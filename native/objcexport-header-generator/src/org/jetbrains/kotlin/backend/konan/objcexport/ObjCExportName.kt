@@ -18,7 +18,9 @@ interface ObjCExportClassOrProtocolName : ObjCExportName {
 
 interface ObjCExportPropertyName : ObjCExportName
 
-interface ObjCExportFunctionName: ObjCExportName
+interface ObjCExportFunctionName : ObjCExportName
+
+interface ObjCExportFileName : ObjCExportName
 
 fun ObjCExportClassOrProtocolName(
     swiftName: String,
@@ -34,7 +36,6 @@ private data class ObjCExportClassOrProtocolNameImpl(
     override val swiftName: String,
     override val objCName: String,
     override val binaryName: String,
-
 ) : ObjCExportClassOrProtocolName
 
 fun ObjCExportPropertyName(
@@ -53,6 +54,14 @@ fun ObjCExportFunctionName(
     objCName = objCName
 )
 
+fun ObjCExportFileName(
+    swiftName: String,
+    objCName: String,
+): ObjCExportFileName = ObjCExportFileNameImpl(
+    swiftName = swiftName,
+    objCName = objCName
+)
+
 private data class ObjCExportPropertyNameImpl(
     override val swiftName: String,
     override val objCName: String,
@@ -62,6 +71,11 @@ private data class ObjCExportFunctionNameImpl(
     override val swiftName: String,
     override val objCName: String,
 ) : ObjCExportFunctionName
+
+private data class ObjCExportFileNameImpl(
+    override val swiftName: String,
+    override val objCName: String,
+) : ObjCExportFileName
 
 
 fun ObjCExportClassOrProtocolName.toNameAttributes(): List<String> = listOfNotNull(
@@ -77,7 +91,8 @@ fun objcRuntimeNameAttribute(name: String) = "objc_runtime_name(\"$name\")"
 
 fun ObjCExportName.name(forSwift: Boolean) = swiftName.takeIf { forSwift } ?: objCName
 
-private fun String.toIdentifier(): String = this.toValidObjCSwiftIdentifier()
+@InternalKotlinNativeApi
+fun String.toIdentifier(): String = this.toValidObjCSwiftIdentifier()
 
 internal fun String.toValidObjCSwiftIdentifier(): String {
     if (this.isEmpty()) return "__"

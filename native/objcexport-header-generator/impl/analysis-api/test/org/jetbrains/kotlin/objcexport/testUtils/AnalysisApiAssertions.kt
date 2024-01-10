@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.objcexport.testUtils
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.name.Name
@@ -43,3 +44,7 @@ fun KtScope.getFunctionOrFail(name: String): KtFunctionSymbol {
     return symbol
 }
 
+context(KtAnalysisSession)
+fun KtClassOrObjectSymbol.getFunctionOrFail(name: String) : KtFunctionSymbol {
+    return this.getMemberScope().getFunctionOrFail(name)
+}

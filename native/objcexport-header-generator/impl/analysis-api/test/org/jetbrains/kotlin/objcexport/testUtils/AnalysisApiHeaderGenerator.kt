@@ -31,10 +31,8 @@ object AnalysisApiHeaderGenerator : HeaderGenerator {
         val session = createStandaloneAnalysisApiSession(root.listFiles().orEmpty().filter { it.extension == "kt" })
         val (module, files) = session.modulesWithFiles.entries.single()
         return analyze(module) {
-            val scope = files.map { it as KtFile }.map { it.getFileSymbol().getFileScope() }.asCompositeScope()
-
             KtObjCExportSession(KtObjCExportConfiguration()) {
-                scope.translateToObjCHeader().toString()
+                translateToObjCHeader(files.map { it as KtFile }).toString()
             }
         }
     }

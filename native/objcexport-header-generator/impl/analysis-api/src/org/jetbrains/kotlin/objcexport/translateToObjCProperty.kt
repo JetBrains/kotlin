@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getMethodBridge
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 context(KtAnalysisSession, KtObjCExportSession)
@@ -24,12 +25,12 @@ context(KtAnalysisSession, KtObjCExportSession)
 fun KtPropertySymbol.buildProperty(): ObjCProperty {
     val propertyName = getObjCPropertyName()
     val name = propertyName.objCName
-    val getterBridge = getter?.bridgeMethodImpl()
+    val getterBridge = getter?.getMethodBridge()
     val type = getter?.mapReturnType(getterBridge!!.returnBridge)
     val attributes = mutableListOf<String>()
     val setterName: String?
 
-    if (!getterBridge!!.isInstance) {
+    if (getterBridge!!.isInstance) {
         attributes += "class"
     }
 
@@ -38,7 +39,7 @@ fun KtPropertySymbol.buildProperty(): ObjCProperty {
     val shouldBeSetterExposed = true //TODO: mapper.shouldBeExposed
 
     if (propertySetter != null && shouldBeSetterExposed) {
-        val setterSelector = propertySetter.getSelector()
+        val setterSelector = propertySetter.getSelector(getterBridge)
         setterName = if (setterSelector != "set" + name.replaceFirstChar(Char::uppercaseChar) + ":") setterSelector else null
     } else {
         attributes += "readonly"

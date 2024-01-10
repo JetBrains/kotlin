@@ -2,9 +2,8 @@ package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.objcexport.KtObjCExportSession
 
-context(KtAnalysisSession, KtObjCExportSession)
+context(KtAnalysisSession)
 internal fun KtClassOrObjectSymbol.members(): List<KtSymbol> {
     return getMemberScope()
         .getAllSymbols()

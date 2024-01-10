@@ -2,25 +2,26 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.annotationInfos
 import org.jetbrains.kotlin.analysis.api.annotations.annotations
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
-import org.jetbrains.kotlin.backend.konan.KonanPrimitiveType
-import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSelectors
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getMethodBridge
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
+import org.jetbrains.kotlin.psi.KtFile
 
 internal val KtCallableSymbol.isConstructor: Boolean
     get() = this is KtConstructorSymbol
@@ -29,27 +30,39 @@ internal val KtCallableSymbol.isArray: Boolean
     get() = false //TODO: temp k2 workaround
 
 context(KtAnalysisSession, KtObjCExportSession)
-fun KtFunctionSymbol.translateToObjCMethod(): ObjCMethod? {
+fun KtFunctionSymbol.translateToObjCMethod(
+): ObjCMethod? {
     if (!isVisibleInObjC()) return null
     if (anyMethodSelectors.containsKey(this.name)) return null //temp, find replacement for org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.isReal
+
     return buildObjCMethod()
+}
+
+
+context(KtAnalysisSession, KtObjCExportSession)
+fun KtFileSymbol.getObjCFileClassOrProtocolName(): ObjCExportFileName? {
+    val ktFile = this.psi as? KtFile ?: return null
+    val name = NameUtils.getPackagePartClassNamePrefix(FileUtil.getNameWithoutExtension(ktFile.name)) + "Kt"
+    return name.toIdentifier().getObjCFileName()
 }
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildMethod]
  */
 context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtFunctionLikeSymbol.buildObjCMethod(unavailable: Boolean = false): ObjCMethod {
-    val baseMethodBridge = bridgeMethodImpl()
+internal fun KtFunctionLikeSymbol.buildObjCMethod(
+    unavailable: Boolean = false,
+): ObjCMethod {
+    val bridge = getMethodBridge()
     val origin: ObjCExportStubOrigin? = null
-    val returnType: ObjCType = mapReturnType(baseMethodBridge.returnBridge)
-    val parameters = collectParameters(baseMethodBridge, this)
-    val selector = getSelector()
+    val returnType: ObjCType = mapReturnType(bridge.returnBridge)
+    val parameters = translateToObjCParameters(bridge)
+    val selector = getSelector(bridge)
     val selectors: List<String> = splitSelector(selector)
-    val swiftName = getSwiftName()
+    val swiftName = getSwiftName(bridge)
     val attributes = mutableListOf<String>()
-    val returnBridge = baseMethodBridge.returnBridge
-    val comment = buildComment(this, baseMethodBridge, parameters)
+    val returnBridge = bridge.returnBridge
+    val comment = buildComment(this, bridge, parameters)
 
     attributes += getSwiftPrivateAttribute() ?: swiftNameAttribute(swiftName)
 
@@ -74,78 +87,16 @@ internal fun KtFunctionLikeSymbol.buildObjCMethod(unavailable: Boolean = false):
     }
 
     return ObjCMethod(
-        comment,
-        origin,
-        true,
-        returnType,
-        selectors,
-        parameters,
-        attributes
+        comment = comment,
+        origin = origin,
+        isInstanceMethod = bridge.isInstance || isConstructor,
+        returnType = returnType,
+        selectors = selectors,
+        parameters = parameters,
+        attributes = attributes
     )
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-private fun collectParameters(baseMethodBridge: MethodBridge, method: KtFunctionLikeSymbol): List<ObjCParameter> {
-    fun unifyName(initialName: String, usedNames: Set<String>): String {
-        var unique = initialName.toValidObjCSwiftIdentifier()
-        while (unique in usedNames || unique in cKeywords) {
-            unique += "_"
-        }
-        return unique
-    }
-
-    val valueParametersAssociated = baseMethodBridge.valueParametersAssociated(method)
-
-    val parameters = mutableListOf<ObjCParameter>()
-
-    val usedNames = mutableSetOf<String>()
-
-    valueParametersAssociated.forEach { (bridge: MethodBridgeValueParameter, parameter: KtTypeParameterSymbol?) ->
-        val candidateName: String = when (bridge) {
-            is MethodBridgeValueParameter.Mapped -> {
-                if (parameter == null) throw IllegalStateException("Parameter shouldn't be null")
-                when {
-                    method is KtPropertySetterSymbol -> "value"
-                    else -> parameter.getObjCName().name(false)
-                }
-            }
-            MethodBridgeValueParameter.ErrorOutParameter -> "error"
-            is MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
-        }
-
-        val uniqueName = unifyName(candidateName, usedNames)
-        usedNames += uniqueName
-
-        val type = when (bridge) {
-            is MethodBridgeValueParameter.Mapped -> TODO("Fetch KtType from KtTypeParameterSymbol: $parameter")
-            MethodBridgeValueParameter.ErrorOutParameter ->
-                ObjCPointerType(ObjCNullableReferenceType(ObjCClassType("NSError")), nullable = true)
-
-            is MethodBridgeValueParameter.SuspendCompletion -> {
-                val resultType = if (bridge.useUnitCompletion) {
-                    null
-                } else {
-                    when (val it = method.returnType.translateToObjCReferenceType()) {
-                        is ObjCNonNullReferenceType -> ObjCNullableReferenceType(it, isNullableResult = false)
-                        is ObjCNullableReferenceType -> ObjCNullableReferenceType(it.nonNullType, isNullableResult = true)
-                    }
-                }
-                ObjCBlockPointerType(
-                    returnType = ObjCVoidType,
-                    parameterTypes = listOfNotNull(
-                        resultType,
-                        ObjCNullableReferenceType(ObjCClassType("NSError"))
-                    )
-                )
-            }
-        }
-
-        val origin: ObjCExportStubOrigin? = null
-        val todo: Nothing? = null
-        parameters += ObjCParameter(uniqueName, origin, type, todo)
-    }
-    return parameters
-}
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerKt.toValidObjCSwiftIdentifier]
@@ -269,12 +220,12 @@ internal fun KtCallableSymbol.isRefinedInSwift(): Boolean = when {
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtFunctionLikeSymbol.getSwiftName(): String {
+internal fun KtFunctionLikeSymbol.getSwiftName(methodBridge: MethodBridge): String {
 
     //assert(mapper.isBaseMethod(method)) //TODO: implement isBaseMethod
     getPredefined(this, Predefined.anyMethodSwiftNames)?.let { return it }
 
-    val parameters = bridgeMethodImpl().valueParametersAssociated(this)
+    val parameters = methodBridge.valueParametersAssociated(this)
     val method = this
 
     val sb = StringBuilder().apply {
@@ -343,11 +294,11 @@ private fun <T : Any> getPredefined(method: KtFunctionLikeSymbol, predefinedForA
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getSelector]
  */
 context(KtAnalysisSession, KtObjCExportSession)
-fun KtFunctionLikeSymbol.getSelector(): String {
+fun KtFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
 
     getPredefined(this, Predefined.anyMethodSelectors)?.let { return it }
 
-    val parameters = bridgeMethodImpl().valueParametersAssociated(this)
+    val parameters = methodBridge.valueParametersAssociated(this)
 
     val method = this
 
@@ -388,35 +339,6 @@ fun KtFunctionLikeSymbol.getSelector(): String {
 
     return sb.toString()
 }
-
-/**
- * Not implemented
- */
-private fun KtTypeParameterSymbol.getObjCName(): ObjCExportName {
-    TODO()
-}
-
-///**
-// * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerKt.toIdentifier]
-// */
-//private fun String.toIdentifier(): String = this.toValidObjCSwiftIdentifier()
-
-///**
-// * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCName]
-// */
-//private class ObjCName(
-//    private val kotlinName: String,
-//    private val objCName: String?,
-//    private val swiftName: String?,
-//    val isExact: Boolean,
-//) {
-//    // TODO: Prevent mangling when objCName or swiftName is provided
-//
-//    fun asString(forSwift: Boolean): String = swiftName.takeIf { forSwift } ?: objCName ?: kotlinName
-//
-//    fun asIdentifier(forSwift: Boolean, default: (String) -> String = { it.toIdentifier() }): String =
-//        swiftName.takeIf { forSwift } ?: objCName ?: default(kotlinName)
-//}
 
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtFunctionLikeSymbol.getMangledName(forSwift: Boolean): String {
@@ -466,7 +388,7 @@ private fun String.mangleIfSpecialFamily(prefix: String): String {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.startsWithWords]
  */
 private fun String.startsWithWords(words: String) = this.startsWith(words) &&
-        (this.length == words.length || !this[words.length].isLowerCase())
+    (this.length == words.length || !this[words.length].isLowerCase())
 
 @InternalKotlinNativeApi
 fun MethodBridge.valueParametersAssociated(
@@ -513,7 +435,7 @@ fun KtFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): 
             if (!returnBridge.successMayBeZero) {
                 check(
                     successReturnType is ObjCNonNullReferenceType
-                            || (successReturnType is ObjCPointerType && !successReturnType.nullable)
+                        || (successReturnType is ObjCPointerType && !successReturnType.nullable)
                 ) {
                     "Unexpected return type: $successReturnType in $this"
                 }
@@ -528,44 +450,6 @@ fun KtFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): 
     }
 }
 
-/**
- * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.bridgeMethodImpl]
- */
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtFunctionLikeSymbol.bridgeMethodImpl(): MethodBridge {
-    val isTopLevel = false //TODO implement and use ObjCExportMapper.isTopLevel
-    val valueParameters = mutableListOf<MethodBridgeValueParameter>()
-
-    val receiver = if (isConstructor && isArray) {
-        MethodBridgeReceiver.Factory
-    } else if (isTopLevel) {
-        MethodBridgeReceiver.Static
-    } else {
-        MethodBridgeReceiver.Instance
-    }
-
-    this.valueParameters.forEach {
-        valueParameters += bridgeParameter(it.returnType)
-    }
-
-    if (this is KtFunctionSymbol && isSuspend) {
-        valueParameters += MethodBridgeValueParameter.SuspendCompletion(false)
-    }
-
-    return MethodBridge(
-        bridgeReturnType(),
-        receiver,
-        valueParameters
-    )
-}
-
-/**
- * [ObjCExportMapper.bridgeParameter]
- */
-context(KtAnalysisSession, KtObjCExportSession)
-private fun bridgeParameter(type: KtType): MethodBridgeValueParameter {
-    return MethodBridgeValueParameter.Mapped(bridgeType(type))
-}
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapType]
@@ -597,127 +481,5 @@ private fun KtType.mapType(typeBridge: TypeBridge): ObjCType {
                 else -> TODO("Handle primitive KtType mapping to ObjCType: $this")
             }
         }
-    }
-}
-
-/**
- * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.isReferenceOrPointer]
- */
-private fun TypeBridge.isReferenceOrPointer(): Boolean = when (this) {
-    ReferenceBridge, is BlockPointerBridge -> true
-    is ValueTypeBridge -> this.objCValueType == ObjCValueType.POINTER
-}
-
-/**
- * [ObjCExportMapper.bridgeFunctionType]
- */
-context(KtAnalysisSession)
-private fun bridgeFunctionType(type: KtType): TypeBridge {
-
-    val numberOfParameters: Int
-    val returnType: KtType
-
-    if (type is KtFunctionalType) {
-        numberOfParameters = type.parameterTypes.size
-        returnType = type.parameterTypes.last()
-    } else {
-        numberOfParameters = 0
-        returnType = type
-    }
-
-    val returnsVoid = returnType.isUnit || returnType.isNothing
-    return BlockPointerBridge(numberOfParameters, returnsVoid)
-}
-
-/**
- * [ObjCExportMapper.bridgeType]
- */
-context(KtAnalysisSession)
-private fun bridgeType(
-    type: KtType,
-): TypeBridge {
-
-    return if (type.isPrimitive) {
-        val objCType = when {
-            type.isBoolean -> ObjCValueType.BOOL
-            type.isChar -> ObjCValueType.UNICHAR
-            type.isByte -> ObjCValueType.CHAR
-            type.isShort -> ObjCValueType.SHORT
-            type.isInt -> ObjCValueType.INT
-            type.isLong -> ObjCValueType.LONG_LONG
-            type.isFloat -> ObjCValueType.FLOAT
-            type.isDouble -> ObjCValueType.DOUBLE
-            type.isUByte -> ObjCValueType.UNSIGNED_CHAR
-            type.isUShort -> ObjCValueType.UNSIGNED_SHORT
-            type.isUInt -> ObjCValueType.UNSIGNED_INT
-            type.isULong -> ObjCValueType.UNSIGNED_LONG_LONG
-            else ->
-                /**
-                 * Handle [KonanPrimitiveType.NON_NULL_NATIVE_PTR] and [KonanPrimitiveType.VECTOR128]
-                 */
-                TODO()
-        }
-        ValueTypeBridge(objCType)
-    } else if (type.isFunctionType) {
-        bridgeFunctionType(type)
-    } else {
-        ReferenceBridge
-    }
-}
-
-/**
- * [ObjCExportMapper.bridgeReturnType]
- */
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtCallableSymbol.bridgeReturnType(): MethodBridge.ReturnValue {
-
-    val convertExceptionsToErrors = false // TODO: Add exception handling and return MethodBridge.ReturnValue.WithError.ZeroForError
-
-    if (isArray) {
-        return MethodBridge.ReturnValue.Instance.FactoryResult
-    } else if (isConstructor) {
-        val result = MethodBridge.ReturnValue.Instance.InitResult
-        if (convertExceptionsToErrors) {
-            MethodBridge.ReturnValue.WithError.ZeroForError(result, successMayBeZero = false)
-        } else {
-            return result
-        }
-    } else if (returnType.isSuspendFunctionType) {
-        return MethodBridge.ReturnValue.Suspend
-    }
-
-    //TODO: handle hashCode
-//    descriptor.containingDeclaration.let { it is ClassDescriptor && KotlinBuiltIns.isAny(it) } &&
-//            descriptor.name.asString() == "hashCode" -> {
-//        assert(!convertExceptionsToErrors)
-//        MethodBridge.ReturnValue.HashCode
-//    }
-
-    //TODO: handle getter
-//    descriptor is PropertyGetterDescriptor -> {
-//        assert(!convertExceptionsToErrors)
-//        MethodBridge.ReturnValue.Mapped(bridgePropertyType(descriptor.correspondingProperty))
-//    }
-
-    if (returnType.isUnit || returnType.isNothing) {
-        return if (convertExceptionsToErrors) {
-            MethodBridge.ReturnValue.WithError.Success
-        } else {
-            MethodBridge.ReturnValue.Void
-        }
-    }
-
-
-    val returnTypeBridge = bridgeType(returnType)
-    val successReturnValueBridge = MethodBridge.ReturnValue.Mapped(returnTypeBridge)
-
-    return if (convertExceptionsToErrors) {
-        val canReturnZero = !returnTypeBridge.isReferenceOrPointer() || returnType.canBeNull
-        MethodBridge.ReturnValue.WithError.ZeroForError(
-            successReturnValueBridge,
-            successMayBeZero = canReturnZero
-        )
-    } else {
-        successReturnValueBridge
     }
 }

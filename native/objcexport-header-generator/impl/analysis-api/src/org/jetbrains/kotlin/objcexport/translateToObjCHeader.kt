@@ -6,24 +6,23 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind.CLASS
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind.INTERFACE
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCHeader
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
+import org.jetbrains.kotlin.psi.KtFile
+
+
 
 context(KtAnalysisSession, KtObjCExportSession)
-fun KtScope.translateToObjCHeader(): ObjCHeader {
-    val declarationsInScope = getAllSymbols()
-        .flatMap { symbol -> symbol.translateToObjCExportStubs() }
-        .toList()
-
+fun translateToObjCHeader(files: List<KtFile>) : ObjCHeader {
+    val declarations = files.flatMap { ktFile -> ktFile.translateToObjCExportStubs() }
     return ObjCHeader(
-        stubs = declarationsInScope,
+        stubs = declarations,
         classForwardDeclarations = emptySet(),
-        protocolForwardDeclarations = declarationsInScope
+        protocolForwardDeclarations = declarations
             .filterIsInstance<ObjCProtocol>()
             .flatMap { it.superProtocols }
             .toSet(),
@@ -33,8 +32,21 @@ fun KtScope.translateToObjCHeader(): ObjCHeader {
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+fun KtFile.translateToObjCExportStubs(): List<ObjCExportStub> {
+    return this.getFileSymbol().translateToObjCExportStubs()
+}
+
+context(KtAnalysisSession, KtObjCExportSession)
+fun KtFileSymbol.translateToObjCExportStubs(): List<ObjCExportStub> {
+    return listOfNotNull(translateToObjCTopLevelInterfaceFileFacade()) + getFileScope().getClassifierSymbols()
+        .flatMap { classifierSymbol -> classifierSymbol.translateToObjCExportStubs() }
+}
+
+
+context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtSymbol.translateToObjCExportStubs(): List<ObjCExportStub> {
     return when {
+        this is KtFileSymbol -> translateToObjCExportStubs()
         this is KtClassOrObjectSymbol && classKind == INTERFACE -> listOfNotNull(translateToObjCProtocol())
         this is KtClassOrObjectSymbol && classKind == CLASS -> listOfNotNull(translateToObjCClass())
         this is KtConstructorSymbol -> translateToObjCConstructors()
