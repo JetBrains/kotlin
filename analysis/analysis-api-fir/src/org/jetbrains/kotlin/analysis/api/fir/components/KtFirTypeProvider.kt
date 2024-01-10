@@ -20,9 +20,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.isCompatible
@@ -37,6 +40,7 @@ import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -49,6 +53,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.util.bfs
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KtFirTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -208,8 +214,18 @@ internal class KtFirTypeProvider(
     }
 
     override fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KtType> {
-        return analysisSession.firResolveSession.getTowerContextProvider(position.containingKtFile)
-            .getClosestAvailableParentContext(position)?.implicitReceiverStack?.map { it.type.asKtType() } ?: emptyList()
+        val ktFile = position.containingKtFile
+        val firFile = ktFile.getOrBuildFirFile(firResolveSession)
+
+        val fileSession = firFile.llFirSession
+        val sessionHolder = SessionHolderImpl(fileSession, fileSession.getScopeSession())
+
+        val context = ContextCollector.process(firFile, sessionHolder, position)
+            ?: errorWithAttachment("Cannot find context for ${position::class}") {
+                withPsiEntry("position", position)
+            }
+
+        return context.towerDataContext.implicitReceiverStack.map { it.type.asKtType() }
     }
 
     override fun getDirectSuperTypes(type: KtType, shouldApproximate: Boolean): List<KtType> {
