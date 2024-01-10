@@ -27,7 +27,7 @@ sourceSets {
 
 testsJar()
 
-nativeTest("test", tag = null) {
+nativeTest("test", tag = null, requirePlatformLibs = true) {
     useJUnitPlatform()
     enableJunit5ExtensionsAutodetection()
 }

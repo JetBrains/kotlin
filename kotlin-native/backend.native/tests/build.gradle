@@ -188,6 +188,7 @@ tasks.named("run") {
     dependsOn(":kotlin-native:Interop:Indexer:check")
     dependsOn(":kotlin-native:Interop:StubGenerator:check")
     dependsOn(":native:kotlin-native-utils:check")
+    dependsOn(":native:objcexport-header-generator:check")
     dependsOn(":kotlin-native:backend.native:check")
 }
 

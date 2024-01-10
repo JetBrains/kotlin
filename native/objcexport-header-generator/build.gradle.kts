@@ -45,13 +45,13 @@ tasks.test.configure {
     enabled = false
 }
 
-nativeTest("testK1", tag = null) {
+nativeTest("testK1", tag = null, requirePlatformLibs = true) {
     useJUnitPlatform()
     enableJunit5ExtensionsAutodetection()
     classpath += k1TestRuntimeClasspath
 }
 
-nativeTest("testAnalysisApi", tag = null) {
+nativeTest("testAnalysisApi", tag = null, requirePlatformLibs = true) {
     useJUnitPlatform()
     enableJunit5ExtensionsAutodetection()
     testClassesDirs += files(sourceSets.test.map { it.output.classesDirs })
