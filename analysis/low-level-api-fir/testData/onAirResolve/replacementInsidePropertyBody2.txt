@@ -1,1 +1,0 @@
-[ResolvedTo(BODY_RESOLVE)] lval inSetter: R|kotlin/Int| = R|<local>/value|

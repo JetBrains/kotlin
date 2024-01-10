@@ -45,10 +45,6 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
     }
 
     testGroup("analysis/low-level-api-fir/tests", "analysis/low-level-api-fir/testData") {
-        testClass<AbstractFirOnAirResolveTest> {
-            model("onAirResolve")
-        }
-
         testClass<AbstractFirSourceLazyDeclarationResolveTest> {
             model("lazyResolve", pattern = TestGeneratorUtil.KT)
         }
