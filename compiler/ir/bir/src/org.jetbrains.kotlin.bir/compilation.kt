@@ -243,7 +243,6 @@ class BirCompilation() {
             val mappedIr2BirElements = IdentityHashMap<BirElement, IrElement>()
             val ir2BirConverter = Ir2BirConverter(dynamicPropertyManager)
             ir2BirConverter.convertAncestorsForOrphanedElements = true
-            ir2BirConverter.cloneFir2IrLazyElements = false
             ir2BirConverter.appendElementAsDatabaseRoot = { old, new ->
                 mappedIr2BirElements[new] = old
                 when {

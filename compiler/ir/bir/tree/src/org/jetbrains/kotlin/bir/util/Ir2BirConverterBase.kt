@@ -37,7 +37,6 @@ abstract class Ir2BirConverterBase() {
 
     var convertLazyElementsIntoImpl = false
     var convertImplElementsIntoLazyWhenPossible = false
-    var cloneFir2IrLazyElements = false
 
     private val collectedBirElementsWithoutParent = mutableListOf<BirElement>()
     private val collectedIrElementsWithoutParent = mutableListOf<IrElement>()
