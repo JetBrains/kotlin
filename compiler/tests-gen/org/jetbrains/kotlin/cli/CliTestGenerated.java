@@ -1328,6 +1328,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/js/firMppWithKlib.args");
         }
 
+        @TestMetadata("firMultiplatformCompilationWithError.args")
+        public void testFirMultiplatformCompilationWithError() throws Exception {
+            runTest("compiler/testData/cli/js/firMultiplatformCompilationWithError.args");
+        }
+
         @TestMetadata("jsExtraHelp.args")
         public void testJsExtraHelp() throws Exception {
             runTest("compiler/testData/cli/js/jsExtraHelp.args");
