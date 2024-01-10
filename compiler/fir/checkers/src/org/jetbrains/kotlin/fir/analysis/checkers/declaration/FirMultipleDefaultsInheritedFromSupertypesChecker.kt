@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.collectOverriddenFunctionsWhere
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNull
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.isSubstitutionOverride
@@ -58,9 +61,14 @@ sealed class FirMultipleDefaultsInheritedFromSupertypesChecker(mppKind: MppCheck
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
-        val overriddenFunctions = function.collectOverriddenFunctionsWhere(mutableSetOf(), context) { overridden ->
+        val overriddenFunctions = mutableSetOf<FirNamedFunctionSymbol>()
+        function.processOverriddenFunctions(context) { overridden ->
+            // default values of actual functions are located in corresponding expect functions
+            val overriddenWithDefaults = overridden.getSingleMatchedExpectForActualOrNull() as? FirNamedFunctionSymbol ?: overridden
             // Substitution overrides copy default values from originals
-            !overridden.isSubstitutionOverride && overridden.valueParameterSymbols.any { it.hasDefaultValue }
+            if (!overriddenWithDefaults.isSubstitutionOverride && overriddenWithDefaults.valueParameterSymbols.any { it.hasDefaultValue }) {
+                overriddenFunctions += overriddenWithDefaults
+            }
         }
         val isExplicitOverride = function.origin == FirDeclarationOrigin.Source
 
