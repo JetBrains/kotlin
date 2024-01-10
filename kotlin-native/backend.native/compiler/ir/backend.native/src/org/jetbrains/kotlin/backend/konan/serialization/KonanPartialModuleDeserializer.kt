@@ -243,7 +243,6 @@ internal class KonanPartialModuleDeserializer(
                         SerializedClassFieldInfo(
                                 name = "",
                                 binaryType = INVALID_INDEX,
-                                nameAndType.typeIndex,
                                 flags = 0,
                                 field.alignment
                         )
@@ -260,9 +259,6 @@ internal class KonanPartialModuleDeserializer(
                         SerializedClassFieldInfo(
                                 field.name,
                                 primitiveBinaryType?.ordinal ?: INVALID_INDEX,
-                                if (with(KonanManglerIr) { (classifier as? IrClassSymbol)?.owner?.isExported(compatibleMode) } == false)
-                                    INVALID_INDEX
-                                else nameAndType.typeIndex,
                                 flags,
                                 field.alignment
                         )
@@ -480,7 +476,6 @@ internal class KonanPartialModuleDeserializer(
             } else {
                 val name = field.name
                 val type = when {
-                    field.type != INVALID_INDEX -> declarationDeserializer.deserializeIrType(field.type)
                     field.binaryType == INVALID_INDEX -> builtIns.anyNType
                     else -> when (PrimitiveBinaryType.values().getOrNull(field.binaryType)) {
                         PrimitiveBinaryType.BOOLEAN -> builtIns.booleanType
