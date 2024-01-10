@@ -20,12 +20,16 @@ OBJC_FORWARD_DECLARE(NSObject);
 
 namespace kotlin::objc_support {
 
+struct object_ptr_retain_t{};
+inline constexpr object_ptr_retain_t object_ptr_retain{};
+
 namespace internal {
 
 class ObjectPtrImpl {
 public:
     ObjectPtrImpl() noexcept;
     explicit ObjectPtrImpl(NSObject* object) noexcept;
+    ObjectPtrImpl(object_ptr_retain_t, NSObject* object) noexcept;
 
     ObjectPtrImpl(const ObjectPtrImpl& rhs) noexcept;
     ObjectPtrImpl(ObjectPtrImpl&& rhs) noexcept;
@@ -51,6 +55,7 @@ public:
 
     void reset() noexcept;
     void reset(NSObject* object) noexcept;
+    void reset(object_ptr_retain_t, NSObject* object) noexcept;
 
     bool operator==(const ObjectPtrImpl& rhs) const noexcept;
     bool operator<(const ObjectPtrImpl& rhs) const noexcept;
@@ -65,8 +70,10 @@ private:
 
 // `std::shared_ptr`-like smart pointer for ObjC objects.
 //
-// IMPORTANT: Must be constructed from a retained ObjC object.
+// IMPORTANT: By default constructed from a retained ObjC object.
 // This optimizes for the common case of constructing directly from `[[T alloc] init...]`.
+// To construct and additionally retain the object, use `object_ptr_retain` as the first argument
+// to the constructor.
 //
 // Unlike a regular C++ smart pointer `operator*` does not return a reference but return a pointer
 // for convenient syntax of calling ObjC methods: `[*smartPtr methodName]`.
@@ -88,6 +95,9 @@ public:
     // IMPORTANT: this does not `retain` `ptr`.
     explicit object_ptr(T* ptr) noexcept : impl_(ptr) {}
 
+    // Construct from ObjC object, additionally retaining `ptr`.
+    object_ptr(object_ptr_retain_t, T* ptr) noexcept : impl_(object_ptr_retain, ptr) {}
+
     void swap(object_ptr<T>& rhs) noexcept { impl_.swap(rhs.impl_); }
 
     T* get() const noexcept { return (T*)impl_.get(); }
@@ -103,6 +113,9 @@ public:
     //
     // IMPORTANT: this does not `retain` `ptr`.
     void reset(T* ptr) noexcept { impl_.reset(ptr); }
+
+    // Release stored pointer and store `ptr` instead, additionally retaining `ptr`.
+    void reset(object_ptr_retain_t, T* ptr) noexcept { impl_.reset(object_ptr_retain, ptr); }
 
     template <typename U>
     bool operator==(const object_ptr<U>& rhs) const noexcept {

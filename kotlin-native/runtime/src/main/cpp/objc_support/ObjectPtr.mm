@@ -15,6 +15,8 @@ objc_support::internal::ObjectPtrImpl::ObjectPtrImpl() noexcept : object_(nil) {
 
 objc_support::internal::ObjectPtrImpl::ObjectPtrImpl(NSObject* object) noexcept : object_(object) {}
 
+objc_support::internal::ObjectPtrImpl::ObjectPtrImpl(object_ptr_retain_t, NSObject* object) noexcept : object_([object retain]) {}
+
 objc_support::internal::ObjectPtrImpl::ObjectPtrImpl(const ObjectPtrImpl& rhs) noexcept : object_([rhs.object_ retain]) {}
 
 objc_support::internal::ObjectPtrImpl::ObjectPtrImpl(ObjectPtrImpl&& rhs) noexcept : object_(rhs.object_) {
@@ -49,6 +51,10 @@ void objc_support::internal::ObjectPtrImpl::reset(NSObject* object) noexcept {
         [object_ release];
         object_ = object;
     }
+}
+
+void objc_support::internal::ObjectPtrImpl::reset(object_ptr_retain_t, NSObject* object) noexcept {
+    reset([object retain]);
 }
 
 std::size_t objc_support::internal::ObjectPtrImpl::computeHash() const noexcept {

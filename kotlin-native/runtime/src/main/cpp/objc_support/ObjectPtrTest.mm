@@ -85,6 +85,21 @@ TEST(ObjectPtrTest, ObjectCtor) {
     testing::Mock::VerifyAndClearExpectations(&destructorHook);
 }
 
+TEST(ObjectPtrTest, ObjectCtorWithRetain) {
+    testing::StrictMock<testing::MockFunction<DestructorHook>> destructorHook;
+
+    auto* ptr = [[WithDestructorHookObjC alloc] initWithDestructorHook:destructorHook.AsStdFunction()];
+    {
+        objc_support::object_ptr<WithDestructorHookObjC> obj(objc_support::object_ptr_retain, ptr);
+        EXPECT_CONTAINS(obj, ptr);
+        EXPECT_CALL(destructorHook, Call(ptr.impl)).Times(0);
+    }
+    testing::Mock::VerifyAndClearExpectations(&destructorHook);
+
+    EXPECT_CALL(destructorHook, Call(ptr.impl));
+    [ptr release];
+}
+
 TEST(ObjectPtrTest, CopyCtor) {
     testing::StrictMock<testing::MockFunction<DestructorHook>> destructorHook;
 
@@ -304,6 +319,24 @@ TEST(ObjectPtrTest, ResetObjectFromEmpty) {
     EXPECT_CALL(destructorHook, Call(ptr.impl));
 }
 
+TEST(ObjectPtrTest, ResetObjectFromEmptyWithRetain) {
+    testing::StrictMock<testing::MockFunction<DestructorHook>> destructorHook;
+
+    auto* ptr = [[WithDestructorHookObjC alloc] initWithDestructorHook:destructorHook.AsStdFunction()];
+    {
+        objc_support::object_ptr<WithDestructorHookObjC> obj;
+
+        obj.reset(objc_support::object_ptr_retain, ptr);
+        EXPECT_CONTAINS(obj, ptr);
+
+        EXPECT_CALL(destructorHook, Call(ptr.impl)).Times(0);
+    }
+    testing::Mock::VerifyAndClearExpectations(&destructorHook);
+
+    EXPECT_CALL(destructorHook, Call(ptr.impl));
+    [ptr release];
+}
+
 TEST(ObjectPtrTest, ResetObjectFromSet) {
     testing::StrictMock<testing::MockFunction<DestructorHook>> destructorHook;
 
@@ -317,6 +350,27 @@ TEST(ObjectPtrTest, ResetObjectFromSet) {
     EXPECT_CONTAINS(obj, ptr2);
 
     EXPECT_CALL(destructorHook, Call(ptr2.impl));
+}
+
+TEST(ObjectPtrTest, ResetObjectFromSetWithRetain) {
+    testing::StrictMock<testing::MockFunction<DestructorHook>> destructorHook;
+
+    auto* ptr1 = [[WithDestructorHookObjC alloc] initWithDestructorHook:destructorHook.AsStdFunction()];
+    auto* ptr2 = [[WithDestructorHookObjC alloc] initWithDestructorHook:destructorHook.AsStdFunction()];
+    {
+        objc_support::object_ptr<WithDestructorHookObjC> obj(ptr1);
+
+        EXPECT_CALL(destructorHook, Call(ptr1.impl));
+        obj.reset(objc_support::object_ptr_retain, ptr2);
+        testing::Mock::VerifyAndClearExpectations(&destructorHook);
+        EXPECT_CONTAINS(obj, ptr2);
+
+        EXPECT_CALL(destructorHook, Call(ptr2.impl)).Times(0);
+    }
+    testing::Mock::VerifyAndClearExpectations(&destructorHook);
+
+    EXPECT_CALL(destructorHook, Call(ptr2.impl));
+    [ptr2 release];
 }
 
 #define EXPECT_EQUAL(expr1, expr2) \
