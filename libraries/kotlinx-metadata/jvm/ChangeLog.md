@@ -1,5 +1,16 @@
 # kotlinx-metadata-jvm
 
+## 0.9.0
+
+The main purpose of this release is to promote all previous deprecations to ERROR level if they were not already.
+Please refer to the [migration guide](Migration.md) if you are using deprecated functions.
+Also, this release includes several bugfixes. It still uses Kotlin 1.9, but is able to read or write metadata of version 2.0.
+
+- Add missing documentation to `KmVersionRequirement.toString`
+- Raise all deprecations in kotlinx-metadata-jvm to ERROR ([KT-63157](https://youtrack.jetbrains.com/issue/KT-63157))
+- Do not allow writing metadata versions that are too high ([KT-64230](https://youtrack.jetbrains.com/issue/KT-64230))
+- Add `KmVersionRequirementKind.UNKNOWN` ([KT-60870](https://youtrack.jetbrains.com/issue/KT-60870))
+
 ## 0.8.0
 
 This release concludes our API overhaul: it features last significant API changes, as well as raised deprecations to ERROR level almost everywhere.

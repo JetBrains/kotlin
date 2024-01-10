@@ -3,7 +3,7 @@
 Starting with 0.6.0 release, Kotlin team is focused on revisiting and improving kotlinx-metadata-jvm API, with an aim to provide a stable release
 in the near future. As a result, the API was reshaped, with cuts here and there, so we've provided a migration guide to help you with updates.
 
-## Migrating from 0.7.0 to 0.8.0
+## Migrating from 0.7.0 to 0.8.0 and above
 
 ### Choosing between read methods
 
