@@ -523,7 +523,7 @@ private class ElementsToShortenCollector(
 
         val classifierId = resolvedTypeRef.type.lowerBoundIfFlexible().candidateClassId ?: return
 
-        findTypeQualifierToShorten(classifierId, typeElement)?.let(::addElementToShorten)
+        findClassifierQualifierToShorten(classifierId, typeElement)?.let(::addElementToShorten)
     }
 
     /**
@@ -592,25 +592,7 @@ private class ElementsToShortenCollector(
             else -> return
         }
 
-        findTypeQualifierToShorten(wholeClassQualifier, wholeQualifierElement)?.let(::addElementToShorten)
-    }
-
-    private fun findTypeQualifierToShorten(
-        wholeClassQualifier: ClassId,
-        wholeQualifierElement: KtElement,
-    ): ElementToShorten? {
-        val positionScopes = shorteningContext.findScopesAtPosition(
-            wholeQualifierElement,
-            getNamesToImport(),
-            towerContextProvider,
-            withImplicitReceivers = false,
-        ) ?: return null
-
-        return findClassifierQualifierToShorten(
-            positionScopes,
-            wholeClassQualifier,
-            wholeQualifierElement,
-        )
+        findClassifierQualifierToShorten(wholeClassQualifier, wholeQualifierElement)?.let(::addElementToShorten)
     }
 
     private val FirClassifierSymbol<*>.classIdIfExists: ClassId? get() = (this as? FirClassLikeSymbol<*>)?.classId
@@ -819,6 +801,61 @@ private class ElementsToShortenCollector(
         return createElementToShorten(referenceExpression, shortenedRef = aliasedName)
     }
 
+    private fun shortenClassifierQualifier(
+        positionScopes: List<FirScope>,
+        qualifierClassId: ClassId,
+        qualifierElement: KtElement,
+    ): ElementToShorten? {
+        val classSymbol = shorteningContext.toClassSymbol(qualifierClassId) ?: return null
+
+        val option = classShortenStrategy(classSymbol)
+        if (option == ShortenStrategy.DO_NOT_SHORTEN) return null
+
+        // If its parent has a type parameter, we do not shorten it ATM because it will lose its type parameter. See KTIJ-26072
+        if (classSymbol.hasTypeParameterFromParent()) return null
+
+        shortenIfAlreadyImportedAsAlias(qualifierElement, qualifierClassId.asSingleFqName())?.let { return it }
+
+        if (shortenClassifierIfAlreadyImported(qualifierClassId, qualifierElement, classSymbol, positionScopes)) {
+            return createElementToShorten(qualifierElement)
+        }
+        if (option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return null
+
+        val importAllInParent = option == ShortenStrategy.SHORTEN_AND_STAR_IMPORT
+        if (importAffectsUsagesOfClassesWithSameName(qualifierClassId, qualifierElement.containingKtFile, importAllInParent)) return null
+
+        // Find class with the same name that's already available in this file.
+        val availableClassifier = shorteningContext.findFirstClassifierInScopesByName(positionScopes, qualifierClassId.shortClassName)
+
+        when {
+            // No class with name `classId.shortClassName` is present in the scope. Hence, we can safely import the name and shorten
+            // the reference.
+            availableClassifier == null -> {
+                return createElementToShorten(
+                    qualifierElement,
+                    qualifierClassId.asSingleFqName(),
+                    importAllInParent
+                )
+            }
+            // The class with name `classId.shortClassName` happens to be the same class referenced by this qualified access.
+            availableClassifier.symbol.classIdIfExists == qualifierClassId -> {
+                // Respect caller's request to use star import, if it's not already star-imported.
+                return when {
+                    availableClassifier.importKind == ImportKind.EXPLICIT && importAllInParent -> {
+                        createElementToShorten(qualifierElement, qualifierClassId.asSingleFqName(), importAllInParent)
+                    }
+                    // Otherwise, just shorten it and don't alter import statements
+                    else -> createElementToShorten(qualifierElement)
+                }
+            }
+            importedClassifierOverwritesAvailableClassifier(availableClassifier, importAllInParent) -> {
+                return createElementToShorten(qualifierElement, qualifierClassId.asSingleFqName(), importAllInParent)
+            }
+        }
+
+        return null
+    }
+
     /**
      * Finds the longest qualifier in [wholeQualifierElement] which can be safely shortened in the [positionScopes].
      * [wholeQualifierClassId] is supposed to reflect the class which is referenced by the [wholeQualifierElement].
@@ -828,61 +865,23 @@ private class ElementsToShortenCollector(
      * So we have to check all the outer qualifiers.
      */
     private fun findClassifierQualifierToShorten(
-        positionScopes: List<FirScope>,
         wholeQualifierClassId: ClassId,
         wholeQualifierElement: KtElement,
     ): ElementToShorten? {
+        val positionScopes = shorteningContext.findScopesAtPosition(
+            wholeQualifierElement,
+            getNamesToImport(),
+            towerContextProvider,
+            withImplicitReceivers = false,
+        ) ?: return null
+
         val allClassIds = wholeQualifierClassId.outerClassesWithSelf
         val allQualifiedElements = wholeQualifierElement.qualifiedElementsWithSelf
 
         for ((classId, element) in allClassIds.zip(allQualifiedElements)) {
             if (!element.inSelection) continue
 
-            val classSymbol = shorteningContext.toClassSymbol(classId) ?: return null
-            val option = classShortenStrategy(classSymbol)
-            if (option == ShortenStrategy.DO_NOT_SHORTEN) continue
-
-            // If its parent has a type parameter, we do not shorten it ATM because it will lose its type parameter. See KTIJ-26072
-            if (classSymbol.hasTypeParameterFromParent()) continue
-
-            shortenIfAlreadyImportedAsAlias(element, classId.asSingleFqName())?.let { return it }
-
-            if (shortenClassifierIfAlreadyImported(classId, element, classSymbol, positionScopes)) {
-                return createElementToShorten(element)
-            }
-            if (option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) continue
-
-            val importAllInParent = option == ShortenStrategy.SHORTEN_AND_STAR_IMPORT
-            if (importAffectsUsagesOfClassesWithSameName(classId, element.containingKtFile, importAllInParent)) continue
-
-            // Find class with the same name that's already available in this file.
-            val availableClassifier = shorteningContext.findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)
-
-            when {
-                // No class with name `classId.shortClassName` is present in the scope. Hence, we can safely import the name and shorten
-                // the reference.
-                availableClassifier == null -> {
-                    return createElementToShorten(
-                        element,
-                        classId.asSingleFqName(),
-                        importAllInParent
-                    )
-                }
-                // The class with name `classId.shortClassName` happens to be the same class referenced by this qualified access.
-                availableClassifier.symbol.classIdIfExists == classId -> {
-                    // Respect caller's request to use star import, if it's not already star-imported.
-                    return when {
-                        availableClassifier.importKind == ImportKind.EXPLICIT && importAllInParent -> {
-                            createElementToShorten(element, classId.asSingleFqName(), importAllInParent)
-                        }
-                        // Otherwise, just shorten it and don't alter import statements
-                        else -> createElementToShorten(element)
-                    }
-                }
-                importedClassifierOverwritesAvailableClassifier(availableClassifier, importAllInParent) -> {
-                    return createElementToShorten(element, classId.asSingleFqName(), importAllInParent)
-                }
-            }
+            shortenClassifierQualifier(positionScopes, classId, element)?.let { return it }
         }
 
         val lastQualifier = allQualifiedElements.last()
