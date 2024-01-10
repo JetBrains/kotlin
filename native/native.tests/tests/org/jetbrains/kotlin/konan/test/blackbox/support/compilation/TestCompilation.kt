@@ -25,6 +25,12 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
 
+private fun AssertionsMode.assertionsEnabledWith(optimizationMode: OptimizationMode) = when (this) {
+    AssertionsMode.ALWAYS_ENABLE -> true
+    AssertionsMode.ALWAYS_DISABLE -> false
+    else -> optimizationMode != OptimizationMode.OPT
+}
+
 internal abstract class TestCompilation<A : TestCompilationArtifact> {
     abstract val result: TestCompilationResult<out A>
 }
@@ -55,8 +61,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     private fun ArgsBuilder.applyCommonArgs() {
         add("-target", targets.testTarget.name)
         optimizationMode.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
-        if ((freeCompilerArgs.assertionsMode != AssertionsMode.ALWAYS_DISABLE && optimizationMode != OptimizationMode.OPT) ||
-            freeCompilerArgs.assertionsMode == AssertionsMode.ALWAYS_ENABLE)
+        if (freeCompilerArgs.assertionsMode.assertionsEnabledWith(optimizationMode))
             add("-enable-assertions")
         add(
             "-Xverify-ir=error"
@@ -554,14 +559,8 @@ internal class CategorizedDependencies(uncategorizedDependencies: Iterable<TestC
 private object BinaryOptions {
     object RuntimeAssertionsMode {
         // Here the 'default' is in the sense the default for testing, not the default for the compiler.
-        fun defaultForTesting(optimizationMode: OptimizationMode, assertionsMode: AssertionsMode): Map<String, String> {
-            val panic = mapOf("runtimeAssertionsMode" to "panic")
-            return when (assertionsMode) {
-                AssertionsMode.ALWAYS_ENABLE -> panic
-                AssertionsMode.ALWAYS_DISABLE -> mapOf()
-                else -> if (optimizationMode == OptimizationMode.OPT) mapOf() else panic
-            }
-        }
+        fun defaultForTesting(optimizationMode: OptimizationMode, assertionsMode: AssertionsMode) =
+            if (assertionsMode.assertionsEnabledWith(optimizationMode)) mapOf("runtimeAssertionsMode" to "panic") else mapOf()
 
         val forUseWithCache: Map<String, String> = mapOf("runtimeAssertionsMode" to "ignore")
 
