@@ -83,9 +83,8 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
 
     @Deprecated(
         "Accessing 'sourceSets' container on the Kotlin target level DSL is deprecated. " +
-                "Consider accessing 'sourceSets' on the Kotlin extension level.",
-        level = DeprecationLevel.WARNING,
-        replaceWith = ReplaceWith("project.kotlin.sourceSets")
+                "Consider configuring 'sourceSets' on the Kotlin extension level.",
+        level = DeprecationLevel.WARNING
     )
     val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
 }

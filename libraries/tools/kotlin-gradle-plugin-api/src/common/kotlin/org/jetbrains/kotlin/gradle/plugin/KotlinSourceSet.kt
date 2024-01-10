@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Action
 import org.gradle.api.Named
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
@@ -48,12 +47,4 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
 
     val customSourceFilesExtensions: Iterable<String> // lazy iterable expected
     fun addCustomSourceFilesExtensions(extensions: List<String>) {}
-
-    @Deprecated(
-        "Accessing 'sourceSets' container inside another KotlinSourceSet is deprecated. " +
-                "Consider accessing 'sourceSets' only on the Kotlin extension level.",
-        level = DeprecationLevel.WARNING,
-        replaceWith = ReplaceWith("project.kotlin.sourceSets")
-    )
-    val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
 }
