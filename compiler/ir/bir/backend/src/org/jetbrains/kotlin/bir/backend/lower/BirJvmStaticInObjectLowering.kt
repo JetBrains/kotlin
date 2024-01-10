@@ -29,7 +29,7 @@ context(JvmBirBackendContext)
 class BirJvmStaticInObjectLowering : BirLoweringPhase() {
     private val JvmStaticAnnotation by lz { birBuiltIns.findClass(JVM_STATIC_ANNOTATION_FQ_NAME) }
 
-    private val staticDeclarations = registerIndexKey(BirDeclaration, false) {
+    private val staticDeclarations = registerIndexKey(BirDeclaration, true) {
         it.isJvmStaticDeclaration()
     }
     private val memberAccesses = registerBackReferencesKey(BirMemberAccessExpression) { it.symbol.owner }
@@ -49,8 +49,10 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
                     call.replaceWithStatic(replaceCallee = null)
                 }
 
-                if (declaration is BirSimpleFunction) {
-                    declaration.removeStaticDispatchReceiver(parent)
+                if (declaration.getContainingDatabase() == compiledBir) {
+                    if (declaration is BirSimpleFunction) {
+                        declaration.removeStaticDispatchReceiver(parent)
+                    }
                 }
             }
         }
