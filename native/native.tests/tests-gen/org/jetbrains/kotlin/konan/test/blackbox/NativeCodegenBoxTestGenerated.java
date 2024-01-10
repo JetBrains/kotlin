@@ -1875,6 +1875,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("lambdaParameterHasTVType.kt")
+            public void testLambdaParameterHasTVType() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/lambdaParameterHasTVType.kt");
+            }
+
+            @Test
             @TestMetadata("receiverUsesOuterTVButReturnTypeIsProper.kt")
             public void testReceiverUsesOuterTVButReturnTypeIsProper() throws Exception {
                 runTest("compiler/testData/codegen/box/builderInference/receiverUsesOuterTVButReturnTypeIsProper.kt");

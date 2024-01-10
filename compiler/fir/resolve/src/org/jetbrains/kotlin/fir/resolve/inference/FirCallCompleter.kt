@@ -267,7 +267,7 @@ class FirCallCompleter(
                         this.name = name
                         symbol = FirValueParameterSymbol(name)
                         returnTypeRef =
-                            itType.approximateLambdaInputType(symbol).toFirResolvedTypeRef(
+                            itType.approximateLambdaInputType(symbol, withPCLASession).toFirResolvedTypeRef(
                                 lambdaAtom.atom.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
                             )
                         defaultValue = null
@@ -285,7 +285,7 @@ class FirCallCompleter(
                 receiverType == null -> lambdaArgument.replaceReceiverParameter(null)
                 !lambdaAtom.coerceFirstParameterToExtensionReceiver -> {
                     lambdaArgument.receiverParameter?.apply {
-                        val type = receiverType.approximateLambdaInputType(valueParameter = null)
+                        val type = receiverType.approximateLambdaInputType(valueParameter = null, withPCLASession)
                         val source =
                             source?.fakeElement(KtFakeSourceElementKind.LambdaReceiver)
                                 ?: lambdaArgument.source?.fakeElement(KtFakeSourceElementKind.LambdaReceiver)
@@ -330,7 +330,7 @@ class FirCallCompleter(
                     )
                     return@forEachIndexed
                 }
-                val newReturnType = theParameters[index].approximateLambdaInputType(parameter.symbol)
+                val newReturnType = theParameters[index].approximateLambdaInputType(parameter.symbol, withPCLASession)
                 val newReturnTypeRef = if (parameter.returnTypeRef is FirImplicitTypeRef) {
                     newReturnType.toFirResolvedTypeRef(parameter.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter))
                 } else parameter.returnTypeRef.resolvedTypeFromPrototype(newReturnType)
@@ -376,11 +376,14 @@ class FirCallCompleter(
         }
     }
 
-    private fun ConeKotlinType.approximateLambdaInputType(valueParameter: FirValueParameterSymbol?): ConeKotlinType {
+    private fun ConeKotlinType.approximateLambdaInputType(
+        valueParameter: FirValueParameterSymbol?,
+        isRootLambdaForPCLASession: Boolean,
+    ): ConeKotlinType {
         // We only run lambda completion from ConstraintSystemCompletionContext.analyzeRemainingNotAnalyzedPostponedArgument when they are
         // left uninferred.
         // Currently, we use stub types for builder inference, so CANNOT_INFER_PARAMETER_TYPE is the only possible result here.
-        if (isTypeVariableThatShouldBeFixedBeforeLambdaAnalysis(isReceiver = valueParameter == null)) {
+        if (useErrorTypeInsteadOfTypeVariableForParameterType(isReceiver = valueParameter == null, isRootLambdaForPCLASession)) {
             val diagnostic = valueParameter?.let(::ConeCannotInferValueParameterType) ?: ConeCannotInferReceiverParameterType()
             return ConeErrorType(diagnostic)
         }
@@ -390,18 +393,28 @@ class FirCallCompleter(
         ) ?: this
     }
 
-    private fun ConeKotlinType.isTypeVariableThatShouldBeFixedBeforeLambdaAnalysis(isReceiver: Boolean): Boolean {
+    private fun ConeKotlinType.useErrorTypeInsteadOfTypeVariableForParameterType(
+        isReceiver: Boolean,
+        isRootLambdaForPCLASession: Boolean,
+    ): Boolean {
         if (this !is ConeTypeVariableType) return false
 
-        // Outside PCLA, all type variables for parameter types should be fixed before lambda analysis
-        // Inside PCLA, we force fixing receivers before lambda analysis
-        if (inferenceSession !is FirPCLAInferenceSession || isReceiver) return true
+        // Receivers are expected to be fixed both for PCLA/nonPCLA lambdas, so just build error type
+        if (isReceiver) return true
 
-        // For type variables not based on type parameters (created for lambda parameters with no expected type)
-        // we force them to be fixed before lambda analysis
-        if (typeConstructor.originalTypeParameter == null) return true
+        // Besides PCLA, all type variables for parameter types should be fixed before lambda analysis
+        // Inside PCLA (or when we start it), we force fixing receivers before lambda analysis, but allow value parameters
+        // to remain unfixed TVs.
+        if (isRootLambdaForPCLASession || inferenceSession is FirPCLAInferenceSession) {
+            // For type variables not based on type parameters (created for lambda parameters with no expected type)
+            // we force them to be fixed before lambda analysis.
+            //
+            // Otherwise, it's a type variable based on a type parameter which resulting type might be inferred from the lambda body,
+            // so in that case leave type variable type
+            return typeConstructor.originalTypeParameter == null
+        }
 
-        return false
+        return true
     }
 }
 

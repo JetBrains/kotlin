@@ -11,7 +11,7 @@ fun test1() {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>a<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
         <!BUILDER_INFERENCE_STUB_RECEIVER!>this.get(0)<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extension<!>()
         use(<!BUILDER_INFERENCE_STUB_RECEIVER!>this.get(0)<!>::extension)
-        use(it::extension)
+        use(<!BUILDER_INFERENCE_STUB_RECEIVER!>it<!>::extension)
     }<!>
 }
 
@@ -21,7 +21,7 @@ fun test2() {
         val v = this.get(0)
         <!BUILDER_INFERENCE_STUB_RECEIVER!>v<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extension<!>()
         use(<!BUILDER_INFERENCE_STUB_RECEIVER!>v<!>::extension)
-        use(it::extension)
+        use(<!BUILDER_INFERENCE_STUB_RECEIVER!>it<!>::extension)
     }<!>
 }
 
@@ -31,7 +31,7 @@ fun test3() {
         val v by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>this.get(0)<!>
         <!BUILDER_INFERENCE_STUB_RECEIVER!>v<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extension<!>()
         use(<!BUILDER_INFERENCE_STUB_RECEIVER!>v<!>::extension)
-        use(it::extension)
+        use(<!BUILDER_INFERENCE_STUB_RECEIVER!>it<!>::extension)
     }<!>
 }
 
@@ -44,7 +44,7 @@ fun test4() {
         val v by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>this.get(0)<!>
         <!BUILDER_INFERENCE_STUB_RECEIVER!>v<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extension<!>()
         use(<!BUILDER_INFERENCE_STUB_RECEIVER!>v<!>::extension)
-        use(it::extension)
+        use(<!BUILDER_INFERENCE_STUB_RECEIVER!>it<!>::extension)
     }<!>
 }
 

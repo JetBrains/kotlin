@@ -8,9 +8,9 @@ class GenericController<T> {
 
 fun <S> generate(g: suspend GenericController<S>.(S) -> Unit): S = TODO()
 
-val test1 = generate <!CANNOT_INFER_PARAMETER_TYPE!>{
+val test1 = generate {
     yield(4)
-}<!>
+}
 
 val test2 = generate<Int> {
     yield(4)

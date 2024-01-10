@@ -17194,6 +17194,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("bothReceiverAndValueParameterNotFixed.kt")
+                public void testBothReceiverAndValueParameterNotFixed() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/bothReceiverAndValueParameterNotFixed.kt");
+                }
+
+                @Test
                 @TestMetadata("builderInferenceAnnotationInLambdaWithTVExpectedType.kt")
                 public void testBuilderInferenceAnnotationInLambdaWithTVExpectedType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/builderInferenceAnnotationInLambdaWithTVExpectedType.kt");
