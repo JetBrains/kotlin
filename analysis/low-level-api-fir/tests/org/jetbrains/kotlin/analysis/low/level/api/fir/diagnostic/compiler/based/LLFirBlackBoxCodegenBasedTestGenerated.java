@@ -28407,6 +28407,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
         }
 
         @Test
+        @TestMetadata("kt62584.kt")
+        public void testKt62584() throws Exception {
+            runTest("compiler/testData/codegen/box/innerNested/kt62584.kt");
+        }
+
+        @Test
         @TestMetadata("kt63732.kt")
         public void testKt63732() throws Exception {
             runTest("compiler/testData/codegen/box/innerNested/kt63732.kt");
