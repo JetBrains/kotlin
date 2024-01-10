@@ -58,7 +58,7 @@ object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
         }
         if (memberPropertySymbols.isEmpty()) return null
         // TODO, KT-59803: merge with `FirPropertyInitializationAnalyzer` for fewer passes.
-        val data = PropertyInitializationInfoData(memberPropertySymbols, symbol, graph)
+        val data = PropertyInitializationInfoData(memberPropertySymbols, conditionallyInitializedProperties = emptySet(), symbol, graph)
         data.checkPropertyAccesses(isForInitialization = true, context, reporter)
         return data.getValue(graph.exitNode)[NormalPath]
     }
