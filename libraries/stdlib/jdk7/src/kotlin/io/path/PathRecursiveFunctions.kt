@@ -164,43 +164,44 @@ public fun Path.copyToRecursively(
         src.copyToIgnoringExistingDirectory(dst, followLinks)
     }
 ): Path {
-    if (!this.exists(*LinkFollowing.toLinkOptions(followLinks)))
-        throw NoSuchFileException(this.toString(), target.toString(), "The source file doesn't exist.")
+    val normalizedThis = this.normalize()
+    val normalizedTarget = target.normalize()
 
-    if (this.exists() && (followLinks || !this.isSymbolicLink())) {
+    if (!normalizedThis.exists(*LinkFollowing.toLinkOptions(followLinks)))
+        throw NoSuchFileException(normalizedThis.toString(), normalizedTarget.toString(), "The source file doesn't exist.")
+
+    if (normalizedThis.exists() && (followLinks || !normalizedThis.isSymbolicLink())) {
         // Here the checks are conducted without followLinks option, because:
         //   * isSameFileAs doesn't take LinkOption and throws if `this` or `other` file doesn't exist
         //   * toRealPath takes LinkOption, but the option also applies to the directories on the way to the file
         // Thus links are always followed in isSameFileAs and toRealPath
 
-        val targetExistsAndNotSymlink = target.exists() && !target.isSymbolicLink()
+        val targetExistsAndNotSymlink = normalizedTarget.exists() && !normalizedTarget.isSymbolicLink()
 
-        if (targetExistsAndNotSymlink && this.isSameFileAs(target)) {
+        if (targetExistsAndNotSymlink && normalizedThis.isSameFileAs(normalizedTarget)) {
             // TODO: KT-38678
             // source and target files are the same entry, continue recursive copy operation
         } else {
             val isSubdirectory = when {
-                this.fileSystem != target.fileSystem ->
+                normalizedThis.fileSystem != normalizedTarget.fileSystem ->
                     false
                 targetExistsAndNotSymlink ->
-                    target.toRealPath().startsWith(this.toRealPath())
+                    normalizedTarget.toRealPath().startsWith(normalizedThis.toRealPath())
                 else ->
-                    target.parent?.let { it.exists() && it.toRealPath().startsWith(this.toRealPath()) } ?: false
+                    normalizedTarget.parent?.let { it.exists() && it.toRealPath().startsWith(normalizedThis.toRealPath()) } ?: false
             }
             if (isSubdirectory)
                 throw FileSystemException(
-                    this.toString(),
-                    target.toString(),
+                    normalizedThis.toString(),
+                    normalizedTarget.toString(),
                     "Recursively copying a directory into its subdirectory is prohibited."
                 )
         }
     }
 
-    val normalizedTarget = target.normalize()
-
     fun destination(source: Path): Path {
-        val relativePath = source.relativeTo(this@copyToRecursively)
-        val destination = target.resolve(relativePath.pathString)
+        val relativePath = source.relativeTo(normalizedThis)
+        val destination = normalizedTarget.resolve(relativePath.pathString)
         if (!destination.normalize().startsWith(normalizedTarget)) {
             throw IllegalFileNameException(
                 source,
@@ -231,7 +232,7 @@ public fun Path.copyToRecursively(
         }
     }
 
-    visitFileTree(followLinks = followLinks) {
+    normalizedThis.visitFileTree(followLinks = followLinks) {
         onPreVisitDirectory { directory, attributes ->
             copy(directory, attributes).also {
                 if (it == FileVisitResult.CONTINUE) stack.add(directory)
@@ -249,7 +250,7 @@ public fun Path.copyToRecursively(
         }
     }
 
-    return target
+    return normalizedTarget
 }
 
 
@@ -307,7 +308,7 @@ private fun OnErrorResult.toFileVisitResult() = when (this) {
 @ExperimentalPathApi
 @SinceKotlin("1.8")
 public fun Path.deleteRecursively(): Unit {
-    val suppressedExceptions = this.deleteRecursivelyImpl()
+    val suppressedExceptions = this.normalize().deleteRecursivelyImpl()
 
     if (suppressedExceptions.isNotEmpty()) {
         throw FileSystemException("Failed to delete one or more files. See suppressed exceptions for details.").apply {

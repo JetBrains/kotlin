@@ -1065,7 +1065,7 @@ public inline fun URI.toPath(): Path =
  */
 @ExperimentalPathApi
 @SinceKotlin("1.7")
-public fun Path.walk(vararg options: PathWalkOption): Sequence<Path> = PathTreeWalk(this, options)
+public fun Path.walk(vararg options: PathWalkOption): Sequence<Path> = PathTreeWalk(this.normalize(), options)
 
 /**
  * Visits this directory and all its content with the specified [visitor].
