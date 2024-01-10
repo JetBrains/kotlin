@@ -53,6 +53,26 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerTestGenerat
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Conflicts {
+        @Test
+        public void testAllFilesPresentInConflicts() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ClassWithSameName {
+            @Test
+            public void testAllFilesPresentInClassWithSameName() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName"), Pattern.compile("^(.+)\\.kts$"), null, true);
+            }
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class NestedClasses {
