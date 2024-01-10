@@ -6,24 +6,14 @@
 package org.jetbrains.kotlin.fir.analysis.native.checkers
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
-import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_OBJC_NAME_OVERRIDE
-import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCNameChecker.getObjCNames
-import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCNameUtilities.checkCallableMember
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.isIntersectionOverride
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
-import org.jetbrains.kotlin.fir.scopes.retrieveDirectOverriddenOf
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 object FirNativeObjCNameOverridesChecker : FirClassChecker() {
 
@@ -32,51 +22,11 @@ object FirNativeObjCNameOverridesChecker : FirClassChecker() {
         val firTypeScope = declaration.unsubstitutedScope(context)
         firTypeScope.processAllFunctions { symbol ->
             if (!symbol.isIntersectionOverride) return@processAllFunctions
-            check(firTypeScope, symbol, declaration, context, reporter)
+            checkCallableMember(firTypeScope, symbol, declaration, context, reporter)
         }
         firTypeScope.processAllProperties { symbol ->
             if (!symbol.isIntersectionOverride) return@processAllProperties
-            check(firTypeScope, symbol, declaration, context, reporter)
+            checkCallableMember(firTypeScope, symbol, declaration, context, reporter)
         }
-    }
-
-    fun check(
-        firTypeScope: FirTypeScope,
-        memberSymbol: FirCallableSymbol<*>,
-        declarationToReport: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
-        val overriddenSymbols = firTypeScope.retrieveDirectOverriddenOf(memberSymbol)
-        if (overriddenSymbols.isEmpty()) return
-        val objCNames = overriddenSymbols.map { it.getFirstBaseSymbol(context).getObjCNames(context.session) }
-        if (!objCNames.allNamesEquals()) {
-            val containingDeclarations = overriddenSymbols.mapNotNull {
-                it.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)
-            }
-            reporter.reportOn(
-                declarationToReport.source,
-                INCOMPATIBLE_OBJC_NAME_OVERRIDE,
-                declarationToReport.symbol,
-                containingDeclarations,
-                context
-            )
-        }
-    }
-
-    private fun FirCallableSymbol<*>.getFirstBaseSymbol(context: CheckerContext): FirCallableSymbol<*> {
-        val session = context.session
-        val ownScope = containingClassLookupTag()?.toSymbol(session)?.fullyExpandedClass(session)?.unsubstitutedScope(context)
-            ?: return this
-        val overriddenMemberSymbols = ownScope.retrieveDirectOverriddenOf(this)
-        return if (overriddenMemberSymbols.isEmpty()) this else overriddenMemberSymbols.first().getFirstBaseSymbol(context)
-    }
-
-    private fun List<List<FirNativeObjCNameChecker.ObjCName?>>.allNamesEquals(): Boolean {
-        val first = this[0]
-        for (i in 1 until size) {
-            if (first != this[i]) return false
-        }
-        return true
     }
 }
