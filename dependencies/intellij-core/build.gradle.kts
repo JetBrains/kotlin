@@ -29,6 +29,8 @@ dependencies {
     api("com.jetbrains.intellij.platform:core:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:core-impl:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:extensions:$intellijVersion") { isTransitive = false }
+    api("com.jetbrains.intellij.java:java-frontback-psi:$intellijVersion") { isTransitive = false }
+    api("com.jetbrains.intellij.java:java-frontback-psi-impl:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.java:java-psi:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.java:java-psi-impl:$intellijVersion") { isTransitive = false }
 }
