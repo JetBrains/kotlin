@@ -100,6 +100,9 @@ object CommonConfigurationKeys {
     @JvmField
     val USE_IR_FAKE_OVERRIDE_BUILDER =
         CompilerConfigurationKey.create<Boolean>("Generate fake overrides via IR. See KT-61514")
+
+    @JvmField
+    val USE_BIR = CompilerConfigurationKey.create<Boolean>("Compile using experimental BIR implementation")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
