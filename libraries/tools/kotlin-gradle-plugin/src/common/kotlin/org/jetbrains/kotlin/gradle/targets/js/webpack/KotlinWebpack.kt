@@ -244,7 +244,7 @@ constructor(
         outputFileName = mainOutputFileName.get(),
         configDirectory = configDirectory,
         rules = rules,
-        devServerProperty = devServerProperty,
+        devServer = devServerProperty.orNull,
         devtool = devtool,
         sourceMaps = sourceMaps,
         resolveFromModulesFirst = resolveFromModulesFirst,
