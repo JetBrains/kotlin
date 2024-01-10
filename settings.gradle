@@ -283,6 +283,15 @@ include ":kotlin-atomicfu-compiler-plugin",
         ":kotlinx-atomicfu-runtime",
         ":atomicfu"
 
+include ":plugins:jso:compiler-plugin",
+        ":plugins:jso:compiler-plugin-embeddable",
+        ":plugins:jso:compiler-plugin:jso.common",
+        ":plugins:jso:compiler-plugin:jso.k2",
+        ":plugins:jso:compiler-plugin:jso.backend",
+        ":plugins:jso:compiler-plugin:jso.cli",
+        ":plugins:jso:runtime",
+        ":libraries:tools:jso"
+
 include ":compiler:fir",
         ":compiler:fir:cones",
         ":compiler:fir:tree",
