@@ -266,7 +266,10 @@ class FirCallCompleter(
                         origin = FirDeclarationOrigin.Source
                         this.name = name
                         symbol = FirValueParameterSymbol(name)
-                        returnTypeRef = itType.approximateLambdaInputType(symbol).toFirResolvedTypeRef()
+                        returnTypeRef =
+                            itType.approximateLambdaInputType(symbol).toFirResolvedTypeRef(
+                                lambdaAtom.atom.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
+                            )
                         defaultValue = null
                         isCrossinline = false
                         isNoinline = false
@@ -283,7 +286,9 @@ class FirCallCompleter(
                 !lambdaAtom.coerceFirstParameterToExtensionReceiver -> {
                     lambdaArgument.receiverParameter?.apply {
                         val type = receiverType.approximateLambdaInputType(valueParameter = null)
-                        val source = source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
+                        val source =
+                            source?.fakeElement(KtFakeSourceElementKind.LambdaReceiver)
+                                ?: lambdaArgument.source?.fakeElement(KtFakeSourceElementKind.LambdaReceiver)
                         replaceTypeRef(typeRef.resolvedTypeFromPrototype(type, source))
                     }
                 }

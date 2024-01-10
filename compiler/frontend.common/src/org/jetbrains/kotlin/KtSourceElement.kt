@@ -230,6 +230,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // where `it` parameter declaration has fake source
     object ItLambdaParameter : KtFakeSourceElementKind()
 
+    // While it doesn't have an explicit source, it still has a type that might be a ConeErrorType
+    object LambdaReceiver : KtFakeSourceElementKind()
+
     // { (a, b) -> foo() } -> { x -> val (a, b) = x; { foo() } }
     // where the inner block { foo() } has fake source
     object LambdaDestructuringBlock : KtFakeSourceElementKind()

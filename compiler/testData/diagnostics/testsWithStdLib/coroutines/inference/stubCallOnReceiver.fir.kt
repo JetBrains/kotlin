@@ -12,13 +12,13 @@ fun <KotlinType : Any> defineType(definition: TypeDefinition<KotlinType>.() -> U
 fun foo() {
     defineType {
         parse { it.toInt() }
-        serialize { toString() }
+        serialize <!CANNOT_INFER_PARAMETER_TYPE!>{ toString() }<!>
     }
 }
 
 fun bar() {
     defineType {
         parse { it.toInt() }
-        serialize { <!CANNOT_INFER_PARAMETER_TYPE!>this<!>.toString() }
+        serialize <!CANNOT_INFER_PARAMETER_TYPE!>{ <!CANNOT_INFER_PARAMETER_TYPE!>this<!>.toString() }<!>
     }
 }
