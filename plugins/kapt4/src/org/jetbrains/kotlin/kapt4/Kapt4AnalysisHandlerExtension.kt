@@ -40,89 +40,90 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
     @OptIn(KtAnalysisApiInternals::class)
     override fun doAnalysis(configuration: CompilerConfiguration): Boolean {
-        val optionsBuilder = configuration[KAPT_OPTIONS]!!
-        val messageCollector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
-        val logger = MessageCollectorBackedKaptLogger(
-            KaptFlag.VERBOSE in optionsBuilder.flags,
-            KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,
-            messageCollector
-        )
-
-        if (optionsBuilder.mode == AptMode.WITH_COMPILATION) {
-            logger.error("KAPT \"compile\" mode is not supported in Kotlin 2.x. Run kapt with -Kapt-mode=stubsAndApt and use kotlinc for the final compilation step.")
-            return false
-        }
-
-        val oldLanguageVersionSettings = configuration.languageVersionSettings
-        val updatedConfiguration = configuration.copy().apply {
-            languageVersionSettings = object : LanguageVersionSettings by oldLanguageVersionSettings {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T> getFlag(flag: AnalysisFlag<T>): T =
-                    when (flag) {
-                        JvmAnalysisFlags.generatePropertyAnnotationsMethods -> true as T
-                        else -> oldLanguageVersionSettings.getFlag(flag)
-                    }
-            }
-        }
-
-        val projectDisposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project")
-        try {
-            val standaloneAnalysisAPISession =
-                buildStandaloneAnalysisAPISession(
-                    projectDisposable = projectDisposable,
-                    classLoader = Kapt4AnalysisHandlerExtension::class.java.classLoader) {
-                    @Suppress("DEPRECATION") // TODO: KT-61319 Kapt: remove usages of deprecated buildKtModuleProviderByCompilerConfiguration
-                    buildKtModuleProviderByCompilerConfiguration(updatedConfiguration)
-
-                    registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-                }
-
-            val (module, files) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()
-
-            optionsBuilder.apply {
-                projectBaseDir = projectBaseDir ?: module.project.basePath?.let(::File)
-                val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
-                compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
-                javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
-                classesOutputDir = classesOutputDir ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
-            }
-
-            if (!optionsBuilder.checkOptions(logger, configuration)) return false
-            val options = optionsBuilder.build()
-            if (options[KaptFlag.VERBOSE]) {
-                logger.info(options.logString())
-            }
-
-            return try {
-                if (options.mode.generateStubs) {
-                    generateAndSaveStubs(
-                        module,
-                        files,
-                        options,
-                        logger,
-                        configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES),
-                        configuration[CommonConfigurationKeys.METADATA_VERSION]
-                    )
-
-                }
-                if (options.mode.runAnnotationProcessing) {
-                    KaptContext(
-                        options,
-                        false,
-                        logger
-                    ).use { context ->
-                        runProcessors(context, options)
-                    }
-                }
-                true
-
-            } catch (e: Exception) {
-                logger.exception(e)
-                false
-            }
-        } finally {
-            Disposer.dispose(projectDisposable)
-        }
+        throw RuntimeException("DIE!")
+//        val optionsBuilder = configuration[KAPT_OPTIONS]!!
+//        val messageCollector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
+//        val logger = MessageCollectorBackedKaptLogger(
+//            KaptFlag.VERBOSE in optionsBuilder.flags,
+//            KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,
+//            messageCollector
+//        )
+//
+//        if (optionsBuilder.mode == AptMode.WITH_COMPILATION) {
+//            logger.error("KAPT \"compile\" mode is not supported in Kotlin 2.x. Run kapt with -Kapt-mode=stubsAndApt and use kotlinc for the final compilation step.")
+//            return false
+//        }
+//
+//        val oldLanguageVersionSettings = configuration.languageVersionSettings
+//        val updatedConfiguration = configuration.copy().apply {
+//            languageVersionSettings = object : LanguageVersionSettings by oldLanguageVersionSettings {
+//                @Suppress("UNCHECKED_CAST")
+//                override fun <T> getFlag(flag: AnalysisFlag<T>): T =
+//                    when (flag) {
+//                        JvmAnalysisFlags.generatePropertyAnnotationsMethods -> true as T
+//                        else -> oldLanguageVersionSettings.getFlag(flag)
+//                    }
+//            }
+//        }
+//
+//        val projectDisposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project")
+//        try {
+//            val standaloneAnalysisAPISession =
+//                buildStandaloneAnalysisAPISession(
+//                    projectDisposable = projectDisposable,
+//                    classLoader = Kapt4AnalysisHandlerExtension::class.java.classLoader) {
+//                    @Suppress("DEPRECATION") // TODO: KT-61319 Kapt: remove usages of deprecated buildKtModuleProviderByCompilerConfiguration
+//                    buildKtModuleProviderByCompilerConfiguration(updatedConfiguration)
+//
+//                    registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
+//                }
+//
+//            val (module, files) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()
+//
+//            optionsBuilder.apply {
+//                projectBaseDir = projectBaseDir ?: module.project.basePath?.let(::File)
+//                val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
+//                compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
+//                javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
+//                classesOutputDir = classesOutputDir ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
+//            }
+//
+//            if (!optionsBuilder.checkOptions(logger, configuration)) return false
+//            val options = optionsBuilder.build()
+//            if (options[KaptFlag.VERBOSE]) {
+//                logger.info(options.logString())
+//            }
+//
+//            return try {
+//                if (options.mode.generateStubs) {
+//                    generateAndSaveStubs(
+//                        module,
+//                        files,
+//                        options,
+//                        logger,
+//                        configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES),
+//                        configuration[CommonConfigurationKeys.METADATA_VERSION]
+//                    )
+//
+//                }
+//                if (options.mode.runAnnotationProcessing) {
+//                    KaptContext(
+//                        options,
+//                        false,
+//                        logger
+//                    ).use { context ->
+//                        runProcessors(context, options)
+//                    }
+//                }
+//                true
+//
+//            } catch (e: Exception) {
+//                logger.exception(e)
+//                false
+//            }
+//        } finally {
+//            Disposer.dispose(projectDisposable)
+//        }
     }
 
     private fun generateAndSaveStubs(
