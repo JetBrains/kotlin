@@ -136,6 +136,7 @@ class BirInlineCallableReferenceToLambdaLowering : BirLoweringPhase() {
                                 birGet(BirValueParameter.build {
                                     name = Name.identifier("p$next")
                                     type = argumentTypes[next]
+                                    index = wrapperFunction.valueParameters.size
                                     wrapperFunction.valueParameters += this
                                 })
                             parameter.isVararg && (next < argumentTypes.size || !parameter.hasDefaultValue()) ->
@@ -144,6 +145,7 @@ class BirInlineCallableReferenceToLambdaLowering : BirLoweringPhase() {
                                         +birGet(BirValueParameter.build {
                                             name = Name.identifier("p$i")
                                             type = argumentTypes[i]
+                                            index = wrapperFunction.valueParameters.size
                                             wrapperFunction.valueParameters += this
                                         })
                                     }
@@ -154,6 +156,7 @@ class BirInlineCallableReferenceToLambdaLowering : BirLoweringPhase() {
                                 birGet(BirValueParameter.build {
                                     name = Name.identifier("p$next")
                                     type = argumentTypes[next]
+                                    index = wrapperFunction.valueParameters.size
                                     wrapperFunction.valueParameters += this
                                 })
                         }
