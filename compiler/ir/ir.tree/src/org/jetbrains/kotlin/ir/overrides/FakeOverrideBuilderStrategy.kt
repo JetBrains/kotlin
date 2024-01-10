@@ -11,13 +11,11 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.extractTypeParameters
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 
 /**
@@ -37,10 +35,15 @@ abstract class FakeOverrideBuilderStrategy(
     private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
 ) {
     /**
-     * Creates a fake override for [member] from [superType] to be added to the class [clazz]
+     * Creates a fake override for [member] from [superType] to be added to the class [clazz] or returns null,
+     * if no fake override should be created for this member
      */
-    fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember =
-        buildFakeOverrideMember(superType, member, clazz, friendModules, unimplementedOverridesStrategy)
+    fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
+        return if (isVisibleForOverrideInClass(member, clazz))
+            buildFakeOverrideMember(superType, member, clazz, unimplementedOverridesStrategy)
+        else
+            null
+    }
 
     /**
      * This function is a callback for fake override creation finish.
@@ -59,6 +62,41 @@ abstract class FakeOverrideBuilderStrategy(
             is IrFunctionWithLateBinding -> linkFunctionFakeOverride(fakeOverride, compatibilityMode)
             is IrPropertyWithLateBinding -> linkPropertyFakeOverride(fakeOverride, compatibilityMode)
             else -> error("Unexpected fake override: $fakeOverride")
+        }
+    }
+
+    private fun isInFriendModules(
+        fromModule: ModuleDescriptor,
+        toModule: ModuleDescriptor,
+    ): Boolean {
+        val fromModuleName = fromModule.name.asStringStripSpecialMarkers()
+        val toModuleName = toModule.name.asStringStripSpecialMarkers()
+
+        return fromModuleName == toModuleName || friendModules[fromModuleName]?.contains(toModuleName) == true
+    }
+
+    private fun isVisibleForOverrideInClass(original: IrOverridableMember, clazz: IrClass) : Boolean {
+        return when {
+            DescriptorVisibilities.isPrivate(original.visibility) -> false
+            original.visibility == DescriptorVisibilities.INVISIBLE_FAKE -> false
+            original.visibility == DescriptorVisibilities.INTERNAL -> {
+                val thisModule = clazz.getPackageFragment().moduleDescriptor
+                val memberModule = original.getPackageFragment().moduleDescriptor
+
+                when {
+                    thisModule == memberModule -> true
+                    isInFriendModules(thisModule, memberModule) -> true
+                    // TODO: this is very questionable - KT-63381
+                    original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
+                    else -> false
+                }
+            }
+            else -> {
+                original.visibility.visibleFromPackage(
+                    clazz.getPackageFragment().packageFqName,
+                    original.getPackageFragment().packageFqName
+                )
+            }
         }
     }
 
@@ -93,33 +131,10 @@ abstract class FakeOverrideBuilderStrategy(
     protected abstract fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean)
 }
 
-private fun IrOverridableMember.isPrivateToThisModule(
-    thisClass: IrClass, memberClass: IrClass, friendModules: Map<String, Collection<String>>,
-): Boolean {
-    if (visibility != DescriptorVisibilities.INTERNAL) return false
-
-    val thisModule = thisClass.getPackageFragment().moduleDescriptor
-    val memberModule = memberClass.getPackageFragment().moduleDescriptor
-
-    return thisModule != memberModule && !isInFriendModules(thisModule, memberModule, friendModules)
-}
-
-private fun isInFriendModules(
-    fromModule: ModuleDescriptor,
-    toModule: ModuleDescriptor,
-    friendModules: Map<String, Collection<String>>,
-): Boolean {
-    val fromModuleName = fromModule.name.asStringStripSpecialMarkers()
-    val toModuleName = toModule.name.asStringStripSpecialMarkers()
-
-    return fromModuleName == toModuleName || friendModules[fromModuleName]?.contains(toModuleName) == true
-}
-
 fun buildFakeOverrideMember(
     superType: IrType,
     member: IrOverridableMember,
     clazz: IrClass,
-    friendModules: Map<String, Collection<String>> = emptyMap(),
     unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides,
 ): IrOverridableMember {
     require(superType is IrSimpleType) { "superType is $superType, expected IrSimpleType" }
@@ -144,13 +159,7 @@ fun buildFakeOverrideMember(
 
     return CopyIrTreeWithSymbolsForFakeOverrides(member, substitutionMap, clazz, unimplementedOverridesStrategy)
         .copy()
-        .apply {
-            makeExternal(clazz.isExternal)
-
-            val isInvisible = isPrivateToThisModule(clazz, classifier.owner, friendModules)
-            if (isInvisible && !member.annotations.hasAnnotation(StandardNames.FqNames.publishedApi))
-                visibility = DescriptorVisibilities.INVISIBLE_FAKE
-        }
+        .apply { makeExternal(clazz.isExternal) }
 }
 
 // TODO: this is JS-specific functionality which should be moved out of the common ir.tree.
