@@ -35,6 +35,23 @@ import java.lang.IllegalArgumentException
 
 abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        performTestByMainFile(mainFile, testServices, testPrefix = null)
+
+        val fakeFile = createFileCopy(mainFile)
+        performTestByMainFile(fakeFile, testServices, testPrefix = "copy")
+    }
+
+    private fun createFileCopy(file: KtFile): KtFile {
+        val fakeFile = file.copy() as KtFile
+
+        assert(fakeFile.originalFile == file)
+        assert(!fakeFile.isPhysical)
+        assert(!fakeFile.viewProvider.isEventSystemEnabled)
+
+        return fakeFile
+    }
+
+    private fun performTestByMainFile(mainFile: KtFile, testServices: TestServices, testPrefix: String?) {
         val project = mainFile.project
         val sourceModule = ProjectStructureProvider.getModule(project, mainFile, contextualModule = null)
 
@@ -58,7 +75,7 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
             append(firRenderer.renderElementAsString(firFile, trim = true))
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actualText, testPrefix = testPrefix)
     }
 }
 

@@ -1,0 +1,41 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol s: R|kotlin/String|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol n: R|kotlin/Int|
+    Element 11
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] lambdaArguments.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        R|/block|<R|kotlin/String|>(String(foo), <L> = [ResolvedTo(BODY_RESOLVE)] block@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit| <inline=NoInline>  {
+            R|/block|<R|kotlin/Int|>(Int(42), <L> = [ResolvedTo(BODY_RESOLVE)] block@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] n: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+                R|<local>/s|.R|kotlin/String.length|.R|kotlin/Int.plus|(R|<local>/n|)
+            }
+            )
+        }
+        )
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> block([ResolvedTo(RAW_FIR)] obj: T, [ResolvedTo(RAW_FIR)] block: ( (T) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }

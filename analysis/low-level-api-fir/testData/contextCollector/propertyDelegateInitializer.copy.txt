@@ -1,0 +1,41 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol constructorParam: R|test/MyInterface|
+
+FILE: [ResolvedTo(IMPORTS)] propertyDelegateInitializer.kt
+    public final? [ResolvedTo(RAW_FIR)] interface MyInterface : R|kotlin/Any| {
+        public? final? operator [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any, [ResolvedTo(RAW_FIR)] property: Any): MyInterface
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] constructorParam: MyInterface): R|test/Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val regularProperty: MyInterface
+            public? [ResolvedTo(RAW_FIR)] get(): MyInterface
+
+        public final [ResolvedTo(BODY_RESOLVE)] val property: R|test/MyInterface|by R|<local>/constructorParam|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|test/MyInterface| {
+                ^ this@R|test/Foo|.D|test/Foo.property|.R|test/MyInterface.getValue|(this@R|test/Foo|, ::R|test/Foo.property|)
+            }
+
+    }

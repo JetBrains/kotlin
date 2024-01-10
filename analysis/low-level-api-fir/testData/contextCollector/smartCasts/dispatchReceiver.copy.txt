@@ -1,0 +1,52 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public open class Foo : R|kotlin/Any|
+                Type: Bar
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+Smart Casts:
+    FirRegularClassSymbol public open class Foo : R|kotlin/Any|
+    Types:
+        Bar
+        kotlin.Any
+
+FILE: [ResolvedTo(IMPORTS)] dispatchReceiver.kt
+    public open [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+            when () {
+                (this@R|/Foo| is R|Bar|) ->  {
+                    R|/consume|(this@R|/Foo|)
+                }
+            }
+
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Bar : Foo {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|Bar| {
+            LAZY_super<Foo>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] obj: Bar): R|kotlin/Unit| { LAZY_BLOCK }
