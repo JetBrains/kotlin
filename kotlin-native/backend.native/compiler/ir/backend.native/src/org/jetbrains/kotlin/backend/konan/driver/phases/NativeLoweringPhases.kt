@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
@@ -32,12 +33,14 @@ import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
 import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
 import org.jetbrains.kotlin.backend.konan.lower.UnboxInlineLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTransformer
+import org.jetbrains.kotlin.backend.konan.optimizations.NativeHeaderInfoBuilder
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.*
@@ -305,7 +308,10 @@ private val rangeContainsLoweringPhase = createFileLoweringPhase(
 
 private val forLoopsPhase = createFileLoweringPhase(
         { context, irFile ->
-            ForLoopsLowering(context, KonanBCEForLoopBodyTransformer()).lower(irFile)
+            ForLoopsLowering(
+                    context,
+                    { scopeOwnerSymbol: () -> IrSymbol -> NativeHeaderInfoBuilder(context, scopeOwnerSymbol) },
+                    KonanBCEForLoopBodyTransformer()).lower(irFile)
         },
         name = "ForLoops",
         description = "For loops lowering",

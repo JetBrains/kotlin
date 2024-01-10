@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.shallowCopy
 
 /** Builds a [HeaderInfo] for progressions not handled by more specialized handlers. */
-internal class DefaultProgressionHandler(
+class DefaultProgressionHandler(
     private val context: CommonBackendContext, private val allowUnsignedBounds: Boolean = false
 ) : HeaderInfoHandler<IrExpression, Nothing?> {
     private val symbols = context.ir.symbols

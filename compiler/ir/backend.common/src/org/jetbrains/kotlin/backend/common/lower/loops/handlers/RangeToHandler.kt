@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Builds a [HeaderInfo] for progressions built using the `rangeTo` function. */
-internal class RangeToHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
+class RangeToHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
     private val preferJavaLikeCounterLoop = context.preferJavaLikeCounterLoop
     private val progressionElementTypes = context.ir.symbols.progressionElementTypes
 

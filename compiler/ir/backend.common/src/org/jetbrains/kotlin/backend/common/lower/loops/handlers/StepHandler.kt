@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.FqName
 import kotlin.math.absoluteValue
 
 /** Builds a [HeaderInfo] for progressions built using the `step` extension function. */
-internal class StepHandler(
+class StepHandler(
     private val context: CommonBackendContext, private val visitor: HeaderInfoBuilder
 ) : HeaderInfoHandler<IrCall, ProgressionType> {
     override fun matchIterable(expression: IrCall): Boolean {

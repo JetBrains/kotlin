@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.name.FqName
 
 /** Builds a [HeaderInfo] for progressions built using the `downTo` extension function. */
-internal class DownToHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
+class DownToHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
     private val preferJavaLikeCounterLoop = context.preferJavaLikeCounterLoop
     private val progressionElementTypes = context.ir.symbols.progressionElementTypes
 

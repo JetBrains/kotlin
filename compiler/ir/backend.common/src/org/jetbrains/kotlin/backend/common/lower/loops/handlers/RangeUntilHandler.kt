@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 /** Builds a [HeaderInfo] for progressions built using the `rangeUntil` member function (`..<` operator). */
-internal class RangeUntilHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
+class RangeUntilHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
     private val progressionElementTypes = context.ir.symbols.progressionElementTypes
 
     override fun matchIterable(expression: IrCall): Boolean {

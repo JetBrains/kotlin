@@ -71,7 +71,7 @@ abstract class IndexedGetIterationHandler(
 }
 
 /** Builds a [HeaderInfo] for arrays. */
-internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context, canCacheLast = true) {
+class ArrayIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context, canCacheLast = true) {
     private val supportsUnsignedArrays = context.optimizeLoopsOverUnsignedArrays
 
     override fun matchIterable(expression: IrExpression): Boolean {
@@ -106,30 +106,13 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
         }
 }
 
-/** Builds a [HeaderInfo] for arrays. */
-internal class ArrayListIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context, canCacheLast = true) {
-    override fun matchIterable(expression: IrExpression) =
-        expression.type.classOrNull?.hasEqualFqName(FqName("kotlin.collections.ArrayList")) == true
-
-    override val IrType.sizePropertyGetter
-        get() = getClass()!!.getPropertyGetter("size")!!.owner
-
-    override val IrType.getFunction
-        get() = getClass()!!.functions.single {
-            //it.name == OperatorNameConventions.GET &&
-            it.name.asString() == "getWithoutBoundCheck" &&
-                    it.valueParameters.size == 1 &&
-                    it.valueParameters[0].type.isInt()
-        }
-}
-
 /**
  * Builds a [HeaderInfo] for iteration over characters in a [CharSequence].
  *
  * Note: The value for "last" can NOT be cached (i.e., stored in a variable) because the size/length can change within the loop. This means
  * that "last" is re-evaluated with each iteration of the loop.
  */
-internal open class CharSequenceIterationHandler(
+open class CharSequenceIterationHandler(
     context: CommonBackendContext,
     canCacheLast: Boolean = false
 ) : IndexedGetIterationHandler(context, canCacheLast) {
@@ -158,7 +141,7 @@ internal open class CharSequenceIterationHandler(
  *
  * Note: The value for "last" CAN be cached for Strings as they are immutable and the size/length cannot change.
  */
-internal class StringIterationHandler(context: CommonBackendContext) : CharSequenceIterationHandler(context, canCacheLast = true) {
+class StringIterationHandler(context: CommonBackendContext) : CharSequenceIterationHandler(context, canCacheLast = true) {
     override fun matchIterable(expression: IrExpression): Boolean =
         expression.type.isString()
 

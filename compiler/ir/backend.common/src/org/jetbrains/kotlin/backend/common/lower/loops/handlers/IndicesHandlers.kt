@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.name.FqName
 
 /** Builds a [HeaderInfo] for progressions built using the `indices` extension property. */
-internal abstract class IndicesHandler(protected val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
+abstract class IndicesHandler(protected val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
     private val preferJavaLikeCounterLoop = context.preferJavaLikeCounterLoop
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
@@ -61,7 +61,7 @@ internal abstract class IndicesHandler(protected val context: CommonBackendConte
     abstract val IrType.sizePropertyGetter: IrSimpleFunction
 }
 
-internal class CollectionIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
+class CollectionIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
         return callee.valueParameters.isEmpty() &&
@@ -73,7 +73,7 @@ internal class CollectionIndicesHandler(context: CommonBackendContext) : Indices
         get() = context.ir.symbols.collection.getPropertyGetter("size")!!.owner
 }
 
-internal class ArrayIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
+class ArrayIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
     private val supportsUnsignedArrays = context.optimizeLoopsOverUnsignedArrays
 
     override fun matchIterable(expression: IrCall): Boolean {
@@ -89,7 +89,7 @@ internal class ArrayIndicesHandler(context: CommonBackendContext) : IndicesHandl
         get() = getClass()!!.getPropertyGetter("size")!!.owner
 }
 
-internal class CharSequenceIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
+class CharSequenceIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
         return callee.valueParameters.isEmpty() &&

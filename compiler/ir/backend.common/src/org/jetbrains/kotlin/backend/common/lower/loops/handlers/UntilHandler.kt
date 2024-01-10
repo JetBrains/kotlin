@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.name.FqName
 
 /** Builds a [HeaderInfo] for progressions built using the `until` extension function. */
-internal class UntilHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
+class UntilHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
     private val progressionElementTypes = context.ir.symbols.progressionElementTypes
 
     override fun matchIterable(expression: IrCall): Boolean {

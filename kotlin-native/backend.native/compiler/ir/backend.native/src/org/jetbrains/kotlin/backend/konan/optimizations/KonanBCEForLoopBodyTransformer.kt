@@ -7,20 +7,45 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.loops.*
+import org.jetbrains.kotlin.backend.common.lower.loops.handlers.*
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.isArray
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
+
+// TODO: handle ConcurrentModificationException.
+/** Builds a [HeaderInfo] for arrays. */
+internal class ArrayListIterationHandler(context: Context) : IndexedGetIterationHandler(context, canCacheLast = true) {
+    private val list = context.ir.symbols.list.owner
+    private val functionsWithoutBoundsCheckSupport = context.functionsWithoutBoundsCheckSupport
+
+    override fun matchIterable(expression: IrExpression) =
+            expression.type.classOrNull?.owner?.let {
+                list in it.getAllSuperclasses()
+                        && it.packageFqName?.asString()?.startsWith("kotlin.") == true
+            } == true
+
+    override val IrType.sizePropertyGetter
+        get() = getClass()!!.getPropertyGetter("size")!!.owner
+
+    override val IrType.getFunction
+        get() = with(functionsWithoutBoundsCheckSupport) { getClass()!!.getGetWithoutBoundsCheck() }
+}
+
+internal class NativeHeaderInfoBuilder(context: Context, scopeOwnerSymbol: () -> IrSymbol)
+    : DefaultHeaderInfoBuilder(context, scopeOwnerSymbol) {
+    override val expressionHandlers = super.expressionHandlers + listOf(ArrayListIterationHandler(context))
+}
 
 // Base class describing value of expression.
 sealed class ValueDescription

@@ -233,7 +233,7 @@ internal class IterableHeaderInfo(val iteratorVariable: IrVariable) : HeaderInfo
 }
 
 /** Matches an iterable expression and builds a [HeaderInfo] from the expression. */
-internal interface HeaderInfoHandler<E : IrExpression, D> {
+interface HeaderInfoHandler<E : IrExpression, D> {
     /** Returns true if the handler can build a [HeaderInfo] from the iterable expression. */
     fun matchIterable(expression: E): Boolean
 
@@ -254,7 +254,7 @@ internal interface HeaderInfoHandler<E : IrExpression, D> {
         }
 }
 
-internal abstract class HeaderInfoBuilder(
+abstract class HeaderInfoBuilder(
     context: CommonBackendContext,
     private val scopeOwnerSymbol: () -> IrSymbol,
     private val allowUnsignedBounds: Boolean = false
@@ -300,7 +300,7 @@ internal abstract class HeaderInfoBuilder(
     }
 }
 
-internal class DefaultHeaderInfoBuilder(context: CommonBackendContext, scopeOwnerSymbol: () -> IrSymbol) :
+open class DefaultHeaderInfoBuilder(context: CommonBackendContext, scopeOwnerSymbol: () -> IrSymbol) :
     HeaderInfoBuilder(context, scopeOwnerSymbol) {
     override val callHandlers = listOf(
         ReversedHandler(context, this),
@@ -319,8 +319,7 @@ internal class DefaultHeaderInfoBuilder(context: CommonBackendContext, scopeOwne
         ArrayIterationHandler(context),
         DefaultProgressionHandler(context),
         StringIterationHandler(context),
-        CharSequenceIterationHandler(context),
-        //ArrayListIterationHandler(context)
+        CharSequenceIterationHandler(context)
     )
 }
 
