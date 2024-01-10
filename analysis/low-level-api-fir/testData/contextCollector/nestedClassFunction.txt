@@ -30,14 +30,14 @@ Tower Data Context:
     Element 10
         Scope: FirLocalScope
 
-FILE: [ResolvedTo(IMPORTS)] nestedClasses.kt
-    public final? [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] F> : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] constructor<[ResolvedTo(RAW_FIR)] F>(): R|test/Foo<F>| {
+FILE: [ResolvedTo(IMPORTS)] nestedClassFunction.kt
+    public final [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] F> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor<[ResolvedTo(STATUS)] F>(): R|test/Foo<F>| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Bar<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] constructor<[ResolvedTo(RAW_FIR)] B>(): R|test/Foo.Bar<B>| {
+        public final [ResolvedTo(STATUS)] class Bar<[ResolvedTo(STATUS)] B> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] constructor<[ResolvedTo(STATUS)] B>(): R|test/Foo.Bar<B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -48,4 +48,5 @@ FILE: [ResolvedTo(IMPORTS)] nestedClasses.kt
         }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] obj: Any): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any|): R|kotlin/Unit| {
+    }

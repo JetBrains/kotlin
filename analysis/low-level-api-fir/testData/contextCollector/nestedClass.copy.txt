@@ -1,0 +1,44 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final? class Bar<B> : R|kotlin/Any|
+                FirRegularClassSymbol public final class Baz : R|kotlin/Any|
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public final class Baz : R|kotlin/Any|
+                Type: Foo.Baz
+
+FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
+    public final? [ResolvedTo(SUPER_TYPES)] class Foo<[ResolvedTo(SUPER_TYPES)] A> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor<[ResolvedTo(SUPER_TYPES)] A>(): R|Foo<A>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Bar<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor<[ResolvedTo(RAW_FIR)] B>(): R|Foo.Bar<B>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final [ResolvedTo(STATUS)] class Baz : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor(): R|Foo.Baz| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }

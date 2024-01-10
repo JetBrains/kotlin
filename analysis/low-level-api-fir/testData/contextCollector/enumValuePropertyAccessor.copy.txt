@@ -43,13 +43,13 @@ Tower Data Context:
     Element 11
         Scope: FirLocalScope
 
-FILE: [ResolvedTo(IMPORTS)] enumValue.kt
-    public final [ResolvedTo(STATUS)] enum class Direction : R|kotlin/Enum<Direction>| {
-        private [ResolvedTo(STATUS)] constructor(): R|Direction| {
+FILE: [ResolvedTo(IMPORTS)] enumValuePropertyAccessor.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class Direction : R|kotlin/Enum<Direction>| {
+        private [ResolvedTo(RAW_FIR)] constructor(): R|Direction| {
             LAZY_super<R|kotlin/Enum<Direction>|>
         }
 
-        public final static [ResolvedTo(STATUS)] enum entry NORTH: R|Direction| = LAZY_EXPRESSION
+        public final static [ResolvedTo(RAW_FIR)] enum entry NORTH: R|Direction| = LAZY_EXPRESSION
         public final static [ResolvedTo(BODY_RESOLVE)] enum entry EAST: R|Direction| = object : R|Direction| {
             private [ResolvedTo(BODY_RESOLVE)] constructor(): R|<anonymous>| {
                 super<R|Direction|>()
@@ -62,18 +62,18 @@ FILE: [ResolvedTo(IMPORTS)] enumValue.kt
 
         }
 
-        public final static [ResolvedTo(STATUS)] enum entry SOUTH: R|Direction| = LAZY_EXPRESSION
-        public final static [ResolvedTo(STATUS)] enum entry WEST: R|Direction| = LAZY_EXPRESSION
-        public abstract [ResolvedTo(STATUS)] val code: R|kotlin/Int|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+        public final static [ResolvedTo(RAW_FIR)] enum entry SOUTH: R|Direction| = LAZY_EXPRESSION
+        public final static [ResolvedTo(RAW_FIR)] enum entry WEST: R|Direction| = LAZY_EXPRESSION
+        public? abstract [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
-        public final static [ResolvedTo(STATUS)] fun values(): R|kotlin/Array<Direction>| {
+        public final static [ResolvedTo(RAW_FIR)] fun values(): R|kotlin/Array<Direction>| {
         }
 
-        public final static [ResolvedTo(STATUS)] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|Direction| {
+        public final static [ResolvedTo(RAW_FIR)] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Direction| {
         }
 
-        public final static [ResolvedTo(STATUS)] val entries: R|kotlin/enums/EnumEntries<Direction>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Direction>|
+        public final static [ResolvedTo(RAW_FIR)] val entries: R|kotlin/enums/EnumEntries<Direction>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Direction>|
 
     }

@@ -1,0 +1,36 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Functions
+                FirNamedFunctionSymbol local final fun local(n: R|kotlin/Int|): R|kotlin/Unit|
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol n: R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] localFunctionExpression.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] fun local([ResolvedTo(BODY_RESOLVE)] n: R|kotlin/Int|): R|kotlin/Unit| {
+            R|/call|(R|<local>/n|)
+        }
+
+        R|<local>/local|(Int(5))
+    }
+    public final [ResolvedTo(CONTRACTS)] fun call([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any?|): R|kotlin/Unit| {
+    }

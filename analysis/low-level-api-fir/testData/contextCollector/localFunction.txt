@@ -15,21 +15,15 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 7
         Scope: FirLocalScope
-            Classifiers:
-                FirRegularClassSymbol local final class Local : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol local final fun local(): R|kotlin/Unit|
     Element 8
-        Implicit receiver:
-            FirRegularClassSymbol local final class Local : R|kotlin/Any|
-                Type: <local>.Local
+        Scope: FirLocalScope
 
-FILE: [ResolvedTo(IMPORTS)] localClass.kt
+FILE: [ResolvedTo(IMPORTS)] localFunction.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-        local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
-            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/Local| {
-                super<R|kotlin/Any|>()
-            }
-
+        local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Unit| {
         }
 
-        R|<local>/Local.Local|()
+        R|<local>/local|()
     }

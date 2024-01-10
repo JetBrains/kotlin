@@ -25,6 +25,18 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("classFunction.kt")
+    public void testClassFunction() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/classFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("classProperty.kt")
+    public void testClassProperty() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/classProperty.kt");
+    }
+
+    @Test
     @TestMetadata("contextReceivers.kt")
     public void testContextReceivers() throws Exception {
         runTest("analysis/low-level-api-fir/testData/contextCollector/contextReceivers.kt");
@@ -37,9 +49,15 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
-    @TestMetadata("enumValue.kt")
-    public void testEnumValue() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/enumValue.kt");
+    @TestMetadata("enumValueFunction.kt")
+    public void testEnumValueFunction() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/enumValueFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("enumValuePropertyAccessor.kt")
+    public void testEnumValuePropertyAccessor() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/enumValuePropertyAccessor.kt");
     }
 
     @Test
@@ -58,6 +76,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     @TestMetadata("file.kt")
     public void testFile() throws Exception {
         runTest("analysis/low-level-api-fir/testData/contextCollector/file.kt");
+    }
+
+    @Test
+    @TestMetadata("fileAnnotation.kt")
+    public void testFileAnnotation() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/fileAnnotation.kt");
     }
 
     @Test
@@ -91,9 +115,33 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
-    @TestMetadata("nestedClasses.kt")
-    public void testNestedClasses() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/nestedClasses.kt");
+    @TestMetadata("localClassFunction.kt")
+    public void testLocalClassFunction() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/localClassFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunction.kt")
+    public void testLocalFunction() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/localFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunctionExpression.kt")
+    public void testLocalFunctionExpression() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/localFunctionExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClass.kt")
+    public void testNestedClass() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/nestedClass.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassFunction.kt")
+    public void testNestedClassFunction() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/nestedClassFunction.kt");
     }
 
     @Test
@@ -136,6 +184,30 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         runTest("analysis/low-level-api-fir/testData/contextCollector/simple.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunction.kt")
+    public void testTopLevelFunction() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/topLevelFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelProperty.kt")
+    public void testTopLevelProperty() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/topLevelProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAlias.kt")
+    public void testTypeAlias() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/typeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAliasInitializer.kt")
+    public void testTypeAliasInitializer() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/typeAliasInitializer.kt");
     }
 
     @Test
@@ -241,6 +313,22 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
         @TestMetadata("superTypeRefGenerics.kt")
         public void testSuperTypeRefGenerics() throws Exception {
             runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeRefGenerics.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/error")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Error {
+        @Test
+        public void testAllFilesPresentInError() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/error"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("InvalidInitializer.kt")
+        public void testInvalidInitializer() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/contextCollector/error/InvalidInitializer.kt");
         }
     }
 
