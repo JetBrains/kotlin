@@ -13,18 +13,20 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.commonizer.toolsDir
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.targets.native.internal.konanDistribution
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.property
 import javax.inject.Inject
 
 internal val KotlinLLDBScriptSetupAction = KotlinProjectSetupCoroutine {
     locateOrRegisterLLDBScriptTask()
 }
 
-@CacheableTask
+@DisableCachingByDefault(because = "The task is just writing to the file, so no need to cache")
 internal abstract class LLDBInitTask
 @Inject constructor(
     objects: ObjectFactory,
@@ -32,18 +34,16 @@ internal abstract class LLDBInitTask
 ) : DefaultTask() {
 
     @get:Input
-    internal abstract val fileName: Property<String>
+    internal val fileName: Property<String> = objects.property(initialValue = "lldbinit")
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal abstract val konanToolsDir: DirectoryProperty
 
     @get:OutputFile
-    protected val outputFile: RegularFileProperty by lazy {
-        objects.fileProperty().convention(
-            projectLayout.buildDirectory.file(fileName)
-        )
-    }
+    protected val outputFile: RegularFileProperty = objects.fileProperty().convention(
+        projectLayout.buildDirectory.file(fileName)
+    )
 
     @TaskAction
     fun createScript() {
@@ -56,7 +56,6 @@ internal abstract class LLDBInitTask
 internal fun Project.locateOrRegisterLLDBScriptTask(): TaskProvider<LLDBInitTask> {
     return locateOrRegisterTask("setupLldbScript") { task ->
         task.description = "Generate lldbinit file with imported konan_lldb.py script"
-        task.fileName.set("lldbinit")
         task.konanToolsDir.set(konanDistribution.toolsDir)
     }
 }
