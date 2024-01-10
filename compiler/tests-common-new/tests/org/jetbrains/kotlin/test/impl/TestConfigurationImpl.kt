@@ -58,7 +58,9 @@ class TestConfigurationImpl(
         testServices.register(KotlinTestInfo::class, testInfo)
         val runtimeClassPathProviders = runtimeClasspathProviders.map { it.invoke(testServices) }
         testServices.register(RuntimeClasspathProvidersContainer::class, RuntimeClasspathProvidersContainer(runtimeClassPathProviders))
-        additionalServices.forEach { testServices.register(it) }
+        additionalServices.forEach {
+            testServices.register(it, skipAlreadyRegistered = false)
+        }
     }
 
     private val allDirectives = directives.toMutableSet()
@@ -131,7 +133,7 @@ class TestConfigurationImpl(
 
     private fun ServicesAndDirectivesContainer.registerDirectivesAndServices() {
         allDirectives += directiveContainers
-        testServices.register(additionalServices)
+        testServices.register(additionalServices, skipAlreadyRegistered = true)
     }
 
     private fun List<ServicesAndDirectivesContainer>.registerDirectivesAndServices() {
