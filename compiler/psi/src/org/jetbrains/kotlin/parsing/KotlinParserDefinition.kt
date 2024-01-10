@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
  * Creates [org.jetbrains.kotlin.psi.KtCommonFile] when java psi is not available e.g. on JB Client.
  * Otherwise, normal [KotlinParserDefinition] should be used.
  */
-sealed class KotlinCommonParserDefinition : ParserDefinition {
+open class KotlinCommonParserDefinition : ParserDefinition {
     override fun createLexer(project: Project): Lexer = KotlinLexer()
 
     override fun createParser(project: Project): PsiParser = KotlinParser(project)
