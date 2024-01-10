@@ -154,7 +154,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             }?.toTypedArray()
             args.contextReceivers = originalArguments.contextReceivers
             args.skipPrereleaseCheck = originalArguments.skipPrereleaseCheck
-
+            args.useBir = originalArguments.useBir
         } else {
             args.jvmTarget = JVM_TARGET
             args.allowKotlinPackage = true

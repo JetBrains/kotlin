@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.bir
 
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfigurationService
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.util.Bir2IrConverter
@@ -18,16 +19,17 @@ import kotlin.io.path.writeText
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
-private val irDumpOptions = DumpIrTreeOptions(printFlagsInDeclarationReferences = false, printFilePath = false)
+val showResultTable = false
 
+private val irDumpOptions = DumpIrTreeOptions(printFlagsInDeclarationReferences = false, printFilePath = false)
 private val dumpBir = false
 private val dumpIr = false
 
-fun dumpOriginalIrPhase(context: JvmBackendContext, input: IrModuleFragment, phaseName: String, isBefore: Boolean) {
+fun dumpOriginalIrPhase(phaseConfig: PhaseConfigurationService, input: IrModuleFragment, phaseName: String, isBefore: Boolean) {
     if (!dumpIr) return
 
     var name = phaseName
-    context.phaseConfig.dumpToDirectory?.let { dumpDir ->
+    phaseConfig.dumpToDirectory?.let { dumpDir ->
         if (isBefore) {
             if (phaseName == allBirPhases.firstNotNullOfOrNull { it.second.firstOrNull() }) {
                 name = "Initial"
@@ -49,13 +51,14 @@ fun dumpOriginalIrPhase(context: JvmBackendContext, input: IrModuleFragment, pha
 
 fun dumpBirPhase(
     context: JvmBackendContext,
+    phaseConfig: PhaseConfigurationService,
     input: BirCompilation.BirCompilationBundle,
     phase: BirLoweringPhase?,
     phaseName: String?,
 ) {
     if (!dumpBir) return
 
-    context.phaseConfig.dumpToDirectory?.let { dumpDir ->
+    phaseConfig.dumpToDirectory?.let { dumpDir ->
         val irPhases = phase?.let {
             val i = input.backendContext!!.loweringPhases.indexOf(phase)
             allBirPhases[i].second
@@ -81,6 +84,32 @@ fun dumpBirPhase(
     }
 }
 
+fun printCompilationPhaseTime(
+    input: BirCompilation.BirCompilationBundle?,
+    kind: String?, name: String, time: Duration,
+) {
+    val label = when (kind) {
+        "BIR" -> {
+            val i = input?.backendContext?.loweringPhases?.indexOfFirst { it.javaClass.simpleName == name }
+            val irPhases = i?.takeUnless { it == -1 }?.let { allBirPhases[it].second }.orEmpty()
+            when (irPhases.size) {
+                0 -> name
+                1 -> irPhases.last()
+                else -> name + irPhases.joinToString(", ", " [", "]")
+            }
+        }
+        "IR" -> {
+            if (!allBirPhases.any { name in it.second }) {
+                return
+            }
+            name
+        }
+        else -> name
+    }
+
+    println("$kind: $label: ${time.format()}")
+}
+
 fun printCompilationTimings(
     input: BirCompilation.BirCompilationBundle,
     irPhasesTime: Map<String, Duration>,
@@ -92,8 +121,6 @@ fun printCompilationTimings(
         val irPhaseName = irPhases?.lastOrNull()
         val irPhaseTime = irPhasesTime[irPhaseName]
 
-        fun Duration.format() = toString(DurationUnit.MILLISECONDS, 2).removeSuffix("ms")
-
         print(irPhaseName ?: birPhaseName)
         print(" | ")
         if (irPhaseTime != null)
@@ -103,3 +130,5 @@ fun printCompilationTimings(
         println()
     }
 }
+
+fun Duration.format() = toString(DurationUnit.MILLISECONDS, 2).removeSuffix("ms")
