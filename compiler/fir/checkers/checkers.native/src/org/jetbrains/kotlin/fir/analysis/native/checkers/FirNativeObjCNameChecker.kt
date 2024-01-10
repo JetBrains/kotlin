@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.EMPTY_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_EXACT_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_OBJC_NAME
@@ -20,25 +19,16 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MISSING_EXACT_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.NON_LITERAL_OBJC_NAME_ARG
 import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCNameUtilities.ObjCName
-import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCNameUtilities.checkCallableMember
 import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCNameUtilities.getObjCNames
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 
 object FirNativeObjCNameChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        checkDeclaration(declaration, context, reporter)
-        if (declaration is FirCallableDeclaration && (declaration is FirSimpleFunction || declaration is FirProperty)) {
-            val containingClass = context.containingDeclarations.lastOrNull() as? FirClass
-            if (containingClass != null) {
-                val firTypeScope = containingClass.unsubstitutedScope(context)
-                checkCallableMember(firTypeScope, declaration.symbol, declaration, context, reporter)
-            }
-        }
-    }
-
-    private fun checkDeclaration(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirValueParameter) return // those are checked with the FirFunction
         val objCNames = declaration.symbol.getObjCNames(context.session).filterNotNull()
         if (objCNames.isEmpty()) return
@@ -86,4 +76,3 @@ object FirNativeObjCNameChecker : FirBasicDeclarationChecker() {
         }
     }
 }
-

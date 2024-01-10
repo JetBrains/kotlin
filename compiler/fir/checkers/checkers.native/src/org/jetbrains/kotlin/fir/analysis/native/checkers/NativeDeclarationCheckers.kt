@@ -19,7 +19,8 @@ object NativeDeclarationCheckers : DeclarationCheckers() {
 
     override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker>
         get() = setOf(
-            FirNativeObjCRefinementChecker
+            FirNativeObjCRefinementChecker,
+            FirNativeObjCNameCallableChecker,
         )
 
     override val classCheckers: Set<FirClassChecker>
