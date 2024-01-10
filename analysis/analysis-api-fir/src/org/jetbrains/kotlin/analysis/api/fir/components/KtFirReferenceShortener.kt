@@ -822,7 +822,7 @@ private class ElementsToShortenCollector(
         if (option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return null
 
         val importAllInParent = option == ShortenStrategy.SHORTEN_AND_STAR_IMPORT
-        if (importAffectsUsagesOfClassesWithSameName(qualifierClassId, qualifierElement.containingKtFile, importAllInParent)) return null
+        if (importBreaksExistingReferences(qualifierClassId, qualifierElement.containingKtFile, importAllInParent)) return null
 
         // Find class with the same name that's already available in this file.
         val availableClassifier = shorteningContext.findFirstClassifierInScopesByName(positionScopes, qualifierClassId.shortClassName)
@@ -916,6 +916,17 @@ private class ElementsToShortenCollector(
             is KtDotQualifiedExpression -> findFakePackageToShorten(element)
             else -> error("Unexpected ${element::class}")
         }
+    }
+
+    /**
+     * Returns `true` if adding [classToImport] import to the [file] might alter or break the
+     * resolve of existing references in the file.
+     *
+     * N.B.: At the moment it might have both false positives and false negatives, since it does not
+     * check all possible references.
+     */
+    private fun importBreaksExistingReferences(classToImport: ClassId, file: KtFile, importAllInParent: Boolean): Boolean {
+        return importAffectsUsagesOfClassesWithSameName(classToImport, file, importAllInParent)
     }
 
     private fun importedClassifierOverwritesAvailableClassifier(
