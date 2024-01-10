@@ -412,6 +412,11 @@ class BirDatabase : BirElementParent() {
         }
         currentIndexSlot = cacheSlotIndex
 
+        if (cacheSlotIndex >= elementIndexSlotCount) {
+            // We reached the last index, no more indexing is possible.
+            elementClassifier = null
+        }
+
         val slot = elementIndexSlots[cacheSlotIndex]!!
         val iter = ElementsIndexSlotIterator<E>(slot)
         currentElementsIndexSlotIterator = iter
