@@ -103,7 +103,20 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
                 }
             }
             is KtIntersectionType -> getTypeText(typeElement.getLeftTypeRef()?.typeElement) + " & " + getTypeText(typeElement.getRightTypeRef()?.typeElement)
-            is KtNullableType -> getTypeText(typeElement.innerType) + "?"
+            is KtNullableType -> {
+                val innerType = typeElement.innerType
+                buildString {
+                    val parenthesisRequired = innerType is KtFunctionType
+                    if (parenthesisRequired) {
+                        append("(")
+                    }
+                    append(getTypeText(innerType))
+                    append("?")
+                    if (parenthesisRequired) {
+                        append(")")
+                    }
+                }
+            }
             null -> null
             else -> error("Unsupported type $typeElement")
         }
