@@ -659,6 +659,80 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Conflicts {
+        @Test
+        public void testAllFilesPresentInConflicts() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ClassWithSameName {
+            @Test
+            public void testAllFilesPresentInClassWithSameName() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("constructorCall_vs_constructorCall.kt")
+            public void testConstructorCall_vs_constructorCall() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/constructorCall_vs_constructorCall.kt");
+            }
+
+            @Test
+            @TestMetadata("constructorCall_vs_noUsages.kt")
+            public void testConstructorCall_vs_noUsages() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/constructorCall_vs_noUsages.kt");
+            }
+
+            @Test
+            @TestMetadata("constructorCall_vs_typeRefs.kt")
+            public void testConstructorCall_vs_typeRefs() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/constructorCall_vs_typeRefs.kt");
+            }
+
+            @Test
+            @TestMetadata("qualifier_vs_constructorCall.kt")
+            public void testQualifier_vs_constructorCall() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/qualifier_vs_constructorCall.kt");
+            }
+
+            @Test
+            @TestMetadata("qualifier_vs_noUsages.kt")
+            public void testQualifier_vs_noUsages() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/qualifier_vs_noUsages.kt");
+            }
+
+            @Test
+            @TestMetadata("qualifier_vs_typeRef.kt")
+            public void testQualifier_vs_typeRef() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/qualifier_vs_typeRef.kt");
+            }
+
+            @Test
+            @TestMetadata("typeRef_vs_constructorCall.kt")
+            public void testTypeRef_vs_constructorCall() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/typeRef_vs_constructorCall.kt");
+            }
+
+            @Test
+            @TestMetadata("typeRef_vs_noUsages.kt")
+            public void testTypeRef_vs_noUsages() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/typeRef_vs_noUsages.kt");
+            }
+
+            @Test
+            @TestMetadata("typeRef_vs_typeRef.kt")
+            public void testTypeRef_vs_typeRef() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/typeRef_vs_typeRef.kt");
+            }
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class NestedClasses {
