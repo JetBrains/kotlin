@@ -101,14 +101,25 @@ class Fir2IrDeclarationStorage(
      */
     @DelicateDeclarationStorageApi
     fun forEachCachedDeclarationSymbol(block: (IrSymbol) -> Unit) {
-        functionCache.values.forEach(block)
+        functionCache.values.forEachWithRemapping(symbolsMappingForLazyClasses::remapFunctionSymbol, block)
         constructorCache.values.forEach(block)
-        propertyCache.values.forEach(block)
-        getterForPropertyCache.values.forEach(block)
-        setterForPropertyCache.values.forEach(block)
+        propertyCache.values.forEachWithRemapping(symbolsMappingForLazyClasses::remapPropertySymbol, block)
+        getterForPropertyCache.values.forEachWithRemapping(symbolsMappingForLazyClasses::remapFunctionSymbol, block)
+        setterForPropertyCache.values.forEachWithRemapping(symbolsMappingForLazyClasses::remapFunctionSymbol, block)
         backingFieldForPropertyCache.values.forEach(block)
         propertyForBackingFieldCache.values.forEach(block)
         delegateVariableForPropertyCache.values.forEach(block)
+    }
+
+    private inline fun <S : IrSymbol> Collection<S>.forEachWithRemapping(remapper: (S) -> S, block: (S) -> Unit) {
+        for (symbol in this) {
+            val updatedSymbol = if (symbol is IrFakeOverrideSymbolBase<*, *, *>) {
+                remapper(symbol)
+            } else {
+                symbol
+            }
+            block(updatedSymbol)
+        }
     }
 
     // interface A { /* $1 */ fun foo() }
