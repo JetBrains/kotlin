@@ -595,7 +595,11 @@ private class ElementsToShortenCollector(
         findClassifierQualifierToShorten(wholeClassQualifier, wholeQualifierElement)?.let(::addElementToShorten)
     }
 
-    private val FirClassifierSymbol<*>.classIdIfExists: ClassId? get() = (this as? FirClassLikeSymbol<*>)?.classId
+    private val FirClassifierSymbol<*>.classIdIfExists: ClassId?
+        get() = (this as? FirClassLikeSymbol<*>)?.classId
+
+    private val FirConstructorSymbol.classIdIfExists: ClassId?
+        get() = this.containingClassLookupTag()?.classId
 
     /**
      * Returns true if the class symbol has a type parameter that is supposed to be provided for its parent class.
@@ -929,6 +933,22 @@ private class ElementsToShortenCollector(
         return importAffectsUsagesOfClassesWithSameName(classToImport, file, importAllInParent)
     }
 
+    /**
+     * Same as above, but for more general callable symbols.
+     *
+     * Currently only checks constructor calls, assuming `true` for everything else.
+     */
+    private fun importBreaksExistingReferences(callableToImport: FirCallableSymbol<*>, file: KtFile, importAllInParent: Boolean): Boolean {
+        if (callableToImport is FirConstructorSymbol) {
+            val classToImport = callableToImport.classIdIfExists
+            if (classToImport != null) {
+                return importAffectsUsagesOfClassesWithSameName(classToImport, file, importAllInParent)
+            }
+        }
+
+        return false
+    }
+
     private fun importedClassifierOverwritesAvailableClassifier(
         availableClassifier: AvailableSymbol<FirClassifierSymbol<*>>,
         importAllInParent: Boolean
@@ -1221,15 +1241,21 @@ private class ElementsToShortenCollector(
                 when {
                     matchedCallables.isEmpty() -> {
                         if (nameToImport == null || option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return null
+
+                        val importAllInParent = option == ShortenStrategy.SHORTEN_AND_STAR_IMPORT
+                        if (importBreaksExistingReferences(calledSymbol, qualifiedCallExpression.containingKtFile, importAllInParent)) return null
+
                         createElementToShorten(
                             qualifiedCallExpression,
                             nameToImport,
-                            importAllInParent = option == ShortenStrategy.SHORTEN_AND_STAR_IMPORT
+                            importAllInParent,
                         )
                     }
+
                     // Respect caller's request to star import this symbol.
                     matchedCallables.any { it.importKind == ImportKind.EXPLICIT } && option == ShortenStrategy.SHORTEN_AND_STAR_IMPORT ->
                         createElementToShorten(qualifiedCallExpression, nameToImport, importAllInParent = true)
+
                     else -> createElementToShorten(qualifiedCallExpression)
                 }
             }
