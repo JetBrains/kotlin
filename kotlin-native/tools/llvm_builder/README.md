@@ -70,5 +70,4 @@ docker run --rm -it -v <HOST_PATH>:/output kotlin-llvm-builder --instal-path /ou
 ```
 
 ### Known problems
-1. `libcxx` and `compiler-rt` are built as projects, not runtimes.
-2. No way to run LLVM tests out of the box.
+1. No way to run LLVM tests out of the box.

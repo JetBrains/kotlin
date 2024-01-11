@@ -222,7 +222,7 @@ def run_command(command: List[str], dry_run):
 
     if not dry_run:
         subprocess.run(command, shell=True, check=True)
-        
+
 def force_create_directory(parent, name) -> Path:
     build_path = parent / name
     print(f"Force-creating directory {build_path}")
@@ -343,8 +343,8 @@ def build_distribution(args):
             intermediate_build_results.append(install_path)
             build_targets = ["install"]
 
-        projects = ["clang", "lld", "libcxx", "libcxxabi", "compiler-rt"]
-        runtimes = None
+        projects = ["clang", "lld"]
+        runtimes = ["libcxx", "libcxxabi", "compiler-rt"]
 
         build_dir = force_create_directory(current_dir, f"llvm-stage-{stage}-build")
         intermediate_build_results.append(build_dir)
