@@ -39,15 +39,17 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    jsoIrRuntimeForTests(project(":plugins:jso:runtime")) { isTransitive = false }
+    if (!project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        jsoIrRuntimeForTests(project(":plugins:jso:runtime")) { isTransitive = false }
 
-    embedded(project(":plugins:jso:runtime")) {
-        attributes {
-            attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
-            attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
+        embedded(project(":plugins:jso:runtime")) {
+            attributes {
+                attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+                attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+                attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
+            }
+            isTransitive = false
         }
-        isTransitive = false
     }
 
     testRuntimeOnly(project(":core:descriptors.runtime"))

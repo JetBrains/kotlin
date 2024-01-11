@@ -288,9 +288,12 @@ include ":plugins:jso:compiler-plugin",
         ":plugins:jso:compiler-plugin:jso.common",
         ":plugins:jso:compiler-plugin:jso.k2",
         ":plugins:jso:compiler-plugin:jso.backend",
-        ":plugins:jso:compiler-plugin:jso.cli",
-        ":plugins:jso:runtime",
-        ":libraries:tools:jso"
+        ":plugins:jso:compiler-plugin:jso.cli"
+
+if (!buildProperties.inJpsBuildIdeaSync) {
+    include ":plugins:jso:runtime",
+            ":libraries:tools:jso"
+}
 
 include ":compiler:fir",
         ":compiler:fir:cones",
