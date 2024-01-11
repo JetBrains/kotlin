@@ -555,7 +555,6 @@ class FakeOverrideGenerator(
         }
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrProperty.setOverriddenSymbolsForProperty(
         declarationStorage: Fir2IrDeclarationStorage,
         isVar: Boolean,
@@ -564,14 +563,13 @@ class FakeOverrideGenerator(
         val overriddenIrSymbols = getOverriddenSymbolsInSupertypes(this, firOverriddenSymbols) {
             declarationStorage.getIrPropertySymbol(it) as IrPropertySymbol
         }
-        val overriddenIrProperties = overriddenIrSymbols.map { it.owner }
 
         getter?.apply {
-            overriddenSymbols = overriddenIrProperties.mapNotNull { it.getter?.symbol }
+            overriddenSymbols = overriddenIrSymbols.mapNotNull { declarationStorage.findGetterOfProperty(it) }
         }
         if (isVar) {
             setter?.apply {
-                overriddenSymbols = overriddenIrProperties.mapNotNull { it.setter?.symbol }
+                overriddenSymbols = overriddenIrSymbols.mapNotNull { declarationStorage.findSetterOfProperty(it) }
             }
         }
         overriddenSymbols = overriddenIrSymbols
