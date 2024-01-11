@@ -27,14 +27,14 @@ fun test() {
         var variable = getTypeVariable()
         variable = TargetType()
         variable.<!UNRESOLVED_REFERENCE!>targetTypeMemberFunction<!>()
-        variable = <!ASSIGNMENT_TYPE_MISMATCH!>DifferentType()<!>
+        variable = DifferentType()
         variable.<!UNRESOLVED_REFERENCE!>targetTypeMemberFunction<!>()
         variable = TargetType()
         variable.<!UNRESOLVED_REFERENCE!>targetTypeMemberFunction<!>()
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    checkExactType<Buildee<Any>>(<!ARGUMENT_TYPE_MISMATCH!>anyBuildee<!>)
+    checkExactType<Buildee<Any>>(anyBuildee)
 }
 
 
