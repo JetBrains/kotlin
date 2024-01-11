@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.native.executors
 
 import org.jetbrains.kotlin.konan.target.*
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.nio.file.Files
 import java.nio.file.Paths
+import kotlin.io.path.absolutePathString
 
 /**
  * An abstract class representing a local execution of XCTest tests.
@@ -54,66 +53,30 @@ abstract class AbstractXCTestExecutor(
         return stdout.toString("UTF-8").trim()
     }
 
-    private val frameworkPath: String
-        get() = "${targetPlatform()}/Developer/Library/Frameworks/"
+    private val frameworkPath: String by lazy {
+        "${targetPlatform()}/Developer/Library/Frameworks/"
+    }
 
-    private val xcTestExecutablePath: String
-        get() = "${targetPlatform()}/Developer/Library/Xcode/Agents/xctest"
+    private val xcTestExecutablePath: String by lazy {
+        "${targetPlatform()}/Developer/Library/Xcode/Agents/xctest"
+    }
 
     override fun execute(request: ExecuteRequest): ExecuteResponse {
-        val originalBundle = File(request.executableAbsolutePath)
-        val bundleToExecute = if (request.args.isNotEmpty()) {
-            // Copy the bundle to a temp dir
-            val workDir = request.workingDirectory?.toPath() ?: Paths.get(".")
-            val dir = Files.createTempDirectory(workDir, "tmp-xctest-runner")
-            val newBundleFile = originalBundle.run {
-                val newPath = dir.resolve(name)
-                copyRecursively(newPath.toFile())
-                newPath.toFile()
+        val bundle = XCTestBundle.Standalone(Paths.get(request.executableAbsolutePath), request.args)
+        val path = bundle.prepareToRun(request.workingDirectory?.toPath() ?: Paths.get("."))
+
+        val response = executor.execute(
+            request.copying {
+                environment["DYLD_FRAMEWORK_PATH"] = frameworkPath
+                environment["KotlinNativeTestArgs"] = bundle.args.joinToString(" ")
+                executableAbsolutePath = xcTestExecutablePath
+                args.clear()
+                args.add(path.absolutePathString())
             }
-            check(newBundleFile.exists())
+        )
 
-            // Passing arguments to the XCTest-runner using Info.plist file.
-            val infoPlist = newBundleFile.walk()
-                .firstOrNull { it.name == "Info.plist" }
-                ?.absolutePath
-            checkNotNull(infoPlist) { "Info.plist of xctest-bundle wasn't found. Check the bundle contents and location " }
+        bundle.cleanup()
 
-            check(request.args.all { !it.contains(" ") }) {
-                // TODO: Consider also check for other incorrect symbols and escaping them or use CDATA section.
-                """
-                    Provided arguments contain spaces that not supported as arguments: 
-                    ${request.args.joinToString()}
-                """.trimIndent()
-            }
-
-            val writeArgsRequest = ExecuteRequest(
-                executableAbsolutePath = "/usr/libexec/PlistBuddy",
-                args = mutableListOf("-c", "Add :KotlinNativeTestArgs string ${request.args.joinToString(" ")}", infoPlist)
-            )
-            val writeResponse = hostExecutor.execute(writeArgsRequest)
-            writeResponse.assertSuccess()
-
-            newBundleFile
-        } else {
-            originalBundle
-        }
-
-        val response = executor.execute(request.copying {
-            environment["DYLD_FRAMEWORK_PATH"] = frameworkPath
-            executableAbsolutePath = xcTestExecutablePath
-            args.clear()
-            args.add(bundleToExecute.absolutePath)
-        })
-
-        if (bundleToExecute != originalBundle) {
-            bundleToExecute.apply {
-                // Remove the copied bundle after the run
-                deleteRecursively()
-                // Also remove the temp directory that contained this bundle
-                parentFile.delete()
-            }
-        }
         return response
     }
 }
