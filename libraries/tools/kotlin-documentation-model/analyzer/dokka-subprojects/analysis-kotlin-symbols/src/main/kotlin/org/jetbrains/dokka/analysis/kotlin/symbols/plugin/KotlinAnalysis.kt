@@ -102,7 +102,10 @@ internal fun createAnalysisSession(
                     jdkModule?.let { addRegularDependency(it) }
                 }
                 sourceSet.dependentSourceSets.forEach {
-                    addRegularDependency(
+                    /**
+                     * @see org.jetbrains.kotlin.analysis.project.structure.KtModule.directDependsOnDependencies
+                     */
+                    addDependsOnDependency(
                         sourcesModuleBySourceSetId[it]
                             ?: error("There is no source module for $it")
                     )

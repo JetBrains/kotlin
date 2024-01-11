@@ -27,11 +27,17 @@ val symbolsTest = tasks.register<Test>("symbolsTest") {
 // run symbols and descriptors tests
 tasks.test {
     //enabled = false
+    useJUnitPlatform {
+        excludeTags("onlySymbols")
+    }
     classpath += descriptorsTestConfiguration
     dependsOn(symbolsTest)
 }
 
 val descriptorsTest = tasks.register<Test>("descriptorsTest") {
+    useJUnitPlatform {
+        excludeTags("onlySymbols")
+    }
     classpath += descriptorsTestConfiguration
 }
 
