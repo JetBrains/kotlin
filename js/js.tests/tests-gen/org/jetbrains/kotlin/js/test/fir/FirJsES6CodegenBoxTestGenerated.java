@@ -14756,6 +14756,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         }
 
         @Test
+        @TestMetadata("missingDependencyClassInTypeArguments.kt")
+        public void testMissingDependencyClassInTypeArguments() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/missingDependencyClassInTypeArguments.kt");
+        }
+
+        @Test
         @TestMetadata("nestedClassTypeParameterDeserialization.kt")
         public void testNestedClassTypeParameterDeserialization() throws Exception {
             runTest("compiler/testData/codegen/box/fir/nestedClassTypeParameterDeserialization.kt");

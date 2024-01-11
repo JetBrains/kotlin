@@ -342,12 +342,13 @@ class FakeOverrideGenerator(
             isLocal
         ).symbol as IS
 
+        baseSymbols[irSymbol] = baseFirSymbolsForFakeOverride
+
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         val owner = irSymbol.owner
         if (containsErrorTypes(owner)) {
             return
         }
-        baseSymbols[irSymbol] = baseFirSymbolsForFakeOverride
 
         result?.add(owner)
     }

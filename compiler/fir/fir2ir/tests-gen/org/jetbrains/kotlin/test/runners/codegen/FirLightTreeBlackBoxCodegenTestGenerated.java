@@ -19832,6 +19832,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("missingDependencyClassInTypeArguments.kt")
+        public void testMissingDependencyClassInTypeArguments() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/missingDependencyClassInTypeArguments.kt");
+        }
+
+        @Test
         @TestMetadata("Mockito.kt")
         public void testMockito() throws Exception {
             runTest("compiler/testData/codegen/box/fir/Mockito.kt");

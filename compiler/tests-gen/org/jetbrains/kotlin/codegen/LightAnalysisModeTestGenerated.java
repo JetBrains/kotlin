@@ -16561,6 +16561,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/manyImplFromOneJavaInterfaceWithDelegation2.kt");
         }
 
+        @TestMetadata("missingDependencyClassInTypeArguments.kt")
+        public void testMissingDependencyClassInTypeArguments() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/missingDependencyClassInTypeArguments.kt");
+        }
+
         @TestMetadata("Mockito.kt")
         public void testMockito() throws Exception {
             runTest("compiler/testData/codegen/box/fir/Mockito.kt");
