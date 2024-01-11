@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2014-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 
 package org.jetbrains.dokka.analysis.java.parsers
@@ -19,7 +19,7 @@ import org.jetbrains.dokka.analysis.java.doccomment.DocComment
 import org.jetbrains.dokka.analysis.java.doccomment.JavaDocComment
 import org.jetbrains.dokka.analysis.java.parsers.doctag.PsiDocTagParser
 import org.jetbrains.dokka.analysis.java.util.*
-import org.jetbrains.dokka.analysis.markdown.jb.MARKDOWN_ELEMENT_FILE_NAME
+import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.doc.Deprecated
