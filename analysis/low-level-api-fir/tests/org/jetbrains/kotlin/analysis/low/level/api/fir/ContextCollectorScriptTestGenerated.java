@@ -54,6 +54,12 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
         }
 
         @Test
+        @TestMetadata("insideClassBody.kts")
+        public void testInsideClassBody() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/insideClassBody.kts");
+        }
+
+        @Test
         @TestMetadata("insideClassMember.kts")
         public void testInsideClassMember() throws Exception {
             runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/insideClassMember.kts");
@@ -63,6 +69,24 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
         @TestMetadata("insideTopLevelFunction.kts")
         public void testInsideTopLevelFunction() throws Exception {
             runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/insideTopLevelFunction.kts");
+        }
+
+        @Test
+        @TestMetadata("lastStatement.kts")
+        public void testLastStatement() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/lastStatement.kts");
+        }
+
+        @Test
+        @TestMetadata("scriptInsideLastStatement.kts")
+        public void testScriptInsideLastStatement() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/scriptInsideLastStatement.kts");
+        }
+
+        @Test
+        @TestMetadata("statement.kts")
+        public void testStatement() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/statement.kts");
         }
 
         @Test

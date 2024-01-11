@@ -1,0 +1,42 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|test/MyInterface|
+                Type: test.MyClass.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|test/MyInterface|
+    Element 8
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] superTypeDelegatedToCompanion.kt
+    public abstract [ResolvedTo(STATUS)] interface MyInterface : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|test/MyInterface| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|test/MyInterface| = Q|test/MyClass.Companion|
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|test/MyInterface| {
+            private [ResolvedTo(STATUS)] constructor(): R|test/MyClass.Companion| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }

@@ -1,0 +1,56 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol lval args: R|kotlin/Array<kotlin/String>|
+    Element 8
+        Context receivers:
+            FirScriptSymbol context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+            SCRIPT: <script-insideClassBody.kts>
+                lval args: R|kotlin/Array<kotlin/String>|
+
+                public final class Foo : R|kotlin/Any|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+                Label: <script>
+    Element 9
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: Foo
+    Element 10
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] insideClassBody.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-insideClassBody.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] constructor(): R|Foo| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] val x: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+            }
+
+        }

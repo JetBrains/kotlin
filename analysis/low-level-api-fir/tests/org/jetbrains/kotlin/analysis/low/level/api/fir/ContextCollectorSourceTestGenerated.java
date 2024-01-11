@@ -181,6 +181,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("secondaryConstructor_superCallArgument.kt")
+    public void testSecondaryConstructor_superCallArgument() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/secondaryConstructor_superCallArgument.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         runTest("analysis/low-level-api-fir/testData/contextCollector/simple.kt");
@@ -295,6 +301,18 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
         @TestMetadata("superTypeDelegatedExpression.kt")
         public void testSuperTypeDelegatedExpression() throws Exception {
             runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeDelegatedExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypeDelegatedToCompanion.kt")
+        public void testSuperTypeDelegatedToCompanion() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeDelegatedToCompanion.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypeDelegatedToPrimaryConstructorParam.kt")
+        public void testSuperTypeDelegatedToPrimaryConstructorParam() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeDelegatedToPrimaryConstructorParam.kt");
         }
 
         @Test
