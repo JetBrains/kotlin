@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.bir
 
-import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
@@ -28,13 +27,13 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformFlat
 import java.util.IdentityHashMap
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import kotlin.system.exitProcess
 import kotlin.time.Duration
 import kotlin.time.measureTimedValue
 
@@ -58,8 +57,7 @@ val allBirPhases = listOf<Pair<(JvmBirBackendContext) -> BirLoweringPhase, List<
 private val excludedPhases = setOf<String>(
     //"Ir2Bir",
     //"Lower Bir",
-    //"Bir2Ir",
-    "Terminate",
+    "Bir2Ir",
 
     // This phase removes annotation constructors, but they are still being used,
     // which causes an exception in BIR. It works in IR because removed constructors
@@ -68,6 +66,8 @@ private val excludedPhases = setOf<String>(
     // This phase is not implemented, as it is hardly ever relevant.
     "AnnotationImplementation",
 )
+
+private val StopCompilationAfterBir = true
 
 class BirCompilation() {
     private val irPhasesTime = mutableMapOf<String, Duration>()
@@ -98,8 +98,12 @@ class BirCompilation() {
                     "Convert lowered BIR back to IR",
                 ),
             )
+            val index = newPhases.indexOfFirst { (it as AnyNamedPhase).name == "FileClass" } + 1
+            if (StopCompilationAfterBir) {
+                newPhases.subList(index, newPhases.size).clear()
+            }
             newPhases.addAll(
-                newPhases.indexOfFirst { (it as AnyNamedPhase).name == "FileClass" } + 1,
+                index,
                 birPhases as List<NamedCompilerPhase<JvmBackendContext, IrModuleFragment>>
             )
 
@@ -146,11 +150,6 @@ class BirCompilation() {
                 filePhases.addAll(
                     filePhases.indexOfFirst { it.name == "DirectInvokes" } + 1,
                     annotationPhases
-                )
-
-                filePhases.add(
-                    filePhases.indexOfFirst { it.name == "FunctionReference" },
-                    terminateProcessPhase as AbstractNamedCompilerPhase<JvmBackendContext, IrFile, IrFile>
                 )
 
                 val lower = CustomPerFileAggregateLoweringPhase(filePhases)
@@ -399,7 +398,10 @@ class BirCompilation() {
             context: JvmBackendContext,
             input: BirCompilationBundle,
         ): IrModuleFragment {
-            return input.irModuleFragment
+            val orgIrModule = input.irModuleFragment
+            return if (StopCompilationAfterBir)
+                IrModuleFragmentImpl(orgIrModule.descriptor, orgIrModule.irBuiltins)
+            else orgIrModule
         }
     }
 
@@ -418,10 +420,3 @@ class BirCompilation() {
         return result
     }
 }
-
-private val terminateProcessPhase = createSimpleNamedCompilerPhase<LoggingContext, IrFile, IrFile>(
-    name = "Terminate",
-    description = "Goodbay",
-    outputIfNotEnabled = { _, _, _, input -> input },
-    op = { _, _ -> exitProcess(0) }
-)
