@@ -7,4 +7,4 @@
 actual fun foo() {}
 
 // MODULE: main()()(common, intermediate)
-actual fun foo() {}
+<!AMBIGUOUS_EXPECTS!>actual fun foo() {}<!>

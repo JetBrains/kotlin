@@ -308,6 +308,18 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("mainActualMissing.kt")
+    public void testMainActualMissing() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/mainActualMissing.kt");
+    }
+
+    @Test
+    @TestMetadata("mainRedeclarationAcrossCommonPlatformModules.kt")
+    public void testMainRedeclarationAcrossCommonPlatformModules() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/mainRedeclarationAcrossCommonPlatformModules.kt");
+    }
+
+    @Test
     @TestMetadata("modifierApplicability.kt")
     public void testModifierApplicability() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/modifierApplicability.kt");
@@ -353,6 +365,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     @TestMetadata("privateTopLevelDeclarations.kt")
     public void testPrivateTopLevelDeclarations() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/privateTopLevelDeclarations.kt");
+    }
+
+    @Test
+    @TestMetadata("redeclarationAcrossCommonPlatformModules.kt")
+    public void testRedeclarationAcrossCommonPlatformModules() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/redeclarationAcrossCommonPlatformModules.kt");
     }
 
     @Test

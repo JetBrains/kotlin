@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirExpectActualMatchingContext
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.ExpectForActualMatchingData
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.dependsOnSymbolProvider
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -37,7 +39,7 @@ object FirExpectActualResolver {
                     val classId = callableId.classId
                     var actualContainingClass: FirRegularClassSymbol? = null
                     var expectContainingClass: FirRegularClassSymbol? = null
-                    val candidates = when {
+                    val matchedByNamesExpectCandidates = when {
                         callableId.isLocal -> return emptyMap()
                         classId != null -> {
                             actualContainingClass = useSiteSession.symbolProvider.getClassLikeSymbolByClassId(classId)
@@ -59,8 +61,17 @@ object FirExpectActualResolver {
                             }
                         }
                     }
-                    candidates.filter { expectSymbol ->
-                        actualSymbol != expectSymbol && (expectContainingClass != null /*match fake overrides*/ || expectSymbol.isExpect)
+                    // Don't match private top-level callables. It's allowed for private top-level callables from
+                    // different modules (common vs platform) to "clash" (on JVM, filenames also need to be different, but it
+                    // is checked by the JVM backend)
+                    //
+                    // The reason why it's supported, is because K1 supported it. Probably, for the consistency sake with
+                    // callables inside classifiers, it'd be better to discard such callables
+                    if (actualSymbol.isPrivateTopLevel(actualContainingClass)) {
+                        return emptyMap()
+                    }
+                    matchedByNamesExpectCandidates.filter { expectSymbol ->
+                        actualSymbol != expectSymbol && !expectSymbol.isPrivateTopLevel(expectContainingClass)
                     }.groupBy { expectDeclaration ->
                         AbstractExpectActualMatcher.getCallablesMatchingCompatibility(
                             expectDeclaration,
@@ -105,4 +116,8 @@ object FirExpectActualResolver {
             return result
         }
     }
+}
+
+fun FirCallableSymbol<*>.isPrivateTopLevel(containingClass: FirRegularClassSymbol?): Boolean {
+    return Visibilities.isPrivate(visibility) && containingClass == null
 }

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
+import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevelMainFunction
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -64,7 +65,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         if ((ExpectActualMatchingCompatibility.MatchedSuccessfully in matchingCompatibilityToMembersMap || declaration.hasActualModifier()) &&
             !declaration.isLocalMember // Reduce verbosity. WRONG_MODIFIER_TARGET will be reported anyway.
         ) {
-            checkActualDeclarationHasExpected(declaration, context, reporter, matchingCompatibilityToMembersMap)
+            checkExpectActualPair(declaration, context, reporter, matchingCompatibilityToMembersMap)
         }
     }
 
@@ -128,7 +129,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         }
     }
 
-    private fun checkActualDeclarationHasExpected(
+    private fun checkExpectActualPair(
         declaration: FirMemberDeclaration,
         context: CheckerContext,
         reporter: DiagnosticReporter,
@@ -156,13 +157,27 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
 
         checkAmbiguousExpects(symbol, matchingCompatibilityToMembersMap, symbol, context, reporter)
 
+        // There are 3 major cases that cover "expect/actual keywords presence":
+        // (1) "actual is missing". Expect non-fake-override (Ideally, we shouldn't consider "fake-override" as a separate case KT-65188)
+        //     declaration is found, but actual declaration has no 'actual' keyword. (ACTUAL_MISSING)
+        // (2) "actual and expect are both missing". non-actual and non-expect top-level declarations are matched by the matcher.
+        //     (CONFLICTING_OVERLOADS or PACKAGE_OR_CLASSIFIER_REDECLARATION)
+        // (3) "expect is missing". 'actual' keyword is present on actual declaration, but expect declaration is not found,
+        //     or expect top-level declaration isn't marked as 'expect', or expect declaration is a fake-override (Ideally,
+        //     we shouldn't consider fake-overrides as a separate case KT-65188)
+        //
+        // Case (2) can't happen for non-top-level declarations because once we find a pair of non-top-level declarations,
+        // it means that the expect declaration is inside 'expect' classifier => it is implicitly marked with 'expect' keyword =>
+        // it's at least case (1)
+
         val source = declaration.source
+        // "expect/actual keyword presence" major case (1)
         if (!declaration.hasActualModifier() &&
-            ExpectActualMatchingCompatibility.MatchedSuccessfully in matchingCompatibilityToMembersMap &&
             (actualContainingClass == null || requireActualModifier(symbol, actualContainingClass, context.session)) &&
             expectedSingleCandidate != null &&
+            expectedSingleCandidate.isExpectOrInsideExpect &&
             // Don't require 'actual' keyword on fake-overrides actualizations.
-            // It's an inconsistency in the language design, but it's the way it works right now
+            // It's an inconsistency in the language design, but it's the way it works right now. KT-65188
             !expectedSingleCandidate.isFakeOverride(expectContainingClass, expectActualMatchingContext)
         ) {
             java.io.File("/home/bobko/log").appendText("""
@@ -170,8 +185,31 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                     actual: ${symbol.moduleData}
                     expect: ${expectedSingleCandidate.moduleData}
             """.trimIndent() + "\n")
+            // ACTUAL_MISSING is a controversial diagnostic. Ideally, we shouldn't try to create actual to expect mapping, if 'actual'
+            // keyword is not present. But we need to create expect-actual mapping because we have these two features in kotlin:
+            // 1. actualization by fake-overrides
+            // 2. actual typealias
+            // 'actual' keyword is not presented on members in either of these two features
             reporter.reportOn(source, FirErrors.ACTUAL_MISSING, context)
             return
+        }
+
+        // "expect/actual keyword presence" major case (2)
+        if (expectContainingClass == null && expectedSingleCandidate != null &&
+            !expectedSingleCandidate.isExpectOrInsideExpect && !declaration.hasActualModifier()
+        ) {
+            if (expectedSingleCandidate is FirCallableSymbol<*>) {
+                if (!symbol.isTopLevelMainFunction(context.session)) {
+                    // We reuse expect-actual matcher to report CONFLICTING_OVERLOADS for declarations from different modules (common vs platform)
+                    reporter.reportOn(source, FirErrors.CONFLICTING_OVERLOADS, listOf(expectedSingleCandidate), context)
+                }
+                return
+            }
+            if (expectedSingleCandidate is FirRegularClassSymbol) {
+                // We reuse expect-actual matcher to report PACKAGE_OR_CLASSIFIER_REDECLARATION for declarations from different modules (common vs platform)
+                reporter.reportOn(source, FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION, listOf(expectedSingleCandidate), context)
+                return
+            }
         }
 
         when {
@@ -179,10 +217,12 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 reportClassScopesIncompatibility(symbol, expectedSingleCandidate, declaration, checkingCompatibility, reporter, source, context)
             }
 
+            // "expect/actual keyword presence" major case (3)
             ExpectActualMatchingCompatibility.MatchedSuccessfully !in matchingCompatibilityToMembersMap ||
                     expectedSingleCandidate != null &&
                     declaration.hasActualModifier() &&
-                    expectedSingleCandidate.isFakeOverride(expectContainingClass, expectActualMatchingContext) -> {
+                    (!expectedSingleCandidate.isExpectOrInsideExpect ||
+                            expectedSingleCandidate.isFakeOverride(expectContainingClass, expectActualMatchingContext)) -> {
                 java.io.File("/home/bobko/log").appendText("""
                     ACTUAL_WITHOUT_EXPECT
                         actual: ${symbol.moduleData}
@@ -219,6 +259,13 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             checkOptInAnnotation(declaration, expectedSingleCandidate, context, reporter)
         }
     }
+
+    private val FirBasedSymbol<*>.isExpectOrInsideExpect: Boolean
+        get() = when (this) {
+            is FirRegularClassSymbol -> isExpect
+            is FirCallableSymbol<*> -> isExpect
+            else -> error("These expect/actual shouldn't have been matched by FirExpectActualResolver")
+        }
 
     private fun reportClassScopesIncompatibility(
         symbol: FirBasedSymbol<out FirDeclaration>,

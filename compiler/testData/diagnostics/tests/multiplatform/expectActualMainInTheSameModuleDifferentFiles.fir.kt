@@ -10,4 +10,4 @@ actual fun <!ACTUAL_WITHOUT_EXPECT, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>main<!
 expect fun <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>main<!>()
 
 // FILE: jvm2.kt
-actual fun <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>main<!>() {}
+<!AMBIGUOUS_EXPECTS!>actual fun <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>main<!>() {}<!>
