@@ -160,26 +160,30 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
 
-            FirSessionConfigurator(this).apply {
-                val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {}
-                val scriptDefinition = module.file.findScriptDefinition()
-                    ?: errorWithAttachment("Cannot load script definition") {
-                        withVirtualFileEntry("file", module.file.virtualFile)
-                    }
-
-                val extensionRegistrar = FirScriptingCompilerExtensionIdeRegistrar(
-                    project,
-                    hostConfiguration,
-                    scriptDefinitionSources = emptyList(),
-                    scriptDefinitions = listOf(scriptDefinition)
-                )
-
-                registerExtensions(extensionRegistrar.configure())
-                registerExtensions(FirScriptingSamWithReceiverExtensionRegistrar().configure())
-            }.configure()
+            registerScriptExtensions(this, module.file)
 
             LLFirSessionConfigurator.configure(this)
         }
+    }
+
+    private fun registerScriptExtensions(session: LLFirSession, file: KtFile) {
+        FirSessionConfigurator(session).apply {
+            val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {}
+            val scriptDefinition = file.findScriptDefinition()
+                ?: errorWithAttachment("Cannot load script definition") {
+                    withVirtualFileEntry("file", file.virtualFile)
+                }
+
+            val extensionRegistrar = FirScriptingCompilerExtensionIdeRegistrar(
+                project,
+                hostConfiguration,
+                scriptDefinitionSources = emptyList(),
+                scriptDefinitions = listOf(scriptDefinition)
+            )
+
+            registerExtensions(extensionRegistrar.configure())
+            registerExtensions(FirScriptingSamWithReceiverExtensionRegistrar().configure())
+        }.configure()
     }
 
     fun createNotUnderContentRootResolvableSession(module: KtNotUnderContentRootModule): LLFirNotUnderContentRootResolvableModuleSession {
@@ -531,6 +535,10 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             val switchableExtensionDeclarationsSymbolProvider = FirSwitchableExtensionDeclarationsSymbolProvider
                 .createIfNeeded(this)
                 ?.also { register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it) }
+
+            if (contextModule is KtScriptModule) {
+                registerScriptExtensions(this, contextModule.file)
+            }
 
             val context = DanglingFileSessionCreationContext(
                 moduleData,
