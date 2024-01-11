@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.bir.declarations.lazy.*
 import org.jetbrains.kotlin.bir.expressions.*
 import org.jetbrains.kotlin.bir.expressions.impl.*
 import org.jetbrains.kotlin.bir.types.BirUninitializedType
+import org.jetbrains.kotlin.bir.CompressedSourceSpan.Companion.CompressedSourceSpan
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -26,8 +27,9 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class Ir2BirConverter(
     dynamicPropertyManager: BirElementDynamicPropertyManager,
+    compressedSourceSpanManager: CompressedSourceSpanManager,
     expectedTreeSize: Int = 0,
-) : Ir2BirConverterBase() {
+) : Ir2BirConverterBase(compressedSourceSpanManager) {
     private val modules = createElementMap<BirModuleFragment, IrModuleFragment>(1)
     private val classes = createElementMap<BirClass, IrClass>((expectedTreeSize * 0.004).toInt())
     private val scripts = createElementMap<BirScript, IrScript>()
@@ -127,7 +129,7 @@ class Ir2BirConverter(
 
     private fun copyValueParameter(old: IrValueParameter): BirValueParameter = copyReferencedElement(old, valueParameters, {
         BirValueParameterImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             origin = old.origin,
             name = old.name,
             type = BirUninitializedType,
@@ -150,7 +152,7 @@ class Ir2BirConverter(
 
     private fun copyClass(old: IrClass): BirClass = copyReferencedElement(old, classes, {
         BirClassImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             origin = old.origin,
             visibility = old.visibility,
             name = old.name,
@@ -183,7 +185,7 @@ class Ir2BirConverter(
 
     private fun copyAnonymousInitializer(old: IrAnonymousInitializer): BirAnonymousInitializer = copyNotReferencedElement(old) {
         val new = BirAnonymousInitializerImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             origin = old.origin,
             isStatic = old.isStatic,
             body = copyElement(old.body),
@@ -196,7 +198,7 @@ class Ir2BirConverter(
 
     private fun copyTypeParameter(old: IrTypeParameter): BirTypeParameter = copyReferencedElement(old, typeParameters, {
         BirTypeParameterImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             origin = old.origin,
             name = old.name,
             variance = old.variance,
@@ -213,7 +215,7 @@ class Ir2BirConverter(
 
     private fun copyConstructor(old: IrConstructor): BirConstructor = copyReferencedElement(old, constructors, {
         BirConstructorImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             origin = old.origin,
             visibility = old.visibility,
             name = old.name,
@@ -241,7 +243,7 @@ class Ir2BirConverter(
 
     private fun copyEnumEntry(old: IrEnumEntry): BirEnumEntry = copyReferencedElement(old, enumEntries, {
         BirEnumEntryImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             origin = old.origin,
             name = old.name,
             initializerExpression = null,
@@ -257,7 +259,7 @@ class Ir2BirConverter(
 
     private fun copyErrorDeclaration(old: IrErrorDeclaration): BirErrorDeclaration = copyNotReferencedElement(old) {
         val new = BirErrorDeclarationImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             origin = old.origin,
             signature = old.symbol.signature,
         )
@@ -268,7 +270,7 @@ class Ir2BirConverter(
 
     private fun copyField(old: IrField): BirField = copyReferencedElement(old, fields, {
         BirFieldImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             origin = old.origin,
             visibility = old.visibility,
             name = old.name,
@@ -291,7 +293,7 @@ class Ir2BirConverter(
     private fun copyLocalDelegatedProperty(old: IrLocalDelegatedProperty): BirLocalDelegatedProperty =
         copyReferencedElement(old, localDelegatedProperties, {
             BirLocalDelegatedPropertyImpl(
-                sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+                sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
                 origin = old.origin,
                 name = old.name,
                 type = BirUninitializedType,
@@ -310,7 +312,7 @@ class Ir2BirConverter(
 
     private fun copyModuleFragment(old: IrModuleFragment): BirModuleFragment = copyReferencedElement(old, modules, {
         BirModuleFragmentImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             descriptor = old.descriptor,
             name = old.name,
         )
@@ -321,7 +323,7 @@ class Ir2BirConverter(
 
     private fun copyProperty(old: IrProperty): BirProperty = copyReferencedElement(old, properties, {
         BirPropertyImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             origin = old.origin,
             name = old.name,
             isExternal = old.isExternal,
@@ -351,7 +353,7 @@ class Ir2BirConverter(
 
     private fun copyScript(old: IrScript): BirScript = copyReferencedElement(old, scripts, {
         BirScriptImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             origin = old.origin,
             name = old.name,
             thisReceiver = null,
@@ -380,7 +382,7 @@ class Ir2BirConverter(
 
     private fun copySimpleFunction(old: IrSimpleFunction): BirSimpleFunction = copyReferencedElement(old, functions, {
         BirSimpleFunctionImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             origin = old.origin,
             visibility = old.visibility,
             name = old.name,
@@ -418,7 +420,7 @@ class Ir2BirConverter(
 
     private fun copyTypeAlias(old: IrTypeAlias): BirTypeAlias = copyReferencedElement(old, typeAliases, {
         BirTypeAliasImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             origin = old.origin,
             name = old.name,
             visibility = old.visibility,
@@ -435,7 +437,7 @@ class Ir2BirConverter(
 
     private fun copyVariable(old: IrVariable): BirVariable = copyReferencedElement(old, variables, {
         BirVariableImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             origin = old.origin,
             name = old.name,
             type = BirUninitializedType,
@@ -456,7 +458,7 @@ class Ir2BirConverter(
     private fun copyExternalPackageFragment(old: IrExternalPackageFragment): BirExternalPackageFragment =
         copyReferencedElement(old, externalPackageFragments, {
             BirExternalPackageFragmentImpl(
-                sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+                sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
                 packageFqName = old.packageFqName,
                 containerSource = if (old.symbol is DescriptorlessExternalPackageFragmentSymbol) null else old.containerSource,
                 signature = if (old.symbol is DescriptorlessExternalPackageFragmentSymbol) null else old.symbol.signature,
@@ -468,7 +470,7 @@ class Ir2BirConverter(
 
     private fun copyFile(old: IrFile): BirFile = copyReferencedElement(old, files, {
         BirFileImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             packageFqName = old.packageFqName,
             fileEntry = old.fileEntry,
             signature = old.symbol.signature,
@@ -481,7 +483,7 @@ class Ir2BirConverter(
 
     private fun copyExpressionBody(old: IrExpressionBody): BirExpressionBody = copyNotReferencedElement(old) {
         val new = BirExpressionBodyImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             expression = copyElement(old.expression),
         )
         new.copyDynamicProperties(old)
@@ -490,7 +492,7 @@ class Ir2BirConverter(
 
     private fun copyBlockBody(old: IrBlockBody): BirBlockBody = copyNotReferencedElement(old) {
         val new = BirBlockBodyImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
         )
         new.statements.copyElements(old.statements)
         new.copyDynamicProperties(old)
@@ -499,7 +501,7 @@ class Ir2BirConverter(
 
     private fun copyConstructorCall(old: IrConstructorCall): BirConstructorCall = copyNotReferencedElement(old) {
         val new = BirConstructorCallImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             symbol = remapSymbol(old.symbol),
             dispatchReceiver = old.dispatchReceiver?.let { copyElement(it) },
@@ -518,7 +520,7 @@ class Ir2BirConverter(
 
     private fun copyGetObjectValue(old: IrGetObjectValue): BirGetObjectValue = copyNotReferencedElement(old) {
         val new = BirGetObjectValueImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             symbol = remapSymbol(old.symbol),
         )
@@ -529,7 +531,7 @@ class Ir2BirConverter(
 
     private fun copyGetEnumValue(old: IrGetEnumValue): BirGetEnumValue = copyNotReferencedElement(old) {
         val new = BirGetEnumValueImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             symbol = remapSymbol(old.symbol),
         )
@@ -540,7 +542,7 @@ class Ir2BirConverter(
 
     private fun copyRawFunctionReference(old: IrRawFunctionReference): BirRawFunctionReference = copyNotReferencedElement(old) {
         val new = BirRawFunctionReferenceImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             symbol = remapSymbol(old.symbol),
         )
@@ -551,7 +553,7 @@ class Ir2BirConverter(
 
     private fun copyBlock(old: IrBlock): BirBlock = copyNotReferencedElement(old) {
         val new = BirBlockImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             origin = old.origin,
         )
@@ -563,7 +565,7 @@ class Ir2BirConverter(
 
     private fun copyComposite(old: IrComposite): BirComposite = copyNotReferencedElement(old) {
         val new = BirCompositeImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             origin = old.origin,
         )
@@ -575,7 +577,7 @@ class Ir2BirConverter(
 
     private fun copyReturnableBlock(old: IrReturnableBlock): BirReturnableBlock = copyReferencedElement(old, returnableBlocks, {
         BirReturnableBlockImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             origin = old.origin,
             signature = old.symbol.signature,
@@ -588,7 +590,7 @@ class Ir2BirConverter(
 
     private fun copyInlinedFunctionBlock(old: IrInlinedFunctionBlock): BirInlinedFunctionBlock = copyNotReferencedElement(old) {
         val new = BirInlinedFunctionBlockImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             origin = old.origin,
             inlineCall = remapElement(old.inlineCall),
@@ -602,7 +604,7 @@ class Ir2BirConverter(
 
     private fun copySyntheticBody(old: IrSyntheticBody): BirSyntheticBody = copyNotReferencedElement(old) {
         val new = BirSyntheticBodyImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             kind = old.kind,
         )
         new.copyDynamicProperties(old)
@@ -611,7 +613,7 @@ class Ir2BirConverter(
 
     private fun copyBreak(old: IrBreak): BirBreak = copyNotReferencedElement(old) {
         val new = BirBreakImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             loop = remapElement(old.loop),
             label = old.label,
@@ -623,7 +625,7 @@ class Ir2BirConverter(
 
     private fun copyContinue(old: IrContinue): BirContinue = copyNotReferencedElement(old) {
         val new = BirContinueImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             loop = remapElement(old.loop),
             label = old.label,
@@ -635,7 +637,7 @@ class Ir2BirConverter(
 
     private fun copyCall(old: IrCall): BirCall = copyNotReferencedElement(old) {
         val new = BirCallImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             symbol = remapSymbol(old.symbol),
             dispatchReceiver = old.dispatchReceiver?.let { copyElement(it) },
@@ -653,7 +655,7 @@ class Ir2BirConverter(
 
     private fun copyFunctionReference(old: IrFunctionReference): BirFunctionReference = copyNotReferencedElement(old) {
         val new = BirFunctionReferenceImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             symbol = remapSymbol(old.symbol),
             dispatchReceiver = old.dispatchReceiver?.let { copyElement(it) },
@@ -670,7 +672,7 @@ class Ir2BirConverter(
 
     private fun copyPropertyReference(old: IrPropertyReference): BirPropertyReference = copyNotReferencedElement(old) {
         val new = BirPropertyReferenceImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             symbol = remapSymbol(old.symbol),
             dispatchReceiver = old.dispatchReceiver?.let { copyElement(it) },
@@ -690,7 +692,7 @@ class Ir2BirConverter(
     private fun copyLocalDelegatedPropertyReference(old: IrLocalDelegatedPropertyReference): BirLocalDelegatedPropertyReference =
         copyNotReferencedElement(old) {
             val new = BirLocalDelegatedPropertyReferenceImpl(
-                sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+                sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
                 type = remapType(old.type),
                 symbol = remapSymbol(old.symbol),
                 dispatchReceiver = old.dispatchReceiver?.let { copyElement(it) },
@@ -709,7 +711,7 @@ class Ir2BirConverter(
 
     private fun copyClassReference(old: IrClassReference): BirClassReference = copyNotReferencedElement(old) {
         val new = BirClassReferenceImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             symbol = remapSymbol(old.symbol),
             classType = remapType(old.type),
@@ -721,7 +723,7 @@ class Ir2BirConverter(
 
     private fun <T> copyConst(old: IrConst<T>): BirConst<T> = copyNotReferencedElement(old) {
         val new = BirConstImpl<T>(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             kind = old.kind,
             value = old.value,
@@ -733,7 +735,7 @@ class Ir2BirConverter(
 
     private fun copyConstantPrimitive(old: IrConstantPrimitive): BirConstantPrimitive = copyNotReferencedElement(old) {
         val new = BirConstantPrimitiveImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             value = copyElement(old.value),
         )
@@ -744,7 +746,7 @@ class Ir2BirConverter(
 
     private fun copyConstantObject(old: IrConstantObject): BirConstantObject = copyNotReferencedElement(old) {
         val new = BirConstantObjectImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             constructor = remapSymbol(old.constructor),
             typeArguments = old.typeArguments.memoryOptimizedMap { remapType(it) },
@@ -757,7 +759,7 @@ class Ir2BirConverter(
 
     private fun copyConstantArray(old: IrConstantArray): BirConstantArray = copyNotReferencedElement(old) {
         val new = BirConstantArrayImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
         )
         new.copyAttributes(old)
@@ -769,7 +771,7 @@ class Ir2BirConverter(
     private fun copyDelegatingConstructorCall(old: IrDelegatingConstructorCall): BirDelegatingConstructorCall =
         copyNotReferencedElement(old) {
             val new = BirDelegatingConstructorCallImpl(
-                sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+                sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
                 type = remapType(old.type),
                 symbol = remapSymbol(old.symbol),
                 dispatchReceiver = old.dispatchReceiver?.let { copyElement(it) },
@@ -787,7 +789,7 @@ class Ir2BirConverter(
     private fun copyDynamicOperatorExpression(old: IrDynamicOperatorExpression): BirDynamicOperatorExpression =
         copyNotReferencedElement(old) {
             val new = BirDynamicOperatorExpressionImpl(
-                sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+                sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
                 type = remapType(old.type),
                 operator = old.operator,
                 receiver = copyElement(old.receiver),
@@ -800,7 +802,7 @@ class Ir2BirConverter(
 
     private fun copyDynamicMemberExpression(old: IrDynamicMemberExpression): BirDynamicMemberExpression = copyNotReferencedElement(old) {
         val new = BirDynamicMemberExpressionImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             memberName = old.memberName,
             receiver = copyElement(old.receiver),
@@ -812,7 +814,7 @@ class Ir2BirConverter(
 
     private fun copyEnumConstructorCall(old: IrEnumConstructorCall): BirEnumConstructorCall = copyNotReferencedElement(old) {
         val new = BirEnumConstructorCallImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             symbol = remapSymbol(old.symbol),
             dispatchReceiver = old.dispatchReceiver?.let { copyElement(it) },
@@ -829,7 +831,7 @@ class Ir2BirConverter(
 
     private fun copyErrorCallExpression(old: IrErrorCallExpression): BirErrorCallExpression = copyNotReferencedElement(old) {
         val new = BirErrorCallExpressionImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             description = old.description,
             explicitReceiver = old.explicitReceiver?.let { copyElement(it) },
@@ -842,7 +844,7 @@ class Ir2BirConverter(
 
     private fun copyGetField(old: IrGetField): BirGetField = copyNotReferencedElement(old) {
         val new = BirGetFieldImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             symbol = remapSymbol(old.symbol),
             superQualifierSymbol = old.superQualifierSymbol?.let { remapSymbol(it) },
@@ -856,7 +858,7 @@ class Ir2BirConverter(
 
     private fun copySetField(old: IrSetField): BirSetField = copyNotReferencedElement(old) {
         val new = BirSetFieldImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             symbol = remapSymbol(old.symbol),
             superQualifierSymbol = old.superQualifierSymbol?.let { remapSymbol(it) },
@@ -871,7 +873,7 @@ class Ir2BirConverter(
 
     private fun copyFunctionExpression(old: IrFunctionExpression): BirFunctionExpression = copyNotReferencedElement(old) {
         val new = BirFunctionExpressionImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             origin = old.origin,
             function = copyElement(old.function),
@@ -883,7 +885,7 @@ class Ir2BirConverter(
 
     private fun copyGetClass(old: IrGetClass): BirGetClass = copyNotReferencedElement(old) {
         val new = BirGetClassImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             argument = copyElement(old.argument),
         )
@@ -894,7 +896,7 @@ class Ir2BirConverter(
 
     private fun copyInstanceInitializerCall(old: IrInstanceInitializerCall): BirInstanceInitializerCall = copyNotReferencedElement(old) {
         val new = BirInstanceInitializerCallImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             classSymbol = remapSymbol(old.classSymbol),
         )
@@ -905,7 +907,7 @@ class Ir2BirConverter(
 
     private fun copyWhileLoop(old: IrWhileLoop): BirWhileLoop = copyReferencedElement(old, loops, {
         BirWhileLoopImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             origin = old.origin,
             body = null,
@@ -922,7 +924,7 @@ class Ir2BirConverter(
 
     private fun copyDoWhileLoop(old: IrDoWhileLoop): BirDoWhileLoop = copyReferencedElement(old, loops, {
         BirDoWhileLoopImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             origin = old.origin,
             body = null,
@@ -937,7 +939,7 @@ class Ir2BirConverter(
 
     private fun copyReturn(old: IrReturn): BirReturn = copyNotReferencedElement(old) {
         val new = BirReturnImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             value = copyElement(old.value),
             returnTargetSymbol = remapSymbol(old.returnTargetSymbol),
@@ -949,7 +951,7 @@ class Ir2BirConverter(
 
     private fun copyStringConcatenation(old: IrStringConcatenation): BirStringConcatenation = copyNotReferencedElement(old) {
         val new = BirStringConcatenationImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
         )
         new.copyAttributes(old)
@@ -960,7 +962,7 @@ class Ir2BirConverter(
 
     private fun copySuspensionPoint(old: IrSuspensionPoint): BirSuspensionPoint = copyNotReferencedElement(old) {
         val new = BirSuspensionPointImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             suspensionPointIdParameter = copyElement(old.suspensionPointIdParameter),
             result = copyElement(old.result),
@@ -973,7 +975,7 @@ class Ir2BirConverter(
 
     private fun copySuspendableExpression(old: IrSuspendableExpression): BirSuspendableExpression = copyNotReferencedElement(old) {
         val new = BirSuspendableExpressionImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             suspensionPointId = copyElement(old.suspensionPointId),
             result = copyElement(old.result),
@@ -985,7 +987,7 @@ class Ir2BirConverter(
 
     private fun copyThrow(old: IrThrow): BirThrow = copyNotReferencedElement(old) {
         val new = BirThrowImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             value = copyElement(old.value),
         )
@@ -996,7 +998,7 @@ class Ir2BirConverter(
 
     private fun copyTry(old: IrTry): BirTry = copyNotReferencedElement(old) {
         val new = BirTryImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             tryResult = copyElement(old.tryResult),
             finallyExpression = old.finallyExpression?.let { copyElement(it) },
@@ -1009,7 +1011,7 @@ class Ir2BirConverter(
 
     private fun copyCatch(old: IrCatch): BirCatch = copyNotReferencedElement(old) {
         val new = BirCatchImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             catchParameter = copyElement(old.catchParameter),
             result = copyElement(old.result),
         )
@@ -1019,7 +1021,7 @@ class Ir2BirConverter(
 
     private fun copyTypeOperatorCall(old: IrTypeOperatorCall): BirTypeOperatorCall = copyNotReferencedElement(old) {
         val new = BirTypeOperatorCallImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             operator = old.operator,
             argument = copyElement(old.argument),
@@ -1032,7 +1034,7 @@ class Ir2BirConverter(
 
     private fun copyGetValue(old: IrGetValue): BirGetValue = copyNotReferencedElement(old) {
         val new = BirGetValueImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             symbol = remapSymbol(old.symbol),
             origin = old.origin,
@@ -1044,7 +1046,7 @@ class Ir2BirConverter(
 
     private fun copySetValue(old: IrSetValue): BirSetValue = copyNotReferencedElement(old) {
         val new = BirSetValueImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             symbol = remapSymbol(old.symbol),
             origin = old.origin,
@@ -1057,7 +1059,7 @@ class Ir2BirConverter(
 
     private fun copyVararg(old: IrVararg): BirVararg = copyNotReferencedElement(old) {
         val new = BirVarargImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             varargElementType = remapType(old.varargElementType),
         )
@@ -1069,7 +1071,7 @@ class Ir2BirConverter(
 
     private fun copySpreadElement(old: IrSpreadElement): BirSpreadElement = copyNotReferencedElement(old) {
         val new = BirSpreadElementImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             expression = copyElement(old.expression),
         )
         new.copyDynamicProperties(old)
@@ -1078,7 +1080,7 @@ class Ir2BirConverter(
 
     private fun copyWhen(old: IrWhen): BirWhen = copyNotReferencedElement(old) {
         val new = BirWhenImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             origin = old.origin,
         )
@@ -1090,7 +1092,7 @@ class Ir2BirConverter(
 
     private fun copyBranch(old: IrBranch): BirBranch = copyNotReferencedElement(old) {
         val new = BirBranchImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             condition = copyElement(old.condition),
             result = copyElement(old.result),
         )
@@ -1100,7 +1102,7 @@ class Ir2BirConverter(
 
     private fun copyElseBranch(old: IrElseBranch): BirElseBranch = copyNotReferencedElement(old) {
         val new = BirElseBranchImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             condition = copyElement(old.condition),
             result = copyElement(old.result),
         )
@@ -1110,7 +1112,7 @@ class Ir2BirConverter(
 
     private fun copyErrorExpression(old: IrErrorExpression): BirErrorExpression = copyNotReferencedElement(old) {
         val new = BirErrorExpressionImpl(
-            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            sourceSpan = CompressedSourceSpan(old.startOffset, old.endOffset),
             type = remapType(old.type),
             description = old.description,
         )

@@ -8,15 +8,15 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.expressions.BirSyntheticBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 
 class BirSyntheticBodyImpl(
-    sourceSpan: SourceSpan,
+    sourceSpan: CompressedSourceSpan,
     kind: IrSyntheticBodyKind,
 ) : BirSyntheticBody(BirSyntheticBody) {
-    private var _sourceSpan: SourceSpan = sourceSpan
+    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -25,7 +25,7 @@ class BirSyntheticBodyImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: SourceSpan
+    override var sourceSpan: CompressedSourceSpan
         get() {
             recordPropertyRead(2)
             return _sourceSpan

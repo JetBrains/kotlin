@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.bir.backend.builders
 
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.backend.BirBackendContext
 import org.jetbrains.kotlin.bir.declarations.BirVariable
 import org.jetbrains.kotlin.bir.declarations.impl.BirVariableImpl
@@ -27,7 +27,7 @@ inline fun birTemporaryVariable(
     nameHint: String? = null,
     addIndexToName: Boolean = true,
     origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-    sourceSpan: SourceSpan = this@BirStatementBuilderScope.sourceSpan,
+    sourceSpan: CompressedSourceSpan = this@BirStatementBuilderScope.sourceSpan,
     block: BirVariable.() -> Unit = {},
 ): BirVariable {
     val name = Name.identifier(getNameForTemporary(nameHint, addIndexToName))
@@ -45,7 +45,7 @@ inline fun birTemporaryVariable(
     origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
     nameHint: String? = null,
     addIndexToName: Boolean = true,
-    sourceSpan: SourceSpan = initializer.sourceSpan,
+    sourceSpan: CompressedSourceSpan = initializer.sourceSpan,
     block: BirVariable.() -> Unit = {},
 ): BirVariable {
     return birTemporaryVariable(type, isMutable, nameHint, addIndexToName, origin, sourceSpan) {

@@ -235,12 +235,13 @@ class BirCompilation() {
         SimpleNamedCompilerPhase<JvmBackendContext, IrModuleFragment, BirCompilationBundle>(name, description) {
         override fun phaseBody(context: JvmBackendContext, input: IrModuleFragment): BirCompilationBundle {
             val dynamicPropertyManager = BirElementDynamicPropertyManager()
+            val compressedSourceSpanManager = CompressedSourceSpanManager()
 
             val externalModulesBir = BirDatabase()
             val compiledBir = BirDatabase()
 
             val mappedIr2BirElements = IdentityHashMap<BirElement, IrElement>()
-            val ir2BirConverter = Ir2BirConverter(dynamicPropertyManager)
+            val ir2BirConverter = Ir2BirConverter(dynamicPropertyManager, compressedSourceSpanManager)
             ir2BirConverter.convertAncestorsForOrphanedElements = true
             ir2BirConverter.appendElementAsDatabaseRoot = { old, new ->
                 mappedIr2BirElements[new] = old
@@ -261,6 +262,7 @@ class BirCompilation() {
                     externalModulesBir,
                     ir2BirConverter,
                     dynamicPropertyManager,
+                    compressedSourceSpanManager,
                     allBirPhases.map { it.first },
                 )
 
@@ -350,6 +352,7 @@ class BirCompilation() {
             val compiledBir = input.birModule!!.getContainingDatabase()!!
             val bir2IrConverter = Bir2IrConverter(
                 dynamicPropertyManager,
+                input.backendContext!!.compressedSourceSpanManager,
                 input.mappedIr2BirElements,
                 context.irBuiltIns,
                 compiledBir,

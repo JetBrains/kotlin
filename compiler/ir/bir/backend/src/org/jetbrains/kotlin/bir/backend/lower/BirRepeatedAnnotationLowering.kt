@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.bir.backend.lower
 
 import org.jetbrains.kotlin.bir.BirElementDynamicPropertyKey
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.builders.*
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext

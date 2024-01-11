@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 class BirTypeParameterImpl(
-    sourceSpan: SourceSpan,
+    sourceSpan: CompressedSourceSpan,
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
     name: Name,
@@ -30,7 +30,7 @@ class BirTypeParameterImpl(
     override val owner: BirTypeParameterImpl
         get() = this
 
-    private var _sourceSpan: SourceSpan = sourceSpan
+    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -39,7 +39,7 @@ class BirTypeParameterImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: SourceSpan
+    override var sourceSpan: CompressedSourceSpan
         get() {
             recordPropertyRead(8)
             return _sourceSpan
