@@ -1,4 +1,5 @@
 // WITH_EXTENDED_CHECKERS
+@file:OptIn(ExperimentalSubclassOptIn::class)
 
 package a.b.c
 

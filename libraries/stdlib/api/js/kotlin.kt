@@ -1599,6 +1599,7 @@ public final annotation class ExperimentalStdlibApi : kotlin.Annotation {
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS})
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
 @kotlin.SinceKotlin(version = "1.8")
+@kotlin.RequiresOptIn
 public final annotation class ExperimentalSubclassOptIn : kotlin.Annotation {
     public constructor ExperimentalSubclassOptIn()
 }

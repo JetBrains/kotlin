@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+@file:OptIn(ExperimentalSubclassOptIn::class)
 
 annotation class DummyAnnotation
 

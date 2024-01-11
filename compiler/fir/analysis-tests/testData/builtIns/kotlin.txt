@@ -601,7 +601,7 @@ public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|j
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|) @R|kotlin/SinceKotlin|(version = String(1.8)) public final annotation class ExperimentalSubclassOptIn : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|) @R|kotlin/SinceKotlin|(version = String(1.8)) @R|kotlin/RequiresOptIn|() public final annotation class ExperimentalSubclassOptIn : R|kotlin/Annotation| {
     public constructor(): R|kotlin/ExperimentalSubclassOptIn|
 
 }

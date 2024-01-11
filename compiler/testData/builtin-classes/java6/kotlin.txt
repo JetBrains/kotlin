@@ -362,7 +362,7 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E>, jav
     /*primary*/ public constructor ExperimentalStdlibApi()
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.SinceKotlin(version = "1.8") public final annotation class ExperimentalSubclassOptIn : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.SinceKotlin(version = "1.8") @kotlin.RequiresOptIn public final annotation class ExperimentalSubclassOptIn : kotlin.Annotation {
     /*primary*/ public constructor ExperimentalSubclassOptIn()
 }
 
