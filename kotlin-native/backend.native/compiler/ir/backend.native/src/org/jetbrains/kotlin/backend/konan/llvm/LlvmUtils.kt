@@ -123,11 +123,7 @@ fun extractConstUnsignedInt(value: LLVMValueRef): Long {
 }
 
 internal fun ContextUtils.isObjectRef(value: LLVMValueRef): Boolean {
-    return isObjectType(value.type)
-}
-
-internal fun RuntimeAware.isObjectType(type: LLVMTypeRef): Boolean {
-    return type == kObjHeaderPtr || type == kArrayHeaderPtr
+    return TODO() //isObjectType(value.type)
 }
 
 /**
@@ -184,7 +180,7 @@ private fun CodeGenerator.replaceExternalWeakOrCommonGlobal(name: String, value:
         // When some dynamic caches are used, we consider that stdlib is in the dynamic cache as well.
         // Runtime is linked into stdlib module only, so import runtime global from it.
         val global = importGlobal(name, value.llvmType)
-        val initializerProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType)).toProto(
+        val initializerProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType), false).toProto(
                 name = "",
                 origin = null,
                 LLVMLinkage.LLVMPrivateLinkage
@@ -235,8 +231,8 @@ internal class TLSAddressAccess(private val index: Int) : AddressAccess() {
     }
 }
 
-internal fun ContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef, alignment: Int): AddressAccess {
-    return if (isObjectType(type)) {
+internal fun ContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef, alignment: Int, isObjectType: Boolean): AddressAccess {
+    return if (isObjectType) {
         val index = llvm.tlsCount++
         require(llvm.runtime.pointerAlignment % alignment == 0)
         TLSAddressAccess(index)

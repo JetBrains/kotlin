@@ -1,9 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.KonanFqNames
-import org.jetbrains.kotlin.backend.konan.MemoryModel
-import org.jetbrains.kotlin.backend.konan.RuntimeNames
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.isConstantConstructorIntrinsic
 import org.jetbrains.kotlin.backend.konan.ir.isTypedIntrinsic
 import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
@@ -344,7 +342,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitCmpExchange(callSite: IrCall, args: List<LLVMValueRef>, mode: CmpExchangeMode, resultSlot: LLVMValueRef?): LLVMValueRef {
         require(args.size == 3) { "The call to ${callSite.symbol.owner.name.asString()} expects 3 value arguments." }
-        return if (isObjectRef(args[1])) {
+        return if (callSite.symbol.owner.returnsObjectType()) {
             require(context.memoryModel == MemoryModel.EXPERIMENTAL)
             when (mode) {
                 CmpExchangeMode.SET -> call(llvm.CompareAndSetVolatileHeapRef, args)
@@ -364,7 +362,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitAtomicRMW(callSite: IrCall, args: List<LLVMValueRef>, op: LLVMAtomicRMWBinOp, resultSlot: LLVMValueRef?): LLVMValueRef {
         require(args.size == 2) { "The call to ${callSite.symbol.owner.name.asString()} expects 2 value arguments." }
-        return if (isObjectRef(args[1])) {
+        return if (callSite.symbol.owner.returnsObjectType()) {
             require(op == LLVMAtomicRMWBinOp.LLVMAtomicRMWBinOpXchg)
             require(context.memoryModel == MemoryModel.EXPERIMENTAL)
             call(llvm.GetAndSetVolatileHeapRef, args,
@@ -415,14 +413,14 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitAtomicSetArrayElement(callSite: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
         require(args.size == 3) { "The call to ${callSite.symbol.owner.name.asString()} expects 3 value arguments." }
         val address = arrayGetElementAddress(callSite, args[0], args[1])
-        storeAny(args[2], address, onStack = false, isVolatile = true)
+        storeAny(args[2], address, isObjectRef = LLVMTypeOf(args[2]) == llvm.int8PtrType, onStack = false, isVolatile = true)
         return theUnitInstanceRef.llvm
     }
 
     private fun FunctionGenerationContext.emitAtomicGetArrayElement(callSite: IrCall, args: List<LLVMValueRef>, resultSlot: LLVMValueRef?): LLVMValueRef {
         require(args.size == 2) { "The call to ${callSite.symbol.owner.name.asString()} expects 2 value arguments." }
         val address = arrayGetElementAddress(callSite, args[0], args[1])
-        return loadSlot(callSite.llvmReturnType, address, isVar = true, resultSlot, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent)
+        return loadSlot(callSite.llvmReturnType, callSite.symbol.owner.returnType.binaryTypeIsReference(), address, isVar = true, resultSlot, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent)
     }
 
     private fun FunctionGenerationContext.transformArgsForAtomicArray(callSite: IrCall, args: List<LLVMValueRef>): List<LLVMValueRef> {
@@ -583,7 +581,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val superClass = args[1]
 
         val structType = llvm.structType(llvm.int8PtrType, llvm.int8PtrType)
-        val ptr = alloca(structType)
+        val ptr = alloca(structType, false)
         store(receiver, structGep(structType, ptr, 0, ""))
         store(superClass, structGep(structType, ptr, 1, ""))
         return bitcast(llvm.int8PtrType, ptr)

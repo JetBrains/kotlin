@@ -405,7 +405,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             val name = "kvar:" + qualifyInternalName(declaration)
             val alignmnet = declaration.requiredAlignment(llvm)
             val storage = if (declaration.storageKind(context) == FieldStorageKind.THREAD_LOCAL) {
-                addKotlinThreadLocal(name, declaration.type.toLLVMType(llvm), alignmnet)
+                addKotlinThreadLocal(name, declaration.type.toLLVMType(llvm), alignmnet, declaration.type.binaryTypeIsReference())
             } else {
                 addKotlinGlobal(name, declaration.type.toLLVMType(llvm), alignmnet, isExported = false)
             }

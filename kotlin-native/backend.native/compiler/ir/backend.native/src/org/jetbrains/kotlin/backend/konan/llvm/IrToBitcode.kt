@@ -393,7 +393,7 @@ internal class CodeGeneratorVisitor(
     private fun FunctionGenerationContext.initThreadLocalField(irField: IrField) {
         val initializer = irField.initializer ?: return
         val address = staticFieldPtr(irField, this)
-        storeAny(evaluateExpression(initializer.expression), address, false)
+        storeAny(evaluateExpression(initializer.expression), address, irField.type.binaryTypeIsReference(), false)
     }
 
     private fun FunctionGenerationContext.initGlobalField(irField: IrField) {
@@ -410,7 +410,7 @@ internal class CodeGeneratorVisitor(
             call(llvm.initAndRegisterGlobalFunction, listOf(address, initialValue
                     ?: kNullObjHeaderPtr))
         } else if (initialValue != null) {
-            storeAny(initialValue, address, false)
+            storeAny(initialValue, address, irField.type.binaryTypeIsReference(), false)
         }
     }
 
@@ -493,10 +493,10 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
-    val ctorFunctionSignature = LlvmFunctionSignature(LlvmRetType(llvm.voidType))
-    val kNodeInitType = LLVMGetTypeByName(llvm.module, "struct.InitNode")!!
-    val kMemoryStateType = LLVMGetTypeByName(llvm.module, "struct.MemoryState")!!
-    val kInitFuncType = LlvmFunctionSignature(LlvmRetType(llvm.voidType), listOf(LlvmParamType(llvm.int32Type), LlvmParamType(pointerType(kMemoryStateType))))
+    val ctorFunctionSignature = LlvmFunctionSignature(LlvmRetType(llvm.voidType), false)
+    val kNodeInitType = llvm.runtime.getStructType("InitNode")
+    val kMemoryStateType = llvm.runtime.getStructType("MemoryState")
+    val kInitFuncType = LlvmFunctionSignature(LlvmRetType(llvm.voidType), false, listOf(LlvmParamType(llvm.int32Type), LlvmParamType(pointerType(kMemoryStateType))))
 
     //-------------------------------------------------------------------------//
 
@@ -815,7 +815,7 @@ internal class CodeGeneratorVisitor(
     private fun getThreadLocalInitStateFor(container: IrDeclarationContainer): AddressAccess =
             llvm.initializersGenerationState.fileThreadLocalInitStates.getOrPut(container) {
                 codegen.addKotlinThreadLocal("state_thread_local$${container.initVariableSuffix}", llvm.int32Type,
-                        LLVMPreferredAlignmentOfType(llvm.runtime.targetData, llvm.int32Type)).also {
+                        LLVMPreferredAlignmentOfType(llvm.runtime.targetData, llvm.int32Type), false).also {
                     LLVMSetInitializer((it as GlobalAddressAccess).getAddress(null), llvm.int32(FILE_NOT_INITIALIZED))
                 }
             }
@@ -1770,6 +1770,7 @@ internal class CodeGeneratorVisitor(
         }
         return functionGenerationContext.loadSlot(
                 value.type.toLLVMType(llvm),
+                value.type.binaryTypeIsReference(),
                 fieldAddress,
                 !value.symbol.owner.isFinal,
                 resultSlot,
@@ -1786,9 +1787,7 @@ internal class CodeGeneratorVisitor(
     }
 
     private fun needLifetimeConstraintsCheck(valueToAssign: LLVMValueRef, irClass: IrClass): Boolean {
-        // TODO: Likely, we don't need isFrozen check here at all.
-        return context.config.memoryModel != MemoryModel.EXPERIMENTAL
-                && functionGenerationContext.isObjectType(valueToAssign.type) && !irClass.isFrozen(context)
+        return false // Never true for MemoryModel.EXPERIMENTAL
     }
 
     private fun isZeroConstValue(value: IrExpression): Boolean {
@@ -1848,7 +1847,7 @@ internal class CodeGeneratorVisitor(
             alignment = generationState.llvmDeclarations.forStaticField(value.symbol.owner).alignment
         }
         functionGenerationContext.storeAny(
-                valueToAssign, address, false,
+                valueToAssign, address, value.symbol.owner.type.binaryTypeIsReference(), false,
                 isVolatile = value.symbol.owner.hasAnnotation(KonanFqNames.volatile),
                 alignment = alignment,
         )
@@ -2593,7 +2592,7 @@ internal class CodeGeneratorVisitor(
         val protocolGetterName = annotation.getAnnotationStringValue("protocolGetter")
         val protocolGetterProto = LlvmFunctionProto(
                 protocolGetterName,
-                LlvmFunctionSignature(LlvmRetType(llvm.int8PtrType)),
+                LlvmFunctionSignature(LlvmRetType(llvm.int8PtrType), false),
                 origin = FunctionOrigin.OwnedBy(irClass),
                 linkage = LLVMLinkage.LLVMExternalLinkage,
                 independent = true // Protocol is header-only declaration.
