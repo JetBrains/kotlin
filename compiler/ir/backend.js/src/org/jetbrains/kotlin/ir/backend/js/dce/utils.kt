@@ -25,7 +25,7 @@ private fun IrDeclaration.fallbackFqName(): String {
         true -> this.valueParameters.joinToString(prefix = "(", postfix = ")") { it.type.dumpKotlinLike() }
         else -> ""
     }
-    return (fqn + signature)
+    return fqn + signature
 }
 
 private fun IrDeclaration.getNameByGetter(getter: (IrDeclaration) -> String?): String {
