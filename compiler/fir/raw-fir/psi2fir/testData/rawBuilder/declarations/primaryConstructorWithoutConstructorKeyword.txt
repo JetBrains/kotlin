@@ -1,0 +1,7 @@
+FILE: primaryConstructorWithoutConstructorKeyword.kt
+    public final? class Foo : R|kotlin/Any| {
+        private [ContainingClassKey=Foo] error_constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

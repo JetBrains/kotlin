@@ -321,6 +321,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noPrimaryConstructor.kt");
         }
 
+        @TestMetadata("primaryConstructorWithoutConstructorKeyword.kt")
+        public void testPrimaryConstructorWithoutConstructorKeyword() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/primaryConstructorWithoutConstructorKeyword.kt");
+        }
+
         @TestMetadata("propertyWithBackingField.kt")
         public void testPropertyWithBackingField() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/propertyWithBackingField.kt");

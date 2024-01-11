@@ -1,0 +1,7 @@
+FILE: primaryConstructorWithoutConstructorKeyword.kt
+    public final? class Foo : R|kotlin/Any| {
+        private error_constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }

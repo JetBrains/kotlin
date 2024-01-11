@@ -370,6 +370,12 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("primaryConstructorWithoutConstructorKeyword.kt")
+        public void testPrimaryConstructorWithoutConstructorKeyword() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/primaryConstructorWithoutConstructorKeyword.kt");
+        }
+
+        @Test
         @TestMetadata("propertyWithBackingField.kt")
         public void testPropertyWithBackingField() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/propertyWithBackingField.kt");
