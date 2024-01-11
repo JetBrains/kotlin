@@ -1,0 +1,52 @@
+open annotation class Ann : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface Base {
+  @Ann
+  abstract fun func()
+
+  @Ann
+  abstract val prop: Int
+    abstract get
+
+  abstract var propWithAccessors: Int
+    @Ann
+    abstract get
+    @Ann
+    abstract set
+
+}
+
+class Delegated : Base {
+  constructor(b: Base) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  private /* final field */ val $$delegate_0: Base = b
+  @Ann
+  override fun func() {
+    <this>.#$$delegate_0.func()
+  }
+
+  override val prop: Int
+    override get(): Int {
+      return <this>.#$$delegate_0.<get-prop>()
+    }
+
+  override var propWithAccessors: Int
+    override get(): Int {
+      return <this>.#$$delegate_0.<get-propWithAccessors>()
+    }
+    override set(<set-?>: Int) {
+      <this>.#$$delegate_0.<set-propWithAccessors>(<set-?> = <set-?>)
+    }
+
+}

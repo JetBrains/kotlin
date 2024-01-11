@@ -53,6 +53,12 @@ public class ClassicNativeIrTextTestGenerated extends AbstractClassicNativeIrTex
         }
 
         @Test
+        @TestMetadata("annotationsOnDelegatedMembers.kt")
+        public void testAnnotationsOnDelegatedMembers() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/annotationsOnDelegatedMembers.kt");
+        }
+
+        @Test
         @TestMetadata("argumentReorderingInDelegatingConstructorCall.kt")
         public void testArgumentReorderingInDelegatingConstructorCall() throws Exception {
             runTest("compiler/testData/ir/irText/classes/argumentReorderingInDelegatingConstructorCall.kt");

@@ -57,6 +57,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/annotationClasses.kt");
         }
 
+        @TestMetadata("annotationsOnDelegatedMembers.kt")
+        public void testAnnotationsOnDelegatedMembers() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/annotationsOnDelegatedMembers.kt");
+        }
+
         @TestMetadata("argumentReorderingInDelegatingConstructorCall.kt")
         public void testArgumentReorderingInDelegatingConstructorCall() throws Exception {
             runTest("compiler/testData/ir/irText/classes/argumentReorderingInDelegatingConstructorCall.kt");
