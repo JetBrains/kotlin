@@ -18,6 +18,21 @@ import kotlin.test.assertTrue
 
 // Compile .def and .kt files in most straightforward way to check the structure of packages created by `cinterop` tool into interop klib.
 // Same test sources are also checked with new native test infra using its package renaming feature.
+
+// This demonstrates the behavior of cinterop tool:
+//   how the packages are arranged in klib in different combinations of compound filenames and package directives.
+// Cinterop tool here is executed directly, not under new test system, which might modify sources before compilation.
+// The most important test is dotFnameRoot.kt, where the order of package parts is counterintuitive:
+//   filename is `root1.root2.def`, and the resulting package is `root2.root1`
+// This test explains the necessity of flipping package parts in new test system, happening in `val KtFile.packageFqNameForKLib`.
+// Without this test it would be unclear, why such odd flipping code is written there.
+// In case code in packageFqNameForKLib would be simpler -> the package directive in tests might be rewritten to pass the test.
+// However, these tests would not work without renaming, for ex, when making the test standalone.
+// CInteropPackagesTest makes sure the package directives are written in the way to work without renaming.
+
+// It could be another less obvious approach: to run same tests under new test system 1) with renaming and 2) without,
+// while CInteropPackagesTest is simple and straightforward, and also allows to validate new test system's package rename approach.
+
 class CInteropPackagesTest : AbstractNativeSimpleTest() {
     @Test
     fun testAllTestSourcesInCinteropPackages() {
