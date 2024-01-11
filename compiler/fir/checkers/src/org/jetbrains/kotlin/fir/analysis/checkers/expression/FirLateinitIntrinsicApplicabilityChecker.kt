@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations
 
@@ -51,7 +50,8 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
         }
 
         // property must be declared in one of the outer lexical scopes
-        if (calleePropertySymbol.containingClassOrFile(context) !in context.containingDeclarations) {
+        val containingSymbol = calleePropertySymbol.containingClassOrFile(context)
+        if (context.containingDeclarations.none { it.symbol == containingSymbol }) {
             reporter.reportOn(
                 source,
                 FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY,
@@ -70,11 +70,10 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
     /**
      * Returns the containing class or file if the property is top-level.
      */
-    @OptIn(SymbolInternals::class)
     private fun FirPropertySymbol.containingClassOrFile(
         context: CheckerContext
-    ): FirDeclaration? {
-        return getContainingClassSymbol(context.session)?.fir
-            ?: context.session.firProvider.getFirCallableContainerFile(this)
+    ): FirBasedSymbol<*>? {
+        return getContainingClassSymbol(context.session)
+            ?: context.session.firProvider.getFirCallableContainerFile(this)?.symbol
     }
 }

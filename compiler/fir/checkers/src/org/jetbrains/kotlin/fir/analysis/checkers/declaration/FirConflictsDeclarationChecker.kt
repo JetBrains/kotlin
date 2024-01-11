@@ -53,7 +53,9 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
 
     private fun getDestructuredParameters(function: FirFunction): List<FirVariable> {
         if (function.valueParameters.none { it.name == SpecialNames.DESTRUCT }) return function.valueParameters
-        val destructuredParametersBoxes = function.valueParameters.filterTo(mutableSetOf()) { it.name == SpecialNames.DESTRUCT }
+        val destructuredParametersBoxes = function.valueParameters
+            .filter { it.name == SpecialNames.DESTRUCT }
+            .mapTo(mutableSetOf()) { it.symbol }
 
         return function.body?.statements.orEmpty().mapNotNullTo(function.valueParameters.toMutableList()) {
             val destructuredParameter = (it as? FirVariable)?.getDestructuredParameter() ?: return@mapNotNullTo null

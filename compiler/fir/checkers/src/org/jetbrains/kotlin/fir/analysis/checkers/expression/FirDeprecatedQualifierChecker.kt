@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDeprecated
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 
 object FirDeprecatedQualifierChecker : FirResolvedQualifierChecker() {
     override fun check(expression: FirResolvedQualifier, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -27,8 +26,7 @@ object FirDeprecatedQualifierChecker : FirResolvedQualifierChecker() {
             // is handled automatically when getting deprecationInfo
             // for the typealias symbol (in FirDeprecationChecker).
             // Below we check "the last transition".
-            @OptIn(SymbolInternals::class)
-            val companionSymbol = expression.symbol?.fullyExpandedClass(context.session)?.fir?.companionObjectSymbol ?: return
+            val companionSymbol = expression.symbol?.fullyExpandedClass(context.session)?.companionObjectSymbol ?: return
             FirDeprecationChecker.reportApiStatusIfNeeded(expression.source, companionSymbol, context, reporter)
         }
     }

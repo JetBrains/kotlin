@@ -85,7 +85,6 @@ fun PropertyInitializationInfoData.checkPropertyAccesses(
     )
 }
 
-@OptIn(SymbolInternals::class)
 private fun PropertyInitializationInfoData.checkPropertyAccesses(
     graph: ControlFlowGraph,
     properties: Set<FirPropertySymbol>,
@@ -116,7 +115,7 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
 
             node is VariableAssignmentNode -> {
                 val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: continue
-                if (!symbol.fir.isVal || node.fir.unwrapLValue()?.hasCorrectReceiver() != true || symbol !in properties) continue
+                if (!symbol.isVal || node.fir.unwrapLValue()?.hasCorrectReceiver() != true || symbol !in properties) continue
 
                 if (getValue(node).values.any { it[symbol]?.canBeRevisited() == true }) {
                     reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)

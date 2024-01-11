@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>(), CallableSymbolMarker {
     abstract val callableId: CallableId
@@ -75,6 +76,10 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
 
     val name: Name
         get() = callableId.callableName
+
+    val containerSource: DeserializedContainerSource?
+        // This is ok, because containerSource should be set during fir creation
+        get() = fir.containerSource
 
     fun getDeprecation(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite? {
         lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)

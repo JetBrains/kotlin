@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -194,19 +193,19 @@ internal fun checkConstantArguments(
 
             val propertySymbol = expressionSymbol as? FirPropertySymbol ?: return ConstantArgumentKind.NOT_CONST
 
-            @OptIn(SymbolInternals::class)
-            val property = propertySymbol.fir
             when {
-                property.unwrapFakeOverrides().symbol.canBeEvaluated() || property.isCompileTimeBuiltinProperty(session) -> {
+                propertySymbol.unwrapFakeOverrides().canBeEvaluated() || propertySymbol.isCompileTimeBuiltinProperty(session) -> {
                     val receiver = listOf(expression.dispatchReceiver, expression.extensionReceiver).single { it != null }!!
                     return checkConstantArguments(receiver, session)
                 }
                 propertySymbol.isLocal -> return ConstantArgumentKind.NOT_CONST
                 expressionType.classId == StandardClassIds.KClass -> return ConstantArgumentKind.NOT_KCLASS_LITERAL
             }
-            return when (property.initializer) {
+            // Ok, because we only look at the structure, not resolution-dependent properties.
+            @OptIn(SymbolInternals::class)
+            return when (propertySymbol.fir.initializer) {
                 is FirConstExpression<*> -> when {
-                    property.isVal -> ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION
+                    propertySymbol.isVal -> ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION
                     else -> ConstantArgumentKind.NOT_CONST
                 }
                 is FirGetClassCall -> ConstantArgumentKind.NOT_KCLASS_LITERAL
@@ -255,7 +254,7 @@ private fun FirFunctionCall.isCompileTimeBuiltinCall(session: FirSession): Boole
     return false
 }
 
-private fun FirProperty.isCompileTimeBuiltinProperty(session: FirSession): Boolean {
+private fun FirPropertySymbol.isCompileTimeBuiltinProperty(session: FirSession): Boolean {
     val receiverType = dispatchReceiverType ?: receiverParameter?.typeRef?.coneTypeSafe<ConeKotlinType>() ?: return false
     val receiverClassId = receiverType.fullyExpandedClassId(session) ?: return false
     return when (name.asString()) {

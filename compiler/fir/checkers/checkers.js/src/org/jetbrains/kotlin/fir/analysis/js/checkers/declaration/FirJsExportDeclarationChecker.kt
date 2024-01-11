@@ -22,8 +22,9 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.isEnumEntries
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
 import org.jetbrains.kotlin.js.common.SPECIAL_KEYWORDS
@@ -73,7 +74,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker() {
                     checkTypeParameter(typeParameter)
                 }
 
-                if (declaration.isInlineWithReified) {
+                if (declaration.symbol.isInlineWithReified) {
                     reportWrongExportedDeclaration("inline function with reified type parameters")
                     return
                 }
@@ -153,13 +154,12 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker() {
             return parent != null && parent.isInterface
         }
 
-    private val FirCallableDeclaration.isInlineWithReified: Boolean
+    private val FirCallableSymbol<*>.isInlineWithReified: Boolean
         get() = when (this) {
-            is FirPropertyAccessor -> {
-                @OptIn(SymbolInternals::class)
-                this.propertySymbol.fir.isInlineWithReified
+            is FirPropertyAccessorSymbol -> {
+                this.propertySymbol.isInlineWithReified
             }
-            else -> typeParameters.any { it.symbol.isReified }
+            else -> typeParameterSymbols.any { it.isReified }
         }
 
     private fun ConeKotlinType.isExportableReturn(session: FirSession, currentlyProcessed: MutableSet<ConeKotlinType> = hashSetOf()) =
@@ -208,8 +208,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker() {
 
         return when {
             isPrimitiveExportableType -> true
-            @OptIn(SymbolInternals::class)
-            symbol?.fir !is FirMemberDeclaration -> false
+            symbol?.isMemberDeclaration != true -> false
             isEnum -> true
             else -> symbol.isEffectivelyExternal(session) || symbol.isExportedObject(session)
         }

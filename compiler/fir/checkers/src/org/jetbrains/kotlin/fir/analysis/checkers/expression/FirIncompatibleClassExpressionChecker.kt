@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -34,8 +33,7 @@ object FirIncompatibleClassExpressionChecker : FirQualifiedAccessExpressionCheck
             }
         }
 
-        @OptIn(SymbolInternals::class)
-        checkSourceElement(symbol.fir.containerSource, expression, context, reporter)
+        checkSourceElement(symbol.containerSource, expression, context, reporter)
     }
 
     internal fun checkType(type: ConeKotlinType?, element: FirElement, context: CheckerContext, reporter: DiagnosticReporter) {

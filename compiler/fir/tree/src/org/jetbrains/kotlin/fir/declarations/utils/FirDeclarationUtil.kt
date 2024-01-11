@@ -50,6 +50,10 @@ val FirDeclaration.isNonLocal
 
 val FirCallableDeclaration.isExtension get() = receiverParameter != null
 
+val FirBasedSymbol<*>.isMemberDeclaration: Boolean
+    // Accessing `fir` is ok, because we don't really use it
+    get() = fir is FirMemberDeclaration
+
 val FirBasedSymbol<*>.memberDeclarationNameOrNull: Name?
     // Accessing `fir` is ok, because `nameOrSpecialName` only accesses names
     get() = (fir as? FirMemberDeclaration)?.nameOrSpecialName

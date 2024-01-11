@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.fir.analysis.wasm.checkers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.FirAbstractWebCheckerUtils
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 object FirWasmWebCheckerUtils : FirAbstractWebCheckerUtils() {
-    @OptIn(SymbolInternals::class)
     override fun isNativeOrExternalInterface(symbol: FirBasedSymbol<*>, session: FirSession): Boolean =
-        symbol.isEffectivelyExternal(session) && (symbol.fir as? FirClass)?.isInterface == true
+        symbol.isEffectivelyExternal(session) && (symbol as? FirClassSymbol<*>)?.isInterface == true
 }

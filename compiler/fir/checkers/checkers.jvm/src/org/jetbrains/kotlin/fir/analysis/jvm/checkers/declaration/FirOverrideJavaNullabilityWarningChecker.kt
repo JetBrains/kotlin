@@ -7,18 +7,17 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirAbstractOverrideChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.firOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -41,22 +40,21 @@ object FirOverrideJavaNullabilityWarningChecker : FirAbstractOverrideChecker() {
                 val enhancedOverrides = scope
                     .getDirectOverriddenFunctions(member.symbol)
                     .map {
-                        @OptIn(SymbolInternals::class)
-                        val substitutedBase = it.fir.substituteOrNull(substitutor, context) ?: return@map it
+                        val substitutedBase = it.substituteOrNull(substitutor, context) ?: return@map it
                         anyBaseEnhanced = true
 
-                        if (!anyReported && !context.session.firOverrideChecker.isOverriddenFunction(member, substitutedBase)) {
+                        if (!anyReported && !context.session.firOverrideChecker.isOverriddenFunction(member.symbol, substitutedBase)) {
                             anyReported = true
                             reporter.reportOn(
                                 member.source,
                                 FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
                                 member.symbol,
-                                substitutedBase.symbol,
+                                substitutedBase,
                                 context
                             )
                         }
 
-                        substitutedBase.symbol
+                        substitutedBase
                     }
 
                 if (anyBaseEnhanced && !anyReported) {
@@ -70,22 +68,21 @@ object FirOverrideJavaNullabilityWarningChecker : FirAbstractOverrideChecker() {
                 val enhancedOverrides = scope
                     .getDirectOverriddenProperties(member.symbol)
                     .map {
-                        @OptIn(SymbolInternals::class)
-                        val substitutedBase = it.fir.substituteOrNull(substitutor, context) ?: return@map it
+                        val substitutedBase = it.substituteOrNull(substitutor, context) ?: return@map it
                         anyBaseEnhanced = true
 
-                        if (!anyReported && !context.session.firOverrideChecker.isOverriddenProperty(member, substitutedBase)) {
+                        if (!anyReported && !context.session.firOverrideChecker.isOverriddenProperty(member.symbol, substitutedBase)) {
                             anyReported = true
                             reporter.reportOn(
                                 member.source,
                                 FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
                                 member.symbol,
-                                substitutedBase.symbol,
+                                substitutedBase,
                                 context
                             )
                         }
 
-                        substitutedBase.symbol
+                        substitutedBase
                     }
 
                 if (anyBaseEnhanced && !anyReported) {
@@ -133,6 +130,15 @@ private fun FirSimpleFunction.substituteOrNull(
     }
 }
 
+private fun FirNamedFunctionSymbol.substituteOrNull(
+    substitutor: EnhancedForWarningConeSubstitutor,
+    context: CheckerContext,
+): FirNamedFunctionSymbol? {
+    // Ok, because `substituteOrNull` calls lazyResolveToPhase
+    @OptIn(SymbolInternals::class)
+    return fir.substituteOrNull(substitutor, context)?.symbol
+}
+
 /**
  * @see org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope.createSubstitutionOverrideProperty
  * @see org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope.createSubstitutedData
@@ -163,4 +169,13 @@ private fun FirProperty.substituteOrNull(
             newReceiverType = newExtensionReceiverType,
         )
     }
+}
+
+private fun FirPropertySymbol.substituteOrNull(
+    substitutor: EnhancedForWarningConeSubstitutor,
+    context: CheckerContext,
+): FirPropertySymbol? {
+    // Ok, because `substituteOrNull` calls `lazyResolveToPhase`
+    @OptIn(SymbolInternals::class)
+    return fir.substituteOrNull(substitutor, context)?.symbol
 }

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
@@ -212,10 +211,7 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
 
     private fun CheckerContext.containerIsNonCompanionObject(outerLevel: Int): Boolean {
         val containingClassSymbol = this.getContainerAt(outerLevel) ?: return false
-
-        @OptIn(SymbolInternals::class)
-        val containingClass = (containingClassSymbol.fir as? FirRegularClass) ?: return false
-
+        val containingClass = (containingClassSymbol as? FirRegularClassSymbol) ?: return false
         return containingClass.classKind == ClassKind.OBJECT && !containingClass.isCompanion
     }
 

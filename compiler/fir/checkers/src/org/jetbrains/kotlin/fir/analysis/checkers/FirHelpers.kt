@@ -345,13 +345,11 @@ fun FirCallableSymbol<*>.getImplementationStatus(
         var hasImplementationVar = false
 
         for (intersection in symbol.intersections) {
-            @OptIn(SymbolInternals::class)
-            val fir = intersection.fir
-            val unwrappedFir = fir.unwrapFakeOverrides()
-            val isVar = unwrappedFir is FirProperty && unwrappedFir.isVar
-            val isFromClass = unwrappedFir.getContainingClassSymbol(sessionHolder.session)?.classKind == ClassKind.CLASS
+            val unwrapped = intersection.unwrapFakeOverrides()
+            val isVar = unwrapped is FirPropertySymbol && unwrapped.isVar
+            val isFromClass = unwrapped.getContainingClassSymbol(sessionHolder.session)?.classKind == ClassKind.CLASS
 
-            if (fir.isAbstract) {
+            if (intersection.isAbstract) {
                 if (isFromClass) {
                     hasAbstractFromClass = true
                 }
@@ -359,7 +357,7 @@ fun FirCallableSymbol<*>.getImplementationStatus(
                     hasAbstractVar = true
                 }
             } else {
-                if (fir.origin == FirDeclarationOrigin.Delegated) {
+                if (intersection.origin == FirDeclarationOrigin.Delegated) {
                     hasInterfaceDelegation = true
                 }
                 if (isFromClass) {
