@@ -27,6 +27,9 @@ public class ConstructorExample {
 
     @NonNull Integer somethingElse;
 
+    // Not required by annotation because static.
+    private static String constant;
+
     static void javaUsage() {
         ConstructorExample generated = ConstructorExample.build("foo", true, 12);
     }

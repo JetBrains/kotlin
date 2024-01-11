@@ -17,6 +17,9 @@ public class ConstructorExample {
     // Not part of constructor because final and initialized.
     @Getter private final String result = "OK";
 
+    // Not part of constructor because static.
+    private static String constant;
+
     static void javaUsage() {
         val generated = new ConstructorExample(12, "sdf", true);
     }
