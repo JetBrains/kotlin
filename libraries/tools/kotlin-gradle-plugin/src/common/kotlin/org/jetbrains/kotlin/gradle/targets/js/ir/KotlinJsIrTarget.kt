@@ -344,7 +344,7 @@ constructor(
         compilations.all {
             it.kotlinOptions.configureCommonJsOptions()
 
-            binaries
+            it.binaries
                 .withType(JsIrBinary::class.java)
                 .all {
                     it.linkTask.configure { linkTask ->
@@ -358,7 +358,7 @@ constructor(
         compilations.all {
             it.kotlinOptions.configureEsModulesOptions()
 
-            binaries
+            it.binaries
                 .withType(JsIrBinary::class.java)
                 .all {
                     it.linkTask.configure { linkTask ->
