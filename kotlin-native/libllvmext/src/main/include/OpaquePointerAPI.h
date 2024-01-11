@@ -18,6 +18,8 @@ Copied from llvm release/14.x.
 
 unsigned LLVMGetProgramAddressSpace(LLVMModuleRef moduleRef);
 
+void LLVMSetOpaquePointers(LLVMContextRef contextRef, int value);
+
 # ifdef __cplusplus
 }
 # endif

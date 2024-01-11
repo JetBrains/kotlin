@@ -11,6 +11,7 @@ import kotlinx.cinterop.memScoped
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
+import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -111,6 +112,7 @@ private fun addDeclarationAttributesAtIndex(context: LLVMContextRef, function: L
  */
 internal open class LlvmFunctionSignature(
         val returnType: LlvmRetType,
+        val returnsObjectType: Boolean,
         val parameterTypes: List<LlvmParamType> = emptyList(),
         val isVararg: Boolean = false,
         val functionAttributes: List<LlvmFunctionAttribute> = emptyList(),
@@ -118,6 +120,7 @@ internal open class LlvmFunctionSignature(
 
     constructor(irFunction: IrFunction, contextUtils: ContextUtils) : this(
             returnType = contextUtils.getLlvmFunctionReturnType(irFunction),
+            returnsObjectType = with (contextUtils) { irFunction.returnsObjectType() },
             parameterTypes = contextUtils.getLlvmFunctionParameterTypes(irFunction),
             functionAttributes = inferFunctionAttributes(contextUtils, irFunction),
             isVararg = false,
@@ -178,7 +181,7 @@ internal class LlvmFunctionProto(
         addTargetCpuAndFeaturesAttributes(context, function)
         signature.addFunctionAttributes(function)
         LLVMSetLinkage(function, linkage)
-        return LlvmCallable(signature.llvmFunctionType, function, signature)
+        return LlvmCallable(signature.llvmFunctionType, signature.returnsObjectType, function, signature)
     }
 }
 
