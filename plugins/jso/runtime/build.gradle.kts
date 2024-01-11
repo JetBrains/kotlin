@@ -1,5 +1,5 @@
-import plugins.configureDefaultPublishing
-import plugins.configureKotlinPomAttributes
+//import plugins.configureDefaultPublishing
+//import plugins.configureKotlinPomAttributes
 
 description = "Runtime library for the JSO compiler plugin"
 
@@ -26,17 +26,17 @@ val emptyJavadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            artifactId = "jso"
-            from(components["kotlin"])
-            configureKotlinPomAttributes(project, "Runtime library for the JSO compiler plugin", packaging = "klib")
-        }
-        withType<MavenPublication> {
-            artifact(emptyJavadocJar)
-        }
-    }
-}
-
-configureDefaultPublishing()
+//publishing {
+//    publications {
+//        create<MavenPublication>("maven") {
+//            artifactId = "jso"
+//            from(components["kotlin"])
+//            configureKotlinPomAttributes(project, "Runtime library for the JSO compiler plugin", packaging = "klib")
+//        }
+//        withType<MavenPublication> {
+//            artifact(emptyJavadocJar)
+//        }
+//    }
+//}
+//
+//configureDefaultPublishing()

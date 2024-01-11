@@ -63,7 +63,7 @@ sourceSets {
     }
 }
 
-publish()
+//publish()
 
 runtimeJar()
 sourcesJar()
