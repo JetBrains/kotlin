@@ -490,6 +490,8 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project.registerTask<PodInstallTask>(POD_INSTALL_TASK_NAME) { task ->
             task.group = TASK_GROUP
             task.description = "Invokes `pod install` call within Podfile location directory"
+            task.podExecutablePath
+            task.podExecutablePath.set(project.provider { project.kotlinPropertiesProvider.cocoapodsExecutablePath })
             task.podfile.set(project.provider { cocoapodsExtension.podfile })
             @Suppress("DEPRECATION") // is set for compatibility reasons
             task.podspec.set(podspecTaskProvider.map { it.outputFile })
@@ -536,6 +538,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
             project.registerTask<PodInstallSyntheticTask>(family.toPodInstallSyntheticTaskName) { task ->
                 task.description = "Invokes `pod install` for synthetic project"
+                task.podExecutablePath.set(project.provider { project.kotlinPropertiesProvider.cocoapodsExecutablePath })
                 task.podfile.set(podGenTask.map { it.podfile.get() })
                 task.family.set(family)
                 task.podName.set(cocoapodsExtension.name)

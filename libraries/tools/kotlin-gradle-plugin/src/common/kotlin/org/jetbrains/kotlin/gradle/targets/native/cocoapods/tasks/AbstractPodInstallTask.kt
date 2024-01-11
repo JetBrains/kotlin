@@ -7,13 +7,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks
 
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.utils.CommandFallback
-import org.jetbrains.kotlin.gradle.utils.RunProcessResult
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.onlyIfCompat
+import org.jetbrains.kotlin.gradle.utils.runCommand
 import org.jetbrains.kotlin.gradle.utils.runCommandWithFallback
 import java.io.File
 
@@ -32,6 +33,11 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFile
     abstract val podfile: Property<File?>
+
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:InputFile
+    abstract val podExecutablePath: RegularFileProperty
 
     @get:Internal
     protected val workingDir: Provider<File> = podfile.map { file: File? ->
@@ -55,11 +61,30 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
         }
     }
 
+    private fun podExecutable(): String {
+        return when (val podPath = podExecutablePath.orNull?.asFile) {
+            is File -> podPath.absolutePath.ifBlank { runWhichPod() }
+            else -> runWhichPod()
+        }
+    }
+
+    private fun runWhichPod(): String {
+        val checkPodCommand = listOf("which", "pod")
+        val output = runCommand(checkPodCommand, logger, { result ->
+            if (result.retCode == 1) {
+                missingPodsError()
+            } else {
+                sharedHandleError(checkPodCommand, result)
+            }
+        })
+
+        return output.removingTrailingNewline().ifBlank {
+            throw IllegalStateException(missingPodsError())
+        }
+    }
+
     private fun runPodInstall(updateRepo: Boolean): String {
-        // env is used here to work around the JVM PATH caching when spawning a child process with custom environment, i.e. LC_ALL
-        // The caching causes the ProcessBuilder to ignore changes in the PATH that may occur on incremental runs of the Gradle daemon
-        // KT-60394
-        val podInstallCommand = listOfNotNull("env", "pod", "install", if (updateRepo) "--repo-update" else null)
+        val podInstallCommand = listOfNotNull(podExecutable(), "install", if (updateRepo) "--repo-update" else null)
 
         return runCommandWithFallback(podInstallCommand,
                                       logger,
@@ -98,7 +123,6 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
                |        Please check that CocoaPods v1.14 or above is installed.
                |        
                |        To check CocoaPods version type 'pod --version' in the terminal
-               |        
                |        To install CocoaPods execute 'sudo gem install cocoapods'
                |        For more information, refer to the documentation: https://kotl.in/fx2sde
                |
@@ -116,6 +140,23 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
         } else {
             return handleError(result)
         }
+    }
+
+    private fun missingPodsError(): String {
+        return """
+                  |        ERROR: CocoaPods executable not found in your PATH.
+                  |        Please make sure CocoaPods is installed on your system.
+                  |
+                  |        You can install CocoaPods using the following command:
+                  |        ${'$'} sudo gem install cocoapods
+                  |
+                  |        If CocoaPods is already installed and not in your PATH, you can define the
+                  |        CocoaPods executable path in the local.properties file by executing the following:
+                  |        ${'$'} echo -e "kotlin.apple.cocoapods.bin=${'$'}(which pod)" >> local.properties
+                  |
+                  |        For more information, refer to the documentation: https://kotl.in/hxxwtk
+                  |        
+               """.trimMargin()
     }
 
     abstract fun handleError(result: RunProcessResult): String?
