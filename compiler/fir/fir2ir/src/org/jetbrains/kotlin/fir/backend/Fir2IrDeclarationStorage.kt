@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
 import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
@@ -626,10 +627,15 @@ class Fir2IrDeclarationStorage(
         val getterSymbol = IrFunctionFakeOverrideSymbol(originalSymbols.getterSymbol, containingClassSymbol, getterSignature)
 
         val setterSymbol = runIf(property.isVar) {
-            val setterSignature = runIf(signature != null) {
-                signatureComposer.composeAccessorSignature(property, isSetter = true, fakeOverrideOwnerLookupTag)
+            val setterIsVisible = property.setter?.let { setter ->
+                fakeOverrideOwnerLookupTag?.toFirRegularClass(session)?.let { containingClass -> setter.isVisibleInClass(containingClass) }
+            } ?: true
+            runIf(setterIsVisible) {
+                val setterSignature = runIf(signature != null) {
+                    signatureComposer.composeAccessorSignature(property, isSetter = true, fakeOverrideOwnerLookupTag)
+                }
+                IrFunctionFakeOverrideSymbol(originalSymbols.setterSymbol!!, containingClassSymbol, setterSignature)
             }
-            IrFunctionFakeOverrideSymbol(originalSymbols.setterSymbol!!, containingClassSymbol, setterSignature)
         }
         return PropertySymbols(propertySymbol, getterSymbol, setterSymbol, backingFieldSymbol = null)
     }
