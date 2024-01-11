@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
@@ -416,9 +417,16 @@ internal class TestCompilationFactory {
         private fun Settings.artifactFileForBinaryLibrary(module: TestModule.Exclusive, kind: BinaryLibraryKind) =
             singleModuleArtifactFile(module, pickBinaryLibrarySuffix(kind))
 
-        private fun Settings.artifactFileForXCTestBundle(modules: Set<TestModule.Exclusive>) = when (modules.size) {
-            1 -> artifactFileForXCTestBundle(modules.first())
-            else -> multiModuleArtifactFile(modules, xctestExtension())
+        private fun Settings.artifactFileForXCTestBundle(modules: Set<TestModule.Exclusive>): File {
+            val defaultFile = when (modules.size) {
+                1 -> artifactFileForXCTestBundle(modules.first())
+                else -> multiModuleArtifactFile(modules, xctestExtension())
+            }
+
+            return if (get<KotlinNativeTargets>().testTarget == KonanTarget.IOS_ARM64) {
+                // workaround for the executor that uses only this name in the Xcode project
+                defaultFile.resolveSibling("test-ios-launchTests.${xctestExtension()}")
+            } else defaultFile
         }
 
         private fun Settings.artifactFileForXCTestBundle(module: TestModule.Exclusive) =
