@@ -18,7 +18,7 @@ import kotlin.io.path.*
 
 class FirebaseCloudExecutor(
     private val configurables: AppleConfigurables,
-    private val description: String = "Test execution sample with K/N executor"
+    private val description: String = "K/N Test execution"
 ) : Executor {
     private val hostExecutor = HostExecutor()
 
@@ -79,7 +79,8 @@ class FirebaseCloudExecutor(
         val appPath = derivedData.resolve("Build/Products/Debug-iphoneos/test-ios-launch.app")
         val bundlePath = appPath.resolve("PlugIns/test-ios-launchTests.xctest")
         File(request.executableAbsolutePath).copyRecursively(bundlePath.toFile(), overwrite = true)
-        setXCTestArguments(hostExecutor, bundlePath.toFile(), request.args)
+
+        bundlePath.toFile().writeTestArguments(request.args)
 
         // Codesign (ad-hoc) both application and the xctest bundle
         codesign(
@@ -125,10 +126,19 @@ class FirebaseCloudExecutor(
             stdout = stdout,
             stderr = stderr
         )
-        hostExecutor.execute(firebaseRequest)
+        val firebaseResponse = hostExecutor.execute(firebaseRequest)
 
+        val firebaseStdoutString = stdout.toString("UTF-8").trim()
         val firebaseStderrString = stderr.toString("UTF-8").trim()
+        println(firebaseStdoutString)
         println(firebaseStderrString)
+
+        // 0 - exit code for "All test executions passed."
+        // 10 - exit code for "One or more test cases (tested classes or class methods) within a test execution did not pass."
+        // Treat other codes for unsuccessful execution of the Firebase run itself.
+        check(firebaseResponse.exitCode == 0 || firebaseResponse.exitCode == 10) {
+            "Firebase failed with exit code ${firebaseResponse.exitCode}, see stderr: $firebaseStderrString"
+        }
 
         // Get the URL to the results located on Google Cloud Storage
         val resultsBucketURL = Regex(

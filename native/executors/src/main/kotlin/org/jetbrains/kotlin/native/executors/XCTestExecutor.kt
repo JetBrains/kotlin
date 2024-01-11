@@ -73,7 +73,7 @@ abstract class AbstractXCTestExecutor(
             }
             check(newBundleFile.exists())
 
-            setXCTestArguments(hostExecutor, newBundleFile, request.args)
+            newBundleFile.writeTestArguments(request.args)
 
             newBundleFile
         } else {
@@ -97,12 +97,11 @@ abstract class AbstractXCTestExecutor(
         }
         return response
     }
-
 }
 
-internal fun setXCTestArguments(executor: Executor, newBundleFile: File, args: List<String>) {
+internal fun File.writeTestArguments(args: List<String>) {
     // Passing arguments to the XCTest-runner using Info.plist file.
-    val infoPlist = newBundleFile.walk()
+    val infoPlist = walk()
         .firstOrNull { it.name == "Info.plist" }
         ?.absolutePath
     checkNotNull(infoPlist) { "Info.plist of xctest-bundle wasn't found. Check the bundle contents and location " }
@@ -119,7 +118,7 @@ internal fun setXCTestArguments(executor: Executor, newBundleFile: File, args: L
         executableAbsolutePath = "/usr/libexec/PlistBuddy",
         args = mutableListOf("-c", "Add :KotlinNativeTestArgs string ${args.joinToString(" ")}", infoPlist)
     )
-    val writeResponse = executor.execute(writeArgsRequest)
+    val writeResponse = HostExecutor().execute(writeArgsRequest)
     writeResponse.assertSuccess()
 }
 
