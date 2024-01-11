@@ -26375,6 +26375,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("NoOverrideAndWeakenedVisibilityOnOneLine.kt")
+            public void testNoOverrideAndWeakenedVisibilityOnOneLine() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/NoOverrideAndWeakenedVisibilityOnOneLine.kt");
+            }
+
+            @Test
             @TestMetadata("NonGenerics.kt")
             public void testNonGenerics() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/NonGenerics.kt");
