@@ -30,7 +30,9 @@ import java.util.*
 import kotlin.collections.set
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-abstract class Ir2BirConverterBase() {
+abstract class Ir2BirConverterBase(
+    override val compressedSourceSpanManager: CompressedSourceSpanManager
+) : CompressedSourceSpanManagerScope {
     var appendElementAsDatabaseRoot: (IrElement, BirElement) -> BirDatabase? = { _, _ -> null }
     var convertAncestorsForOrphanedElements = false
     var instantiateDescriptors = false
@@ -324,12 +326,5 @@ abstract class Ir2BirConverterBase() {
         is IrType -> remapType(irTypeArgument) as BirTypeArgument
         is IrTypeProjectionImpl -> makeTypeProjection(remapType(irTypeArgument.type), irTypeArgument.variance)
         else -> error(irTypeArgument)
-    }
-
-    companion object {
-        fun IrElement.convertToBir(): BirElement {
-            val converter = Ir2BirConverter(BirElementDynamicPropertyManager())
-            return converter.copyIrTree(listOf(this)).single()
-        }
     }
 }

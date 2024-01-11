@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirPropertyReferenceImpl(
-    sourceSpan: SourceSpan,
+    sourceSpan: CompressedSourceSpan,
     type: BirType,
     dispatchReceiver: BirExpression?,
     extensionReceiver: BirExpression?,
@@ -30,7 +30,7 @@ class BirPropertyReferenceImpl(
     getter: BirSimpleFunctionSymbol?,
     setter: BirSimpleFunctionSymbol?,
 ) : BirPropertyReference(BirPropertyReference) {
-    private var _sourceSpan: SourceSpan = sourceSpan
+    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -39,7 +39,7 @@ class BirPropertyReferenceImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: SourceSpan
+    override var sourceSpan: CompressedSourceSpan
         get() {
             recordPropertyRead(12)
             return _sourceSpan

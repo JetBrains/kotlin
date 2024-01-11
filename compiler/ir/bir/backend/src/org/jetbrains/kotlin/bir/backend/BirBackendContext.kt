@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.bir.backend
 
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
-import org.jetbrains.kotlin.bir.BirBuiltIns
-import org.jetbrains.kotlin.bir.BirElementDynamicPropertyManager
-import org.jetbrains.kotlin.bir.BirDatabase
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.expressions.BirCall
 import org.jetbrains.kotlin.bir.types.BirTypeSystemContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -20,8 +18,9 @@ abstract class BirBackendContext(
     val compiledBir: BirDatabase,
     val externalModulesBir: BirDatabase,
     val dynamicPropertyManager: BirElementDynamicPropertyManager,
+    override val compressedSourceSpanManager: CompressedSourceSpanManager,
     val configuration: CompilerConfiguration
-) {
+) : CompressedSourceSpanManagerScope {
     abstract val builtIns: KotlinBuiltIns
     abstract val birBuiltIns: BirBuiltIns
     abstract val typeSystem: BirTypeSystemContext
