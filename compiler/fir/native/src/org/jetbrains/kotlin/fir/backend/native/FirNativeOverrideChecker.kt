@@ -48,8 +48,8 @@ class FirNativeOverrideChecker(private val session: FirSession) : FirOverrideChe
         if (this.name != baseDeclaration.name) {
             return null
         }
-        val superInfo = baseDeclaration.decodeObjCMethodAnnotation(session) ?: return null
-        val subInfo = decodeObjCMethodAnnotation(session)
+        val superInfo = baseDeclaration.symbol.decodeObjCMethodAnnotation(session) ?: return null
+        val subInfo = symbol.decodeObjCMethodAnnotation(session)
         return if (subInfo != null) {
             // Overriding Objective-C method by Objective-C method in interop stubs.
             // Don't even check method signatures, so this check is weaker than the standard one

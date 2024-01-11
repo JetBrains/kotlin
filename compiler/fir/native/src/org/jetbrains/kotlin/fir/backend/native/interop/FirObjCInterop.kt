@@ -77,9 +77,6 @@ internal fun List<FirAnnotation>.decodeObjCMethodAnnotation(session: FirSession)
         )
     }
 
-internal fun FirFunction.decodeObjCMethodAnnotation(session: FirSession): ObjCMethodInfo? =
-    annotations.decodeObjCMethodAnnotation(session)
-
 internal fun FirFunctionSymbol<*>.decodeObjCMethodAnnotation(session: FirSession): ObjCMethodInfo? =
     annotations.decodeObjCMethodAnnotation(session)
 
