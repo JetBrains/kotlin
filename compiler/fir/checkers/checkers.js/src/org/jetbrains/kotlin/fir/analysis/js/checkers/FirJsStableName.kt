@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 
 internal data class FirJsStableName(
@@ -40,7 +38,6 @@ internal data class FirJsStableName(
             }
         }
 
-        @OptIn(SymbolInternals::class)
         fun createStableNameOrNull(symbol: FirBasedSymbol<*>, session: FirSession): FirJsStableName? {
             val jsName = symbol.getJsName(session)
             if (jsName != null) {
@@ -70,7 +67,7 @@ internal data class FirJsStableName(
                 //  - FirJsStableName.shouldClashBeCaughtByCommonFrontendCheck().
                 hasPublicName(symbol, session)
             ) {
-                val name = (symbol.fir as? FirMemberDeclaration)?.nameOrSpecialName?.identifierOrNullIfSpecial
+                val name = symbol.memberDeclarationNameOrNull?.identifierOrNullIfSpecial
                 if (name != null) {
                     return FirJsStableName(name, symbol, !hasStableNameInJavaScript, symbol.isPresentInGeneratedCode(session))
                 }

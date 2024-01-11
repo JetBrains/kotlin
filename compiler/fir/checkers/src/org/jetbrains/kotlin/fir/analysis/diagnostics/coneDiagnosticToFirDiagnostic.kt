@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstrai
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -318,11 +317,11 @@ private fun mapInapplicableCandidateError(
 
             is TypeVariableAsExplicitReceiver -> {
                 val typeParameter = rootCause.typeParameter
-                @OptIn(SymbolInternals::class)
                 FirErrors.BUILDER_INFERENCE_STUB_RECEIVER.createOn(
                     rootCause.explicitReceiver.source,
                     typeParameter.symbol.name,
-                    (typeParameter.symbol.containingDeclarationSymbol.fir as FirMemberDeclaration).nameOrSpecialName
+                    typeParameter.symbol.containingDeclarationSymbol.memberDeclarationNameOrNull
+                        ?: error("containingDeclarationSymbol must have been a member declaration")
                 )
             }
 
@@ -541,8 +540,8 @@ private fun ConstraintSystemError.toDiagnostic(
             FirErrors.BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION.createOn(
                 anonymous.source ?: source,
                 typeParameterSymbol.name,
-                @OptIn(SymbolInternals::class)
-                (typeParameterSymbol.containingDeclarationSymbol.fir as FirMemberDeclaration).nameOrSpecialName
+                typeParameterSymbol.containingDeclarationSymbol.memberDeclarationNameOrNull
+                    ?: error("containingDeclarationSymbol must have been a member declaration")
             )
         }
 

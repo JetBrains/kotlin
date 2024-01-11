@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isNullableAny
@@ -49,14 +49,14 @@ val FirDeclaration.isNonLocal
 
 val FirCallableDeclaration.isExtension get() = receiverParameter != null
 
+val FirBasedSymbol<*>.memberDeclarationNameOrNull: Name?
+    // Accessing `fir` is ok, because `nameOrSpecialName` only accesses names
+    get() = (fir as? FirMemberDeclaration)?.nameOrSpecialName
+
 val FirMemberDeclaration.nameOrSpecialName: Name
     get() = when (this) {
-        is FirCallableDeclaration ->
-            this.symbol.callableId.callableName
-        is FirClass ->
-            this.classId.shortClassName
-        is FirTypeAlias ->
-            this.name
+        is FirCallableDeclaration -> symbol.callableId.callableName
+        is FirClassLikeDeclaration -> classId.shortClassName
     }
 
 val FirNamedFunctionSymbol.isMethodOfAny: Boolean
