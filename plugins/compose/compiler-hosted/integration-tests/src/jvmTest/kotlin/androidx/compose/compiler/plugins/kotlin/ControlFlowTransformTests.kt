@@ -2115,7 +2115,6 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             import androidx.compose.runtime.*
             import androidx.compose.foundation.layout.*
             import androidx.compose.foundation.text.KeyboardActions
-            import androidx.compose.material.*
 
             object Ui {}
 
@@ -2131,6 +2130,17 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                     Text("${'$'}keyboardActions2")
                 }
             }
+        """.trimIndent(),
+        extra = """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            fun Text(
+                text: String,
+                softWrap: Boolean = true,
+                maxLines: Int = Int.MAX_VALUE,
+                minLines: Int = 1,
+            ) {}
         """.trimIndent()
     )
 

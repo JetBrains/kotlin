@@ -39,7 +39,6 @@ androidXMultiplatform {
                 implementation(libs.kotlinStdlibCommon)
                 implementation(kotlin("test-junit"))
                 implementation(project(":compose:runtime:runtime"))
-                implementation(project(":compose:ui:ui-util"))
             }
         }
 
@@ -57,7 +56,6 @@ androidXMultiplatform {
                 implementation(libs.guavaAndroid)
                 implementation(project(":compose:compiler:compiler-hosted"))
                 implementation(projectOrArtifact(":compose:foundation:foundation"))
-                implementation(projectOrArtifact(":compose:material:material"))
                 implementation(projectOrArtifact(":compose:ui:ui"))
                 implementation(project(":compose:runtime:runtime"))
                 implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
