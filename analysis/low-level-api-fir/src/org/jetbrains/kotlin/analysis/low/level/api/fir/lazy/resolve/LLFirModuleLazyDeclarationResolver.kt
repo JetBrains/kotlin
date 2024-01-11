@@ -28,8 +28,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      * Might resolve additional required declarations.
      *
      * Resolution is performed under the lock specific to each declaration that is going to be resolved.
-     *
-     * Suitable for body resolve or/and on-air resolve.
      */
     fun lazyResolve(
         target: FirElementWithResolveState,
@@ -46,8 +44,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      * Might resolve additional required declarations.
      *
      * Resolution is performed under the lock specific to each declaration that is going to be resolved.
-     *
-     * Suitable for body resolve or/and on-air resolve.
      */
     fun lazyResolveWithCallableMembers(
         target: FirRegularClass,
@@ -63,8 +59,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      * Might resolve additional required declarations.
      *
      * Resolution is performed under the lock specific to each declaration that is going to be resolved.
-     *
-     * Suitable for body resolve or/and on-air resolve.
      */
     fun lazyResolveRecursively(
         target: FirElementWithResolveState,
@@ -103,8 +97,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      * Might resolve additional required declarations.
      *
      * Resolution is performed under the lock specific to each declaration which is going to be resolved.
-     *
-     * Suitable for body resolve or/and on-air resolve.
      */
     fun lazyResolveTarget(
         target: LLFirResolveTarget,

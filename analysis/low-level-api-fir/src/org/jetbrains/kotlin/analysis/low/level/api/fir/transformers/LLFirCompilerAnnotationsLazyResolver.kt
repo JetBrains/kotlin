@@ -293,7 +293,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
                      */
                     annotationTypeRef = transformer.annotationTransformer.createDeepCopyOfTypeRef(userTypeRef)
 
-                    // We assume that non-empty argument must be a lazy expression, or it is a copied declaration inside an on-air session
+                    // Non-empty arguments must be lazy expressions
                     if (FirLazyBodiesCalculator.needCalculatingAnnotationCall(annotation)) {
                         argumentList = FirLazyBodiesCalculator.calculateLazyArgumentsForAnnotation(annotation, llFirSession)
                     }
