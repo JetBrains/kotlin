@@ -92,6 +92,8 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
       overridden:
         public abstract propWithAccessors: kotlin.Int
       FUN DELEGATED_MEMBER name:<get-propWithAccessors> visibility:public modality:OPEN <> ($this:<root>.Delegated) returnType:kotlin.Int
+        annotations:
+          Ann
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:propWithAccessors visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <get-propWithAccessors> (): kotlin.Int declared in <root>.Base
@@ -102,6 +104,8 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Base visibility:private [final]' type=<root>.Base origin=null
                 receiver: GET_VAR '<this>: <root>.Delegated declared in <root>.Delegated.<get-propWithAccessors>' type=<root>.Delegated origin=null
       FUN DELEGATED_MEMBER name:<set-propWithAccessors> visibility:public modality:OPEN <> ($this:<root>.Delegated, <set-?>:kotlin.Int) returnType:kotlin.Unit
+        annotations:
+          Ann
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:propWithAccessors visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <set-propWithAccessors> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Base

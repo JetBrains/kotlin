@@ -42,9 +42,11 @@ class Delegated : Base {
     }
 
   override var propWithAccessors: Int
+    @Ann
     override get(): Int {
       return <this>.#$$delegate_0.<get-propWithAccessors>()
     }
+    @Ann
     override set(<set-?>: Int) {
       <this>.#$$delegate_0.<set-propWithAccessors>(<set-?> = <set-?>)
     }

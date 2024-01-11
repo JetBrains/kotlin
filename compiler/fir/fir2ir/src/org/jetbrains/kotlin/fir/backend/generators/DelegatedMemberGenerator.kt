@@ -400,7 +400,15 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             baseSymbols.add(it)
         }
         basePropertySymbols[delegateProperty] = baseSymbols
-        // Do not generate annotations to copy K1 behavior, see KT-57228.
+        // Do not generate annotations on property to copy K1 behavior, see KT-57228.
+        // But generate annotations on accessors, see KT-64466.
+        firDelegateProperty.getter?.let { firGetter ->
+            annotationGenerator.generate(delegateProperty.getter!!, firGetter)
+        }
+
+        firDelegateProperty.setter?.let { firSetter ->
+            annotationGenerator.generate(delegateProperty.setter!!, firSetter)
+        }
 
         return delegateProperty
     }
