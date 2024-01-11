@@ -1035,7 +1035,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // for cases like
         // buildSomething { tVar = "" // Should infer TV from String assignment }
         context.inferenceSession.addSubtypeConstraintIfCompatible(
-            variableAssignment.lValue.resolvedType, variableAssignment.rValue.resolvedType,
+            lowerType = variableAssignment.rValue.resolvedType,
+            upperType = variableAssignment.lValue.resolvedType,
             variableAssignment,
         )
 
