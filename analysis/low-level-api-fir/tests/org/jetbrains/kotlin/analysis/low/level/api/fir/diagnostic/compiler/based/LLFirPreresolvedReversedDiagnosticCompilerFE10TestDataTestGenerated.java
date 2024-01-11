@@ -4086,6 +4086,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 public void testKt63841() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt63841.kt");
                 }
+
+                @Test
+                @TestMetadata("kt64222.kt")
+                public void testKt64222() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt64222.kt");
+                }
             }
 
             @Nested
