@@ -20,6 +20,7 @@
 #include "CustomLogging.hpp"
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
+#include "FinalizerHooks.hpp"
 #include "GC.hpp"
 #include "GCStatistics.hpp"
 #include "KAssert.h"
@@ -49,9 +50,17 @@ bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::
             extraObject->ClearRegularWeakReferenceImpl();
             CustomAllocDebug("SweepObject: fromExtraObject(%p) = %p", extraObject, ExtraObjectCell::fromExtraObject(extraObject));
             finalizerQueue.Push(ExtraObjectCell::fromExtraObject(extraObject));
-            gcHandle.addMarkedObject();
-            gcHandle.addKeptObject(size);
-            return true;
+            if (HasFinalizersDataInObject(heapObjHeader->object())) {
+                // The object must survive until the finalizers for it are finished.
+                gcHandle.addMarkedObject();
+                gcHandle.addKeptObject(size);
+                return true;
+            }
+            // The object has a finalizer, but all the data for it resides in `ExtraObjectData`. So, detach the object from it, and free it.
+            extraObject->UnlinkFromBaseObject();
+            CustomAllocDebug("SweepObject(%p): can be reclaimed", heapObjHeader);
+            gcHandle.addSweptObject();
+            return false;
         }
         if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_FINALIZED)) {
             CustomAllocDebug("SweepObject(%p): already waiting to be finalized", heapObjHeader);

@@ -51,3 +51,8 @@ std::vector<ObjHeader*> alloc::test_support::allocatedObjects(mm::ThreadData& th
     }
     return objects;
 }
+
+void alloc::test_support::detachAndDestroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {
+    extraObject.ClearRegularWeakReferenceImpl();
+    destroyExtraObjectData(extraObject);
+}

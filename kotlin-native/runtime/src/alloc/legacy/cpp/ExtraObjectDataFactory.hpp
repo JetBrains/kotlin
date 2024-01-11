@@ -30,6 +30,14 @@ public:
         // when it's asked by GC to stop.
         using Producer::Publish;
 
+        void ClearForTests() noexcept {
+            forEachNode([](auto& extraObject) noexcept {
+                extraObject.ClearRegularWeakReferenceImpl();
+                extraObject.Uninstall();
+            });
+            Producer::ClearForTests();
+        }
+
         // Do not add fields as this is just a wrapper and Producer does not have virtual destructor.
     };
 
@@ -43,7 +51,13 @@ public:
     // Lock registry for safe iteration.
     Iterable LockForIter() noexcept { return extraObjects_.LockForIter(); }
 
-    void ClearForTests() noexcept { extraObjects_.ClearForTests(); }
+    void ClearForTests() noexcept {
+        for (auto& extraObject : extraObjects_.LockForIter()) {
+            extraObject.ClearRegularWeakReferenceImpl();
+            extraObject.Uninstall();
+        }
+        extraObjects_.ClearForTests();
+    }
 
     size_t GetSizeUnsafe() noexcept { return extraObjects_.GetSizeUnsafe(); }
 

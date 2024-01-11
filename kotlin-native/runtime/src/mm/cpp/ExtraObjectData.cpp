@@ -40,7 +40,10 @@ mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
 }
 
 void mm::ExtraObjectData::UnlinkFromBaseObject() noexcept {
-    auto *object = GetBaseObject();
+    auto* object = weakReferenceOrBaseObject_.exchange(nullptr);
+    RuntimeAssert(
+            !hasPointerBits(object, WEAK_REF_TAG), "ExtraObjectData %p has uncleared weak reference %p during unlink", this,
+            clearPointerBits(object, WEAK_REF_TAG));
     atomicSetRelease(const_cast<const TypeInfo**>(&object->typeInfoOrMeta_), typeInfo_);
     RuntimeAssert(
             !object->has_meta_object(), "Object %p has metaobject %p after removing metaobject %p", object, object->meta_object_or_null(),

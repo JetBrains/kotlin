@@ -102,6 +102,12 @@ public:
             deletionQueue_.clear();
         }
 
+    protected:
+        template <typename F>
+        void forEachNode(F&& f) noexcept(noexcept(f(std::declval<T&>()))) {
+            for (auto& node : queue_) f(*node);
+        }
+
     private:
         MultiSourceQueue& owner_; // weak
         List<Node> queue_;

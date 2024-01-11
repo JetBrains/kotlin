@@ -23,8 +23,13 @@ struct FinalizerQueueTraits {
     static void process(FinalizerQueue queue) noexcept {
         while (auto* cell = queue.Pop()) {
             auto* extraObject = cell->Data();
-            auto* baseObject = extraObject->GetBaseObject();
-            RunFinalizers(baseObject);
+            if (auto* baseObject = extraObject->GetBaseObject()) {
+                RunFinalizers(baseObject);
+            } else {
+                // This `ExtraObjectData` does not have an object attached. This means
+                // that the only finalization step is destroying it.
+                destroyExtraObjectData(*extraObject);
+            }
         }
     }
 };

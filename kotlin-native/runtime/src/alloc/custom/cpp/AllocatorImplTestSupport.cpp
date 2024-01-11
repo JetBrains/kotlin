@@ -33,3 +33,10 @@ void alloc::test_support::assertClear(Allocator& allocator) noexcept {
 std::vector<ObjHeader*> alloc::test_support::allocatedObjects(mm::ThreadData& threadData) noexcept {
     return threadData.allocator().impl().alloc().heap().GetAllocatedObjects();
 }
+
+void alloc::test_support::detachAndDestroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {
+    extraObject.ClearRegularWeakReferenceImpl();
+    extraObject.UnlinkFromBaseObject();
+    destroyExtraObjectData(extraObject);
+    extraObject.setFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE);
+}

@@ -1234,17 +1234,6 @@ TYPED_TEST_P(TracingGCTest, WeakResuractionInMark) {
     for (auto& future : mutatorFutures) {
         future.wait();
     }
-
-    for (int i = 0; i < kDefaultThreadCount; ++i) {
-        mutators[i].Execute([&, i](mm::ThreadData&, Mutator&) noexcept {
-            if (auto weakReferee = weaks[i]->get()) {
-                auto& extraObj = *mm::ExtraObjectData::Get(weakReferee);
-                extraObj.ClearRegularWeakReferenceImpl();
-                extraObj.Uninstall();
-                alloc::destroyExtraObjectData(extraObj);
-            }
-        }).wait();
-    }
 }
 
 #define TRACING_GC_TEST_LIST \
@@ -1355,11 +1344,6 @@ TYPED_TEST_P(STWMarkGCTest, MultipleMutatorsWeakNewObj) {
                 return test_support::InstallWeakReference(threadData, object.header(), holder.slot());
             })();
             EXPECT_NE(objectWeak.get(), nullptr);
-
-            auto& extraObj = *mm::ExtraObjectData::Get(object.header());
-            extraObj.ClearRegularWeakReferenceImpl();
-            extraObj.Uninstall();
-            alloc::destroyExtraObjectData(extraObj);
 
             while (!gcDone.load(std::memory_order_relaxed)) {
                 mm::safePoint(threadData);

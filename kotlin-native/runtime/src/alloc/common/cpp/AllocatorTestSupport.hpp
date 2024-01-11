@@ -15,5 +15,6 @@ namespace kotlin::alloc::test_support {
 
 void assertClear(Allocator& allocator) noexcept;
 std::vector<ObjHeader*> allocatedObjects(mm::ThreadData& threadData) noexcept;
+void detachAndDestroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept;
 
 } // namespace kotlin::alloc::test_support
