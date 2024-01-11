@@ -4,18 +4,12 @@ package org.jetbrains.kotlin.objcexport
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.annotationInfos
-import org.jetbrains.kotlin.analysis.api.annotations.annotations
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.objcexport.*
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSelectors
@@ -62,7 +56,7 @@ internal fun KtFunctionLikeSymbol.buildObjCMethod(
     val swiftName = getSwiftName(bridge)
     val attributes = mutableListOf<String>()
     val returnBridge = bridge.returnBridge
-    val comment = buildComment(this, bridge, parameters)
+    val comment = this.translateToObjCComment(bridge, parameters)
 
     attributes += getSwiftPrivateAttribute() ?: swiftNameAttribute(swiftName)
 
@@ -107,105 +101,6 @@ internal fun String.toValidObjCSwiftIdentifier(): String {
     return this.replace('$', '_') // TODO: handle more special characters.
         .let { if (it.first().isDigit()) "_$it" else it }
         .let { if (it == "_") "__" else it }
-}
-
-private val throwableClassId = ClassId.topLevel(StandardNames.FqNames.throwable)
-
-/**
- * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildComment]
- */
-private fun buildComment(method: KtFunctionLikeSymbol, bridge: MethodBridge, parameters: List<ObjCParameter>): ObjCComment? {
-
-    val visibility: Visibility
-    val isSuspend: Boolean
-
-    if (method is KtFunctionSymbol) {
-        isSuspend = method.isSuspend
-        visibility = method.visibility
-    } else if (method is KtConstructorSymbol) {
-        isSuspend = false
-        visibility = Visibilities.Public //check constructor
-    } else {
-        TODO("Unsupported type for comment building: $method")
-    }
-
-    val throwsComments = if (isSuspend || bridge.returnsError) {
-        val effectiveThrows = getEffectiveThrows(method).toSet()
-        when {
-            effectiveThrows.contains(throwableClassId) -> {
-                listOf("@note This method converts all Kotlin exceptions to errors.")
-            }
-
-            effectiveThrows.isNotEmpty() -> {
-                listOf(
-                    buildString {
-                        append("@note This method converts instances of ")
-                        effectiveThrows.joinTo(this) { it.relativeClassName.asString() }
-                        append(" to errors.")
-                    },
-                    "Other uncaught Kotlin exceptions are fatal."
-                )
-            }
-
-            else -> {
-                // Shouldn't happen though.
-                listOf("@warning All uncaught Kotlin exceptions are fatal.")
-            }
-        }
-    } else emptyList()
-
-    val visibilityComments = visibilityComments(visibility, "method")
-
-    val paramComments = method.valueParameters.flatMap { parameterDescriptor ->
-        parameters.find { parameter -> parameter.origin?.name == parameterDescriptor.name }?.let { parameter ->
-            mustBeDocumentedParamAttributeList(parameter, descriptor = parameterDescriptor)
-        } ?: emptyList()
-    }
-    val annotationsComments = mustBeDocumentedAttributeList(method.annotations)
-    val commentLines = annotationsComments + paramComments + throwsComments + visibilityComments
-    return if (commentLines.isNotEmpty()) ObjCComment(commentLines) else null
-}
-
-/**
- * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mustBeDocumentedParamAttributeList]
- */
-private fun mustBeDocumentedParamAttributeList(parameter: ObjCParameter, descriptor: KtValueParameterSymbol): List<String> {
-
-    descriptor.annotationsList.annotations
-
-    val mbdAnnotations = mustBeDocumentedAnnotations(descriptor.annotations).joinToString(" ")
-    return if (mbdAnnotations.isNotEmpty()) listOf("@param ${parameter.name} annotations $mbdAnnotations") else emptyList()
-}
-
-/**
- * Not implemented [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mustBeDocumentedAnnotations]
- */
-private fun mustBeDocumentedAnnotations(annotations: List<KtAnnotationApplicationWithArgumentsInfo>): List<String> {
-    return emptyList()
-}
-
-private fun mustBeDocumentedAttributeList(annotations: List<KtAnnotationApplicationWithArgumentsInfo>): List<String> {
-    val mustBeDocumentedAnnotations = mustBeDocumentedAnnotations(annotations)
-    return if (mustBeDocumentedAnnotations.isNotEmpty()) {
-        listOf("@note annotations") + mustBeDocumentedAnnotations.map { "  $it" }
-    } else emptyList()
-}
-
-/**
- * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.visibilityComments]
- */
-private fun visibilityComments(visibility: Visibility, kind: String): List<String> {
-    return when (visibility) {
-        Visibilities.Protected -> listOf("@note This $kind has protected visibility in Kotlin source and is intended only for use by subclasses.")
-        else -> emptyList()
-    }
-}
-
-/**
- * Not implemented [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.getEffectiveThrows]
- */
-private fun getEffectiveThrows(method: KtFunctionLikeSymbol): Sequence<ClassId> {
-    return emptySequence()
 }
 
 internal fun KtCallableSymbol.getSwiftPrivateAttribute(): String? =

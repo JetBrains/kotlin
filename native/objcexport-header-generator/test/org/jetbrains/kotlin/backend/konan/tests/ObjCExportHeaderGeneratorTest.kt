@@ -121,6 +121,11 @@ class ObjCExportHeaderGeneratorTest(val generator: HeaderGenerator) {
     }
 
     @Test
+    fun `test - interfaceWithMustBeDocumentedAnnotation`() {
+        doTest(headersTestDataDir.resolve("interfaceWithMustBeDocumentedAnnotation"))
+    }
+
+    @Test
     fun `test - functionWithMustBeDocumentedAnnotation`() {
         doTest(headersTestDataDir.resolve("functionWithMustBeDocumentedAnnotation"))
     }

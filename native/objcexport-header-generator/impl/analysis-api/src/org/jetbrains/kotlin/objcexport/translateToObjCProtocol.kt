@@ -28,8 +28,7 @@ fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
 
     val members = members().flatMap { it.translateToObjCExportStubs() }
 
-    // TODO: Resolve comment
-    val comment: ObjCComment? = null
+    val comment: ObjCComment? = annotationsList.translateToObjCComment()
 
     return ObjCProtocolImpl(
         name = name.objCName,

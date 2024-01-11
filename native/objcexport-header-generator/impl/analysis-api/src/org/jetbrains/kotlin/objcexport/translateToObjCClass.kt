@@ -1,13 +1,10 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
-import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.objcexport.*
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrProtocolName
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getSuperClassSymbolNotAny
@@ -27,7 +24,7 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
     val attributes = if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()
 
     val name = getObjCClassOrProtocolName()
-    val comment: ObjCComment? = annotationsList.toComment()
+    val comment: ObjCComment? = annotationsList.translateToObjCComment()
     val origin: ObjCExportStubOrigin = getObjCStubOrigin()
     val superProtocols: List<String> = superProtocols()
     val members: List<ObjCExportStub> = members().flatMap { it.translateToObjCExportStubs() }
@@ -59,16 +56,3 @@ private fun abbreviate(name: String): String {
 
     return normalizedName
 }
-
-/**
- * Not implemented
- */
-private fun KtAnnotationsList.toComment(): ObjCComment? {
-    return null
-}
-
-private val mustBeDocumentedAnnotationsStopList = setOf(
-    StandardNames.FqNames.deprecated,
-    KonanFqNames.objCName,
-    KonanFqNames.shouldRefineInSwift
-)
