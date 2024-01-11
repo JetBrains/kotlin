@@ -47,15 +47,15 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class Bir2IrConverterBase(
     dynamicPropertyManager: BirElementDynamicPropertyManager,
+    override val compressedSourceSpanManager: CompressedSourceSpanManager,
     protected val remappedIr2BirElements: Map<BirElement, IrElement>,
     protected val compiledBir: BirDatabase,
-) {
+) : CompressedSourceSpanManagerScope {
     var elementConvertedCallback: ((BirElement, IrElement) -> Unit)? = null
     var reuseOnlyExternalElements = false
     var remappedIr2BirTypes: Map<BirType, IrType>? = null
@@ -286,13 +286,6 @@ abstract class Bir2IrConverterBase(
         is BirType -> remapType(birTypeArgument) as IrTypeArgument
         is BirTypeProjectionImpl -> makeTypeProjection(remapType(birTypeArgument.type), birTypeArgument.variance)
         else -> error(birTypeArgument)
-    }
-
-    companion object {
-        fun IrElement.convertToBir(): BirElement {
-            val converter = Ir2BirConverter(BirElementDynamicPropertyManager())
-            return converter.copyIrTree(listOf(this)).single()
-        }
     }
 
     /*private object PartialPatchParentVisitor : IrElementVisitor<IrElement, BirElementParent> {

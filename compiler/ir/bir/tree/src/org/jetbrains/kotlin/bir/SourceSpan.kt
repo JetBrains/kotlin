@@ -10,14 +10,14 @@ import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 
 @JvmInline
 value class SourceSpan constructor(
-    private val packed: Long
+    private val packedValue: Long
 ) {
     constructor(start: Int, end: Int) : this(start.toUInt().toLong() or (end.toLong() shl 32))
 
     val start: Int
-        get() = packed.toInt()
+        get() = packedValue.toInt()
     val end: Int
-        get() = (packed shr 32).toInt()
+        get() = (packedValue shr 32).toInt()
 
     val isUndefined: Boolean
         get() = this == UNDEFINED

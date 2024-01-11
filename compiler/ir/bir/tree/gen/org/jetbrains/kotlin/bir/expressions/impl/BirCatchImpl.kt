@@ -10,18 +10,18 @@ package org.jetbrains.kotlin.bir.expressions.impl
 
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.declarations.BirVariable
 import org.jetbrains.kotlin.bir.expressions.BirCatch
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 
 class BirCatchImpl(
-    sourceSpan: SourceSpan,
+    sourceSpan: CompressedSourceSpan,
     catchParameter: BirVariable?,
     result: BirExpression?,
 ) : BirCatch(BirCatch) {
-    private var _sourceSpan: SourceSpan = sourceSpan
+    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -30,7 +30,7 @@ class BirCatchImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: SourceSpan
+    override var sourceSpan: CompressedSourceSpan
         get() {
             recordPropertyRead(3)
             return _sourceSpan

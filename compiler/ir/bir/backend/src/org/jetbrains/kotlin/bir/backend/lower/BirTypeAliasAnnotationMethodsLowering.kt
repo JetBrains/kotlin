@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.bir.backend.lower
 
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.builders.build
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
@@ -33,7 +33,7 @@ class BirTypeAliasAnnotationMethodsLowering : BirLoweringPhase() {
                 returnType = birBuiltIns.unitType
                 modality = Modality.OPEN
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS
-                body = BirBlockBodyImpl(SourceSpan.UNDEFINED)
+                body = BirBlockBodyImpl(CompressedSourceSpan.UNDEFINED)
                 annotations += alias.annotations
             }
             parentClass.declarations += function

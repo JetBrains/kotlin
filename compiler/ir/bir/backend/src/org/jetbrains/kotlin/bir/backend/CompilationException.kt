@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.bir.backend
 
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirFile
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.bir.util.ancestors
@@ -43,10 +43,12 @@ class CompilationException(
 
             if (birSourceSpan.isUndefined) return UNDEFINED_OFFSET
 
-            val lineNumber = file?.fileEntry?.getLineNumber(birSourceSpan.start)
+            // todo
+            return UNDEFINED_OFFSET
+            /*val lineNumber = file?.fileEntry?.getLineNumber(birSourceSpan.start)
                 ?: return UNDEFINED_OFFSET
 
-            return lineNumber + 1
+            return lineNumber + 1*/
         }
 
     val column: Int
@@ -56,13 +58,15 @@ class CompilationException(
 
             if (birSourceSpan.isUndefined) return UNDEFINED_OFFSET
 
-            val columnNumber = file?.fileEntry?.getColumnNumber(birSourceSpan.start)
+            // todo
+            return UNDEFINED_OFFSET
+            /*val columnNumber = file?.fileEntry?.getColumnNumber(birSourceSpan.start)
                 ?: return UNDEFINED_OFFSET
 
-            return columnNumber + 1
+            return columnNumber + 1*/
         }
 
-    private val birSourceSpan: SourceSpan?
+    private val birSourceSpan: CompressedSourceSpan?
         get() = (bir as? BirElement)?.sourceSpan
 
     val path: String?

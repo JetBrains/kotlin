@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.bir.BirBuiltIns
 import org.jetbrains.kotlin.bir.BirElementDynamicPropertyManager
 import org.jetbrains.kotlin.bir.BirDatabase
+import org.jetbrains.kotlin.bir.CompressedSourceSpanManager
 import org.jetbrains.kotlin.bir.backend.BirBackendContext
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.types.BirTypeSystemContext
@@ -29,8 +30,9 @@ class JvmBirBackendContext @OptIn(ObsoleteDescriptorBasedAPI::class) constructor
     externalModulesBir: BirDatabase,
     val ir2BirConverter: Ir2BirConverter,
     dynamicPropertyManager: BirElementDynamicPropertyManager,
+    compressedSourceSpanManager: CompressedSourceSpanManager,
     phaseConfig: List<(JvmBirBackendContext) -> BirLoweringPhase>,
-) : BirBackendContext(compiledBir, externalModulesBir, dynamicPropertyManager, irContext.configuration) {
+) : BirBackendContext(compiledBir, externalModulesBir, dynamicPropertyManager, compressedSourceSpanManager, irContext.configuration) {
     val config: JvmBackendConfig = irContext.state.config
     override val builtIns = irContext.builtIns
     val generationState: GenerationState = irContext.state

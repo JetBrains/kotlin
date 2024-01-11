@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirWhenImpl(
-    sourceSpan: SourceSpan,
+    sourceSpan: CompressedSourceSpan,
     type: BirType,
     origin: IrStatementOrigin?,
 ) : BirWhen(BirWhen) {
-    private var _sourceSpan: SourceSpan = sourceSpan
+    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -29,7 +29,7 @@ class BirWhenImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: SourceSpan
+    override var sourceSpan: CompressedSourceSpan
         get() {
             recordPropertyRead(5)
             return _sourceSpan

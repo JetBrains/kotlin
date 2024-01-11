@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.bir.backend.builders
 
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.backend.BirBackendContext
 import org.jetbrains.kotlin.bir.backend.utils.listOfNulls
 import org.jetbrains.kotlin.bir.declarations.*
@@ -38,7 +38,7 @@ inline fun <R> birBodyScope(block: context(BirStatementBuilderScope) () -> R): R
 
 context(BirBackendContext)
 class BirStatementBuilderScope() {
-    var sourceSpan: SourceSpan = SourceSpan.UNDEFINED
+    var sourceSpan: CompressedSourceSpan = CompressedSourceSpan.UNDEFINED
     var origin: IrStatementOrigin? = null
     var returnTarget: BirReturnTargetSymbol? = null
 

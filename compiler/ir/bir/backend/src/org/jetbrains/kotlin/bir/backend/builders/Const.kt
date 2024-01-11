@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.bir.backend.builders
 
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.backend.BirBackendContext
 import org.jetbrains.kotlin.bir.expressions.BirConst
 import org.jetbrains.kotlin.bir.expressions.impl.BirConstImpl
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 
 context(BirBackendContext)
 inline fun BirConst.Companion.constNull(
-    sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
+    sourceSpan: CompressedSourceSpan = CompressedSourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.nothingNType
 ): BirConstImpl<Nothing?> =
     BirConstImpl(sourceSpan, type, IrConstKind.Null, null)
@@ -24,7 +24,7 @@ inline fun BirConst.Companion.constNull(
 context(BirBackendContext)
 inline fun BirConst(
     value: Boolean,
-    sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
+    sourceSpan: CompressedSourceSpan = CompressedSourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.booleanType,
 ): BirConstImpl<Boolean> =
     BirConstImpl(sourceSpan, type, IrConstKind.Boolean, value)
@@ -32,7 +32,7 @@ inline fun BirConst(
 context(BirBackendContext)
 inline fun BirConst(
     value: Byte,
-    sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
+    sourceSpan: CompressedSourceSpan = CompressedSourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.byteType,
 ): BirConstImpl<Byte> =
     BirConstImpl(sourceSpan, type, IrConstKind.Byte, value)
@@ -40,7 +40,7 @@ inline fun BirConst(
 context(BirBackendContext)
 inline fun BirConst(
     value: Short,
-    sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
+    sourceSpan: CompressedSourceSpan = CompressedSourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.shortType,
 ): BirConstImpl<Short> =
     BirConstImpl(sourceSpan, type, IrConstKind.Short, value)
@@ -48,7 +48,7 @@ inline fun BirConst(
 context(BirBackendContext)
 inline fun BirConst(
     value: Int,
-    sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
+    sourceSpan: CompressedSourceSpan = CompressedSourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.intType,
 ): BirConstImpl<Int> =
     BirConstImpl(sourceSpan, type, IrConstKind.Int, value)
@@ -56,7 +56,7 @@ inline fun BirConst(
 context(BirBackendContext)
 inline fun BirConst(
     value: Long,
-    sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
+    sourceSpan: CompressedSourceSpan = CompressedSourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.longType,
 ): BirConstImpl<Long> =
     BirConstImpl(sourceSpan, type, IrConstKind.Long, value)
@@ -64,7 +64,7 @@ inline fun BirConst(
 context(BirBackendContext)
 inline fun BirConst(
     value: Float,
-    sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
+    sourceSpan: CompressedSourceSpan = CompressedSourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.floatType,
 ): BirConstImpl<Float> =
     BirConstImpl(sourceSpan, type, IrConstKind.Float, value)
@@ -72,7 +72,7 @@ inline fun BirConst(
 context(BirBackendContext)
 inline fun BirConst(
     value: Double,
-    sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
+    sourceSpan: CompressedSourceSpan = CompressedSourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.doubleType,
 ): BirConstImpl<Double> =
     BirConstImpl(sourceSpan, type, IrConstKind.Double, value)
@@ -80,7 +80,7 @@ inline fun BirConst(
 context(BirBackendContext)
 inline fun BirConst(
     value: Char,
-    sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
+    sourceSpan: CompressedSourceSpan = CompressedSourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.charType,
 ): BirConstImpl<Char> =
     BirConstImpl(sourceSpan, type, IrConstKind.Char, value)
@@ -88,7 +88,7 @@ inline fun BirConst(
 context(BirBackendContext)
 inline fun BirConst(
     value: String,
-    sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
+    sourceSpan: CompressedSourceSpan = CompressedSourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.stringType
 ): BirConstImpl<String> =
     BirConstImpl(sourceSpan, type, IrConstKind.String, value)

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.bir.lazy
 
 import org.jetbrains.kotlin.bir.*
+import org.jetbrains.kotlin.bir.CompressedSourceSpan.Companion.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
 import org.jetbrains.kotlin.ir.IrElement
@@ -71,8 +72,12 @@ abstract class BirLazyElementBase(
     ) = BirLazyChildElementList<E>(this, id, false, retrieveUpstreamList as BirLazyElementBase.() -> List<IrElement>)
 
 
-    override var sourceSpan: SourceSpan
-        get() = SourceSpan(originalIrElement.startOffset, originalIrElement.endOffset)
+    override var sourceSpan: CompressedSourceSpan
+        get() {
+            with(converter) {
+                return CompressedSourceSpan(originalIrElement.startOffset, originalIrElement.endOffset)
+            }
+        }
         set(value) = mutationNotSupported()
 
     override var signature: IdSignature?

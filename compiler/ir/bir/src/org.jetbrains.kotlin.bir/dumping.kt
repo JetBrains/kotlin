@@ -68,6 +68,7 @@ fun dumpBirPhase(
         val compiledBir = input.birModule!!.getContainingDatabase()!!
         val bir2IrConverter = Bir2IrConverter(
             input.dynamicPropertyManager!!,
+            input.backendContext!!.compressedSourceSpanManager,
             input.mappedIr2BirElements,
             context.irBuiltIns,
             compiledBir,

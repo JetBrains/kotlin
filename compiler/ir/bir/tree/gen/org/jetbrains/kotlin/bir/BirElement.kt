@@ -22,7 +22,7 @@ interface BirElement : BirElementFacade {
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    var sourceSpan: SourceSpan
+    var sourceSpan: CompressedSourceSpan
 
     companion object : BirElementClass<BirElement>(BirElement::class.java, 0, false)
 }

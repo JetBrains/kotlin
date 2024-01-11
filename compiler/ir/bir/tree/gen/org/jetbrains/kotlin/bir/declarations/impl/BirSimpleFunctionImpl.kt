@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
 class BirSimpleFunctionImpl(
-    sourceSpan: SourceSpan,
+    sourceSpan: CompressedSourceSpan,
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
     name: Name,
@@ -50,7 +50,7 @@ class BirSimpleFunctionImpl(
     override val owner: BirSimpleFunctionImpl
         get() = this
 
-    private var _sourceSpan: SourceSpan = sourceSpan
+    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -59,7 +59,7 @@ class BirSimpleFunctionImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: SourceSpan
+    override var sourceSpan: CompressedSourceSpan
         get() {
             recordPropertyRead(14)
             return _sourceSpan

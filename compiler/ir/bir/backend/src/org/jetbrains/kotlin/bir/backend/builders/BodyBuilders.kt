@@ -8,7 +8,7 @@
 package org.jetbrains.kotlin.bir.backend.builders
 
 import org.jetbrains.kotlin.bir.BirStatement
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.backend.BirBackendContext
 import org.jetbrains.kotlin.bir.expressions.BirBlockBody
 import org.jetbrains.kotlin.bir.expressions.BirContainerExpression
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 /*fun birBlockBody(
-    sourceSpan: SourceSpan,
+    sourceSpan: CompressedSourceSpan,
     builder: BirBlockBodyBuilderScope.() -> Unit
 ): BirBlockBody {
     val body = BirBlockBodyImpl(sourceSpan)
@@ -120,7 +120,7 @@ class BirBlockBuilderScope() {
 
     context(BirBackendContext)
     fun build(
-        sourceSpan: SourceSpan,
+        sourceSpan: CompressedSourceSpan,
         origin: IrStatementOrigin?,
         resultType: BirType?,
         isTransparent: Boolean,
