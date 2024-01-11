@@ -73,26 +73,7 @@ abstract class AbstractXCTestExecutor(
             }
             check(newBundleFile.exists())
 
-            // Passing arguments to the XCTest-runner using Info.plist file.
-            val infoPlist = newBundleFile.walk()
-                .firstOrNull { it.name == "Info.plist" }
-                ?.absolutePath
-            checkNotNull(infoPlist) { "Info.plist of xctest-bundle wasn't found. Check the bundle contents and location " }
-
-            check(request.args.all { !it.contains(" ") }) {
-                // TODO: Consider also check for other incorrect symbols and escaping them or use CDATA section.
-                """
-                    Provided arguments contain spaces that not supported as arguments: 
-                    ${request.args.joinToString()}
-                """.trimIndent()
-            }
-
-            val writeArgsRequest = ExecuteRequest(
-                executableAbsolutePath = "/usr/libexec/PlistBuddy",
-                args = mutableListOf("-c", "Add :KotlinNativeTestArgs string ${request.args.joinToString(" ")}", infoPlist)
-            )
-            val writeResponse = hostExecutor.execute(writeArgsRequest)
-            writeResponse.assertSuccess()
+            setXCTestArguments(hostExecutor, newBundleFile, request.args)
 
             newBundleFile
         } else {
@@ -116,6 +97,30 @@ abstract class AbstractXCTestExecutor(
         }
         return response
     }
+
+}
+
+internal fun setXCTestArguments(executor: Executor, newBundleFile: File, args: List<String>) {
+    // Passing arguments to the XCTest-runner using Info.plist file.
+    val infoPlist = newBundleFile.walk()
+        .firstOrNull { it.name == "Info.plist" }
+        ?.absolutePath
+    checkNotNull(infoPlist) { "Info.plist of xctest-bundle wasn't found. Check the bundle contents and location " }
+
+    check(args.all { !it.contains(" ") }) {
+        // TODO: Consider also check for other incorrect symbols and escaping them or use CDATA section.
+        """
+            Provided arguments contain spaces that not supported as arguments: 
+            ${args.joinToString()}
+            """.trimIndent()
+    }
+
+    val writeArgsRequest = ExecuteRequest(
+        executableAbsolutePath = "/usr/libexec/PlistBuddy",
+        args = mutableListOf("-c", "Add :KotlinNativeTestArgs string ${args.joinToString(" ")}", infoPlist)
+    )
+    val writeResponse = executor.execute(writeArgsRequest)
+    writeResponse.assertSuccess()
 }
 
 /**
