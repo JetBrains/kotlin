@@ -24477,6 +24477,12 @@ public class FirWasmCodegenBoxTestGenerated extends AbstractFirWasmCodegenBoxTes
             }
 
             @Test
+            @TestMetadata("commonFakeOverridePropertyRef.kt")
+            public void testCommonFakeOverridePropertyRef() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/commonFakeOverridePropertyRef.kt");
+            }
+
+            @Test
             @TestMetadata("covariantOverrideInActual.kt")
             public void testCovariantOverrideInActual() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/k2/covariantOverrideInActual.kt");
