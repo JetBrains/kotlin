@@ -140,13 +140,16 @@ private fun collectDesignationPathWithContainingClass(target: FirDeclaration, co
 
     val firFile = target.getContainingFile()
     if (firFile != null && firFile.packageFqName == containingClassId.packageFqName) {
-        // We should do fallback to the heavy implementation if something goes wrong.
-        // For example, we can't be able to find an on-air declaration by this way
-        collectDesignationPathWithContainingClassByFirFile(firFile, containingClassId, target)?.let {
-            return it
+        val designationPath = collectDesignationPathWithContainingClassByFirFile(firFile, containingClassId, target)
+        if (designationPath != null) {
+            return designationPath
         }
     }
 
+    return collectDesignationPathWithContainingClassFallback(target, containingClassId)
+}
+
+private fun collectDesignationPathWithContainingClassFallback(target: FirDeclaration, containingClassId: ClassId): List<FirRegularClass>? {
     val useSiteSession = getTargetSession(target)
 
     fun resolveChunk(classId: ClassId): FirRegularClass {
