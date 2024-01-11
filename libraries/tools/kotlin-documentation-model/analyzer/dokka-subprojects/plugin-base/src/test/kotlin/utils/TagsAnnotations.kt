@@ -24,6 +24,24 @@ import org.junit.jupiter.api.Tag
 @Tag("onlyDescriptors")
 annotation class OnlyDescriptors(val reason: String = "")
 
+
+/**
+ * Run a test only for symbols (aka K2), not descriptors (K1).
+ *
+ * After remove K1 in dokka, this annotation should be also removed without consequences
+ */
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER
+)
+@Retention(
+    AnnotationRetention.RUNTIME
+)
+@Tag("onlySymbols")
+annotation class OnlySymbols(val reason: String = "")
+
 /**
  * Run a test only for descriptors, not symbols.
  *
