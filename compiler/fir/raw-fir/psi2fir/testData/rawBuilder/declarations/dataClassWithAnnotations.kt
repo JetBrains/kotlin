@@ -1,3 +1,4 @@
+// IGNORE_TREE_ACCESS: KT-64898
 @Anno("Derived $x")
 data class Derived @Anno("Derived constructor $x") constructor(
     @Anno("b $x")

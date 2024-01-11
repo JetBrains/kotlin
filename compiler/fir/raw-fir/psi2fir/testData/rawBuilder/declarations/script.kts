@@ -1,3 +1,4 @@
+// IGNORE_TREE_ACCESS: KT-64899
 class Builder {
     var version: String = ""
 

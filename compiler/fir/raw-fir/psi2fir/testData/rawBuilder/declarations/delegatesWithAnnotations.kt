@@ -1,3 +1,4 @@
+// IGNORE_TREE_ACCESS: KT-64898
 @Anno("x annotation $x")
 val x: Int by lazy { 1 + 2 }
 

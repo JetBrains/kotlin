@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -170,8 +170,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         private fun FirDeclaration.shouldAddParentContext(): Boolean = symbol is FirFunctionWithoutNameSymbol || !isNonLocal
     }
 
-
-    protected fun createKtFile(filePath: String): KtFile {
+    protected open fun createKtFile(filePath: String): KtFile {
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath))
         return (createFile(filePath, KtNodeTypes.KT_FILE) as KtFile).apply {
             myFile = this

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,10 +14,11 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
-import org.jetbrains.kotlin.fir.java.AbstractFirOldFrontendLightClassesTest
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesTestCase
+import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByAstTest
+import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByStubTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderSourceElementMappingTestCase
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
+import org.jetbrains.kotlin.fir.java.AbstractFirOldFrontendLightClassesTest
 import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
 import org.jetbrains.kotlin.fir.java.AbstractOwnFirTypeEnhancementTest
 import org.jetbrains.kotlin.fir.lightTree.AbstractLightTree2FirConverterTestCase
@@ -396,7 +397,11 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("rawBuilder", testMethod = "doRawFirTest", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
-            testClass<AbstractRawFirBuilderLazyBodiesTestCase> {
+            testClass<AbstractRawFirBuilderLazyBodiesByAstTest> {
+                model("rawBuilder", testMethod = "doRawFirTest", pattern = TestGeneratorUtil.KT_OR_KTS)
+            }
+
+            testClass<AbstractRawFirBuilderLazyBodiesByStubTest> {
                 model("rawBuilder", testMethod = "doRawFirTest", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
