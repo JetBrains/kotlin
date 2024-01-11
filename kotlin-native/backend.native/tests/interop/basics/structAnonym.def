@@ -66,7 +66,7 @@ struct StructAnonRecordMember_Nested {
     union { // implicitly aligned to 8 bytes due to int64, or 4 bytes at 32-bit arch
         int a[2];
         struct {
-            int64_t b;
+            int32_t b;
         };
     };
     char z;
@@ -94,12 +94,12 @@ struct StructAnonRecordMember_Complicate {
 	union {
 		int a[2];
 		union { char c1; int c2; };
-		struct { char b1; int64_t b2; };  // implicit 64-bits alignment
+		struct { char b1; int32_t b2; };  // implicit 64-bits alignment
 	};
 	char second __attribute__((aligned(16)));
 	struct {
 	    char x;
-		struct { int64_t b11, b12; } Y2;
+		struct { int32_t b11, b12; } Y2;
 		int32_t f  __attribute__((aligned(16)));
 	}; // __attribute__((aligned(16)));
 	char last;
@@ -121,17 +121,18 @@ static struct StructAnonRecordMember_Complicate retByValue_StructAnonRecordMembe
 	return c;
 }
 
+// nested struct is not packed
 struct StructAnonRecordMember_Packed {
 	char first;
 	union {
 		int a[2];
 		union { char c1; int c2; };
-		struct { char b1; int64_t b2; };
+		struct { char b1; int32_t b2; };
 	};
 	char second;
 	struct {
 	    char x;
-		struct { int64_t b11, b12; } Y2;
+		struct { int32_t b11, b12; } Y2;
 		int32_t f;
 	} __attribute__((aligned(16)));
 	char last;
@@ -149,12 +150,12 @@ struct StructAnonRecordMember_PragmaPacked {
 	union {
 		int a[2];
 		union { char c1; int c2; };
-		struct { char b1; int64_t b2; };
+		struct { char b1; int32_t b2; };
 	};
 	char second;
 	struct {
 	    char x;
-		struct { int64_t b11, b12; } Y2;
+		struct { int32_t b11, b12; } Y2;
 		int32_t f  __attribute__((aligned(16))); // another kind of alignment
 	};
 	char last;
@@ -172,12 +173,12 @@ struct StructAnonRecordMember_Packed2 {
 	union {
 		int a[2];
 		union { char c1; int c2; };
-		struct { char b1; int64_t b2; };
+		struct { char b1; int32_t b2; };
 	};
 	char second;
 	struct {
 	    char x;
-		struct { int64_t b11, b12; } Y2;
+		struct { int32_t b11, b12; } Y2;
 		int32_t f;
 	} __attribute__((aligned(16)));
 	char last;
