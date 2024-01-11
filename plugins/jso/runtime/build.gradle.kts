@@ -8,7 +8,7 @@ plugins {
     `maven-publish`
 }
 
-group = "org.jetbrains.kotlinx"
+group = "org.jetbrains.kotlin"
 
 kotlin {
     js {
