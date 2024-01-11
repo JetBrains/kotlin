@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -56,7 +57,7 @@ sealed class AbiClassInfo {
  * single inline method `f` which should be kept.
  */
 class JvmAbiClassBuilderInterceptor(
-    private val removeCopyAlongWithConstructor: Boolean,
+    private val removeDataClassCopyIfConstructorIsPrivate: Boolean,
 ) : ClassGeneratorExtension {
     val abiClassInfo: MutableMap<String, AbiClassInfo> = mutableMapOf()
 
@@ -68,14 +69,11 @@ class JvmAbiClassBuilderInterceptor(
         irClass: IrClass?,
     ) : ClassGenerator by delegate {
         private val isPrivateClass = irClass != null && DescriptorVisibilities.isPrivate(irClass.visibility)
-        private val isDataClass = irClass?.isData == true
+        private val isDataClass = irClass != null && irClass.isData
 
         @OptIn(UnsafeDuringIrConstructionAPI::class)
-        private val primaryConstructorIsNotInAbi = irClass
-            ?.primaryConstructor
-            ?.visibility
-            ?.let(DescriptorVisibilities::isPrivate)
-            ?: false
+        private val primaryConstructorIsNotInAbi =
+            irClass?.primaryConstructor?.visibility?.let(DescriptorVisibilities::isPrivate) == true
 
         lateinit var internalName: String
         var localOrAnonymousClass = false
@@ -128,7 +126,9 @@ class JvmAbiClassBuilderInterceptor(
                 return delegate.newMethod(declaration, access, name, desc, signature, exceptions)
             }
 
-            if (removeCopyAlongWithConstructor && isDataClass && (name == "copy" || name == "copy\$default")) {
+            if (isDataClass && removeDataClassCopyIfConstructorIsPrivate &&
+                (name == "copy" || name == "copy${JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX}")
+            ) {
                 if (primaryConstructorIsNotInAbi) {
                     return delegate.newMethod(declaration, access, name, desc, signature, exceptions)
                 }

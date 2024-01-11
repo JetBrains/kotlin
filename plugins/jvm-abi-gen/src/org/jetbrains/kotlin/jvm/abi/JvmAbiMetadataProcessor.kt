@@ -20,7 +20,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
  */
 fun abiMetadataProcessor(
     annotationVisitor: AnnotationVisitor,
-    removeCopyAlongWithConstructor: Boolean,
+    removeDataClassCopyIfConstructorIsPrivate: Boolean,
 ): AnnotationVisitor =
     kotlinClassHeaderVisitor { header ->
         // kotlinx-metadata only supports writing Kotlin metadata of version >= 1.4, so we need to
@@ -35,7 +35,7 @@ fun abiMetadataProcessor(
             KotlinClassMetadata.transform(header) { metadata ->
                 when (metadata) {
                     is KotlinClassMetadata.Class -> {
-                        metadata.kmClass.removePrivateDeclarations(removeCopyAlongWithConstructor)
+                        metadata.kmClass.removePrivateDeclarations(removeDataClassCopyIfConstructorIsPrivate)
                     }
                     is KotlinClassMetadata.FileFacade -> {
                         metadata.kmPackage.removePrivateDeclarations()
@@ -162,14 +162,12 @@ private fun KmClass.removePrivateDeclarations(removeCopyAlongWithConstructor: Bo
 }
 
 private fun KmPackage.removePrivateDeclarations() {
-    (this as KmDeclarationContainer).removePrivateDeclarations()
+    (this as KmDeclarationContainer).removePrivateDeclarations(false)
     localDelegatedProperties.clear()
     // TODO: do not serialize private type aliases once KT-17229 is fixed.
 }
 
-private fun KmDeclarationContainer.removePrivateDeclarations(
-    copyFunShouldBeDeleted: Boolean = false,
-) {
+private fun KmDeclarationContainer.removePrivateDeclarations(copyFunShouldBeDeleted: Boolean) {
     functions.removeIf { it.visibility.isPrivate || (copyFunShouldBeDeleted && it.name == "copy") }
     properties.removeIf { it.visibility.isPrivate }
 
@@ -181,10 +179,8 @@ private fun KmDeclarationContainer.removePrivateDeclarations(
     }
 }
 
-private fun KmClass.copyFunShouldBeDeleted(removeCopyAlongWithConstructor: Boolean) = removeCopyAlongWithConstructor
-        && isData
-        && constructors.none { !it.isSecondary }
-
+private fun KmClass.copyFunShouldBeDeleted(removeDataClassCopy: Boolean): Boolean =
+    removeDataClassCopy && isData && constructors.none { !it.isSecondary }
 
 private val Visibility.isPrivate: Boolean
     get() = this == Visibility.PRIVATE || this == Visibility.PRIVATE_TO_THIS || this == Visibility.LOCAL
