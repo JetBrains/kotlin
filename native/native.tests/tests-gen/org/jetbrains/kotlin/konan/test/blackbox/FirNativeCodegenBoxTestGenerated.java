@@ -4929,9 +4929,51 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
                 }
 
                 @Test
-                @TestMetadata("structAnonym.kt")
-                public void testStructAnonym() throws Exception {
-                    runTest("compiler/testData/codegen/box/cinterop/basics/structAnonym.kt");
+                @TestMetadata("structAnonRecordMember_ExplicitAlignment.kt")
+                public void testStructAnonRecordMember_ExplicitAlignment() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/structAnonRecordMember_ExplicitAlignment.kt");
+                }
+
+                @Test
+                @TestMetadata("structAnonRecordMember_ImplicitAlignment.kt")
+                public void testStructAnonRecordMember_ImplicitAlignment() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/structAnonRecordMember_ImplicitAlignment.kt");
+                }
+
+                @Test
+                @TestMetadata("structAnonRecordMember_Nested.kt")
+                public void testStructAnonRecordMember_Nested() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/structAnonRecordMember_Nested.kt");
+                }
+
+                @Test
+                @TestMetadata("structAnonym_Complicate.kt")
+                public void testStructAnonym_Complicate() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/structAnonym_Complicate.kt");
+                }
+
+                @Test
+                @TestMetadata("structAnonym_GLKVector3.kt")
+                public void testStructAnonym_GLKVector3() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/structAnonym_GLKVector3.kt");
+                }
+
+                @Test
+                @TestMetadata("structAnonym_Packed.kt")
+                public void testStructAnonym_Packed() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/structAnonym_Packed.kt");
+                }
+
+                @Test
+                @TestMetadata("structAnonym_Packed2.kt")
+                public void testStructAnonym_Packed2() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/structAnonym_Packed2.kt");
+                }
+
+                @Test
+                @TestMetadata("structAnonym_PragmaPacked.kt")
+                public void testStructAnonym_PragmaPacked() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/structAnonym_PragmaPacked.kt");
                 }
 
                 @Test
