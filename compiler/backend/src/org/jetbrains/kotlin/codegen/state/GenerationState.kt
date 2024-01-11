@@ -341,6 +341,13 @@ class GenerationState private constructor(
 
     @Suppress("UNCHECKED_CAST", "DEPRECATION_ERROR")
     private fun loadClassBuilderInterceptors(): List<org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension> {
+        // KAPT with useJvmIr=False (non-Ir backend) can't use ClassBuilderExtensionAdapter
+        // Anything that's not JvmIrDeclarationOrigin became NO_ORIGIN after ClassBuilderExtensionAdapter's
+        // unwrapOrigin() and wrapToOrigin(), causing it to lose necessary information for KAPT stub generation.
+        if (!isIrBackend) {
+            return org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension.getInstances(project)
+        }
+
         // Using Class.forName here because we're in the old JVM backend, and we need to load extensions declared in the JVM IR backend.
         val adapted = Class.forName("org.jetbrains.kotlin.backend.jvm.extensions.ClassBuilderExtensionAdapter")
             .getDeclaredMethod("getExtensions", Project::class.java)
