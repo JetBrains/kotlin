@@ -246,9 +246,9 @@ def clone_llvm_repository(repo, branch, llvm_repo_destination, dry_run):
     Downloads a single commit from the given repository.
     """
     if host_is_darwin():
-        default_repo, default_branch = "https://github.com/apple/llvm-project", "stable/20220421"
+        default_repo, default_branch = "https://github.com/troelsbjerre/llvm-project", "patch/20221013/ignore_jvm_gc_sigs"
     else:
-        default_repo, default_branch = "https://github.com/llvm/llvm-project", "release/14.x"
+        default_repo, default_branch = "https://github.com/troelsbjerre/llvm-project", "patch/16.x/ignore_jvm_gc_sigs"
     repo = default_repo if repo is None else repo
     branch = default_branch if branch is None else branch
     # Download only single commit because we don't need whole history just for building LLVM.
@@ -339,8 +339,8 @@ def build_distribution(args):
             intermediate_build_results.append(install_path)
             build_targets = ["install"]
 
-        projects = ["clang", "lld", "libcxx", "libcxxabi", "compiler-rt"]
-        runtimes = None
+        projects = ["clang", "lld", "compiler-rt"]
+        runtimes = ["libcxx", "libcxxabi"]
 
         build_dir = force_create_directory(current_dir, f"llvm-stage-{stage}-build")
         intermediate_build_results.append(build_dir)

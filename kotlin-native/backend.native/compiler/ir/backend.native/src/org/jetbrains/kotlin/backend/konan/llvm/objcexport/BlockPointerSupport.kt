@@ -41,7 +41,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
         val thisRef = param(0)
         val associatedObjectHolder = if (useSeparateHolder) {
             val bodyPtr = bitcast(pointerType(bodyType), thisRef)
-            loadSlot(codegen.kObjHeaderPtr, structGep(bodyType, bodyPtr, 1), isVar = false)
+            loadSlot(codegen.kObjHeaderPtr, true, structGep(bodyType, bodyPtr, 1), isVar = false)
         } else {
             thisRef
         }
@@ -90,7 +90,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
             bodyType,
             immutable = true
     )
-    val functionSig = LlvmFunctionSignature(LlvmRetType(codegen.kObjHeaderPtr), listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(codegen.kObjHeaderPtrPtr)))
+    val functionSig = LlvmFunctionSignature(LlvmRetType(codegen.kObjHeaderPtr), true, listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(codegen.kObjHeaderPtrPtr)))
     return functionGenerator(
             functionSig.toProto("convertBlock${bridge.nameSuffix}", null, LLVMLinkage.LLVMInternalLinkage)
     ).generate {
@@ -128,7 +128,7 @@ private fun FunctionGenerationContext.loadBlockInvoke(
     val functionType = signature.llvmFunctionType
     val functionPointerType = pointerType(functionType)
     val functionPointer = load(functionPointerType, bitcast(pointerType(functionPointerType), invokePtr))
-    return LlvmCallable(functionType, functionPointer, signature)
+    return LlvmCallable(functionType, !bridge.returnsVoid, functionPointer, signature)
 }
 
 private fun FunctionGenerationContext.allocInstanceWithAssociatedObject(
@@ -152,6 +152,7 @@ internal data class BlockType(val numberOfParameters: Int, val returnsVoid: Bool
 private fun BlockType.toBlockInvokeLlvmType(llvm: CodegenLlvmHelpers): LlvmFunctionSignature =
         LlvmFunctionSignature(
                 LlvmRetType(if (returnsVoid) llvm.voidType else llvm.int8PtrType),
+                false,
                 (0..numberOfParameters).map { LlvmParamType(llvm.int8PtrType) }
         )
 
@@ -168,6 +169,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
 
     val disposeProto = LlvmFunctionSignature(
             LlvmRetType(llvm.voidType),
+            false,
             listOf(LlvmParamType(llvm.int8PtrType))
     ).toProto(
             "blockDisposeHelper",
@@ -188,7 +190,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
     }
 
     val copyProto = LlvmFunctionSignature(
-            LlvmRetType(llvm.voidType),
+            LlvmRetType(llvm.voidType), false,
             listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType))
     ).toProto(
             "blockCopyHelper",
@@ -317,7 +319,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         )
 
         return functionGenerator(
-                LlvmFunctionSignature(LlvmRetType(llvm.int8PtrType), listOf(LlvmParamType(codegen.kObjHeaderPtr))).toProto(
+                LlvmFunctionSignature(LlvmRetType(llvm.int8PtrType), false, listOf(LlvmParamType(codegen.kObjHeaderPtr))).toProto(
                     convertName, null, LLVMLinkage.LLVMInternalLinkage
                 )
         ).generate {
@@ -335,7 +337,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             val invoke = generateInvoke(blockType, invokeName, genBlockBody).bitcast(invokeType).llvm
             val descriptor = blockDescriptor.llvmGlobal
 
-            val blockOnStack = alloca(blockLiteralType)
+            val blockOnStack = alloca(blockLiteralType, false)
             val blockOnStackBase = structGep(blockLiteralType, blockOnStack, 0)
             val refHolder = structGep(blockLiteralType, blockOnStack, 1)
 

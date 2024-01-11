@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMTypeRef
+import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.allParameters
@@ -23,13 +25,12 @@ class LlvmParamType(val llvmType: LLVMTypeRef, val attributes: List<LlvmParamete
 typealias LlvmRetType = LlvmParamType
 
 internal fun ContextUtils.getLlvmFunctionParameterTypes(function: IrFunction): List<LlvmParamType> {
-    val returnType = getLlvmFunctionReturnType(function).llvmType
     val paramTypes = ArrayList(function.allParameters.map {
         LlvmParamType(it.type.toLLVMType(llvm), argumentAbiInfo.defaultParameterAttributesForIrType(it.type))
     })
     require(!function.isSuspend) { "Suspend functions should be lowered out at this point"}
-    if (isObjectType(returnType))
-        paramTypes.add(LlvmParamType(kObjHeaderPtrPtr))
+    if (function.returnsObjectType())
+            paramTypes.add(LlvmParamType(kObjHeaderPtrPtr))
 
     return paramTypes
 }

@@ -81,6 +81,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
         val llvmType = functionType.llvmFunctionType
         return LlvmCallable(
                 llvmType,
+                false,
                 objcMsgSend.bitcast(pointerType(llvmType)).llvm,
                 functionType)
     }

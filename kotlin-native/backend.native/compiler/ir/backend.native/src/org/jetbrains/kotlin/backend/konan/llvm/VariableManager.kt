@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -23,22 +24,20 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
         fun address() : LLVMValueRef
     }
 
-    inner class SlotRecord(val address: LLVMValueRef, val type: LLVMTypeRef, val isVar: Boolean) : Record {
-        val refSlot = functionGenerationContext.isObjectType(type)
-        override fun load(resultSlot: LLVMValueRef?) : LLVMValueRef = functionGenerationContext.loadSlot(type, address, isVar, resultSlot)
+    inner class SlotRecord(val address: LLVMValueRef, val type: LLVMTypeRef, val isVar: Boolean, val isObjectType: Boolean) : Record {
+        override fun load(resultSlot: LLVMValueRef?) : LLVMValueRef = functionGenerationContext.loadSlot(type, isObjectType, address, isVar, resultSlot)
         override fun store(value: LLVMValueRef) {
-            functionGenerationContext.storeAny(value, address, true)
+            functionGenerationContext.storeAny(value, address, isObjectType, true)
         }
         override fun address() : LLVMValueRef = this.address
-        override fun toString() = (if (refSlot) "refslot" else "slot") + " for ${address}"
+        override fun toString() = (if (isObjectType) "refslot" else "slot") + " for ${address}"
     }
 
-    inner class ParameterRecord(val address: LLVMValueRef, val type: LLVMTypeRef) : Record {
-        val refSlot = functionGenerationContext.isObjectType(type)
-        override fun load(resultSlot: LLVMValueRef?): LLVMValueRef = functionGenerationContext.loadSlot(type, address, false, resultSlot)
+    inner class ParameterRecord(val address: LLVMValueRef, val type: LLVMTypeRef, val isObjectType: Boolean) : Record {
+        override fun load(resultSlot: LLVMValueRef?): LLVMValueRef = functionGenerationContext.loadSlot(type, isObjectType, address, false, resultSlot)
         override fun store(value: LLVMValueRef) = functionGenerationContext.store(value, address)
         override fun address() : LLVMValueRef = this.address
-        override fun toString() = (if (refSlot) "refslot" else "slot") + " for ${address}"
+        override fun toString() = (if (isObjectType) "refslot" else "slot") + " for ${address}"
     }
 
     class ValueRecord(val value: LLVMValueRef, val name: Name) : Record {
@@ -78,10 +77,11 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
         }
         val index = variables.size
         val type = valueDeclaration.type.toLLVMType(functionGenerationContext.llvm)
-        val slot = functionGenerationContext.alloca(type, valueDeclaration.name.asString(), variableLocation)
+        val isObjectType = valueDeclaration.type.binaryTypeIsReference()
+        val slot = functionGenerationContext.alloca(type, isObjectType, valueDeclaration.name.asString(), variableLocation)
         if (value != null)
-            functionGenerationContext.storeAny(value, slot, true)
-        variables.add(SlotRecord(slot, type, isVar))
+            functionGenerationContext.storeAny(value, slot, isObjectType, true)
+        variables.add(SlotRecord(slot, type, isVar, isObjectType))
         contextVariablesToIndex[valueDeclaration] = index
         return index
     }
@@ -91,10 +91,11 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
         assert(!contextVariablesToIndex.contains(valueDeclaration))
         val index = variables.size
         val type = valueDeclaration.type.toLLVMType(functionGenerationContext.llvm)
+        val isObjectType = valueDeclaration.type.binaryTypeIsReference()
         val slot = functionGenerationContext.alloca(
-                type, "p-${valueDeclaration.name.asString()}", variableLocation)
-        val isObject = functionGenerationContext.isObjectType(type)
-        variables.add(ParameterRecord(slot, type))
+                type, isObjectType, "p-${valueDeclaration.name.asString()}", variableLocation)
+        val isObject = valueDeclaration.type.binaryTypeIsReference()
+        variables.add(ParameterRecord(slot, type, isObjectType))
         contextVariablesToIndex[valueDeclaration] = index
         if (isObject)
             skipSlots++
@@ -106,17 +107,17 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
 
     // Creates anonymous mutable variable.
     // Think of slot reuse.
-    fun createAnonymousSlot(value: LLVMValueRef? = null) : LLVMValueRef {
-        val index = createAnonymousMutable(functionGenerationContext.kObjHeaderPtr, value)
+    fun createAnonymousSlot(isObjectType: Boolean, value: LLVMValueRef? = null) : LLVMValueRef {
+        val index = createAnonymousMutable(functionGenerationContext.kObjHeaderPtr, isObjectType, value)
         return addressOf(index)
     }
 
-    private fun createAnonymousMutable(type: LLVMTypeRef, value: LLVMValueRef? = null) : Int {
+    private fun createAnonymousMutable(type: LLVMTypeRef, isObjectType: Boolean, value: LLVMValueRef? = null) : Int {
         val index = variables.size
-        val slot = functionGenerationContext.alloca(type, variableLocation = null)
+        val slot = functionGenerationContext.alloca(type, isObjectType, variableLocation = null)
         if (value != null)
-            functionGenerationContext.storeAny(value, slot, true)
-        variables.add(SlotRecord(slot, type, true))
+            functionGenerationContext.storeAny(value, slot, isObjectType, true)
+        variables.add(SlotRecord(slot, type, true, isObjectType))
         return index
     }
 

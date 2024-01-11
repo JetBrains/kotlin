@@ -19,9 +19,11 @@ class Runtime(llvmContext: LLVMContextRef, bitcodeFile: String) {
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
     val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmCallable> = HashMap()
 
-    private fun getStructTypeOrNull(name: String) = LLVMGetTypeByName(llvmModule, "struct.$name")
-    private fun getStructType(name: String) = getStructTypeOrNull(name)
-            ?: error("struct.$name is not found in the Runtime module.")
+    private fun getStructTypeOrNull(name: String) =
+            LLVMGetTypeByName(llvmModule, "struct.$name") ?: LLVMGetNamedGlobal(llvmModule, "touch$name")?.let(::LLVMGlobalGetValueType)
+
+    internal fun getStructType(name: String) = getStructTypeOrNull(name)
+            ?: error("type $name is not found in the Runtime module.")
 
     val typeInfoType = getStructType("TypeInfo")
     val extendedTypeInfoType = getStructType("ExtendedTypeInfo")

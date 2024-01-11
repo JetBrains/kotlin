@@ -56,6 +56,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
     val targetHasAddressDependency get() = target.hasAddressDependencyInMemoryModel()
     internal val flexiblePhaseConfig = configuration.get(CLIConfigurationKeys.FLEXIBLE_PHASE_CONFIG)!!
+    val useOpaquePointers = true // changing this needs to trigger a full cache rebuild, so it shouldn't be a command line argument
 
     // TODO: debug info generation mode and debug/release variant selection probably requires some refactoring.
     val debug: Boolean get() = configuration.getBoolean(KonanConfigKeys.DEBUG)

@@ -14,7 +14,7 @@ import llvm.*
  *  @todo This class mixes "something that can be called" and function abstractions.
  *        Some of it's methods make sense only for functions. Probably, LlvmFunction sub-class should be extracted.
  */
-class LlvmCallable(val functionType: LLVMTypeRef, private val llvmValue: LLVMValueRef, private val attributeProvider: LlvmFunctionAttributeProvider) {
+class LlvmCallable(val functionType: LLVMTypeRef, val returnsObjectType: Boolean, private val llvmValue: LLVMValueRef, private val attributeProvider: LlvmFunctionAttributeProvider) {
     val returnType: LLVMTypeRef by lazy {
         LLVMGetReturnType(functionType)!!
     }
