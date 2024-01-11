@@ -1,10 +1,11 @@
 /*
- * Copyright 2014-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2014-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 
 package translators
 
 import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.modifiers
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
@@ -911,7 +912,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                                     Text("This method may be used to iterate over the constants.")
                                 ))
                             ),
-                            name = "MARKDOWN_FILE"
+                            name = MARKDOWN_ELEMENT_FILE_NAME
                         )
                     )
                 ))
@@ -974,7 +975,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                                     Text("This method may be used to iterate over the enum entries.")
                                 ))
                             ),
-                            name = "MARKDOWN_FILE"
+                            name = MARKDOWN_ELEMENT_FILE_NAME
                         )
                     )
                 ))
@@ -1023,7 +1024,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                                     )
                                 ))
                             ),
-                            name = "MARKDOWN_FILE"
+                            name = MARKDOWN_ELEMENT_FILE_NAME
                         )
                     ),
                     Throws(
@@ -1033,7 +1034,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                                     Text("if this enum type has no constant with the specified name")
                                 ))
                             ),
-                            name = "MARKDOWN_FILE"
+                            name = MARKDOWN_ELEMENT_FILE_NAME
                         ),
                         name = "kotlin.IllegalArgumentException",
                         exceptionAddress = DRI(
