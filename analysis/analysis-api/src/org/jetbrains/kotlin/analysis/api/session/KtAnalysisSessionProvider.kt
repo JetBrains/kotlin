@@ -39,24 +39,6 @@ public abstract class KtAnalysisSessionProvider(public val project: Project) : D
 
     public abstract fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KtAnalysisSession
 
-    @Deprecated(
-        "On-air analysis is obsolete. Use 'analyzeCopy()' instead",
-        replaceWith = ReplaceWith(
-            "analyzeCopy(elementToReanalyze, DanglingFileAnalysisMode.IGNORE_SELF, action)",
-            imports = [
-                "org.jetbrains.kotlin.analysis.api.analyzeCopy",
-                "org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode"
-            ]
-        )
-    )
-    public inline fun <R> analyseInDependedAnalysisSession(
-        @Suppress("unused", "UNUSED_PARAMETER") originalFile: KtFile,
-        elementToReanalyze: KtElement,
-        crossinline action: KtAnalysisSession.() -> R,
-    ): R {
-        return analyzeCopy(elementToReanalyze, DanglingFileResolutionMode.IGNORE_SELF, action)
-    }
-
     public inline fun <R> analyse(
         useSiteKtElement: KtElement,
         action: KtAnalysisSession.() -> R,

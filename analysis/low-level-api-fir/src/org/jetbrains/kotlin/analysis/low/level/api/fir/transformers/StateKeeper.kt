@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
 @DslMarker
 internal annotation class StateKeeperDsl
@@ -264,15 +259,6 @@ internal inline fun <Target : FirElementWithResolveState, Context : Any, Result>
     prepareTarget: (Target) -> Unit = {},
     action: () -> Result,
 ): Result {
-    val onAirAnalysisTarget = target.moduleData.session.onAirAnalysisTarget
-    if (onAirAnalysisTarget != null && target in onAirAnalysisTarget) {
-        // Several arrangers reset declaration bodies to lazy ones, and then re-construct the FIR tree from the backing PSI.
-        // This won't work for on-air analysis, as the tree is manually modified. However, it doesn't seem that tree guards are needed
-        // in the first place, as results of the on-air analysis aren't going to be shared.
-        prepareTarget(target)
-        return action()
-    }
-
     var preservedState: PreservedState? = null
 
     try {
@@ -284,26 +270,4 @@ internal inline fun <Target : FirElementWithResolveState, Context : Any, Result>
         preservedState?.restore()
         throw e
     }
-}
-
-private operator fun FirElementWithResolveState.contains(child: FirElementWithResolveState): Boolean {
-    if (this == child) {
-        return true
-    }
-
-    var isFound = false
-
-    accept(object : FirVisitorVoid() {
-        override fun visitElement(element: FirElement) {
-            if (!isFound) {
-                if (element == child) {
-                    isFound = true
-                } else if (element is FirDeclaration || element !is FirStatement) {
-                    element.acceptChildren(this)
-                }
-            }
-        }
-    })
-
-    return isFound
 }

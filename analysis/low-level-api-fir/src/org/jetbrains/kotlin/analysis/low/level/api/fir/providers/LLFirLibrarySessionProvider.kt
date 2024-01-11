@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.SyntheticFirClassProvider
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
@@ -20,8 +19,7 @@ internal class LLFirLibrarySessionProvider(
     override val symbolProvider: FirSymbolProvider
 ) : FirProvider() {
     override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? {
-        return SyntheticFirClassProvider.getInstance(symbolProvider.session).getFirClassifierByFqName(classId)
-            ?: symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
+        return symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
     }
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile = shouldNotBeCalled()

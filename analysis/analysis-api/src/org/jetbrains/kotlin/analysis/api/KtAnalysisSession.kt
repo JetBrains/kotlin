@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
 
 /**
  * [KtAnalysisSession] is the entry point to all frontend-related work. It has the following contracts:
@@ -99,15 +97,6 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     public abstract val useSiteModule: KtModule
 
     override val analysisSession: KtAnalysisSession get() = this
-
-    /**
-     * Creates a new [KtAnalysisSession] which depends on this analysis session, but additionally provides its own symbols derived from
-     * analyzing [elementToReanalyze].
-     *
-     * @see analyzeInDependedAnalysisSession
-     */
-    @Deprecated("On-air analysis is obsolete. Use 'analyzeCopy()' instead")
-    public abstract fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession
 
     internal val smartCastProvider: KtSmartCastProvider get() = smartCastProviderImpl
     protected abstract val smartCastProviderImpl: KtSmartCastProvider

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KtAnalysisScopePro
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -35,8 +34,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(KtAnalysisApiInternals::class, KtAnalysisNonPublicApi::class)
@@ -134,26 +131,6 @@ private constructor(
     override val metadataCalculatorImpl: KtMetadataCalculator = KtFirMetadataCalculator(this)
 
     override val substitutorProviderImpl: KtSubstitutorProvider = KtFirSubstitutorProvider(this)
-
-    @Suppress("AnalysisApiMissingLifetimeCheck", "OVERRIDE_DEPRECATION")
-    override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {
-        check(mode == AnalysisSessionMode.REGULAR) {
-            "Cannot create context-dependent copy of KtAnalysis session from a context dependent one"
-        }
-
-        val contextFirResolveSession = LowLevelFirApiFacadeForResolveOnAir.getFirResolveSessionForDependentCopy(
-            originalFirResolveSession = firResolveSession,
-            originalKtFile = originalKtFile,
-            elementToAnalyze = elementToReanalyze
-        )
-
-        return KtFirAnalysisSession(
-            project,
-            contextFirResolveSession,
-            token,
-            AnalysisSessionMode.DEPENDENT_COPY
-        )
-    }
 
     internal val useSiteSession: FirSession get() = firResolveSession.useSiteFirSession
     internal val firSymbolProvider: FirSymbolProvider get() = useSiteSession.symbolProvider

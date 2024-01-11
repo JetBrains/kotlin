@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.SyntheticFirClassProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.NoMutableState
@@ -62,8 +61,9 @@ internal class LLFirProvider(
     private fun getFirClassifierByFqNameAndDeclaration(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration?,
-    ): FirClassLikeDeclaration? = SyntheticFirClassProvider.getInstance(session).getFirClassifierByFqName(classId)
-        ?: providerHelper.getFirClassifierByFqNameAndDeclaration(classId, classLikeDeclaration)
+    ): FirClassLikeDeclaration? {
+        return providerHelper.getFirClassifierByFqNameAndDeclaration(classId, classLikeDeclaration)
+    }
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
         return getFirClassifierContainerFileIfAny(fqName)
@@ -73,8 +73,7 @@ internal class LLFirProvider(
     }
 
     override fun getFirClassifierContainerFileIfAny(fqName: ClassId): FirFile? {
-        return SyntheticFirClassProvider.getInstance(session).getFirClassifierContainerFileIfAny(fqName)
-            ?: getFirClassifierByFqName(fqName)?.let { moduleComponents.cache.getContainerFirFile(it) }
+        return getFirClassifierByFqName(fqName)?.let { moduleComponents.cache.getContainerFirFile(it) }
     }
 
     override fun getFirClassifierContainerFile(symbol: FirClassLikeSymbol<*>): FirFile {
@@ -85,13 +84,11 @@ internal class LLFirProvider(
     }
 
     override fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? {
-        return SyntheticFirClassProvider.getInstance(session).getFirClassifierContainerFileIfAny(symbol.classId)
-            ?: moduleComponents.cache.getContainerFirFile(symbol.fir)
+        return moduleComponents.cache.getContainerFirFile(symbol.fir)
     }
 
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
-        return symbol.callableId.classId?.let { SyntheticFirClassProvider.getInstance(session).getFirClassifierContainerFileIfAny(it) }
-            ?: moduleComponents.cache.getContainerFirFile(symbol.fir)
+        return moduleComponents.cache.getContainerFirFile(symbol.fir)
     }
 
     override fun getFirScriptContainerFile(symbol: FirScriptSymbol): FirFile? {

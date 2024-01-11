@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
@@ -130,9 +129,5 @@ internal class LLFirResolvableResolveSession(
 
     override fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase) {
         declaration.lazyResolveToPhase(toPhase)
-    }
-
-    override fun getTowerContextProvider(ktFile: KtFile): FirTowerContextProvider {
-        return TowerProviderForElementForState(this)
     }
 }

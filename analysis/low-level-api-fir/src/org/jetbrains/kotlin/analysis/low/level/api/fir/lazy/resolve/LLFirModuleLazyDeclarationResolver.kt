@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeElementResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyResolverRunner
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.withOnAirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -127,38 +123,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
             )
         } catch (e: Exception) {
             handleExceptionFromResolve(e, target, toPhase)
-        }
-    }
-
-    /**
-     * Resolve on-air created declaration in a context of real [FirDesignationWithFile.firFile] and [FirDesignationWithFile.path].
-     * If target declaration is [FirFile] then the entire file will be resolved.
-     * The same for [FirRegularClass] if [resolvePhase] is [FirResolvePhase.BODY_RESOLVE].
-     */
-    fun runLazyDesignatedOnAirResolve(
-        designation: FirDesignationWithFile,
-        towerDataContextCollector: FirResolveContextCollector?,
-        resolvePhase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE,
-    ) {
-        resolveFileToImportsWithLock(designation.firFile)
-
-        val target = when {
-            designation.target is FirFile -> LLFirWholeElementResolveTarget(designation.firFile)
-            resolvePhase == FirResolvePhase.BODY_RESOLVE && designation.target is FirRegularClass -> {
-                LLFirWholeElementResolveTarget(designation.firFile, designation.path, designation.target)
-            }
-
-            else -> LLFirSingleResolveTarget(designation.firFile, designation.path, designation.target)
-        }
-
-        try {
-            withOnAirDesignation(designation) {
-                // New session to avoid garbage in the original session
-                val scopeSession = ScopeSession()
-                lazyResolveTargets(listOf(target), scopeSession, resolvePhase, towerDataContextCollector)
-            }
-        } catch (e: Exception) {
-            handleExceptionFromResolve(e, target, resolvePhase)
         }
     }
 

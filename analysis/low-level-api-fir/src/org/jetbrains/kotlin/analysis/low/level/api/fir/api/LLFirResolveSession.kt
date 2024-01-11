@@ -82,8 +82,6 @@ abstract class LLFirResolveSession(
     abstract fun resolveToFirSymbol(ktDeclaration: KtDeclaration, phase: FirResolvePhase): FirBasedSymbol<*>
 
     internal abstract fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase)
-
-    abstract fun getTowerContextProvider(ktFile: KtFile): FirTowerContextProvider
 }
 
 fun LLFirResolveSession.getModule(element: PsiElement): KtModule {

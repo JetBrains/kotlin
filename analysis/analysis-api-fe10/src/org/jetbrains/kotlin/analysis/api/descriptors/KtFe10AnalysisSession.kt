@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProviderByJavaPsi
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
 
 @OptIn(KtAnalysisApiInternals::class, KtAnalysisNonPublicApi::class)
 @Suppress("LeakingThis")
@@ -79,8 +78,4 @@ class KtFe10AnalysisSession(
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override val substitutorProviderImpl: KtSubstitutorProvider
         get() = throw NotSupportedForK1Exception()
-
-    @Suppress("OVERRIDE_DEPRECATION")
-    override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession =
-        KtFe10AnalysisSession(originalKtFile.project, elementToReanalyze, token)
 }
