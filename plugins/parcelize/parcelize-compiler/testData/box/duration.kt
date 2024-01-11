@@ -1,6 +1,6 @@
 // WITH_STDLIB
-@file:JvmName("TestKt")
 
+@file:JvmName("TestKt")
 package test
 
 import kotlinx.parcelize.*
@@ -33,14 +33,10 @@ fun box() = parcelTest { parcel ->
         infinite = Duration.INFINITE,
         negativeInfinite = -Duration.INFINITE,
     )
-    println("test: $test")
     test.writeToParcel(parcel, 0)
     val bytes = parcel.marshall()
-    println("bytes: $bytes")
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
     val got = parcelableCreator<Test>().createFromParcel(parcel)
-    println("expected: $test")
-    println("got: $got")
     assert(test == got)
 }
