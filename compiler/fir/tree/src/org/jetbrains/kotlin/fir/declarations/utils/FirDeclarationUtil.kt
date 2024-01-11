@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations.utils
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isNullableAny
@@ -58,6 +59,12 @@ val FirMemberDeclaration.nameOrSpecialName: Name
         is FirCallableDeclaration -> symbol.callableId.callableName
         is FirClassLikeDeclaration -> classId.shortClassName
     }
+
+fun FirBasedSymbol<*>.asMemberDeclarationResolvedTo(phase: FirResolvePhase): FirMemberDeclaration? {
+    return (fir as? FirMemberDeclaration)?.also {
+        lazyResolveToPhase(phase)
+    }
+}
 
 val FirNamedFunctionSymbol.isMethodOfAny: Boolean
     get() {
