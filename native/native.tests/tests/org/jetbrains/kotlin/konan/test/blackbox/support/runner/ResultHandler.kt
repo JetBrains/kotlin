@@ -16,7 +16,7 @@ internal class ResultHandler(
     checks: TestRunChecks,
     private val testRun: TestRun,
     private val loggedParameters: LoggedData.TestRunParameters
-) : LocalResultHandler<Unit>(runResult, visibleProcessName, checks, testRun.testCaseId, testRun.expectedFailure) {
+) : LocalResultHandler<Unit>(runResult, visibleProcessName, checks, testRun.testCase.id, testRun.expectedFailure) {
     override fun getLoggedRun() = LoggedData.TestRun(loggedParameters, runResult)
 
     override fun doHandle() {

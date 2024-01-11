@@ -25,8 +25,9 @@ internal object TestRunners {
                     check(configurables is AppleConfigurables) {
                         "Running tests with XCTest is not supported on non-Apple $configurables"
                     }
-                    when {
-                        configurables.target == hostTarget -> XCTestHostExecutor(configurables)
+                    when (configurables.target) {
+                        is KonanTarget.IOS_ARM64 -> FirebaseCloudExecutor(configurables)
+                        hostTarget -> XCTestHostExecutor(configurables)
                         else -> XCTestSimulatorExecutor(configurables)
                     }
                 } else {

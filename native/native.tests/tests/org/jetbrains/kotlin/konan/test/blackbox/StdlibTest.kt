@@ -98,7 +98,7 @@ class FirStdlibTest : AbstractNativeBlackBoxTest() {
         ignoredTests = [DISABLED_STDLIB_TEST]
     )
 )
-@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "2m")
+@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "5m")
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class StdlibTestWithXCTest : AbstractNativeBlackBoxTest() {
     @TestFactory
@@ -136,7 +136,7 @@ class StdlibTestWithXCTest : AbstractNativeBlackBoxTest() {
         ignoredTests = [DISABLED_STDLIB_TEST]
     )
 )
-@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "2m")
+@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "5m")
 @FirPipeline
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class FirStdlibTestWithXCTest : AbstractNativeBlackBoxTest() {

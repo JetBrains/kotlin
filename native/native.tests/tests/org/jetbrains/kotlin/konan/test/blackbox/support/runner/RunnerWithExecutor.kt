@@ -17,7 +17,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
-internal class RunnerWithExecutor(
+internal open class RunnerWithExecutor(
     private val executor: Executor,
     private val testRun: TestRun
 ) : AbstractRunner<Unit>() {
@@ -74,7 +74,7 @@ internal class RunnerWithExecutor(
 
     override fun getLoggedParameters() = LoggedData.TestRunParameters(
         compilationToolCall = executable.loggedCompilationToolCall,
-        testCaseId = testRun.testCaseId,
+        testCaseId = testRun.testCase.id,
         runArgs = programArgs,
         runParameters = testRun.runParameters
     )

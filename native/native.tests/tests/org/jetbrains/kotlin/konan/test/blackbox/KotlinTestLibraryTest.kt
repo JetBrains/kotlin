@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestRunnerType
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.DisabledTestsIfProperty
@@ -48,6 +49,7 @@ class FirKotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
 }
 
+// region kotlin-test with XCTest runner
 @Tag("kotlin-test")
 @Tag("xctest")
 @DisabledTestsIfProperty(
@@ -57,16 +59,17 @@ class FirKotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
 )
 @PredefinedTestCases(
     TC(
-        name = "test-ios-launchTests-testLib",
+        name = "test-ios-launchTests",
         runnerType = TestRunnerType.DEFAULT,
         freeCompilerArgs = [STDLIB_IS_A_FRIEND],
         sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
     )
 )
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
+@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "5m")
 class KotlinTestLibraryTestWithXCTest : AbstractNativeBlackBoxTest() {
     @TestFactory
-    fun default() = dynamicTestCase(TestCaseId.Named("test-ios-launchTests-testLib"))
+    fun default() = dynamicTestCase(TestCaseId.Named("test-ios-launchTests"))
 }
 
 @Tag("kotlin-test")
@@ -79,7 +82,7 @@ class KotlinTestLibraryTestWithXCTest : AbstractNativeBlackBoxTest() {
 )
 @PredefinedTestCases(
     TC(
-        name = "test-ios-launchTests-testLib",
+        name = "test-ios-launchTests",
         runnerType = TestRunnerType.DEFAULT,
         freeCompilerArgs = [STDLIB_IS_A_FRIEND],
         sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
@@ -87,8 +90,9 @@ class KotlinTestLibraryTestWithXCTest : AbstractNativeBlackBoxTest() {
 )
 @FirPipeline
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
+@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "5m")
 class FirKotlinTestLibraryTestWithXCTest : AbstractNativeBlackBoxTest() {
     @TestFactory
-    fun default() = dynamicTestCase(TestCaseId.Named("test-ios-launchTests-testLib"))
+    fun default() = dynamicTestCase(TestCaseId.Named("test-ios-launchTests"))
 }
-
+// endregion

@@ -130,7 +130,7 @@ internal object NativeTestSupport {
         fun Long.toMBs() = (this / 1024 / 1024)
 
         // Set up memory tracking and reporting:
-        MemoryTracker.startTracking(intervalMillis = 1000) { memoryMark ->
+        MemoryTracker.startTracking(intervalMillis = 30000) { memoryMark ->
             TestLogger.log(
                 buildString {
                     append(memoryMark.timestamp).append(' ').append(gradleTaskName)
