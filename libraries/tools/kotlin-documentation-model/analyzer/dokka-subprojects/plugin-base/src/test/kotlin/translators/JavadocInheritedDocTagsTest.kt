@@ -1,9 +1,10 @@
 /*
- * Copyright 2014-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2014-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 
 package translators
 
+import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.PointingToDeclaration
@@ -100,7 +101,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
                             children = listOf(Text("\"sample string\". super string"))
                         )
                     ),
-                    name = "MARKDOWN_FILE"
+                    name = MARKDOWN_ELEMENT_FILE_NAME
                 )
             )
 
@@ -121,7 +122,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
                             children = listOf(Text("because i can, super throws"))
                         )
                     ),
-                    name = "MARKDOWN_FILE"
+                    name = MARKDOWN_ELEMENT_FILE_NAME
                 ),
                 "java.lang.RuntimeException",
                 DRI("java.lang", "RuntimeException", target = PointingToDeclaration)
@@ -144,7 +145,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
                             children = listOf(Text("this should be it"))
                         )
                     ),
-                    name = "MARKDOWN_FILE"
+                    name = MARKDOWN_ELEMENT_FILE_NAME
                 ),
                 "java.lang.IllegalStateException",
                 DRI("java.lang", "IllegalStateException", target = PointingToDeclaration)
@@ -166,7 +167,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
                             children = listOf(Text("do not use, Sample super method"))
                         )
                     ),
-                    name = "MARKDOWN_FILE"
+                    name = MARKDOWN_ELEMENT_FILE_NAME
                 ),
             )
 
@@ -186,7 +187,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
                             children = listOf(Text("string,"))
                         )
                     ),
-                    name = "MARKDOWN_FILE"
+                    name = MARKDOWN_ELEMENT_FILE_NAME
                 ),
                 "java.lang.String",
                 DRI("java.lang", "String")
@@ -208,7 +209,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
                             children = listOf(Text("Ja, super author"))
                         )
                     ),
-                    name = "MARKDOWN_FILE"
+                    name = MARKDOWN_ELEMENT_FILE_NAME
                 ),
             )
 
@@ -230,7 +231,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
                             children = listOf(Text("integer subclass, Integer superclass"))
                         )
                     ),
-                    name = "MARKDOWN_FILE"
+                    name = MARKDOWN_ELEMENT_FILE_NAME
                 ),
                 "asd2"
             )
@@ -241,7 +242,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
                             children = listOf(Text("string subclass, String superclass"))
                         )
                     ),
-                    name = "MARKDOWN_FILE"
+                    name = MARKDOWN_ELEMENT_FILE_NAME
                 ),
                 "xd2"
             )
