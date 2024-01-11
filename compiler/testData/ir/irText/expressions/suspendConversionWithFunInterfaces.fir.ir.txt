@@ -50,7 +50,8 @@ FILE fqName:<root> fileName:/suspendConversionWithFunInterfaces.kt
         s: BLOCK type=<root>.SuspendRunnable origin=ADAPTED_FUNCTION_REFERENCE
           FUN ADAPTER_FOR_CALLABLE_REFERENCE name:bar2 visibility:local modality:FINAL <> () returnType:kotlin.Unit [suspend]
             BLOCK_BODY
-              CALL 'public final fun bar2 (s: kotlin.String): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                CALL 'public final fun bar2 (s: kotlin.String): kotlin.Int declared in <root>' type=kotlin.Int origin=null
           TYPE_OP type=<root>.SuspendRunnable origin=SAM_CONVERSION typeOperand=<root>.SuspendRunnable
             FUNCTION_REFERENCE 'local final fun bar2 (): kotlin.Unit declared in <root>.box' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun bar2 (s: kotlin.String): kotlin.Int declared in <root>
       CALL 'public final fun foo1 (s: <root>.SuspendRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null

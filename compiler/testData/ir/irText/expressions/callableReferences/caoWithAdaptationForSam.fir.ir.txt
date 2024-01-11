@@ -112,9 +112,10 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL <> (p0:kotlin.Int) returnType:kotlin.Unit
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Int
               BLOCK_BODY
-                CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-                  xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                    GET_VAR 'p0: kotlin.Int declared in <root>.test1.withVararg' type=kotlin.Int origin=null
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                    xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                      GET_VAR 'p0: kotlin.Int declared in <root>.test1.withVararg' type=kotlin.Int origin=null
             FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.test1' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>
         CALL 'public final fun set (i: <root>.IFoo, newValue: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
           $receiver: GET_VAR 'val tmp_0: <root>.A declared in <root>.test1' type=<root>.A origin=null
@@ -136,9 +137,10 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL <> (p0:kotlin.Int) returnType:kotlin.Unit
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Int
               BLOCK_BODY
-                CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-                  xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                    GET_VAR 'p0: kotlin.Int declared in <root>.test2.withVararg' type=kotlin.Int origin=null
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                    xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                      GET_VAR 'p0: kotlin.Int declared in <root>.test2.withVararg' type=kotlin.Int origin=null
             FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>
         CALL 'public final fun set (i: <root>.IFoo2, newValue: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
           $receiver: GET_VAR 'val tmp_2: <root>.B declared in <root>.test2' type=<root>.B origin=null

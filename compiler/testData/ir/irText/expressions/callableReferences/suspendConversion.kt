@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +SuspendConversion
 
 fun useSuspend(fn: suspend () -> Unit) {}

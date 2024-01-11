@@ -47,7 +47,7 @@ fun test1() {
     val tmp_0: A = A
     val tmp_1: Function1<Int, Unit> = { // BLOCK
       local fun withVararg(p0: Int) {
-        withVararg(xs = [p0])
+        withVararg(xs = [p0]) /*~> Unit */
       }
 
       ::withVararg
@@ -61,7 +61,7 @@ fun test2() {
     val tmp_2: B = B
     val tmp_3: Function1<Int, Unit> = { // BLOCK
       local fun withVararg(p0: Int) {
-        withVararg(xs = [p0])
+        withVararg(xs = [p0]) /*~> Unit */
       }
 
       ::withVararg
