@@ -39,7 +39,7 @@ abstract class FakeOverrideBuilderStrategy(
      * if no fake override should be created for this member
      */
     fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
-        return if (isVisibleForOverrideInClass(member, clazz))
+        return if (member.isOverridableMemberOrAccessor() && isVisibleForOverrideInClass(member, clazz))
             buildFakeOverrideMember(superType, member, clazz, unimplementedOverridesStrategy)
         else
             null
