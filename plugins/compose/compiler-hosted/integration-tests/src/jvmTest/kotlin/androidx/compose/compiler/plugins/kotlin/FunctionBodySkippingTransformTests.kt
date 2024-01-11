@@ -144,7 +144,35 @@ class FunctionBodySkippingTransformTests(
     @Test
     fun testFunInterfaces2(): Unit = comparisonPropagation(
         """
-            import androidx.compose.ui.graphics.Color
+            import androidx.compose.runtime.Immutable
+            import androidx.compose.runtime.Stable
+
+            @Stable
+            fun Color(color: Long): Color {
+                return Color((color shl 32).toULong())
+            }
+
+            @Immutable
+            @kotlin.jvm.JvmInline
+            value class Color(val value: ULong) {
+                companion object {
+                    @Stable
+                    val Red = Color(0xFFFF0000)
+                    @Stable
+                    val Blue = Color(0xFF0000FF)
+                    @Stable
+                    val Transparent = Color(0x00000000)
+                }
+            }
+
+            @Composable
+            public fun Text(
+                text: String,
+                color: Color = Color.Transparent,
+                softWrap: Boolean = true,
+                maxLines: Int = Int.MAX_VALUE,
+                minLines: Int = 1,
+            ) {}
 
             @Composable fun condition(): Boolean = true
 
@@ -153,9 +181,6 @@ class FunctionBodySkippingTransformTests(
             }
         """,
         """
-            import androidx.compose.material.Text
-            import androidx.compose.ui.graphics.Color
-
             @Composable
             fun Button(colors: ButtonColors) {
                 Text("hello world", color = colors.getColor())
