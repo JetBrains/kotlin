@@ -207,6 +207,12 @@ private class ExtTestDataFile(
             directives.contains(IGNORE_NATIVE_K2.name)
         ) return true
 
+        /**
+         * K2 in MPP compilation expects that it receives module structure with exactly one platform leaf module
+         * This invariant may be broken during grouping tests, so MPP tests should be run in standalone mode
+         */
+        if (pipelineType != PipelineType.K1 && testDataFileSettings.languageSettings.contains("+MultiPlatformProjects")) return true
+
         var isStandaloneTest = false
 
         filesToTransform.forEach { handler ->
