@@ -29,13 +29,13 @@ internal val Project.libs : LibrariesForLibs
     get() = extensions.getByType()
 
 /**
- * Retrieves the [dokkaBuild][org.jetbrains.DokkaBuildProperties] extension.
+ * Retrieves the [dokkaBuild][dokkabuild.DokkaBuildProperties] extension.
  */
 internal val Project.dokkaBuild: DokkaBuildProperties
     get() = extensions.getByType()
 
 /**
- * Configures the [dokkaBuild][org.jetbrains.DokkaBuildProperties] extension.
+ * Configures the [dokkaBuild][dokkabuild.DokkaBuildProperties] extension.
  */
 internal fun Project.dokkaBuild(configure: DokkaBuildProperties.() -> Unit) =
     extensions.configure(configure)
