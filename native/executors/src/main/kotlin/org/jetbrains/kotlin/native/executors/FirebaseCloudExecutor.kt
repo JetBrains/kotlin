@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.native.executors
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
+import java.io.ByteArrayOutputStream
 import java.nio.file.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.*
-import kotlin.time.Duration.Companion.seconds
 
 class FirebaseCloudExecutor(
     private val configurables: AppleConfigurables,
@@ -43,72 +44,69 @@ class FirebaseCloudExecutor(
             testBundle.toFile().writeTestArguments(request.args)
             codesign()
         }
-        /*
 
-                // Make a zip with the built application and xctestrun file
-                val testsZip = projectDir.resolve("KNTests.zip")
-                testsZip.createZip(derivedData.resolve("Build/Products"))
+        // Make a zip with the built application and xctestrun file
+        val testsZip = projectDir.resolve("KNTests.zip").apply {
+            createZip(xcodeProject.derivedData.resolve("Build/Products"))
+        }
 
-                // Execute tests in the Firebase
-                val stdout = ByteArrayOutputStream()
-                val stderr = ByteArrayOutputStream()
-                val firebaseRequest = ExecuteRequest(
-                    executableAbsolutePath = "gcloud",
-                    workingDirectory = projectDir.toFile(),
-                    args = mutableListOf(
-                        "firebase", "test", "ios", "run",
-                        "--test=$testsZip",
-                        "--device=model=iphone13pro",
-                        "--client-details=matrixLabel=$description"
-                    ),
-                    stdout = stdout,
-                    stderr = stderr
+        // Execute tests in the Firebase
+        val stderr = ByteArrayOutputStream()
+        val firebaseRequest = ExecuteRequest(
+            executableAbsolutePath = "gcloud",
+            workingDirectory = projectDir.toFile(),
+            args = mutableListOf(
+                "firebase", "test", "ios", "run",
+                "--test=$testsZip",
+                "--device=model=iphone13pro",
+                "--client-details=matrixLabel=$description"
+            ),
+            stderr = stderr
+        )
+        val firebaseResponse = hostExecutor.execute(firebaseRequest)
+
+        val firebaseStderrString = stderr.toString("UTF-8").trim()
+        println(firebaseStderrString)
+
+        // 0 - exit code for "All test executions passed."
+        // 10 - exit code for "One or more test cases (tested classes or class methods) within a test execution did not pass."
+        // Treat other codes for unsuccessful execution of the Firebase run itself.
+        check(firebaseResponse.exitCode == 0 || firebaseResponse.exitCode == 10) {
+            "Firebase failed with exit code ${firebaseResponse.exitCode}, see stderr: $firebaseStderrString"
+        }
+
+        // Get the URL to the results located on Google Cloud Storage
+        // This is a default GCloud bucket and name, non-default buckets require a billing-enabled account
+        val resultsBucketURL = Regex(
+            "Raw results will be stored in your GCS bucket at \\[https://console.developers.google.com/storage/browser/(.*)]"
+        ).find(firebaseStderrString.trim())
+            ?.groupValues
+            ?.get(1)
+            ?.removeSuffixIfPresent("/")
+            ?: error("Unable to match URL against pattern, the input was: \"$firebaseStderrString\"")
+
+        // Fetch results from the storage
+        hostExecutor.execute(
+            ExecuteRequest(
+                executableAbsolutePath = "gsutil",
+                workingDirectory = projectDir.toFile(),
+                args = mutableListOf(
+                    "-m", "cp", "-r",
+                    "gs://${resultsBucketURL}/iphone*", "."
                 )
-                val firebaseResponse = hostExecutor.execute(firebaseRequest)
+            )
+        ).assertSuccess()
+        val executionLog = projectDir.listDirectoryEntries("iphone*")
+            .first()
+            .resolve("xcodebuild_output.log")
+            .readText()
 
-                val firebaseStdoutString = stdout.toString("UTF-8").trim()
-                val firebaseStderrString = stderr.toString("UTF-8").trim()
-                println(firebaseStdoutString)
-                println(firebaseStderrString)
+        // Fill in the request's stdout with the execution result
+        request.stdout.writer()
+            .append(executionLog)
+            .close()
 
-                // 0 - exit code for "All test executions passed."
-                // 10 - exit code for "One or more test cases (tested classes or class methods) within a test execution did not pass."
-                // Treat other codes for unsuccessful execution of the Firebase run itself.
-                check(firebaseResponse.exitCode == 0 || firebaseResponse.exitCode == 10) {
-                    "Firebase failed with exit code ${firebaseResponse.exitCode}, see stderr: $firebaseStderrString"
-                }
-
-                // Get the URL to the results located on Google Cloud Storage
-                val resultsBucketURL = Regex(
-                    "Raw results will be stored in your GCS bucket at \\[https://console.developers.google.com/storage/browser/(.*)]"
-                ).find(firebaseStderrString.trim())
-                    ?.groupValues
-                    ?.get(1)
-                    ?.removeSuffixIfPresent("/")
-                    ?: error("Unable to match URL against pattern, the input was: \"$firebaseStderrString\"")
-
-                // Fetch results from the storage
-                val response = hostExecutor.execute(
-                    ExecuteRequest(
-                        executableAbsolutePath = "gsutil",
-                        workingDirectory = projectDir.toFile(),
-                        args = mutableListOf(
-                            "-m", "cp", "-r",
-                            "gs://${resultsBucketURL}/iphone*", "."
-                        )
-                    )
-                ).assertSuccess()
-                val executionLog = projectDir.listDirectoryEntries("iphone*")
-                    .first()
-                    .resolve("xcodebuild_output.log")
-                    .readText()
-
-                // Fill in the request's stdout with the execution result
-                request.stdout.writer()
-                    .append(executionLog)
-                    .close()
-        */
-        return ExecuteResponse(0, 0.seconds)
+        return firebaseResponse
     }
 
     private fun Path.createZip(sourceFolder: Path) {
