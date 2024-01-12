@@ -13,4 +13,4 @@ package namespace1.main
 
 import namespace1
 import namespace2
-fun foobar(): Int = foo() + bar()
+fun foobar(param: Int): Int = foo() + bar() + param

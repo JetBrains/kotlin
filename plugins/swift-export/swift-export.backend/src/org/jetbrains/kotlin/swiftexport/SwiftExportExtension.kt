@@ -14,12 +14,9 @@ import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.analysisapi.SirGenerator
-import org.jetbrains.kotlin.sir.bridge.BridgeRequest
-import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
-import org.jetbrains.kotlin.sir.bridge.createCBridgePrinter
-import org.jetbrains.kotlin.sir.bridge.createKotlinBridgePrinter
+import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.sir.builder.buildModule
-import org.jetbrains.kotlin.sir.visitors.SirVisitor
+import org.jetbrains.kotlin.sir.visitors.SirVisitorVoid
 import org.jetbrains.sir.passes.SirInflatePackagesPass
 import org.jetbrains.sir.passes.SirModulePass
 import org.jetbrains.sir.passes.SirPass
@@ -37,10 +34,15 @@ class SwiftExportExtension(
     }
 
     override fun doAnalysis(configuration: CompilerConfiguration): Boolean {
-        buildSwiftModule(configuration)
+        val module = buildSwiftModule(configuration)
             .transformToSwift()
-            .dumpResultToFiles()
+        val bridgeRequests = module.createFunctionBridges()
+        module.dumpResultToFiles(bridgeRequests)
         return true
+    }
+
+    private fun SirModule.createFunctionBridges(): List<BridgeRequest> {
+        return BridgeGenerationPass.run(this)
     }
 
     @OptIn(KtAnalysisApiInternals::class)
@@ -74,14 +76,14 @@ class SwiftExportExtension(
         }
     }
 
-    private fun SirModule.dumpResultToFiles() {
+    private fun SirModule.dumpResultToFiles(requests: List<BridgeRequest>) {
         val destinationPath = destination.absolutePath
 
         val cHeaderFile = File("${destinationPath}/${outputFileName}.h")
         val ktBridgeFile = File("${destinationPath}/${outputFileName}.kt")
         val swiftFile = File("${destinationPath}/${outputFileName}.swift")
 
-        val bridges = generateBridgeSources()
+        val bridges = generateBridgeSources(requests)
         val swiftSrc = generateSwiftSrc()
 
         dumpTextAtFile(bridges.ktSrc, ktBridgeFile)
@@ -93,8 +95,7 @@ class SwiftExportExtension(
         return SirAsSwiftSourcesPrinter().print(this)
     }
 
-    private fun SirModule.generateBridgeSources(): BridgeSources {
-        val requests = BridgeRequestsBuilder.build(this)
+    private fun generateBridgeSources(requests: List<BridgeRequest>): BridgeSources {
 
         val generator = createBridgeGenerator()
         val kotlinBridgePrinter = createKotlinBridgePrinter()
@@ -149,27 +150,30 @@ class SwiftExportExtension(
         }
     }
 
-    private object BridgeRequestsBuilder : SirVisitor<Unit, MutableList<BridgeRequest>>() {
-        fun build(from: SirModule): List<BridgeRequest> {
-            val result = mutableListOf<BridgeRequest>()
-            from.accept(this, result)
-            return result
+    private object BridgeGenerationPass : SirPass<SirElement, Nothing?, List<BridgeRequest>> {
+        override fun run(element: SirElement, data: Nothing?): List<BridgeRequest> {
+            val requests = mutableListOf<BridgeRequest>()
+            element.accept(Visitor(requests))
+            return requests.toList()
         }
 
-        override fun visitFunction(function: SirFunction, data: MutableList<BridgeRequest>) {
-            val fqName = (function.origin as? SirKotlinOrigin.Function)?.fqName ?: return
+        private class Visitor(val requests: MutableList<BridgeRequest>) : SirVisitorVoid() {
 
-            data.add(
-                BridgeRequest(
+            override fun visitElement(element: SirElement) {
+                element.acceptChildren(this)
+            }
+
+            override fun visitFunction(function: SirFunction) {
+                val fqName = (function.origin as? SirKotlinOrigin.Function)?.fqName
+                    ?: return
+                val bridgeRequest = BridgeRequest(
                     function,
                     fqName.joinToString("_"),
                     fqName
                 )
-            )
-        }
-
-        override fun visitElement(element: SirElement, data: MutableList<BridgeRequest>) {
-            element.acceptChildren(this, data)
+                requests += bridgeRequest
+                function.body = createFunctionBodyFromRequest(bridgeRequest)
+            }
         }
     }
 }

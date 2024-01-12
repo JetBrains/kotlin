@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.sir.bridge
 
 import org.jetbrains.kotlin.sir.SirFunction
+import org.jetbrains.kotlin.sir.SirFunctionBody
 import org.jetbrains.kotlin.sir.bridge.impl.BridgeGeneratorImpl
 import org.jetbrains.kotlin.sir.bridge.impl.CBridgePrinter
 import org.jetbrains.kotlin.sir.bridge.impl.KotlinBridgePrinter
@@ -21,6 +22,21 @@ public class BridgeRequest(
     public val bridgeName: String,
     public val fqName: List<String>,
 )
+
+/**
+ * Generates the body of a function from a given request.
+ *
+ * @param request the BridgeRequest object that contains information about the function and the bridge
+ * @return the generated SirFunctionBody object representing the body of the function
+ */
+public fun createFunctionBodyFromRequest(request: BridgeRequest): SirFunctionBody {
+    val callee = request.bridgeName
+    val calleeArguments = request.function.parameters.map { it.argumentName }
+    val callSite = "$callee(${calleeArguments.joinToString(separator = ", ")})"
+    return SirFunctionBody(
+        listOf("return $callSite")
+    )
+}
 
 /**
  * A C-like wrapper around some Kotlin function.

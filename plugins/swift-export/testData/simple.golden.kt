@@ -1,8 +1,8 @@
 import kotlin.native.internal.ExportedBridge
 
 @ExportedBridge("namespace1_main_foobar")
-public fun namespace1_main_foobar(): Int {
-    val result = namespace1.main.foobar()
+public fun namespace1_main_foobar(param: Int): Int {
+    val result = namespace1.main.foobar(param)
     return result
 }
 
