@@ -154,9 +154,7 @@ class BirDatabase : BirElementParent() {
             buffer[i] = null
             element.setFlag(BirElementBase.FLAG_IS_IN_MOVED_ELEMENTS_BUFFER, false)
 
-            // perf: it may be possible to find out the actual database reference faster
-            //  than traversing up to the root each time.
-            val actualDatabase = element.findDatabaseFromAncestors()
+            val actualDatabase = element.findActualContainingDatabaseAfterMove()
             val previousDatabase = element._containingDatabase
 
             if (actualDatabase === this) {
@@ -196,6 +194,30 @@ class BirDatabase : BirElementParent() {
             }
         }
         movedElementBufferSize = 0
+    }
+
+    private fun BirElementBase.findActualContainingDatabaseAfterMove(): BirDatabase? {
+        var ancestor = _parent
+        while (true) {
+            when (ancestor) {
+                null -> break
+                is BirElementBase -> {
+                    val db = ancestor._containingDatabase
+                    if (db != null) {
+                        if (db === this@BirDatabase) {
+                            return db
+                        } else {
+                            handleElementFromOtherDatabase()
+                        }
+                    }
+
+                    ancestor = ancestor._parent
+                }
+                is BirDatabase -> return ancestor
+            }
+        }
+
+        return null
     }
 
     private fun collectCurrentRootElements(): List<BirElementBase> {
