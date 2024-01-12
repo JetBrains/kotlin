@@ -1,16 +1,12 @@
 /*
- * Copyright 2016-2020 JetBrains s.r.o.
+ * Copyright 2016-2023 JetBrains s.r.o.
  * Use of this source code is governed by the Apache 2.0 License that can be found in the LICENSE.txt file.
  */
-
 package kotlinx.validation.build
 
-import org.gradle.api.*
-import org.gradle.api.file.*
-import org.gradle.api.publish.*
-import org.gradle.api.publish.maven.*
-import org.gradle.jvm.tasks.*
-import org.gradle.kotlin.dsl.*
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.kotlin.dsl.withType
 
 fun PublishingExtension.mavenCentralMetadata() {
     publications.withType(MavenPublication::class) {
@@ -40,17 +36,4 @@ fun PublishingExtension.mavenCentralMetadata() {
             }
         }
     }
-}
-
-fun MavenPublication.mavenCentralArtifacts(project: Project, sources: SourceDirectorySet) {
-    val sourcesJar by project.tasks.creating(Jar::class) {
-        archiveClassifier.set("sources")
-        from(sources)
-    }
-    val javadocJar by project.tasks.creating(Jar::class) {
-        archiveClassifier.set("javadoc")
-        // contents are deliberately left empty
-    }
-    artifact(sourcesJar)
-    artifact(javadocJar)
 }

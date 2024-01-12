@@ -86,33 +86,33 @@ internal class AndroidLibraryTest : BaseKotlinGradleTest() {
      */
     private fun BaseKotlinScope.createProjectWithSubModules() {
         settingsGradleKts {
-            resolve("examples/gradle/settings/settings-android-project.gradle.kts")
+            resolve("/examples/gradle/settings/settings-android-project.gradle.kts")
         }
         buildGradleKts {
-            resolve("examples/gradle/base/androidProjectRoot.gradle.kts")
+            resolve("/examples/gradle/base/androidProjectRoot.gradle.kts")
         }
         initLocalProperties()
 
         dir("kotlin-library") {
             buildGradleKts {
-                resolve("examples/gradle/base/androidKotlinLibrary.gradle.kts")
+                resolve("/examples/gradle/base/androidKotlinLibrary.gradle.kts")
             }
             kotlin("KotlinLib.kt") {
-                resolve("examples/classes/KotlinLib.kt")
+                resolve("/examples/classes/KotlinLib.kt")
             }
             apiFile(projectName = "kotlin-library") {
-                resolve("examples/classes/KotlinLib.dump")
+                resolve("/examples/classes/KotlinLib.dump")
             }
         }
         dir("java-library") {
             buildGradleKts {
-                resolve("examples/gradle/base/androidJavaLibrary.gradle.kts")
+                resolve("/examples/gradle/base/androidJavaLibrary.gradle.kts")
             }
             java("JavaLib.java") {
-                resolve("examples/classes/JavaLib.java")
+                resolve("/examples/classes/JavaLib.java")
             }
             apiFile(projectName = "java-library") {
-                resolve("examples/classes/JavaLib.dump")
+                resolve("/examples/classes/JavaLib.dump")
             }
         }
     }

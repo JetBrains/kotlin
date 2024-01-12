@@ -5,9 +5,10 @@
 
 package kotlinx.validation.api
 
-import kotlinx.validation.API_DIR
-import org.gradle.testkit.runner.*
 import java.io.*
+import kotlinx.validation.API_DIR
+import org.gradle.testkit.runner.GradleRunner
+import org.intellij.lang.annotations.Language
 
 internal fun BaseKotlinGradleTest.test(fn: BaseKotlinScope.() -> Unit): GradleRunner {
     val baseKotlinScope = BaseKotlinScope()
@@ -30,6 +31,7 @@ internal fun BaseKotlinGradleTest.test(fn: BaseKotlinScope.() -> Unit): GradleRu
         .withProjectDir(rootProjectDir)
         .withPluginClasspath()
         .withArguments(baseKotlinScope.runner.arguments)
+        .withGradleVersion("7.4.2")
         .addPluginTestRuntimeClasspath()
     // disabled because of: https://github.com/gradle/gradle/issues/6862
     // .withDebug(baseKotlinScope.runner.debug)
@@ -38,7 +40,11 @@ internal fun BaseKotlinGradleTest.test(fn: BaseKotlinScope.() -> Unit): GradleRu
 /**
  * same as [file][FileContainer.file], but prepends "src/${sourceSet}/kotlin" before given `classFileName`
  */
-internal fun FileContainer.kotlin(classFileName: String, sourceSet:String = "main", fn: AppendableScope.() -> Unit) {
+internal fun FileContainer.kotlin(
+    classFileName: String,
+    sourceSet: String = "main",
+    fn: AppendableScope.() -> Unit,
+) {
     require(classFileName.endsWith(".kt")) {
         "ClassFileName must end with '.kt'"
     }
@@ -50,7 +56,11 @@ internal fun FileContainer.kotlin(classFileName: String, sourceSet:String = "mai
 /**
  * same as [file][FileContainer.file], but prepends "src/${sourceSet}/java" before given `classFileName`
  */
-internal fun FileContainer.java(classFileName: String, sourceSet:String = "main", fn: AppendableScope.() -> Unit) {
+internal fun FileContainer.java(
+    classFileName: String,
+    sourceSet: String = "main",
+    fn: AppendableScope.() -> Unit,
+) {
     require(classFileName.endsWith(".java")) {
         "ClassFileName must end with '.java'"
     }
@@ -110,7 +120,7 @@ internal fun BaseKotlinScope.runner(fn: Runner.() -> Unit) {
     this.runner = runner
 }
 
-internal fun AppendableScope.resolve(fileName: String) {
+internal fun AppendableScope.resolve(@Language("file-reference") fileName: String) {
     this.files.add(fileName)
 }
 
@@ -132,7 +142,7 @@ internal class BaseKotlinScope : FileContainer {
 internal class DirectoryScope(
     val dirPath: String,
     val parent: FileContainer
-): FileContainer {
+) : FileContainer {
 
     override fun file(fileName: String, fn: AppendableScope.() -> Unit) {
         parent.file("$dirPath/$fileName", fn)
@@ -147,8 +157,8 @@ internal class Runner {
     val arguments: MutableList<String> = mutableListOf("--configuration-cache")
 }
 
-internal fun readFileList(fileName: String): String {
-    val resource = BaseKotlinGradleTest::class.java.classLoader.getResource(fileName)
+internal fun readFileList(@Language("file-reference") fileName: String): String {
+    val resource = BaseKotlinGradleTest::class.java.getResource(fileName)
         ?: throw IllegalStateException("Could not find resource '$fileName'")
     return File(resource.toURI()).readText()
 }

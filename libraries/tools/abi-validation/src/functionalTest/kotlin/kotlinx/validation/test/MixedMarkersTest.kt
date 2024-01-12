@@ -6,10 +6,6 @@
 package kotlinx.validation.test
 
 import kotlinx.validation.api.*
-import kotlinx.validation.api.buildGradleKts
-import kotlinx.validation.api.kotlin
-import kotlinx.validation.api.resolve
-import kotlinx.validation.api.test
 import org.junit.Test
 
 class MixedMarkersTest : BaseKotlinGradleTest() {
@@ -18,16 +14,16 @@ class MixedMarkersTest : BaseKotlinGradleTest() {
     fun testMixedMarkers() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
-                resolve("examples/gradle/configuration/publicMarkers/mixedMarkers.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/configuration/publicMarkers/mixedMarkers.gradle.kts")
             }
 
             kotlin("MixedAnnotations.kt") {
-                resolve("examples/classes/MixedAnnotations.kt")
+                resolve("/examples/classes/MixedAnnotations.kt")
             }
 
             apiFile(projectName = rootProjectDir.name) {
-                resolve("examples/classes/MixedAnnotations.dump")
+                resolve("/examples/classes/MixedAnnotations.dump")
             }
 
             runner {

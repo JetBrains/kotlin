@@ -14,16 +14,16 @@ class InputJarTest : BaseKotlinGradleTest() {
     fun testOverrideInputJar() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
-                resolve("examples/gradle/configuration/jarAsInput/inputJar.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/configuration/jarAsInput/inputJar.gradle.kts")
             }
 
             kotlin("Properties.kt") {
-                resolve("examples/classes/Properties.kt")
+                resolve("/examples/classes/Properties.kt")
             }
 
             apiFile(projectName = rootProjectDir.name) {
-                resolve("examples/classes/PropertiesJarTransformed.dump")
+                resolve("/examples/classes/PropertiesJarTransformed.dump")
             }
 
             runner {

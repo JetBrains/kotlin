@@ -14,10 +14,10 @@ import java.io.File
 internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
     private fun BaseKotlinScope.createProjectHierarchyWithPluginOnRoot() {
         settingsGradleKts {
-            resolve("examples/gradle/settings/settings-name-testproject.gradle.kts")
+            resolve("/examples/gradle/settings/settings-name-testproject.gradle.kts")
         }
         buildGradleKts {
-            resolve("examples/gradle/base/multiplatformWithSingleJvmTarget.gradle.kts")
+            resolve("/examples/gradle/base/multiplatformWithSingleJvmTarget.gradle.kts")
         }
     }
 
@@ -32,17 +32,17 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
 
                 dir("$API_DIR/") {
                     file("testproject.api") {
-                        resolve("examples/classes/Subsub1Class.dump")
-                        resolve("examples/classes/Subsub2Class.dump")
+                        resolve("/examples/classes/Subsub1Class.dump")
+                        resolve("/examples/classes/Subsub2Class.dump")
                     }
                 }
 
                 dir("src/jvmMain/kotlin") {}
                 kotlin("Subsub1Class.kt", "commonMain") {
-                    resolve("examples/classes/Subsub1Class.kt")
+                    resolve("/examples/classes/Subsub1Class.kt")
                 }
                 kotlin("Subsub2Class.kt", "jvmMain") {
-                    resolve("examples/classes/Subsub2Class.kt")
+                    resolve("/examples/classes/Subsub2Class.kt")
                 }
 
             }
@@ -64,17 +64,17 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
 
                 dir("$API_DIR/") {
                     file("testproject.api") {
-                        resolve("examples/classes/Subsub2Class.dump")
-                        resolve("examples/classes/Subsub1Class.dump")
+                        resolve("/examples/classes/Subsub2Class.dump")
+                        resolve("/examples/classes/Subsub1Class.dump")
                     }
                 }
 
                 dir("src/jvmMain/kotlin") {}
                 kotlin("Subsub1Class.kt", "commonMain") {
-                    resolve("examples/classes/Subsub1Class.kt")
+                    resolve("/examples/classes/Subsub1Class.kt")
                 }
                 kotlin("Subsub2Class.kt", "jvmMain") {
-                    resolve("examples/classes/Subsub2Class.kt")
+                    resolve("/examples/classes/Subsub2Class.kt")
                 }
 
             }
@@ -99,10 +99,10 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
 
                 dir("src/jvmMain/kotlin") {}
                 kotlin("Subsub1Class.kt", "commonMain") {
-                    resolve("examples/classes/Subsub1Class.kt")
+                    resolve("/examples/classes/Subsub1Class.kt")
                 }
                 kotlin("Subsub2Class.kt", "jvmMain") {
-                    resolve("examples/classes/Subsub2Class.kt")
+                    resolve("/examples/classes/Subsub2Class.kt")
                 }
 
             }
@@ -110,9 +110,9 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
         runner.build().apply {
             assertTaskSuccess(":apiDump")
 
-            val commonExpectedApi = readFileList("examples/classes/Subsub1Class.dump")
+            val commonExpectedApi = readFileList("/examples/classes/Subsub1Class.dump")
 
-            val mainExpectedApi = commonExpectedApi + "\n" + readFileList("examples/classes/Subsub2Class.dump")
+            val mainExpectedApi = commonExpectedApi + "\n" + readFileList("/examples/classes/Subsub2Class.dump")
             assertThat(jvmApiDump.readText()).isEqualToIgnoringNewLines(mainExpectedApi)
         }
     }

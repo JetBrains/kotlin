@@ -18,20 +18,20 @@ class PublicMarkersTest : BaseKotlinGradleTest() {
     fun testPublicMarkers() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
-                resolve("examples/gradle/configuration/publicMarkers/markers.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/configuration/publicMarkers/markers.gradle.kts")
             }
 
             kotlin("ClassWithPublicMarkers.kt") {
-                resolve("examples/classes/ClassWithPublicMarkers.kt")
+                resolve("/examples/classes/ClassWithPublicMarkers.kt")
             }
 
             kotlin("ClassInPublicPackage.kt") {
-                resolve("examples/classes/ClassInPublicPackage.kt")
+                resolve("/examples/classes/ClassInPublicPackage.kt")
             }
 
             apiFile(projectName = rootProjectDir.name) {
-                resolve("examples/classes/ClassWithPublicMarkers.dump")
+                resolve("/examples/classes/ClassWithPublicMarkers.dump")
             }
 
             runner {

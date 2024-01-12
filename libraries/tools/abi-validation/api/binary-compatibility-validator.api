@@ -1,0 +1,286 @@
+public class kotlinx/validation/ApiValidationExtension {
+	public fun <init> ()V
+	public final fun getAdditionalSourceSets ()Ljava/util/Set;
+	public final fun getIgnoredClasses ()Ljava/util/Set;
+	public final fun getIgnoredPackages ()Ljava/util/Set;
+	public final fun getIgnoredProjects ()Ljava/util/Set;
+	public final fun getNonPublicMarkers ()Ljava/util/Set;
+	public final fun getPublicClasses ()Ljava/util/Set;
+	public final fun getPublicMarkers ()Ljava/util/Set;
+	public final fun getPublicPackages ()Ljava/util/Set;
+	public final fun getValidationDisabled ()Z
+	public final fun setAdditionalSourceSets (Ljava/util/Set;)V
+	public final fun setIgnoredClasses (Ljava/util/Set;)V
+	public final fun setIgnoredPackages (Ljava/util/Set;)V
+	public final fun setIgnoredProjects (Ljava/util/Set;)V
+	public final fun setNonPublicMarkers (Ljava/util/Set;)V
+	public final fun setPublicClasses (Ljava/util/Set;)V
+	public final fun setPublicMarkers (Ljava/util/Set;)V
+	public final fun setPublicPackages (Ljava/util/Set;)V
+	public final fun setValidationDisabled (Z)V
+}
+
+public final class kotlinx/validation/BinaryCompatibilityValidatorPlugin : org/gradle/api/Plugin {
+	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
+}
+
+public final class kotlinx/validation/BinaryCompatibilityValidatorPluginKt {
+	public static final field API_DIR Ljava/lang/String;
+	public static final fun apiCheckEnabled (Ljava/lang/String;Lkotlinx/validation/ApiValidationExtension;)Z
+}
+
+public abstract interface annotation class kotlinx/validation/ExternalApi : java/lang/annotation/Annotation {
+}
+
+public class kotlinx/validation/KotlinApiBuildTask : org/gradle/api/DefaultTask {
+	public field inputDependencies Lorg/gradle/api/file/FileCollection;
+	public field outputApiDir Ljava/io/File;
+	public fun <init> ()V
+	public final fun generate ()V
+	public final fun getIgnoredClasses ()Ljava/util/Set;
+	public final fun getIgnoredPackages ()Ljava/util/Set;
+	public final fun getInputClassesDirs ()Lorg/gradle/api/file/FileCollection;
+	public final fun getInputDependencies ()Lorg/gradle/api/file/FileCollection;
+	public final fun getInputJar ()Lorg/gradle/api/file/RegularFileProperty;
+	public final fun getNonPublicMarkers ()Ljava/util/Set;
+	public final fun getOutputApiDir ()Ljava/io/File;
+	public final fun getPublicClasses ()Ljava/util/Set;
+	public final fun getPublicMarkers ()Ljava/util/Set;
+	public final fun getPublicPackages ()Ljava/util/Set;
+	public final fun setIgnoredClasses (Ljava/util/Set;)V
+	public final fun setIgnoredPackages (Ljava/util/Set;)V
+	public final fun setInputClassesDirs (Lorg/gradle/api/file/FileCollection;)V
+	public final fun setInputDependencies (Lorg/gradle/api/file/FileCollection;)V
+	public final fun setNonPublicMarkers (Ljava/util/Set;)V
+	public final fun setOutputApiDir (Ljava/io/File;)V
+	public final fun setPublicClasses (Ljava/util/Set;)V
+	public final fun setPublicMarkers (Ljava/util/Set;)V
+	public final fun setPublicPackages (Ljava/util/Set;)V
+}
+
+public class kotlinx/validation/KotlinApiCompareTask : org/gradle/api/DefaultTask {
+	public field apiBuildDir Ljava/io/File;
+	public fun <init> (Lorg/gradle/api/model/ObjectFactory;)V
+	public final fun compareApiDumps (Ljava/io/File;Ljava/io/File;)V
+	public final fun getApiBuildDir ()Ljava/io/File;
+	public final fun getDummyOutputFile ()Ljava/io/File;
+	public final fun getNonExistingProjectApiDir ()Ljava/lang/String;
+	public final fun getProjectApiDir ()Ljava/io/File;
+	public final fun setApiBuildDir (Ljava/io/File;)V
+	public final fun setNonExistingProjectApiDir (Ljava/lang/String;)V
+	public final fun setProjectApiDir (Ljava/io/File;)V
+	public final fun verify ()V
+}
+
+public final class kotlinx/validation/api/AccessFlags {
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lkotlinx/validation/api/AccessFlags;
+	public static synthetic fun copy$default (Lkotlinx/validation/api/AccessFlags;IILjava/lang/Object;)Lkotlinx/validation/api/AccessFlags;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAccess ()I
+	public final fun getModifierString ()Ljava/lang/String;
+	public final fun getModifiers ()Ljava/util/List;
+	public fun hashCode ()I
+	public final fun isFinal ()Z
+	public final fun isProtected ()Z
+	public final fun isPublic ()Z
+	public final fun isStatic ()Z
+	public final fun isSynthetic ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlinx/validation/api/AsmMetadataLoadingKt {
+	public static final field publishedApiAnnotationName Ljava/lang/String;
+	public static final fun findAnnotation (Lorg/objectweb/asm/tree/ClassNode;Ljava/lang/String;Z)Lorg/objectweb/asm/tree/AnnotationNode;
+	public static synthetic fun findAnnotation$default (Lorg/objectweb/asm/tree/ClassNode;Ljava/lang/String;ZILjava/lang/Object;)Lorg/objectweb/asm/tree/AnnotationNode;
+	public static final fun get (Lorg/objectweb/asm/tree/AnnotationNode;Ljava/lang/String;)Ljava/lang/Object;
+	public static final fun getACCESS_NAMES ()Ljava/util/Map;
+	public static final fun getEffectiveAccess (Lorg/objectweb/asm/tree/ClassNode;)I
+	public static final fun getInnerClassNode (Lorg/objectweb/asm/tree/ClassNode;)Lorg/objectweb/asm/tree/InnerClassNode;
+	public static final fun getOuterClassName (Lorg/objectweb/asm/tree/ClassNode;)Ljava/lang/String;
+	public static final fun isDefaultImpls (Lorg/objectweb/asm/tree/ClassNode;Lkotlinx/metadata/jvm/KotlinClassMetadata;)Z
+	public static final fun isEffectivelyPublic (Lorg/objectweb/asm/tree/ClassNode;Lkotlinx/validation/api/ClassVisibility;)Z
+	public static final fun isEnumEntriesMappings (Lorg/objectweb/asm/tree/ClassNode;)Z
+	public static final fun isFinal (I)Z
+	public static final fun isInner (Lorg/objectweb/asm/tree/ClassNode;)Z
+	public static final fun isLocal (Lorg/objectweb/asm/tree/ClassNode;)Z
+	public static final fun isProtected (I)Z
+	public static final fun isPublic (I)Z
+	public static final fun isPublishedApi (Ljava/util/List;)Z
+	public static final fun isPublishedApi (Lorg/objectweb/asm/tree/ClassNode;)Z
+	public static final fun isStatic (I)Z
+	public static final fun isSynthetic (I)Z
+	public static final fun isSyntheticAnnotationClass (Lorg/objectweb/asm/tree/ClassNode;)Z
+	public static final fun isWhenMappings (Lorg/objectweb/asm/tree/ClassNode;)Z
+	public static final fun refersToName (Lorg/objectweb/asm/tree/AnnotationNode;Ljava/lang/String;)Z
+}
+
+public final class kotlinx/validation/api/ClassBinarySignature {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lkotlinx/validation/api/AccessFlags;ZZLjava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Ljava/util/List;
+	public final fun component6 ()Lkotlinx/validation/api/AccessFlags;
+	public final fun component7 ()Z
+	public final fun component8 ()Z
+	public final fun component9 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lkotlinx/validation/api/AccessFlags;ZZLjava/util/List;)Lkotlinx/validation/api/ClassBinarySignature;
+	public static synthetic fun copy$default (Lkotlinx/validation/api/ClassBinarySignature;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lkotlinx/validation/api/AccessFlags;ZZLjava/util/List;ILjava/lang/Object;)Lkotlinx/validation/api/ClassBinarySignature;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAccess ()Lkotlinx/validation/api/AccessFlags;
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getMemberSignatures ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getOuterName ()Ljava/lang/String;
+	public final fun getSignature ()Ljava/lang/String;
+	public final fun getSuperName ()Ljava/lang/String;
+	public final fun getSupertypes ()Ljava/util/List;
+	public fun hashCode ()I
+	public final fun isEffectivelyPublic ()Z
+	public final fun isNotUsedWhenEmpty ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlinx/validation/api/ClassVisibility {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCompanionVisibilities ()Lkotlinx/validation/api/ClassVisibility;
+	public final fun getFacadeClassName ()Ljava/lang/String;
+	public final fun getFlags ()Ljava/lang/Integer;
+	public final fun getMembers ()Ljava/util/Map;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getPartVisibilities ()Ljava/util/List;
+	public final fun getVisibility ()Ljava/lang/Integer;
+	public final fun isCompanion ()Z
+	public final fun setCompanionVisibilities (Lkotlinx/validation/api/ClassVisibility;)V
+}
+
+public final class kotlinx/validation/api/FieldBinarySignature : kotlinx/validation/api/MemberBinarySignature {
+	public fun <init> (Lkotlinx/metadata/jvm/JvmFieldSignature;ZLkotlinx/validation/api/AccessFlags;Ljava/util/List;)V
+	public final fun component1 ()Lkotlinx/metadata/jvm/JvmFieldSignature;
+	public final fun component2 ()Z
+	public final fun component3 ()Lkotlinx/validation/api/AccessFlags;
+	public final fun component4 ()Ljava/util/List;
+	public final fun copy (Lkotlinx/metadata/jvm/JvmFieldSignature;ZLkotlinx/validation/api/AccessFlags;Ljava/util/List;)Lkotlinx/validation/api/FieldBinarySignature;
+	public static synthetic fun copy$default (Lkotlinx/validation/api/FieldBinarySignature;Lkotlinx/metadata/jvm/JvmFieldSignature;ZLkotlinx/validation/api/AccessFlags;Ljava/util/List;ILjava/lang/Object;)Lkotlinx/validation/api/FieldBinarySignature;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun findMemberVisibility (Lkotlinx/validation/api/ClassVisibility;)Lkotlinx/validation/api/MemberVisibility;
+	public fun getAccess ()Lkotlinx/validation/api/AccessFlags;
+	public fun getAnnotations ()Ljava/util/List;
+	public fun getDesc ()Ljava/lang/String;
+	public fun getJvmMember ()Lkotlinx/metadata/jvm/JvmFieldSignature;
+	public synthetic fun getJvmMember ()Lkotlinx/metadata/jvm/JvmMemberSignature;
+	public fun getName ()Ljava/lang/String;
+	public fun getSignature ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun isEffectivelyPublic (Lkotlinx/validation/api/AccessFlags;Lkotlinx/validation/api/ClassVisibility;)Z
+	public fun isPublishedApi ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlinx/validation/api/KotlinMetadataSignatureKt {
+	public static final fun getMEMBER_SORT_ORDER ()Ljava/util/Comparator;
+	public static final fun isCompanionField (Lkotlinx/validation/api/FieldBinarySignature;Lkotlinx/metadata/jvm/KotlinClassMetadata;)Z
+	public static final fun toFieldBinarySignature (Lorg/objectweb/asm/tree/FieldNode;Ljava/util/List;)Lkotlinx/validation/api/FieldBinarySignature;
+	public static final fun toMethodBinarySignature (Lorg/objectweb/asm/tree/MethodNode;Ljava/util/List;Lkotlinx/metadata/jvm/JvmMethodSignature;)Lkotlinx/validation/api/MethodBinarySignature;
+}
+
+public final class kotlinx/validation/api/KotlinMetadataVisibilitiesKt {
+	public static final fun findMember (Lkotlinx/validation/api/ClassVisibility;Lkotlinx/metadata/jvm/JvmMemberSignature;)Lkotlinx/validation/api/MemberVisibility;
+	public static final fun getKotlinMetadata (Lorg/objectweb/asm/tree/ClassNode;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
+	public static final fun isFileOrMultipartFacade (Lkotlinx/metadata/jvm/KotlinClassMetadata;)Z
+	public static final fun isInternal (Lkotlinx/validation/api/MemberVisibility;)Z
+	public static final fun isPublic (Lkotlinx/validation/api/ClassVisibility;Z)Z
+	public static final fun isPublic (Lkotlinx/validation/api/MemberVisibility;Z)Z
+	public static final fun isSyntheticClass (Lkotlinx/metadata/jvm/KotlinClassMetadata;)Z
+	public static final fun readKotlinVisibilities (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static synthetic fun readKotlinVisibilities$default (Ljava/util/Map;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/util/Map;
+	public static final fun toClassVisibility (Lkotlinx/metadata/jvm/KotlinClassMetadata;Lorg/objectweb/asm/tree/ClassNode;)Lkotlinx/validation/api/ClassVisibility;
+	public static final fun toClassVisibility (Lorg/objectweb/asm/tree/ClassNode;)Lkotlinx/validation/api/ClassVisibility;
+}
+
+public final class kotlinx/validation/api/KotlinSignaturesLoadingKt {
+	public static final fun dump (Ljava/util/List;)Ljava/io/PrintStream;
+	public static final fun dump (Ljava/util/List;Ljava/lang/Appendable;)Ljava/lang/Appendable;
+	public static final fun filterOutAnnotated (Ljava/util/List;Ljava/util/Set;)Ljava/util/List;
+	public static final fun filterOutNonPublic (Ljava/util/List;Ljava/util/Collection;Ljava/util/Collection;)Ljava/util/List;
+	public static synthetic fun filterOutNonPublic$default (Ljava/util/List;Ljava/util/Collection;Ljava/util/Collection;ILjava/lang/Object;)Ljava/util/List;
+	public static final fun loadApiFromJvmClasses (Ljava/util/jar/JarFile;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public static final fun loadApiFromJvmClasses (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public static synthetic fun loadApiFromJvmClasses$default (Ljava/util/jar/JarFile;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/util/List;
+	public static synthetic fun loadApiFromJvmClasses$default (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/util/List;
+	public static final fun retainExplicitlyIncludedIfDeclared (Ljava/util/List;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;)Ljava/util/List;
+	public static synthetic fun retainExplicitlyIncludedIfDeclared$default (Ljava/util/List;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;ILjava/lang/Object;)Ljava/util/List;
+}
+
+public abstract interface class kotlinx/validation/api/MemberBinarySignature {
+	public abstract fun findMemberVisibility (Lkotlinx/validation/api/ClassVisibility;)Lkotlinx/validation/api/MemberVisibility;
+	public abstract fun getAccess ()Lkotlinx/validation/api/AccessFlags;
+	public abstract fun getAnnotations ()Ljava/util/List;
+	public abstract fun getDesc ()Ljava/lang/String;
+	public abstract fun getJvmMember ()Lkotlinx/metadata/jvm/JvmMemberSignature;
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getSignature ()Ljava/lang/String;
+	public abstract fun isEffectivelyPublic (Lkotlinx/validation/api/AccessFlags;Lkotlinx/validation/api/ClassVisibility;)Z
+	public abstract fun isPublishedApi ()Z
+}
+
+public final class kotlinx/validation/api/MemberBinarySignature$DefaultImpls {
+	public static fun findMemberVisibility (Lkotlinx/validation/api/MemberBinarySignature;Lkotlinx/validation/api/ClassVisibility;)Lkotlinx/validation/api/MemberVisibility;
+	public static fun getDesc (Lkotlinx/validation/api/MemberBinarySignature;)Ljava/lang/String;
+	public static fun getName (Lkotlinx/validation/api/MemberBinarySignature;)Ljava/lang/String;
+	public static fun isEffectivelyPublic (Lkotlinx/validation/api/MemberBinarySignature;Lkotlinx/validation/api/AccessFlags;Lkotlinx/validation/api/ClassVisibility;)Z
+}
+
+public final class kotlinx/validation/api/MemberVisibility {
+	public fun <init> (Lkotlinx/metadata/jvm/JvmMemberSignature;Ljava/lang/Integer;ZLkotlinx/validation/api/PropertyAnnotationHolders;)V
+	public synthetic fun <init> (Lkotlinx/metadata/jvm/JvmMemberSignature;Ljava/lang/Integer;ZLkotlinx/validation/api/PropertyAnnotationHolders;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lkotlinx/metadata/jvm/JvmMemberSignature;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun component3 ()Z
+	public final fun component4 ()Lkotlinx/validation/api/PropertyAnnotationHolders;
+	public final fun copy (Lkotlinx/metadata/jvm/JvmMemberSignature;Ljava/lang/Integer;ZLkotlinx/validation/api/PropertyAnnotationHolders;)Lkotlinx/validation/api/MemberVisibility;
+	public static synthetic fun copy$default (Lkotlinx/validation/api/MemberVisibility;Lkotlinx/metadata/jvm/JvmMemberSignature;Ljava/lang/Integer;ZLkotlinx/validation/api/PropertyAnnotationHolders;ILjava/lang/Object;)Lkotlinx/validation/api/MemberVisibility;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMember ()Lkotlinx/metadata/jvm/JvmMemberSignature;
+	public final fun getPropertyAnnotation ()Lkotlinx/validation/api/PropertyAnnotationHolders;
+	public final fun getVisibility ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public final fun isReified ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlinx/validation/api/MethodBinarySignature : kotlinx/validation/api/MemberBinarySignature {
+	public fun <init> (Lkotlinx/metadata/jvm/JvmMethodSignature;ZLkotlinx/validation/api/AccessFlags;Ljava/util/List;Lkotlinx/metadata/jvm/JvmMethodSignature;)V
+	public final fun component1 ()Lkotlinx/metadata/jvm/JvmMethodSignature;
+	public final fun component2 ()Z
+	public final fun component3 ()Lkotlinx/validation/api/AccessFlags;
+	public final fun component4 ()Ljava/util/List;
+	public final fun copy (Lkotlinx/metadata/jvm/JvmMethodSignature;ZLkotlinx/validation/api/AccessFlags;Ljava/util/List;Lkotlinx/metadata/jvm/JvmMethodSignature;)Lkotlinx/validation/api/MethodBinarySignature;
+	public static synthetic fun copy$default (Lkotlinx/validation/api/MethodBinarySignature;Lkotlinx/metadata/jvm/JvmMethodSignature;ZLkotlinx/validation/api/AccessFlags;Ljava/util/List;Lkotlinx/metadata/jvm/JvmMethodSignature;ILjava/lang/Object;)Lkotlinx/validation/api/MethodBinarySignature;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun findMemberVisibility (Lkotlinx/validation/api/ClassVisibility;)Lkotlinx/validation/api/MemberVisibility;
+	public fun getAccess ()Lkotlinx/validation/api/AccessFlags;
+	public fun getAnnotations ()Ljava/util/List;
+	public fun getDesc ()Ljava/lang/String;
+	public synthetic fun getJvmMember ()Lkotlinx/metadata/jvm/JvmMemberSignature;
+	public fun getJvmMember ()Lkotlinx/metadata/jvm/JvmMethodSignature;
+	public fun getName ()Ljava/lang/String;
+	public fun getSignature ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun isEffectivelyPublic (Lkotlinx/validation/api/AccessFlags;Lkotlinx/validation/api/ClassVisibility;)Z
+	public fun isPublishedApi ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlinx/validation/api/PropertyAnnotationHolders {
+	public fun <init> (Lkotlinx/metadata/jvm/JvmFieldSignature;Lkotlinx/metadata/jvm/JvmMethodSignature;)V
+	public final fun getField ()Lkotlinx/metadata/jvm/JvmFieldSignature;
+	public final fun getMethod ()Lkotlinx/metadata/jvm/JvmMethodSignature;
+}
+
