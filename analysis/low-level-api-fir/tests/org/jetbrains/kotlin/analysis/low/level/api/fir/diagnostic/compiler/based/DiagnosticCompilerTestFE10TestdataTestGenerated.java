@@ -33685,6 +33685,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("functionContractScript.kts")
+            public void testFunctionContractScript() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/script/functionContractScript.kts");
+            }
+
+            @Test
             @TestMetadata("imports.kts")
             public void testImports() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/script/imports.kts");

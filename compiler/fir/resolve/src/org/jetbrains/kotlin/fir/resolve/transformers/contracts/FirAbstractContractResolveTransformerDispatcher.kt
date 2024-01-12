@@ -286,7 +286,9 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
         }
 
         override fun transformScript(script: FirScript, data: ResolutionMode): FirScript {
-            return script
+            return withScript(script) {
+                transformDeclarationContent(script, data) as FirScript
+            }
         }
 
         override fun transformAnonymousObject(

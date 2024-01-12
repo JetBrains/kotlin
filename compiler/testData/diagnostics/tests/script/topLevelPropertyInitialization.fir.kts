@@ -29,7 +29,7 @@ val b: String = inPlaceRun { <!UNINITIALIZED_VARIABLE!>b<!> }
 val c: String = notInPlaceRun { c }
 
 val d: String by simpleDelegate(<!UNINITIALIZED_VARIABLE!>d<!>)
-val e: String by inPlaceDelegate { e }
+val e: String by inPlaceDelegate { <!UNINITIALIZED_VARIABLE!>e<!> }
 val f: String by notInPlaceDelegate { f }
 
 val g: Int
@@ -53,6 +53,6 @@ val t: String = <!UNINITIALIZED_VARIABLE!>z<!>
 val u: String = inPlaceRun { <!UNINITIALIZED_VARIABLE!>z<!> }
 val v: String = notInPlaceRun { z }
 val w: String by simpleDelegate(<!UNINITIALIZED_VARIABLE!>z<!>)
-val x: String by inPlaceDelegate { z }
+val x: String by inPlaceDelegate { <!UNINITIALIZED_VARIABLE!>z<!> }
 val y: String by notInPlaceDelegate { z }
 val z: String = "VALUE"
