@@ -191,6 +191,34 @@ class SirAsSwiftSourcesPrinterTests {
         )
     }
 
+    @Test
+    fun `should print non-empty bodies`() {
+
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildFunction {
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.PUBLIC
+                    name = "foo"
+                    parameters.add(
+                        SirParameter(
+                            argumentName = "arg1",
+                            type = SirNominalType(SirSwiftModule.int32)
+                        )
+                    )
+                    returnType = SirNominalType(SirSwiftModule.bool)
+                    body = SirFunctionBody(listOf("return foo_wrapped(arg1)"))
+                }
+            )
+        }
+
+        runTest(
+            module,
+            "testData/non_empty_body"
+        )
+    }
+
     private fun runTest(module: SirModule, goldenDataFile: String) {
         val expectedSwiftSrc = File(KtTestUtil.getHomeDirectory()).resolve("$goldenDataFile.golden.swift")
 

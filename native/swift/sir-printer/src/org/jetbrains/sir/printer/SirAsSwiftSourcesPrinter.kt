@@ -78,7 +78,7 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
 }
 
 private fun printFunctionBody(function: SirFunction): List<String> {
-    return listOf("fatalError()")
+    return function.body?.statements ?: listOf("fatalError()")
 }
 
 private val SirVisibility.swift
