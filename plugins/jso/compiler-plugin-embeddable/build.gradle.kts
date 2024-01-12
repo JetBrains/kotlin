@@ -6,10 +6,6 @@ dependencies {
     embedded(project(":plugins:jso:compiler-plugin")) { isTransitive = false }
 }
 
-//publish {
-//    artifactId = "kotlinx-jso-compiler-plugin-embeddable"
-//}
-
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
 sourcesJarWithSourcesFromEmbedded(
     project(":plugins:jso:compiler-plugin").tasks.named<Jar>("sourcesJar")

@@ -25,18 +25,3 @@ kotlin {
 val emptyJavadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
 }
-
-//publishing {
-//    publications {
-//        create<MavenPublication>("maven") {
-//            artifactId = "jso"
-//            from(components["kotlin"])
-//            configureKotlinPomAttributes(project, "Runtime library for the JSO compiler plugin", packaging = "klib")
-//        }
-//        withType<MavenPublication> {
-//            artifact(emptyJavadocJar)
-//        }
-//    }
-//}
-//
-//configureDefaultPublishing()
