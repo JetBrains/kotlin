@@ -1,0 +1,19 @@
+// CHECK:
+//   Mangled name: #consumeVarargs(kotlin.IntArray...){}
+//   Public signature: /consumeVarargs|2702777436513705083[0]
+//   Public signature debug description: consumeVarargs(kotlin.IntArray...){}
+fun consumeVarargs(vararg arr: Int): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #main(){}
+//   Mangled name for the signature by IR:       main(){}
+//   Mangled name for the signature by Frontend: main(){}%IntArrayAsVararg.kt
+//   Public signature by IR: /main|-4284757841571462650[0]
+//   Public signature by IR debug description: main(){}
+//   Public signature by Frontend: /main|-2337641484263297417[0]
+//   Public signature by Frontend debug description: main(){}%IntArrayAsVararg.kt
+// CHECK JS_IR NATIVE:
+//   Mangled name: #main(){}
+//   Public signature: /main|-4284757841571462650[0]
+//   Public signature debug description: main(){}
+fun main(): Unit

@@ -1,0 +1,52 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+abstract class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A{}a
+  //   Public signature: /A.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  abstract val a: A?
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-a>(){}A?
+    //   Public signature: /A.a.<get-a>|-5866676359912206759[0]
+    //   Public signature debug description: <get-a>(){}A?
+    abstract get
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : AX {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#getA(){}X?
+  //   Public signature: /B.getA|-186252691497860920[0]
+  //   Public signature debug description: getA(){}X?
+  override fun getA(): X?
+
+  // CHECK:
+  //   Mangled name: B{}a
+  //   Public signature: /B.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  /* fake */ override val a: @EnhancedNullability AX?
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-a>(){}AX?{EnhancedNullability}
+    //   Public signature: /B.a.<get-a>|1682004550888840418[0]
+    //   Public signature debug description: <get-a>(){}AX?{EnhancedNullability}
+    @Override
+    /* fake */ override get(): @EnhancedNullability AX?
+
+}

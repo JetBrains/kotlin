@@ -32,7 +32,8 @@ import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SIGNATURES
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.MUTE_SIGNATURE_COMPARISON_K2
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_SIGNATURE_DUMP
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SEPARATE_SIGNATURE_DUMP_FOR_K2
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
@@ -52,11 +53,14 @@ private const val CHECK_MARKER = "// CHECK"
  * Prints a mangled name and an [IdSignature] for each declaration and compares the result with
  * an expected output in a `*.sig.kt.txt` file located next to the test file.
  *
- * Can be enabled by specifying the [DUMP_SIGNATURES] directive, and disabled with the [SKIP_SIGNATURE_DUMP] test directive.
+ * Can be enabled by specifying the [DUMP_SIGNATURES] directive.
  *
  * Other useful directives:
  * - [MUTE_SIGNATURE_COMPARISON_K2] can be used for muting the comparison result on the K2 frontend. The comparison will
  *   still be performed, and if it succeeds, the test will fail with a message reminding you to unmute it.
+ * - [SEPARATE_SIGNATURE_DUMP_FOR_K2] acts like the inverse of [FIR_IDENTICAL], but it only affects signature dumps. Usually, signature
+ *   dumps generated from K1 and K2 must be identical, but sometimes there are reasons to use separate dumps — in that case specify this
+ *   directive.
  *
  * Since mangled names and signatures may be different depending on the backend, in order to reduce the number
  * of expectation files, this handler uses `// CHECK` blocks to compare the dump with an expectation in a smarter way than
@@ -101,13 +105,23 @@ class IrMangledNameAndSignatureDumpHandler(
         const val DUMP_EXTENSION = "sig.kt.txt"
     }
 
+    private fun computeDumpExtension(): String {
+        return if (testServices.defaultsProvider.defaultFrontend == FrontendKinds.ClassicFrontend ||
+            SEPARATE_SIGNATURE_DUMP_FOR_K2 !in testServices.moduleStructure.allDirectives
+        ) {
+            DUMP_EXTENSION
+        } else {
+            "fir.$DUMP_EXTENSION"
+        }
+    }
+
     private val dumper = MultiModuleInfoDumper("// MODULE: %s")
 
     /**
      * The file that stores the expected signatures of the test file.
      */
     private val expectedFile: File by lazy {
-        testServices.moduleStructure.originalTestDataFiles.first().withExtension(DUMP_EXTENSION)
+        testServices.moduleStructure.originalTestDataFiles.first().withExtension(computeDumpExtension())
     }
 
     /**
@@ -124,7 +138,7 @@ class IrMangledNameAndSignatureDumpHandler(
     }
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        if (DUMP_SIGNATURES !in module.directives || SKIP_SIGNATURE_DUMP in module.directives) return
+        if (DUMP_SIGNATURES !in module.directives) return
 
         dumpModuleKotlinLike(
             module,

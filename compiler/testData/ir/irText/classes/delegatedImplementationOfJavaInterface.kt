@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// SKIP_SIGNATURE_DUMP
+// SEPARATE_SIGNATURE_DUMP_FOR_K2
 // ^ Fake overrides have divirging @EnhancedNullability in K1 and K2
 
 // FILE: delegatedImplementationOfJavaInterface.kt

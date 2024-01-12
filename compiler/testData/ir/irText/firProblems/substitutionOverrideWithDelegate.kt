@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 // ISSUE: KT-61443
-// SKIP_SIGNATURE_DUMP
 
 fun foo() = DelegatedB()()
 

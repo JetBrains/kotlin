@@ -164,8 +164,13 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val SKIP_SIGNATURE_DUMP by directive(
-        description = "Disables dumping signatures and mangled names of declarations to the ${IrMangledNameAndSignatureDumpHandler.DUMP_EXTENSION} file"
+    val SEPARATE_SIGNATURE_DUMP_FOR_K2 by directive(
+        description = """
+            Usually the signature dump must not differ between K1 and K2.
+            There are rare cases, however, when there is legitimate difference (for example, if the set of fake overrides is different).
+            Please always document the usage of this directive and carefully verify that the difference between K1 and K2 does
+            not affect IR linkage.
+            """.trimIndent()
     )
 
     val MUTE_SIGNATURE_COMPARISON_K2 by enumDirective<TargetBackend>(

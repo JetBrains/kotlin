@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // SKIP_KT_DUMP
 
-// SKIP_SIGNATURE_DUMP
+// SEPARATE_SIGNATURE_DUMP_FOR_K2
 // ^ K2 generates an override for foo in C, K1 does not
 
 // FILE: kt45934.kt

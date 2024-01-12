@@ -1,7 +1,6 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
 // ISSUE: KT-60312
-// SKIP_SIGNATURE_DUMP
 
 fun main() {
     consumeVarargs(1, 2)

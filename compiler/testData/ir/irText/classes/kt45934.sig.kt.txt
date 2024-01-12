@@ -1,0 +1,11 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : I {
+  // CHECK:
+  //   Mangled name: C#<init>(J){}
+  //   Public signature: /C.<init>|1083383516528472352[0]
+  //   Public signature debug description: <init>(J){}
+  constructor(client: J) /* primary */
+
+}

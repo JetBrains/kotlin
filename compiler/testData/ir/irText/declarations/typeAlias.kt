@@ -1,4 +1,4 @@
-// SKIP_SIGNATURE_DUMP
+// SEPARATE_SIGNATURE_DUMP_FOR_K2
 // ^ KT-45285
 
 typealias Test1 = String

@@ -1,0 +1,95 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C<out T : Any?> : B<T> {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#invoke(){}
+  //   Public signature: /C.invoke|-4663091332620260873[0]
+  //   Public signature debug description: invoke(){}
+  /* fake */ override operator fun invoke(): Unit
+
+  // CHECK:
+  //   Mangled name: C#invoke(kotlin.String){}
+  //   Public signature: /C.invoke|-8167496601803439348[0]
+  //   Public signature debug description: invoke(kotlin.String){}
+  /* fake */ override operator fun invoke(value: String): Unit
+
+}
+
+// CHECK:
+//   Mangled name: DelegatedB
+//   Public signature: /DelegatedB|null[0]
+open class DelegatedB : B<String> {
+  // CHECK:
+  //   Mangled name: DelegatedB#<init>(){}
+  //   Public signature: /DelegatedB.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: DelegatedB#invoke(){}
+  //   Public signature: /DelegatedB.invoke|-4663091332620260873[0]
+  //   Public signature debug description: invoke(){}
+  override operator fun invoke(): Unit
+
+  // CHECK:
+  //   Mangled name: DelegatedB#invoke(kotlin.String){}
+  //   Public signature: /DelegatedB.invoke|-8167496601803439348[0]
+  //   Public signature debug description: invoke(kotlin.String){}
+  override operator fun invoke(value: String): Unit
+
+}
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+interface A {
+  // CHECK:
+  //   Mangled name: A#invoke(){}
+  //   Public signature: /A.invoke|-4663091332620260873[0]
+  //   Public signature debug description: invoke(){}
+  operator fun invoke(): Unit
+
+  // CHECK:
+  //   Mangled name: A#invoke(kotlin.String){}
+  //   Public signature: /A.invoke|-8167496601803439348[0]
+  //   Public signature debug description: invoke(kotlin.String){}
+  operator fun invoke(value: String): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+interface B<out T : Any?> : A {
+  // CHECK:
+  //   Mangled name: B#invoke(){}
+  //   Public signature: /B.invoke|-4663091332620260873[0]
+  //   Public signature debug description: invoke(){}
+  /* fake */ override operator fun invoke(): Unit
+
+  // CHECK:
+  //   Mangled name: B#invoke(kotlin.String){}
+  //   Public signature: /B.invoke|-8167496601803439348[0]
+  //   Public signature debug description: invoke(kotlin.String){}
+  /* fake */ override operator fun invoke(value: String): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #bar@A(kotlin.String){}
+//   Public signature: /bar|-6811345410593435832[0]
+//   Public signature debug description: bar@A(kotlin.String){}
+fun A.bar(value: String): Unit
+
+// CHECK:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
+//   Public signature debug description: foo(){}
+fun foo(): Unit

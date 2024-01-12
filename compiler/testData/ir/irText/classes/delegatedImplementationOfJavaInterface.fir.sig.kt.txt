@@ -1,0 +1,58 @@
+// CHECK:
+//   Mangled name: Test
+//   Public signature: /Test|null[0]
+class Test : J {
+  // CHECK:
+  //   Mangled name: Test{}j
+  //   Public signature: /Test.j|-6836075379230315579[0]
+  //   Public signature debug description: {}j
+  private val j: J
+    // CHECK JVM_IR:
+    //   Mangled name: Test#<get-j>(){}J
+    //   Public signature: /Test.j.<get-j>|-6114050685652754863[0]
+    //   Public signature debug description: <get-j>(){}J
+    private get
+
+  // CHECK:
+  //   Mangled name: Test#<init>(J){}
+  //   Public signature: /Test.<init>|1083383516528472352[0]
+  //   Public signature debug description: <init>(J){}
+  constructor(j: J) /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test#returnNotNull(){}kotlin.String{EnhancedNullability}
+  //   Public signature: /Test.returnNotNull|-3682895453084642874[0]
+  //   Public signature debug description: returnNotNull(){}kotlin.String{EnhancedNullability}
+  override fun returnNotNull(): @EnhancedNullability String
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test#returnNullable(){}kotlin.String?
+  //   Public signature: /Test.returnNullable|-8543835017469041188[0]
+  //   Public signature debug description: returnNullable(){}kotlin.String?
+  override fun returnNullable(): String?
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test#returnsFlexible(){}kotlin.String?
+  //   Public signature: /Test.returnsFlexible|-5946143652599840920[0]
+  //   Public signature debug description: returnsFlexible(){}kotlin.String?
+  override fun returnsFlexible(): String?
+
+  // CHECK:
+  //   Mangled name: Test#takeFlexible(kotlin.String?){}
+  //   Public signature: /Test.takeFlexible|8434697244780181625[0]
+  //   Public signature debug description: takeFlexible(kotlin.String?){}
+  override fun takeFlexible(x: String?): Unit
+
+  // CHECK:
+  //   Mangled name: Test#takeNotNull(kotlin.String{EnhancedNullability}){}
+  //   Public signature: /Test.takeNotNull|2138033560695328162[0]
+  //   Public signature debug description: takeNotNull(kotlin.String{EnhancedNullability}){}
+  override fun takeNotNull(x: @EnhancedNullability String): Unit
+
+  // CHECK:
+  //   Mangled name: Test#takeNullable(kotlin.String?){}
+  //   Public signature: /Test.takeNullable|5724815424219841897[0]
+  //   Public signature debug description: takeNullable(kotlin.String?){}
+  override fun takeNullable(x: String?): Unit
+
+}
