@@ -392,12 +392,29 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement =
-        transformFunctionCallInternal(functionCall, data, provideDelegate = false)
+        transformFunctionCallInternal(functionCall, data, CallResolutionMode.REGULAR)
+
+    internal enum class CallResolutionMode {
+        REGULAR,
+
+        /**
+         * For PROVIDE_DELEGATE we skip transforming explicit receiver of the call since it's already been resolved
+         * at [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.transformPropertyAccessorsWithDelegate]
+         */
+        PROVIDE_DELEGATE,
+
+        /**
+         * When we're resolving an operator like `a += b` we try to resolve it with different options of desugaring like
+         * `a = a.plus(b)` and `a.plusAssign(b)` until find something that looks successful.
+         * But at this stage, we skip transformation of receiver, arguments and skip completion in any form.
+         */
+        OPTION_FOR_AUGMENTED_ASSIGNMENT,
+    }
 
     internal fun transformFunctionCallInternal(
         functionCall: FirFunctionCall,
         data: ResolutionMode,
-        provideDelegate: Boolean,
+        callResolutionMode: CallResolutionMode,
     ): FirStatement =
         whileAnalysing(session, functionCall) {
             val calleeReference = functionCall.calleeReference
@@ -419,8 +436,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             functionCall.transformAnnotations(transformer, data)
             functionCall.replaceLambdaArgumentInvocationKinds(session)
             functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
-            val resolvingAugmentedAssignment = data == ResolutionMode.ContextDependent.AugmentedAssignmentCallOption
-            val withTransformedArguments = if (!resolvingAugmentedAssignment) {
+            val choosingOptionForAugmentedAssignment = callResolutionMode == CallResolutionMode.OPTION_FOR_AUGMENTED_ASSIGNMENT
+            val withTransformedArguments = if (!choosingOptionForAugmentedAssignment) {
                 dataFlowAnalyzer.enterCallArguments(functionCall, functionCall.arguments)
                 // In provideDelegate mode the explicitReceiver is already resolved
                 // E.g. we have val some by someDelegate
@@ -428,7 +445,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 // at 2nd stage in provideDelegate mode we are trying to resolve someDelegate.provideDelegate(),
                 // and 'someDelegate' explicit receiver is resolved at 1st stage
                 // See also FirDeclarationsResolveTransformer.transformWrappedDelegateExpression
-                val withResolvedExplicitReceiver = if (provideDelegate) functionCall else transformExplicitReceiver(functionCall)
+                val withResolvedExplicitReceiver =
+                    if (callResolutionMode == CallResolutionMode.PROVIDE_DELEGATE) functionCall else transformExplicitReceiver(functionCall)
                 withResolvedExplicitReceiver.also {
                     it.replaceArgumentList(it.argumentList.transform(this, ResolutionMode.ContextDependent))
                     dataFlowAnalyzer.exitCallArguments()
@@ -439,9 +457,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
             val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments, data)
 
-            val completeInference = callCompleter.completeCall(resultExpression, data)
+            val completeInference = callCompleter.completeCall(
+                resultExpression, data,
+                skipEvenPartialCompletion = choosingOptionForAugmentedAssignment,
+            )
             val result = completeInference.transformToIntegerOperatorCallOrApproximateItIfNeeded(data)
-            if (!resolvingAugmentedAssignment) {
+            if (!choosingOptionForAugmentedAssignment) {
                 dataFlowAnalyzer.exitFunctionCall(result, data.forceFullCompletion)
             }
 
@@ -818,8 +839,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     private fun FirFunctionCall.resolveCandidateForAssignmentOperatorCall(): FirFunctionCall {
         return transformFunctionCallInternal(
             this,
-            ResolutionMode.ContextDependent.AugmentedAssignmentCallOption,
-            provideDelegate = false
+            ResolutionMode.ContextDependent,
+            CallResolutionMode.OPTION_FOR_AUGMENTED_ASSIGNMENT
         ) as FirFunctionCall
     }
 
@@ -1641,7 +1662,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ResolutionMode): FirStatement =
         whileAnalysing(session, arrayLiteral) {
             when (data) {
-                is ResolutionMode.ContextDependent.Default -> {
+                is ResolutionMode.ContextDependent -> {
                     // Argument in non-annotation call (unsupported) or if type of array parameter is unresolved.
                     arrayLiteral.transformChildren(transformer, data)
                     arrayLiteral

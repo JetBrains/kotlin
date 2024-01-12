@@ -55,7 +55,12 @@ class FirCallCompleter(
 
     val completer = ConstraintSystemCompleter(components, transformer.context)
 
-    fun <T> completeCall(call: T, resolutionMode: ResolutionMode): T where T : FirResolvable, T : FirStatement {
+    fun <T> completeCall(
+        call: T,
+        resolutionMode: ResolutionMode,
+        // Only expected to be true for resolving different versions of augmented assignments
+        skipEvenPartialCompletion: Boolean = false,
+    ): T where T : FirResolvable, T : FirStatement {
         val typeRef = components.typeFromCallee(call)
 
         val reference = call.calleeReference as? FirNamedReferenceWithCandidate ?: return call
@@ -74,7 +79,7 @@ class FirCallCompleter(
             resolutionMode,
         )
 
-        if (resolutionMode.skipEvenPartialCompletion) return call
+        if (skipEvenPartialCompletion) return call
 
         val completionMode = candidate.computeCompletionMode(
             session.inferenceComponents, resolutionMode, initialType
