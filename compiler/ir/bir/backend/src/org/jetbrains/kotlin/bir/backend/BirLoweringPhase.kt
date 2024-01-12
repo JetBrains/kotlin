@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.bir.backend
 
 import org.jetbrains.kotlin.bir.*
-import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
-import org.jetbrains.kotlin.bir.declarations.BirProperty
-import org.jetbrains.kotlin.bir.declarations.BirField
-import org.jetbrains.kotlin.bir.declarations.BirFunction
+import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirGetValue
+import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
+import org.jetbrains.kotlin.bir.symbols.BirReturnTargetSymbol
+import org.jetbrains.kotlin.bir.symbols.BirSymbol
+import org.jetbrains.kotlin.bir.symbols.BirTypedSymbol
+import kotlin.reflect.KProperty1
 
 context(BirBackendContext)
 abstract class BirLoweringPhase {
@@ -140,7 +142,7 @@ abstract class BirLoweringPhase {
      *
      * @param getBackReference Function to obtain a forward reference to some other element. [BirElement.getBackReferences] will return
      * a reverse connection, this is, all elements for which this function returned the instance of receiver.
-     * May return null, to not record any forward reference. In case of multiple forward references, use [registerMultipleBackReferencesKey].
+     * May return null, to not record any forward reference. In case of multiple forward references, use [registerBackReferencesKey].
      *
      * The function must be pure. It should not depend on any mutable state, except for
      * properties of [BirElement]s (such as [BirField.type]) and[BirChildElementList]s.
@@ -150,7 +152,7 @@ abstract class BirLoweringPhase {
     protected inline fun <reified E : BirElement, R : BirElement> registerBackReferencesKey(
         elementType: BirElementType<E>,
         crossinline getBackReference: (E) -> R?,
-    ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(elementType, object : BirElementBackReferenceRecorder<R> {
+    ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(elementType, null, object : BirElementBackReferenceRecorder<R> {
         context(BirElementBackReferenceRecorderScope)
         override fun recordBackReferences(element: BirElementBase) {
             if (element is E) {
@@ -159,13 +161,59 @@ abstract class BirLoweringPhase {
         }
     })
 
+    @JvmName("registerBackReferencesKeyWithProperty")
+    protected inline fun <reified E : BirElement, R : BirElement> registerBackReferencesKey(
+        elementType: BirElementType<E>,
+        forwardReferenceProperty: KProperty1<E, R>,
+    ): BirElementBackReferencesKey<E, R> =
+        registerBackReferencesKey<E, R>(elementType, forwardReferenceProperty, object : BirElementBackReferenceRecorder<R> {
+            context(BirElementBackReferenceRecorderScope)
+            override fun recordBackReferences(element: BirElementBase) {
+                if (element is E) {
+                    recordReference(forwardReferenceProperty.get(element))
+                }
+            }
+        })
+
+    @JvmName("registerBackReferencesKeyWithSymbolProperty")
+    protected inline fun <reified E : BirElement, R : BirElement, S : BirTypedSymbol<R>> registerBackReferencesKey(
+        elementType: BirElementType<E>,
+        forwardReferenceProperty: KProperty1<E, S>,
+    ) = registerBackReferencesKeyWithUntypedSymbolProperty<E>(elementType, forwardReferenceProperty)
+            as BirElementBackReferencesKey<E, R>
+
+    // xxx: those overloads overcome the inability to define all [BirSymbol]s as generic
+    protected inline fun <reified E : BirElement> registerBackReferencesKey_functionSymbol(
+        elementType: BirElementType<E>,
+        forwardReferenceProperty: KProperty1<E, BirFunctionSymbol>,
+    ) = registerBackReferencesKeyWithUntypedSymbolProperty<E>(elementType, forwardReferenceProperty)
+            as BirElementBackReferencesKey<E, BirFunction>
+
+    protected inline fun <reified E : BirElement> registerBackReferencesKey_returnTargetSymbol(
+        elementType: BirElementType<E>,
+        forwardReferenceProperty: KProperty1<E, BirReturnTargetSymbol>,
+    ) = registerBackReferencesKeyWithUntypedSymbolProperty<E>(elementType, forwardReferenceProperty)
+            as BirElementBackReferencesKey<E, BirReturnTarget>
+
+    protected inline fun <reified E : BirElement> registerBackReferencesKeyWithUntypedSymbolProperty(
+        elementType: BirElementType<E>,
+        forwardReferenceProperty: KProperty1<E, BirSymbol>,
+    ): BirElementBackReferencesKey<E, BirElement> = registerBackReferencesKey<E, BirElement>(
+        elementType, forwardReferenceProperty
+    ) { element ->
+        if (element is E) {
+            val symbol = forwardReferenceProperty.get(element)
+            recordReference(symbol.owner)
+        }
+    }
+
     /**
      * Same as [registerBackReferencesKey], but allows to record multiple forward references for a given element.
      */
     protected inline fun <reified E : BirElement, R : BirElement> registerMultipleBackReferencesKey(
         elementType: BirElementType<E>,
         crossinline getBackReferences: context(BirElementBackReferenceRecorderScope) (E) -> Unit,
-    ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(elementType, object : BirElementBackReferenceRecorder<R> {
+    ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(elementType, null, object : BirElementBackReferenceRecorder<R> {
         context(BirElementBackReferenceRecorderScope)
         override fun recordBackReferences(element: BirElementBase) {
             if (element is E) {
@@ -177,9 +225,10 @@ abstract class BirLoweringPhase {
     @PublishedApi
     internal fun <E : BirElement, R : BirElement> registerBackReferencesKey(
         elementType: BirElementType<E>,
+        forwardReferenceProperty: KProperty1<E, *>?,
         getBackReference: BirElementBackReferenceRecorder<R>,
     ): BirElementBackReferencesKey<E, R> {
-        val key = BirElementBackReferencesKey<E, R>(getBackReference, elementType)
+        val key = BirElementBackReferencesKey<E, R>(getBackReference, elementType, forwardReferenceProperty)
         compiledBir.registerElementBackReferencesKey(key)
         return key
     }

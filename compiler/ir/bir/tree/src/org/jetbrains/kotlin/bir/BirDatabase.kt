@@ -364,6 +364,7 @@ class BirDatabase : BirElementParent() {
                             BirElementGeneralIndexer.Kind.IndexMatcher,
                             indexerKey.condition,
                             indexerKey.elementType,
+                            null,
                             index
                         )
                     }
@@ -372,6 +373,7 @@ class BirDatabase : BirElementParent() {
                             BirElementGeneralIndexer.Kind.BackReferenceRecorder,
                             indexerKey.recorder,
                             indexerKey.elementType,
+                            indexerKey.forwardReferenceProperty,
                             index
                         )
                     }
