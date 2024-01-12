@@ -1,6 +1,3 @@
-//import plugins.configureDefaultPublishing
-//import plugins.configureKotlinPomAttributes
-
 description = "Runtime library for the JSO compiler plugin"
 
 plugins {
