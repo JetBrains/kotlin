@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 context(JvmBirBackendContext)
 class BirRepeatedAnnotationLowering : BirLoweringPhase() {
     private val KotlinRepeatableAnnotation by lz { birBuiltIns.findClass(StandardNames.FqNames.repeatable) }
-    private val JavaRepeatableAnnotation  by lz { birBuiltIns.findClass(JvmAnnotationNames.REPEATABLE_ANNOTATION)!! }
+    private val JavaRepeatableAnnotation by lz { birBuiltIns.findClass(JvmAnnotationNames.REPEATABLE_ANNOTATION)!! }
 
     private val elementsWithMultipleAnnotations = registerIndexKey(BirAnnotationContainerElement, false) {
         it.annotations.size >= 2

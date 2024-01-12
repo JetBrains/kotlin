@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
 import org.jetbrains.kotlin.bir.declarations.BirValueParameter
 import org.jetbrains.kotlin.bir.expressions.*
 import org.jetbrains.kotlin.bir.expressions.impl.BirCallImpl
+import org.jetbrains.kotlin.bir.getBackReferences
 
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.bir.types.isNullableAny
@@ -30,19 +31,23 @@ context(JvmBirBackendContext)
 class BirPolymorphicSignatureLowering : BirLoweringPhase() {
     private val PolymorphicSignatureAnnotation by lz { birBuiltIns.findClass(PolymorphicSignatureCallChecker.polymorphicSignatureFqName) }
 
-    private val polymorphicCalls = registerIndexKey(BirCall, false) { call ->
-        PolymorphicSignatureAnnotation?.let { call.symbol.owner.hasAnnotation(it) } == true
+    private val polymorphicFunctions = registerIndexKey(BirSimpleFunction, true) { function ->
+        PolymorphicSignatureAnnotation?.let { function.hasAnnotation(it) } == true
     }
+    private val functionCalls = registerBackReferencesKey(BirCall, BirCall::symbol)
 
     override fun lower(module: BirModuleFragment) {
-        getAllElementsWithIndex(polymorphicCalls).forEach { call ->
-            val castReturnType = call.findCoercionType()
-            val newCall = transformPolymorphicCall(call, castReturnType)
-            call.replaceWith(newCall)
+        getAllElementsWithIndex(polymorphicFunctions).forEach { function ->
+            function.getBackReferences(functionCalls).forEach { call ->
+                val castReturnType = call.findCoercionType()
+                val newCall = transformPolymorphicCall(call, castReturnType)
 
-            val parent = newCall.parent
-            if (parent is BirTypeOperatorCall && parent.argument == newCall && parent.isCast()) {
-                parent.replaceWith(newCall)
+                val parent = call.parent
+                if (parent is BirTypeOperatorCall && parent.argument == newCall && parent.isCast()) {
+                    parent.replaceWith(newCall)
+                } else {
+                    call.replaceWith(newCall)
+                }
             }
         }
     }
