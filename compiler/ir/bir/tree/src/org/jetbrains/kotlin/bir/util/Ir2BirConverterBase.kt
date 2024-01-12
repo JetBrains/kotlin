@@ -36,7 +36,7 @@ abstract class Ir2BirConverterBase(
     var appendElementAsDatabaseRoot: (IrElement, BirElement) -> BirDatabase? = { _, _ -> null }
     var convertAncestorsForOrphanedElements = false
     var instantiateDescriptors = false
-
+    var recordConvertedTypes = false
     var convertLazyElementsIntoImpl = false
     var convertImplElementsIntoLazyWhenPossible = false
 
@@ -263,7 +263,9 @@ abstract class Ir2BirConverterBase(
         is IrErrorType -> remapErrorType(irType)
         else -> TODO(irType.toString())
     }.also {
-        remappedIr2BirTypes[it] = irType
+        if (recordConvertedTypes) {
+            remappedIr2BirTypes[it] = irType
+        }
     }
 
     @JvmName("remapTypeNullable")
