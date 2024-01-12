@@ -93,10 +93,12 @@ fun FirExpression.extractClassFromArgument(session: FirSession): FirRegularClass
     return when (val argument = argument) {
         is FirResolvedQualifier ->
             argument.symbol as? FirRegularClassSymbol
-        is FirClassReferenceExpression ->
-            argument.classTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.toRegularClassSymbol(session)
-        else ->
-            null
+        is FirClassReferenceExpression -> {
+            val classTypeRef = argument.classTypeRef
+            val coneType = classTypeRef.coneType.unwrapFlexibleAndDefinitelyNotNull()
+            coneType.fullyExpandedType(session).toRegularClassSymbol(session)
+        }
+        else -> null
     }
 }
 

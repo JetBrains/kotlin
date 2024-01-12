@@ -42260,6 +42260,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("JavaKotlinInterop.kt")
+                public void testJavaKotlinInterop() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/JavaKotlinInterop.kt");
+                }
+
+                @Test
                 @TestMetadata("NestedClasses.kt")
                 public void testNestedClasses() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/NestedClasses.kt");
