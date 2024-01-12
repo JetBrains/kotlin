@@ -40,12 +40,13 @@ internal fun PhaseContext.firSerializer(input: FirOutput): SerializerOutput? = w
     else -> firSerializerBase(input.firResult, null)
 }
 
-internal fun PhaseContext.fir2IrSerializer(input: FirSerializerInput) =
-    firSerializerBase(input.firToIrOutput.firResult, input.firToIrOutput, produceHeaderKlib = input.produceHeaderKlib)
+internal fun PhaseContext.fir2IrSerializer(input: FirSerializerInput): SerializerOutput {
+    return firSerializerBase(input.firToIrOutput.firResult, input.firToIrOutput, produceHeaderKlib = input.produceHeaderKlib)
+}
 
 internal fun PhaseContext.firSerializerBase(
         firResult: FirResult,
-        fir2IrInput: Fir2IrOutput?,
+        fir2IrOutput: Fir2IrOutput?,
         produceHeaderKlib: Boolean = false,
 ): SerializerOutput {
     val configuration = config.configuration
@@ -63,13 +64,13 @@ internal fun PhaseContext.firSerializerBase(
             configuration.get(CommonConfigurationKeys.METADATA_VERSION)
                     ?: configuration.languageVersionSettings.languageVersion.toMetadataVersion()
 
-    val usedResolvedLibraries = fir2IrInput?.let {
+    val usedResolvedLibraries = fir2IrOutput?.let {
         config.resolvedLibraries.getFullResolvedList(TopologicalLibraryOrder).filter {
-            (!it.isDefault && !configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)) || it in fir2IrInput.usedLibraries
+            (!it.isDefault && !configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)) || it in fir2IrOutput.usedLibraries
         }
     }
 
-    val actualizedFirDeclarations = fir2IrInput?.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
+    val actualizedFirDeclarations = fir2IrOutput?.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
     val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
     val serializerOutput = serializeNativeModule(
             configuration = configuration,
@@ -77,15 +78,15 @@ internal fun PhaseContext.firSerializerBase(
             messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
             sourceFiles,
             usedResolvedLibraries?.map { it.library as KonanLibrary },
-            fir2IrInput?.irModuleFragment,
-            moduleName = fir2IrInput?.irModuleFragment?.descriptor?.name?.asString()
+            fir2IrOutput?.irModuleFragment,
+            moduleName = fir2IrOutput?.irModuleFragment?.descriptor?.name?.asString()
                     ?: firResult.outputs.last().session.moduleData.name.asString(),
             firFilesAndSessionsBySourceFile,
             bodiesOnlyForInlines = produceHeaderKlib,
             skipPrivateApi = produceHeaderKlib,
     ) { firFile, originalSession, originalScopeSession ->
-        val session = fir2IrInput?.components?.session ?: originalSession
-        val scopeSession = fir2IrInput?.components?.scopeSession ?: originalScopeSession
+        val session = fir2IrOutput?.components?.session ?: originalSession
+        val scopeSession = fir2IrOutput?.components?.scopeSession ?: originalScopeSession
         serializeSingleFirFile(
                 firFile,
                 session,
@@ -93,12 +94,12 @@ internal fun PhaseContext.firSerializerBase(
                 actualizedFirDeclarations,
                 FirKLibSerializerExtension(
                         session, metadataVersion,
-                        fir2IrInput?.let {
-                            ConstValueProviderImpl(fir2IrInput.components)
+                        fir2IrOutput?.let {
+                            ConstValueProviderImpl(fir2IrOutput.components)
                         },
                         allowErrorTypes = false,
                         exportKDoc = shouldExportKDoc(),
-                        additionalMetadataProvider = fir2IrInput?.components?.annotationsFromPluginRegistrar?.createAdditionalMetadataProvider()
+                        additionalMetadataProvider = fir2IrOutput?.components?.annotationsFromPluginRegistrar?.createAdditionalMetadataProvider()
                 ),
                 configuration.languageVersionSettings,
                 produceHeaderKlib,
@@ -122,18 +123,17 @@ class KotlinFileSerializedData(
     val path: String? get() = irData?.path ?: source.path
 }
 
-internal fun PhaseContext.serializeNativeModule(
-    configuration: CompilerConfiguration,
-    diagnosticReporter: DiagnosticReporter,
-    messageLogger: IrMessageLogger,
-    files: List<KtSourceFile>,
-    dependencies: List<KonanLibrary>?,
-    moduleFragment: IrModuleFragment?,
-    moduleName: String,
-    firFilesAndSessionsBySourceFile: Map<KtSourceFile, Triple<FirFile, FirSession, ScopeSession>>,
-    bodiesOnlyForInlines: Boolean = false,
-    skipPrivateApi: Boolean = false,
-    serializeSingleFile: (FirFile, FirSession, ScopeSession) -> ProtoBuf.PackageFragment
+private fun serializeNativeModule(
+        configuration: CompilerConfiguration,
+        diagnosticReporter: DiagnosticReporter,messageLogger: IrMessageLogger,
+        files: List<KtSourceFile>,
+        dependencies: List<KonanLibrary>?,
+        moduleFragment: IrModuleFragment?,
+        moduleName: String,
+        firFilesAndSessionsBySourceFile: Map<KtSourceFile, Triple<FirFile, FirSession, ScopeSession>>,
+        bodiesOnlyForInlines: Boolean = false,
+        skipPrivateApi: Boolean = false,
+        serializeSingleFile: (FirFile, FirSession, ScopeSession) -> ProtoBuf.PackageFragment
 ): SerializerOutput {
     if (moduleFragment != null) {
         assert(files.size == moduleFragment.files.size)
