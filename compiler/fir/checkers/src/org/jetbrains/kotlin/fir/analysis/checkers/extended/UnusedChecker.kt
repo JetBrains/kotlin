@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.SpecialNames
@@ -65,9 +64,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
             val data = dataPerNode.values.mapNotNull { it[variableSymbol] }.reduceOrNull { acc, it -> acc.merge(it) }
             if (data != null) {
                 variableSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-                @OptIn(SymbolInternals::class)
-                val variable = variableSymbol.fir
-                val variableSource = variable.source
+                val variableSource = variableSymbol.source
 
                 if (variableSource?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) {
                     return
@@ -84,7 +81,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
                         }
                     }
                     data.isRedundantInit -> {
-                        val source = variable.initializer?.source
+                        val source = variableSymbol.initializerSource
                         reporter.reportOn(source, FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT, context)
                     }
                     data == VariableStatus.ONLY_WRITTEN_NEVER_READ -> {
@@ -297,8 +294,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
 
     private val FirPropertySymbol.isLoopIterator: Boolean
         get() {
-            @OptIn(SymbolInternals::class)
-            return fir.initializer?.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
+            return initializerSource?.kind == KtFakeSourceElementKind.DesugaredForLoop
         }
 }
 

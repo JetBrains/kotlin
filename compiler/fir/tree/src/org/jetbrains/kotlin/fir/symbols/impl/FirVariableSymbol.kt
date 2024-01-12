@@ -48,6 +48,9 @@ open class FirPropertySymbol(callableId: CallableId, ) : FirVariableSymbol<FirPr
     val hasInitializer: Boolean
         get() = fir.initializer != null
 
+    val initializerSource: KtSourceElement?
+        get() = fir.initializer?.source
+
     val resolvedInitializer: FirExpression?
         get() {
             lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
