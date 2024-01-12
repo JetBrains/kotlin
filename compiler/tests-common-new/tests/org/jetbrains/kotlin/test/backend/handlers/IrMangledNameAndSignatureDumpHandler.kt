@@ -223,13 +223,10 @@ class IrMangledNameAndSignatureDumpHandler(
             val fullMangledNames = mutableListOf<ComputedMangledName>()
             val signatureMangledNames = mutableListOf<ComputedMangledName>()
 
-            signatureComposer.inFile(declaration.fileOrNull?.symbol) {
-                addSignatureTo(
-                    signatures,
-                    signatureComposer.computeSignature(declaration),
-                    ComputedBy.IR,
-                    isPublic = true
-                )
+            val signatureComputedFromIr = signatureComposer.inFile(declaration.fileOrNull?.symbol) {
+                signatureComposer.computeSignature(declaration).also {
+                    addSignatureTo(signatures, it, ComputedBy.IR, isPublic = true)
+                }
             }
 
             irMangler.addFullMangledNameTo(fullMangledNames, declaration)
@@ -255,7 +252,7 @@ class IrMangledNameAndSignatureDumpHandler(
                     // Signature mangled names computed from descriptors, IR and FIR of declarations that are not
                     // effectively private must be all equal to the signature description, which we already print
                     // (see the printSignatures() function below). If this is not the case, print them separately.
-                    if (signatureMangledNames.any { it.value != symbol.signature?.asPublic()?.description.orEmpty() }) {
+                    if (signatureMangledNames.any { it.value != signatureComputedFromIr.asPublic()?.description.orEmpty() }) {
                         printMangledNames(signatureMangledNames, prefix = "Mangled name for the signature")
                     }
                 }
