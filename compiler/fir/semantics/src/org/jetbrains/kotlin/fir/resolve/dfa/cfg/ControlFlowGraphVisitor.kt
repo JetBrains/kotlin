@@ -299,7 +299,7 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
-    open fun visitConstExpressionNode(node: ConstExpressionNode, data: D): R {
+    open fun visitLiteralExpressionNode(node: LiteralExpressionNode, data: D): R {
         return visitNode(node, data)
     }
 

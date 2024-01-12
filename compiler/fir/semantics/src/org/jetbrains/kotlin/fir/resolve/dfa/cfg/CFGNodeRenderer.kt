@@ -50,7 +50,7 @@ fun CFGNode<*>.render(): String =
                 is StubNode -> "Stub"
                 is CheckNotNullCallNode -> "Check not null: ${CfgRenderer.renderElementAsString(fir)}"
 
-                is ConstExpressionNode -> "Const: ${fir.render()}"
+                is LiteralExpressionNode -> "Const: ${fir.render()}"
                 is VariableDeclarationNode ->
                     "Variable declaration: ${
                         CfgRenderer.renderAsCallableDeclarationString(fir)
