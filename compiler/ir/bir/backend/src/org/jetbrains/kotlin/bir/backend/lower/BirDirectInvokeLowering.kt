@@ -39,28 +39,31 @@ context(JvmBirBackendContext)
 class BirDirectInvokeLowering : BirLoweringPhase() {
     private val valueAccesses = registerBackReferencesKey(BirValueAccessExpression) { it.symbol.owner }
     private val returnTargets = registerBackReferencesKey(BirReturn) { it.returnTargetSymbol.owner }
-    private val invokeCalls = registerIndexKey(BirCall, false) {
-        it.dispatchReceiver != null && it.symbol.owner.name == OperatorNameConventions.INVOKE
+    private val invokeFunctions = registerIndexKey(BirSimpleFunction, false) {
+        it.name == OperatorNameConventions.INVOKE
     }
+    private val functionCalls = registerBackReferencesKey(BirCall) { it.symbol.owner }
 
     override fun lower(module: BirModuleFragment) {
-        getAllElementsWithIndex(invokeCalls).forEach { call ->
-            val receiver = call.dispatchReceiver!!
-            val result = when {
-                // TODO deal with type parameters somehow?
-                // It seems we can't encounter them in the code written by user,
-                // but this might be important later if we actually perform inlining and optimizations on IR.
-                receiver is BirFunctionReference && receiver.symbol.owner.typeParameters.isEmpty() ->
-                    visitFunctionReferenceInvoke(call, receiver)
-                receiver is BirBlock ->
-                    receiver.asInlinableFunctionReference()
-                        ?.takeIf { it.extensionReceiver == null }
-                        ?.let { reference -> visitLambdaInvoke(call, reference) }
-                        ?: call
-                else -> call
-            }
+        getAllElementsWithIndex(invokeFunctions).forEach { function ->
+            function.getBackReferences(functionCalls).forEach { call ->
+                val receiver = call.dispatchReceiver
+                val result = when {
+                    // TODO deal with type parameters somehow?
+                    // It seems we can't encounter them in the code written by user,
+                    // but this might be important later if we actually perform inlining and optimizations on IR.
+                    receiver is BirFunctionReference && receiver.symbol.owner.typeParameters.isEmpty() ->
+                        visitFunctionReferenceInvoke(call, receiver)
+                    receiver is BirBlock ->
+                        receiver.asInlinableFunctionReference()
+                            ?.takeIf { it.extensionReceiver == null }
+                            ?.let { reference -> visitLambdaInvoke(call, reference) }
+                            ?: call
+                    else -> call
+                }
 
-            call.replaceWith(result)
+                call.replaceWith(result)
+            }
         }
     }
 
