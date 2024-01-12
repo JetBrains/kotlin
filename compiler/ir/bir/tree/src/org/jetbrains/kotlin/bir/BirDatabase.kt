@@ -358,12 +358,12 @@ class BirDatabase : BirElementParent() {
                 when (indexerKey) {
                     is BirElementsIndexKey<*> -> {
                         indexerIndexes[indexerKey] = index
-                        val slot = ElementsIndexSlot(index, indexerKey.condition, indexerKey.elementClass)
+                        val slot = ElementsIndexSlot(index, indexerKey.condition)
                         elementIndexSlots[index] = slot
                         BirElementIndexClassifierFunctionGenerator.Indexer(
                             BirElementGeneralIndexer.Kind.IndexMatcher,
                             indexerKey.condition,
-                            indexerKey.elementClass,
+                            indexerKey.elementType,
                             index
                         )
                     }
@@ -371,7 +371,7 @@ class BirDatabase : BirElementParent() {
                         BirElementIndexClassifierFunctionGenerator.Indexer(
                             BirElementGeneralIndexer.Kind.BackReferenceRecorder,
                             indexerKey.recorder,
-                            indexerKey.elementClass,
+                            indexerKey.elementType,
                             index
                         )
                     }
@@ -454,7 +454,6 @@ class BirDatabase : BirElementParent() {
     private inner class ElementsIndexSlot(
         val index: Int,
         val condition: BirElementIndexMatcher?,
-        val elementClass: BirElementClass<*>,
     ) {
         var array = emptyArray<BirElementBase?>()
             private set
