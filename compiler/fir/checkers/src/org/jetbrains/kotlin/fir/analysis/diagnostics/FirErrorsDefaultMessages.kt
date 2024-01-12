@@ -134,6 +134,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_CANNOT_BE_E
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_INHERITS_JAVA_SEALED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COLLECTION_LITERAL_NO_BUILDER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COLLECTION_LITERAL_UNKNOWN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_MISSING
@@ -872,6 +874,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(DEPRECATED_BINARY_MOD, "Convention for ''{0}'' is prohibited. Use ''{1}''.", SYMBOL, STRING)
         map.put(FORBIDDEN_BINARY_MOD, "Deprecated convention for ''{0}''. Use ''{1}''.", SYMBOL, STRING)
+        map.put(COLLECTION_LITERAL_UNKNOWN_TYPE, "Unresolved type for collection literal")
+        map.put(COLLECTION_LITERAL_NO_BUILDER, "No available collection builder for ''{0}''.", RENDER_TYPE)
 
         map.put(ILLEGAL_SELECTOR, "The expression cannot be a selector (cannot occur after a dot).")
         map.put(NO_RECEIVER_ALLOWED, "No receiver can be passed to this function or property.")

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -356,6 +357,14 @@ class ConePropertyAsOperator(val symbol: FirPropertySymbol) : ConeDiagnostic {
 
 class ConeUnknownLambdaParameterTypeDiagnostic : ConeDiagnostic {
     override val reason: String get() = "Unknown return lambda parameter type"
+}
+
+class ConeUnknownCollectionLiteralTypeDiagnostic : ConeDiagnostic {
+    override val reason: String get() = "Unknown collection type"
+}
+
+class ConeMissingCollectionLiteralBuilderDiagnostic(val type: ConeKotlinType) : ConeDiagnostic {
+    override val reason: String get() = "No collection builder for ${type.renderReadable()}"
 }
 
 private fun describeSymbol(symbol: FirBasedSymbol<*>): String {

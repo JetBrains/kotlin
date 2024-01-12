@@ -1659,19 +1659,21 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         resolutionContext,
                         data,
                     )
-                    callCompleter.completeCall(call, data)
-                    arrayOfCallTransformer.transformFunctionCall(call, session)
+                    if (call != null) {
+                        callCompleter.completeCall(call, data)
+                        arrayOfCallTransformer.transformFunctionCall(call, session)
+                    } else {
+                        buildErrorExpression {
+                            source = arrayLiteral.source
+                            diagnostic = ConeMissingCollectionLiteralBuilderDiagnostic(data.expectedTypeRef.type)
+                        }
+                    }
                 }
                 else -> {
-                    // Other unsupported usage.
-                    val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(
-                        arrayLiteral,
-                        resolutionContext,
-                        data,
-                    )
-                    arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
-                    callCompleter.completeCall(syntheticIdCall, data)
-                    arrayLiteral
+                    buildErrorExpression {
+                        source = arrayLiteral.source
+                        diagnostic = ConeUnknownCollectionLiteralTypeDiagnostic()
+                    }
                 }
             }
         }

@@ -531,6 +531,19 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.COLLECTION_LITERAL_UNKNOWN_TYPE) { firDiagnostic ->
+        CollectionLiteralUnknownTypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.COLLECTION_LITERAL_NO_BUILDER) { firDiagnostic ->
+        CollectionLiteralNoBuilderImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.SUPER_IS_NOT_AN_EXPRESSION) { firDiagnostic ->
         SuperIsNotAnExpressionImpl(
             firDiagnostic as KtPsiDiagnostic,

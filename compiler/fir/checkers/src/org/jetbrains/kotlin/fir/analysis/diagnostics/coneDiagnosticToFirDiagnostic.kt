@@ -188,6 +188,8 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeAmbiguousFunctionTypeKinds -> FirErrors.AMBIGUOUS_FUNCTION_TYPE_KIND.createOn(source, kinds)
     is ConeUnsupportedClassLiteralsWithEmptyLhs -> FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS.createOn(source)
     is ConeMissingConstructorKeyword -> FirErrors.MISSING_CONSTRUCTOR_KEYWORD.createOn(source)
+    is ConeUnknownCollectionLiteralTypeDiagnostic -> FirErrors.COLLECTION_LITERAL_UNKNOWN_TYPE.createOn(source)
+    is ConeMissingCollectionLiteralBuilderDiagnostic -> FirErrors.COLLECTION_LITERAL_NO_BUILDER.createOn(source, type)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 

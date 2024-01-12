@@ -418,6 +418,15 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val suggestedFunction: String
     }
 
+    interface CollectionLiteralUnknownType : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = CollectionLiteralUnknownType::class
+    }
+
+    interface CollectionLiteralNoBuilder : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = CollectionLiteralNoBuilder::class
+        val type: KtType
+    }
+
     interface SuperIsNotAnExpression : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = SuperIsNotAnExpression::class
     }

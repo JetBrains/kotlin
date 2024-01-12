@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.references.isError
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
@@ -42,13 +43,14 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -67,7 +69,6 @@ class FirSyntheticCallGenerator(
 
     private val whenSelectFunction: FirSimpleFunction = generateSyntheticSelectFunction(SyntheticCallableId.WHEN)
     private val trySelectFunction: FirSimpleFunction = generateSyntheticSelectFunction(SyntheticCallableId.TRY)
-    private val idFunction: FirSimpleFunction = generateSyntheticSelectFunction(SyntheticCallableId.ID)
     private val checkNotNullFunction: FirSimpleFunction = generateSyntheticCheckNotNullFunction()
     private val elvisFunction: FirSimpleFunction = generateSyntheticElvisFunction()
     private val arrayOfSymbolCache: FirCache<Name, FirNamedFunctionSymbol?, Nothing?> = session.firCachesFactory.createCache(::getArrayOfSymbol)
@@ -172,52 +173,81 @@ class FirSyntheticCallGenerator(
         return elvisExpression.transformCalleeReference(UpdateReference, reference)
     }
 
-    fun generateSyntheticIdCall(arrayLiteral: FirExpression, context: ResolutionContext, resolutionMode: ResolutionMode): FirFunctionCall {
-        val argumentList = buildArgumentList {
-            arguments += arrayLiteral
-        }
-        return buildFunctionCall {
-            this.argumentList = argumentList
-            calleeReference = generateCalleeReferenceWithCandidate(
-                arrayLiteral,
-                idFunction,
-                argumentList,
-                SyntheticCallableId.ID.callableName,
-                context = context,
-                resolutionMode = resolutionMode,
-            )
-        }
-    }
-
     fun generateSyntheticArrayOfCall(
         arrayLiteral: FirArrayLiteral,
         expectedTypeRef: FirTypeRef,
         context: ResolutionContext,
         resolutionMode: ResolutionMode,
-    ): FirFunctionCall {
+    ): FirFunctionCall? {
         val argumentList = arrayLiteral.argumentList
-        val arrayOfSymbol = calculateArrayOfSymbol(expectedTypeRef)
-        return buildFunctionCall {
-            this.argumentList = argumentList
-            calleeReference = arrayOfSymbol?.let {
-                generateCalleeReferenceWithCandidate(
+        if (@OptIn(UnexpandedTypeCheck::class) expectedTypeRef.isArrayType) {
+            val arrayOfSymbol = calculateArrayOfSymbol(expectedTypeRef)
+            return buildFunctionCall {
+                this.argumentList = argumentList
+                calleeReference = arrayOfSymbol?.let {
+                    generateCalleeReferenceWithCandidate(
+                        arrayLiteral,
+                        it.fir,
+                        argumentList,
+                        ArrayFqNames.ARRAY_OF_FUNCTION,
+                        callKind = CallKind.Function,
+                        context = context,
+                        resolutionMode,
+                    )
+                } ?: buildErrorNamedReference {
+                    diagnostic = ConeUnresolvedNameError(ArrayFqNames.ARRAY_OF_FUNCTION)
+                }
+                source = arrayLiteral.source
+            }.also {
+                if (arrayOfSymbol == null) {
+                    it.resultType = components.typeFromCallee(it).type
+                }
+            }
+        } else {
+            val type = expectedTypeRef.coneType.fullyExpandedType(session)
+            val klass = type.toSymbol(session)?.fir as? FirRegularClass ?: return null
+            val scope = klass.companionObjectSymbol?.unsubstitutedScope(
+                session,
+                components.scopeSession,
+                false,
+                FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
+            ) ?: klass.scopeProvider.getStaticMemberScopeForCallables(
+                klass,
+                session,
+                components.scopeSession
+            ) ?: return null
+            val ofFunction = scope.getFunctions(Name.identifier("of")).singleOrNull {
+                it.fir.valueParameters.size == 1 && it.fir.valueParameters.first().isVararg
+            } ?: return null
+            return buildFunctionCall {
+                this.argumentList = argumentList
+                calleeReference = generateCalleeReferenceWithCandidate(
                     arrayLiteral,
-                    it.fir,
+                    ofFunction.fir,
                     argumentList,
-                    ArrayFqNames.ARRAY_OF_FUNCTION,
+                    ofFunction.name,
                     callKind = CallKind.Function,
                     context = context,
-                    resolutionMode,
+                    resolutionMode
                 )
-            } ?: buildErrorNamedReference {
-                diagnostic = ConeUnresolvedNameError(ArrayFqNames.ARRAY_OF_FUNCTION)
-            }
-            source = arrayLiteral.source
-        }.also {
-            if (arrayOfSymbol == null) {
-                it.resultType = components.typeFromCallee(it).type
+                type.typeArguments.forEach {
+                    when (it.kind) {
+                        ProjectionKind.STAR -> typeArguments.add(buildStarProjection())
+                        else -> typeArguments.add(buildTypeProjectionWithVariance {
+                            typeRef = it.type!!.toFirResolvedTypeRef()
+                            variance = when (it.kind) {
+                                ProjectionKind.IN -> Variance.IN_VARIANCE
+                                ProjectionKind.OUT -> Variance.OUT_VARIANCE
+                                ProjectionKind.INVARIANT -> Variance.INVARIANT
+                                else -> throw IllegalStateException()
+                            }
+                        })
+                    }
+                }
+                source = arrayLiteral.source
             }
         }
+
     }
 
     private fun calculateArrayOfSymbol(expectedTypeRef: FirTypeRef): FirNamedFunctionSymbol? {

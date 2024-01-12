@@ -176,7 +176,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val arrayLiteralCheckers: Set<FirArrayLiteralChecker>
         get() = setOf(
-            FirUnsupportedArrayLiteralChecker
+            // FirUnsupportedArrayLiteralChecker // collection literals
         )
 
     override val inaccessibleReceiverCheckers: Set<FirInaccessibleReceiverChecker>

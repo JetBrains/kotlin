@@ -224,6 +224,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirBasedSymbol<*>>("forbiddenFunction")
             parameter<String>("suggestedFunction")
         }
+        val COLLECTION_LITERAL_UNKNOWN_TYPE by error<PsiElement>()
+        val COLLECTION_LITERAL_NO_BUILDER by error<PsiElement> {
+            parameter<ConeKotlinType>("type")
+        }
     }
 
     val SUPER by object : DiagnosticGroup("Super") {

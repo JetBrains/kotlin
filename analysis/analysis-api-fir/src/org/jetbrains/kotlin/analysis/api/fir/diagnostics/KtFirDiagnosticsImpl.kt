@@ -485,6 +485,17 @@ internal class DeprecatedBinaryModImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.DeprecatedBinaryMod
 
+internal class CollectionLiteralUnknownTypeImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.CollectionLiteralUnknownType
+
+internal class CollectionLiteralNoBuilderImpl(
+    override val type: KtType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.CollectionLiteralNoBuilder
+
 internal class SuperIsNotAnExpressionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
