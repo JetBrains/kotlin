@@ -71,7 +71,7 @@ abstract class FakeOverrideBuilderStrategy(
      * Contract:
      *  * must call [block] exactly once.
      */
-    abstract fun inFile(file: IrFile?, block: () -> Unit)
+    abstract fun <R> inFile(file: IrFile?, block: () -> R): R
 
     /**
      * Callback for creating a symbol for fake override function.

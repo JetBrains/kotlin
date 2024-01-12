@@ -81,7 +81,6 @@ internal class Fir2IrFakeOverrideStrategy(
         }
     }
 
-    override fun inFile(file: IrFile?, block: () -> Unit) {
+    override fun <R> inFile(file: IrFile?, block: () -> R): R =
         publicIdSignatureComputer.inFile(file?.symbol, block)
-    }
 }

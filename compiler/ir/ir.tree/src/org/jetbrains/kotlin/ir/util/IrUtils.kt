@@ -1305,7 +1305,7 @@ private object BindToNewEmptySymbols : FakeOverrideBuilderStrategy(
         }
     }
 
-    override fun inFile(file: IrFile?, block: () -> Unit) { block() }
+    override fun <R> inFile(file: IrFile?, block: () -> R): R = block()
 }
 
 fun IrClass.addFakeOverrides(

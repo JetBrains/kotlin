@@ -1326,17 +1326,7 @@ open class IrFileSerializer(
         }
     }
 
-    fun serializeIrFile(file: IrFile): SerializedIrFile {
-        var result: SerializedIrFile? = null
-
-        declarationTable.inFile(file) {
-            result = serializeIrFileImpl(file)
-        }
-
-        return result!!
-    }
-
-    private fun serializeIrFileImpl(file: IrFile): SerializedIrFile {
+    fun serializeIrFile(file: IrFile): SerializedIrFile = declarationTable.inFile(file) {
         val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
 
         val proto = ProtoFile.newBuilder()
@@ -1379,7 +1369,7 @@ open class IrFileSerializer(
 
         fillPlatformExplicitlyExported(file, proto)
 
-        return SerializedIrFile(
+        SerializedIrFile(
             fileData = proto.build().toByteArray(),
             fqName = file.packageFqName.asString(),
             path = file.path,

@@ -36,7 +36,7 @@ interface IdSignatureComputer {
      * @param block A block within which signatures computed for private declarations will include [file]'s signature.
      * @see [IdSignature.FileSignature]
      */
-    fun inFile(file: IrFileSymbol?, block: () -> Unit)
+    fun <R> inFile(file: IrFileSymbol?, block: () -> R): R
 }
 
 class DescToIrIdSignatureComputer(private val delegate: IdSignatureDescriptor) : IdSignatureComputer {
@@ -49,7 +49,5 @@ class DescToIrIdSignatureComputer(private val delegate: IdSignatureDescriptor) :
         }
     }
 
-    override fun inFile(file: IrFileSymbol?, block: () -> Unit) {
-        block()
-    }
+    override fun <R> inFile(file: IrFileSymbol?, block: () -> R): R = block()
 }

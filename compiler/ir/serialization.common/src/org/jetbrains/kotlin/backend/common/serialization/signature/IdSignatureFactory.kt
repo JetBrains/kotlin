@@ -39,12 +39,13 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
 
     private var currentFileSignatureX: IdSignature.FileSignature? = null
 
-    override fun inFile(file: IrFileSymbol?, block: () -> Unit) {
+    override fun <R> inFile(file: IrFileSymbol?, block: () -> R): R {
         currentFileSignatureX = file?.let { IdSignature.FileSignature(it) }
-
-        block()
-
-        currentFileSignatureX = null
+        try {
+            return block()
+        } finally {
+            currentFileSignatureX = null
+        }
     }
 
     private fun IrDeclaration.checkIfPlatformSpecificExport(): Boolean = mangler.run { isPlatformSpecificExport() }
@@ -211,9 +212,8 @@ class IdSignatureFactory(
     private var localIndex: Long = startIndex.toLong()
     private var scopeIndex: Int = startIndex
 
-    override fun inFile(file: IrFileSymbol?, block: () -> Unit) {
+    override fun <R> inFile(file: IrFileSymbol?, block: () -> R): R =
         publicSignatureBuilder.inFile(file, block)
-    }
 
     private fun composeContainerIdSignature(container: IrDeclarationParent, compatibleMode: Boolean): IdSignature =
         when (container) {

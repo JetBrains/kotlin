@@ -87,9 +87,8 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     unimplementedOverridesStrategy = unimplementedOverridesStrategy
 ) {
 
-    override fun inFile(file: IrFile?, block: () -> Unit) {
+    override fun <R> inFile(file: IrFile?, block: () -> R): R =
         fakeOverrideDeclarationTable.inFile(file, block)
-    }
 
     override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
         val (signature, symbol) = computeFunctionFakeOverrideSymbol(function, manglerCompatibleMode)
