@@ -573,33 +573,48 @@ class FirCallResolver(
                 // We want to "desugar" array literal arguments to arrayOf, intArrayOf, floatArrayOf and other *arrayOf* calls
                 // so that we can properly complete them eventually.
                 // In order to find out what the expected type is, we need to run argument mapping.
+                // Array literals can be nested despite the fact they are not supported in annotation arguments.
+                // But we should traverse them all recursively to report type mismatches.
+                // For nested array literal, we need a new expected type obtained from the previous expected type (extract type of array element).
                 // We don't want to force full completion before the whole call is completed so that type variables are preserved.
                 // But we need to pass expectType to figure out the correct *arrayOf* function (because Array<T> and primitive arrays can't be matched).
                 val mapping = transformer.resolutionContext.bodyResolveComponents.mapArguments(
                     annotation.arguments, constructorSymbol.fir, originScope = null, callSiteIsOperatorCall = false,
                 )
                 val argumentsToParameters = mapping.toArgumentToParameterMapping()
-                annotation.replaceArgumentList(buildArgumentList {
-                    source = annotation.argumentList.source
-                    annotation.arguments.mapTo(arguments) { arg ->
-                        val resolutionMode = if (arg.unwrapArgument() is FirArrayLiteral) {
-                            (argumentsToParameters[arg]?.returnTypeRef as? FirResolvedTypeRef)?.let {
-                                // Enabling expectedTypeMismatchIsReportedInChecker clarifies error messages:
-                                // It will be reported single ARGUMENT_TYPE_MISMATCH on the array literal in checkApplicabilityForArgumentType
-                                // instead of several TYPE_MISMATCH for every mismatched argument.
-                                ResolutionMode.WithExpectedType(
-                                    it,
-                                    forceFullCompletion = false,
-                                    expectedTypeMismatchIsReportedInChecker = true
-                                )
-                            } ?: ResolutionMode.ContextDependent.Default
-                        } else {
-                            ResolutionMode.ContextDependent
-                        }
 
-                        arg.transformSingle(transformer, resolutionMode)
-                    }
-                })
+                fun FirCall.transformArgumentList(getExpectedType: (FirExpression) -> FirTypeRef?) {
+                    replaceArgumentList(
+                        buildArgumentList {
+                            source = argumentList.source
+                            argumentList.arguments.mapTo(arguments) { arg ->
+                                val unwrappedArgument = arg.unwrapArgument()
+                                val expectedType = getExpectedType(arg)
+                                val resolutionMode = if (unwrappedArgument is FirArrayLiteral && expectedType is FirResolvedTypeRef) {
+                                    unwrappedArgument.transformArgumentList {
+                                        // Trying to extract expected type for the next nested array literal
+                                        expectedType.coneType.arrayElementType()?.toFirResolvedTypeRef()
+                                    }
+
+                                    // Enabling expectedTypeMismatchIsReportedInChecker clarifies error messages:
+                                    // It will be reported single ARGUMENT_TYPE_MISMATCH on the array literal in checkApplicabilityForArgumentType
+                                    // instead of several TYPE_MISMATCH for every mismatched argument.
+                                    ResolutionMode.WithExpectedType(
+                                        expectedType,
+                                        forceFullCompletion = false,
+                                        expectedTypeMismatchIsReportedInChecker = true
+                                    )
+                                } else {
+                                    ResolutionMode.ContextDependent
+                                }
+
+                                return@mapTo arg.transformSingle(transformer, resolutionMode)
+                            }
+                        }
+                    )
+                }
+
+                annotation.transformArgumentList { argumentsToParameters[it]?.returnTypeRef }
             } else {
                 annotation.replaceArgumentList(annotation.argumentList.transform(transformer, ResolutionMode.ContextDependent.Default))
             }

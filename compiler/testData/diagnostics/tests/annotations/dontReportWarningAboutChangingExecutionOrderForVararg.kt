@@ -4,6 +4,9 @@ annotation class Anno(vararg val x: String, val y: String)
 @Anno(x = [<!TYPE_MISMATCH, TYPE_MISMATCH!>["a", "b"]<!>, <!TYPE_MISMATCH, TYPE_MISMATCH!>["a", "b"]<!>], y = "a")
 fun foo1() {}
 
+@Anno(x = [<!TYPE_MISMATCH, TYPE_MISMATCH!>[["a"]]<!>], y = "b")
+fun foo11() {}
+
 @Anno(x = ["a", "b"], y = "a")
 fun foo2() {}
 
