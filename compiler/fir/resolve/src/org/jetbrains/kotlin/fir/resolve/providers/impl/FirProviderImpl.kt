@@ -63,18 +63,18 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
 
         @FirSymbolProviderInternals
         override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
-            destination += (state.functionMap[CallableId(packageFqName, null, name)] ?: emptyList())
-            destination += (state.propertyMap[CallableId(packageFqName, null, name)] ?: emptyList())
+            destination += (state.functionMap[CallableId(packageFqName, name)] ?: emptyList())
+            destination += (state.propertyMap[CallableId(packageFqName, name)] ?: emptyList())
         }
 
         @FirSymbolProviderInternals
         override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
-            destination += (state.functionMap[CallableId(packageFqName, null, name)] ?: emptyList())
+            destination += (state.functionMap[CallableId(packageFqName, name)] ?: emptyList())
         }
 
         @FirSymbolProviderInternals
         override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
-            destination += (state.propertyMap[CallableId(packageFqName, null, name)] ?: emptyList())
+            destination += (state.propertyMap[CallableId(packageFqName, name)] ?: emptyList())
         }
 
         override fun getPackage(fqName: FqName): FqName? {
