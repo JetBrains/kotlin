@@ -59,15 +59,17 @@ class ArtifactsTest {
         }.asStream()
     }
 
-    @Test
-    fun allExpectedPomsPresentInActual() {
+    @TestFactory
+    fun allExpectedPomsPresentInActual(): Stream<DynamicTest> {
         val publishedPoms = findActualPoms()
             .map { it.toExpectedPath() }
             .filter { "${it.parent.fileName}" !in excludedProjects }.toSet()
 
-        findExpectedPoms().forEach { expected ->
-            assertTrue(expected in publishedPoms, "Missing actual pom for expected pom: $expected")
-        }
+        return findExpectedPoms().map { expected ->
+            DynamicTest.dynamicTest(expected.fileName.toString()) {
+                assertTrue(expected in publishedPoms, "Missing actual pom for expected pom: $expected")
+            }
+        }.asStream()
     }
 
     private fun findActualPoms() = Files.find(
