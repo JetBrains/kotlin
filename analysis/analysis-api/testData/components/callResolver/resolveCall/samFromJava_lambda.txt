@@ -1,0 +1,43 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = handler
+        isSafeNavigation = false
+        type = test.pkg.MyHandler
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/pkg/MyHandler.stash(<dispatch receiver>: test.pkg.MyHandler, actor: test.pkg.MyInterface!, actors: ft<kotlin.collections.MutableList<test.pkg.MyInterface!>, kotlin.collections.List<test.pkg.MyInterface!>?>): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = actor
+            receiverType = null
+            returnType = test.pkg.MyInterface!
+            symbol = actor: test.pkg.MyInterface!
+            callableIdIfNonLocal = null,
+          KtVariableLikeSignature:
+            name = actors
+            receiverType = null
+            returnType = ft<kotlin.collections.MutableList<test.pkg.MyInterface!>, kotlin.collections.List<test.pkg.MyInterface!>?>
+            symbol = actors: ft<kotlin.collections.MutableList<test.pkg.MyInterface!>, kotlin.collections.List<test.pkg.MyInterface!>?>
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = test/pkg/MyHandler.stash
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      lambda -> (KtVariableLikeSignature:
+        name = actor
+        receiverType = null
+        returnType = test.pkg.MyInterface!
+        symbol = actor: test.pkg.MyInterface!
+        callableIdIfNonLocal = null),
+      list -> (KtVariableLikeSignature:
+        name = actors
+        receiverType = null
+        returnType = ft<kotlin.collections.MutableList<test.pkg.MyInterface!>, kotlin.collections.List<test.pkg.MyInterface!>?>
+        symbol = actors: ft<kotlin.collections.MutableList<test.pkg.MyInterface!>, kotlin.collections.List<test.pkg.MyInterface!>?>
+        callableIdIfNonLocal = null)
+    }

@@ -767,6 +767,30 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("samFromJava_lambda.kt")
+    public void testSamFromJava_lambda() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/samFromJava_lambda.kt");
+    }
+
+    @Test
+    @TestMetadata("samFromJava_methodReference.kt")
+    public void testSamFromJava_methodReference() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/samFromJava_methodReference.kt");
+    }
+
+    @Test
+    @TestMetadata("samLambda.kt")
+    public void testSamLambda() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/samLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("samMethodReference.kt")
+    public void testSamMethodReference() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/samMethodReference.kt");
+    }
+
+    @Test
     @TestMetadata("simpleCallWithNonMatchingArgs.kt")
     public void testSimpleCallWithNonMatchingArgs() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/simpleCallWithNonMatchingArgs.kt");
