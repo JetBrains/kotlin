@@ -29,13 +29,12 @@ import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 
 
-@OptIn(SymbolInternals::class)
-internal fun FirFunction.getObjCMethodInfoFromOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): ObjCMethodInfo? {
+internal fun FirFunctionSymbol<*>.getObjCMethodInfoFromOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): ObjCMethodInfo? {
     decodeObjCMethodAnnotation(session)?.let {
         return it
     }
     // recursively find ObjCMethod annotation in getDirectOverriddenFunctions() (same as `overriddenDescriptors` in K1)
-    return when (val symbol = this.symbol) {
+    return when (val symbol = this) {
         is FirNamedFunctionSymbol -> {
             val firClassSymbol = containingClassLookupTag()?.toSymbol(session) as FirClassSymbol<*>?
             firClassSymbol?.let {
@@ -43,8 +42,8 @@ internal fun FirFunction.getObjCMethodInfoFromOverriddenFunctions(session: FirSe
                 // call of `processFunctionsByName()` is needed only for necessary side-effect before `getDirectOverriddenFunctions` call
                 unsubstitutedScope.processFunctionsByName(symbol.name) {}
                 unsubstitutedScope.getDirectOverriddenFunctions(symbol).firstNotNullOfOrNull {
-                    assert(it.fir != this) { "Function ${symbol.name}() is wrongly contained in its own getDirectOverriddenFunctions" }
-                    it.fir.getObjCMethodInfoFromOverriddenFunctions(session, scopeSession)
+                    assert(it != this) { "Function ${symbol.name}() is wrongly contained in its own getDirectOverriddenFunctions" }
+                    it.getObjCMethodInfoFromOverriddenFunctions(session, scopeSession)
                 }
             }
         }
@@ -55,23 +54,6 @@ internal fun FirFunction.getObjCMethodInfoFromOverriddenFunctions(session: FirSe
 /**
  * mimics ConstructorDescriptor.getObjCInitMethod()
  */
-@OptIn(SymbolInternals::class)
-fun FirConstructor.getObjCInitMethod(session: FirSession, scopeSession: ScopeSession): FirFunction? {
-    this.annotations.getAnnotationByClassId(NativeStandardInteropNames.objCConstructorClassId, session)?.let { annotation ->
-        val initSelector: String = annotation.constStringArgument("initSelector")
-        val classSymbol = containingClassLookupTag()?.toSymbol(session) as FirClassSymbol<*>
-        val initSelectors = mutableListOf<FirFunction>()
-        classSymbol.fir.scopeForClass(ConeSubstitutor.Empty, session, scopeSession, classSymbol.toLookupTag(), memberRequiredPhase = null)
-                .processAllFunctions {
-                    if (it.fir.decodeObjCMethodAnnotation(session)?.selector == initSelector)
-                        initSelectors.add(it.fir)
-                }
-        return initSelectors.singleOrNull()
-                ?: error("expected one init method for $classSymbol $initSelector, got ${initSelectors.size}")
-    }
-    return null
-}
-
 fun FirConstructorSymbol.getObjCInitMethod(session: FirSession, scopeSession: ScopeSession): FirFunctionSymbol<*>? {
     this.annotations.getAnnotationByClassId(NativeStandardInteropNames.objCConstructorClassId, session)?.let { annotation ->
         val initSelector: String = annotation.constStringArgument("initSelector")
@@ -130,8 +112,8 @@ internal fun FirFunction.isObjCClassMethod(session: FirSession) =
 /**
  * mimics ConstructorDescriptor.isObjCConstructor()
  */
-internal fun FirConstructor.isObjCConstructor(session: FirSession) =
-        this.annotations.hasAnnotation(NativeStandardInteropNames.objCConstructorClassId, session)
+internal fun FirConstructorSymbol.isObjCConstructor(session: FirSession) =
+    this.annotations.hasAnnotation(NativeStandardInteropNames.objCConstructorClassId, session)
 
 /**
  * mimics IrClass.isObjCClass()
@@ -146,8 +128,8 @@ private fun FirClassSymbol<*>.selfOrAnySuperClass(session: FirSession, predicate
             lookupSuperTypes(listOf(this), lookupInterfaces = true, deep = true, session, substituteTypes = false)
                 .any { predicate(it.lookupTag) }
 
-internal fun FirFunction.getInitMethodIfObjCConstructor(session: FirSession, scopeSession: ScopeSession): FirFunction? =
-        if (this is FirConstructor && isObjCConstructor(session))
+internal fun FirFunctionSymbol<*>.getInitMethodIfObjCConstructor(session: FirSession, scopeSession: ScopeSession): FirFunctionSymbol<*>? =
+        if (this is FirConstructorSymbol && isObjCConstructor(session))
             getObjCInitMethod(session, scopeSession)
         else
             this

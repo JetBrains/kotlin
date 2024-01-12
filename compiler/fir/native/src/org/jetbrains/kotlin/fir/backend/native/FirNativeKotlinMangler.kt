@@ -53,13 +53,13 @@ private class FirObjCFunctionNameMangleComputer(
 
     override fun getObjCMethodInfo(): ObjCMethodInfo? {
         val scopeSession = ScopeSession()
-        return function.getInitMethodIfObjCConstructor(session, scopeSession)
+        return function.symbol.getInitMethodIfObjCConstructor(session, scopeSession)
             ?.getObjCMethodInfoFromOverriddenFunctions(session, scopeSession)
     }
 
     override fun getExtensionReceiverClassName(): Name? = function.receiverParameter?.getTypeName(session)?.let(Name::identifier)
 
-    override fun isObjCConstructor(): Boolean = function is FirConstructor && function.isObjCConstructor(session)
+    override fun isObjCConstructor(): Boolean = function is FirConstructor && function.symbol.isObjCConstructor(session)
 
     override fun isPropertyAccessor(): Boolean = function is FirPropertyAccessor
 
