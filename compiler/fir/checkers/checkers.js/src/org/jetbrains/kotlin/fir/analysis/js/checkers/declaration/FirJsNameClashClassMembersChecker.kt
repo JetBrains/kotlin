@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
@@ -182,9 +181,8 @@ object FirJsNameClashClassMembersChecker : FirClassChecker() {
 
             val nonFakeOverrideClashes = stableNames.collectNonFakeOverrideClashes { it in fakeOverrideStableNames }
             for ((symbol, clashedWith) in nonFakeOverrideClashes) {
-                @OptIn(SymbolInternals::class)
                 val source = when (symbol) {
-                    is FirCallableSymbol<*> -> symbol.fir.unwrapFakeOverridesOrDelegated().source
+                    is FirCallableSymbol<*> -> symbol.unwrapFakeOverridesOrDelegated().source
                     else -> symbol.source
                 } ?: declaration.source
                 reporter.reportOn(source, FirJsErrors.JS_NAME_CLASH, name, clashedWith, context)
