@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.FqName
@@ -546,3 +547,12 @@ private fun FirClassLikeDeclaration.containingNonLocalClass(session: FirSession)
         is FirTypeAlias -> null
     }
 }
+
+/**
+ * The returned fir can be passed to the visibility checker, but don't
+ * use it for anything else.
+ */
+val <D, S : FirBasedSymbol<out D>> S.firForVisibilityChecker: D
+    get() = fir.also {
+        lazyResolveToPhase(FirResolvePhase.STATUS)
+    }
