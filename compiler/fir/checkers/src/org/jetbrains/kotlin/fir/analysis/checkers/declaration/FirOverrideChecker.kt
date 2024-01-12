@@ -221,15 +221,13 @@ object FirOverrideChecker : FirAbstractOverrideChecker() {
         }
     }
 
-    @OptIn(SymbolInternals::class)
     private fun FirFunctionSymbol<*>.checkDefaultValues(
         reporter: DiagnosticReporter,
         context: CheckerContext,
     ) {
         for (valueParameterSymbol in valueParameterSymbols) {
-            val defaultValue = valueParameterSymbol.fir.defaultValue
-            if (defaultValue != null) {
-                reporter.reportOn(defaultValue.source, FirErrors.DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE, context)
+            if (valueParameterSymbol.hasDefaultValue) {
+                reporter.reportOn(valueParameterSymbol.defaultValueSource, FirErrors.DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE, context)
             }
         }
     }

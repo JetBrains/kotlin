@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
@@ -114,6 +115,9 @@ class FirEnumEntrySymbol(callableId: CallableId) : FirVariableSymbol<FirEnumEntr
 class FirValueParameterSymbol(name: Name) : FirVariableSymbol<FirValueParameter>(CallableId(name)), ValueParameterSymbolMarker {
     val hasDefaultValue: Boolean
         get() = fir.defaultValue != null
+
+    val defaultValueSource: KtSourceElement?
+        get() = fir.defaultValue?.source
 
     val isCrossinline: Boolean
         get() = fir.isCrossinline
