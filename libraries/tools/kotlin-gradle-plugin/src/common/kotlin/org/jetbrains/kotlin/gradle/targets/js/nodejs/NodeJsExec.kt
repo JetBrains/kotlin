@@ -10,6 +10,7 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
@@ -93,7 +94,7 @@ constructor(
         fun create(
             compilation: KotlinJsIrCompilation,
             name: String,
-            configuration: NodeJsExec.() -> Unit = {}
+            configuration: NodeJsExec.() -> Unit = {},
         ): TaskProvider<NodeJsExec> {
             val target = compilation.target
             val project = target.project
@@ -123,5 +124,21 @@ constructor(
                 it.configuration()
             }
         }
+
+        @Deprecated(
+            "Use create(KotlinJsIrCompilation, name, configuration)",
+            replaceWith = ReplaceWith("create(compilation, name, configuration)"),
+            level = DeprecationLevel.HIDDEN
+        )
+        fun create(
+            compilation: KotlinJsCompilation,
+            name: String,
+            configuration: NodeJsExec.() -> Unit = {},
+        ): TaskProvider<NodeJsExec> =
+            create(
+                compilation as KotlinJsIrCompilation,
+                name,
+                configuration
+            )
     }
 }
