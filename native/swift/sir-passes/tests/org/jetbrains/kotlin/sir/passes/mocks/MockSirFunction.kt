@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.sir.passes.mocks
 
+import org.jetbrains.kotlin.sir.SirFunctionBody
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.visitors.SirTransformer
 import org.jetbrains.kotlin.sir.visitors.SirVisitor
 
@@ -20,4 +20,6 @@ class MockSirFunction(
 ) : SirFunction() {
     override fun <R, D> acceptChildren(visitor: SirVisitor<R, D>, data: D) = Unit
     override fun <D> transformChildren(transformer: SirTransformer<D>, data: D) = Unit
+
+    override var body: SirFunctionBody? = null
 }

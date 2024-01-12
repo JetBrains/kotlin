@@ -14,6 +14,7 @@ val originType = type(BASE_PACKAGE, "SirOrigin", TypeKind.Class)
 val parameterType = type(BASE_PACKAGE, "SirParameter", TypeKind.Class)
 val typeType = type(BASE_PACKAGE, "SirType", TypeKind.Class)
 val enumCaseType = type(BASE_PACKAGE, "SirEnumCase", TypeKind.Class)
+val functionBodyType = type(BASE_PACKAGE, "SirFunctionBody", TypeKind.Class)
 
 private const val VISITORS_PACKAGE = "$BASE_PACKAGE.visitors"
 
