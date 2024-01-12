@@ -11,3 +11,4 @@ fun String.checkedReplace(original: String, replacement: String): String {
 }
 
 fun String.capitalize() = replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+fun String.removingTrailingNewline(): String = this.dropLastWhile { it == '\n' }

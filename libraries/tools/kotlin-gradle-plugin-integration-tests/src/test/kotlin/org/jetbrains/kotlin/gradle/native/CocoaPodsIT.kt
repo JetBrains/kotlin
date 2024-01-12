@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
+import org.jetbrains.kotlin.gradle.util.removingTrailingNewline
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.BeforeAll
@@ -901,6 +902,7 @@ class CocoaPodsIT : KGPBaseTest() {
 
     private val maybeCocoaPodsIsNotInstalledError = "Possible reason: CocoaPods is not installed"
     private val maybePodfileIsIncorrectError = "Please, check that podfile contains following lines in header"
+    private val missingPodExecutableInPath = "CocoaPods executable not found in your PATH"
 
     @DisplayName("Pod install emits correct error when pod binary is not present in PATH")
     @GradleTest
@@ -922,7 +924,8 @@ class CocoaPodsIT : KGPBaseTest() {
                 podInstallTaskName,
             ) {
                 assertOutputDoesNotContain(maybePodfileIsIncorrectError)
-                assertOutputContains(maybeCocoaPodsIsNotInstalledError)
+                assertOutputDoesNotContain(maybeCocoaPodsIsNotInstalledError)
+                assertOutputContains(missingPodExecutableInPath)
             }
         }
     }
@@ -950,6 +953,58 @@ class CocoaPodsIT : KGPBaseTest() {
             ) {
                 assertOutputContains(maybePodfileIsIncorrectError)
                 assertOutputDoesNotContain(maybeCocoaPodsIsNotInstalledError)
+            }
+        }
+    }
+
+    @DisplayName("Installing pod with custom defined pod executable in the local.properties")
+    @GradleTest
+    fun testPodInstallWithCustomExecutablePath(gradleVersion: GradleVersion) {
+        val podPathRun = runProcess(listOf("which", "pod"), Path("/").toFile())
+        val pathWithoutCocoapods = "/bin:/usr/bin"
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            environmentVariables = EnvironmentalVariables(
+                mapOf("PATH" to pathWithoutCocoapods)
+            )
+        ) {
+
+            val podPath = podPathRun.output.removingTrailingNewline()
+
+            assertTrue {
+                podPath.isNotBlank()
+            }
+            assertTrue {
+                podPathRun.exitCode != 1
+            }
+
+            buildGradleKts.addCocoapodsBlock(
+                """
+                    framework {
+                        baseName = "kotlin-library"
+                    }
+                    name = "kotlin-library"
+                    podfile = project.file("ios-app/Podfile")
+                """.trimIndent()
+            )
+
+            buildAndFailWithCocoapodsWrapper(podInstallTaskName) {
+                assertOutputContains(missingPodExecutableInPath)
+            }
+
+            projectPath.resolve("local.properties")
+                .also { if (!it.exists()) it.createFile() }
+                .apply {
+                    append("\n")
+                    appendText(
+                        """
+                            kotlin.apple.cocoapods.bin=${podPath}
+                        """.trimIndent()
+                    )
+                }
+
+            buildWithCocoapodsWrapper(podInstallTaskName) {
+                assertTasksExecuted(podInstallTaskName)
             }
         }
     }
