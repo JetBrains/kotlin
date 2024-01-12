@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.cli.common.CLITool;
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.Usage;
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
@@ -62,7 +63,18 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
     private static final String BUILD_FILE_ARGUMENT_PREFIX = "-Xbuild-file=";
 
-    public static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLITool<?> compiler, @NotNull List<String> args) {
+    public static Pair<String, ExitCode> executeCompilerGrabOutput(
+            @NotNull CLITool<?> compiler,
+            @NotNull List<String> args
+    ) {
+        return executeCompilerGrabOutput(compiler, args, null);
+    }
+
+    public static Pair<String, ExitCode> executeCompilerGrabOutput(
+            @NotNull CLITool<?> compiler,
+            @NotNull List<String> args,
+            @Nullable MessageRenderer messageRenderer
+    ) {
         StringBuilder output = new StringBuilder();
 
         int index = 0;
@@ -73,7 +85,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             } else {
                 next = index + next;
             }
-            Pair<String, ExitCode> pair = CompilerTestUtil.executeCompiler(compiler, args.subList(index, next));
+            Pair<String, ExitCode> pair = CompilerTestUtil.executeCompiler(compiler, args.subList(index, next), messageRenderer);
             output.append(pair.getFirst());
             if (pair.getSecond() != ExitCode.OK) {
                 return new Pair<>(output.toString(), pair.getSecond());

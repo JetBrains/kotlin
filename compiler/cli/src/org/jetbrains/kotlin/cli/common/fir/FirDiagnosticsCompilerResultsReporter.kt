@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import java.io.Closeable
 import java.io.File
 import java.io.InputStreamReader
+import java.util.TreeSet
 
 object FirDiagnosticsCompilerResultsReporter {
     fun reportToMessageCollector(
@@ -54,7 +55,23 @@ object FirDiagnosticsCompilerResultsReporter {
             }
 
             try {
-                for (diagnostic in diagnosticsCollector.diagnosticsByFilePath[filePath].orEmpty().sortedWith(InFileDiagnosticsComparator)) {
+                val diagnosticList = diagnosticsCollector.diagnosticsByFilePath[filePath].orEmpty()
+
+                // Precomputing positions of the offsets in the ascending order of the offsets
+                val offsetsToPositions = positionFinder.value?.let { finder ->
+                    val sortedOffsets = TreeSet<Int>().apply {
+                        for (diagnostic in diagnosticList) {
+                            if (diagnostic !is KtPsiDiagnostic) {
+                                val range = DiagnosticUtils.firstRange(diagnostic.textRanges)
+                                add(range.startOffset)
+                                add(range.endOffset)
+                            }
+                        }
+                    }
+                    sortedOffsets.associateWith { finder.findNextPosition(it) }
+                }
+
+                for (diagnostic in diagnosticList.sortedWith(InFileDiagnosticsComparator)) {
                     when (diagnostic) {
                         is KtPsiDiagnostic -> {
                             val file = diagnostic.element.psi.containingFile
@@ -68,11 +85,14 @@ object FirDiagnosticsCompilerResultsReporter {
                             // TODO: bring KtSourceFile and KtSourceFileLinesMapping here and rewrite reporting via it to avoid code duplication
                             // NOTE: SequentialPositionFinder relies on the ascending order of the input offsets, so the code relies
                             // on the the appropriate sorting above
-                            // Also the end offset is ignored, as it is irrelevant for the CLI reporting
-                            positionFinder.value?.findNextPosition(DiagnosticUtils.firstRange(diagnostic.textRanges).startOffset)
-                                ?.let { pos ->
-                                    MessageUtil.createMessageLocation(filePath, pos.lineContent, pos.line, pos.column, -1, -1)
-                                }
+                            offsetsToPositions?.let {
+                                val range = DiagnosticUtils.firstRange(diagnostic.textRanges)
+                                val start = offsetsToPositions[range.startOffset]!!
+                                val end = offsetsToPositions[range.endOffset]!!
+                                MessageUtil.createMessageLocation(
+                                    filePath, start.lineContent, start.line, start.column, end.line, end.column
+                                )
+                            }
                         }
                     }?.let { location ->
                         report(diagnostic, location)

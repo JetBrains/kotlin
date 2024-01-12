@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -34,7 +35,8 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
         relativeDirectory: String,
         compileWith: LanguageVersion = LanguageVersion.LATEST_STABLE,
         loadWith: LanguageVersion = LanguageVersion.LATEST_STABLE,
-        extraOptions: List<String> = emptyList()
+        extraOptions: List<String> = emptyList(),
+        messageRenderer: MessageRenderer? = null,
     ) {
         val directory = KtTestUtil.getTestDataPathBase() + relativeDirectory
         val tmpdir = KtTestUtil.tmpDir(this::class.simpleName)
@@ -46,7 +48,8 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
                 "-d", tmpdir.path,
                 "-module-name", moduleName,
                 "-language-version", compileWith.versionString
-            ) + extraOptions
+            ) + extraOptions,
+            messageRenderer
         )
 
         val mapping = ModuleMapping.loadModuleMapping(

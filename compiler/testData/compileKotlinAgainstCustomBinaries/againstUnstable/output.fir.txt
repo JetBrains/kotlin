@@ -5,4 +5,7 @@ compiler/testData/compileKotlinAgainstCustomBinaries/againstUnstable/source.kt:4
 compiler/testData/compileKotlinAgainstCustomBinaries/againstUnstable/source.kt:4:11: error: class 'lib.Box' is compiled by an unstable version of the Kotlin compiler and cannot be loaded by this compiler.
     get { Box("OK").value }
           ^
+compiler/testData/compileKotlinAgainstCustomBinaries/againstUnstable/source.kt:4:11: error: class 'lib.Box' is compiled by an unstable version of the Kotlin compiler and cannot be loaded by this compiler.
+    get { Box("OK").value }
+          ^
 COMPILATION_ERROR

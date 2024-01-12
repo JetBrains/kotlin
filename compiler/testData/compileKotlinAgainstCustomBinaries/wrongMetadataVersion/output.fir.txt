@@ -20,6 +20,10 @@ compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersion/source
 The class is loaded from $TMP_DIR$/library-after.jar!/a/A.class
     val methodCall = param.method()
                      ^
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersion/source.kt:8:22: error: class 'a.A' was compiled with an incompatible version of Kotlin. The actual metadata version is 42.0.0, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION_NEXT$.
+The class is loaded from $TMP_DIR$/library-after.jar!/a/A.class
+    val methodCall = param.method()
+                     ^
 compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersion/source.kt:9:30: error: class 'a.A' was compiled with an incompatible version of Kotlin. The actual metadata version is 42.0.0, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION_NEXT$.
 The class is loaded from $TMP_DIR$/library-after.jar!/a/A.class
     val supertype = object : A() {}
