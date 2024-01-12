@@ -13,7 +13,7 @@ import javax.inject.Inject
 /**
  * Common build properties used to build Dokka subprojects.
  *
- * This is an extension created by the [org.jetbrains.conventions.Base_gradle] convention plugin.
+ * This is an extension created by the `dokkabuild.base.gradle.kts` convention plugin.
  *
  * Default values are set in the root `gradle.properties`, and can be overridden via
  * [project properties](https://docs.gradle.org/current/userguide/build_environment.html#sec:project_properties)
