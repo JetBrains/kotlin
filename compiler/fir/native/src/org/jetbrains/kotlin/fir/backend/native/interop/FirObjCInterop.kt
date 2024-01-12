@@ -13,12 +13,15 @@ import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -69,18 +72,40 @@ fun FirConstructor.getObjCInitMethod(session: FirSession, scopeSession: ScopeSes
     return null
 }
 
+fun FirConstructorSymbol.getObjCInitMethod(session: FirSession, scopeSession: ScopeSession): FirFunctionSymbol<*>? {
+    this.annotations.getAnnotationByClassId(NativeStandardInteropNames.objCConstructorClassId, session)?.let { annotation ->
+        val initSelector: String = annotation.constStringArgument("initSelector")
+        val classSymbol = containingClassLookupTag()?.toSymbol(session) as FirClassSymbol<*>
+        val initSelectors = mutableListOf<FirFunctionSymbol<*>>()
+        session.declaredMemberScope(classSymbol, memberRequiredPhase = null)
+            .processAllFunctions {
+                if (it.decodeObjCMethodAnnotation(session)?.selector == initSelector)
+                    initSelectors.add(it)
+            }
+        return initSelectors.singleOrNull()
+            ?: error("expected one init method for $classSymbol $initSelector, got ${initSelectors.size}")
+    }
+    return null
+}
+
 /**
  * mimics FunctionDescriptor.decodeObjCMethodAnnotation()
  */
+internal fun List<FirAnnotation>.decodeObjCMethodAnnotation(session: FirSession): ObjCMethodInfo? =
+    getAnnotationByClassId(NativeStandardInteropNames.objCMethodClassId, session)?.let {
+        ObjCMethodInfo(
+            selector = it.constStringArgument("selector"),
+            encoding = it.constStringArgument("encoding"),
+            isStret = it.constBooleanArgumentOrNull("isStret") ?: false,
+            directSymbol = getAnnotationByClassId(NativeStandardInteropNames.objCDirectClassId, session)?.constStringArgument("symbol"),
+        )
+    }
+
 internal fun FirFunction.decodeObjCMethodAnnotation(session: FirSession): ObjCMethodInfo? =
-        annotations.getAnnotationByClassId(NativeStandardInteropNames.objCMethodClassId, session)?.let {
-            ObjCMethodInfo(
-                    selector = it.constStringArgument("selector"),
-                    encoding = it.constStringArgument("encoding"),
-                    isStret = it.constBooleanArgumentOrNull("isStret") ?: false,
-                    directSymbol = annotations.getAnnotationByClassId(NativeStandardInteropNames.objCDirectClassId, session)?.constStringArgument("symbol"),
-            )
-        }
+    annotations.decodeObjCMethodAnnotation(session)
+
+internal fun FirFunctionSymbol<*>.decodeObjCMethodAnnotation(session: FirSession): ObjCMethodInfo? =
+    annotations.decodeObjCMethodAnnotation(session)
 
 
 private fun FirAnnotation.constStringArgument(argumentName: String): String =
