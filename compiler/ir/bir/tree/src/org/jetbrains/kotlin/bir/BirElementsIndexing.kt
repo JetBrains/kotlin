@@ -321,7 +321,7 @@ internal object BirElementIndexClassifierFunctionGenerator {
         for (indexer in indexers) {
             val possibleClasses = when (val type = indexer.elementType) {
                 is BirElementClass<*> -> setOf(type)
-                is BirUnionElementType<*> -> type.possibleClasses
+                is BirElementUnionType<*> -> type.possibleClasses
             }
 
             for (elementClass in possibleClasses) {

@@ -9,6 +9,6 @@ abstract class BirElementClass<T : BirElement>(
     val javaClass: Class<T>,
     val id: Int,
     val hasImplementation: Boolean,
-) : BirElementType<T> {
+) : BirElementType<T>() {
     override fun toString(): String = javaClass.name
 }
