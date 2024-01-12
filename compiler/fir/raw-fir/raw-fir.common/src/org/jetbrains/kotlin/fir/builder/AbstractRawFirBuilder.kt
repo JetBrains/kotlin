@@ -470,14 +470,14 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                 )
             }
             BOOLEAN_CONSTANT ->
-                buildConstExpression(
+                buildLiteralExpression(
                     sourceElement,
                     ConstantValueKind.Boolean,
                     convertedText as Boolean,
                     setType = false
                 )
             NULL ->
-                buildConstExpression(
+                buildLiteralExpression(
                     sourceElement,
                     ConstantValueKind.Null,
                     null,
@@ -503,7 +503,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         receiver: FirExpression,
         operationToken: IElementType,
     ): FirExpression? {
-        if (receiver !is FirConstExpression<*>) return null
+        if (receiver !is FirLiteralExpression<*>) return null
         if (receiver.kind != ConstantValueKind.IntegerLiteral) return null
         if (operationToken != PLUS && operationToken != MINUS) return null
 
@@ -514,7 +514,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             else -> error("Should not be here")
         }
 
-        return buildConstExpression(
+        return buildLiteralExpression(
             source.toFirSourceElement(),
             ConstantValueKind.IntegerLiteral,
             convertedValue,
@@ -537,7 +537,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                         OPEN_QUOTE, CLOSING_QUOTE -> continue@L
                         LITERAL_STRING_TEMPLATE_ENTRY -> {
                             sb.append(entry.asText)
-                            buildConstExpression(
+                            buildLiteralExpression(
                                 entry.toFirSourceElement(), ConstantValueKind.String, entry.asText, setType = false
                             )
                         }
@@ -571,7 +571,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             source = base?.toFirSourceElement()
             // Fast-pass if there is no errors and non-const string expressions
             if (!hasExpressions && !argumentList.arguments.any { it is FirErrorExpression })
-                return buildConstExpression(source, ConstantValueKind.String, sb.toString(), setType = false)
+                return buildLiteralExpression(source, ConstantValueKind.String, sb.toString(), setType = false)
         }
     }
 

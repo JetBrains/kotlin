@@ -163,7 +163,7 @@ fun ControlFlowGraphBuilder.createElvisExitNode(fir: FirElvisExpression): ElvisE
 fun ControlFlowGraphBuilder.createVariableDeclarationNode(fir: FirProperty): VariableDeclarationNode =
     VariableDeclarationNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createConstExpressionNode(fir: FirConstExpression<*>): ConstExpressionNode =
+fun ControlFlowGraphBuilder.createConstExpressionNode(fir: FirLiteralExpression<*>): ConstExpressionNode =
     ConstExpressionNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createThrowExceptionNode(fir: FirThrowExpression): ThrowExceptionNode =

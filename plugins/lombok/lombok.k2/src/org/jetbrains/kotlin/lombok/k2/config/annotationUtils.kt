@@ -22,7 +22,7 @@ fun FirAnnotation.getAccessLevel(field: Name = LombokConfigNames.VALUE): AccessL
 private fun FirAnnotation.getArgumentAsString(field: Name): String? {
     val argument = findArgumentByName(field) ?: return null
     return when (argument) {
-        is FirConstExpression<*> -> argument.value as? String
+        is FirLiteralExpression<*> -> argument.value as? String
         is FirEnumEntryDeserializedAccessExpression -> argument.enumEntryName.identifier
         is FirQualifiedAccessExpression -> {
             @OptIn(UnsafeExpressionUtility::class)

@@ -1,5 +1,5 @@
 KT element: KtConstantExpression
-FIR element: FirConstExpressionImpl
+FIR element: FirLiteralExpressionImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:

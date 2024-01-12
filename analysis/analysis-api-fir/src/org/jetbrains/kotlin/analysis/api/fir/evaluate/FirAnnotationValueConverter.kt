@@ -42,7 +42,7 @@ internal object FirAnnotationValueConverter {
         )
     }
 
-    private fun <T> FirConstExpression<T>.convertConstantExpression(): KtConstantAnnotationValue? {
+    private fun <T> FirLiteralExpression<T>.convertConstantExpression(): KtConstantAnnotationValue? {
         val expression = psi as? KtElement
 
         @OptIn(UnresolvedExpressionTypeAccess::class)
@@ -98,7 +98,7 @@ internal object FirAnnotationValueConverter {
     private fun FirExpression.convertConstantExpression(builder: KtSymbolByFirBuilder): KtAnnotationValue? {
         val sourcePsi = psi as? KtElement
         return when (this) {
-            is FirConstExpression<*> -> convertConstantExpression()
+            is FirLiteralExpression<*> -> convertConstantExpression()
             is FirNamedArgumentExpression -> {
                 expression.convertConstantExpression(builder)
             }

@@ -10,10 +10,9 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirIntegerLiteralOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -58,17 +57,17 @@ class IntegerLiteralAndOperatorApproximationTransformer(
         return element
     }
 
-    override fun <T> transformConstExpression(
-        constExpression: FirConstExpression<T>,
+    override fun <T> transformLiteralExpression(
+        literalExpression: FirLiteralExpression<T>,
         data: ConeKotlinType?,
     ): FirStatement {
-        val type = constExpression.resolvedType as? ConeIntegerLiteralType ?: return constExpression
+        val type = literalExpression.resolvedType as? ConeIntegerLiteralType ?: return literalExpression
         val approximatedType = type.getApproximatedType(data?.fullyExpandedType(session))
-        constExpression.resultType = approximatedType
+        literalExpression.resultType = approximatedType
         @Suppress("UNCHECKED_CAST")
         val kind = approximatedType.toConstKind() as ConstantValueKind<T>
-        constExpression.replaceKind(kind)
-        return constExpression
+        literalExpression.replaceKind(kind)
+        return literalExpression
     }
 
     override fun transformIntegerLiteralOperatorCall(

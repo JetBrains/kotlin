@@ -456,7 +456,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 expression is FirFunctionCall ||
                 expression is FirLambdaArgumentExpression ||
                 expression is FirAnonymousFunctionExpression ||
-                (expression is FirConstExpression<*> && expression.value == null) //this will be reported separately
+                (expression is FirLiteralExpression<*> && expression.value == null) //this will be reported separately
 
     fun checkCallableDeclaration(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirPropertyAccessor) return

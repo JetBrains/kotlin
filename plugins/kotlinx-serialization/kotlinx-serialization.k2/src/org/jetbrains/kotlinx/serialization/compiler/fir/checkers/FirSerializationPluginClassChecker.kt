@@ -172,7 +172,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
     context(CheckerContext)
     private fun FirExpression.isEqualTo(other: FirExpression): Boolean {
         return when {
-            this is FirConstExpression<*> && other is FirConstExpression<*> -> kind == other.kind && value == other.value
+            this is FirLiteralExpression<*> && other is FirLiteralExpression<*> -> kind == other.kind && value == other.value
             this is FirGetClassCall && other is FirGetClassCall -> AbstractTypeChecker.equalTypes(
                 session.typeContext,
                 resolvedType,

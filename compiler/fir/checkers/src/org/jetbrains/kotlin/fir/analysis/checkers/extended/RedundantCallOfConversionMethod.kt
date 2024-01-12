@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -38,7 +38,7 @@ object RedundantCallOfConversionMethod : FirQualifiedAccessExpressionChecker(Mpp
     }
 
     private fun FirExpression.isRedundant(qualifiedClassId: ClassId, session: FirSession): Boolean {
-        val thisType = if (this is FirConstExpression<*>) {
+        val thisType = if (this is FirLiteralExpression<*>) {
             this.resolvedType.classId
         } else {
             when {

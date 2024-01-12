@@ -41,7 +41,7 @@ abstract class ExpressionCheckers {
     open val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker> = emptySet()
     open val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker> = emptySet()
     open val resolvedQualifierCheckers: Set<FirResolvedQualifierChecker> = emptySet()
-    open val constExpressionCheckers: Set<FirConstExpressionChecker> = emptySet()
+    open val literalExpressionCheckers: Set<FirLiteralExpressionChecker> = emptySet()
     open val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> = emptySet()
     open val thisReceiverExpressionCheckers: Set<FirThisReceiverExpressionChecker> = emptySet()
     open val whileLoopCheckers: Set<FirWhileLoopChecker> = emptySet()
@@ -75,7 +75,7 @@ abstract class ExpressionCheckers {
     @CheckersComponentInternal internal val allStringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker> by lazy { stringConcatenationCallCheckers + basicExpressionCheckers + callCheckers }
     @CheckersComponentInternal internal val allTypeOperatorCallCheckers: Set<FirTypeOperatorCallChecker> by lazy { typeOperatorCallCheckers + basicExpressionCheckers + callCheckers }
     @CheckersComponentInternal internal val allResolvedQualifierCheckers: Set<FirResolvedQualifierChecker> by lazy { resolvedQualifierCheckers + basicExpressionCheckers }
-    @CheckersComponentInternal internal val allConstExpressionCheckers: Set<FirConstExpressionChecker> by lazy { constExpressionCheckers + basicExpressionCheckers }
+    @CheckersComponentInternal internal val allLiteralExpressionCheckers: Set<FirLiteralExpressionChecker> by lazy { literalExpressionCheckers + basicExpressionCheckers }
     @CheckersComponentInternal internal val allCallableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> by lazy { callableReferenceAccessCheckers + qualifiedAccessExpressionCheckers + basicExpressionCheckers }
     @CheckersComponentInternal internal val allThisReceiverExpressionCheckers: Set<FirThisReceiverExpressionChecker> by lazy { thisReceiverExpressionCheckers + qualifiedAccessExpressionCheckers + basicExpressionCheckers }
     @CheckersComponentInternal internal val allWhileLoopCheckers: Set<FirWhileLoopChecker> by lazy { whileLoopCheckers + loopExpressionCheckers + basicExpressionCheckers }

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -23,25 +23,25 @@ import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 @OptIn(UnresolvedExpressionTypeAccess::class)
-internal class FirConstExpressionImpl<T> (
+internal class FirLiteralExpressionImpl<T> (
     override val source: KtSourceElement?,
     @property:UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var kind: ConstantValueKind<T>,
     override val value: T,
-) : FirConstExpression<T>() {
+) : FirLiteralExpression<T>() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirConstExpressionImpl<T> {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirLiteralExpressionImpl<T> {
         transformAnnotations(transformer, data)
         return this
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirConstExpressionImpl<T> {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLiteralExpressionImpl<T> {
         annotations.transformInplace(transformer, data)
         return this
     }

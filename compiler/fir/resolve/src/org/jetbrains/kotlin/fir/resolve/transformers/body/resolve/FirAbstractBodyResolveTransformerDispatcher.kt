@@ -299,13 +299,13 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirDeclarationsResolveTransformer::transformWrappedDelegateExpression,
     )
 
-    override fun <T> transformConstExpression(
-        constExpression: FirConstExpression<T>,
+    override fun <T> transformLiteralExpression(
+        literalExpression: FirLiteralExpression<T>,
         data: ResolutionMode,
     ): FirStatement = expressionTransformation(
-        constExpression,
+        literalExpression,
         data,
-        FirExpressionsResolveTransformer::transformConstExpression,
+        FirExpressionsResolveTransformer::transformLiteralExpression,
     )
 
     override fun transformAnnotation(

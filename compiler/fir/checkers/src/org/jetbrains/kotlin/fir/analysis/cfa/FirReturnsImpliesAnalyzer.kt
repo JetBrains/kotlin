@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
@@ -111,7 +111,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
         var flow = node.flow
         val operation = effect.value.toOperation()
         if (operation != null) {
-            if (resultExpression is FirConstExpression<*>) {
+            if (resultExpression is FirLiteralExpression<*>) {
                 if (!operation.isTrueFor(resultExpression.value)) return false
             } else {
                 if (expressionType != null && !operation.canBeTrueFor(context.session, expressionType)) return false

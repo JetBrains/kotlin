@@ -876,8 +876,8 @@ class Fir2IrVisitor(
         return desugaredAssignmentValueReferenceExpression.expressionRef.value.accept(this, null)
     }
 
-    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?): IrElement {
-        return constExpression.toIrConst(constExpression.resolvedType.toIrType())
+    override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: Any?): IrElement {
+        return literalExpression.toIrConst(literalExpression.resolvedType.toIrType())
     }
 
     // ==================================================================================

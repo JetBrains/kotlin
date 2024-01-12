@@ -227,7 +227,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("receiver", expression)
         }
 
-        constExpression.configure {
+        literalExpression.configure {
             val t = withArg("T")
             +field("kind", constKindType.withArgs(t), withReplace = true)
             +field("value", t)

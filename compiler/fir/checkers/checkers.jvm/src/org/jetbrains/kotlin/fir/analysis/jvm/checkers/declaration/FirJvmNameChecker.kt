@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isOverridable
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.java.findJvmNameAnnotation
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -34,7 +34,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             return
         }
 
-        val value = (name as? FirConstExpression<*>)?.value as? String ?: return
+        val value = (name as? FirLiteralExpression<*>)?.value as? String ?: return
 
         if (!Name.isValidIdentifier(value)) {
             reporter.reportOn(jvmName.source, FirJvmErrors.ILLEGAL_JVM_NAME, context)

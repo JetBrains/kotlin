@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorLoop
 import org.jetbrains.kotlin.fir.expressions.impl.FirBlockImpl
@@ -34,7 +34,7 @@ inline val FirAnnotation.unexpandedClassId: ClassId?
 
 fun <T> buildConstOrErrorExpression(source: KtSourceElement?, kind: ConstantValueKind<T>, value: T?, diagnostic: ConeDiagnostic): FirExpression =
     value?.let {
-        buildConstExpression(source, kind, it, setType = false)
+        buildLiteralExpression(source, kind, it, setType = false)
     } ?: buildErrorExpression {
         this.source = source
         this.diagnostic = diagnostic

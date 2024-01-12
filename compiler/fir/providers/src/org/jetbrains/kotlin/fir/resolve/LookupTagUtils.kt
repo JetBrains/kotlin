@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -109,7 +109,7 @@ fun ConeKotlinType.withParameterNameAnnotation(parameter: FirFunctionTypeParamet
             }
         argumentMapping = buildAnnotationArgumentMapping {
             mapping[StandardClassIds.Annotations.ParameterNames.parameterNameName] =
-                buildConstExpression(fakeSource, ConstantValueKind.String, name.asString(), setType = true)
+                buildLiteralExpression(fakeSource, ConstantValueKind.String, name.asString(), setType = true)
         }
     }
     val attributesWithParameterNameAnnotation =

@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.constExpression]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.literalExpression]
  */
-abstract class FirConstExpression<T> : FirExpression() {
+abstract class FirLiteralExpression<T> : FirExpression() {
     abstract override val source: KtSourceElement?
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
@@ -27,11 +27,11 @@ abstract class FirConstExpression<T> : FirExpression() {
     abstract val value: T
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitConstExpression(this, data)
+        visitor.visitLiteralExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformConstExpression(this, data) as E
+        transformer.transformLiteralExpression(this, data) as E
 
     abstract override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?)
 
@@ -39,5 +39,5 @@ abstract class FirConstExpression<T> : FirExpression() {
 
     abstract fun replaceKind(newKind: ConstantValueKind<T>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirConstExpression<T>
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLiteralExpression<T>
 }

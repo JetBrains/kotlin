@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -88,7 +88,7 @@ private fun FirAnnotation.constBooleanArgumentOrNull(argumentName: String): Bool
         constArgument(argumentName) as Boolean?
 
 private fun FirAnnotation.constArgument(argumentName: String) =
-        (argumentMapping.mapping[Name.identifier(argumentName)] as? FirConstExpression<*>)?.value
+        (argumentMapping.mapping[Name.identifier(argumentName)] as? FirLiteralExpression<*>)?.value
 
 internal fun FirFunction.hasObjCFactoryAnnotation(session: FirSession) = this.annotations.hasAnnotation(NativeStandardInteropNames.objCFactoryClassId, session)
 

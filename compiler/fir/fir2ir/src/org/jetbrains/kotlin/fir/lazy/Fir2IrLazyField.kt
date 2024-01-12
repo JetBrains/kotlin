@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -72,7 +72,7 @@ class Fir2IrLazyField(
 
     override var initializer: IrExpressionBody? by lazyVar(lock) {
         when (val initializer = fir.unwrapFakeOverrides().initializer) {
-            is FirConstExpression<*> -> factory.createExpressionBody(initializer.toIrConst(type))
+            is FirLiteralExpression<*> -> factory.createExpressionBody(initializer.toIrConst(type))
             else -> null
         }
     }

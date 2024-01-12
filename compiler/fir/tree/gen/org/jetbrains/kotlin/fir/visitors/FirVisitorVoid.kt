@@ -555,12 +555,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(tryExpression)
     }
 
-    final override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Nothing?) {
-        visitConstExpression(constExpression)
+    final override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: Nothing?) {
+        visitLiteralExpression(literalExpression)
     }
 
-    open fun <T> visitConstExpression(constExpression: FirConstExpression<T>) {
-        visitElement(constExpression)
+    open fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>) {
+        visitElement(literalExpression)
     }
 
     final override fun visitTypeProjection(typeProjection: FirTypeProjection, data: Nothing?) {

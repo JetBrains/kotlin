@@ -141,12 +141,12 @@ fun FirAnnotation.getBooleanArgument(name: Name): Boolean? = getPrimitiveArgumen
 fun FirAnnotation.getStringArgument(name: Name): String? = getPrimitiveArgumentValue(name)
 fun FirAnnotation.getStringArrayArgument(name: Name): List<String>? {
     val argument = findArgumentByName(name) as? FirArrayLiteral ?: return null
-    return argument.arguments.mapNotNull { (it as? FirConstExpression<*>)?.value as? String }
+    return argument.arguments.mapNotNull { (it as? FirLiteralExpression<*>)?.value as? String }
 }
 
 private inline fun <reified T> FirAnnotation.getPrimitiveArgumentValue(name: Name): T? {
     return findArgumentByName(name)?.let { expression ->
-        (expression as? FirConstExpression<*>)?.value as? T
+        (expression as? FirLiteralExpression<*>)?.value as? T
     }
 }
 

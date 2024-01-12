@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 
 object EmptyRangeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
@@ -41,12 +41,12 @@ object EmptyRangeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
     private val FirFunctionCall.rangeLeft: Long?
         get() {
-            return (explicitReceiver as? FirConstExpression<*>)?.value as? Long
+            return (explicitReceiver as? FirLiteralExpression<*>)?.value as? Long
         }
 
     private val FirFunctionCall.rangeRight: Long?
         get() {
-            val arg = argumentList.arguments.getOrNull(0) as? FirConstExpression<*>
+            val arg = argumentList.arguments.getOrNull(0) as? FirLiteralExpression<*>
             return arg?.value as? Long
         }
 }

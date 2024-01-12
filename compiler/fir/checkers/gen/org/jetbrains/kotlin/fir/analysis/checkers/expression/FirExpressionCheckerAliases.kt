@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirInaccessibleReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirIntegerLiteralOperatorCall
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
@@ -68,7 +68,7 @@ typealias FirEqualityOperatorCallChecker = FirExpressionChecker<FirEqualityOpera
 typealias FirStringConcatenationCallChecker = FirExpressionChecker<FirStringConcatenationCall>
 typealias FirTypeOperatorCallChecker = FirExpressionChecker<FirTypeOperatorCall>
 typealias FirResolvedQualifierChecker = FirExpressionChecker<FirResolvedQualifier>
-typealias FirConstExpressionChecker = FirExpressionChecker<FirConstExpression<*>>
+typealias FirLiteralExpressionChecker = FirExpressionChecker<FirLiteralExpression<*>>
 typealias FirCallableReferenceAccessChecker = FirExpressionChecker<FirCallableReferenceAccess>
 typealias FirThisReceiverExpressionChecker = FirExpressionChecker<FirThisReceiverExpression>
 typealias FirWhileLoopChecker = FirExpressionChecker<FirWhileLoop>

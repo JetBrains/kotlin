@@ -363,7 +363,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 }
                 coneTypeOrNull = context.dispatchReceiverTypesStack.last()
             }
-            else -> buildConstExpression(null, ConstantValueKind.Null, null, setType = false)
+            else -> buildLiteralExpression(null, ConstantValueKind.Null, null, setType = false)
         }
 
     fun delegateAccess() = buildPropertyAccessExpression {

@@ -792,7 +792,7 @@ fun FirBasedSymbol<*>.getAnnotationFirstArgument(classId: ClassId, session: FirS
 }
 
 fun FirBasedSymbol<*>.getAnnotationStringParameter(classId: ClassId, session: FirSession): String? {
-    val expression = getAnnotationFirstArgument(classId, session) as? FirConstExpression<*>
+    val expression = getAnnotationFirstArgument(classId, session) as? FirLiteralExpression<*>
     return expression?.value as? String
 }
 

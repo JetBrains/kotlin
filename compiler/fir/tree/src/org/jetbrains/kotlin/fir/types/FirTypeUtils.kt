@@ -85,7 +85,7 @@ val FirTypeRef.isArrayType: Boolean
                 || StandardClassIds.unsignedArrayTypeByElementType.values.any { isBuiltinType(it, false) }
 
 val FirExpression.isNullLiteral: Boolean
-    get() = this is FirConstExpression<*> &&
+    get() = this is FirLiteralExpression<*> &&
             this.kind == ConstantValueKind.Null &&
             this.value == null &&
             this.source != null

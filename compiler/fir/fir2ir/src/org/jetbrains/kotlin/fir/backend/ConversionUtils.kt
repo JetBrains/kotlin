@@ -333,7 +333,7 @@ fun FirCallableSymbol<*>.toSymbolForCall(
     }
 }
 
-fun FirConstExpression<*>.getIrConstKind(): IrConstKind<*> = when (kind) {
+fun FirLiteralExpression<*>.getIrConstKind(): IrConstKind<*> = when (kind) {
     ConstantValueKind.IntegerLiteral, ConstantValueKind.UnsignedIntegerLiteral -> {
         val type = resolvedType as ConeIntegerLiteralType
         type.getApproximatedType().toConstKind()!!.toIrConstKind()
@@ -342,7 +342,7 @@ fun FirConstExpression<*>.getIrConstKind(): IrConstKind<*> = when (kind) {
     else -> kind.toIrConstKind()
 }
 
-fun <T> FirConstExpression<T>.toIrConst(irType: IrType): IrConst<T> {
+fun <T> FirLiteralExpression<T>.toIrConst(irType: IrType): IrConst<T> {
     return convertWithOffsets { startOffset, endOffset ->
         @Suppress("UNCHECKED_CAST")
         val kind = getIrConstKind() as IrConstKind<T>

@@ -938,16 +938,16 @@ class FirCallCompletionResultsWriterTransformer(
         )
     }
 
-    override fun <T> transformConstExpression(
-        constExpression: FirConstExpression<T>,
+    override fun <T> transformLiteralExpression(
+        literalExpression: FirLiteralExpression<T>,
         data: ExpectedArgumentType?,
     ): FirStatement {
-        if (data == ExpectedArgumentType.NoApproximation) return constExpression
-        val expectedType = data?.getExpectedType(constExpression)
+        if (data == ExpectedArgumentType.NoApproximation) return literalExpression
+        val expectedType = data?.getExpectedType(literalExpression)
         if (expectedType is ConeIntegerConstantOperatorType) {
-            return constExpression
+            return literalExpression
         }
-        return constExpression.transformSingle(integerOperatorApproximator, expectedType)
+        return literalExpression.transformSingle(integerOperatorApproximator, expectedType)
     }
 
     override fun transformIntegerLiteralOperatorCall(

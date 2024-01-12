@@ -8,22 +8,22 @@ package org.jetbrains.kotlin.fir.expressions.builder
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.impl.FirConstExpressionImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirLiteralExpressionImpl
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 @OptIn(UnresolvedExpressionTypeAccess::class)
-fun <T> buildConstExpression(
+fun <T> buildLiteralExpression(
     source: KtSourceElement?,
     kind: ConstantValueKind<T>,
     value: T,
     annotations: MutableList<FirAnnotation> = mutableListOf(),
     setType: Boolean
-): FirConstExpression<T> {
-    return FirConstExpressionImpl(source, null, annotations.toMutableOrEmpty(), kind, value).also {
+): FirLiteralExpression<T> {
+    return FirLiteralExpressionImpl(source, null, annotations.toMutableOrEmpty(), kind, value).also {
         if (setType) {
             when (kind) {
                 ConstantValueKind.Boolean -> it.coneTypeOrNull = StandardClassIds.Boolean.constructClassLikeType()

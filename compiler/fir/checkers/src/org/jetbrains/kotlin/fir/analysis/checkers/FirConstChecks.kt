@@ -119,7 +119,7 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
         return if (intrinsicConstEvaluation) ConstantArgumentKind.VALID_CONST else ConstantArgumentKind.NOT_CONST
     }
 
-    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Nothing?): ConstantArgumentKind {
+    override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: Nothing?): ConstantArgumentKind {
         return ConstantArgumentKind.VALID_CONST
     }
 
@@ -143,7 +143,7 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
         }
 
         for (exp in equalityOperatorCall.arguments) {
-            if (exp is FirConstExpression<*> && exp.value == null) {
+            if (exp is FirLiteralExpression<*> && exp.value == null) {
                 return ConstantArgumentKind.NOT_CONST
             }
 
@@ -219,7 +219,7 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
                 // Ok, because we only look at the structure, not resolution-dependent properties.
                 @OptIn(SymbolInternals::class)
                 return when (propertySymbol.fir.initializer) {
-                    is FirConstExpression<*> -> when {
+                    is FirLiteralExpression<*> -> when {
                         propertySymbol.isVal -> ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION
                         else -> ConstantArgumentKind.NOT_CONST
                     }

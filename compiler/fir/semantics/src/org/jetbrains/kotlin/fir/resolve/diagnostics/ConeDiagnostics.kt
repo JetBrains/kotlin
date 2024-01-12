@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithSource
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.render
@@ -199,7 +199,7 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
     }
 
     class IllegalConst(
-        val element: FirConstExpression<*>,
+        val element: FirLiteralExpression<*>,
         val onlyNullAllowed: Boolean
     ) : ConeContractDescriptionError() {
         override val reason: String

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.unwrapVarargValue
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
@@ -60,7 +60,7 @@ abstract class AbstractDiagnosticCollector(
                         ?: continue
 
                 for (argumentValue in argumentValues) {
-                    val value = (argumentValue as? FirConstExpression<*>)?.value as? String ?: continue
+                    val value = (argumentValue as? FirLiteralExpression<*>)?.value as? String ?: continue
 
                     if (result == null) {
                         result = mutableListOf()

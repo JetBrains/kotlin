@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
@@ -312,7 +312,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                                 initializer,
                                 typeToUse
                             ).also { field ->
-                                if (initializer is FirConstExpression<*>) {
+                                if (initializer is FirLiteralExpression<*>) {
                                     val constType = initializer.resolvedType.toIrType()
                                     field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
                                 }
@@ -368,7 +368,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
     private fun getEffectivePropertyInitializer(property: FirProperty, resolveIfNeeded: Boolean): FirExpression? {
         val initializer = property.backingField?.initializer ?: property.initializer
 
-        if (resolveIfNeeded && initializer is FirConstExpression<*>) {
+        if (resolveIfNeeded && initializer is FirLiteralExpression<*>) {
             property.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             return getEffectivePropertyInitializer(property, resolveIfNeeded = false)
         }
@@ -558,7 +558,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             ).apply {
                 metadata = FirMetadataSource.Field(field)
                 val initializer = field.unwrapFakeOverrides().initializer
-                if (initializer is FirConstExpression<*>) {
+                if (initializer is FirLiteralExpression<*>) {
                     this.initializer = factory.createExpressionBody(initializer.toIrConst(irType))
                 }
                 /*
