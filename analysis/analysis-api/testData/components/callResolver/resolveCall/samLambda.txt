@@ -1,0 +1,54 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtNamedClassOrObjectSymbol:
+          annotationsList: []
+          classIdIfNonLocal: Test
+          classKind: CLASS
+          companionObject: null
+          contextReceivers: []
+          isActual: false
+          isData: false
+          isExpect: false
+          isExternal: false
+          isFun: false
+          isInline: false
+          isInner: false
+          modality: FINAL
+          name: Test
+          origin: SOURCE
+          superTypes: [
+            KtUsualClassType:
+              annotationsList: []
+              ownTypeArguments: []
+              type: kotlin/Any
+          ]
+          symbolKind: TOP_LEVEL
+          typeParameters: []
+          visibility: Public
+        type = Test
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /Test.test(<dispatch receiver>: Test, foo: Test.Foo): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = foo
+            receiverType = null
+            returnType = Test.Foo
+            symbol = foo: Test.Foo
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /Test.test
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      { uiMethod() } -> (KtVariableLikeSignature:
+        name = foo
+        receiverType = null
+        returnType = Test.Foo
+        symbol = foo: Test.Foo
+        callableIdIfNonLocal = null)
+    }

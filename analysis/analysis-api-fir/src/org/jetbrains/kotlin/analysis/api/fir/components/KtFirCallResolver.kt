@@ -1343,7 +1343,10 @@ internal class KtFirCallResolver(
         // For spread, named, and lambda arguments, the source is the KtValueArgument.
         // For other arguments (including array indices), the source is the KtExpression.
         return when (this) {
-            is FirSmartCastExpression -> originalExpression.realPsi as? KtExpression
+            is FirSamConversionExpression ->
+                expression.realPsi as? KtExpression
+            is FirSmartCastExpression ->
+                originalExpression.realPsi as? KtExpression
             is FirNamedArgumentExpression, is FirSpreadArgumentExpression, is FirLambdaArgumentExpression ->
                 realPsi.safeAs<KtValueArgument>()?.getArgumentExpression()
             else -> realPsi as? KtExpression

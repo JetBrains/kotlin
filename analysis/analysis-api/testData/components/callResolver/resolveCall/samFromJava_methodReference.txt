@@ -1,0 +1,31 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = handler
+        isSafeNavigation = false
+        type = test.pkg.MyHandler
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/pkg/MyHandler.act(<dispatch receiver>: test.pkg.MyHandler, actor: test.pkg.MyInterface!): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = actor
+            receiverType = null
+            returnType = test.pkg.MyInterface!
+            symbol = actor: test.pkg.MyInterface!
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = test/pkg/MyHandler.act
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      ::callback -> (KtVariableLikeSignature:
+        name = actor
+        receiverType = null
+        returnType = test.pkg.MyInterface!
+        symbol = actor: test.pkg.MyInterface!
+        callableIdIfNonLocal = null)
+    }
