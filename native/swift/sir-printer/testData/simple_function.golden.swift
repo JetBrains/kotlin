@@ -1,1 +1,3 @@
-public func foo() -> Swift.Bool { fatalError() }
+public func foo() -> Swift.Bool {
+    fatalError()
+}

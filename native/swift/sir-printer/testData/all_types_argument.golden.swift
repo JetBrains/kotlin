@@ -6,4 +6,6 @@ public func foo(
     arg5: Swift.Int64,
     arg6: Swift.Double,
     arg7: Swift.Float
-) -> Swift.Bool { fatalError() }
+) -> Swift.Bool {
+    fatalError()
+}

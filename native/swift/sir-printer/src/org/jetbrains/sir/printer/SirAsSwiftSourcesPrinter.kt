@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitorVoid
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
-private const val DEFAULT_INDENT: String = "    "
-
 public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVisitorVoid() {
 
     public constructor() : this(SmartPrinter(StringBuilder()))
@@ -31,26 +29,43 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
     }
 
     override fun visitFunction(function: SirFunction): Unit = with(printer) {
-        println(
-            listOfNotNull(
-                function.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " },
-                "func ",
-                function.name.swiftIdentifier,
-                function.parameters.takeIf { it.isNotEmpty() }
-                    ?.joinToString(prefix = "(\n", postfix = "\n)", separator = ",\n") {
-                        it.swift.prependIndent(DEFAULT_INDENT)
-                    } ?: "()",
-                " -> ",
-                function.returnType.swift,
-                " { fatalError() }",
-            ).joinToString(separator = ""),
+        print(
+            function.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: "",
+            "func ",
+            function.name.swiftIdentifier,
+            "("
         )
+        if (function.parameters.isNotEmpty()) {
+            println()
+            withIndent {
+                function.parameters.forEachIndexed { index, sirParameter ->
+                    print(sirParameter.swift)
+                    if (index != function.parameters.lastIndex) {
+                        println(",")
+                    } else {
+                        println()
+                    }
+                }
+            }
+        }
+        print(
+            ")",
+            " -> ",
+            function.returnType.swift,
+        )
+        println(" {")
+        withIndent {
+            printFunctionBody(function).forEach {
+                println(it)
+            }
+        }
+        println("}")
     }
 
     override fun visitEnum(enum: SirEnum): Unit = with(printer) {
         println("enum ${enum.name.swiftIdentifier} {")
         withIndent {
-            enum.acceptChildren(SirAsSwiftSourcesPrinter(printer))
+            enum.acceptChildren(this@SirAsSwiftSourcesPrinter)
         }
         println("}")
     }
@@ -60,6 +75,10 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
     override fun visitElement(element: SirElement): Unit = with(printer) {
         println("/* ERROR: unsupported element type: " + element.javaClass.simpleName + " */")
     }
+}
+
+private fun printFunctionBody(function: SirFunction): List<String> {
+    return listOf("fatalError()")
 }
 
 private val SirVisibility.swift
