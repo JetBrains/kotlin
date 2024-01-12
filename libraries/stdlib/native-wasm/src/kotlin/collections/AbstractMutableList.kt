@@ -28,7 +28,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
      * to provide fail-fast behavoir when a concurrent modification is detected during iteration.
      * [ConcurrentModificationException] will be thrown in this case.
      */
-    protected var modCount: Int = 0
+    protected actual var modCount: Int = 0
 
     abstract override fun add(index: Int, element: E): Unit
     abstract override fun removeAt(index: Int): E

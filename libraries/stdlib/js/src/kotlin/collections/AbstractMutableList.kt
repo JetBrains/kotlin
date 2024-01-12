@@ -18,7 +18,17 @@ package kotlin.collections
  * @param E the type of elements contained in the list. The list is invariant in its element type.
  */
 public actual abstract class AbstractMutableList<E> protected actual constructor() : AbstractMutableCollection<E>(), MutableList<E> {
-    protected var modCount: Int = 0
+    /**
+     * The number of times this list is structurally modified.
+     *
+     * A modification is considered to be structural if it changes the list size,
+     * or otherwise changes it in a way that iterations in progress may return incorrect results.
+     *
+     * This value can be used by iterators returned by [iterator] and [listIterator]
+     * to provide fail-fast behavoir when a concurrent modification is detected during iteration.
+     * [ConcurrentModificationException] will be thrown in this case.
+     */
+    protected actual var modCount: Int = 0
 
     abstract override fun add(index: Int, element: E): Unit
     abstract override fun removeAt(index: Int): E
