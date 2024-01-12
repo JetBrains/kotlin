@@ -248,8 +248,7 @@ class FakeOverrideGenerator(
                     if (!compatibleType) {
                         return@mapNotNull null
                     }
-                    // TODO: it should be already expanded - KT-64743
-                    symbol to superType.fullyExpandedType(session).lookupTag
+                    symbol to superType.lookupTag
                 }
             }
         }

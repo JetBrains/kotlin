@@ -83,7 +83,9 @@ internal fun PhaseContext.firSerializerBase(
             firFilesAndSessionsBySourceFile,
             bodiesOnlyForInlines = produceHeaderKlib,
             skipPrivateApi = produceHeaderKlib,
-    ) { firFile, session, scopeSession ->
+    ) { firFile, originalSession, originalScopeSession ->
+        val session = fir2IrInput?.components?.session ?: originalSession
+        val scopeSession = fir2IrInput?.components?.scopeSession ?: originalScopeSession
         serializeSingleFirFile(
                 firFile,
                 session,
