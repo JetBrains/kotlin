@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
@@ -173,22 +172,7 @@ fun FirDeclaration.getContainingClassSymbol(session: FirSession) = symbol.getCon
 
 fun FirClassLikeSymbol<*>.outerClassSymbol(context: CheckerContext): FirClassLikeSymbol<*>? {
     if (this !is FirClassSymbol<*>) return null
-    return getContainingDeclarationSymbol(context.session)
-}
-
-@OptIn(SymbolInternals::class)
-fun FirClassSymbol<*>.getContainingDeclarationSymbol(session: FirSession): FirClassLikeSymbol<*>? {
-    if (isLocal) {
-        return (this as FirRegularClassSymbol).fir.containingClassForLocalAttr?.toFirRegularClassSymbol(session)
-    } else {
-        val parentId = classId.relativeClassName.parent()
-        if (!parentId.isRoot) {
-            val containingDeclarationId = ClassId(classId.packageFqName, parentId, isLocal = false)
-            return session.symbolProvider.getClassLikeSymbolByClassId(containingDeclarationId)
-        }
-    }
-
-    return null
+    return getContainingDeclaration(context.session)
 }
 
 /**

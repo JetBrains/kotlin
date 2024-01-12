@@ -34,6 +34,20 @@ fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirCl
     return null
 }
 
+fun FirClassLikeSymbol<out FirClassLikeDeclaration>.getContainingDeclaration(session: FirSession): FirClassLikeSymbol<out FirClassLikeDeclaration>? {
+    if (isLocal) {
+        return (this as? FirRegularClassSymbol)?.containingClassForLocalAttr?.toFirRegularClassSymbol(session)
+    } else {
+        val parentId = classId.relativeClassName.parent()
+        if (!parentId.isRoot) {
+            val containingDeclarationId = ClassId(classId.packageFqName, parentId, isLocal = false)
+            return session.symbolProvider.getClassLikeSymbolByClassId(containingDeclarationId)
+        }
+    }
+
+    return null
+}
+
 fun isValidTypeParameterFromOuterDeclaration(
     typeParameterSymbol: FirTypeParameterSymbol,
     declaration: FirDeclaration?,

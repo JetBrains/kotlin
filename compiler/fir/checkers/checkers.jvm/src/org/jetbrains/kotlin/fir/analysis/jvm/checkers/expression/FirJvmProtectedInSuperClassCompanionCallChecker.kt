@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -52,7 +52,7 @@ object FirJvmProtectedInSuperClassCompanionCallChecker : FirBasicExpressionCheck
         if (resolvedSymbol.getAnnotationByClassId(JVM_STATIC_ANNOTATION_CLASS_ID, context.session) != null) return
         if (!dispatchClassSymbol.isCompanion) return
         val companionContainingClassSymbol =
-            dispatchClassSymbol.getContainingDeclarationSymbol(context.session) as? FirRegularClassSymbol ?: return
+            dispatchClassSymbol.getContainingDeclaration(context.session) as? FirRegularClassSymbol ?: return
 
         // Called from within a derived class
         val companionContainingType = companionContainingClassSymbol.defaultType()

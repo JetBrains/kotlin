@@ -53,7 +53,7 @@ private class FirObjCFunctionNameMangleComputer(
 
     override fun getObjCMethodInfo(): ObjCMethodInfo? {
         val scopeSession = ScopeSession()
-        return function.symbol.getInitMethodIfObjCConstructor(session, scopeSession)
+        return function.symbol.getInitMethodIfObjCConstructor(session)
             ?.getObjCMethodInfoFromOverriddenFunctions(session, scopeSession)
     }
 

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.backend.native.interop.getObjCInitMethod
 import org.jetbrains.kotlin.fir.backend.native.interop.isKotlinObjCClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -67,7 +66,7 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker() {
                 return
             }
 
-            val initMethod = superConstructor.getObjCInitMethod(session, ScopeSession())!!
+            val initMethod = superConstructor.getObjCInitMethod(session)!!
 
             // Remove fake overrides of this init method, also check for explicit overriding:
             firClass.declarations.forEach {

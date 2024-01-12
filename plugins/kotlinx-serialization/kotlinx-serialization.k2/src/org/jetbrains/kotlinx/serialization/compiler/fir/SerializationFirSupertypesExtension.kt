@@ -7,7 +7,6 @@ package org.jetbrains.kotlinx.serialization.compiler.fir
 
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.fir.extensions.buildUserTypeFromQualifierParts
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -51,7 +51,7 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
         if (isJvmOrMetadata) return false
         if (declaration !is FirRegularClass) return false
         if (!declaration.isCompanion) return false
-        val parentSymbol = declaration.symbol.getContainingDeclarationSymbol(session) as FirClassSymbol<*>
+        val parentSymbol = declaration.symbol.getContainingDeclaration(session) as FirClassSymbol<*>
         return session.predicateBasedProvider.matches(annotatedWithSerializableOrMeta, parentSymbol)
                 && parentSymbol.companionNeedsSerializerFactory
     }

@@ -11,18 +11,12 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
-import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
@@ -54,7 +48,7 @@ internal fun FirFunctionSymbol<*>.getObjCMethodInfoFromOverriddenFunctions(sessi
 /**
  * mimics ConstructorDescriptor.getObjCInitMethod()
  */
-fun FirConstructorSymbol.getObjCInitMethod(session: FirSession, scopeSession: ScopeSession): FirFunctionSymbol<*>? {
+fun FirConstructorSymbol.getObjCInitMethod(session: FirSession): FirFunctionSymbol<*>? {
     this.annotations.getAnnotationByClassId(NativeStandardInteropNames.objCConstructorClassId, session)?.let { annotation ->
         val initSelector: String = annotation.constStringArgument("initSelector")
         val classSymbol = containingClassLookupTag()?.toSymbol(session) as FirClassSymbol<*>
@@ -128,9 +122,9 @@ private fun FirClassSymbol<*>.selfOrAnySuperClass(session: FirSession, predicate
             lookupSuperTypes(listOf(this), lookupInterfaces = true, deep = true, session, substituteTypes = false)
                 .any { predicate(it.lookupTag) }
 
-internal fun FirFunctionSymbol<*>.getInitMethodIfObjCConstructor(session: FirSession, scopeSession: ScopeSession): FirFunctionSymbol<*>? =
+internal fun FirFunctionSymbol<*>.getInitMethodIfObjCConstructor(session: FirSession): FirFunctionSymbol<*>? =
         if (this is FirConstructorSymbol && isObjCConstructor(session))
-            getObjCInitMethod(session, scopeSession)
+            getObjCInitMethod(session)
         else
             this
 
@@ -139,13 +133,12 @@ fun FirProperty.isExternalObjCClassProperty(session: FirSession): Boolean =
 
 internal fun FirClassSymbol<*>.isExternalObjCClass(session: FirSession): Boolean =
         isObjCClass(session) &&
-                parentsWithSelf(session).filterIsInstance<FirClass>().any {
+                parentsWithSelf(session).filterIsInstance<FirClassSymbol<*>>().any {
                     it.hasAnnotation(NativeStandardInteropNames.externalObjCClassClassId, session)
                 }
 
-@OptIn(SymbolInternals::class)
-fun FirClassSymbol<*>.parentsWithSelf(session: FirSession): Sequence<FirClassLikeDeclaration> {
-    return generateSequence<FirClassLikeDeclaration>(fir) { it.getContainingDeclaration(session) }
+fun FirClassSymbol<*>.parentsWithSelf(session: FirSession): Sequence<FirClassLikeSymbol<out FirClassLikeDeclaration>> {
+    return generateSequence<FirClassLikeSymbol<out FirClassLikeDeclaration>>(this) { it.getContainingDeclaration(session) }
 }
 
 fun FirClassSymbol<*>.isKotlinObjCClass(session: FirSession): Boolean = isObjCClass(session) && !isExternalObjCClass(session)

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.plugin.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -155,7 +155,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         val owner = context?.owner ?: return emptyList()
         if (callableId.callableName == SerialEntityNames.SERIALIZER_PROVIDER_NAME) {
             val serializableClass = if (owner.isCompanion) {
-                val containingSymbol = owner.getContainingDeclarationSymbol(session) as? FirClassSymbol<*> ?: return emptyList()
+                val containingSymbol = owner.getContainingDeclaration(session) as? FirClassSymbol<*> ?: return emptyList()
                 if (with(session) { containingSymbol.shouldHaveGeneratedMethodsInCompanion }) containingSymbol else null
             } else {
                 if (with(session) { owner.isSerializableObject }) owner else null

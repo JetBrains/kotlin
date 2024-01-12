@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -56,6 +57,8 @@ private object ContainingClassKey : FirDeclarationDataKey()
 var FirCallableDeclaration.containingClassForStaticMemberAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
 var FirRegularClass.containingClassForLocalAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
 var FirDanglingModifierList.containingClassAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
+val FirRegularClassSymbol.containingClassForLocalAttr: ConeClassLikeLookupTag?
+    get() = fir.containingClassForLocalAttr
 
 private object HasNoEnumEntriesKey : FirDeclarationDataKey()
 var FirClass.hasNoEnumEntriesAttr: Boolean? by FirDeclarationDataRegistry.data(HasNoEnumEntriesKey)
