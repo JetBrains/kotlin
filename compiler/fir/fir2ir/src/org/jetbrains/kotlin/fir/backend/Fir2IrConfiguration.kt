@@ -70,12 +70,11 @@ class Fir2IrConfiguration private constructor(
         fun forKlibCompilation(
             compilerConfiguration: CompilerConfiguration,
             diagnosticReporter: DiagnosticReporter,
-            linkViaSignatures: Boolean = false, // FIXME(KT-64809): This parameter is only used in irText tests, we need to remove it.
         ): Fir2IrConfiguration =
             Fir2IrConfiguration(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
-                linkViaSignatures = linkViaSignatures,
+                linkViaSignatures = false,
                 evaluatedConstTracker = compilerConfiguration.putIfAbsent(
                     CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
                     EvaluatedConstTracker.create(),

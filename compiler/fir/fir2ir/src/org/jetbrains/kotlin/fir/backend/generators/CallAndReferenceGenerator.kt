@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.ir.util.isUnsignedArray
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.types.Variance
@@ -925,10 +926,15 @@ class CallAndReferenceGenerator(
                         }
                     }
                 } else {
-                    val name = if (this is IrCallImpl) symbol.signature.toString() else "???"
+                    val calleeSymbol = (this as? IrCallImpl)?.symbol
+
+                    @OptIn(UnsafeDuringIrConstructionAPI::class)
+                    val description = calleeSymbol?.signature?.render()
+                        ?: calleeSymbol?.takeIf { it.isBound }?.owner?.render()
+                        ?: "???"
                     IrErrorCallExpressionImpl(
                         startOffset, endOffset, type,
-                        "Cannot bind $argumentsCount arguments to $name call with $valueArgumentsCount parameters"
+                        "Cannot bind $argumentsCount arguments to '$description' call with $valueArgumentsCount parameters"
                     ).apply {
                         for (argument in call.arguments) {
                             addArgument(visitor.convertToIrExpression(argument))

@@ -85,8 +85,6 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
         val fir2IrConfiguration = Fir2IrConfiguration.forKlibCompilation(
             compilerConfiguration,
             diagnosticReporter,
-            // FIXME(KT-64809): This is for irText tests. Remove this when we stop building signatures from FIR entirely.
-            linkViaSignatures = LanguageSettingsDirectives.LINK_VIA_SIGNATURES in module.directives,
         )
         val fir2irResult = inputArtifact.toFirResult().convertToIrAndActualize(
             Fir2IrExtensions.Default,
