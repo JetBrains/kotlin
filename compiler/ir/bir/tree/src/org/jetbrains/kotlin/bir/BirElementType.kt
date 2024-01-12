@@ -5,37 +5,37 @@
 
 package org.jetbrains.kotlin.bir
 
-sealed interface BirElementType<out T : BirElement>
+sealed class BirElementType<out T : BirElement> {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is BirElementType<*>) return false
 
-class BirUnionElementType<out T : BirElement>(
-    options: Set<BirElementType<T>>
-) : BirElementType<T> {
-    val possibleClasses: Set<BirElementClass<out T>>
-    val options: Set<BirElementType<T>>
-        get() = possibleClasses
-
-    init {
-        require(options.isNotEmpty())
-
-        val flatList = LinkedHashSet<BirElementClass<T>>(options.size)
-        fun addAll(types: Set<BirElementType<T>>) {
-            for (type in types) {
-                when (type) {
-                    is BirUnionElementType<T> -> addAll(type.options)
-                    is BirElementClass<T> -> flatList += type
+        fun checkUnion(a: BirElementType<*>, b: BirElementType<*>): Boolean {
+            if (a is BirElementUnionType<*>) {
+                return when (b) {
+                    is BirElementUnionType<*> -> a.options == b.options
+                    is BirElementClass<*> -> a.options.singleOrNull() == b
                 }
             }
+            return false
         }
-        addAll(options)
-        this.possibleClasses = flatList
+
+        if (checkUnion(this, other)) return true
+        if (checkUnion(other, this)) return true
+
+        return false
     }
 
-    override fun toString(): String {
-        return options.joinToString(" | ")
+    override fun hashCode(): Int {
+        when (this) {
+            is BirElementUnionType<*> -> {
+                options.singleOrNull()?.let {
+                    return it.hashCode()
+                }
+                return options.hashCode()
+            }
+            is BirElementClass<*> -> return super.hashCode()
+        }
     }
 }
 
-infix fun <T : BirElement> BirElementType<T>.or(other: BirElementType<T>): BirUnionElementType<T> {
-    val options = setOf(this, other)
-    return BirUnionElementType<T>(options)
-}
