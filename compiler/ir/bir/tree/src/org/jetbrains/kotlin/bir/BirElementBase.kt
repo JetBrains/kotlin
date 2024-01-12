@@ -80,19 +80,6 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         return false
     }
 
-    internal fun findDatabaseFromAncestors(): BirDatabase? {
-        var n = _parent
-        while (true) {
-            when (n) {
-                null -> break
-                is BirElementBase -> n = n._parent
-                is BirDatabase -> return n
-            }
-        }
-
-        return null
-    }
-
 
     internal open fun getChildrenListById(id: Int): BirChildElementList<*> {
         throwChildrenListWithIdNotFound(id)
