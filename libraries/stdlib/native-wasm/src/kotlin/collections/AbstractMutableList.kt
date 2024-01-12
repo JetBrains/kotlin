@@ -234,6 +234,16 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
                 return _size
             }
 
+        override fun iterator(): MutableIterator<E> {
+            checkForComodification()
+            return super.iterator()
+        }
+
+        override fun listIterator(index: Int): MutableListIterator<E> {
+            checkForComodification()
+            return super.listIterator(index)
+        }
+
         private fun checkForComodification() {
             if (list.modCount != modCount)
                 throw ConcurrentModificationException()

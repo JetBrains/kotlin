@@ -120,6 +120,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
      * Prepends the specified [element] to this deque.
      */
     public fun addFirst(element: E) {
+        registerModification()
         ensureCapacity(size + 1)
 
         head = decremented(head)
@@ -131,6 +132,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
      * Appends the specified [element] to this deque.
      */
     public fun addLast(element: E) {
+        registerModification()
         ensureCapacity(size + 1)
 
         elementData[internalIndex(size)] = element
@@ -142,6 +144,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
      */
     public fun removeFirst(): E {
         if (isEmpty()) throw NoSuchElementException("ArrayDeque is empty.")
+        registerModification()
 
         val element = internalGet(head)
         elementData[head] = null
@@ -160,6 +163,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
      */
     public fun removeLast(): E {
         if (isEmpty()) throw NoSuchElementException("ArrayDeque is empty.")
+        registerModification()
 
         val internalLastIndex = internalIndex(lastIndex)
         val element = internalGet(internalLastIndex)
@@ -190,6 +194,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
             return
         }
 
+        registerModification()
         ensureCapacity(size + 1)
 
         // Elements in circular array lay in 2 ways:
@@ -269,6 +274,8 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
 
     public override fun addAll(elements: Collection<E>): Boolean {
         if (elements.isEmpty()) return false
+
+        registerModification()
         ensureCapacity(this.size + elements.size)
         copyCollectionElements(internalIndex(size), elements)
         return true
@@ -283,6 +290,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
             return addAll(elements)
         }
 
+        registerModification()
         ensureCapacity(this.size + elements.size)
 
         val tail = internalIndex(size)
@@ -424,6 +432,8 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
             return removeFirst()
         }
 
+        registerModification()
+
         val internalIndex = internalIndex(index)
         val element = internalGet(internalIndex)
 
@@ -510,14 +520,18 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
                 }
             }
         }
-        if (modified)
+        if (modified) {
+            registerModification()
             size = negativeMod(newTail - head)
+        }
 
         return modified
     }
 
     public override fun clear() {
         if (isNotEmpty()) {
+            registerModification()
+
             val tail = internalIndex(size)
             nullifyNonEmpty(head, tail)
         }
@@ -549,7 +563,6 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
 
     override fun removeRange(fromIndex: Int, toIndex: Int) {
         AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-        // TODO: registerModification()
 
         val length = toIndex - fromIndex
         when (length) {
@@ -563,6 +576,8 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
                 return
             }
         }
+
+        registerModification()
 
         if (fromIndex < size - toIndex) {
             // closer to the first element -> shift preceding elements
@@ -620,6 +635,10 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
             elementData.fill(null, internalFromIndex, elementData.size)
             elementData.fill(null, 0, internalToIndex)
         }
+    }
+
+    private fun registerModification() {
+        modCount += 1
     }
 
     // for testing
