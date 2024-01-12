@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getOverriddenSymbols
+import org.jetbrains.kotlin.fir.analysis.checkers.getDirectOverriddenSymbols
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.backend.native.interop.getObjCInitMethod
@@ -71,7 +71,7 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker() {
 
             // Remove fake overrides of this init method, also check for explicit overriding:
             firClass.declarations.forEach {
-                if (it is FirSimpleFunction && initMethod in it.getOverriddenSymbols(context) && !it.isSubstitutionOrIntersectionOverride) {
+                if (it is FirSimpleFunction && initMethod in it.getDirectOverriddenSymbols(context) && !it.isSubstitutionOrIntersectionOverride) {
                     reporter.reportOn(
                         constructor.source,
                         FirNativeErrors.CONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER,
