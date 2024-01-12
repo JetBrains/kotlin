@@ -148,10 +148,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         assert(obj.kind == ClassKind.OBJECT)
         assert(obj.isEffectivelyExternal()) { "Non external IrGetObjectValue must be lowered" }
 
-        return when {
-            obj.isCompanion && obj.parentAsClass.let { it.isInterface && it.isExternal } -> JsNullLiteral()
-            else -> context.getRefForExternalClass(obj).withSource(expression, context)
-        }
+        return context.getRefForExternalClass(obj).withSource(expression, context)
     }
 
     override fun visitSetField(expression: IrSetField, context: JsGenerationContext): JsExpression {
