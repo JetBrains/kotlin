@@ -44,6 +44,9 @@ sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration>(
     val typeParameterSymbols: List<FirTypeParameterSymbol>
         get() = fir.typeParameters.map { it.symbol }
 
+    val ownTypeParameterSymbols: List<FirTypeParameterSymbol>
+        get() = fir.typeParameters.mapNotNull { (it as? FirTypeParameter)?.symbol }
+
     override fun toString(): String = "${this::class.simpleName} ${classId.asString()}"
 }
 
