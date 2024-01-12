@@ -11,4 +11,5 @@ package org.jetbrains.kotlin.gradle.dsl
  * @see DslMarker
  */
 @DslMarker
+@MustBeDocumented
 annotation class KotlinGradlePluginDsl
