@@ -23,9 +23,10 @@ sealed class ResolutionMode(
             override fun toString(): String = "ContextDependent"
         }
 
-        data object Delegate : ContextDependent()
         data object AugmentedAssignmentCallOption : ContextDependent(skipCompletion = true)
     }
+
+    data object Delegate : ResolutionMode(forceFullCompletion = false)
 
     data object ContextIndependent : ResolutionMode(forceFullCompletion = true)
 

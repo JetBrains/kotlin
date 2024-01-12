@@ -440,7 +440,7 @@ open class FirDeclarationsResolveTransformer(
     }
 
     private fun transformDelegateExpression(delegate: FirWrappedDelegateExpression): FirExpression =
-        delegate.expression.transformSingle(transformer, ResolutionMode.ContextDependent.Delegate)
+        delegate.expression.transformSingle(transformer, ResolutionMode.Delegate)
             .transformSingle(components.integerLiteralAndOperatorApproximationTransformer, null)
 
     /**
@@ -1024,7 +1024,12 @@ open class FirDeclarationsResolveTransformer(
             }
             is ResolutionMode.WithExpectedType ->
                 transformAnonymousFunctionWithExpectedType(anonymousFunction, data.expectedTypeRef, data)
-            is ResolutionMode.ContextIndependent, is ResolutionMode.AssignmentLValue, is ResolutionMode.ReceiverResolution ->
+
+            is ResolutionMode.ContextIndependent,
+            is ResolutionMode.AssignmentLValue,
+            is ResolutionMode.ReceiverResolution,
+            is ResolutionMode.Delegate,
+            ->
                 transformAnonymousFunctionWithExpectedType(anonymousFunction, FirImplicitTypeRefImplWithoutSource, data)
             is ResolutionMode.WithStatus ->
                 throw AssertionError("Should not be here in WithStatus/WithExpectedTypeFromCast mode")

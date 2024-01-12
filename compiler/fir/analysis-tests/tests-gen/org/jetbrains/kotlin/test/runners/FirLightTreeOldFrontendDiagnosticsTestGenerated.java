@@ -10682,6 +10682,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("lambdaDelegate.kt")
+                public void testLambdaDelegate() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/lambdaDelegate.kt");
+                }
+
+                @Test
                 @TestMetadata("lambdaWithMultipleReturns.kt")
                 public void testLambdaWithMultipleReturns() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/lambdaWithMultipleReturns.kt");
