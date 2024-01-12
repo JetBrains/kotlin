@@ -5,14 +5,15 @@
 
 package kotlinx.validation
 
-import difflib.*
+import com.github.difflib.DiffUtils
+import com.github.difflib.UnifiedDiffUtils
+import java.io.*
+import java.util.TreeMap
+import javax.inject.Inject
 import org.gradle.api.*
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
-import java.io.*
-import java.util.TreeMap
-import javax.inject.Inject
 
 open class KotlinApiCompareTask @Inject constructor(private val objects: ObjectFactory): DefaultTask() {
 
@@ -123,7 +124,7 @@ open class KotlinApiCompareTask @Inject constructor(private val objects: ObjectF
             return null
 
         val patch = DiffUtils.diff(checkLines, builtLines)
-        val diff = DiffUtils.generateUnifiedDiff(checkFile.toString(), builtFile.toString(), checkLines, patch, 3)
+        val diff = UnifiedDiffUtils.generateUnifiedDiff(checkFile.toString(), builtFile.toString(), checkLines, patch, 3)
         return diff.joinToString("\n")
     }
 }

@@ -24,12 +24,12 @@ internal class IgnoredClassesTests : BaseKotlinGradleTest() {
     fun `apiCheck should succeed, when given class is not in api-File, but is ignored via ignoredClasses`() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
-                resolve("examples/gradle/configuration/ignoredClasses/oneValidFullyQualifiedClass.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/configuration/ignoredClasses/oneValidFullyQualifiedClass.gradle.kts")
             }
 
             kotlin("BuildConfig.kt") {
-                resolve("examples/classes/BuildConfig.kt")
+                resolve("/examples/classes/BuildConfig.kt")
             }
 
             emptyApiFile(projectName = rootProjectDir.name)
@@ -48,12 +48,12 @@ internal class IgnoredClassesTests : BaseKotlinGradleTest() {
     fun `apiCheck should succeed, when given class is not in api-File, but is ignored via ignoredPackages`() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
-                resolve("examples/gradle/configuration/ignoredPackages/oneValidPackage.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/configuration/ignoredPackages/oneValidPackage.gradle.kts")
             }
 
             kotlin("BuildConfig.kt") {
-                resolve("examples/classes/BuildConfig.kt")
+                resolve("/examples/classes/BuildConfig.kt")
             }
 
             emptyApiFile(projectName = rootProjectDir.name)
@@ -72,14 +72,14 @@ internal class IgnoredClassesTests : BaseKotlinGradleTest() {
     fun `apiDump should not dump ignoredClasses, when class is excluded via ignoredClasses`() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
-                resolve("examples/gradle/configuration/ignoredClasses/oneValidFullyQualifiedClass.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/configuration/ignoredClasses/oneValidFullyQualifiedClass.gradle.kts")
             }
             kotlin("BuildConfig.kt") {
-                resolve("examples/classes/BuildConfig.kt")
+                resolve("/examples/classes/BuildConfig.kt")
             }
             kotlin("AnotherBuildConfig.kt") {
-                resolve("examples/classes/AnotherBuildConfig.kt")
+                resolve("/examples/classes/AnotherBuildConfig.kt")
             }
 
             runner {
@@ -92,7 +92,7 @@ internal class IgnoredClassesTests : BaseKotlinGradleTest() {
 
             assertTrue(rootProjectApiDump.exists(), "api dump file should exist")
 
-            val expected = readFileList("examples/classes/AnotherBuildConfig.dump")
+            val expected = readFileList("/examples/classes/AnotherBuildConfig.dump")
             Assertions.assertThat(rootProjectApiDump.readText()).isEqualToIgnoringNewLines(expected)
         }
     }

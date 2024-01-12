@@ -17,7 +17,7 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
     fun `apiCheck should fail, when there is no api directory, even if there are no Kotlin sources`() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
             }
             runner {
                 arguments.add(":apiCheck")
@@ -34,7 +34,7 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
     fun `check should fail, when there is no api directory, even if there are no Kotlin sources`() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
             }
 
             runner {
@@ -52,7 +52,7 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
     fun `apiCheck should succeed, when api-File is empty, but no kotlin files are included in SourceSet`() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
             }
 
             emptyApiFile(projectName = rootProjectDir.name)
@@ -71,13 +71,13 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
     fun `apiCheck should succeed when public classes match api file`() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
             }
             kotlin("AnotherBuildConfig.kt") {
-                resolve("examples/classes/AnotherBuildConfig.kt")
+                resolve("/examples/classes/AnotherBuildConfig.kt")
             }
             apiFile(projectName = rootProjectDir.name) {
-                resolve("examples/classes/AnotherBuildConfig.dump")
+                resolve("/examples/classes/AnotherBuildConfig.dump")
             }
 
             runner {
@@ -94,13 +94,13 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
     fun `apiCheck should succeed when public classes match api file ignoring case`() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
             }
             kotlin("AnotherBuildConfig.kt") {
-                resolve("examples/classes/AnotherBuildConfig.kt")
+                resolve("/examples/classes/AnotherBuildConfig.kt")
             }
             apiFile(projectName = rootProjectDir.name.uppercase()) {
-                resolve("examples/classes/AnotherBuildConfig.dump")
+                resolve("/examples/classes/AnotherBuildConfig.dump")
             }
 
             runner {
@@ -117,11 +117,11 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
     fun `apiCheck should fail, when a public class is not in api-File`() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
             }
 
             kotlin("BuildConfig.kt") {
-                resolve("examples/classes/BuildConfig.kt")
+                resolve("/examples/classes/BuildConfig.kt")
             }
 
             emptyApiFile(projectName = rootProjectDir.name)
@@ -149,7 +149,7 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
     fun `apiDump should create empty api file when there are no Kotlin sources`() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
             }
 
             runner {
@@ -170,10 +170,10 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
     fun `apiDump should create api file with the name of the project, respecting settings file`() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
             }
             settingsGradleKts {
-                resolve("examples/gradle/settings/settings-name-testproject.gradle.kts")
+                resolve("/examples/gradle/settings/settings-name-testproject.gradle.kts")
             }
 
             runner {
@@ -198,10 +198,10 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
     fun `apiDump should dump public classes`() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
             }
             kotlin("AnotherBuildConfig.kt") {
-                resolve("examples/classes/AnotherBuildConfig.kt")
+                resolve("/examples/classes/AnotherBuildConfig.kt")
             }
 
             runner {
@@ -214,7 +214,7 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
 
             assertTrue(rootProjectApiDump.exists(), "api dump file should exist")
 
-            val expected = readFileList("examples/classes/AnotherBuildConfig.dump")
+            val expected = readFileList("/examples/classes/AnotherBuildConfig.dump")
             Assertions.assertThat(rootProjectApiDump.readText()).isEqualToIgnoringNewLines(expected)
         }
     }
@@ -223,7 +223,7 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
     fun `apiCheck should be run when we run check`() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
             }
 
             emptyApiFile(projectName = rootProjectDir.name)

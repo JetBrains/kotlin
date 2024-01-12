@@ -181,7 +181,7 @@ private fun Project.configureKotlinCompilation(
 ) {
     val projectName = project.name
     val apiDirProvider = targetConfig.apiDir
-    val apiBuildDir = apiDirProvider.map { buildDir.resolve(it) }
+    val apiBuildDir = apiDirProvider.map { layout.buildDirectory.asFile.get().resolve(it) }
 
     val apiBuild = task<KotlinApiBuildTask>(targetConfig.apiTaskName("Build")) {
         // Do not enable task for empty umbrella modules
@@ -224,7 +224,7 @@ private fun Project.configureApiTasks(
     targetConfig: TargetConfig = TargetConfig(this),
 ) {
     val projectName = project.name
-    val apiBuildDir = targetConfig.apiDir.map { buildDir.resolve(it) }
+    val apiBuildDir = targetConfig.apiDir.map { layout.buildDirectory.asFile.get().resolve(it) }
     val sourceSetsOutputsProvider = project.provider {
         sourceSets
             .filter { it.name == SourceSet.MAIN_SOURCE_SET_NAME || it.name in extension.additionalSourceSets }

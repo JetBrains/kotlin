@@ -14,16 +14,16 @@ class NonPublicMarkersTest : BaseKotlinGradleTest() {
     fun testIgnoredMarkersOnProperties() {
         val runner = test {
             buildGradleKts {
-                resolve("examples/gradle/base/withPlugin.gradle.kts")
-                resolve("examples/gradle/configuration/nonPublicMarkers/markers.gradle.kts")
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/configuration/nonPublicMarkers/markers.gradle.kts")
             }
 
             kotlin("Properties.kt") {
-                resolve("examples/classes/Properties.kt")
+                resolve("/examples/classes/Properties.kt")
             }
 
             apiFile(projectName = rootProjectDir.name) {
-                resolve("examples/classes/Properties.dump")
+                resolve("/examples/classes/Properties.dump")
             }
 
             runner {
