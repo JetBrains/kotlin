@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class BirElementsIndexKey<E : BirElement>(
     val condition: BirElementIndexMatcher?,
-    val elementClass: BirElementClass<E>,
+    val elementType: BirElementType<E>,
 ) : BirElementGeneralIndexerKey
 
 fun interface BirElementIndexMatcher : BirElementGeneralIndexer {
@@ -32,7 +32,7 @@ internal fun interface BirElementIndexClassifier {
 
 class BirElementBackReferencesKey<E : BirElement, R : BirElement>(
     val recorder: BirElementBackReferenceRecorder<R>,
-    val elementClass: BirElementClass<E>,
+    val elementType: BirElementType<E>,
 ) : BirElementGeneralIndexerKey
 
 fun interface BirElementBackReferenceRecorder<R : BirElement> : BirElementGeneralIndexer {
@@ -58,12 +58,12 @@ internal object BirElementIndexClassifierFunctionGenerator {
     private val generatedFunctionClassLoader by lazy { ByteArrayFunctionClassLoader(BirElement::class.java.classLoader) }
     private val classifierFunctionClassCache = ConcurrentHashMap<Set<IndexerCacheKey>, Class<*>>()
 
-    private data class IndexerCacheKey(val conditionClass: Class<*>?, val elementClass: BirElementClass<*>, val index: Int)
+    private data class IndexerCacheKey(val conditionClass: Class<*>?, val elementType: BirElementType<*>, val index: Int)
 
     class Indexer(
         val kind: BirElementGeneralIndexer.Kind,
         val indexerFunction: BirElementGeneralIndexer?,
-        val elementClass: BirElementClass<*>,
+        val elementType: BirElementType<*>,
         val index: Int,
     )
 
@@ -83,7 +83,7 @@ internal object BirElementIndexClassifierFunctionGenerator {
         indexers: List<Indexer>,
         indexersFunctions: Array<BirElementGeneralIndexer?>,
     ): Class<*> {
-        val key = indexers.map { IndexerCacheKey(it.indexerFunction?.javaClass, it.elementClass, it.index) }.toHashSet()
+        val key = indexers.map { IndexerCacheKey(it.indexerFunction?.javaClass, it.elementType, it.index) }.toHashSet()
         return classifierFunctionClassCache.computeIfAbsent(key) { _ ->
             val clazzNode = generateClassifierFunctionClass(indexers)
             val classWriter = ClassWriter(ClassWriter.COMPUTE_FRAMES)
@@ -223,7 +223,10 @@ internal object BirElementIndexClassifierFunctionGenerator {
         }
 
         switchCases.sortBy { it.second }
-        il.set(switchInstPlaceholder, LookupSwitchInsnNode(endLabel, switchCases.map { it.second }.toIntArray(), switchCases.map { it.first }.toTypedArray()))
+        il.set(
+            switchInstPlaceholder,
+            LookupSwitchInsnNode(endLabel, switchCases.map { it.second }.toIntArray(), switchCases.map { it.first }.toTypedArray())
+        )
 
         il.add(endLabel)
         il.add(VarInsnNode(Opcodes.ILOAD, resultVarIdx))
@@ -316,10 +319,17 @@ internal object BirElementIndexClassifierFunctionGenerator {
         }
 
         for (indexer in indexers) {
-            val node = elementClassNodes.getValue(indexer.elementClass)
-            node.descendantClasses().forEach { descendantNode ->
-                if (descendantNode.elementClass.hasImplementation) {
-                    descendantNode.indexers += indexer
+            val possibleClasses = when (val type = indexer.elementType) {
+                is BirElementClass<*> -> setOf(type)
+                is BirUnionElementType<*> -> type.possibleClasses
+            }
+
+            for (elementClass in possibleClasses) {
+                val node = elementClassNodes.getValue(elementClass)
+                node.descendantClasses().forEach { descendantNode ->
+                    if (descendantNode.elementClass.hasImplementation) {
+                        descendantNode.indexers += indexer
+                    }
                 }
             }
         }
@@ -350,10 +360,6 @@ internal object BirElementIndexClassifierFunctionGenerator {
     private class ElementSwitchNode(
         val elementClasses: List<BirElementClass<*>>,
         val indexers: List<Indexer>,
-    )
-
-    private class IndexBucket(
-        val indexer: Indexer,
     )
 
     private fun generateConstructor(

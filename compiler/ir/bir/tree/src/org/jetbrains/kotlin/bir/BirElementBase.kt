@@ -92,7 +92,7 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
     internal fun getContainingList(): BirChildElementList<*>? {
         val containingListId = containingListId
         return if (containingListId == 0) null
-        else (parent as? BirElementBase)?.getChildrenListById(containingListId)
+        else parent?.getChildrenListById(containingListId)
     }
 
 

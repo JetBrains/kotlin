@@ -17,9 +17,9 @@ abstract class BirLoweringPhase {
     abstract fun lower(module: BirModuleFragment)
 
     protected fun <E : BirElement> registerIndexKey(
-        elementClass: BirElementClass<E>,
+        elementType: BirElementType<E>,
         includeExternalModules: Boolean,
-    ): BirElementsIndexKey<E> = registerIndexKey(elementClass, null, includeExternalModules)
+    ): BirElementsIndexKey<E> = registerIndexKey(elementType, null, includeExternalModules)
 
     /**
      * Registers a handle which can be used later to obtain all [BirElement]s of specific class,
@@ -80,7 +80,7 @@ abstract class BirLoweringPhase {
      * }
      * ```
      *
-     * @param elementClass Only check elements of this and derived classes. May be [BirElement] to check all.
+     * @param elementType Only check elements of this and derived classes. May be [BirElement] to check all.
      *
      * @param condition Predicate deciding whether to include a given element in this index.
      *
@@ -97,21 +97,21 @@ abstract class BirLoweringPhase {
      * @see getAllElementsWithIndex
      */
     protected inline fun <E : BirElement> registerIndexKey(
-        elementClass: BirElementClass<E>,
+        elementType: BirElementType<E>,
         includeExternalModules: Boolean,
         crossinline condition: (E) -> Boolean,
-    ): BirElementsIndexKey<E> = registerIndexKey(elementClass, { element ->
+    ): BirElementsIndexKey<E> = registerIndexKey(elementType, { element ->
         @Suppress("UNCHECKED_CAST")
         condition(element as E)
     }, includeExternalModules)
 
     @PublishedApi
     internal fun <E : BirElement> registerIndexKey(
-        elementClass: BirElementClass<E>,
+        elementType: BirElementType<E>,
         condition: BirElementIndexMatcher?,
         includeExternalModules: Boolean,
     ): BirElementsIndexKey<E> {
-        val key = BirElementsIndexKey<E>(condition, elementClass)
+        val key = BirElementsIndexKey<E>(condition, elementType)
         compiledBir.registerElementIndexingKey(key)
         if (includeExternalModules) {
             externalModulesBir.registerElementIndexingKey(key)
@@ -135,7 +135,7 @@ abstract class BirLoweringPhase {
      * }
      * ```
      *
-     * @param elementClass The class of referencing element. All elements returned by [BirElement.getBackReferences] will be of this class.
+     * @param elementType The type of referencing element. All elements returned by [BirElement.getBackReferences] will be of this type.
      * In other words, only run [getBackReference] on elements of this and derived classes. May be [BirElement].
      *
      * @param getBackReference Function to obtain a forward reference to some other element. [BirElement.getBackReferences] will return
@@ -148,9 +148,9 @@ abstract class BirLoweringPhase {
      * @return Token which may be passed to [BirElement.getBackReferences].
      */
     protected inline fun <reified E : BirElement, R : BirElement> registerBackReferencesKey(
-        elementClass: BirElementClass<E>,
+        elementType: BirElementType<E>,
         crossinline getBackReference: (E) -> R?,
-    ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(elementClass, object : BirElementBackReferenceRecorder<R> {
+    ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(elementType, object : BirElementBackReferenceRecorder<R> {
         context(BirElementBackReferenceRecorderScope)
         override fun recordBackReferences(element: BirElementBase) {
             if (element is E) {
@@ -163,9 +163,9 @@ abstract class BirLoweringPhase {
      * Same as [registerBackReferencesKey], but allows to record multiple forward references for a given element.
      */
     protected inline fun <reified E : BirElement, R : BirElement> registerMultipleBackReferencesKey(
-        elementClass: BirElementClass<E>,
+        elementType: BirElementType<E>,
         crossinline getBackReferences: context(BirElementBackReferenceRecorderScope) (E) -> Unit,
-    ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(elementClass, object : BirElementBackReferenceRecorder<R> {
+    ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(elementType, object : BirElementBackReferenceRecorder<R> {
         context(BirElementBackReferenceRecorderScope)
         override fun recordBackReferences(element: BirElementBase) {
             if (element is E) {
@@ -176,10 +176,10 @@ abstract class BirLoweringPhase {
 
     @PublishedApi
     internal fun <E : BirElement, R : BirElement> registerBackReferencesKey(
-        elementClass: BirElementClass<E>,
+        elementType: BirElementType<E>,
         getBackReference: BirElementBackReferenceRecorder<R>,
     ): BirElementBackReferencesKey<E, R> {
-        val key = BirElementBackReferencesKey<E, R>(getBackReference, elementClass)
+        val key = BirElementBackReferencesKey<E, R>(getBackReference, elementType)
         compiledBir.registerElementBackReferencesKey(key)
         return key
     }
