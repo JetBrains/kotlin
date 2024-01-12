@@ -37,12 +37,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 context(JvmBirBackendContext)
 class BirDirectInvokeLowering : BirLoweringPhase() {
-    private val valueAccesses = registerBackReferencesKey(BirValueAccessExpression) { it.symbol.owner }
-    private val returnTargets = registerBackReferencesKey(BirReturn) { it.returnTargetSymbol.owner }
+    private val valueAccesses = registerBackReferencesKey(BirValueAccessExpression, BirValueAccessExpression::symbol)
+    private val returnTargets = registerBackReferencesKey_returnTargetSymbol(BirReturn, BirReturn::returnTargetSymbol)
     private val invokeFunctions = registerIndexKey(BirSimpleFunction, false) {
         it.name == OperatorNameConventions.INVOKE
     }
-    private val functionCalls = registerBackReferencesKey(BirCall) { it.symbol.owner }
+    private val functionCalls = registerBackReferencesKey(BirCall, BirCall::symbol)
 
     override fun lower(module: BirModuleFragment) {
         getAllElementsWithIndex(invokeFunctions).forEach { function ->

@@ -15,6 +15,7 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.util.CheckClassAdapter
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.reflect.KProperty1
 
 class BirElementsIndexKey<E : BirElement>(
     val condition: BirElementIndexMatcher?,
@@ -33,6 +34,7 @@ internal fun interface BirElementIndexClassifier {
 class BirElementBackReferencesKey<E : BirElement, R : BirElement>(
     val recorder: BirElementBackReferenceRecorder<R>,
     val elementType: BirElementType<E>,
+    val forwardReferenceProperty: KProperty1<E, *>?,
 ) : BirElementGeneralIndexerKey
 
 fun interface BirElementBackReferenceRecorder<R : BirElement> : BirElementGeneralIndexer {
@@ -64,6 +66,7 @@ internal object BirElementIndexClassifierFunctionGenerator {
         val kind: BirElementGeneralIndexer.Kind,
         val indexerFunction: BirElementGeneralIndexer?,
         val elementType: BirElementType<*>,
+        val forwardReferenceProperty: KProperty1<*, *>?,
         val index: Int,
     )
 
@@ -110,28 +113,16 @@ internal object BirElementIndexClassifierFunctionGenerator {
             interfaces.add(Type.getInternalName(BirElementIndexClassifier::class.java))
         }
 
-        val capturedMatcherInstancesCache = generateClassifyMethod(clazz, indexers)
+        val capturedIndexerInstances = storeIndexerInstances(indexers, clazz)
+        val capturedMatcherInstancesCache = generateClassifyMethod(clazz, indexers, capturedIndexerInstances)
         generateConstructor(clazz, capturedMatcherInstancesCache)
         generateStaticConstructor(clazz, capturedMatcherInstancesCache)
 
         return clazz
     }
 
-    private fun generateClassifyMethod(
-        clazz: ClassNode,
-        indexers: List<Indexer>,
-    ): Map<Indexer, FieldNode> {
-        val classifyMethod = MethodNode().apply {
-            access = Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL
-            name = "classify"
-            desc = Type.getMethodDescriptor(
-                Type.INT_TYPE,
-                Type.getType(BirElementBase::class.java),
-                Type.INT_TYPE,
-                Type.getType(ForwardReferenceRecorder::class.java)
-            )
-        }
 
+    private fun storeIndexerInstances(indexers: List<Indexer>, clazz: ClassNode): Map<Indexer, FieldNode> {
         val capturedIndexerInstances = mutableMapOf<Indexer, FieldNode>()
         for (indexer in indexers) {
             indexer.indexerFunction?.javaClass?.let { conditionFunctionClass ->
@@ -152,6 +143,24 @@ internal object BirElementIndexClassifierFunctionGenerator {
                 clazz.fields.add(field)
                 capturedIndexerInstances[indexer] = field
             }
+        }
+        return capturedIndexerInstances
+    }
+
+    private fun generateClassifyMethod(
+        clazz: ClassNode,
+        indexers: List<Indexer>,
+        capturedIndexerInstances: Map<Indexer, FieldNode>,
+    ): Map<Indexer, FieldNode> {
+        val classifyMethod = MethodNode().apply {
+            access = Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL
+            name = "classify"
+            desc = Type.getMethodDescriptor(
+                Type.INT_TYPE,
+                Type.getType(BirElementBase::class.java),
+                Type.INT_TYPE,
+                Type.getType(ForwardReferenceRecorder::class.java)
+            )
         }
 
         val il = classifyMethod.instructions
@@ -335,6 +344,23 @@ internal object BirElementIndexClassifierFunctionGenerator {
         }
 
         for (element in elementClassNodes.values) {
+            // todo: check if properties are in the same type hierarchy
+            //  (so that one overrides the other), or they just happen
+            //  to have the same name.
+            val mergedBackRefRecorders = element.indexers
+                .filter { it.kind == BirElementGeneralIndexer.Kind.BackReferenceRecorder }
+                .filter { it.forwardReferenceProperty != null }
+                .groupBy { it.forwardReferenceProperty!!.name }
+                .filter { it.value.size > 1 }
+            element.indexers.removeAll { indexer ->
+                mergedBackRefRecorders.any { group ->
+                    // retain only the last one
+                    indexer in group.value && group.value.any { it.index > indexer.index }
+                }
+            }
+        }
+
+        for (element in elementClassNodes.values) {
             element.indexers.sortBy { it.index }
         }
 
@@ -354,7 +380,7 @@ internal object BirElementIndexClassifierFunctionGenerator {
         val subClasses = mutableSetOf<ElementClassInfo>()
         val indexers = mutableListOf<Indexer>()
 
-        fun descendantClasses() = DFS.topologicalOrder(listOf(this)) { it.subClasses }
+        fun descendantClasses(): List<ElementClassInfo> = DFS.topologicalOrder(listOf(this)) { it.subClasses }
     }
 
     private class ElementSwitchNode(

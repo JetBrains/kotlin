@@ -33,8 +33,8 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
     private val staticDeclarations = registerIndexKey<BirDeclaration>(BirSimpleFunction or BirProperty, true) { declaration ->
         JvmStaticAnnotation?.let { declaration.hasAnnotation(it) } == true
     }
-    private val memberAccesses = registerBackReferencesKey(BirMemberAccessExpression) { it.symbol.owner }
-    private val valueReads = registerBackReferencesKey(BirGetValue) { it.symbol.owner }
+    private val memberAccesses = registerBackReferencesKeyWithUntypedSymbolProperty(BirMemberAccessExpression, BirMemberAccessExpression<*>::symbol)
+    private val valueReads = registerBackReferencesKey(BirGetValue, BirGetValue::symbol)
 
     private val fieldForObjectInstanceToken = acquireProperty(JvmCachedDeclarations.FieldForObjectInstance)
     private val interfaceCompanionFieldDeclaration = acquireProperty(JvmCachedDeclarations.InterfaceCompanionFieldDeclaration)
