@@ -1019,20 +1019,6 @@ void createInterop(String name, Closure conf) {
     }
 }
 
-createInterop("sysstat") {
-    // FIXME: creates empty file to workaround konan gradle plugin issue (should be able to have no def file)
-    def f = File.createTempFile("sysstat.empty", ".def")
-    it.packageName 'sysstat'
-    // FIXME: this option doesn't work due to an issue in plugin: it tries to resolve header in project dir.
-    //it.headers 'sys/stat.h'
-    f.write("headers = sys/stat.h")
-    it.defFile f
-}
-
-createInterop("cstdio") {
-    it.defFile 'interop/basics/cstdio.def'
-}
-
 createInterop("sockets") {
     it.defFile 'interop/basics/sockets.def'
 }
@@ -1342,31 +1328,6 @@ standaloneTest("interop_objc_allocException") {
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
-interopTest("interop0") {
-    disabled = (project.testTarget == 'linux_arm64')
-    useGoldenData = true
-    source = "interop/basics/0.kt"
-    interop = 'sysstat'
-}
-
-interopTest("interop2") {
-    useGoldenData = true
-    source = "interop/basics/2.kt"
-    interop = 'cstdio'
-}
-
-interopTest("interop4") {
-    useGoldenData = true
-    source = "interop/basics/4.kt"
-    interop = 'cstdio'
-}
-
-standaloneTest("interop5") {
-    useGoldenData = true
-    source = "interop/basics/5.kt"
-    UtilsKt.dependsOnPlatformLibs(it)
-}
-
 interopTest("interop_concurrentTerminate") {
     source = "interop/concurrentTerminate/main.kt"
     interop = 'concurrentTerminate'
@@ -1377,34 +1338,6 @@ interopTest("interop_concurrentTerminate") {
 interopTest("interop_embedStaticLibraries") {
     source = "interop/embedStaticLibraries/main.kt"
     interop = 'embedStaticLibraries'
-}
-
-interopTest("interop_threadStates") {
-    source = "interop/threadStates/threadStates.kt"
-    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
-    interop = "threadStates"
-}
-
-interopTest("interop_threadStates_callbacksWithExceptions") {
-    source = "interop/threadStates/callbacksWithExceptions.kt"
-    interop = "threadStates"
-    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-interopTest("interop_threadStates_unhandledException") {
-    source = "interop/threadStates/unhandledException.kt"
-    interop = "threadStates"
-    outputChecker = { it.contains("Error. Runnable state: true") }
-    expectedExitStatusChecker = { it != 0 }
-    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-interopTest("interop_threadStates_unhandledExceptionInForeignThread") {
-    source = "interop/threadStates/unhandledExceptionInForeignThread.kt"
-    interop = "threadStates"
-    outputChecker = { it.contains("Error. Runnable state: true") }
-    expectedExitStatusChecker = { it != 0 }
-    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 interopTest("interop_withSpaces") {
@@ -1444,11 +1377,6 @@ interopTest("interop_leakMemoryWithRunningThreadChecked") {
     source = "interop/leakMemoryWithRunningThread/checked.kt"
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> s.contains("Cannot run checkers when there are 1 alive runtimes at the shutdown") }
-}
-
-standaloneTest("interop_pinning") {
-    source = "interop/basics/pinning.kt"
-    flags = [ "-tr" ]
 }
 
 interopTest("interop_cppClass") {

@@ -4817,6 +4817,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("statbuf.kt")
+                public void testStatbuf() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/statbuf.kt");
+                }
+
+                @Test
                 @TestMetadata("structAnonRecordMember_ExplicitAlignment.kt")
                 public void testStructAnonRecordMember_ExplicitAlignment() throws Exception {
                     runTest("compiler/testData/codegen/box/cinterop/basics/structAnonRecordMember_ExplicitAlignment.kt");

@@ -49,9 +49,27 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
         }
 
         @Test
+        @TestMetadata("fprintf.kt")
+        public void testFprintf() throws Exception {
+            runTest("native/native.tests/testData/standalone/console/fprintf.kt");
+        }
+
+        @Test
+        @TestMetadata("printf.kt")
+        public void testPrintf() throws Exception {
+            runTest("native/native.tests/testData/standalone/console/printf.kt");
+        }
+
+        @Test
         @TestMetadata("println.kt")
         public void testPrintln() throws Exception {
             runTest("native/native.tests/testData/standalone/console/println.kt");
+        }
+
+        @Test
+        @TestMetadata("puts.kt")
+        public void testPuts() throws Exception {
+            runTest("native/native.tests/testData/standalone/console/puts.kt");
         }
 
         @Test
@@ -187,6 +205,12 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
         }
 
         @Test
+        @TestMetadata("unhandledException.kt")
+        public void testUnhandledException() throws Exception {
+            runTest("native/native.tests/testData/standalone/termination/unhandledException.kt");
+        }
+
+        @Test
         @TestMetadata("unhandledExceptionHookClosure.kt")
         public void testUnhandledExceptionHookClosure() throws Exception {
             runTest("native/native.tests/testData/standalone/termination/unhandledExceptionHookClosure.kt");
@@ -226,6 +250,87 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
         @TestMetadata("unhandledExceptionHookWithProcess.kt")
         public void testUnhandledExceptionHookWithProcess() throws Exception {
             runTest("native/native.tests/testData/standalone/termination/unhandledExceptionHookWithProcess.kt");
+        }
+
+        @Test
+        @TestMetadata("unhandledExceptionInForeignThread.kt")
+        public void testUnhandledExceptionInForeignThread() throws Exception {
+            runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInForeignThread.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("native/native.tests/testData/standalone/threadStates")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("standalone")
+    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
+    @UseStandardTestCaseGroupProvider()
+    @Tag("frontend-fir")
+    @FirPipeline()
+    public class ThreadStates {
+        @Test
+        public void testAllFilesPresentInThreadStates() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/standalone/threadStates"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("callback.kt")
+        public void testCallback() throws Exception {
+            runTest("native/native.tests/testData/standalone/threadStates/callback.kt");
+        }
+
+        @Test
+        @TestMetadata("callbackOnSeparateThread.kt")
+        public void testCallbackOnSeparateThread() throws Exception {
+            runTest("native/native.tests/testData/standalone/threadStates/callbackOnSeparateThread.kt");
+        }
+
+        @Test
+        @TestMetadata("callbackWithException.kt")
+        public void testCallbackWithException() throws Exception {
+            runTest("native/native.tests/testData/standalone/threadStates/callbackWithException.kt");
+        }
+
+        @Test
+        @TestMetadata("callbackWithFinally.kt")
+        public void testCallbackWithFinally() throws Exception {
+            runTest("native/native.tests/testData/standalone/threadStates/callbackWithFinally.kt");
+        }
+
+        @Test
+        @TestMetadata("callbackWithFinallyNoCatch.kt")
+        public void testCallbackWithFinallyNoCatch() throws Exception {
+            runTest("native/native.tests/testData/standalone/threadStates/callbackWithFinallyNoCatch.kt");
+        }
+
+        @Test
+        @TestMetadata("directStaticCFunctionCall.kt")
+        public void testDirectStaticCFunctionCall() throws Exception {
+            runTest("native/native.tests/testData/standalone/threadStates/directStaticCFunctionCall.kt");
+        }
+
+        @Test
+        @TestMetadata("nativeCall.kt")
+        public void testNativeCall() throws Exception {
+            runTest("native/native.tests/testData/standalone/threadStates/nativeCall.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedCallbackWithException.kt")
+        public void testNestedCallbackWithException() throws Exception {
+            runTest("native/native.tests/testData/standalone/threadStates/nestedCallbackWithException.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedCallbackWithFinally.kt")
+        public void testNestedCallbackWithFinally() throws Exception {
+            runTest("native/native.tests/testData/standalone/threadStates/nestedCallbackWithFinally.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedCalls.kt")
+        public void testNestedCalls() throws Exception {
+            runTest("native/native.tests/testData/standalone/threadStates/nestedCalls.kt");
         }
     }
 }
