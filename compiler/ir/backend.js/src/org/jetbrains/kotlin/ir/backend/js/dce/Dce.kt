@@ -23,7 +23,7 @@ fun eliminateDeadDeclarations(
     modules: Iterable<IrModuleFragment>,
     context: JsIrBackendContext,
     removeUnusedAssociatedObjects: Boolean = true,
-    dceDumpNameCache: DceDumpNameCache,
+    dceDumpNameCache: DceDumpDeclarationStorage,
 ) {
     val allRoots = buildRoots(modules, context)
 

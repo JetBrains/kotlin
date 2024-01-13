@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
+import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpDeclarationStorage
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpExtendedDeclarationsIrSizes
 import org.jetbrains.kotlin.ir.backend.js.ic.*
@@ -361,7 +361,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     exportedDeclarations = setOf(FqName("main")),
                     propertyLazyInitialization = arguments.irPropertyLazyInitialization,
                 )
-                val dceDumpNameCache = DceDumpNameCache()
+                val dceDumpNameCache = DceDumpDeclarationStorage()
                 if (arguments.irDce) {
                     eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
                 }

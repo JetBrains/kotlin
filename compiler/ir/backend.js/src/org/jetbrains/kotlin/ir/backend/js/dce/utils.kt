@@ -64,7 +64,7 @@ internal fun IrDeclaration.fqNameForDisplayDceDump(): String = getNameByGetter(I
 
 internal data class IrDeclarationDumpInfo(val fqName: String, val displayName: String, val type: String, val size: Int)
 
-fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragment>, dceDumpNameCache: DceDumpNameCache) {
+fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragment>, dceDumpNameCache: DceDumpDeclarationStorage) {
     if (path == null) return
 
     val declarations = linkedSetOf<IrDeclarationDumpInfo>()
@@ -101,11 +101,11 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
     dumpIrDeclarationSizes(declarations, File(path))
 }
 
-fun dumpExtendedDeclarationsIrSizes(path: String?, dceDumpNameCache: DceDumpNameCache) {
+fun dumpExtendedDeclarationsIrSizes(path: String?, dceDumpNameCache: DceDumpDeclarationStorage) {
     if (path == null) {
         return
     }
-    val extendedDeclarations = dceDumpNameCache.getDceDumpNames().map {
+    val extendedDeclarations = dceDumpNameCache.allCachedDeclarations.map {
         val type = when (it) {
             is IrFunction -> "function"
             is IrProperty -> "property"

@@ -236,7 +236,7 @@ abstract class UsefulDeclarationProcessor(
 
     protected open fun handleAssociatedObjects(): Unit = Unit
 
-    fun collectDeclarations(rootDeclarations: Iterable<IrDeclaration>, dceDumpNameCache: DceDumpNameCache): Set<IrDeclaration> {
+    fun collectDeclarations(rootDeclarations: Iterable<IrDeclaration>, dceDumpNameCache: DceDumpDeclarationStorage): Set<IrDeclaration> {
 
         rootDeclarations.forEach {
             it.enqueue(it, "<ROOT>")
@@ -306,7 +306,7 @@ private data class ReachabilityInfo(
 private fun transformToStringBy(
     reachabilityInfos: List<ReachabilityInfo>,
     separator: String,
-    dceDumpNameCache: DceDumpNameCache,
+    dceDumpNameCache: DceDumpDeclarationStorage,
     transformer: (sourceFqn: String, targetFqn: String, description: String, isTargetContagious: Boolean) -> String,
 ): String {
     return reachabilityInfos
@@ -322,7 +322,7 @@ private fun transformToStringBy(
         .joinToString(separator)
 }
 
-private fun transformToDotLikeString(reachabilityInfos: List<ReachabilityInfo>, dceDumpNameCache: DceDumpNameCache): String {
+private fun transformToDotLikeString(reachabilityInfos: List<ReachabilityInfo>, dceDumpNameCache: DceDumpDeclarationStorage): String {
     return transformToStringBy(reachabilityInfos, "\n", dceDumpNameCache) { sourceFqn, targetFqn, description, isTargetContagious ->
         val comment = description + (if (isTargetContagious) "[CONTAGIOUS!]" else "")
         val info = "\"$sourceFqn\" -> \"$targetFqn\"" + (if (comment.isBlank()) "" else " // $comment")
@@ -331,7 +331,7 @@ private fun transformToDotLikeString(reachabilityInfos: List<ReachabilityInfo>, 
     }
 }
 
-private fun transformToJsonString(reachabilityInfos: List<ReachabilityInfo>, dceDumpNameCache: DceDumpNameCache): String {
+private fun transformToJsonString(reachabilityInfos: List<ReachabilityInfo>, dceDumpNameCache: DceDumpDeclarationStorage): String {
     return "[\n" + transformToStringBy(reachabilityInfos, ",\n", dceDumpNameCache) { sourceFqn, targetFqn, description, isTargetContagious ->
         """
         |    {
@@ -343,6 +343,6 @@ private fun transformToJsonString(reachabilityInfos: List<ReachabilityInfo>, dce
     } + "\n]"
 }
 
-private fun transformToJsConstDeclaration(reachabilityInfos: List<ReachabilityInfo>, dceDumpNameCache: DceDumpNameCache): String {
+private fun transformToJsConstDeclaration(reachabilityInfos: List<ReachabilityInfo>, dceDumpNameCache: DceDumpDeclarationStorage): String {
     return "export const kotlinReachabilityInfos = " + transformToJsonString(reachabilityInfos, dceDumpNameCache) + ";"
 }
