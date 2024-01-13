@@ -103,12 +103,7 @@ internal class SymbolLightAccessorMethod private constructor(
                         it.abiName()
                 }
 
-                val visibility = if (!isGetter && propertySymbol.canHaveNonPrivateField)
-                    accessorSymbol.visibility
-                else
-                    propertySymbol.visibility
-
-                propertySymbol.computeJvmMethodName(defaultName, outerClass, accessorSite, visibility)
+                propertySymbol.computeJvmMethodName(defaultName, outerClass, accessorSite, accessorSymbol.visibility)
             }
         }
     }

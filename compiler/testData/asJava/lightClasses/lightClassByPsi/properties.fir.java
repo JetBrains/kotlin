@@ -3,7 +3,7 @@ public abstract interface A /* A*/ {
 
   public abstract int getInt2();//  getInt2()
 
-  public abstract void setInt2(int);//  setInt2(int)
+  public abstract void setInt2$light_idea_test_case(int);//  setInt2$light_idea_test_case(int)
 }
 
 public final class Foo /* Foo*/ {
