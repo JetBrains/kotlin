@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStubOrigin
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getKDocString
 
 context(KtAnalysisSession)
-fun KtSymbol.getObjCStubOrigin(): ObjCExportStubOrigin {
+fun KtSymbol.getObjCExportStubOrigin(): ObjCExportStubOrigin {
     // TODO: Differentiate origins
     // TODO: Extract kdoc from deserialized symbols
     return ObjCExportStubOrigin.Source(

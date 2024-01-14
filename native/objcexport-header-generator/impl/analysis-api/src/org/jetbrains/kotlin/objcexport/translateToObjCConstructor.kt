@@ -15,13 +15,13 @@ fun KtConstructorSymbol.translateToObjCConstructors(): List<ObjCMethod> {
 
     result.add(
         ObjCMethod(
-            null,
-            null,
-            false,
-            ObjCInstanceType,
-            listOf("new"),
-            emptyList(),
-            listOf(
+            comment = null,
+            origin = getObjCExportStubOrigin(),
+            isInstanceMethod = false,
+            returnType = ObjCInstanceType,
+            selectors = listOf("new"),
+            parameters = emptyList(),
+            attributes = listOf(
                 "availability(swift, unavailable, message=\"use object initializers instead\")"
             )
         )

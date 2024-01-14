@@ -54,13 +54,13 @@ fun KtPropertySymbol.buildProperty(): ObjCProperty {
     //declarationAttributes.addIfNotNull(mapper.getDeprecation(property)?.toDeprecationAttribute())
 
     return ObjCProperty(
-        name,
-        null,
-        null,
-        type!!,
-        attributes,
-        setterName,
-        getterName,
-        declarationAttributes
+        name = name,
+        comment = null,
+        origin = getObjCExportStubOrigin(),
+        type = type!!,
+        propertyAttributes = attributes,
+        setterName = setterName,
+        getterName = getterName,
+        declarationAttributes = declarationAttributes
     )
 }

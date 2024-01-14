@@ -48,7 +48,6 @@ internal fun KtFunctionLikeSymbol.buildObjCMethod(
     unavailable: Boolean = false,
 ): ObjCMethod {
     val bridge = getMethodBridge()
-    val origin: ObjCExportStubOrigin? = null
     val returnType: ObjCType = mapReturnType(bridge.returnBridge)
     val parameters = translateToObjCParameters(bridge)
     val selector = getSelector(bridge)
@@ -82,7 +81,7 @@ internal fun KtFunctionLikeSymbol.buildObjCMethod(
 
     return ObjCMethod(
         comment = comment,
-        origin = origin,
+        origin = getObjCExportStubOrigin(),
         isInstanceMethod = bridge.isInstance || isConstructor,
         returnType = returnType,
         selectors = selectors,

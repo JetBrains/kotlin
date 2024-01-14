@@ -25,7 +25,7 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
 
     val name = getObjCClassOrProtocolName()
     val comment: ObjCComment? = annotationsList.translateToObjCComment()
-    val origin: ObjCExportStubOrigin = getObjCStubOrigin()
+    val origin: ObjCExportStubOrigin = getObjCExportStubOrigin()
     val superProtocols: List<String> = superProtocols()
     val members: List<ObjCExportStub> = members().flatMap { it.translateToObjCExportStubs() }
     val categoryName: String? = null
