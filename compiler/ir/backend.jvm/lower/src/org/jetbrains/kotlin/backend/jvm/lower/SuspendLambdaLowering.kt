@@ -226,6 +226,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                     it.valueParameters[0].type.isKotlinResult()
         }
         return addFunctionOverride(superMethod, irFunction.startOffset, irFunction.endOffset).apply {
+            annotations += irFunction.annotations
             val localVals: List<IrVariable?> = parameterInfos.map { param ->
                 if (param.isUsed) {
                     buildVariable(
