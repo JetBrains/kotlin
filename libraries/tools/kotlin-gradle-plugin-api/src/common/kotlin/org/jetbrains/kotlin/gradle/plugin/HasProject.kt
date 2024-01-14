@@ -7,6 +7,13 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 
+/**
+ * Represents a Kotlin DSL entity associated with a Gradle [Project].
+ */
 interface HasProject {
+
+    /**
+     * The Gradle [Project] associated with the entity.
+     */
     val project: Project
 }
