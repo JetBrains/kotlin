@@ -5,9 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+/**
+ * @suppress
+ */
 @Deprecated("Use KotlinSourceSetTree instead")
 interface KotlinTargetHierarchy {
 
+    /**
+     * @suppress
+     */
     @Deprecated("Use KotlinSourceSetTree instead", replaceWith = ReplaceWith("KotlinSourceSetTree"))
     class SourceSetTree(val name: String)  {
         override fun toString(): String = name
