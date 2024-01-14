@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.gradle.plugin
 
 import groovy.lang.Closure
@@ -93,6 +91,7 @@ interface KotlinDependencyHandler {
         version: String,
         generateExternals: Boolean
     ): Dependency {
+        @Suppress("deprecation_error")
         warnNpmGenerateExternals(project.logger)
         return npm(name, version)
     }
@@ -107,6 +106,7 @@ interface KotlinDependencyHandler {
         directory: File,
         generateExternals: Boolean
     ): Dependency {
+        @Suppress("deprecation_error")
         warnNpmGenerateExternals(project.logger)
         return npm(name, directory)
     }
@@ -120,6 +120,7 @@ interface KotlinDependencyHandler {
         directory: File,
         generateExternals: Boolean
     ): Dependency {
+        @Suppress("deprecation_error")
         warnNpmGenerateExternals(project.logger)
         return npm(directory)
     }
@@ -147,6 +148,7 @@ interface KotlinDependencyHandler {
         version: String,
         generateExternals: Boolean
     ): Dependency {
+        @Suppress("deprecation_error")
         warnNpmGenerateExternals(project.logger)
         return optionalNpm(name, version)
     }
@@ -161,6 +163,7 @@ interface KotlinDependencyHandler {
         directory: File,
         generateExternals: Boolean
     ): Dependency {
+        @Suppress("deprecation_error")
         warnNpmGenerateExternals(project.logger)
         return optionalNpm(name, directory)
     }
@@ -174,6 +177,7 @@ interface KotlinDependencyHandler {
         directory: File,
         generateExternals: Boolean
     ): Dependency {
+        @Suppress("deprecation_error")
         warnNpmGenerateExternals(project.logger)
         return optionalNpm(directory)
     }
@@ -198,16 +202,22 @@ interface HasKotlinDependencies {
     val runtimeOnlyConfigurationName: String
 }
 
-@Deprecated("Do not use in your build script")
+/**
+ * @suppress
+ */
+@Deprecated(
+    message = "Do not use in your build script",
+    level = DeprecationLevel.ERROR
+)
 fun warnNpmGenerateExternals(logger: Logger) {
     logger.warn(
         """
-                |
-                |==========
-                |Please note, Dukat integration in Gradle plugin does not work now.
-                |It is in redesigning process.
-                |==========
-                |
-                """.trimMargin()
+        |
+        |==========
+        |Please note, Dukat integration in Gradle plugin does not work now.
+        |It is in redesigning process.
+        |==========
+        |
+        """.trimMargin()
     )
 }
