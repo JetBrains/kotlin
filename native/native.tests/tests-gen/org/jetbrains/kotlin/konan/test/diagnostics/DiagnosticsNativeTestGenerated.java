@@ -79,6 +79,12 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
     }
 
     @Test
+    @TestMetadata("resolveToDelegatedProperty.kt")
+    public void testResolveToDelegatedProperty() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/resolveToDelegatedProperty.kt");
+    }
+
+    @Test
     @TestMetadata("sharedImmutable.kt")
     public void testSharedImmutable() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/sharedImmutable.kt");
