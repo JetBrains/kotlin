@@ -45,13 +45,13 @@ mm::SpecialRefRegistry& mm::SpecialRefRegistry::instance() noexcept {
 
 mm::SpecialRefRegistry::Node* mm::SpecialRefRegistry::nextRoot(Node* current) noexcept {
     RuntimeAssert(current != nullptr, "current cannot be null");
-    RuntimeAssert(current != rootsTail(), "current cannot be tail");
+    RuntimeAssert(current != &rootsTail_, "current cannot be tail");
     Node* candidate = current->nextRoot_.load(std::memory_order_relaxed);
     // Not an infinite loop, `candidate` always moves forward and since insertions can only
     // happen in the head, they will always happen before `candidate`.
     while (true) {
         RuntimeAssert(candidate != nullptr, "candidate cannot be null");
-        if (candidate == rootsTail())
+        if (candidate == &rootsTail_)
             // Reached tail, nothing to do anymore
             return candidate;
         if (candidate->rc_.load(std::memory_order_relaxed) > 0) {
@@ -92,8 +92,8 @@ mm::SpecialRefRegistry::Node* mm::SpecialRefRegistry::nextRoot(Node* current) no
 
 std::pair<mm::SpecialRefRegistry::Node*, mm::SpecialRefRegistry::Node*> mm::SpecialRefRegistry::eraseFromRoots(
         Node* prev, Node* node) noexcept {
-    RuntimeAssert(node != rootsHead(), "node cannot be head");
-    RuntimeAssert(node != rootsTail(), "node cannot be tail");
+    RuntimeAssert(node != &rootsHead_, "node cannot be head");
+    RuntimeAssert(node != &rootsTail_, "node cannot be tail");
     Node* next = node->nextRoot_.load(std::memory_order_acquire);
     RuntimeAssert(next != nullptr, "node@%p next cannot be null", node);
     do {
@@ -106,15 +106,15 @@ std::pair<mm::SpecialRefRegistry::Node*, mm::SpecialRefRegistry::Node*> mm::Spec
             return {prev, next};
         }
         prev = prevExpectedNext;
-        RuntimeAssert(prev != rootsHead(), "prev cannot be head");
-        RuntimeAssert(prev != rootsTail(), "prev cannot be tail");
+        RuntimeAssert(prev != &rootsHead_, "prev cannot be head");
+        RuntimeAssert(prev != &rootsTail_, "prev cannot be tail");
         // We moved `prev` forward, nothing can insert after `prev` anymore, this
         // cannot be an infinite loop, then.
     } while (true);
 }
 
 void mm::SpecialRefRegistry::insertIntoRootsHead(Node& node) noexcept {
-    Node* next = rootsHead()->nextRoot_.load(std::memory_order_acquire);
+    Node* next = rootsHead_.nextRoot_.load(std::memory_order_acquire);
     Node* nodeExpectedNext = nullptr;
     do {
         RuntimeAssert(next != nullptr, "head's next cannot be null");
@@ -129,7 +129,7 @@ void mm::SpecialRefRegistry::insertIntoRootsHead(Node& node) noexcept {
         }
         // CAS was successfull, so we need to update the expected value of node.nextRoot_
         nodeExpectedNext = next;
-    } while (!rootsHead()->nextRoot_.compare_exchange_weak(next, &node, std::memory_order_release, std::memory_order_acquire));
+    } while (!rootsHead_.nextRoot_.compare_exchange_weak(next, &node, std::memory_order_release, std::memory_order_acquire));
 }
 
 std::list<mm::SpecialRefRegistry::Node>::iterator mm::SpecialRefRegistry::findAliveNode(
