@@ -20,13 +20,11 @@ import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirJsSessionFactory.registerJsComponents
-import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
 
 @OptIn(SessionConfiguration::class)
 internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
     override fun createSourcesSession(module: KtSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module) { context ->
-            registerDefaultComponents()
             registerJsComponents(moduleKind = null)
 
             register(
@@ -46,7 +44,6 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
 
     override fun createLibrarySession(module: KtModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
         return doCreateLibrarySession(module) { context ->
-            registerDefaultComponents()
             registerJsComponents(moduleKind = null)
 
             register(
@@ -64,14 +61,12 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
 
     override fun createBinaryLibrarySession(module: KtBinaryModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
-            registerDefaultComponents()
             registerJsComponents(moduleKind = null)
         }
     }
 
     override fun createDanglingFileSession(module: KtDanglingFileModule, contextSession: LLFirSession): LLFirSession {
         return doCreateDanglingFileSession(module, contextSession) {
-            registerDefaultComponents()
             registerJsComponents(moduleKind = null)
 
             register(

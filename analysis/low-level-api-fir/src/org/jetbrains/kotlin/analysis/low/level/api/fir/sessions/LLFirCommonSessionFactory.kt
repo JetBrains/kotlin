@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
     override fun createSourcesSession(module: KtSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module) { context ->
-            registerDefaultComponents()
-
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
@@ -50,8 +48,6 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
 
     override fun createLibrarySession(module: KtModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
         return doCreateLibrarySession(module) { context ->
-            registerDefaultComponents()
-
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
@@ -69,15 +65,12 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
 
     override fun createBinaryLibrarySession(module: KtBinaryModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
-            registerDefaultComponents()
             registerPlatformSpecificComponentsIfAny(module)
         }
     }
 
     override fun createDanglingFileSession(module: KtDanglingFileModule, contextSession: LLFirSession): LLFirSession {
         return doCreateDanglingFileSession(module, contextSession) {
-            registerDefaultComponents()
-
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(

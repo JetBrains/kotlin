@@ -22,14 +22,12 @@ import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesPr
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory.registerNativeComponents
-import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(SessionConfiguration::class)
 internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
     override fun createSourcesSession(module: KtSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module) { context ->
-            registerDefaultComponents()
             registerNativeComponents()
 
             register(
@@ -49,7 +47,6 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
 
     override fun createLibrarySession(module: KtModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
         return doCreateLibrarySession(module) { context ->
-            registerDefaultComponents()
             registerNativeComponents()
             register(
                 FirSymbolProvider::class,
@@ -66,14 +63,12 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
 
     override fun createBinaryLibrarySession(module: KtBinaryModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
-            registerDefaultComponents()
             registerNativeComponents()
         }
     }
 
     override fun createDanglingFileSession(module: KtDanglingFileModule, contextSession: LLFirSession): LLFirSession {
         return doCreateDanglingFileSession(module, contextSession) {
-            registerDefaultComponents()
             registerNativeComponents()
 
             register(

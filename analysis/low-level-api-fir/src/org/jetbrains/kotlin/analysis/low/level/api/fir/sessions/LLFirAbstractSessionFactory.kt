@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 internal abstract class LLFirAbstractSessionFactory(protected val project: Project) {
@@ -201,6 +202,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerCommonComponentsAfterExtensionsAreConfigured()
             registerJavaComponents(JavaModuleResolver.getInstance(project))
             registerResolveComponents()
+            registerDefaultComponents()
 
             val ktFile = module.file as? KtFile
 
@@ -269,6 +271,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerIdeComponents(project)
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents()
+            registerDefaultComponents()
 
             val firProvider = LLFirProvider(
                 this,
@@ -358,6 +361,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerCommonComponents(languageVersionSettings)
             registerCommonComponentsAfterExtensionsAreConfigured()
             registerResolveComponents()
+            registerDefaultComponents()
 
             val firProvider = LLFirProvider(
                 this,
@@ -489,6 +493,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerIdeComponents(project)
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents()
+            registerDefaultComponents()
 
             val firProvider = LLFirProvider(
                 this,
