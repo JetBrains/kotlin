@@ -36,13 +36,15 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
 
     open val shouldExportKDoc = false
 
-    fun build(): List<String> = ObjCHeader(
+    @InternalKotlinNativeApi
+    fun buildHeader(): ObjCHeader = ObjCHeader(
         stubs = stubs,
         classForwardDeclarations = classForwardDeclarations,
         protocolForwardDeclarations = protocolForwardDeclarations,
         additionalImports = getAdditionalImports(),
-        exportKDoc = shouldExportKDoc
-    ).lines
+    )
+
+    fun build(): List<String> = buildHeader().render(shouldExportKDoc)
 
     @InternalKotlinNativeApi
     fun buildInterface(): ObjCExportedInterface {

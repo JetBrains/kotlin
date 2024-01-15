@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.objcexport.testUtils
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.backend.konan.tests.ObjCExportHeaderGeneratorTest.HeaderGenerator
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCHeader
+import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator
 import org.jetbrains.kotlin.objcexport.KtObjCExportConfiguration
 import org.jetbrains.kotlin.objcexport.KtObjCExportSession
 import org.jetbrains.kotlin.objcexport.translateToObjCHeader
@@ -27,12 +28,12 @@ class AnalysisApiHeaderGeneratorExtension : ParameterResolver {
 }
 
 object AnalysisApiHeaderGenerator : HeaderGenerator {
-    override fun generateHeaders(root: File): String {
+    override fun generateHeaders(root: File, configuration: HeaderGenerator.Configuration): ObjCHeader {
         val session = createStandaloneAnalysisApiSession(root.listFiles().orEmpty().filter { it.extension == "kt" })
         val (module, files) = session.modulesWithFiles.entries.single()
         return analyze(module) {
-            KtObjCExportSession(KtObjCExportConfiguration()) {
-                translateToObjCHeader(files.map { it as KtFile }).toString()
+            KtObjCExportSession(KtObjCExportConfiguration(frameworkName = configuration.frameworkName)) {
+                translateToObjCHeader(files.map { it as KtFile })
             }
         }
     }

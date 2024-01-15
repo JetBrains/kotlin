@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtClassType
 import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
 
@@ -29,6 +30,10 @@ context(KtAnalysisSession)
 internal fun KtClassOrObjectSymbol.getSuperClassSymbolNotAny(): KtClassOrObjectSymbol? {
     return superTypes.firstNotNullOfOrNull find@{ superType ->
         if (superType.isAny) return@find null
+        if (superType.isError && superType is KtClassErrorType) {
+            //Header should have just a Base type in case unresolved super type
+            return@find null
+        }
         if (superType is KtClassType) {
             val classifier = superType.qualifiers.firstNotNullOfOrNull { qualifier ->
                 (qualifier as? KtClassTypeQualifier.KtResolvedClassTypeQualifier)?.symbol

@@ -6,10 +6,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getAllMembers
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrProtocolName
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getSuperClassSymbolNotAny
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.members
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
@@ -27,7 +27,7 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
     val comment: ObjCComment? = annotationsList.translateToObjCComment()
     val origin: ObjCExportStubOrigin = getObjCExportStubOrigin()
     val superProtocols: List<String> = superProtocols()
-    val members: List<ObjCExportStub> = members().flatMap { it.translateToObjCExportStubs() }
+    val members: List<ObjCExportStub> = getAllMembers().flatMap { it.translateToObjCExportStubs() }
     val categoryName: String? = null
     val generics: List<ObjCGenericTypeDeclaration> = emptyList()
     val superClassGenerics: List<ObjCNonNullReferenceType> = emptyList()

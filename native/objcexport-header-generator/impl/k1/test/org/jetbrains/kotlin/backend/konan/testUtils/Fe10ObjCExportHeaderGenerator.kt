@@ -9,7 +9,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.backend.konan.objcexport.*
-import org.jetbrains.kotlin.backend.konan.tests.ObjCExportHeaderGeneratorTest
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -28,7 +27,7 @@ class Fe10HeaderGeneratorExtension : ParameterResolver, AfterEachCallback {
     }
 
     override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean {
-        return parameterContext.parameter.type == ObjCExportHeaderGeneratorTest.HeaderGenerator::class.java
+        return parameterContext.parameter.type == HeaderGenerator::class.java
     }
 
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
@@ -43,15 +42,16 @@ class Fe10HeaderGeneratorExtension : ParameterResolver, AfterEachCallback {
     }
 }
 
-private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) :
-    ObjCExportHeaderGeneratorTest.HeaderGenerator {
-    override fun generateHeaders(root: File): String {
-        val headerGenerator = createObjCExportHeaderGenerator(disposable, root)
+private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenerator {
+    override fun generateHeaders(root: File, configuration: HeaderGenerator.Configuration): ObjCHeader {
+        val headerGenerator = createObjCExportHeaderGenerator(disposable, root, configuration)
         headerGenerator.translateModuleDeclarations()
-        return headerGenerator.build().joinToString(System.lineSeparator())
+        return headerGenerator.buildHeader()
     }
 
-    private fun createObjCExportHeaderGenerator(disposable: Disposable, root: File): ObjCExportHeaderGenerator {
+    private fun createObjCExportHeaderGenerator(
+        disposable: Disposable, root: File, configuration: HeaderGenerator.Configuration,
+    ): ObjCExportHeaderGenerator {
         val mapper = ObjCExportMapper(
             unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT
         )
@@ -62,7 +62,7 @@ private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) :
             local = false,
             problemCollector = ObjCExportProblemCollector.SILENT,
             configuration = object : ObjCExportNamer.Configuration {
-                override val topLevelNamePrefix: String get() = ""
+                override val topLevelNamePrefix: String get() = configuration.frameworkName
                 override fun getAdditionalPrefix(module: ModuleDescriptor): String? = null
                 override val objcGenerics: Boolean = true
             }

@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCComment
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocolImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.toNameAttributes
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDeclaredMembers
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.members
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
@@ -26,7 +26,7 @@ fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
     // TODO: Check error type!
     val name = getObjCClassOrProtocolName()
 
-    val members = members().flatMap { it.translateToObjCExportStubs() }
+    val members = getDeclaredMembers().flatMap { it.translateToObjCExportStubs() }
 
     val comment: ObjCComment? = annotationsList.translateToObjCComment()
 

@@ -134,7 +134,7 @@ internal fun KtFunctionLikeSymbol.getSwiftName(methodBridge: MethodBridge): Stri
                         1 -> "_"
                         else -> "value"
                     }
-                    else -> symbol!!.getObjCName().name(true)
+                    else -> symbol!!.name
                 }
                 MethodBridgeValueParameter.ErrorOutParameter -> continue@parameters
                 is MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
@@ -208,7 +208,9 @@ fun KtFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
                     1 -> ""
                     else -> "value"
                 }
-                else -> typeParameterSymbol!!.getObjCName().name(false)
+                else -> {
+                    typeParameterSymbol!!.name.toString()
+                }
             }
             MethodBridgeValueParameter.ErrorOutParameter -> "error"
             is MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
@@ -282,32 +284,35 @@ private fun String.mangleIfSpecialFamily(prefix: String): String {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.startsWithWords]
  */
 private fun String.startsWithWords(words: String) = this.startsWith(words) &&
-    (this.length == words.length || !this[words.length].isLowerCase())
+        (this.length == words.length || !this[words.length].isLowerCase())
 
+/**
+ * [org.jetbrains.kotlin.backend.konan.objcexport.MethodBrideExtensionsKt.valueParametersAssociated]
+ */
 @InternalKotlinNativeApi
 fun MethodBridge.valueParametersAssociated(
     function: KtFunctionLikeSymbol,
-): List<Pair<MethodBridgeValueParameter, KtTypeParameterSymbol?>> {
+): List<Pair<MethodBridgeValueParameter, KtValueParameterSymbol?>> {
 
-    val kotlinParameters = function.typeParameters.iterator()
-    if (!kotlinParameters.hasNext()) return emptyList()
+    val allParameters = function.valueParameters.iterator()
+    if (!allParameters.hasNext()) return emptyList()
 
     val skipFirstKotlinParameter = when (this.receiver) {
         MethodBridgeReceiver.Static -> false
         MethodBridgeReceiver.Factory, MethodBridgeReceiver.Instance -> true
     }
-    if (skipFirstKotlinParameter) {
-        kotlinParameters.next()
+    if (skipFirstKotlinParameter && allParameters.hasNext()) {
+        allParameters.next()
     }
 
     return this.valueParameters.map {
         when (it) {
-            is MethodBridgeValueParameter.Mapped -> it to kotlinParameters.next()
+            is MethodBridgeValueParameter.Mapped -> it to allParameters.next()
             is MethodBridgeValueParameter.SuspendCompletion,
             is MethodBridgeValueParameter.ErrorOutParameter,
             -> it to null
         }
-    }.also { assert(!kotlinParameters.hasNext()) }
+    }
 }
 
 
@@ -329,7 +334,7 @@ fun KtFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): 
             if (!returnBridge.successMayBeZero) {
                 check(
                     successReturnType is ObjCNonNullReferenceType
-                        || (successReturnType is ObjCPointerType && !successReturnType.nullable)
+                            || (successReturnType is ObjCPointerType && !successReturnType.nullable)
                 ) {
                     "Unexpected return type: $successReturnType in $this"
                 }
