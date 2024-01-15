@@ -83,6 +83,8 @@ where advanced options include:
                              -Xlambdas=class                 Generate lambdas as explicit classes.
   -Xlink-via-signatures      Link JVM IR symbols via signatures instead of descriptors.
                              This mode is slower, but it can be useful for troubleshooting problems with the JVM IR backend.
+                             This option is deprecated and will be deleted in future versions.
+                             It has no effect when -language-version is 2.0 or higher.
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types.
   -Xno-kotlin-nothing-value-exception
                              Don't use KotlinNothingValueException, which has been available since 1.4.

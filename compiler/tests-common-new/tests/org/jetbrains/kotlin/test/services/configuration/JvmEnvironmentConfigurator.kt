@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EMIT_JVM_
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_IR_INLINER
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.JDK_RELEASE
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES_K1
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_NEW_JAVA_ANNOTATION_TARGETS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_OPTIMIZED_CALLABLE_REFERENCES
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_UNIFIED_NULL_CHECKS
@@ -178,7 +178,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         register(ENABLE_DEBUG_MODE, JVMConfigurationKeys.ENABLE_DEBUG_MODE)
         register(NO_NEW_JAVA_ANNOTATION_TARGETS, JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
         register(OLD_INNER_CLASSES_LOGIC, JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC)
-        register(LINK_VIA_SIGNATURES, JVMConfigurationKeys.LINK_VIA_SIGNATURES)
+        register(LINK_VIA_SIGNATURES_K1, JVMConfigurationKeys.LINK_VIA_SIGNATURES)
         register(ENABLE_JVM_IR_INLINER, JVMConfigurationKeys.ENABLE_IR_INLINER)
     }
 

@@ -6,12 +6,6 @@
 // WITH_STDLIB
 // SKIP_KLIB_TEST
 
-// IGNORE_BACKEND_K2: JVM_IR
-// ^^^ The IrErrorCallExpression inside the body of test1() function is dumped in a different way on JVM K1 and JVM K2.
-//     That is because `IrErrorCallExpression.description` includes a signature of a local lambda, which is mangled
-//     differently on K1 and K2. This is not a problem since signatures for local entities do not participate in IR-linkage.
-//     But the test needs to be muted.
-
 inline fun foo(block: () -> Unit) { block() }
 
 inline fun bar(block1: () -> Unit, noinline block2: () -> Unit) {

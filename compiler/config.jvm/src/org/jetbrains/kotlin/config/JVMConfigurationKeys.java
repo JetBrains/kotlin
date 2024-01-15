@@ -155,7 +155,7 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("Validate generated JVM bytecode");
 
     public static final CompilerConfigurationKey<Boolean> LINK_VIA_SIGNATURES =
-            CompilerConfigurationKey.create("Link JVM IR symbols via signatures, instead of by descriptors");
+            CompilerConfigurationKey.create("Link JVM IR symbols via signatures, instead of by descriptors on the K1 frontend");
 
     public static final CompilerConfigurationKey<Boolean> ENABLE_DEBUG_MODE =
             CompilerConfigurationKey.create("Enable debug mode");

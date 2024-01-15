@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SIGNATURE
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES_K1
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
@@ -55,7 +55,7 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
             +DUMP_IR
             +DUMP_KT_IR
             +DUMP_SIGNATURES
-            +LINK_VIA_SIGNATURES
+            +LINK_VIA_SIGNATURES_K1
             +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
             DIAGNOSTICS with "-warnings"
         }

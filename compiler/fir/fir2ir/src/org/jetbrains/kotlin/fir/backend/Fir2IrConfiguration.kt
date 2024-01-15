@@ -56,7 +56,7 @@ class Fir2IrConfiguration private constructor(
             Fir2IrConfiguration(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
-                linkViaSignatures = compilerConfiguration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
+                linkViaSignatures = false,
                 evaluatedConstTracker = compilerConfiguration.putIfAbsent(
                     CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
                     EvaluatedConstTracker.create(),

@@ -36,10 +36,8 @@ class MyMap<K : Any, V : Any> : AbstractMutableMap<K, V> {
   //   Mangled name: MyMap#computeIfPresent(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1,out|1:1?>{EnhancedNullability}){}1:1?
   //   Mangled name for the signature by IR:       computeIfPresent(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1,out|1:1?>{EnhancedNullability}){}1:1?
   //   Mangled name for the signature by Frontend: computeIfPresent(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1?>{EnhancedNullability}){}1:1?
-  //   Public signature by IR: /MyMap.computeIfPresent|-2673672788318360066[0]
-  //   Public signature by IR debug description: computeIfPresent(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1,out|1:1?>{EnhancedNullability}){}1:1?
-  //   Public signature by Frontend: /MyMap.computeIfPresent|-4313180944690406140[0]
-  //   Public signature by Frontend debug description: computeIfPresent(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1?>{EnhancedNullability}){}1:1?
+  //   Public signature: /MyMap.computeIfPresent|-2673672788318360066[0]
+  //   Public signature debug description: computeIfPresent(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1,out|1:1?>{EnhancedNullability}){}1:1?
   /* fake */ override fun computeIfPresent(p0: @EnhancedNullability K, p1: @EnhancedNullability BiFunction<in @EnhancedNullability K, in V, out V?>): V?
 
   // CHECK JVM_IR:
@@ -88,20 +86,16 @@ class MyMap<K : Any, V : Any> : AbstractMutableMap<K, V> {
   //   Mangled name: MyMap#merge(1:0{EnhancedNullability};1:1{EnhancedNullability};java.util.function.BiFunction<in|1:1,in|1:1,out|1:1?>{EnhancedNullability}){}1:1?
   //   Mangled name for the signature by IR:       merge(1:0{EnhancedNullability};1:1{EnhancedNullability};java.util.function.BiFunction<in|1:1,in|1:1,out|1:1?>{EnhancedNullability}){}1:1?
   //   Mangled name for the signature by Frontend: merge(1:0{EnhancedNullability};1:1{EnhancedNullability};java.util.function.BiFunction<in|1:1{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1?>{EnhancedNullability}){}1:1?
-  //   Public signature by IR: /MyMap.merge|5136195963180492586[0]
-  //   Public signature by IR debug description: merge(1:0{EnhancedNullability};1:1{EnhancedNullability};java.util.function.BiFunction<in|1:1,in|1:1,out|1:1?>{EnhancedNullability}){}1:1?
-  //   Public signature by Frontend: /MyMap.merge|-7730033017111273031[0]
-  //   Public signature by Frontend debug description: merge(1:0{EnhancedNullability};1:1{EnhancedNullability};java.util.function.BiFunction<in|1:1{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1?>{EnhancedNullability}){}1:1?
+  //   Public signature: /MyMap.merge|5136195963180492586[0]
+  //   Public signature debug description: merge(1:0{EnhancedNullability};1:1{EnhancedNullability};java.util.function.BiFunction<in|1:1,in|1:1,out|1:1?>{EnhancedNullability}){}1:1?
   /* fake */ override fun merge(p0: @EnhancedNullability K, p1: @EnhancedNullability (V & Any), p2: @EnhancedNullability BiFunction<in V, in V, out V?>): V?
 
   // CHECK:
   //   Mangled name: MyMap#putAll(kotlin.collections.Map<out|1:0?,1:1?>{EnhancedNullability}){}
   //   Mangled name for the signature by IR:       putAll(kotlin.collections.Map<out|1:0?,1:1?>{EnhancedNullability}){}
   //   Mangled name for the signature by Frontend: putAll(kotlin.collections.Map<out|1:0?,out|1:1?>{EnhancedNullability}){}
-  //   Public signature by IR: /MyMap.putAll|8252374948943605914[0]
-  //   Public signature by IR debug description: putAll(kotlin.collections.Map<out|1:0?,1:1?>{EnhancedNullability}){}
-  //   Public signature by Frontend: /MyMap.putAll|2145725647041437129[0]
-  //   Public signature by Frontend debug description: putAll(kotlin.collections.Map<out|1:0?,out|1:1?>{EnhancedNullability}){}
+  //   Public signature: /MyMap.putAll|8252374948943605914[0]
+  //   Public signature debug description: putAll(kotlin.collections.Map<out|1:0?,1:1?>{EnhancedNullability}){}
   /* fake */ override fun putAll(p0: @EnhancedNullability Map<out K?, V?>): Unit
 
   // CHECK JVM_IR:

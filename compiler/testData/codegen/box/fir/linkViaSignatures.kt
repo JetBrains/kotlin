@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
-// LINK_VIA_SIGNATURES
+// LINK_VIA_SIGNATURES_K1
 
 class Class
 interface Interface
