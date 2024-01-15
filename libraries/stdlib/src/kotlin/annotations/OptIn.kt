@@ -165,7 +165,8 @@ public annotation class ExperimentalSubclassOptIn
  * - Annotate declaration with [OptIn] in order to opt in into the provided guarantees in a non-propagating manner.
  * - Annotate declaration with [SubclassOptInRequired] with the same marker class, making it further propagating only for subclassing.
  *
- * Uses of this annotation are limited to open and abstract classes, and non-`fun` interfaces.
+ * Uses of this annotation are limited to open and abstract classes, and non-`fun` interfaces,
+ * except local classes and sealed classes/interfaces.
  * Any other uses allowed by `CLASS` annotation target yield a compilation error.
  *
  * @property markerClass specifies marker annotation that require explicit opt-in.
