@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 
-@DisplayName("Kapt caching inside Gradle daemon")
+@DisplayName("Kapt3 caching inside Gradle daemon")
 @DaemonsGradlePluginTests
-class Kapt3AndGradleDaemon : KGPDaemonsBaseTest() {
+open class Kapt3AndGradleDaemon : KGPDaemonsBaseTest() {
 
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
         .copy(
@@ -22,7 +22,7 @@ class Kapt3AndGradleDaemon : KGPDaemonsBaseTest() {
                 verbose = true,
                 includeCompileClasspath = false
             )
-        )
+        ).copyEnsuringK1()
 
     @DisplayName("Javac should be loaded only once")
     @GradleTest
@@ -51,7 +51,7 @@ class Kapt3AndGradleDaemon : KGPDaemonsBaseTest() {
     // which is not compatible with classloaders caching.
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
-    fun testAnnotationProcessorClassIsLoadedOnce(gradleVersion: GradleVersion) {
+    open fun testAnnotationProcessorClassIsLoadedOnce(gradleVersion: GradleVersion) {
         project(
             "javacIsLoadedOnce".withPrefix,
             gradleVersion,
