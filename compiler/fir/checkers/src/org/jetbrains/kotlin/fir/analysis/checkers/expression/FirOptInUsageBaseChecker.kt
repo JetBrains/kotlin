@@ -175,6 +175,7 @@ object FirOptInUsageBaseChecker {
             is FirAnonymousInitializer, is FirDanglingModifierList, is FirFile, is FirTypeParameter, is FirScript, is FirCodeFragment -> {}
         }
 
+        lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
         fir.loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype)
 
         if (fir.getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID, session) != null) {

@@ -40016,6 +40016,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("Module.kt")
+                public void testModule() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/Module.kt");
+                }
+
+                @Test
                 @TestMetadata("NestedClasses.kt")
                 public void testNestedClasses() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/NestedClasses.kt");
