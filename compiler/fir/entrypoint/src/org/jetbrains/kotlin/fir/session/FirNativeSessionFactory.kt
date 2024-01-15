@@ -41,8 +41,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             extensionRegistrars,
             registerExtraComponents = { session ->
                 session.registerDefaultComponents()
-                session.register(FirPlatformClassMapper::class, FirNativeClassMapper())
-                session.register(FirPlatformSpecificCastChecker::class, FirNativeCastChecker)
+                session.registerNativeComponents()
                 registerExtraComponents(session)
             },
             createKotlinScopeProvider = { FirKotlinScopeProvider() },
@@ -88,8 +87,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             init,
             registerExtraComponents = {
                 it.registerDefaultComponents()
-                it.register(FirPlatformClassMapper::class, FirNativeClassMapper())
-                it.register(FirPlatformSpecificCastChecker::class, FirNativeCastChecker)
+                it.registerNativeComponents()
                 registerExtraComponents(it)
             },
             registerExtraCheckers = { it.registerNativeCheckers() },
@@ -102,5 +100,11 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
                 )
             }
         )
+    }
+
+    @OptIn(SessionConfiguration::class)
+    fun FirSession.registerNativeComponents() {
+        register(FirPlatformClassMapper::class, FirNativeClassMapper())
+        register(FirPlatformSpecificCastChecker::class, FirNativeCastChecker)
     }
 }
