@@ -292,6 +292,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("delegatedMemberHidesSupertypeOverride.kt")
+        public void testDelegatedMemberHidesSupertypeOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/delegatedMemberHidesSupertypeOverride.kt");
+        }
+
+        @Test
         @TestMetadata("delegationTypeMismatch.kt")
         public void testDelegationTypeMismatch() throws Exception {
             runTest("compiler/testData/diagnostics/tests/delegationTypeMismatch.kt");
