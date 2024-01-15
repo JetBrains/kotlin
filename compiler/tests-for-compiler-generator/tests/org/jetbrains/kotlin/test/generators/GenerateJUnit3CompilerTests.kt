@@ -12,8 +12,13 @@ import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
+import org.jetbrains.kotlin.codegen.defaultConstructor.fir.AbstractFirLightTreeDefaultArgumentsReflectionTest
+import org.jetbrains.kotlin.codegen.defaultConstructor.fir.AbstractFirPsiDefaultArgumentsReflectionTest
+import org.jetbrains.kotlin.codegen.defaultConstructor.ir.AbstractIrDefaultArgumentsReflectionTest
+import org.jetbrains.kotlin.codegen.fir.*
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
+import org.jetbrains.kotlin.codegen.ir.AbstractIrWriteSignatureTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByAstTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByStubTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderSourceElementMappingTestCase
@@ -27,6 +32,8 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.jvm.compiler.*
+import org.jetbrains.kotlin.jvm.compiler.fir.AbstractFirLightTreeCompileJavaAgainstKotlinTest
+import org.jetbrains.kotlin.jvm.compiler.fir.AbstractFirPsiCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.ir.*
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
 import org.jetbrains.kotlin.klib.AbstractKlibIrTextTestCase
@@ -354,7 +361,43 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("writeFlags", targetBackend = TargetBackend.JVM_IR)
             }
 
+            testClass<AbstractIrDefaultArgumentsReflectionTest> {
+                model("codegen/defaultArguments/reflection", targetBackend = TargetBackend.JVM_IR)
+            }
+
             testClass<AbstractIrWriteSignatureTest> {
+                model("writeSignature", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirPsiCheckLocalVariablesTableTest> {
+                model("checkLocalVariablesTable", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirPsiWriteFlagsTest> {
+                model("writeFlags", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirPsiDefaultArgumentsReflectionTest> {
+                model("codegen/defaultArguments/reflection", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirPsiWriteSignatureTest> {
+                model("writeSignature", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirLightTreeWriteFlagsTest> {
+                model("writeFlags", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirLightTreeDefaultArgumentsReflectionTest> {
+                model("codegen/defaultArguments/reflection", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirLightTreeCheckLocalVariablesTableTest> {
+                model("checkLocalVariablesTable", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirLightTreeWriteSignatureTest> {
                 model("writeSignature", targetBackend = TargetBackend.JVM_IR)
             }
 

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-class JvmIrLinkageModeTest : CodegenTestCase() {
+open class JvmIrLinkageModeTest : CodegenTestCase() {
     override val backend: TargetBackend
         get() = TargetBackend.JVM_IR
 

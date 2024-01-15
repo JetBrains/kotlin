@@ -28,7 +28,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 import java.io.File;
 
 // TODO Remove this class once general multi-module bytecode text tests are implemented.
-abstract public class AbstractGenerateNotNullAssertionsTest extends CodegenTestCase {
+public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     @NotNull
     @Override
     protected String getPrefix() {
@@ -100,5 +100,9 @@ abstract public class AbstractGenerateNotNullAssertionsTest extends CodegenTestC
                 };
             }
         }, 0);
+    }
+
+    public void testNoAssertionsForKotlinFromBinary() {
+        doTestNoAssertionsForKotlinFromBinary("noAssertionsForKotlin.kt", "noAssertionsForKotlinMain.kt");
     }
 }

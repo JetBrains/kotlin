@@ -217,7 +217,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     protected void configureEnvironment(KotlinCoreEnvironment environment) {}
 
-    protected void updateConfiguration(CompilerConfiguration configuration) {}
+    public void updateConfiguration(@NotNull CompilerConfiguration configuration) {}
 
     protected void doTestJavaAgainstKotlin(String expectedFileName) {
         try {
