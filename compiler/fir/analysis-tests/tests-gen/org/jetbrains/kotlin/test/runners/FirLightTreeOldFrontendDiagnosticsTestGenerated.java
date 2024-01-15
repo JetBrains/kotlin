@@ -376,6 +376,24 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("expressionsInQaSelectorsCornerCases.kt")
+        public void testExpressionsInQaSelectorsCornerCases() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/expressionsInQaSelectorsCornerCases.kt");
+        }
+
+        @Test
+        @TestMetadata("expressionsInQaSelectorsReceiverConversion.kt")
+        public void testExpressionsInQaSelectorsReceiverConversion() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/expressionsInQaSelectorsReceiverConversion.kt");
+        }
+
+        @Test
+        @TestMetadata("expressionsInQaSelectorsWithElvis.kt")
+        public void testExpressionsInQaSelectorsWithElvis() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/expressionsInQaSelectorsWithElvis.kt");
+        }
+
+        @Test
         @TestMetadata("ExtensionCallInvoke.kt")
         public void testExtensionCallInvoke() throws Exception {
             runTest("compiler/testData/diagnostics/tests/ExtensionCallInvoke.kt");
