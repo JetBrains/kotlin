@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.kapt4
 
+import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
+import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
+import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt3.EfficientProcessorLoader
 import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
@@ -75,9 +78,22 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                     buildKtModuleProviderByCompilerConfiguration(updatedConfiguration)
 
                     registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
+                    registerProjectService(KtCompilerPluginsProvider::class.java, StandaloneCompilerPluginsProvider())
                 }
 
             val (module, files) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()
+
+            val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
+            for (registrar in configuration.getList(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)) {
+                with(registrar) { extensionStorage.registerExtensions(configuration) }
+            }
+            for ((extensionPoint, extensions) in extensionStorage.registeredExtensions) {
+                for (extension in extensions) {
+                    @Suppress("TestOnlyProblems")
+                    module.project.extensionArea.getExtensionPointIfRegistered<Any>(extensionPoint.extensionPointName.name)
+                        ?.registerExtension(extension, module.project)
+                }
+            }
 
             optionsBuilder.apply {
                 projectBaseDir = projectBaseDir ?: module.project.basePath?.let(::File)
