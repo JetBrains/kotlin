@@ -16,6 +16,6 @@ FILE: mutablePropertyWithCapturedType.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        lval mutableProperty: R|kotlin/reflect/KMutableProperty1<Klass<*>, Generic<out kotlin/Any?>>| = Q|Klass|::R|SubstitutionOverride</Klass.mutableProperty: R|Generic<CapturedType(*)>|>|
+        lval mutableProperty: R|kotlin/reflect/KMutableProperty1<Klass<*>, Generic<out kotlin/Any?>>| = Q|Klass|<*>::R|SubstitutionOverride</Klass.mutableProperty: R|Generic<CapturedType(*)>|>|
         R|<local>/mutableProperty|.R|SubstitutionOverride<kotlin/reflect/KMutableProperty1.set: R|kotlin/Unit|>|(R|/Klass.Klass|<R|kotlin/Int|>(), R|/Generic.Generic|<R|kotlin/String|>())
     }

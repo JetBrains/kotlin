@@ -47,9 +47,9 @@ FILE: incompleteConstructorCall.fir.kt
         }
 
     }
-    public final val test: R|Outer.Companion| = Q|Outer|
+    public final val test: R|Outer.Companion| = Q|Outer|<R|kotlin/String|>
         public get(): R|Outer.Companion|
-    public final val test2: R|Outer.Nested.Companion| = Q|Outer.Nested|
+    public final val test2: R|Outer.Nested.Companion| = Q|Outer.Nested|<R|kotlin/String|>
         public get(): R|Outer.Nested.Companion|
     public final val test3: R|Outer.Inner.Companion| = R|kotlin/Double|
         public get(): R|Outer.Inner.Companion|

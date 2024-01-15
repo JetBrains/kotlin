@@ -1154,6 +1154,7 @@ class FirRenderer(
 
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
             resolvedQualifierRenderer.render(resolvedQualifier)
+            resolvedQualifier.typeArguments.renderTypeArguments()
         }
 
         override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
