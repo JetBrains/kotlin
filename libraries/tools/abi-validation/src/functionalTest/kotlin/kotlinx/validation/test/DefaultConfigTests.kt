@@ -5,7 +5,6 @@
 
 package kotlinx.validation.test
 
-import kotlinx.validation.API_DIR
 import kotlinx.validation.api.*
 import org.assertj.core.api.*
 import org.junit.Test

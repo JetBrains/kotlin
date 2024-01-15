@@ -5,7 +5,6 @@
 
 package kotlinx.validation.api
 
-import kotlinx.validation.API_DIR
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File

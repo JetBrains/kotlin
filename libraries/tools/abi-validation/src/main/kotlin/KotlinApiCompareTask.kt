@@ -15,7 +15,7 @@ import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 
-open class KotlinApiCompareTask @Inject constructor(private val objects: ObjectFactory): DefaultTask() {
+public open class KotlinApiCompareTask @Inject constructor(private val objects: ObjectFactory): DefaultTask() {
 
     /*
      * Nullability and optionality is a workaround for
@@ -26,14 +26,14 @@ open class KotlinApiCompareTask @Inject constructor(private val objects: ObjectF
     @Optional
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
-    var projectApiDir: File? = null
+    public var projectApiDir: File? = null
 
     // Used for diagnostic error message when projectApiDir doesn't exist
     @Input
     @Optional
-    var nonExistingProjectApiDir: String? = null
+    public var nonExistingProjectApiDir: String? = null
 
-    fun compareApiDumps(apiReferenceDir: File, apiBuildDir: File) {
+    internal fun compareApiDumps(apiReferenceDir: File, apiBuildDir: File) {
         if (apiReferenceDir.exists()) {
             projectApiDir = apiReferenceDir
         } else {
@@ -45,19 +45,19 @@ open class KotlinApiCompareTask @Inject constructor(private val objects: ObjectF
 
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
-    lateinit var apiBuildDir: File
+    public lateinit var apiBuildDir: File
 
     @OutputFile
     @Optional
     @Suppress("unused")
-    val dummyOutputFile: File? = null
+    public val dummyOutputFile: File? = null
 
     private val projectName = project.name
 
     private val rootDir = project.rootProject.rootDir
 
     @TaskAction
-    fun verify() {
+    internal fun verify() {
         val projectApiDir = projectApiDir
             ?: error("Expected folder with API declarations '$nonExistingProjectApiDir' does not exist.\n" +
                     "Please ensure that ':apiDump' was executed in order to get API dump to compare the build against")

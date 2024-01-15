@@ -76,6 +76,7 @@ dependencies {
 
 tasks.compileKotlin {
     compilerOptions {
+        freeCompilerArgs.add("-Xexplicit-api=strict")
         allWarningsAsErrors.set(true)
         @Suppress("DEPRECATION") // Compatibility with Gradle 7 requires Kotlin 1.4
         languageVersion.set(KotlinVersion.KOTLIN_1_4)

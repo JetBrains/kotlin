@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 JetBrains s.r.o.
+ * Copyright 2016-2023 JetBrains s.r.o.
  * Use of this source code is governed by the Apache 2.0 License that can be found in the LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import kotlinx.metadata.jvm.*
 import org.objectweb.asm.*
 import org.objectweb.asm.tree.*
 
-val ACCESS_NAMES = mapOf(
+internal val ACCESS_NAMES = mapOf(
     Opcodes.ACC_PUBLIC to "public",
     Opcodes.ACC_PROTECTED to "protected",
     Opcodes.ACC_PRIVATE to "private",
@@ -21,13 +21,13 @@ val ACCESS_NAMES = mapOf(
     Opcodes.ACC_ANNOTATION to "annotation"
 )
 
-fun isPublic(access: Int) = access and Opcodes.ACC_PUBLIC != 0 || access and Opcodes.ACC_PROTECTED != 0
-fun isProtected(access: Int) = access and Opcodes.ACC_PROTECTED != 0
-fun isStatic(access: Int) = access and Opcodes.ACC_STATIC != 0
-fun isFinal(access: Int) = access and Opcodes.ACC_FINAL != 0
-fun isSynthetic(access: Int) = access and Opcodes.ACC_SYNTHETIC != 0
+internal fun isPublic(access: Int) = access and Opcodes.ACC_PUBLIC != 0 || access and Opcodes.ACC_PROTECTED != 0
+internal fun isProtected(access: Int) = access and Opcodes.ACC_PROTECTED != 0
+internal fun isStatic(access: Int) = access and Opcodes.ACC_STATIC != 0
+internal fun isFinal(access: Int) = access and Opcodes.ACC_FINAL != 0
+internal fun isSynthetic(access: Int) = access and Opcodes.ACC_SYNTHETIC != 0
 
-fun ClassNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
+internal fun ClassNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
     isPublic(access)
             && !isLocal()
             && !isWhenMappings()
@@ -36,27 +36,26 @@ fun ClassNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
             && (classVisibility?.isPublic(isPublishedApi()) ?: true)
 
 
-val ClassNode.innerClassNode: InnerClassNode? get() = innerClasses.singleOrNull { it.name == name }
-fun ClassNode.isLocal() = outerMethod != null
-fun ClassNode.isInner() = innerClassNode != null
-fun ClassNode.isWhenMappings() = isSynthetic(access) && name.endsWith("\$WhenMappings")
-fun ClassNode.isSyntheticAnnotationClass() = isSynthetic(access) && name.contains("\$annotationImpl\$")
-fun ClassNode.isEnumEntriesMappings() = isSynthetic(access) && name.endsWith("\$EntriesMappings")
+private val ClassNode.innerClassNode: InnerClassNode? get() = innerClasses.singleOrNull { it.name == name }
+private fun ClassNode.isLocal() = outerMethod != null
+private fun ClassNode.isInner() = innerClassNode != null
+private fun ClassNode.isWhenMappings() = isSynthetic(access) && name.endsWith("\$WhenMappings")
+private fun ClassNode.isSyntheticAnnotationClass() = isSynthetic(access) && name.contains("\$annotationImpl\$")
+private fun ClassNode.isEnumEntriesMappings() = isSynthetic(access) && name.endsWith("\$EntriesMappings")
 
-val ClassNode.effectiveAccess: Int get() = innerClassNode?.access ?: access
-val ClassNode.outerClassName: String? get() = innerClassNode?.outerName
-
-
-const val publishedApiAnnotationName = "kotlin/PublishedApi"
-fun ClassNode.isPublishedApi() = findAnnotation(publishedApiAnnotationName, includeInvisible = true) != null
-fun List<AnnotationNode>.isPublishedApi() = firstOrNull { it.refersToName(publishedApiAnnotationName) } != null
-
-fun ClassNode.isDefaultImpls(metadata: KotlinClassMetadata?) = isInner() && name.endsWith("\$DefaultImpls") && metadata.isSyntheticClass()
+internal val ClassNode.effectiveAccess: Int get() = innerClassNode?.access ?: access
+internal val ClassNode.outerClassName: String? get() = innerClassNode?.outerName
 
 
-fun ClassNode.findAnnotation(annotationName: String, includeInvisible: Boolean = false) =
+private const val publishedApiAnnotationName = "kotlin/PublishedApi"
+private fun ClassNode.isPublishedApi() = findAnnotation(publishedApiAnnotationName, includeInvisible = true) != null
+internal fun List<AnnotationNode>.isPublishedApi() = firstOrNull { it.refersToName(publishedApiAnnotationName) } != null
+
+internal fun ClassNode.isDefaultImpls(metadata: KotlinClassMetadata?) = isInner() && name.endsWith("\$DefaultImpls") && metadata.isSyntheticClass()
+
+internal fun ClassNode.findAnnotation(annotationName: String, includeInvisible: Boolean = false) =
     findAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
-operator fun AnnotationNode.get(key: String): Any? = values.annotationValue(key)
+internal operator fun AnnotationNode.get(key: String): Any? = values.annotationValue(key)
 
 private fun List<Any>.annotationValue(key: String): Any? {
     for (index in (0 until size / 2)) {
@@ -75,5 +74,5 @@ private fun findAnnotation(
     visibleAnnotations?.firstOrNull { it.refersToName(annotationName) }
         ?: if (includeInvisible) invisibleAnnotations?.firstOrNull { it.refersToName(annotationName) } else null
 
-fun AnnotationNode.refersToName(name: String) =
+internal fun AnnotationNode.refersToName(name: String) =
     desc.startsWith('L') && desc.endsWith(';') && desc.regionMatches(1, name, 0, name.length)

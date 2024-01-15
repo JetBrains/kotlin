@@ -5,7 +5,6 @@
 
 package kotlinx.validation.test
 
-import kotlinx.validation.API_DIR
 import kotlinx.validation.api.*
 import kotlinx.validation.api.BaseKotlinGradleTest
 import kotlinx.validation.api.assertTaskSuccess
