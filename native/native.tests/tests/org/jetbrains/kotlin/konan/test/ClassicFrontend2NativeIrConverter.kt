@@ -133,7 +133,7 @@ class ClassicFrontend2NativeIrConverter(
             moduleFragment,
             pluginContext,
             diagnosticReporter = DiagnosticReporterFactory.createReporter(),
-            descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer.mangler,
+            descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer!!.mangler,
             irMangler = KonanManglerIr,
             firMangler = null,
         )

@@ -62,7 +62,6 @@ interface Fir2IrComponents {
     val annotationsFromPluginRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar
 
     interface Manglers {
-        val descriptorMangler: KotlinMangler.DescriptorMangler
         val irMangler: KotlinMangler.IrMangler
         val firMangler: FirMangler
     }

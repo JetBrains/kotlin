@@ -19,12 +19,10 @@ import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProv
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.overrides.buildForAll
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
-import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -43,16 +41,10 @@ data class Fir2IrActualizedResult(
     val irActualizedResult: IrActualizedResult?,
 )
 
-fun signatureComposerForJvmFir2Ir(): IdSignatureComposer {
-    val mangler = JvmDescriptorMangler(null)
-    return DescriptorSignatureComposerStub(mangler)
-}
-
 fun FirResult.convertToIrAndActualize(
     fir2IrExtensions: Fir2IrExtensions,
     fir2IrConfiguration: Fir2IrConfiguration,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
-    signatureComposer: IdSignatureComposer,
     irMangler: KotlinMangler.IrMangler,
     firMangler: FirMangler,
     visibilityConverter: Fir2IrVisibilityConverter,
@@ -60,7 +52,7 @@ fun FirResult.convertToIrAndActualize(
     actualizerTypeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
     fir2IrResultPostCompute: (ModuleCompilerAnalyzedOutput, Fir2IrResult) -> Unit = { _, _ -> },
 ): Fir2IrActualizedResult {
-    val commonMemberStorage = Fir2IrCommonMemberStorage(signatureComposer, firMangler)
+    val commonMemberStorage = Fir2IrCommonMemberStorage(firMangler)
 
     require(outputs.isNotEmpty()) { "No modules found" }
 

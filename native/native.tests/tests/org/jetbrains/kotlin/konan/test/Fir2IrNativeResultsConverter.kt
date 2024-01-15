@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
-import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -29,10 +28,6 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
 class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrNonJvmResultsConverter(testServices) {
-
-    override fun createDescriptorMangler(): KotlinMangler.DescriptorMangler {
-        return KonanManglerDesc
-    }
 
     override fun createIrMangler(): KotlinMangler.IrMangler {
         return KonanManglerIr
@@ -62,7 +57,7 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrN
             fir2IrResult.irModuleFragment,
             fir2IrResult.pluginContext,
             diagnosticReporter = diagnosticReporter,
-            descriptorMangler = manglers.descriptorMangler,
+            descriptorMangler = null,
             irMangler = manglers.irMangler,
             firMangler = manglers.firMangler,
         )

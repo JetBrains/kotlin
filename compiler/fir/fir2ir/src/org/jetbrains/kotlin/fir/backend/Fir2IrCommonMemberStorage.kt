@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import java.util.concurrent.ConcurrentHashMap
 
@@ -22,13 +21,10 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * See `/docs/fir/k2_kmp.md`
  */
-class Fir2IrCommonMemberStorage(
-    signatureComposer: IdSignatureComposer,
-    firMangler: FirMangler
-) {
+class Fir2IrCommonMemberStorage(firMangler: FirMangler) {
     val firSignatureComposer = FirBasedSignatureComposer(firMangler)
 
-    val symbolTable = SymbolTable(signaturer = signatureComposer, irFactory = IrFactoryImpl)
+    val symbolTable = SymbolTable(signaturer = null, irFactory = IrFactoryImpl)
 
     val classCache: MutableMap<FirRegularClass, IrClass> = mutableMapOf()
 

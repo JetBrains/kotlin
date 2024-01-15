@@ -33,14 +33,15 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
     abstract val irPluginContext: IrPluginContext
 
     /**
-     * The mangler instance that was used to build declaration signatures from (possibly deserialized) K1 descriptors for this backend.
+     * The mangler instance that was used to build declaration signatures from (possibly deserialized) K1 descriptors for this backend,
+     * or `null` if this artifact was compiled using the K2 frontend.
      *
      * This instance can be used to verify signatures in tests.
      *
      * @see org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorMangleComputer
      * @see org.jetbrains.kotlin.ir.util.IdSignature
      */
-    abstract val descriptorMangler: KotlinMangler.DescriptorMangler
+    abstract val descriptorMangler: KotlinMangler.DescriptorMangler?
 
     /**
      * The mangler instance that was used to build declaration signatures from IR declarations for this backend.
@@ -70,7 +71,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         val icData: List<KotlinFileSerializedData>,
         override val diagnosticReporter: BaseDiagnosticsCollector,
         val hasErrors: Boolean,
-        override val descriptorMangler: KotlinMangler.DescriptorMangler,
+        override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
         val serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment,
@@ -80,7 +81,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val irModuleFragment: IrModuleFragment,
         override val irPluginContext: IrPluginContext,
         override val diagnosticReporter: BaseDiagnosticsCollector,
-        override val descriptorMangler: KotlinMangler.DescriptorMangler,
+        override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
     ) : IrBackendInput() {
@@ -96,7 +97,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         val icData: List<KotlinFileSerializedData>,
         override val diagnosticReporter: BaseDiagnosticsCollector,
         val hasErrors: Boolean,
-        override val descriptorMangler: KotlinMangler.DescriptorMangler,
+        override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
         val serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment,
@@ -107,7 +108,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         val codegenFactory: JvmIrCodegenFactory,
         val backendInput: JvmIrCodegenFactory.JvmIrBackendInput,
         val sourceFiles: List<KtSourceFile>,
-        override val descriptorMangler: KotlinMangler.DescriptorMangler,
+        override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
     ) : IrBackendInput() {
@@ -128,7 +129,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val irModuleFragment: IrModuleFragment,
         override val irPluginContext: IrPluginContext,
         override val diagnosticReporter: BaseDiagnosticsCollector,
-        override val descriptorMangler: KotlinMangler.DescriptorMangler,
+        override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
     ) : IrBackendInput()

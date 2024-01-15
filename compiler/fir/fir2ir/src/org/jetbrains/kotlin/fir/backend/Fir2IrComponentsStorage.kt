@@ -75,9 +75,6 @@ class Fir2IrComponentsStorage(
         get() = symbolTable.lock
 
     override val manglers: Fir2IrComponents.Manglers = object : Fir2IrComponents.Manglers {
-        override val descriptorMangler: KotlinMangler.DescriptorMangler
-            get() = symbolTable.signaturer.mangler
-
         override val irMangler: KotlinMangler.IrMangler
             get() = irMangler
 

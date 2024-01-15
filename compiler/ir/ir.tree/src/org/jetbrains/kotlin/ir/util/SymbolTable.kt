@@ -17,7 +17,7 @@ private fun <SymbolOwner : IrSymbolOwner, Symbol : IrBindableSymbol<*, SymbolOwn
 
 @OptIn(SymbolTableInternals::class)
 open class SymbolTable(
-    val signaturer: IdSignatureComposer,
+    val signaturer: IdSignatureComposer?, // TODO: This is `null` only in FIR2IR. Make non-nullable again after KT-64990 is fixed.
     val irFactory: IrFactory,
     val nameProvider: NameProvider = NameProvider.DEFAULT,
 ) : ReferenceSymbolTable {

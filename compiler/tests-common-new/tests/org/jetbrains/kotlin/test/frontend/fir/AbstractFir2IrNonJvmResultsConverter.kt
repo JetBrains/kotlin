@@ -7,14 +7,11 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -35,7 +32,6 @@ import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -51,7 +47,6 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
     FrontendKinds.FIR,
     BackendKinds.IrBackend
 ) {
-    protected abstract fun createDescriptorMangler(): KotlinMangler.DescriptorMangler
     protected abstract fun createIrMangler(): KotlinMangler.IrMangler
     protected abstract fun createFirMangler(): FirMangler
     protected abstract fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary>
@@ -90,7 +85,6 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
             Fir2IrExtensions.Default,
             fir2IrConfiguration,
             module.irGenerationExtensions(testServices),
-            IdSignatureDescriptor(createDescriptorMangler()),
             irMangler,
             createFirMangler(),
             Fir2IrVisibilityConverter.Default,

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.KotlinFileSerializedData
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.incrementalDataProvider
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
@@ -43,15 +42,11 @@ abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : Abstra
         List<KotlinFileSerializedData>,
         BaseDiagnosticsCollector,
         Boolean,
-        KotlinMangler.DescriptorMangler,
+        KotlinMangler.DescriptorMangler?,
         KotlinMangler.IrMangler,
         FirMangler?,
         (KtSourceFile) -> ProtoBuf.PackageFragment
     ) -> IrBackendInput
-
-    override fun createDescriptorMangler(): KotlinMangler.DescriptorMangler {
-        return JsManglerDesc
-    }
 
     override fun createIrMangler(): KotlinMangler.IrMangler {
         return JsManglerIr
@@ -83,7 +78,7 @@ abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : Abstra
             compilerConfiguration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList(),
             diagnosticReporter,
             inputArtifact.hasErrors,
-            manglers.descriptorMangler,
+            /*descriptorMangler = */null,
             manglers.irMangler,
             manglers.firMangler,
         ) { file ->
@@ -108,7 +103,7 @@ abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : Abstra
 }
 
 class Fir2IrJsResultsConverter(testServices: TestServices) : Fir2IrJsWasmResultsConverter(testServices) {
-    override val artifactFactory: (IrModuleFragment, IrPluginContext, List<KtSourceFile>, List<KotlinFileSerializedData>, BaseDiagnosticsCollector, Boolean, KotlinMangler.DescriptorMangler, KotlinMangler.IrMangler, FirMangler?, (KtSourceFile) -> ProtoBuf.PackageFragment) -> IrBackendInput
+    override val artifactFactory: (IrModuleFragment, IrPluginContext, List<KtSourceFile>, List<KotlinFileSerializedData>, BaseDiagnosticsCollector, Boolean, KotlinMangler.DescriptorMangler?, KotlinMangler.IrMangler, FirMangler?, (KtSourceFile) -> ProtoBuf.PackageFragment) -> IrBackendInput
         get() = IrBackendInput::JsIrBackendInput
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary> {
@@ -118,7 +113,7 @@ class Fir2IrJsResultsConverter(testServices: TestServices) : Fir2IrJsWasmResults
 
 
 class Fir2IrWasmResultsConverter(testServices: TestServices) : Fir2IrJsWasmResultsConverter(testServices) {
-    override val artifactFactory: (IrModuleFragment, IrPluginContext, List<KtSourceFile>, List<KotlinFileSerializedData>, BaseDiagnosticsCollector, Boolean, KotlinMangler.DescriptorMangler, KotlinMangler.IrMangler, FirMangler?, (KtSourceFile) -> ProtoBuf.PackageFragment) -> IrBackendInput
+    override val artifactFactory: (IrModuleFragment, IrPluginContext, List<KtSourceFile>, List<KotlinFileSerializedData>, BaseDiagnosticsCollector, Boolean, KotlinMangler.DescriptorMangler?, KotlinMangler.IrMangler, FirMangler?, (KtSourceFile) -> ProtoBuf.PackageFragment) -> IrBackendInput
         get() = IrBackendInput::WasmBackendInput
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary> {

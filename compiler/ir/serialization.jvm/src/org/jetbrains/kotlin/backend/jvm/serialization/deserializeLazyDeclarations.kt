@@ -94,8 +94,13 @@ fun deserializeFromByteArray(
         deserializer.deserializeDeclaration(declarationProto, setParent = false)
     }
 
-    symbolTable.signaturer.withFileSignature(dummyFileSignature) {
+    val signaturer = symbolTable.signaturer
+    if (signaturer == null) {
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
+    } else {
+        signaturer.withFileSignature(dummyFileSignature) {
+            ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
+        }
     }
     toplevelParent.acceptChildrenVoid(PatchDeclarationParentsVisitor(toplevelParent))
     buildFakeOverridesForLocalClasses(symbolTable, typeSystemContext, symbolDeserializer, toplevelParent)

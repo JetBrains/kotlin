@@ -176,7 +176,7 @@ class IrMangledNameAndSignatureDumpHandler(
     private inner class DumpStrategy(
         val module: TestModule,
         val irMangler: KotlinMangler.IrMangler,
-        val descriptorMangler: KotlinMangler.DescriptorMangler,
+        val descriptorMangler: KotlinMangler.DescriptorMangler?,
         val firMangler: FirMangler?,
         val irBuiltIns: IrBuiltIns,
     ) : CustomKotlinLikeDumpStrategy {
@@ -242,7 +242,7 @@ class IrMangledNameAndSignatureDumpHandler(
                     // for computing signature mangled names.
                     firMangler?.addSignatureMangledNameTo(signatureMangledNames, firDeclaration, ComputedBy.FE)
                 } else
-                    descriptorMangler.addSignatureMangledNameTo(signatureMangledNames, symbol.descriptor, ComputedBy.FE)
+                    descriptorMangler?.addSignatureMangledNameTo(signatureMangledNames, symbol.descriptor, ComputedBy.FE)
             }
 
             fun printActualMangledNamesAndSignatures() {

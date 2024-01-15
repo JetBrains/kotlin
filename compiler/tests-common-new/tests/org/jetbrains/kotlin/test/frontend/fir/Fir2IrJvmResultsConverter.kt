@@ -14,11 +14,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
-import org.jetbrains.kotlin.fir.pipeline.signatureComposerForJvmFir2Ir
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -68,7 +66,6 @@ class Fir2IrJvmResultsConverter(
 
         val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
 
-        val commonMemberStorage = Fir2IrCommonMemberStorage(signatureComposerForJvmFir2Ir(), FirJvmKotlinMangler())
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
 
         val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(module)
@@ -78,7 +75,6 @@ class Fir2IrJvmResultsConverter(
             fir2IrExtensions,
             fir2IrConfiguration,
             module.irGenerationExtensions(testServices),
-            signatureComposerForJvmFir2Ir(),
             irMangler,
             FirJvmKotlinMangler(),
             FirJvmVisibilityConverter,
@@ -114,9 +110,9 @@ class Fir2IrJvmResultsConverter(
             codegenFactory,
             backendInput,
             sourceFiles,
-            descriptorMangler = commonMemberStorage.symbolTable.signaturer.mangler,
-            irMangler = irMangler,
-            firMangler = commonMemberStorage.firSignatureComposer.mangler,
+            descriptorMangler = null,
+            irMangler = fir2irResult.components.manglers.irMangler,
+            firMangler = fir2irResult.components.manglers.firMangler,
         )
     }
 }

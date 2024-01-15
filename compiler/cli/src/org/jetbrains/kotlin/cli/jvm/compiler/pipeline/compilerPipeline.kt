@@ -203,7 +203,6 @@ fun FirResult.convertToIrAndActualizeForJvm(
         fir2IrExtensions,
         fir2IrConfiguration,
         irGeneratorExtensions,
-        signatureComposerForJvmFir2Ir(),
         JvmIrMangler,
         FirJvmKotlinMangler(),
         FirJvmVisibilityConverter,

@@ -75,7 +75,7 @@ class ClassicFrontend2IrConverter(
             codegenFactory,
             conversionResult,
             sourceFiles = emptyList(),
-            descriptorMangler = conversionResult.symbolTable.signaturer.mangler,
+            descriptorMangler = conversionResult.symbolTable.signaturer!!.mangler,
             irMangler = JvmIrMangler,
             firMangler = null,
         )
@@ -114,7 +114,7 @@ class ClassicFrontend2IrConverter(
             icData,
             diagnosticReporter = DiagnosticReporterFactory.createReporter(),
             hasErrors,
-            descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer.mangler,
+            descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer!!.mangler,
             irMangler = JsManglerIr,
             firMangler = null,
         ) { file ->
@@ -156,7 +156,7 @@ class ClassicFrontend2IrConverter(
             icData,
             diagnosticReporter = DiagnosticReporterFactory.createReporter(),
             hasErrors,
-            descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer.mangler,
+            descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer!!.mangler,
             irMangler = JsManglerIr,
             firMangler = null,
         ) { file ->

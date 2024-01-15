@@ -38,7 +38,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         get() = table.nameProvider
 
     private val signatureComposer: IdSignatureComposer
-        get() = table.signaturer
+        get() = table.signaturer!!
 
     private val externalPackageFragmentSlice: SymbolTableSlice<PackageFragmentDescriptor, IrExternalPackageFragment, IrExternalPackageFragmentSymbol> = SymbolTableSlice.Flat(lock)
 
