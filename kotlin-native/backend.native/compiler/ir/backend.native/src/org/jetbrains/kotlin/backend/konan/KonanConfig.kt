@@ -92,7 +92,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, "-Xdestroy-runtime-mode switch is deprecated and will be removed in a future release.")
         }
     }.let { DestroyRuntimeMode.ON_SHUTDOWN }
-    private val defaultGC get() = GC.PARALLEL_MARK_CONCURRENT_SWEEP
+    private val defaultGC get() = GC.CONCURRENT_MARK_AND_SWEEP
     val gc: GC get() = configuration.get(BinaryOptions.gc) ?: defaultGC
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
     val checkStateAtExternalCalls: Boolean get() = configuration.get(BinaryOptions.checkStateAtExternalCalls) ?: false
