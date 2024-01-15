@@ -14,7 +14,7 @@
 #include "KAssert.h"
 #include "Memory.h"
 #include "Runtime.h"
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "Utils.hpp"
 #include "Logging.hpp"
 #include "objc_support/AutoreleasePool.hpp"

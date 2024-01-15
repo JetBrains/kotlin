@@ -17,7 +17,7 @@
 #include "gtest/gtest.h"
 
 #include "ClockTestSupport.hpp"
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "TestSupport.hpp"
 
 using namespace kotlin;

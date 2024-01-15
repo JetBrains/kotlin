@@ -29,7 +29,8 @@ mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
 
     auto& allocator = mm::ThreadRegistry::Instance().CurrentThreadData()->allocator();
     auto& data = allocator.allocateExtraObjectData(object, typeInfo);
-    if (!compareExchange(object->typeInfoOrMeta_, typeInfo, reinterpret_cast<TypeInfo*>(&data))) {
+    std_support::atomic_ref objectAtomicTypeInfo{object->typeInfoOrMeta_};
+    if (!objectAtomicTypeInfo.compare_exchange_strong(typeInfo, reinterpret_cast<TypeInfo*>(&data))) {
         // Somebody else created `mm::ExtraObjectData` for this object.
         allocator.destroyUnattachedExtraObjectData(data);
         return *reinterpret_cast<mm::ExtraObjectData*>(typeInfo);
@@ -43,7 +44,7 @@ void mm::ExtraObjectData::UnlinkFromBaseObject() noexcept {
     RuntimeAssert(
             !hasPointerBits(object, WEAK_REF_TAG), "ExtraObjectData %p has uncleared weak reference %p during unlink", this,
             clearPointerBits(object, WEAK_REF_TAG));
-    atomicSetRelease(const_cast<const TypeInfo**>(&object->typeInfoOrMeta_), typeInfo_);
+    std_support::atomic_ref{object->typeInfoOrMeta_}.store(const_cast<TypeInfo*>(typeInfo_), std::memory_order_release);
     RuntimeAssert(
             !object->has_meta_object(), "Object %p has metaobject %p after removing metaobject %p", object, object->meta_object_or_null(),
             this);

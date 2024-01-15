@@ -9,7 +9,7 @@
 
 #include "Memory.h"
 #include "Runtime.h"
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 
 namespace kotlin {
 

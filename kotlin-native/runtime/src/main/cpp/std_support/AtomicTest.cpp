@@ -3,14 +3,14 @@
  * that can be found in the LICENSE file.
  */
 
-#include "AtomicRef.hpp"
+#include "Atomic.hpp"
 
 #include <iterator>
 #include <type_traits>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 
 using namespace kotlin;
 

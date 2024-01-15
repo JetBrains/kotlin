@@ -16,7 +16,7 @@
 #include "Runtime.h"
 #include "RuntimePrivate.hpp"
 #include "SafePoint.hpp"
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "TestSupport.hpp"
 #include "TestSupportCompilerGenerated.hpp"
 #include "ThreadState.hpp"

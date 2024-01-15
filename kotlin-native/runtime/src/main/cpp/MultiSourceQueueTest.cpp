@@ -12,7 +12,7 @@
 #include "gtest/gtest.h"
 
 #include "StdAllocatorTestSupport.hpp"
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "TestSupport.hpp"
 
 using namespace kotlin;

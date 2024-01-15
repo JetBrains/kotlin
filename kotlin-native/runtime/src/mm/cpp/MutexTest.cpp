@@ -3,11 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-#include "Mutex.hpp"
+#include "concurrent/Mutex.hpp"
 
 #include "gtest/gtest.h"
 
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "TestSupport.hpp"
 #include "ThreadState.hpp"
 

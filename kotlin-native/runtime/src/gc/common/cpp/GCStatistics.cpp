@@ -11,7 +11,7 @@
 
 #include "Allocator.hpp"
 #include "Logging.hpp"
-#include "Mutex.hpp"
+#include "concurrent/Mutex.hpp"
 #include "Porting.h"
 #include "ThreadData.hpp"
 #include "Types.h"

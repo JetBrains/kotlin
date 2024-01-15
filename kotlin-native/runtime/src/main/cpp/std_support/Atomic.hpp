@@ -5,8 +5,9 @@
 
 #pragma once
 
-#include "Common.h"
 #include <atomic>
+
+#include "Common.h"
 
 namespace kotlin::std_support {
 
@@ -18,6 +19,9 @@ namespace kotlin::std_support {
 
 template<typename T>
 class atomic_ref {
+#ifdef KONAN_NO_64BIT_ATOMIC
+    static_assert(sizeof(T) <= 4);
+#endif
     // TODO current implementation supports only pointer or integral T
 public:
     explicit atomic_ref(T& ref) : ref_(ref) {}
@@ -108,5 +112,16 @@ private:
 };
 
 #pragma clang diagnostic pop
+
+template<typename T, typename Atomic>
+ALWAYS_INLINE T atomic_compare_swap_strong(Atomic&& atomic, T expectedValue, T newValue) {
+    atomic.compare_exchange_strong(expectedValue, newValue);
+    return expectedValue;
+}
+
+template<typename T, typename Atomic>
+ALWAYS_INLINE bool atomic_compare_exchange_strong(Atomic&& atomic, T expectedValue, T newValue) {
+    return atomic.compare_exchange_strong(expectedValue, newValue);
+}
 
 }
