@@ -149,7 +149,9 @@ internal fun checkPropertyInitializer(
             val isExternal = property.isEffectivelyExternal(containingClass, context)
             val isCorrectlyInitialized =
                 property.initializer != null || isDefinitelyAssigned && !property.hasSetterAccessorImplementation &&
-                        property.getEffectiveModality(containingClass, context.languageVersionSettings) != Modality.OPEN
+                        (property.getEffectiveModality(containingClass, context.languageVersionSettings) != Modality.OPEN ||
+                                // Drop this workaround after KT-64980 is fixed
+                                property.effectiveVisibility == org.jetbrains.kotlin.descriptors.EffectiveVisibility.PrivateInClass)
             if (
                 backingFieldRequired &&
                 !inInterface &&

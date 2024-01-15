@@ -3579,6 +3579,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("OpenPrivateValDeferredInit.kt")
+            public void testOpenPrivateValDeferredInit() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/OpenPrivateValDeferredInit.kt");
+            }
+
+            @Test
             @TestMetadata("OpenValDeferredInitError_InFinalClass_DisableEffectivelyFinal.kt")
             public void testOpenValDeferredInitError_InFinalClass_DisableEffectivelyFinal() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/backingField/OpenValDeferredInitError_InFinalClass_DisableEffectivelyFinal.kt");
