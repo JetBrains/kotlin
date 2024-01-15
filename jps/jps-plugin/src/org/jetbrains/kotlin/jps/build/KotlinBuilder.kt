@@ -499,7 +499,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val generatedFiles = getGeneratedFiles(context, chunk, environment.outputItemsCollector)
 
-        markDirtyComplementaryMultifileClasses(generatedFiles, kotlinContext, incrementalCaches, fsOperations)
+        if (!isKotlinBuilderInDumbMode) markDirtyComplementaryMultifileClasses(generatedFiles, kotlinContext, incrementalCaches, fsOperations)
 
         val kotlinTargets = kotlinContext.targetsBinding
         for ((target, outputItems) in generatedFiles) {
@@ -530,7 +530,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             environment
         )
 
-        if (isKotlinBuilderInDumbMode || !representativeTarget.isIncrementalCompilationEnabled) {
+        if (!representativeTarget.isIncrementalCompilationEnabled) {
             return OK
         }
 
@@ -552,15 +552,17 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 )
             }
 
-            updateLookupStorage(lookupTracker, kotlinContext.lookupStorageManager, kotlinDirtyFilesHolder)
+            if (!isKotlinBuilderInDumbMode) {
+                updateLookupStorage(lookupTracker, kotlinContext.lookupStorageManager, kotlinDirtyFilesHolder)
 
-            if (!isChunkRebuilding) {
-                changesCollector.processChangesUsingLookups(
-                    kotlinDirtyFilesHolder.allDirtyFiles,
-                    kotlinContext.lookupStorageManager,
-                    fsOperations,
-                    incrementalCaches.values
-                )
+                if (!isChunkRebuilding) {
+                    changesCollector.processChangesUsingLookups(
+                        kotlinDirtyFilesHolder.allDirtyFiles,
+                        kotlinContext.lookupStorageManager,
+                        fsOperations,
+                        incrementalCaches.values
+                    )
+                }
             }
         }
 
