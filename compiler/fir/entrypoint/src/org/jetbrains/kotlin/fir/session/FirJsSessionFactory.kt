@@ -105,8 +105,13 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         }
     )
 
-    @OptIn(SessionConfiguration::class)
     private fun FirSession.registerJsComponents(compilerConfiguration: CompilerConfiguration) {
+        val moduleKind = compilerConfiguration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
+        registerJsComponents(moduleKind)
+    }
+
+    @OptIn(SessionConfiguration::class)
+    fun FirSession.registerJsComponents(moduleKind: ModuleKind?) {
         register(ConeCallConflictResolverFactory::class, JsCallConflictResolverFactory)
         register(
             FirTypeSpecificityComparatorProvider::class,
@@ -114,7 +119,8 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         )
         register(FirPlatformDiagnosticSuppressor::class, FirJsPlatformDiagnosticSuppressor())
 
-        val moduleKind = compilerConfiguration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
-        register(FirJsModuleKind::class, FirJsModuleKind(moduleKind))
+        if (moduleKind != null) {
+            register(FirJsModuleKind::class, FirJsModuleKind(moduleKind))
+        }
     }
 }
