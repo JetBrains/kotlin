@@ -1,2 +1,5 @@
 expression: arg
-expected type: null
+expected type: KtUsualClassType:
+  annotationsList: []
+  ownTypeArguments: []
+  type: kotlin/String
