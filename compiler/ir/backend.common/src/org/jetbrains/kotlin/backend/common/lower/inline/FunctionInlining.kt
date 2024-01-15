@@ -74,7 +74,7 @@ open class DefaultInlineFunctionResolver(open val context: CommonBackendContext)
             symbol == context.ir.symbols.coroutineContextGetter ->
                 context.ir.symbols.coroutineGetContext.owner
 
-            else -> (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner
+            else -> function
         }
     }
 
@@ -117,7 +117,8 @@ class FunctionInlining(
         if (!callee.needsInlining || inlineFunctionResolver.shouldExcludeFunctionFromInlining(callee.symbol))
             return expression
 
-        val actualCallee = inlineFunctionResolver.getFunctionDeclaration(callee.symbol)
+        val target = (callee as? IrSimpleFunction)?.resolveFakeOverride() ?: callee
+        val actualCallee = inlineFunctionResolver.getFunctionDeclaration(target.symbol)
         if (actualCallee.body == null) {
             return expression
         }
@@ -131,7 +132,7 @@ class FunctionInlining(
             ?: containerScope?.irElement as? IrDeclarationParent
             ?: (containerScope?.irElement as? IrDeclaration)?.parent
 
-        val inliner = Inliner(expression, actualCallee, currentScope ?: containerScope!!, parent, context)
+        val inliner = Inliner(expression, actualCallee, target, currentScope ?: containerScope!!, parent, context)
         return inliner.inline().markAsRegenerated()
     }
 
@@ -157,6 +158,7 @@ class FunctionInlining(
     private inner class Inliner(
         val callSite: IrFunctionAccessExpression,
         val callee: IrFunction,
+        val originalCallee: IrFunction,
         val currentScope: ScopeWithIr,
         val parent: IrDeclarationParent?,
         val context: CommonBackendContext
@@ -176,7 +178,7 @@ class FunctionInlining(
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
 
-        fun inline() = inlineFunction(callSite, callee, inlineFunctionResolver.getFunctionSymbol(callee).owner, true)
+        fun inline() = inlineFunction(callSite, callee, originalCallee, true)
 
         private fun <E : IrElement> E.copy(): E {
             @Suppress("UNCHECKED_CAST")

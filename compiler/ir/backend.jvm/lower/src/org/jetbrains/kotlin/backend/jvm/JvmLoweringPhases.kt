@@ -282,7 +282,7 @@ internal val functionInliningPhase = makeIrModulePhase(
     { context ->
         class JvmInlineFunctionResolver : InlineFunctionResolver {
             override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
-                return (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner
+                return symbol.owner
             }
 
             override fun getFunctionSymbol(irFunction: IrFunction): IrFunctionSymbol {

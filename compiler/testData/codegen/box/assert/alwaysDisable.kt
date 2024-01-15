@@ -1,11 +1,9 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_ASSERT
-// https://youtrack.jetbrains.com/issue/KT-59059/Native-Assert-does-not-evaluate-argument-value-when-disabled
-// https://youtrack.jetbrains.com/issue/KT-64868/K-N-Inlined-assert-is-later-not-removed-even-without-ea
-// IGNORE_NATIVE: cacheMode=NO
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: JS
+// See related issue: https://youtrack.jetbrains.com/issue/KT-59059/Native-Assert-does-not-evaluate-argument-value-when-disabled
 // ASSERTIONS_MODE: always-disable
 // WITH_STDLIB
 
