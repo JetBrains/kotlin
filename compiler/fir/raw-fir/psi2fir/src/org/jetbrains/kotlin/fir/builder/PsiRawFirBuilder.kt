@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -2948,8 +2949,11 @@ open class PsiRawFirBuilder(
             calleeExpression: KtExpression?,
             defaultSource: KtPsiSourceElement,
         ): CalleeAndReceiver {
-            return when (calleeExpression) {
-                is KtSimpleNameExpression ->
+            val parenthesizedArgument = (calleeExpression as? KtParenthesizedExpression)?.expression
+                ?.toFirExpression("Incorrect invoke receiver")
+
+            return when {
+                calleeExpression is KtSimpleNameExpression ->
                     CalleeAndReceiver(
                         buildSimpleNamedReference {
                             source = calleeExpression.toFirSourceElement()
@@ -2957,22 +2961,32 @@ open class PsiRawFirBuilder(
                         }
                     )
 
-                is KtParenthesizedExpression -> splitToCalleeAndReceiver(calleeExpression.expression, defaultSource)
-
-                null -> {
+                calleeExpression is KtSuperExpression || parenthesizedArgument?.calleeReference is FirSuperReference -> {
                     CalleeAndReceiver(
                         buildErrorNamedReference {
-                            source = defaultSource
-                            diagnostic = ConeSyntaxDiagnostic("Call has no callee")
+                            source = (calleeExpression as? KtSuperExpression)?.toFirSourceElement()
+                                ?: parenthesizedArgument?.calleeReference?.source
+                            diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
                         }
                     )
                 }
 
-                is KtSuperExpression -> {
+                parenthesizedArgument != null -> {
+                    CalleeAndReceiver(
+                        buildSimpleNamedReference {
+                            source = defaultSource.fakeElement(KtFakeSourceElementKind.ImplicitInvokeCall)
+                            name = OperatorNameConventions.INVOKE
+                        },
+                        receiverExpression = parenthesizedArgument,
+                        isImplicitInvoke = true
+                    )
+                }
+
+                calleeExpression == null -> {
                     CalleeAndReceiver(
                         buildErrorNamedReference {
-                            source = calleeExpression.toFirSourceElement()
-                            diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
+                            source = defaultSource
+                            diagnostic = ConeSyntaxDiagnostic("Call has no callee")
                         }
                     )
                 }

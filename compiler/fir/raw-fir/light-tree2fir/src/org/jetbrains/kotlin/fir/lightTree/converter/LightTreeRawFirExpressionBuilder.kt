@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
 import org.jetbrains.kotlin.fir.lightTree.fir.WhenEntry
 import org.jetbrains.kotlin.fir.lightTree.fir.addDestructuringStatements
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
@@ -651,8 +652,8 @@ class LightTreeRawFirExpressionBuilder(
                     SUPER_EXPRESSION -> {
                         superNode = node
                     }
-                    PARENTHESIZED -> node.getExpressionInParentheses()?.let { process(it) } ?: run {
-                        additionalArgument = getAsFirExpression(node, "Incorrect invoke receiver")
+                    PARENTHESIZED -> if (node.tokenType != TokenType.ERROR_ELEMENT) {
+                        additionalArgument = getAsFirExpression(node.getExpressionInParentheses(), "Incorrect invoke receiver")
                     }
                     TYPE_ARGUMENT_LIST -> {
                         firTypeArguments += declarationBuilder.convertTypeArguments(node, allowedUnderscoredTypeArgument = true)
@@ -680,6 +681,15 @@ class LightTreeRawFirExpressionBuilder(
                 }
             )
 
+            superNode != null || additionalArgument?.calleeReference is FirSuperReference -> {
+                CalleeAndReceiver(
+                    buildErrorNamedReference {
+                        this.source = superNode?.toFirSourceElement() ?: additionalArgument?.calleeReference?.source
+                        diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
+                    }
+                )
+            }
+
             additionalArgument != null -> {
                 CalleeAndReceiver(
                     buildSimpleNamedReference {
@@ -688,16 +698,6 @@ class LightTreeRawFirExpressionBuilder(
                     },
                     additionalArgument!!,
                     isImplicitInvoke = true
-                )
-            }
-
-            superNode != null -> {
-                CalleeAndReceiver(
-                    buildErrorNamedReference {
-                        val node = superNode!!
-                        this.source = node.toFirSourceElement()
-                        diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
-                    }
                 )
             }
 

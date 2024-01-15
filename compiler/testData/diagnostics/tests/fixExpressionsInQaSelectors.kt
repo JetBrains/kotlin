@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-64891
 
 val b: Int.() -> Int = { 10 }

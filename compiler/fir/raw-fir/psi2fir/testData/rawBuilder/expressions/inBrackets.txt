@@ -1,5 +1,5 @@
 FILE: inBrackets.kt
     public? final? fun test(e: ( Int.() -> String )): R|kotlin/Unit| {
         lval s: <implicit> = IntegerLiteral(3).e#()
-        lval ss: <implicit> = IntegerLiteral(3).e#()
+        lval ss: <implicit> = e#.invoke#(IntegerLiteral(3))
     }
