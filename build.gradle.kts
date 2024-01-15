@@ -1104,16 +1104,6 @@ plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin:
     }
 }
 
-dependencies {
-    // Drop when KT-61766 fixed
-    add(
-        configurations.implicitDependencies.name,
-        "org.jetbrains.kotlinx:kotlinx-collections-immutable-metadata:${rootProject.extra["versions.kotlinx-collections-immutable"]}"
-    ) {
-        isTransitive = false
-    }
-}
-
 afterEvaluate {
     if (cacheRedirectorEnabled) {
         rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {

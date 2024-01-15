@@ -317,6 +317,7 @@
 }
 -keepclassmembers class kotlinx.collections.immutable.ExtensionsKt {
     kotlinx.collections.immutable.PersistentMap toPersistentHashMap(java.util.Map);
+    kotlinx.collections.immutable.PersistentMap persistentHashMapOf(kotlin.Pair[]);
     kotlinx.collections.immutable.PersistentSet persistentHashSetOf(java.lang.Object[]);
 }
 -keepclassmembers class com.intellij.lang.jvm.JvmParameter {
