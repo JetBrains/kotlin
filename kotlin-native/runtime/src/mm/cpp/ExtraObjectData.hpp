@@ -81,7 +81,7 @@ public:
     // info must be equal to objHeader->type_info(), but it needs to be loaded in advance to avoid data races
     explicit ExtraObjectData(ObjHeader* objHeader, const TypeInfo* info) noexcept :
         typeInfo_(nullptr), weakReferenceOrBaseObject_(objHeader) {
-        atomicSetRelease(&typeInfo_, info);
+        std_support::atomic_ref{typeInfo_}.store(info, std::memory_order_release);
     }
     ~ExtraObjectData();
 private:

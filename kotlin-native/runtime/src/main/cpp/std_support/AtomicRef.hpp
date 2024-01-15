@@ -18,6 +18,9 @@ namespace kotlin::std_support {
 
 template<typename T>
 class atomic_ref {
+#ifdef KONAN_NO_64BIT_ATOMIC
+    static_assert(sizeof(T) <= 4);
+#endif
     // TODO current implementation supports only pointer or integral T
 public:
     explicit atomic_ref(T& ref) : ref_(ref) {}

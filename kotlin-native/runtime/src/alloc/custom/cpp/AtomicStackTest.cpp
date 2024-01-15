@@ -11,7 +11,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 
 using namespace kotlin;
 

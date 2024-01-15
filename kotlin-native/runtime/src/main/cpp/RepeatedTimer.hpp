@@ -11,7 +11,7 @@
 
 #include "Clock.hpp"
 #include "KAssert.h"
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "Utils.hpp"
 
 namespace kotlin {

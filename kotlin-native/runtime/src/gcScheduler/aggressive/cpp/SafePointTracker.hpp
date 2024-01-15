@@ -11,7 +11,7 @@
 #include "CallsChecker.hpp"
 #include "KAssert.h"
 #include "Logging.hpp"
-#include "Mutex.hpp"
+#include "concurrent/Mutex.hpp"
 #include "StackTrace.hpp"
 
 namespace kotlin::gcScheduler::internal {

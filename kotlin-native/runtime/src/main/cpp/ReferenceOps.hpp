@@ -72,10 +72,10 @@ public:
     }
 
     ALWAYS_INLINE auto atomic() noexcept {
-        return std_support::atomic_ref<ObjHeader*>{ref_};
+        return std_support::atomic_ref{ref_};
     }
     ALWAYS_INLINE auto atomic() const noexcept {
-        return std_support::atomic_ref<ObjHeader*>{ref_};
+        return std_support::atomic_ref{ref_};
     }
 
     ALWAYS_INLINE ObjHeader* loadAtomic(std::memory_order order) const noexcept {

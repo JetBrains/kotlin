@@ -11,7 +11,7 @@
 
 #include "IntrusiveList.hpp"
 
-#include "ParallelProcessor.hpp"
+#include "concurrent/ParallelProcessor.hpp"
 
 #include "SingleThreadExecutor.hpp"
 #include "TestSupport.hpp"

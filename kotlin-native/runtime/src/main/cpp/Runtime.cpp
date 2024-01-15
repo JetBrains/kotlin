@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-#include "Atomic.h"
+#include "concurrent/CAS.hpp"
 #include "Cleaner.h"
 #include "CompilerConstants.hpp"
 #include "Exceptions.h"
@@ -73,7 +73,7 @@ inline bool isValidRuntime() {
   return ::runtimeState != kInvalidRuntime;
 }
 
-volatile int aliveRuntimesCount = 0;
+std::atomic<int> aliveRuntimesCount = 0;
 
 enum GlobalRuntimeStatus {
     kGlobalRuntimeUninitialized = 0,
@@ -81,7 +81,7 @@ enum GlobalRuntimeStatus {
     kGlobalRuntimeShutdown,
 };
 
-volatile GlobalRuntimeStatus globalRuntimeStatus = kGlobalRuntimeUninitialized;
+std::atomic<GlobalRuntimeStatus> globalRuntimeStatus = kGlobalRuntimeUninitialized;
 
 RuntimeState* initRuntime() {
   SetKonanTerminateHandler();
@@ -96,13 +96,13 @@ RuntimeState* initRuntime() {
   kotlin::ThreadStateGuard stateGuard;
   switch (kotlin::compiler::destroyRuntimeMode()) {
       case kotlin::compiler::DestroyRuntimeMode::kLegacy:
-          compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
+          compareAndSwap(globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
           result->memoryState = InitMemory(false); // The argument will be ignored for legacy DestroyRuntimeMode
           // Switch thread state because worker and globals inits require the runnable state.
           // This call may block if GC requested suspending threads.
           stateGuard = kotlin::ThreadStateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
           result->worker = WorkerInit(result->memoryState);
-          firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
+          firstRuntime = ++aliveRuntimesCount == 1;
           if (!kotlin::kSupportsMultipleMutators && !firstRuntime) {
               konan::consoleErrorf("This GC implementation does not support multiple mutator threads.");
               std::abort();
@@ -111,8 +111,8 @@ RuntimeState* initRuntime() {
       case kotlin::compiler::DestroyRuntimeMode::kOnShutdown:
           // First update `aliveRuntimesCount` and then update `globalRuntimeStatus`, for synchronization with
           // runtime shutdown, which does it the other way around.
-          atomicAdd(&aliveRuntimesCount, 1);
-          auto lastStatus = compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
+          ++aliveRuntimesCount;
+          auto lastStatus = compareAndSwap(globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
           if (Kotlin_forceCheckedShutdown()) {
               RuntimeAssert(lastStatus != kGlobalRuntimeShutdown, "Kotlin runtime was shut down. Cannot create new runtimes.");
           }
@@ -157,7 +157,7 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   // TODO: This may in fact reallocate TLS without guarantees that it'll be deallocated again.
   ::runtimeState = state;
   RestoreMemory(state->memoryState);
-  bool lastRuntime = atomicAdd(&aliveRuntimesCount, -1) == 0;
+  bool lastRuntime = --aliveRuntimesCount == 0;
   switch (kotlin::compiler::destroyRuntimeMode()) {
     case kotlin::compiler::DestroyRuntimeMode::kLegacy:
       destroyRuntime = lastRuntime;
@@ -233,7 +233,7 @@ void Kotlin_shutdownRuntime() {
             break;
     }
     if (!needsFullShutdown) {
-        auto lastStatus = compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
+        auto lastStatus = compareAndSwap(globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
         RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
         // The main thread is not doing anything Kotlin anymore, but will stick around to cleanup C++ globals and the like.
         // Mark the thread native, and don't make the GC thread wait on it.
@@ -254,7 +254,7 @@ void Kotlin_shutdownRuntime() {
     ShutdownCleaners(Kotlin_cleanersLeakCheckerEnabled());
 
     // Cleaners are now done, disallow new runtimes.
-    auto lastStatus = compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
+    auto lastStatus = compareAndSwap(globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
     RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
 
     bool canDestroyRuntime = true;
@@ -271,7 +271,7 @@ void Kotlin_shutdownRuntime() {
         }
 
         // Now check for existence of any other runtimes.
-        auto otherRuntimesCount = atomicGet(&aliveRuntimesCount) - knownRuntimes;
+        auto otherRuntimesCount = aliveRuntimesCount.load() - knownRuntimes;
         RuntimeAssert(otherRuntimesCount >= 0, "Cannot be negative");
         if (Kotlin_forceCheckedShutdown()) {
             if (otherRuntimesCount > 0) {
@@ -451,14 +451,14 @@ static void CallInitGlobalAwaitInitialized(int *state) {
     {
         kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
         do {
-            localState = atomicGetAcquire(state);
+            localState = std_support::atomic_ref{*state}.load(std::memory_order_acquire);
         } while (localState != FILE_INITIALIZED && localState != FILE_FAILED_TO_INITIALIZE);
     }
     if (localState == FILE_FAILED_TO_INITIALIZE) ThrowFileFailedToInitializeException(nullptr);
 }
 
 NO_INLINE void CallInitGlobalPossiblyLock(int* state, void (*init)()) {
-    int localState = atomicGetAcquire(state);
+    int localState = std_support::atomic_ref{*state}.load(std::memory_order_acquire);
     if (localState == FILE_INITIALIZED) return;
     if (localState == FILE_FAILED_TO_INITIALIZE)
         ThrowFileFailedToInitializeException(nullptr);
@@ -469,7 +469,7 @@ NO_INLINE void CallInitGlobalPossiblyLock(int* state, void (*init)()) {
         }
         return;
     }
-    if (compareAndSwap(state, FILE_NOT_INITIALIZED, FILE_BEING_INITIALIZED | (threadId << 2)) == FILE_NOT_INITIALIZED) {
+    if (compareAndSwap(std_support::atomic_ref{*state}, FILE_NOT_INITIALIZED, FILE_BEING_INITIALIZED | (threadId << 2)) == FILE_NOT_INITIALIZED) {
         // actual initialization
         try {
             CurrentFrameGuard guard;
@@ -477,10 +477,10 @@ NO_INLINE void CallInitGlobalPossiblyLock(int* state, void (*init)()) {
         } catch (ExceptionObjHolder& e) {
             ObjHolder holder;
             auto *exception = Kotlin_getExceptionObject(&e, holder.slot());
-            atomicSetRelease(state, FILE_FAILED_TO_INITIALIZE);
+            std_support::atomic_ref{*state}.store(FILE_FAILED_TO_INITIALIZE, std::memory_order_release);
             ThrowFileFailedToInitializeException(exception);
         }
-        atomicSetRelease(state, FILE_INITIALIZED);
+        std_support::atomic_ref{*state}.store(FILE_INITIALIZED, std::memory_order_release);
     } else {
         CallInitGlobalAwaitInitialized(state);
     }

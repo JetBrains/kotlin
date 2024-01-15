@@ -10,7 +10,7 @@
 
 #include "ManuallyScoped.hpp"
 #include "Memory.h"
-#include "Mutex.hpp"
+#include "concurrent/Mutex.hpp"
 
 // TODO: Generalize for uses outside this file.
 enum class ErrorPolicy {

@@ -13,7 +13,7 @@
 
 #include "Memory.h"
 #include "ObjectTestSupport.hpp"
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "TestSupportCompilerGenerated.hpp"
 #include "TestSupport.hpp"
 
