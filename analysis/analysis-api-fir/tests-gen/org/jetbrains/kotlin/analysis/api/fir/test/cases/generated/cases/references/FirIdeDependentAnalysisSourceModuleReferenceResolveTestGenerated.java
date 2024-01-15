@@ -425,6 +425,12 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
     }
 
     @Test
+    @TestMetadata("parameterByNameInSafeCall.kt")
+    public void testParameterByNameInSafeCall() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/parameterByNameInSafeCall.kt");
+    }
+
+    @Test
     @TestMetadata("PlusAssignByHand.kt")
     public void testPlusAssignByHand() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/PlusAssignByHand.kt");
