@@ -1,0 +1,5 @@
+expression: arg
+expected type: KtUsualClassType:
+  annotationsList: []
+  ownTypeArguments: []
+  type: kotlin/String

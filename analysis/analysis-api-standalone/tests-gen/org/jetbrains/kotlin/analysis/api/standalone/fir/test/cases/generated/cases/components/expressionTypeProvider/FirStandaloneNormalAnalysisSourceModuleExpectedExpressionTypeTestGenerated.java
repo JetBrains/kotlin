@@ -341,6 +341,12 @@ public class FirStandaloneNormalAnalysisSourceModuleExpectedExpressionTypeTestGe
     }
 
     @Test
+    @TestMetadata("safeCallArgument.kt")
+    public void testSafeCallArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/safeCallArgument.kt");
+    }
+
+    @Test
     @TestMetadata("sam.kt")
     public void testSam() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/sam.kt");
