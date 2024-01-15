@@ -51,7 +51,7 @@ interface IncrementalCacheCommon {
  */
 abstract class AbstractIncrementalCache<ClassName>(
     workingDir: File,
-    icContext: IncrementalCompilationContext,
+    val icContext: IncrementalCompilationContext,
 ) : BasicMapsOwner(workingDir), IncrementalCacheCommon {
     companion object {
         private const val CLASS_ATTRIBUTES = "class-attributes"
@@ -239,6 +239,8 @@ abstract class AbstractIncrementalCache<ClassName>(
     }
 
     override fun updateComplementaryFiles(dirtyFiles: Collection<File>, expectActualTracker: ExpectActualTrackerImpl) {
+        if (icContext.useCompilerMapsOnly && this is IncrementalJvmCache) return
+
         dirtyFiles.forEach {
             complementaryFilesMap.remove(it)
         }

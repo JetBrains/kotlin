@@ -27,6 +27,7 @@ class IncrementalCompilationContext(
      * Required for optimizing Gradle side outputs backup
      */
     val keepIncrementalCompilationCachesInMemory: Boolean = false,
+    val useCompilerMapsOnly: Boolean = false
 ) {
     @Deprecated("This constructor is scheduled to be removed. KSP is using it")
     constructor(

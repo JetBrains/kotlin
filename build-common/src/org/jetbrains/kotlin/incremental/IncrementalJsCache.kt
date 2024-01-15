@@ -40,7 +40,7 @@ import java.io.File
 
 open class IncrementalJsCache(
     cachesDir: File,
-    private val icContext: IncrementalCompilationContext,
+    icContext: IncrementalCompilationContext,
     serializerProtocol: SerializerExtensionProtocol,
 ) : AbstractIncrementalCache<FqName>(cachesDir, icContext) {
     companion object {
