@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -19,7 +21,7 @@ import kotlin.io.path.*
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for K/N with Apple Framework")
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
+@GradleTestVersions(minVersion = Gradle.G_7_0)
 @NativeGradlePluginTests
 class AppleFrameworkIT : KGPBaseTest() {
 
@@ -573,6 +575,23 @@ class AppleFrameworkIT : KGPBaseTest() {
 
             build(*dependencyInsight("iosAppIosX64ReleaseImplementation0"), "-PmultipleFrameworks") {
                 assertOutputDoesNotContain("mainStaticReleaseFrameworkIos")
+            }
+        }
+    }
+
+    // Should always be green because the CI Xcode version must be supported
+    @DisplayName("Xcode version too high diagnostic isn't emitted")
+    @GradleTest
+    @GradleTestVersions(minVersion = Gradle.G_7_4)
+    fun testXcodeVersionTooHighDiagnosticNotEmitted(gradleVersion: GradleVersion) {
+        nativeProject(
+            "sharedAppleFramework",
+            gradleVersion,
+            // enable CC to make sure that external process isn't run during configuration
+            buildOptions = defaultBuildOptions.copy(configurationCache = true),
+        ) {
+            build(":shared:linkReleaseFrameworkIosSimulatorArm64") {
+                assertNoDiagnostic(KotlinToolingDiagnostics.XcodeVersionTooHighWarning)
             }
         }
     }

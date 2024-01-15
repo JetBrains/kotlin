@@ -209,7 +209,7 @@ object KotlinToolingDiagnostics {
                 Kotlin Multiplatform <-> Android Gradle Plugin compatibility issue:
                 The applied Android Gradle Plugin version ($androidGradlePluginVersionString) is higher 
                 than the maximum known to the Kotlin Gradle Plugin.
-                Tooling stability in such configuration isn't tested, please report encountered issues to https://kotl.in/issue"
+                Tooling stability in such configuration isn't tested, please report encountered issues to https://kotl.in/issue
                 
                 Minimum supported Android Gradle Plugin version: $minSupported
                 Maximum tested Android Gradle Plugin version: $maxTested
@@ -781,6 +781,20 @@ object KotlinToolingDiagnostics {
             """
                Unable to find the dependency at the location '${dependency.absolutePath}'.
                Please make sure that the dependency exists at the specified location or ensure that dependency declarations are correct in your project.
+            """.trimIndent()
+        )
+    }
+
+    object XcodeVersionTooHighWarning : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(xcodeVersionString: String, maxTested: String) = build(
+            """
+                Kotlin <-> Xcode compatibility issue:
+                The selected Xcode version ($xcodeVersionString) is higher than the maximum known to the Kotlin Gradle Plugin.
+                Stability in such configuration hasn't been tested, please report encountered issues to https://kotl.in/issue
+                
+                Maximum tested Xcode version: $maxTested
+                
+                To suppress this message add '${PropertiesProvider.PropertyNames.KOTLIN_APPLE_XCODE_COMPATIBILITY_NOWARN}=true' to your gradle.properties
             """.trimIndent()
         )
     }

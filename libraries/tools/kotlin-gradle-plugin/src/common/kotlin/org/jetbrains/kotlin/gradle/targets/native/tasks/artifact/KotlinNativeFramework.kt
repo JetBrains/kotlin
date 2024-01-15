@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.version
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -110,7 +108,6 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
 ): TaskProvider<KotlinNativeLinkArtifactTask> {
     val kind = NativeOutputKind.FRAMEWORK
     val destinationDir = project.layout.buildDirectory.dir("$outDirName/${target.visibleName}/${buildType.visibleName}")
-    val xcodeVersionTask = XcodeVersionTask.locateOrRegister(project)
     val resultTask = project.registerTask<KotlinNativeLinkArtifactTask>(
         lowerCamelCaseName("assemble", name, buildType.visibleName, kind.taskNameClassifier, target.presetName, taskNameSuffix),
         listOf(target, kind.compilerOutputKind)
@@ -123,7 +120,6 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
         task.debuggable.set(buildType.debuggable)
         task.linkerOptions.set(linkerOptions)
         task.binaryOptions.set(binaryOptions)
-        task.xcodeVersion.set(xcodeVersionTask.version)
         task.staticFramework.set(isStatic)
         if (embedBitcode != null) {
             task.embedBitcode.set(embedBitcode)

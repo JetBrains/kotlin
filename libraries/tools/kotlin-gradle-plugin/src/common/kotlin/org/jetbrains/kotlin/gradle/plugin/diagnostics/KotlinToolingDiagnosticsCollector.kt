@@ -37,14 +37,11 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
     }
 
     fun report(task: UsesKotlinToolingDiagnostics, diagnostic: ToolingDiagnostic) {
-        val options = task.diagnosticRenderingOptions.get()
-        if (!diagnostic.isSuppressed(options)) {
-            renderReportedDiagnostic(diagnostic, task.logger, options)
-        }
+        report(task, task.logger, diagnostic)
     }
 
-    fun report(transform: TransformActionUsingKotlinToolingDiagnostics<*>, logger: Logger, diagnostic: ToolingDiagnostic) {
-        val options = transform.parameters.diagnosticRenderingOptions.get()
+    fun report(from: UsesKotlinToolingDiagnosticsParameters, logger: Logger, diagnostic: ToolingDiagnostic) {
+        val options = from.diagnosticRenderingOptions.get()
         if (!diagnostic.isSuppressed(options)) {
             renderReportedDiagnostic(diagnostic, logger, options)
         }
