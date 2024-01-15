@@ -1,4 +1,4 @@
 compiler/testData/javaModules/simpleUseNonExportedPackage/moduleB/usage.kt:8:9: error: symbol is declared in module 'moduleA' which does not export package 'a.impl'
 val a3: AImpl = A.getInstance()
-        ^
+        ^^^^^
 COMPILATION_ERROR

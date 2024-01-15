@@ -1,4 +1,4 @@
 compiler/testData/cli/jvm/jsr305DefaultMigration.kt:2:19: error: null cannot be a value of a non-null type 'kotlin.String'.
     annotated.foo(null)
-                  ^
+                  ^^^^
 COMPILATION_ERROR

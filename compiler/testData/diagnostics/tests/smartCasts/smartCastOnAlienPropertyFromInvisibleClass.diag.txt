@@ -6,5 +6,5 @@
             ^
 /B.kt:23:9: warning: smart cast to 'String' is deprecated, because 'i.x' is a property declared in base class from different module inherited in non-public API class
         i.x.length
-        ^
+        ^^^
 

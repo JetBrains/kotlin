@@ -1,19 +1,19 @@
 /incorrectUsage.kt:18:5: error: val cannot be reassigned
     task.input = 42
-    ^
+    ^^^^^^^^^^
 /incorrectUsage.kt:18:16: error: no applicable 'assign' function found for '=' overload
     task.input = 42
                ^
 /incorrectUsage.kt:18:18: error: the integer literal does not conform to the expected type StringProperty
     task.input = 42
-                 ^
+                 ^^
 /incorrectUsage.kt:24:9: error: val cannot be reassigned
         input = 42
-        ^
+        ^^^^^
 /incorrectUsage.kt:24:15: error: no applicable 'assign' function found for '=' overload
         input = 42
               ^
 /incorrectUsage.kt:24:17: error: the integer literal does not conform to the expected type StringProperty
         input = 42
-                ^
+                ^^
 

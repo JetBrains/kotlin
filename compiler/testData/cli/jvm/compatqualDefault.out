@@ -1,4 +1,4 @@
 compiler/testData/cli/jvm/compatqualUsage.kt:2:11: error: null cannot be a value of a non-null type 'kotlin.String'.
     b.foo(null)
-          ^
+          ^^^^
 COMPILATION_ERROR

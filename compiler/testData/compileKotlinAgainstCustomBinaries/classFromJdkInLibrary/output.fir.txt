@@ -1,4 +1,4 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/classFromJdkInLibrary/source.kt:4:10: error: unresolved reference 'methodWhichDoesNotExistInJdk'.
     Date.methodWhichDoesNotExistInJdk()
-         ^
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

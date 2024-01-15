@@ -1,4 +1,4 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/jvmDefaultNonDefaultInheritanceSuperCall/source.kt:5:22: error: interfaces can only call JVM-default members via super within JVM-default members. Please use '-Xjvm-default=all/all-compatibility' modes for such calls.
         return super.evaluate()
-                     ^
+                     ^^^^^^^^
 COMPILATION_ERROR

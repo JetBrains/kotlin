@@ -13,4 +13,4 @@ compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeA
         constructor(): Writer
 
 actual typealias Writer = java.io.Writer
-                 ^
+                 ^^^^^^

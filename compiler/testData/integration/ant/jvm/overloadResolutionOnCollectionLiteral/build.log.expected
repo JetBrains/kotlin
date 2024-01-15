@@ -7,13 +7,13 @@ build:
     [javac] Compiling [[TestData]] => [[Temp]/classes]
     [javac] [TestData]/literals.kt:9:9: error: overload resolution ambiguity between candidates: [fun intArrayOf(vararg elements: IntArray): IntArray, fun intArrayOf(vararg elements: IntArray): IntArray]
     [javac] @AnnInt(intArrayOf(1, 2))
-    [javac]         ^
+    [javac]         ^^^^^^^^^^
     [javac] [TestData]/myArrayOf.kt:3:1: error: conflicting overloads: [fun intArrayOf(vararg elements: IntArray): IntArray]
     [javac] public fun intArrayOf(vararg elements: Int): IntArray = TODO()
-    [javac] ^
+    [javac] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     [javac] [TestData]/myArrayOf.kt:4:1: error: conflicting overloads: [fun intArrayOf(vararg elements: IntArray): IntArray]
     [javac] public fun intArrayOf(vararg elements: Int): IntArray = TODO()
-    [javac] ^
+    [javac] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ERR:
 

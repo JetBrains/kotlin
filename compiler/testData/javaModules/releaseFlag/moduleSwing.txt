@@ -1,4 +1,4 @@
 compiler/testData/javaModules/releaseFlag/moduleSwing/foo/Foo.kt:5:18: error: unresolved reference: swing
     val z: javax.swing.JFrame? = null
-                 ^
+                 ^^^^^
 COMPILATION_ERROR

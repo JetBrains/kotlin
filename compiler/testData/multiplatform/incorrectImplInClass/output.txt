@@ -7,13 +7,13 @@ Exit code: COMPILATION_ERROR
 Output:
 compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:1:18: error: 'actual constructor(): Foo' has no corresponding expected declaration
 actual class Foo actual constructor() {
-                 ^
+                 ^^^^^^^^^^^^^^^^^^^^
 compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:2:5: error: 'actual constructor(s: String): Foo' has no corresponding expected declaration
     actual constructor(s: String) : this()
-    ^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:4:16: error: 'actual fun nonPlatformFun(): Unit' has no corresponding expected declaration
     actual fun nonPlatformFun() {}
-               ^
+               ^^^^^^^^^^^^^^
 compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:6:16: error: 'actual val nonPlatformVal: String' has no corresponding expected declaration
     actual val nonPlatformVal = ""
-               ^
+               ^^^^^^^^^^^^^^

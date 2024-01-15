@@ -9,5 +9,5 @@ compiler or generated code. Use it at your own risk!
 
 compiler/testData/cli/jvm/enumEntriesNotEnabled.kt:7:26: error: the feature "enum entries" is disabled
     val entries = MyEnum.entries
-                         ^
+                         ^^^^^^^
 COMPILATION_ERROR

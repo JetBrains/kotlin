@@ -3,5 +3,5 @@ warning: unable to find kotlin-script-runtime.jar in the Kotlin home directory. 
 warning: unable to find kotlin-reflect.jar in the Kotlin home directory. Pass either '-no-reflect' or '-no-stdlib' to prevent adding it to the classpath, or the correct '-kotlin-home'
 compiler/testData/cli/jvm/simple.kt:1:14: error: unresolved reference 'println'.
 fun main() = println("hello world")
-             ^
+             ^^^^^^^
 COMPILATION_ERROR

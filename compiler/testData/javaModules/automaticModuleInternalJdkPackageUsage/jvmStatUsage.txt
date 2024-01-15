@@ -1,4 +1,4 @@
 compiler/testData/javaModules/automaticModuleInternalJdkPackageUsage/jvmStatUsage/Test.kt:1:28: error: symbol is declared in module 'jdk.internal.jvmstat' which does not export package 'sun.jvmstat.monitor'
 val z: sun.jvmstat.monitor.Monitor? = null
-                           ^
+                           ^^^^^^^
 COMPILATION_ERROR

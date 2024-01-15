@@ -1,7 +1,7 @@
 compiler/testData/javaModules/jdkModulesFromNamed/main/test.kt:11:18: error: unresolved reference: swing
     val s: javax.swing.JFrame? = null
-                 ^
-compiler/testData/javaModules/jdkModulesFromNamed/main/test.kt:12:5: error: overload resolution ambiguity:
+                 ^^^^^
+compiler/testData/javaModules/jdkModulesFromNamed/main/test.kt:12:5: error: overload resolution ambiguity: 
 public inline fun println(message: Any?): Unit defined in kotlin.io
 public inline fun println(message: Boolean): Unit defined in kotlin.io
 public inline fun println(message: Byte): Unit defined in kotlin.io
@@ -13,5 +13,5 @@ public inline fun println(message: Int): Unit defined in kotlin.io
 public inline fun println(message: Long): Unit defined in kotlin.io
 public inline fun println(message: Short): Unit defined in kotlin.io
     println(s)
-    ^
+    ^^^^^^^
 COMPILATION_ERROR

@@ -1,8 +1,8 @@
 warning: language version 1.6 is deprecated and its support will be removed in a future version of Kotlin
 compiler/testData/cli/jvm/jspecifyUsage.kt:2:11: warning: type mismatch: inferred type is Nothing? but String was expected
     a.foo(null)
-          ^
+          ^^^^
 compiler/testData/cli/jvm/jspecifyUsage.kt:3:5: warning: unsafe use of a nullable receiver of type String?
     a.bar().hashCode()
-    ^
+    ^^^^^^^
 OK

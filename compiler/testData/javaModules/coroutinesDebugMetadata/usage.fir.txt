@@ -1,7 +1,7 @@
 compiler/testData/javaModules/coroutinesDebugMetadata/usage/usage.kt:1:16: warning: this code uses error suppression for 'INVISIBLE_REFERENCE'. While it might compile and work, the compiler behavior is UNSPECIFIED and WON'T BE PRESERVED. Please report your use case to the Kotlin issue tracker instead: https://kotl.in/issue
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
-               ^
+               ^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/javaModules/coroutinesDebugMetadata/usage/usage.kt:1:59: warning: this code uses error suppression for 'CANNOT_OVERRIDE_INVISIBLE_MEMBER'. While it might compile and work, the compiler behavior is UNSPECIFIED and WON'T BE PRESERVED. Please report your use case to the Kotlin issue tracker instead: https://kotl.in/issue
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
-                                                          ^
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 OK

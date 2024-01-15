@@ -1,16 +1,16 @@
 compiler/testData/cli/jvm/conflictingProjection.kt:10:19: error: projection is conflicting with variance of the corresponding type parameter of 'Out<in kotlin.Int>'. Remove the projection or replace it with '*'.
 fun a8(value: Out<in Int>) {}
-                  ^
+                  ^^
 compiler/testData/cli/jvm/conflictingProjection.kt:17:15: error: variance annotations are only allowed for type parameters of classes and interfaces.
 typealias A13<in K> = In<K>
-              ^
+              ^^
 compiler/testData/cli/jvm/conflictingProjection.kt:18:15: error: variance annotations are only allowed for type parameters of classes and interfaces.
 typealias A14<in K> = In<in K>
-              ^
+              ^^
 compiler/testData/cli/jvm/conflictingProjection.kt:19:15: error: variance annotations are only allowed for type parameters of classes and interfaces.
 typealias A15<in K> = In<out K>
-              ^
+              ^^
 compiler/testData/cli/jvm/conflictingProjection.kt:19:26: error: projection is conflicting with variance of the corresponding type parameter of 'In<out K>'. Remove the projection or replace it with '*'.
 typealias A15<in K> = In<out K>
-                         ^
+                         ^^^
 COMPILATION_ERROR

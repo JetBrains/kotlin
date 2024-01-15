@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/plugins/multiplePlugins.kt:11:17: error:
+compiler/testData/cli/jvm/plugins/multiplePlugins.kt:11:17: error: 
     inner class Inner(val s: String)
-                ^
+                ^^^^^
 COMPILATION_ERROR

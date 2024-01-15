@@ -1,10 +1,10 @@
 compiler/testData/javaModules/specifyPathToModuleInfoInArguments/moduleB/usage.kt:2:19: error: symbol is declared in module 'moduleA' which does not export package 'unexported'
 import unexported.Unexported
-                  ^
+                  ^^^^^^^^^^
 compiler/testData/javaModules/specifyPathToModuleInfoInArguments/moduleB/usage.kt:9:5: error: symbol is declared in module 'moduleA' which does not export package 'unexported'
     Unexported()
-    ^
+    ^^^^^^^^^^
 compiler/testData/javaModules/specifyPathToModuleInfoInArguments/moduleB/usage.kt:13:5: error: unresolved reference: Unrelated
     Unrelated()
-    ^
+    ^^^^^^^^^
 COMPILATION_ERROR

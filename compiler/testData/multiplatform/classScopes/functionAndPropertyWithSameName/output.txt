@@ -13,10 +13,10 @@ compiler/testData/multiplatform/classScopes/functionAndPropertyWithSameName/jvm.
         actual fun bar(): String
 
 actual class Foo {
-             ^
+             ^^^
 compiler/testData/multiplatform/classScopes/functionAndPropertyWithSameName/jvm.kt:4:16: error: 'actual fun bar(): String' has no corresponding expected declaration
 The following declaration is incompatible because callable kinds are different (function vs property):
     expect val bar: String
 
     actual fun bar(): String = ""
-               ^
+               ^^^

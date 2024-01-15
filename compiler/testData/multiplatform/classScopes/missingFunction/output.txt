@@ -10,4 +10,4 @@ compiler/testData/multiplatform/classScopes/missingFunction/jvm.kt:1:14: error: 
     expect fun function(s: String): Unit
 
 actual class Foo
-             ^
+             ^^^

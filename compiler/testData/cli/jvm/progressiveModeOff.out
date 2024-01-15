@@ -1,8 +1,8 @@
 warning: language version 1.5 is deprecated and its support will be removed in a future version of Kotlin
 compiler/testData/cli/jvm/progressive/tailrecOnVirtualMember.kt:2:5: error: tailrec is not allowed on open members
     tailrec open fun foo(x: Int) {}
-    ^
+    ^^^^^^^
 compiler/testData/cli/jvm/progressive/typeParametersInAnonymousObjects.kt:2:19: error: type parameters are not allowed for objects
     val x = object<T> { }
-                  ^
+                  ^^^
 COMPILATION_ERROR

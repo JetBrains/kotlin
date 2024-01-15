@@ -1,7 +1,7 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/prohibitNestedClassesByDollarName/main.kt:6:10: error: unresolved reference: `Outer$Nested`
     test.`Outer$Nested`()
-         ^
+         ^^^^^^^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/prohibitNestedClassesByDollarName/main.kt:9:10: error: unresolved reference: `JavaOuter$JavaNested`
     test.`JavaOuter$JavaNested`()
-         ^
+         ^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

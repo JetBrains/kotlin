@@ -1,7 +1,7 @@
 compiler/testData/cli/jvm/firErrorOnLastLineNoEol.kt:1:9: error: 'this' is not defined in this context.
 val x = this
-        ^
+        ^^^^
 compiler/testData/cli/jvm/firErrorOnLastLineNoEol.kt:2:9: error: 'this' is not defined in this context.
 val y = this // *NO* EOL AFTER THIS LINE!
-        ^
+        ^^^^
 COMPILATION_ERROR

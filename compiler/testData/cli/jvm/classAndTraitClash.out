@@ -1,7 +1,7 @@
 compiler/testData/cli/jvm/classAndTraitClash.kt:3:1: error: duplicate JVM class name 'test/T1$DefaultImpls' generated from: `T1$DefaultImpls`, DefaultImpls
 interface T1 {
-^
+^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/classAndTraitClash.kt:7:1: error: duplicate JVM class name 'test/T1$DefaultImpls' generated from: `T1$DefaultImpls`, DefaultImpls
 class `T1$DefaultImpls` {
-^
+^^^^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

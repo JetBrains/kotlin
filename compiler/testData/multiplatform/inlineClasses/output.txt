@@ -10,7 +10,7 @@ The following declaration is incompatible because modifiers are different (compa
     expect class Foo2 : Any
 
 actual class Foo2 actual constructor(actual val y: String)
-             ^
+             ^^^^
 
 -- JS --
 Exit code: COMPILATION_ERROR
@@ -20,4 +20,4 @@ The following declaration is incompatible because modifiers are different (compa
     expect class Foo2 : Any
 
 actual class Foo2 actual constructor(actual val y: String)
-             ^
+             ^^^^

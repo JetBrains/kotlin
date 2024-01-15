@@ -11,4 +11,4 @@ compiler/testData/multiplatform/defaultArguments/methodDefaultArgsViaTypealias/j
     expect constructor(p: String = ...): A
 
 actual typealias A = AImpl
-^
+^^^^^^^^^^^^^^^^^^^^^^^^^^

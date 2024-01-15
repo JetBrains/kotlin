@@ -1,4 +1,4 @@
 compiler/testData/cli/jvm/jsr305Migration.kt:3:19: error: null cannot be a value of a non-null type 'kotlin.String'.
     annotated.bar(null)
-                  ^
+                  ^^^^
 COMPILATION_ERROR

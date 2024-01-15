@@ -10,4 +10,4 @@ The following declaration is incompatible because return type is different:
     expect fun function(b: ByteArray): Int
 
     actual fun function(b: ByteArray): Long = b.size.toLong()
-               ^
+               ^^^^^^^^

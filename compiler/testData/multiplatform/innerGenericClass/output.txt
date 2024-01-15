@@ -7,4 +7,4 @@ Exit code: COMPILATION_ERROR
 Output:
 compiler/testData/multiplatform/innerGenericClass/common2.kt:8:15: error: unresolved reference 'unresolved'.
     b.getAE().unresolved()
-              ^
+              ^^^^^^^^^^

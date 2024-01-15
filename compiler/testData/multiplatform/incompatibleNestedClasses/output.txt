@@ -10,46 +10,46 @@ The following declaration is incompatible because class kinds are different (cla
     expect class N1 : Any
 
     actual interface N1
-                     ^
+                     ^^
 compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:3:19: error: 'actual object N2 : Any' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     expect interface N2 : Any
 
     actual object N2
-                  ^
+                  ^^
 compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:4:18: error: 'actual class N3 : Any' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     expect object N3 : Any
 
     actual class N3
-                 ^
+                 ^^
 compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:8:24: error: 'actual inner class N2 : Any' has no corresponding expected declaration
 The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
     expect class N2 : Any
 
     actual inner class N2
-                       ^
+                       ^^
 compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:9:18: error: 'actual class I2 : Any' has no corresponding expected declaration
 The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
     expect inner class I2 : Any
 
     actual class I2
-                 ^
+                 ^^
 compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:13:22: error: 'actual companion object Companion : Any' has no corresponding expected declaration
 The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
     expect object Companion : Any
 
     actual companion object {}
-                     ^
+                     ^^^^^^
 compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:14:19: error: 'actual object Factory : Any' has no corresponding expected declaration
 The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
     expect companion object Factory : Any
 
     actual object Factory
-                  ^
+                  ^^^^^^^
 compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:18:19: error: 'actual object Companion : Any' has no corresponding expected declaration
 The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
     expect companion object Companion : Any
 
     actual object Companion
-                  ^
+                  ^^^^^^^^^

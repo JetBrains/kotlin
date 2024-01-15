@@ -1,7 +1,7 @@
 compiler/testData/cli/jvm/conflictingOverloads.kt:1:1: error: conflicting overloads: [fun a(): List<String>]
 fun a(): List<Int> = null!!
-^
+^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/conflictingOverloads.kt:2:1: error: conflicting overloads: [fun a(): List<Int>]
 fun a(): List<String> = null!!
-^
+^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

@@ -1,7 +1,7 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/jvmDefaultClashWithOld/source.kt:15:7: error: explicit override is required for 'public open var test: String defined in SubCheck' in the '-Xjvm-default=all' mode. Otherwise, implicit class override 'public open var test: String defined in base.CheckClass' (compiled in the old -Xjvm-default mode) is not fully overridden and would be incorrectly called at runtime
 class SubCheckClass : CheckClass(), SubCheck
-      ^
+      ^^^^^^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/jvmDefaultClashWithOld/source.kt:15:7: error: explicit override is required for 'public open fun test(): String defined in SubCheck' in the '-Xjvm-default=all' mode. Otherwise, implicit class override 'public open fun test(): String defined in base.CheckClass' (compiled in the old -Xjvm-default mode) is not fully overridden and would be incorrectly called at runtime
 class SubCheckClass : CheckClass(), SubCheck
-      ^
+      ^^^^^^^^^^^^^
 COMPILATION_ERROR
