@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -39,7 +40,8 @@ abstract class AbstractAtomicSymbols(
     abstract val volatileAnnotationClass: IrClass
     val volatileAnnotationConstructorCall: IrConstructorCall
         get() {
-            val volatileAnnotationConstructor = buildAnnotationConstructor(volatileAnnotationClass)
+            val volatileAnnotationConstructor = volatileAnnotationClass.primaryConstructor
+                ?: error("Missing constructor in Volatile annotation class")
             return IrConstructorCallImpl.fromSymbolOwner(volatileAnnotationConstructor.returnType, volatileAnnotationConstructor.symbol)
         }
 
@@ -142,7 +144,4 @@ abstract class AbstractAtomicSymbols(
         parent = irPackage
         createImplicitParameterDeclarationWithWrappedDescriptor()
     }.symbol
-
-    private fun buildAnnotationConstructor(annotationClass: IrClass): IrConstructor =
-        annotationClass.addConstructor { isPrimary = true }
 }
