@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android
 
-import com.android.build.gradle.api.AndroidSourceSet
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.utils.getOrCreate
-import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheck
+import org.jetbrains.kotlin.gradle.utils.*
 
 internal class KotlinAndroidSourceSetFactory(
     private val target: KotlinAndroidTarget,
@@ -23,7 +21,10 @@ internal class KotlinAndroidSourceSetFactory(
 ) {
     private val configuredKotlinSourceSets = mutableSetOf<KotlinSourceSet>()
 
-    fun getOrCreateConfiguredKotlinSourceSet(kotlinSourceSetName: String, androidSourceSet: AndroidSourceSet): KotlinSourceSet {
+    fun getOrCreateConfiguredKotlinSourceSet(
+        kotlinSourceSetName: String,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
+    ): KotlinSourceSet {
         val kotlinSourceSet = getOrCreateKotlinSourceSet(kotlinSourceSetName, androidSourceSet)
         if (configuredKotlinSourceSets.add(kotlinSourceSet)) {
             layout.sourceSetConfigurator.configure(target, kotlinSourceSet, androidSourceSet)
@@ -37,7 +38,8 @@ internal class KotlinAndroidSourceSetFactory(
 
 
     private fun getOrCreateKotlinSourceSet(
-        name: String, androidSourceSet: AndroidSourceSet
+        name: String,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
     ): KotlinSourceSet {
         return kotlin.sourceSets.getOrCreate(name) { kotlinSourceSet ->
             kotlinSourceSet.androidSourceSetInfoOrNull?.let { info ->
