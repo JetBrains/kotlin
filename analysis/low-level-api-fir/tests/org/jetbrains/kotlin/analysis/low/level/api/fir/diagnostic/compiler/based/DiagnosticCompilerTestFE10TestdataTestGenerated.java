@@ -16145,6 +16145,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("incompleteConstructorCall.kt")
+            public void testIncompleteConstructorCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/incompleteCode/incompleteConstructorCall.kt");
+            }
+
+            @Test
             @TestMetadata("incompleteEquals.kt")
             public void testIncompleteEquals() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/incompleteCode/incompleteEquals.kt");

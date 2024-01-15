@@ -16139,6 +16139,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("incompleteConstructorCall.kt")
+            public void testIncompleteConstructorCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/incompleteCode/incompleteConstructorCall.kt");
+            }
+
+            @Test
             @TestMetadata("incompleteEquals.kt")
             public void testIncompleteEquals() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/incompleteCode/incompleteEquals.kt");
