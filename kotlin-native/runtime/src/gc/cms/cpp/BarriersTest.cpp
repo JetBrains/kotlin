@@ -15,7 +15,6 @@
 #include "TestSupport.hpp"
 #include "ObjectData.hpp"
 
-
 using namespace kotlin;
 
 namespace {
@@ -44,7 +43,6 @@ test_support::Object<Payload>& AllocateObject(mm::ThreadData& threadData) {
 
 class BarriersTest : public testing::Test {
 public:
-
     ~BarriersTest() override {
         mm::SpecialRefRegistry::instance().clearForTests();
         mm::GlobalData::Instance().allocator().clearForTests();
@@ -53,6 +51,10 @@ public:
     void initMutatorMarkQueue(mm::ThreadData& thread) {
         auto& markData = thread.gc().impl().gc().mark();
         markData.markQueue().construct(parProc_);
+    }
+
+    static void switchToWeakProcessingBarriers() {
+        gc::barriers::switchToWeakProcessingBarriers();
     }
 
 private:
@@ -74,7 +76,7 @@ TEST_F(BarriersTest, Deletion) {
 
         {
             ThreadStateGuard guard(ThreadState::kNative); // pretend to be the GC thread
-            gc::barriers::enableMarkBarriers(gcHandle.getEpoch());
+            gc::barriers::enableBarriers(gcHandle.getEpoch());
         }
 
         UpdateHeapRef(&ref, newObj.header());
@@ -84,14 +86,14 @@ TEST_F(BarriersTest, Deletion) {
 
         {
             ThreadStateGuard guard(ThreadState::kNative); // pretend to be the GC thread
-            gc::barriers::disableMarkBarriers();
+            switchToWeakProcessingBarriers();
+            gc::barriers::disableBarriers();
         }
-
     });
 }
 
 TEST_F(BarriersTest, AllocationDuringMarkBarreirs) {
-    gc::barriers::enableMarkBarriers(gcHandle.getEpoch());
+    gc::barriers::enableBarriers(gcHandle.getEpoch());
 
     RunInNewThread([this](mm::ThreadData& threadData) {
         initMutatorMarkQueue(threadData);
@@ -99,7 +101,8 @@ TEST_F(BarriersTest, AllocationDuringMarkBarreirs) {
         EXPECT_THAT(gc::isMarked(obj.header()), true);
     });
 
-    gc::barriers::disableMarkBarriers();
+    switchToWeakProcessingBarriers();
+    gc::barriers::disableBarriers();
 }
 
 TEST_F(BarriersTest, ConcurrentDeletion) {
@@ -118,7 +121,7 @@ TEST_F(BarriersTest, ConcurrentDeletion) {
     std::atomic<bool> canStart = false;
     std::atomic<std::size_t> finished = 0;
 
-    gc::barriers::enableMarkBarriers(gcHandle.getEpoch());
+    gc::barriers::enableBarriers(gcHandle.getEpoch());
 
     std::vector<ScopedThread> threads;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
@@ -148,7 +151,8 @@ TEST_F(BarriersTest, ConcurrentDeletion) {
         std::this_thread::yield();
     }
 
-    gc::barriers::disableMarkBarriers();
+    switchToWeakProcessingBarriers();
+    gc::barriers::disableBarriers();
 
     EXPECT_THAT(gc::isMarked(ref), true);
 }

@@ -146,3 +146,50 @@ TEST_F(SafePointActionTest, SafePointWithExplicitThread) {
         mm::test_support::setSafePointAction(nullptr);
     });
 }
+
+class ExtraSafePointActionActivatorTest : public ::testing::Test {
+public:
+    class ActivatorImpl : public mm::ExtraSafePointActionActivator<ActivatorImpl> {};
+
+    auto& mockAction() noexcept { return mockAction_; }
+private:
+    testing::StrictMock<testing::MockFunction<void()>> mockAction_;
+};
+
+TEST_F(ExtraSafePointActionActivatorTest, ExtraActionActivator) {
+    ASSERT_FALSE(mm::test_support::safePointsAreActive());
+    ActivatorImpl::doIfActive([&] { mockAction().Call(); });
+    {
+        ActivatorImpl activator;
+        ASSERT_TRUE(mm::test_support::safePointsAreActive());
+
+        EXPECT_CALL(mockAction(), Call());
+        ActivatorImpl::doIfActive([&] { mockAction().Call(); });
+        testing::Mock::VerifyAndClearExpectations(&mockAction());
+    }
+    ActivatorImpl::doIfActive([&] { mockAction().Call(); });
+    ASSERT_FALSE(mm::test_support::safePointsAreActive());
+}
+
+TEST_F(ExtraSafePointActionActivatorTest, ExtraActionActivatorStress) {
+    std::atomic terminate = false;
+
+    std::vector<ScopedThread> threads;
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        threads.emplace_back([&]() noexcept {
+            while (!terminate) {
+                ActivatorImpl::doIfActive([&] { mockAction().Call(); });
+                std::this_thread::yield();
+            }
+        });
+    }
+
+    EXPECT_CALL(mockAction(), Call()).Times(testing::AnyNumber());
+    {
+        ActivatorImpl activator;
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    testing::Mock::VerifyAndClearExpectations(&mockAction());
+
+    terminate = true;
+}

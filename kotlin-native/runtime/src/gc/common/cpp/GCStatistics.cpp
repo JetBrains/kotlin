@@ -282,7 +282,7 @@ void GCHandle::suspensionRequested() {
         if (!stat->firstPauseRequestTime) {
             stat->firstPauseRequestTime = requestTime;
         } else {
-            RuntimeAssert(!stat->secondPauseRequestTime, "GCStatistics support max two pauses per GC epoch");
+            // TODO RuntimeAssert(!stat->secondPauseRequestTime, "GCStatistics support max two pauses per GC epoch");
             stat->secondPauseRequestTime = requestTime;
         }
     }
@@ -296,7 +296,7 @@ void GCHandle::threadsAreSuspended() {
             stat->firstPauseStartTime = startTime;
             requestTime = stat->firstPauseRequestTime;
         } else {
-            RuntimeAssert(!stat->secondPauseStartTime, "GCStatistics support max two pauses per GC epoch");
+            // TODO RuntimeAssert(!stat->secondPauseStartTime, "GCStatistics support max two pauses per GC epoch");
             stat->secondPauseStartTime = startTime;
             requestTime = stat->secondPauseRequestTime;
         }
@@ -315,7 +315,7 @@ void GCHandle::threadsAreResumed() {
             stat->firstPauseEndTime = endTime;
             startTime = stat->firstPauseStartTime;
         } else {
-            RuntimeAssert(!stat->secondPauseEndTime, "GCStatistics support max two pauses per GC epoch");
+            // TODO RuntimeAssert(!stat->secondPauseEndTime, "GCStatistics support max two pauses per GC epoch");
             stat->secondPauseEndTime = endTime;
             startTime = stat->secondPauseStartTime;
         }

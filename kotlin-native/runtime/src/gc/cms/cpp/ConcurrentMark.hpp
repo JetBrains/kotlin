@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -15,6 +15,9 @@
 #include "SafePoint.hpp"
 #include "ThreadRegistry.hpp"
 #include "Utils.hpp"
+#include "concurrent/Once.hpp"
+
+#include <ThreadData.hpp>
 
 namespace kotlin::gc::mark {
 
@@ -51,9 +54,7 @@ public:
 
         static constexpr auto kAllowHeapToStackRefs = false;
 
-        static void clear(AnyQueue& queue) noexcept {
-            RuntimeAssert(queue.localEmpty(), "Mark queue must be empty");
-        }
+        static void clear(AnyQueue& queue) noexcept { RuntimeAssert(queue.localEmpty(), "Mark queue must be empty"); }
 
         static ALWAYS_INLINE ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
             auto* obj = queue.tryPop();
@@ -91,10 +92,17 @@ public:
     };
 
     class ThreadData : private Pinned {
+        friend ConcurrentMark;
+
     public:
         auto& markQueue() noexcept { return markQueue_; }
+        void onSafePoint() noexcept;
+
     private:
+        void ensureFlushActionExecuted() noexcept;
+
         ManuallyScoped<MutatorQueue> markQueue_{};
+        ManuallyScoped<OnceExecutable> flushAction_{};
     };
 
     void beginMarkingEpoch(GCHandle gcHandle);
@@ -109,17 +117,32 @@ public:
      */
     void runOnMutator(mm::ThreadData& mutatorThread);
 
+    /**
+     * Weak reference reads may be mutually exclusive with certain parts of mark oprocess.
+     * Every read must be guarded by the object returned by this method.
+     */
+    auto weakReadProtector() noexcept { return std::shared_lock{markTerminationMutex_}; }
+
+    ALWAYS_INLINE void assertWeakReadForbiden() noexcept {
+        std::shared_lock lock(markTerminationMutex_, std::try_to_lock);
+        RuntimeAssert(!lock, "Mark termination mutex must be held for write by a GC thread");
+    }
+
 private:
     GCHandle& gcHandle();
 
     void completeMutatorsRootSet(MarkTraits::MarkQueue& markQueue);
     void tryCollectRootSet(mm::ThreadData& thread, ParallelProcessor::Worker& markQueue);
     void parallelMark(ParallelProcessor::Worker& worker);
+    void waitForMutatorsToFlush() noexcept;
+    bool tryTerminateMark(std::size_t& everSharedBatches) noexcept;
 
     void resetMutatorFlags();
 
     GCHandle gcHandle_ = GCHandle::invalid();
     std::optional<mm::ThreadRegistry::Iterable> lockedMutatorsList_;
     ManuallyScoped<ParallelProcessor> parallelProcessor_{};
+
+    RWSpinLock<MutexThreadStateHandling::kIgnore> markTerminationMutex_;
 };
 } // namespace kotlin::gc::mark
