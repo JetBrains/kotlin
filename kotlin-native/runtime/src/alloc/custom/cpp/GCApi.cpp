@@ -78,9 +78,11 @@ bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::
 
 bool SweepExtraObject(mm::ExtraObjectData* extraObject, gc::GCHandle::GCSweepExtraObjectsScope& gcHandle) noexcept {
     if (extraObject->getFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE)) {
+        gcHandle.addSweptObject();
         CustomAllocDebug("SweepExtraObject(%p): can be reclaimed", extraObject);
         return false;
     }
+    gcHandle.addKeptObject(sizeof(mm::ExtraObjectData));
     CustomAllocDebug("SweepExtraObject(%p): is still needed", extraObject);
     return true;
 }
