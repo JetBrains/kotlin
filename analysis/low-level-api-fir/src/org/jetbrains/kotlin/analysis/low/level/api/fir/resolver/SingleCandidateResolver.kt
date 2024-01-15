@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
@@ -84,6 +86,9 @@ class SingleCandidateResolver(
 
         return completionResult
     }
+
+    fun resolveDoubleColonLHS(doubleColonExpression: FirCallableReferenceAccess): DoubleColonLHS? =
+        bodyResolveComponents.doubleColonExpressionResolver.resolveDoubleColonLHS(doubleColonExpression)
 
     private fun createCandidateInfoProvider(resolutionParameters: ResolutionParameters): CandidateInfoProvider {
         return when (resolutionParameters.singleCandidateResolutionMode) {

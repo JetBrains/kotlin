@@ -1,0 +1,20 @@
+extensionApplicable1: ApplicableAsExtensionCallable
+substitutor: empty
+
+extensionApplicable2: ApplicableAsExtensionCallable
+substitutor: empty
+
+extensionWrongReceiver1: NonApplicable
+substitutor: null
+
+extensionWrongReceiver2: NonApplicable
+substitutor: null
+
+extensionWithTypeParameter1: ApplicableAsExtensionCallable
+substitutor: {T=A<kotlin/Int>}
+
+extensionWithTypeParameter2: ApplicableAsExtensionCallable
+substitutor: {T=kotlin/Int}
+
+test: ApplicableAsExtensionCallable
+substitutor: empty

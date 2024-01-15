@@ -1,0 +1,5 @@
+extensionApplicable: ApplicableAsExtensionCallable
+substitutor: empty
+
+extensionWrongReceiver: NonApplicable
+substitutor: null

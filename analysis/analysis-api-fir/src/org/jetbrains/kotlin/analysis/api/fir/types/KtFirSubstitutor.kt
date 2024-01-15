@@ -51,6 +51,10 @@ internal class KtFirMapBackedSubstitutor(
 
         return result
     }
+
+    override fun toString(): String {
+        return getAsMap().mapKeys { (typeParameterSymbol, _) -> typeParameterSymbol.name.identifier }.toString()
+    }
 }
 
 @OptIn(KtAnalysisApiInternals::class)

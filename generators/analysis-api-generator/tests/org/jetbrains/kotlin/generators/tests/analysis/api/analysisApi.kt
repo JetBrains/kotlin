@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callRes
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractMultiModuleCompilerFacilityTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.completionCandidateChecker.AbstractCompletionCandidateExtensionChecker
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByDelegatedMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByPsiTest
@@ -284,6 +285,15 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("compileTimeConstantProvider") {
         test(AbstractCompileTimeConstantEvaluatorTest::class) {
             model(it, "evaluate")
+        }
+    }
+
+    component("completionCandidateChecker") {
+        test(
+            AbstractCompletionCandidateExtensionChecker::class,
+            filter = frontendIs(FrontendKind.Fir) and testModuleKindIs(TestModuleKind.Source)
+        ) {
+            model(it, "checkExtensionIsSuitable")
         }
     }
 
