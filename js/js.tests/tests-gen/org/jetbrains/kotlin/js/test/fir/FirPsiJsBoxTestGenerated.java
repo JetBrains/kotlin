@@ -3145,6 +3145,12 @@ public class FirPsiJsBoxTestGenerated extends AbstractFirPsiJsBoxTest {
         }
 
         @Test
+        @TestMetadata("topLevelAndClassCtrNameClash.kt")
+        public void testTopLevelAndClassCtrNameClash() throws Exception {
+            runTest("js/js.translator/testData/box/export/topLevelAndClassCtrNameClash.kt");
+        }
+
+        @Test
         @TestMetadata("vararg.kt")
         public void testVararg() throws Exception {
             runTest("js/js.translator/testData/box/export/vararg.kt");

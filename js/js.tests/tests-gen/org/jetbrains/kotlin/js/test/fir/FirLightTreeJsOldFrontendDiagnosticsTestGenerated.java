@@ -701,6 +701,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("constructorsWithSameJsName.kt")
+        public void testConstructorsWithSameJsName() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/constructorsWithSameJsName.kt");
+        }
+
+        @Test
         @TestMetadata("declarationClash.kt")
         public void testDeclarationClash() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/declarationClash.kt");
