@@ -337,11 +337,13 @@ abstract class AbstractIncrementalJpsTest(
 
         buildLogFile?.let {
             val logs = createBuildLog(otherMakeResults)
-            val expected = excludeCompilerErrorMessagesFromLog(File(buildLogFile.absolutePath).readText())
+            val buildLog = File(buildLogFile.absolutePath).readText()
+            val expected = excludeCompilerErrorMessagesFromLog(buildLog)
             val actual = excludeCompilerErrorMessagesFromLog(logs)
 
-            UsefulTestCase.assertEquals(expected.trimEnd(), actual.trimEnd())
-
+            if(expected.trimEnd() != actual.trimEnd()) {
+                UsefulTestCase.assertEquals(buildLog, logs)
+            }
             val lastMakeResult = otherMakeResults.last()
             clearCachesRebuildAndCheckOutput(lastMakeResult)
         }
