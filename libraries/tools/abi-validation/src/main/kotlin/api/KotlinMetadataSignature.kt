@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 JetBrains s.r.o.
+ * Copyright 2016-2023 JetBrains s.r.o.
  * Use of this source code is governed by the Apache 2.0 License that can be found in the LICENSE.txt file.
  */
 
@@ -11,22 +11,23 @@ import org.objectweb.asm.*
 import org.objectweb.asm.tree.*
 
 @ExternalApi // Only name is part of the API, nothing else is used by stdlib
-data class ClassBinarySignature(
-    val name: String,
-    val superName: String,
-    val outerName: String?,
-    val supertypes: List<String>,
-    val memberSignatures: List<MemberBinarySignature>,
-    val access: AccessFlags,
-    val isEffectivelyPublic: Boolean,
-    val isNotUsedWhenEmpty: Boolean,
-    val annotations: List<AnnotationNode>
+public data class ClassBinarySignature internal constructor(
+    internal val name: String,
+    internal val superName: String,
+    internal val outerName: String?,
+    internal val supertypes: List<String>,
+    internal val memberSignatures: List<MemberBinarySignature>,
+    internal val access: AccessFlags,
+    internal val isEffectivelyPublic: Boolean,
+    internal val isNotUsedWhenEmpty: Boolean,
+    internal val annotations: List<AnnotationNode>
 ) {
-    val signature: String
+    internal val signature: String
         get() = "${access.getModifierString()} class $name" + if (supertypes.isEmpty()) "" else " : ${supertypes.joinToString()}"
+
 }
 
-interface MemberBinarySignature {
+internal interface MemberBinarySignature {
     val jvmMember: JvmMemberSignature
     val name: String get() = jvmMember.name
     val desc: String get() = jvmMember.desc
@@ -45,7 +46,7 @@ interface MemberBinarySignature {
     val signature: String
 }
 
-data class MethodBinarySignature(
+internal data class MethodBinarySignature(
     override val jvmMember: JvmMethodSignature,
     override val isPublishedApi: Boolean,
     override val access: AccessFlags,
@@ -93,7 +94,7 @@ internal fun MethodNode.alternateDefaultSignature(className: String): JvmMethodS
     }
 }
 
-fun MethodNode.toMethodBinarySignature(
+internal fun MethodNode.toMethodBinarySignature(
     /*
      * Extra annotations are:
      * * Annotations from the original method for synthetic `$default` method
@@ -113,7 +114,7 @@ fun MethodNode.toMethodBinarySignature(
     )
 }
 
-data class FieldBinarySignature(
+internal data class FieldBinarySignature(
     override val jvmMember: JvmFieldSignature,
     override val isPublishedApi: Boolean,
     override val access: AccessFlags,
@@ -128,7 +129,7 @@ data class FieldBinarySignature(
     }
 }
 
-fun FieldNode.toFieldBinarySignature(extraAnnotations: List<AnnotationNode>): FieldBinarySignature {
+internal fun FieldNode.toFieldBinarySignature(extraAnnotations: List<AnnotationNode>): FieldBinarySignature {
     val allAnnotations = visibleAnnotations.orEmpty() + invisibleAnnotations.orEmpty() + extraAnnotations
     return FieldBinarySignature(
         JvmFieldSignature(name, desc),
@@ -144,26 +145,26 @@ private val MemberBinarySignature.kind: Int
         else -> error("Unsupported $this")
     }
 
-val MEMBER_SORT_ORDER = compareBy<MemberBinarySignature>(
+internal val MEMBER_SORT_ORDER = compareBy<MemberBinarySignature>(
     { it.kind },
     { it.name },
     { it.desc }
 )
 
-data class AccessFlags(val access: Int) {
+internal data class AccessFlags(val access: Int) {
     val isPublic: Boolean get() = isPublic(access)
     val isProtected: Boolean get() = isProtected(access)
     val isStatic: Boolean get() = isStatic(access)
     val isFinal: Boolean get() = isFinal(access)
     val isSynthetic: Boolean get() = isSynthetic(access)
 
-    fun getModifiers(): List<String> =
+    private fun getModifiers(): List<String> =
         ACCESS_NAMES.entries.mapNotNull { if (access and it.key != 0) it.value else null }
 
     fun getModifierString(): String = getModifiers().joinToString(" ")
 }
 
-fun FieldBinarySignature.isCompanionField(outerClassMetadata: KotlinClassMetadata?): Boolean {
+internal fun FieldBinarySignature.isCompanionField(outerClassMetadata: KotlinClassMetadata?): Boolean {
     if (!access.isFinal || !access.isStatic) return false
     val metadata = outerClassMetadata ?: return false
     // Non-classes are not affected by the problem

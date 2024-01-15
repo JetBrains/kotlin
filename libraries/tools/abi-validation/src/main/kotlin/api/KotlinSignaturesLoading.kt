@@ -224,7 +224,7 @@ public fun List<ClassBinarySignature>.retainExplicitlyIncludedIfDeclared(
 }
 
 @ExternalApi
-public fun List<ClassBinarySignature>.dump() = dump(to = System.out)
+public fun List<ClassBinarySignature>.dump(): PrintStream = dump(to = System.out)
 
 @ExternalApi
 public fun <T : Appendable> List<ClassBinarySignature>.dump(to: T): T {

@@ -6,9 +6,10 @@
 package kotlinx.validation.api
 
 import java.io.*
-import kotlinx.validation.API_DIR
 import org.gradle.testkit.runner.GradleRunner
 import org.intellij.lang.annotations.Language
+
+public const val API_DIR: String = "api"
 
 internal fun BaseKotlinGradleTest.test(fn: BaseKotlinScope.() -> Unit): GradleRunner {
     val baseKotlinScope = BaseKotlinScope()

@@ -5,12 +5,12 @@
 
 package kotlinx.validation
 
-open class ApiValidationExtension {
+public open class ApiValidationExtension {
 
     /**
      * Disables API validation checks completely.
      */
-    public var validationDisabled = false
+    public var validationDisabled: Boolean = false
 
     /**
      * Fully qualified package names that are not consider public API.

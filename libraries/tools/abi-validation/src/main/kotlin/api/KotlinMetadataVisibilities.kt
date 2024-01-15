@@ -10,7 +10,7 @@ import kotlinx.metadata.jvm.*
 import kotlinx.metadata.jvm.KotlinClassMetadata.Companion.COMPATIBLE_METADATA_VERSION
 import org.objectweb.asm.tree.*
 
-class ClassVisibility(
+internal class ClassVisibility(
     val name: String,
     val flags: Flags?,
     val members: Map<JvmMemberSignature, MemberVisibility>,
@@ -23,11 +23,11 @@ class ClassVisibility(
     val partVisibilities = mutableListOf<ClassVisibility>()
 }
 
-fun ClassVisibility.findMember(signature: JvmMemberSignature): MemberVisibility? =
+internal fun ClassVisibility.findMember(signature: JvmMemberSignature): MemberVisibility? =
     members[signature] ?: partVisibilities.mapNotNull { it.members[signature] }.firstOrNull()
 
 
-data class MemberVisibility(
+internal data class MemberVisibility(
     val member: JvmMemberSignature,
     val visibility: Flags?,
     val isReified: Boolean,
@@ -44,16 +44,16 @@ private fun isPublic(visibility: Flags?, isPublishedApi: Boolean) =
             || Flag.IS_PROTECTED(visibility)
             || (isPublishedApi && Flag.IS_INTERNAL(visibility))
 
-fun ClassVisibility.isPublic(isPublishedApi: Boolean) =
+internal fun ClassVisibility.isPublic(isPublishedApi: Boolean) =
     isPublic(visibility, isPublishedApi)
 
-fun MemberVisibility.isPublic(isPublishedApi: Boolean) =
+internal fun MemberVisibility.isPublic(isPublishedApi: Boolean) =
         // Assuming isReified implies inline
         !isReified && isPublic(visibility, isPublishedApi)
 
-fun MemberVisibility.isInternal(): Boolean = visibility != null && Flag.IS_INTERNAL(visibility)
+internal fun MemberVisibility.isInternal(): Boolean = visibility != null && Flag.IS_INTERNAL(visibility)
 
-val ClassNode.kotlinMetadata: KotlinClassMetadata?
+internal val ClassNode.kotlinMetadata: KotlinClassMetadata?
     get() {
         val metadata = findAnnotation("kotlin/Metadata", false) ?: return null
         @Suppress("UNCHECKED_CAST")
@@ -80,18 +80,18 @@ val ClassNode.kotlinMetadata: KotlinClassMetadata?
     }
 
 
-fun KotlinClassMetadata?.isFileOrMultipartFacade() =
+internal fun KotlinClassMetadata?.isFileOrMultipartFacade() =
     this is KotlinClassMetadata.FileFacade || this is KotlinClassMetadata.MultiFileClassFacade
 
-fun KotlinClassMetadata?.isSyntheticClass() = this is KotlinClassMetadata.SyntheticClass
+internal fun KotlinClassMetadata?.isSyntheticClass() = this is KotlinClassMetadata.SyntheticClass
 
 // Auxiliary class that stores signatures of corresponding field and method for a property.
-class PropertyAnnotationHolders(
+internal class PropertyAnnotationHolders(
     val field: JvmFieldSignature?,
     val method: JvmMethodSignature?,
 )
 
-fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility {
+internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility {
     var flags: Flags? = null
     var _facadeClassName: String? = null
     val members = mutableListOf<MemberVisibility>()
@@ -150,9 +150,9 @@ fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility
     return ClassVisibility(classNode.name, flags, members.associateBy { it.member }, _facadeClassName)
 }
 
-fun ClassNode.toClassVisibility() = kotlinMetadata?.toClassVisibility(this)
+internal fun ClassNode.toClassVisibility() = kotlinMetadata?.toClassVisibility(this)
 
-fun Map<String, ClassNode>.readKotlinVisibilities(visibilityFilter: (String) -> Boolean = { true }): Map<String, ClassVisibility> =
+internal fun Map<String, ClassNode>.readKotlinVisibilities(visibilityFilter: (String) -> Boolean = { true }): Map<String, ClassVisibility> =
     /*
      * Optimized sequence of:
      * 1) Map values to visibility
