@@ -122,10 +122,6 @@ private val USE_SITE_TARGET_NAME_MAP = mapOf(
 private val DEFAULT_USE_SITE_TARGETS: Set<AnnotationUseSiteTarget> =
     USE_SITE_TARGET_NAME_MAP.values.fold(setOf<AnnotationUseSiteTarget>()) { a, b -> a + b } - setOf(AnnotationUseSiteTarget.FILE)
 
-fun FirDeclaration.hasAnnotation(type: ConeClassLikeType, session: FirSession): Boolean {
-    return annotations.hasAnnotation(type, session)
-}
-
 fun FirDeclaration.hasAnnotation(classId: ClassId, session: FirSession): Boolean {
     return annotations.hasAnnotation(classId, session)
 }
@@ -140,10 +136,6 @@ fun FirBasedSymbol<*>.hasAnnotation(classId: ClassId, session: FirSession): Bool
 
 fun FirAnnotationContainer.hasAnnotation(classId: ClassId, session: FirSession): Boolean {
     return annotations.hasAnnotation(classId, session)
-}
-
-fun List<FirAnnotation>.hasAnnotation(type: ConeClassLikeType, session: FirSession): Boolean {
-    return this.any { it.toAnnotationClassLikeType(session) == type }
 }
 
 fun List<FirAnnotation>.hasAnnotation(classId: ClassId, session: FirSession): Boolean {

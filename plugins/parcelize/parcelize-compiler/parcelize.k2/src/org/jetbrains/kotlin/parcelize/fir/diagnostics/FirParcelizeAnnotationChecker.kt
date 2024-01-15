@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeType
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -94,11 +91,25 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker() {
             val enclosingClass = context.findClosestClassOrObject() ?: return
 
             val annotationType = annotationCall.toAnnotationClassLikeType(context.session) ?: return
-            if (enclosingClass.hasAnnotation(annotationType, context.session)) {
+            if (checkForRedundantTypeParceler(enclosingClass, annotationType, context)) {
                 val reportElement = annotationCall.calleeReference.source ?: annotationCall.source
                 reporter.reportOn(reportElement, KtErrorsParcelize.REDUNDANT_TYPE_PARCELER, enclosingClass.symbol, context)
             }
         }
+    }
+
+    private fun checkForRedundantTypeParceler(
+        enclosingClass: FirClass,
+        annotationType: ConeClassLikeType,
+        context: CheckerContext,
+    ): Boolean {
+        return enclosingClass.annotations
+            .mapNotNull { it.toAnnotationClassLikeType(context.session) }
+            .filter { it.classId == annotationType.classId && it.typeArguments.size == annotationType.typeArguments.size }
+            .any {
+                it.typeArguments.zip(annotationType.typeArguments)
+                    .all { (first, second) -> first.type?.fullyExpandedType(context.session) == second.type?.fullyExpandedType(context.session) }
+            }
     }
 
     private fun checkWriteWithUsage(annotationCall: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
