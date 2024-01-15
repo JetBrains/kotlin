@@ -317,3 +317,15 @@ fun FirRegularClassSymbol.getSuperClassSymbolOrAny(session: FirSession): FirRegu
     }
     return session.builtinTypes.anyType.type.toRegularClassSymbol(session) ?: error("Symbol for Any not found")
 }
+
+fun FirClassLikeSymbol<*>.getSuperTypes(
+    useSiteSession: FirSession,
+    recursive: Boolean = true,
+    lookupInterfaces: Boolean = true,
+    substituteSuperTypes: Boolean = true,
+    supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
+): List<ConeClassLikeType> {
+    return SmartList<ConeClassLikeType>().also {
+        collectSuperTypes(it, SmartSet.create(), recursive, lookupInterfaces, substituteSuperTypes, useSiteSession, supertypeSupplier)
+    }
+}

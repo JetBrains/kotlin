@@ -30,10 +30,10 @@ object Parceler3 : Parceler<String> {
 @Parcelize
 @TypeParceler<String, Parceler2>
 data class Test(
-        val a: String,
-        @<!REDUNDANT_TYPE_PARCELER!>TypeParceler<!><String, Parceler1> val b: String,
-        @TypeParceler<String, Parceler3> val c: CharSequence,
-        val d: @WriteWith<Parceler3> String
+    val a: String,
+    @<!REDUNDANT_TYPE_PARCELER!>TypeParceler<!><String, Parceler1> val b: String,
+@TypeParceler<String, Parceler3> val c: CharSequence,
+val d: @WriteWith<Parceler3> String
 ) : Parcelable
 
 fun box() = parcelTest { parcel ->

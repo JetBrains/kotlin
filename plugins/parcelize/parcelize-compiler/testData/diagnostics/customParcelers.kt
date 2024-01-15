@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_STDLIB
 package test
 
@@ -17,6 +18,8 @@ object CharSequenceParceler : Parceler<CharSequence> {
     override fun create(parcel: Parcel) = TODO()
     override fun CharSequence.write(parcel: Parcel, flags: Int) = TODO()
 }
+
+typealias CharSequenceParcelerAlias = CharSequenceParceler
 
 class StringClassParceler : Parceler<String> {
     override fun create(parcel: Parcel) = TODO()
@@ -46,7 +49,9 @@ class Test(
     val b: @WriteWith<StringParceler> String,
     val c: @WriteWith<<!PARCELER_TYPE_INCOMPATIBLE!>StringParceler<!>> CharSequence,
     val d: @WriteWith<CharSequenceParceler> String,
-    val e: @WriteWith<CharSequenceParceler> CharSequence
+    val e: @WriteWith<CharSequenceParceler> CharSequence,
+    val f: @WriteWith<CharSequenceParcelerAlias> String,
+    val g: @WriteWith<CharSequenceParcelerAlias> CharSequence,
 ) : Parcelable
 
 @Parcelize
