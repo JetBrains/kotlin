@@ -1,0 +1,85 @@
+package org.jetbrains;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {})
+/**
+ * public final annotation class org/jetbrains/A : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface A {
+}
+
+////////////////////
+
+package org.jetbrains;
+
+/**
+ * public final class org/jetbrains/Outer : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: Inner
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Outer {
+
+    public Outer() {
+        super();
+    }
+
+    /**
+     * public final class org/jetbrains/Outer.Inner : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Inner {
+
+        public Inner() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+/**
+ * package {
+ *
+ *   // signature: foo(Ljava/util/List;Lorg/jetbrains/Outer$Inner;I)Ljava/lang/String;
+ *   public final fun foo(x: @org/jetbrains/A kotlin/collections/List<@org/jetbrains/A kotlin/String>, y: @org/jetbrains/A org/jetbrains/Outer.Inner, z: @org/jetbrains/A kotlin/Int): @org/jetbrains/A kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class TypeAnnotationsKt {
+
+    public TypeAnnotationsKt() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String foo(@org.jetbrains.annotations.NotNull()
+    java.util.List<java.lang.String> x, @org.jetbrains.annotations.NotNull()
+    org.jetbrains.Outer.Inner y, int z) {
+        return null;
+    }
+}
