@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsStableName
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.constructors
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -118,6 +119,7 @@ object FirJsNameClashClassMembersChecker : FirClassChecker() {
 
             val scope = declaration.symbol.unsubstitutedScope(context)
 
+            scope.processDeclaredConstructors(allSymbols::add)
             addAllSymbolsFrom(scope.collectAllFunctions())
             addAllSymbolsFrom(scope.collectAllProperties())
 

@@ -35,11 +35,6 @@ object FirJsNameClashFileTopLevelDeclarationsChecker : FirFileChecker() {
         val topLevelDeclarationsWithStableName = mutableMapOf<String, MutableList<FirJsStableName>>()
         for (topLevelDeclaration in declaration.declarations) {
             topLevelDeclarationsWithStableName.addStableName(topLevelDeclaration.symbol, context)
-            if (topLevelDeclaration is FirClass) {
-                for (classConstructor in topLevelDeclaration.constructors(context.session)) {
-                    topLevelDeclarationsWithStableName.addStableName(classConstructor, context)
-                }
-            }
         }
         for ((name, stableNames) in topLevelDeclarationsWithStableName.entries) {
             for (symbol in stableNames) {
