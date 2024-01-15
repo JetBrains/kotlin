@@ -110,7 +110,7 @@ abstract class AbstractNativeCExportTest(
             checks = TestRunChecks(
                 executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(testRunSettings.get<Timeouts>().executionTimeout),
                 exitCodeCheck = TestRunCheck.ExitCode.Expected(0),
-                outputDataFile = goldenData?.let { TestRunCheck.OutputDataFile(it) },
+                outputDataFile = goldenData?.let { TestRunCheck.OutputDataFile(file = it) },
                 outputMatcher = null,
                 fileCheckMatcher = null,
             ),
