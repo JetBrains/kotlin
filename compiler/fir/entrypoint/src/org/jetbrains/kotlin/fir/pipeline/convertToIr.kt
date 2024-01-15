@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbols
 import org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbolsResolverVisitor
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.*
@@ -44,13 +43,9 @@ data class Fir2IrActualizedResult(
     val irActualizedResult: IrActualizedResult?,
 )
 
-fun signatureComposerForJvmFir2Ir(generateSignatures: Boolean): IdSignatureComposer {
+fun signatureComposerForJvmFir2Ir(): IdSignatureComposer {
     val mangler = JvmDescriptorMangler(null)
-    return if (generateSignatures) {
-        JvmIdSignatureDescriptor(mangler)
-    } else {
-        DescriptorSignatureComposerStub(mangler)
-    }
+    return DescriptorSignatureComposerStub(mangler)
 }
 
 fun FirResult.convertToIrAndActualize(

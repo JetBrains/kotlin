@@ -135,12 +135,11 @@ class FakeOverrideGenerator(
                     createFakeOverriddenIfNeeded(
                         firClass, irClass, isLocal, propertyOrFieldSymbol,
                         declarationStorage::getCachedIrPropertySymbol,
-                        { property, irParent, predefinedOrigin, isLocal ->
+                        { property, irParent, predefinedOrigin, _ ->
                             declarationStorage.createAndCacheIrProperty(
                                 property,
                                 irParent,
                                 predefinedOrigin,
-                                isLocal,
                                 allowLazyDeclarationsCreation = true
                             )
                         },

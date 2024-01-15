@@ -24,10 +24,6 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 /**
- * @param linkViaSignatures Enables calculation of signatures for IR symbols and filling the [SymbolTable] with them.
- *  This parameter should be set to `true` if the caller relies on the content of the symbol table in the future.
- *  Note: this parameter is to be removed ([KT-64809](https://youtrack.jetbrains.com/issue/KT-64809)).
- *
  * @param allowNonCachedDeclarations
  *  Normally, FIR2IR caches all declarations it meets in a compiled module.
  *  It means asking for an IR element of a non-cached declaration is a sign of inconsistent state.
@@ -40,7 +36,6 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 class Fir2IrConfiguration private constructor(
     val languageVersionSettings: LanguageVersionSettings,
     val diagnosticReporter: DiagnosticReporter,
-    val linkViaSignatures: Boolean,
     val evaluatedConstTracker: EvaluatedConstTracker,
     val inlineConstTracker: InlineConstTracker?,
     val expectActualTracker: ExpectActualTracker?,
@@ -56,7 +51,6 @@ class Fir2IrConfiguration private constructor(
             Fir2IrConfiguration(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
-                linkViaSignatures = false,
                 evaluatedConstTracker = compilerConfiguration.putIfAbsent(
                     CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
                     EvaluatedConstTracker.create(),
@@ -74,7 +68,6 @@ class Fir2IrConfiguration private constructor(
             Fir2IrConfiguration(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
-                linkViaSignatures = false,
                 evaluatedConstTracker = compilerConfiguration.putIfAbsent(
                     CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
                     EvaluatedConstTracker.create(),
@@ -93,7 +86,6 @@ class Fir2IrConfiguration private constructor(
             Fir2IrConfiguration(
                 languageVersionSettings = languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
-                linkViaSignatures = false,
                 evaluatedConstTracker = compilerConfiguration.putIfAbsent(
                     CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
                     EvaluatedConstTracker.create(),

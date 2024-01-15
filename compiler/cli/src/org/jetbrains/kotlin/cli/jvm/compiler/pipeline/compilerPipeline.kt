@@ -38,11 +38,9 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
@@ -205,7 +203,7 @@ fun FirResult.convertToIrAndActualizeForJvm(
         fir2IrExtensions,
         fir2IrConfiguration,
         irGeneratorExtensions,
-        signatureComposerForJvmFir2Ir(fir2IrConfiguration.linkViaSignatures),
+        signatureComposerForJvmFir2Ir(),
         JvmIrMangler,
         FirJvmKotlinMangler(),
         FirJvmVisibilityConverter,

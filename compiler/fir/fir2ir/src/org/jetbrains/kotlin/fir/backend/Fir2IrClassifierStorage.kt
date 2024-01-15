@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class Fir2IrClassifierStorage(
     private val components: Fir2IrComponents,
@@ -177,18 +175,11 @@ class Fir2IrClassifierStorage(
         parent: IrDeclarationParent,
         predefinedOrigin: IrDeclarationOrigin? = null
     ): IrClass {
-        val symbol = createClassSymbol(regularClass)
+        val symbol = createClassSymbol(signature = null)
         return classifiersGenerator.createIrClass(regularClass, parent, symbol, predefinedOrigin).also {
             @OptIn(LeakedDeclarationCaches::class)
             cacheIrClass(regularClass, it)
         }
-    }
-
-    private fun createClassSymbol(regularClass: FirRegularClass): IrClassSymbol {
-        val signature = runIf(!regularClass.isLocal && configuration.linkViaSignatures) {
-            signatureComposer.composeSignature(regularClass)
-        }
-        return createClassSymbol(signature)
     }
 
     private fun createClassSymbol(signature: IdSignature?): IrClassSymbol {
@@ -247,7 +238,7 @@ class Fir2IrClassifierStorage(
         // firClass may be referenced by some parent's type parameters as a bound. In that case, getIrClassSymbol will be called recursively.
         classifierStorage.getCachedIrClass(firClass)?.let { return it }
 
-        val symbol = createClassSymbol(firClass)
+        val symbol = createClassSymbol(signature = null)
         val irClass = lazyDeclarationsGenerator.createIrLazyClass(firClass, irParent, symbol)
         classCache[firClass] = irClass
         // NB: this is needed to prevent recursions in case of self bounds

@@ -68,7 +68,7 @@ class Fir2IrJvmResultsConverter(
 
         val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
 
-        val commonMemberStorage = Fir2IrCommonMemberStorage(signatureComposerForJvmFir2Ir(false), FirJvmKotlinMangler())
+        val commonMemberStorage = Fir2IrCommonMemberStorage(signatureComposerForJvmFir2Ir(), FirJvmKotlinMangler())
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
 
         val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(module)
@@ -78,7 +78,7 @@ class Fir2IrJvmResultsConverter(
             fir2IrExtensions,
             fir2IrConfiguration,
             module.irGenerationExtensions(testServices),
-            signatureComposerForJvmFir2Ir(false),
+            signatureComposerForJvmFir2Ir(),
             irMangler,
             FirJvmKotlinMangler(),
             FirJvmVisibilityConverter,
