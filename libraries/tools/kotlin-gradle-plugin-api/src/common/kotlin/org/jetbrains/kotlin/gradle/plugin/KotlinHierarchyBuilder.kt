@@ -3,6 +3,9 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.konan.target.REMOVED_TARGET_MESSAGE
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @KotlinTargetsDsl
 @ExperimentalKotlinGradlePluginApi
 interface KotlinHierarchyBuilder {

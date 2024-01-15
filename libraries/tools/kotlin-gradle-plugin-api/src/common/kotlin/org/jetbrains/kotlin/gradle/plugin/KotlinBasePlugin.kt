@@ -9,6 +9,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 /**
+ * @suppress TODO: KT-58858 add documentation
  * Base Kotlin plugin that is responsible for creating basic build services, configurations,
  * and other setup that is common for all Kotlin projects.
  */

@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import java.util.*
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 enum class KotlinJsCompilerType {
     @Deprecated("Legacy compiler is deprecated. Migrate your project to the new IR-based compiler")
     LEGACY,
@@ -30,10 +33,16 @@ enum class KotlinJsCompilerType {
     }
 }
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @Deprecated("This method is planned to be removed")
 val KotlinJsCompilerType.lowerName
     get() = name.toLowerCase(Locale.ENGLISH)
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @Suppress("DEPRECATION")
 @Deprecated("This method is planned to be removed")
 fun String.removeJsCompilerSuffix(compilerType: KotlinJsCompilerType): String {

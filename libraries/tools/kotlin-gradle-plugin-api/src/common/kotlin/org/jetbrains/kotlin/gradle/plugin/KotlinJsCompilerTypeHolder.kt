@@ -7,6 +7,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 interface KotlinJsCompilerTypeHolder {
     @Deprecated("Because only IR compiler is left, no more necessary to know about compiler type in properties")
     val compilerTypeFromProperties: KotlinJsCompilerType?

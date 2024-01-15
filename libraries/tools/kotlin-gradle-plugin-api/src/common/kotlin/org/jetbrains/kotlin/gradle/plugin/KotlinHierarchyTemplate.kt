@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 sealed interface KotlinHierarchyTemplate {
     companion object Templates {
         /**
@@ -51,6 +54,9 @@ sealed interface KotlinHierarchyTemplate {
 EXPERIMENTAL API
  */
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @ExperimentalKotlinGradlePluginApi
 fun KotlinHierarchyTemplate(
     describe: KotlinHierarchyBuilder.Root.() -> Unit,
@@ -58,6 +64,9 @@ fun KotlinHierarchyTemplate(
     return KotlinHierarchyTemplateImpl(describe)
 }
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @ExperimentalKotlinGradlePluginApi
 fun KotlinHierarchyTemplate.extend(describe: KotlinHierarchyBuilder.Root.() -> Unit): KotlinHierarchyTemplate {
     return KotlinHierarchyTemplate {
@@ -70,6 +79,9 @@ fun KotlinHierarchyTemplate.extend(describe: KotlinHierarchyBuilder.Root.() -> U
 INTERNAL API
  */
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @InternalKotlinGradlePluginApi
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
 fun KotlinHierarchyBuilder.Root.applyHierarchyTemplate(template: KotlinHierarchyTemplate) {

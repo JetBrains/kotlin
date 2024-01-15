@@ -11,6 +11,9 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.file.FileCollection
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 interface CInteropSettings : Named {
 
     interface IncludeDirectories {

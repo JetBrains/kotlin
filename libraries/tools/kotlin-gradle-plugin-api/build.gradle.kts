@@ -13,7 +13,7 @@ configureDokkaPublication(
         failOnWarning.set(true)
 
         perPackageOption {
-            matchingRegex.set("org\\.jetbrains\\.kotlin\\.gradle\\.plugin.*")
+            matchingRegex.set("org\\.jetbrains\\.kotlin\\.gradle\\.plugin\\.mpp.*")
             suppress.set(true)
         }
     }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 /**
+ * @suppress TODO: KT-58858 add documentation
  * When applying any [KotlinHierarchyTemplate] (e.g. by calling `applyDefaultHierarchyTemplate()`), the descriptor will
  * be applied on individual compilations, creating multiple trees of shared SourceSets.
  *

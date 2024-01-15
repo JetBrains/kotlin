@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompileDeprecated
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @KotlinGradlePluginDsl
 interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
     HasProject,
@@ -196,6 +199,9 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
         get() = target.disambiguationClassifier + name
 }
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @Deprecated("Scheduled for removal with Kotlin 2.0")
 interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptionsDeprecated> : KotlinCompilation<T> {
     override val runtimeDependencyConfigurationName: String
@@ -203,18 +209,30 @@ interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptionsDeprecated> : 
     override var runtimeDependencyFiles: FileCollection
 }
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @Suppress("Deprecation")
 typealias DeprecatedKotlinCompilationToRunnableFiles<T> = KotlinCompilationToRunnableFiles<T>
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @Deprecated("Scheduled for removal with Kotlin 2.0")
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER", "deprecation") // kept for compatibility
 val <T : KotlinCommonOptionsDeprecated> KotlinCompilation<T>.runtimeDependencyConfigurationName: String?
     get() = (this as? KotlinCompilationToRunnableFiles<T>)?.runtimeDependencyConfigurationName
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @Deprecated("Scheduled for removal with Kotlin 2.0")
 interface KotlinCompilationWithResources<T : KotlinCommonOptionsDeprecated> : KotlinCompilation<T> {
     val processResourcesTaskName: String
 }
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @Suppress("Deprecation")
 typealias DeprecatedKotlinCompilationWithResources<T> = KotlinCompilationWithResources<T>

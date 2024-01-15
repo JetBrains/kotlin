@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 interface LanguageSettingsBuilder : LanguageSettings {
     override var languageVersion: String?
 

@@ -9,6 +9,9 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import java.io.File
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 interface KotlinCompilationOutput {
     var resourcesDirProvider: Any
     val resourcesDir: File

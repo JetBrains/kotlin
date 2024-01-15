@@ -10,6 +10,9 @@ import org.gradle.api.attributes.*
 import org.gradle.util.GradleVersion
 import java.io.Serializable
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 enum class KotlinPlatformType: Named, Serializable {
     common, jvm, js, androidJvm, native, wasm;
 
