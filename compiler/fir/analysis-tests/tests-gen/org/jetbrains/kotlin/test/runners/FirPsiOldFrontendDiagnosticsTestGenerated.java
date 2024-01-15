@@ -430,6 +430,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("fixExpressionsInQaSelectors.kt")
+        public void testFixExpressionsInQaSelectors() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/fixExpressionsInQaSelectors.kt");
+        }
+
+        @Test
         @TestMetadata("ForRangeConventions.kt")
         public void testForRangeConventions() throws Exception {
             runTest("compiler/testData/diagnostics/tests/ForRangeConventions.kt");
