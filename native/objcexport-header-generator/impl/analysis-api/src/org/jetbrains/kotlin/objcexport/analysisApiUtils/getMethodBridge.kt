@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.backend.konan.KonanPrimitiveType
@@ -14,17 +15,9 @@ import org.jetbrains.kotlin.objcexport.*
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.bridgeMethodImpl]
  */
 context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtFunctionLikeSymbol.getMethodBridge(): MethodBridge {
+internal fun KtFunctionLikeSymbol.getFunctionMethodBridge(): MethodBridge {
 
     val valueParameters = mutableListOf<MethodBridgeValueParameter>()
-
-    val receiver = if (isConstructor && isArray) {
-        MethodBridgeReceiver.Factory
-    } else if (isTopLevel) {
-        MethodBridgeReceiver.Static
-    } else {
-        MethodBridgeReceiver.Instance
-    }
 
     this.valueParameters.forEach {
         valueParameters += bridgeParameter(it.returnType)
@@ -36,10 +29,28 @@ internal fun KtFunctionLikeSymbol.getMethodBridge(): MethodBridge {
 
     return MethodBridge(
         bridgeReturnType(),
-        receiver,
+        receiverType,
         valueParameters
     )
 }
+
+context(KtAnalysisSession, KtObjCExportSession)
+internal fun KtPropertySymbol.getPropertyMethodBridge(): MethodBridge {
+    return MethodBridge(
+        bridgeReturnType(),
+        receiverType,
+        emptyList()
+    )
+}
+
+private val KtCallableSymbol.receiverType: MethodBridgeReceiver
+    get() = if (isConstructor && isArray) {
+        MethodBridgeReceiver.Factory
+    } else if (isTopLevel) {
+        MethodBridgeReceiver.Static
+    } else {
+        MethodBridgeReceiver.Instance
+    }
 
 /**
  * [ObjCExportMapper.bridgeParameter]
