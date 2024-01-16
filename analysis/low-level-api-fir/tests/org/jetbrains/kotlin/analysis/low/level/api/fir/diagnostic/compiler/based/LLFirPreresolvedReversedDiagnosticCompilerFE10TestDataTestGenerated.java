@@ -26552,6 +26552,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("propertyAgainstFakeOverrideOfJavaField.kt")
+                public void testPropertyAgainstFakeOverrideOfJavaField() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/java/propertyAgainstFakeOverrideOfJavaField.kt");
+                }
+
+                @Test
                 @TestMetadata("propertyAgainstJavaMethod.kt")
                 public void testPropertyAgainstJavaMethod() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/java/propertyAgainstJavaMethod.kt");
