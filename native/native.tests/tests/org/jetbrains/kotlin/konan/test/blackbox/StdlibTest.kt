@@ -98,6 +98,11 @@ class FirStdlibTest : AbstractNativeBlackBoxTest() {
         ignoredTests = [DISABLED_STDLIB_TEST]
     )
 )
+@DisabledTestsIfProperty(
+    sourceLocations = ["*.kt"],
+    property = ClassLevelProperty.XCTEST_FRAMEWORK,
+    propertyValue = "" // Framework location is not set
+)
 @EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "5m")
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class StdlibTestWithXCTest : AbstractNativeBlackBoxTest() {
@@ -135,6 +140,11 @@ class StdlibTestWithXCTest : AbstractNativeBlackBoxTest() {
         ],
         ignoredTests = [DISABLED_STDLIB_TEST]
     )
+)
+@DisabledTestsIfProperty(
+    sourceLocations = ["*.kt"],
+    property = ClassLevelProperty.XCTEST_FRAMEWORK,
+    propertyValue = "" // Framework location is not set
 )
 @EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "5m")
 @FirPipeline
