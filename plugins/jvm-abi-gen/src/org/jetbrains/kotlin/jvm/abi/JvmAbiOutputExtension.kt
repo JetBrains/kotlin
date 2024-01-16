@@ -79,6 +79,7 @@ class JvmAbiOutputExtension(
                     else -> /* abiInfo is AbiClassInfo.Stripped */ {
                         val methodInfo = (abiInfo as AbiClassInfo.Stripped).methodInfo
                         val innerClassesToKeep = mutableSetOf<String>()
+                        val noMethodsKept = methodInfo.values.none { it == AbiMethodInfo.KEEP }
                         val writer = ClassWriter(0)
                         val remapper = ClassRemapper(writer, object : Remapper() {
                             override fun map(internalName: String): String =
@@ -127,7 +128,7 @@ class JvmAbiOutputExtension(
                             override fun visitSource(source: String?, debug: String?) {
                                 when {
                                     removeDebugInfo -> super.visitSource(null, null)
-                                    methodInfo.values.none { it == AbiMethodInfo.KEEP } -> {
+                                    noMethodsKept -> {
                                         // Strip SourceDebugExtension attribute if there are no inline functions.
                                         super.visitSource(source, null)
                                     }
@@ -144,8 +145,9 @@ class JvmAbiOutputExtension(
 
                             override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor? {
                                 // Strip @SourceDebugExtension annotation if we're removing debug info.
-                                if (removeDebugInfo && descriptor == JvmAnnotationNames.SOURCE_DEBUG_EXTENSION_DESC)
-                                    return null
+                                if (descriptor == JvmAnnotationNames.SOURCE_DEBUG_EXTENSION_DESC) {
+                                    if (removeDebugInfo || noMethodsKept) return null
+                                }
 
                                 val delegate = super.visitAnnotation(descriptor, visible)
                                 if (descriptor != JvmAnnotationNames.METADATA_DESC)

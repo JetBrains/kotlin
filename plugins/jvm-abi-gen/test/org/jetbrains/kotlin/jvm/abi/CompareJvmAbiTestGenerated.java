@@ -115,6 +115,11 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/inlineFunInPrivateNestedClass/");
     }
 
+    @TestMetadata("inlineFunUsageMakesAbiUnstable")
+    public void testInlineFunUsageMakesAbiUnstable() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/inlineFunUsageMakesAbiUnstable/");
+    }
+
     @TestMetadata("inlineFunctionBody")
     public void testInlineFunctionBody() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/inlineFunctionBody/");
