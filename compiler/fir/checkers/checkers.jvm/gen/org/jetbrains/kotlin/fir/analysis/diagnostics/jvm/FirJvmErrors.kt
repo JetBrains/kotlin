@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation2
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation4
@@ -53,8 +52,8 @@ object FirJvmErrors {
 
     // Types
     val JAVA_TYPE_MISMATCH: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> by error2<KtExpression, ConeKotlinType, ConeKotlinType>()
-    val RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, String> by warning3<PsiElement, ConeKotlinType, ConeKotlinType, String>()
-    val NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, String> by warning3<PsiElement, ConeKotlinType, ConeKotlinType, String>()
+    val RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> by warning2<PsiElement, ConeKotlinType, ConeKotlinType>()
+    val NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> by warning2<PsiElement, ConeKotlinType, ConeKotlinType>()
 
     // Type parameters
     val UPPER_BOUND_CANNOT_BE_ARRAY: KtDiagnosticFactory0 by error0<PsiElement>()

@@ -56,12 +56,10 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement> {
             parameter<ConeKotlinType>("actualType")
             parameter<ConeKotlinType>("expectedType")
-            parameter<String>("messageSuffix")
         }
         val NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement> {
             parameter<ConeKotlinType>("actualType")
             parameter<ConeKotlinType>("expectedType")
-            parameter<String>("messageSuffix")
         }
     }
 
