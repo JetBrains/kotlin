@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBa
 import org.jetbrains.kotlin.js.test.handlers.JsDebugRunner
 import org.jetbrains.kotlin.js.test.handlers.JsIrRecompiledArtifactsIdentityHandler
 import org.jetbrains.kotlin.js.test.handlers.createFirJsLineNumberHandler
+import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTest
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
@@ -158,6 +159,21 @@ open class AbstractFirJsLineNumberTest : AbstractFirJsTest(
             }
             configureJsArtifactsHandlersStep {
                 useHandlers(::createFirJsLineNumberHandler)
+            }
+        }
+    }
+}
+
+open class AbstractFirSourceMapGenerationSmokeTest : AbstractFirJsTest(
+    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/sourcemap/",
+    testGroupOutputDirPrefix = "firSourcemap/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                +JsEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
+                -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
             }
         }
     }

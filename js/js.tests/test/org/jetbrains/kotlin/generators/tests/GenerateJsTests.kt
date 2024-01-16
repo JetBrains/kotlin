@@ -171,6 +171,10 @@ fun main(args: Array<String>) {
             testClass<AbstractFirJsLineNumberTest> {
                 model("lineNumbers/")
             }
+
+            testClass<AbstractFirSourceMapGenerationSmokeTest> {
+                model("sourcemap/")
+            }
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {

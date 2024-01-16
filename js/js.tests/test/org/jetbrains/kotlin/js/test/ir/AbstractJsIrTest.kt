@@ -154,7 +154,7 @@ open class AbstractJsIrLineNumberTest : AbstractJsIrTest(
 
 open class AbstractSourceMapGenerationSmokeTest : AbstractJsIrTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/sourcemap/",
-    testGroupOutputDirPrefix = "sourcemap/"
+    testGroupOutputDirPrefix = "irSourcemap/"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
