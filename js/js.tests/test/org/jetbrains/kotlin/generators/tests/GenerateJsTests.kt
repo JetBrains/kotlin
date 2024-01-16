@@ -175,6 +175,10 @@ fun main(args: Array<String>) {
             testClass<AbstractFirSourceMapGenerationSmokeTest> {
                 model("sourcemap/")
             }
+
+            testClass<AbstractFirMultiModuleOrderTest> {
+                model("multiModuleOrder/")
+            }
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {

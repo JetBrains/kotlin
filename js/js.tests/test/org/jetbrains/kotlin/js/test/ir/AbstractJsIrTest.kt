@@ -169,7 +169,7 @@ open class AbstractSourceMapGenerationSmokeTest : AbstractJsIrTest(
 
 open class AbstractMultiModuleOrderTest : AbstractJsIrTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/multiModuleOrder/",
-    testGroupOutputDirPrefix = "multiModuleOrder/"
+    testGroupOutputDirPrefix = "irMultiModuleOrder/"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

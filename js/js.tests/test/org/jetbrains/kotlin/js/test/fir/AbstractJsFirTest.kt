@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.JsDebugRunner
 import org.jetbrains.kotlin.js.test.handlers.JsIrRecompiledArtifactsIdentityHandler
+import org.jetbrains.kotlin.js.test.handlers.JsWrongModuleHandler
 import org.jetbrains.kotlin.js.test.handlers.createFirJsLineNumberHandler
 import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTest
 import org.jetbrains.kotlin.parsing.parseBoolean
@@ -174,6 +175,22 @@ open class AbstractFirSourceMapGenerationSmokeTest : AbstractFirJsTest(
             defaultDirectives {
                 +JsEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
                 -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
+            }
+        }
+    }
+}
+
+open class AbstractFirMultiModuleOrderTest : AbstractFirJsTest(
+    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/multiModuleOrder/",
+    testGroupOutputDirPrefix = "firMultiModuleOrder/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            configureJsArtifactsHandlersStep {
+                useHandlers(
+                    ::JsWrongModuleHandler
+                )
             }
         }
     }
