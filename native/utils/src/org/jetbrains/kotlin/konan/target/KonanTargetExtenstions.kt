@@ -65,18 +65,6 @@ fun KonanTarget.supportsGccUnwind(): Boolean = family == Family.ANDROID || famil
 // MINGW_X64 target does not support GCC unwind, since its sysroot contains libgcc version < 12 having misfeature, see KT-49240
 fun KonanTarget.supportsWinAPIUnwind(): Boolean = this is KonanTarget.MINGW_X64
 
-fun KonanTarget.supportsThreads(): Boolean = when(this) {
-    is KonanTarget.WASM32 -> false
-    is KonanTarget.ZEPHYR -> false
-    else -> true
-}
-
-fun KonanTarget.supportsExceptions(): Boolean = when(this) {
-    is KonanTarget.WASM32 -> false
-    is KonanTarget.ZEPHYR -> false
-    else -> true
-}
-
 fun KonanTarget.supportsObjcInterop(): Boolean = family.isAppleFamily
 fun KonanTarget.hasFoundationFramework(): Boolean = family.isAppleFamily
 fun KonanTarget.hasUIKitFramework(): Boolean = family == Family.IOS || family == Family.TVOS
@@ -129,12 +117,6 @@ fun KonanTarget.supportedSanitizers(): List<SanitizerKind> =
         // TODO: Support macOS arm64
         else -> listOf()
     }
-
-fun KonanTarget.hasAddressDependencyInMemoryModel(): Boolean =
-     when (this.architecture) {
-         Architecture.X86, Architecture.X64, Architecture.ARM32, Architecture.ARM64 -> true
-         Architecture.MIPS32, Architecture.MIPSEL32 -> false
-     }
 
 val KonanTarget.supportsGrandCentralDispatch
     get() = family.isAppleFamily

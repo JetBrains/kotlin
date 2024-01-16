@@ -324,9 +324,6 @@ fun targetSupportsLibBacktrace(targetName: String) =
 fun targetSupportsCoreSymbolication(targetName: String) =
     HostManager().targetByName(targetName).supportsCoreSymbolication()
 
-fun targetSupportsThreads(targetName: String) =
-    HostManager().targetByName(targetName).supportsThreads()
-
 fun Project.buildStaticLibrary(cSources: Collection<File>, output: File, objDir: File) {
     delete(objDir)
     delete(output)

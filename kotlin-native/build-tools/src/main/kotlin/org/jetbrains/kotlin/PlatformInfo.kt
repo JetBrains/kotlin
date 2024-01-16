@@ -31,19 +31,10 @@ object PlatformInfo {
     fun isWindowsTarget(project: Project) = getTarget(project).family == Family.MINGW
 
     @JvmStatic
-    fun isWasmTarget(project: Project) =
-        getTarget(project).family == Family.WASM
-
-    @JvmStatic
     fun getTarget(project: Project): KonanTarget {
         val platformManager = project.project(":kotlin-native").platformManager
         val targetName = project.project.testTarget.name
         return platformManager.targetManager(targetName).target
-    }
-
-    @JvmStatic
-    fun supportsExceptions(project: Project): Boolean {
-        return getTarget(project).supportsExceptions()
     }
 
     @JvmStatic

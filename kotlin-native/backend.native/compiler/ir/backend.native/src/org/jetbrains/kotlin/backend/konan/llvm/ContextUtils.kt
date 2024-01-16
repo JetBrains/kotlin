@@ -493,14 +493,6 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val Kotlin_intArrayGetElementAddress by lazyRtFunction
     val Kotlin_longArrayGetElementAddress by lazyRtFunction
 
-    val tlsMode by lazy {
-        when (target) {
-            KonanTarget.WASM32,
-            is KonanTarget.ZEPHYR -> LLVMThreadLocalMode.LLVMNotThreadLocal
-            else -> LLVMThreadLocalMode.LLVMGeneralDynamicTLSModel
-        }
-    }
-
     val usedFunctions = mutableListOf<LlvmCallable>()
     val usedGlobals = mutableListOf<LLVMValueRef>()
     val compilerUsedGlobals = mutableListOf<LLVMValueRef>()

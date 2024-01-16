@@ -489,7 +489,7 @@ standaloneTest("stack_trace_inline") {
 }
 
 standaloneTest("kt-49240-stack-trace-completeness") {
-    disabled = !PlatformInfo.supportsExceptions(project) || project.globalTestArgs.contains('-opt')
+    disabled = project.globalTestArgs.contains('-opt')
     source = "runtime/exceptions/kt-49240-stack-trace-completeness.kt"
 }
 
