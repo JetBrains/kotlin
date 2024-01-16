@@ -1,0 +1,2 @@
+struct ImportedUsed;
+struct ImportedUnused;

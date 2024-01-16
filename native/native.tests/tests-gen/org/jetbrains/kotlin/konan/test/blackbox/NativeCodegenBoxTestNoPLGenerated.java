@@ -4876,6 +4876,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("kt64105.kt")
+            public void testKt64105() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/kt64105.kt");
+            }
+
+            @Test
             @TestMetadata("leakMemoryWithRunningThreadUnchecked.kt")
             public void testLeakMemoryWithRunningThreadUnchecked() throws Exception {
                 runTest("compiler/testData/codegen/box/cinterop/leakMemoryWithRunningThreadUnchecked.kt");

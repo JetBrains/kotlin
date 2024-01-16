@@ -1,0 +1,2 @@
+headers = dependency.h
+headerFilter = dependency.h

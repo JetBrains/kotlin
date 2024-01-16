@@ -1,0 +1,2 @@
+headers = main.h
+headerFilter = main.h included.h dependency.h
