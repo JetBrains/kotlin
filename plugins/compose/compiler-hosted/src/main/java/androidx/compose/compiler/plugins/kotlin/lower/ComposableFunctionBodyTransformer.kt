@@ -1636,17 +1636,22 @@ class ComposableFunctionBodyTransformer(
                 irCurrentComposer(),
                 irGet(param),
                 inferredStable = true,
+                compareInstanceForFunctionTypes = true,
                 compareInstanceForUnstableValues = true
             ),
             elsePart = irChanged(
                 irCurrentComposer(),
                 irGet(param),
                 inferredStable = false,
+                compareInstanceForFunctionTypes = true,
                 compareInstanceForUnstableValues = true
             )
         )
     } else {
-        irChanged(irGet(param))
+        irChanged(
+            irGet(param),
+            compareInstanceForFunctionTypes = true
+        )
     }
 
     private fun irEndRestartGroupAndUpdateScope(
@@ -2121,11 +2126,13 @@ class ComposableFunctionBodyTransformer(
 
     private fun irChanged(
         value: IrExpression,
+        compareInstanceForFunctionTypes: Boolean,
         compareInstanceForUnstableValues: Boolean = strongSkippingEnabled
     ): IrExpression = irChanged(
         irCurrentComposer(),
         value,
         inferredStable = false,
+        compareInstanceForFunctionTypes = compareInstanceForFunctionTypes,
         compareInstanceForUnstableValues = compareInstanceForUnstableValues
     )
 
@@ -3112,7 +3119,13 @@ class ComposableFunctionBodyTransformer(
         val metaMaskConsistent = updateChangedFlagsFunction != null
         val changedFunction: (Boolean, IrExpression, CallArgumentMeta) -> IrExpression? =
             if (usesDirty || !metaMaskConsistent) {
-                { _, arg, _ -> irChanged(arg, compareInstanceForUnstableValues = isMemoizedLambda) }
+                { _, arg, _ ->
+                    irChanged(
+                        arg,
+                        compareInstanceForFunctionTypes = false,
+                        compareInstanceForUnstableValues = isMemoizedLambda
+                    )
+                }
             } else {
                 ::irIntrinsicChanged
             }
@@ -3254,7 +3267,11 @@ class ComposableFunctionBodyTransformer(
                 val stableBits = param.irSlotAnd(meta.maskSlot, StabilityBits.UNSTABLE.bits)
                 val maskIsUnstableAndChanged = irAndAnd(
                     irNotEqual(stableBits, irConst(0)),
-                    irChanged(arg, compareInstanceForUnstableValues = isMemoizedLambda)
+                    irChanged(
+                        arg,
+                        compareInstanceForFunctionTypes = false,
+                        compareInstanceForUnstableValues = isMemoizedLambda
+                    )
                 )
                 irOrOr(
                     maskIsStableAndDifferent,
@@ -3284,7 +3301,11 @@ class ComposableFunctionBodyTransformer(
                 irOrOr(
                     irAndAnd(
                         maskIsUnstableOrUncertain,
-                        irChanged(arg, compareInstanceForUnstableValues = isMemoizedLambda)
+                        irChanged(
+                            arg,
+                            compareInstanceForFunctionTypes = false,
+                            compareInstanceForUnstableValues = isMemoizedLambda
+                        )
                     ),
                     irEqual(
                         param.irIsolateBitsAtSlot(meta.maskSlot, includeStableBit = false),
@@ -3292,7 +3313,11 @@ class ComposableFunctionBodyTransformer(
                     )
                 )
             }
-            else -> irChanged(arg, compareInstanceForUnstableValues = isMemoizedLambda)
+            else -> irChanged(
+                arg,
+                compareInstanceForFunctionTypes = false,
+                compareInstanceForUnstableValues = isMemoizedLambda
+            )
         }
     }
 
