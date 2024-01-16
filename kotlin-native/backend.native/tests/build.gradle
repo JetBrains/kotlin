@@ -1231,9 +1231,6 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.defFile 'interop/objc/objCAction/objclib.def'
         it.headers "$projectDir/interop/objc/objCAction/objclib.h"
     }
-    createInterop("kt59167") {
-        it.defFile 'interop/kt59167/kt59167.def'
-    }
     createInterop("overridabilityCondition") {
         it.defFile 'interop/objc/overridabilityCondition/lib.def'
         it.headers "$projectDir/interop/objc/overridabilityCondition/lib.h"
@@ -1848,13 +1845,6 @@ if (PlatformInfo.isAppleTarget(project)) {
             }
         }
         UtilsKt.dependsOnPlatformLibs(it)
-    }
-
-    interopTest("interop_kt59167") {
-        // There is no GameController on watchOS.
-        enabled = target.family != Family.WATCHOS
-        source = 'interop/kt59167/main.kt'
-        interop = 'kt59167'
     }
 
     interopTest("interop_objc_kt63423_dispose_on_main_stress") {

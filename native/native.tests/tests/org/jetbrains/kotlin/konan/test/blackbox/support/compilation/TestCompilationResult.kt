@@ -29,7 +29,7 @@ internal sealed interface TestCompilationResult<A : TestCompilationArtifact> {
     companion object {
         fun <A : TestCompilationArtifact> TestCompilationResult<A>.assertSuccess(): Success<A> = when (this) {
             is Success -> this
-            is UnexpectedFailure -> fail { describeFailure() }
+            is UnexpectedFailure -> throw CompilationToolException(describeFailure())
             is CompilationToolFailure -> throw CompilationToolException(describeFailure())
             is DependencyFailures -> fail { describeDependencyFailures() }
         }

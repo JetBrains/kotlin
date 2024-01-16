@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K1
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2
+import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -155,7 +157,7 @@ private class ExtTestDataFile(
 
     val isRelevant: Boolean =
         isCompatibleTarget(TargetBackend.NATIVE, testDataFile) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
-                && !isDisabledNative(pipelineType, structure.directives)
+                && !settings.isDisabledNative(structure.directives)
                 && testDataFileSettings.languageSettings.none { it in INCOMPATIBLE_LANGUAGE_SETTINGS }
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
@@ -893,14 +895,6 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
     }
 }
 
-internal fun isDisabledNative(pipelineType: PipelineType, directives: Directives): Boolean {
-    return when (pipelineType) {
-        PipelineType.K1 -> directives.contains(DISABLE_NATIVE.name) || directives.contains(DISABLE_NATIVE_K1.name)
-        PipelineType.K2 -> directives.contains(DISABLE_NATIVE.name) || directives.contains(DISABLE_NATIVE_K2.name)
-        PipelineType.DEFAULT -> directives.contains(DISABLE_NATIVE.name)
-    }
-}
-
 internal fun Settings.isIgnoredTarget(testDataFile: File): Boolean {
     val disposable = Disposer.newDisposable("Disposable for ExtTestCaseGroupProvider.isIgnoredTarget")
     try {
@@ -934,24 +928,27 @@ private fun Settings.isIgnoredWithIGNORE_BACKEND(directives: Directives): Boolea
     return false
 }
 
+private val TARGET_FAMILY = "targetFamily"
+private val IS_APPLE_TARGET = "isAppleTarget"
 private val CACHE_MODE_NAMES = CacheMode.Alias.entries.map { it.name }
 private val TEST_MODE_NAMES = TestMode.entries.map { it.name }
 private val OPTIMIZATION_MODE_NAMES = OptimizationMode.entries.map { it.name }
 private val GC_TYPE_NAMES = GCType.entries.map { it.name }
+private val FAMILY_NAMES = Family.entries.map { it.name }
+private val BOOLEAN_NAMES = listOf(true.toString(), false.toString())
 
-private fun Settings.isIgnoredWithIGNORE_NATIVE(
-    directives: Directives,
-): Boolean {
-    val directiveValues = buildList {
-        directives.listValues(IGNORE_NATIVE.name)?.let { addAll(it) }
-        when (get<PipelineType>()) {
-            PipelineType.K1 -> directives.listValues(IGNORE_NATIVE_K1.name)?.let { addAll(it) }
-            PipelineType.K2 -> directives.listValues(IGNORE_NATIVE_K2.name)?.let { addAll(it) }
-            else -> {}
-        }
-    }
-    // Boolean evaluation of expressions like `property1=value1 && property2=value2`
+private fun Settings.isDisabledNative(directives: Directives) =
+    evaluate(getDirectiveValues(directives, DISABLE_NATIVE, DISABLE_NATIVE_K1, DISABLE_NATIVE_K2))
+
+private fun Settings.isIgnoredWithIGNORE_NATIVE(directives: Directives) =
+    evaluate(getDirectiveValues(directives, IGNORE_NATIVE, IGNORE_NATIVE_K1, IGNORE_NATIVE_K2))
+
+// Evaluation of conjunction of boolean expressions like `property1=value1 && property2=value2`.
+// Any null element makes whole result as `true`.
+private fun Settings.evaluate(directiveValues: List<String?>): Boolean {
     directiveValues.forEach {
+        if (it == null)
+            return true  // Directive without value is treated as unconditional
         val split = it.split("&&")
         val booleanList = split.map {
             val matchResult = "(.+)=(.+)".toRegex().find(it.trim())
@@ -963,6 +960,8 @@ private fun Settings.isIgnoredWithIGNORE_NATIVE(
                 ClassLevelProperty.OPTIMIZATION_MODE.shortName -> get<OptimizationMode>().name to OPTIMIZATION_MODE_NAMES
                 ClassLevelProperty.TEST_TARGET.shortName -> get<KotlinNativeTargets>().testTarget.name to null
                 ClassLevelProperty.GC_TYPE.shortName -> get<GCType>().name to GC_TYPE_NAMES
+                TARGET_FAMILY -> get<KotlinNativeTargets>().testTarget.family.name to FAMILY_NAMES
+                IS_APPLE_TARGET -> get<KotlinNativeTargets>().testTarget.family.isAppleFamily.toString() to BOOLEAN_NAMES
                 else -> throw AssertionError("ClassLevelProperty name: $propName is not yet supported in IGNORE_NATIVE* test directives.")
             }
             val valueFromTestDirective = matchResult.groups[2]?.value!!
@@ -979,6 +978,26 @@ private fun Settings.isIgnoredWithIGNORE_NATIVE(
             return true
     }
     return false
+}
+
+// Returns list of relevant directive values.
+// Null is added to result list in case the directive given without value.
+private fun Settings.getDirectiveValues(
+    directives: Directives,
+    directiveAllPipelineTypes: StringDirective,
+    directiveK1: StringDirective,
+    directiveK2: StringDirective
+): List<String?> = buildList {
+    fun extract(directives: Directives, directive: StringDirective) {
+        if (directives.contains(directive.name))
+            directives.listValues(directive.name)?.let { addAll(it) } ?: add(null)
+    }
+    extract(directives, directiveAllPipelineTypes)
+    when (get<PipelineType>()) {
+        PipelineType.K1 -> extract(directives, directiveK1)
+        PipelineType.K2 -> extract(directives, directiveK2)
+        else -> {}
+    }
 }
 
 private val KtFile.packageFqNameForKLib: FqName

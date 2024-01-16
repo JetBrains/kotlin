@@ -1,9 +1,0 @@
-language=Objective-C
----
-#import <GameController/GCDevice.h>
-
-// We only need to touch the problematic header to trigger the problem,
-// so actual code does not matter.
-id<GCDevice> dummy() {
-    return nil;
-}
