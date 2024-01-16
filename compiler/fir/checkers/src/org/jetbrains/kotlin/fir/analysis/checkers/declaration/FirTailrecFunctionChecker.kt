@@ -102,8 +102,9 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker() {
             val hasMore = when (next) {
                 // If exiting another function, then it means this call is inside a nested local function, in which case, it's not a tailrec call.
                 is FunctionExitNode -> return next.fir != tailrecFunction
-                is JumpNode, is BinaryAndExitNode, is BinaryOrExitNode, is WhenBranchResultExitNode, is WhenExitNode, is BlockExitNode ->
-                    next.hasMoreFollowingInstructions(tailrecFunction)
+                is JumpNode, is BinaryAndExitNode, is BinaryOrExitNode, is WhenBranchResultExitNode, is WhenExitNode, is BlockExitNode,
+                is ExitSafeCallNode
+                -> next.hasMoreFollowingInstructions(tailrecFunction)
                 else -> return true
             }
             if (hasMore) return hasMore

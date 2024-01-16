@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-63529
 
 private tailrec fun Context.findActivityOrNull(): Activity? {
