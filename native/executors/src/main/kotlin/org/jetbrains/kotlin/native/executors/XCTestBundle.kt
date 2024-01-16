@@ -10,6 +10,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.deleteRecursively
+import kotlin.io.path.exists
+import kotlin.io.path.name
 
 /**
  * Represents an XCTest bundle.
@@ -69,12 +71,13 @@ internal sealed interface XCTestBundle {
             path = if (args.isNotEmpty()) {
                 // Copy the bundle to a temp dir
                 val dir = Files.createTempDirectory(workingDirectory, "tmp-xctest-runner")
-                val newBundleFile = originalBundle.toFile().run {
-                    val newPath = dir.resolve(name)
-                    copyRecursively(newPath.toFile())
-                    newPath.toFile()
+                val newBundleFile = originalBundle.copyRecursivelyTo(dir)
+
+                // Try to copy dSYM if it exists
+                val dSYM = originalBundle.resolveSibling("${originalBundle.name}.dSYM")
+                if (dSYM.exists()) {
+                    dSYM.copyRecursivelyTo(dir)
                 }
-                check(newBundleFile.exists())
 
                 newBundleFile.writeTestArguments(args)
 
@@ -84,6 +87,16 @@ internal sealed interface XCTestBundle {
             }
 
             return path
+        }
+
+        private fun Path.copyRecursivelyTo(dir: Path): File {
+            val result = this.toFile().run {
+                val newPath = dir.resolve(name)
+                copyRecursively(newPath.toFile())
+                newPath.toFile()
+            }
+            check(result.exists())
+            return result
         }
 
         override fun cleanup() {
