@@ -14608,6 +14608,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("decrementInFinally.kt")
+        public void testDecrementInFinally() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/decrementInFinally.kt");
+        }
+
+        @Test
         @TestMetadata("finallyAndFinally.kt")
         public void testFinallyAndFinally() throws Exception {
             runTest("compiler/testData/codegen/box/finally/finallyAndFinally.kt");

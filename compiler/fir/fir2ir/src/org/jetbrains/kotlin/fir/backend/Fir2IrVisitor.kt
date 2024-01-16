@@ -1146,7 +1146,7 @@ class Fir2IrVisitor(
             } else {
                 val irStatements = mapToIrStatements()
                 val singleStatement = irStatements.singleOrNull()
-                if (origin?.isLoop != true && singleStatement is IrBlock &&
+                if (singleStatement is IrBlock && (!forceUnitType || singleStatement.type.isUnit()) &&
                     (singleStatement.origin == IrStatementOrigin.POSTFIX_INCR || singleStatement.origin == IrStatementOrigin.POSTFIX_DECR)
                 ) {
                     singleStatement
