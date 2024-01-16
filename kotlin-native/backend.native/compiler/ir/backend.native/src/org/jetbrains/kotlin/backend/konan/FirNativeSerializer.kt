@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -87,13 +88,14 @@ internal fun PhaseContext.firSerializerBase(
     ) { firFile, originalSession, originalScopeSession ->
         val session = fir2IrOutput?.components?.session ?: originalSession
         val scopeSession = fir2IrOutput?.components?.scopeSession ?: originalScopeSession
+        val firProvider = fir2IrOutput?.components?.firProvider ?: originalSession.firProvider
         serializeSingleFirFile(
                 firFile,
                 session,
                 scopeSession,
                 actualizedFirDeclarations,
                 FirKLibSerializerExtension(
-                        session, metadataVersion,
+                        session, firProvider, metadataVersion,
                         fir2IrOutput?.let {
                             ConstValueProviderImpl(fir2IrOutput.components)
                         },

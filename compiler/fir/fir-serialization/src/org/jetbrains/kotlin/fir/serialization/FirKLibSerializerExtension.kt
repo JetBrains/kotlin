@@ -9,7 +9,7 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALI
 
 class FirKLibSerializerExtension(
     override val session: FirSession,
+    private val firProvider: FirProvider,
     override val metadataVersion: BinaryVersion,
     override val constValueProvider: ConstValueProvider?,
     private val allowErrorTypes: Boolean,
@@ -84,8 +85,6 @@ class FirKLibSerializerExtension(
         function.setKDoc(proto, KlibMetadataProtoBuf.functionKdoc)
         super.serializeFunction(function, proto, versionRequirementTable, childSerializer)
     }
-
-    private val firProvider = session.firProvider
 
     @Suppress("Reformat")
     private fun <

@@ -96,7 +96,7 @@ abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : Abstra
                 components.scopeSession,
                 actualizedExpectDeclarations,
                 FirKLibSerializerExtension(
-                    components.session, metadataVersion,
+                    components.session, components.firProvider, metadataVersion,
                     ConstValueProviderImpl(components),
                     allowErrorTypes = false, exportKDoc = false,
                     components.annotationsFromPluginRegistrar.createAdditionalMetadataProvider()
