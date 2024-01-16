@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
@@ -21,32 +20,36 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrDynamicOperator
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicMemberExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicOperatorExpressionImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.asSimpleType
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-fun generateJsTests(context: JsIrBackendContext, moduleFragment: IrModuleFragment) {
-    val generator = TestGenerator(context, false)
+fun generateJsTests(context: JsCommonBackendContext, moduleFragment: IrModuleFragment, groupByPackage: Boolean) {
+    val generator = TestGenerator(
+        context = context,
+        groupByPackage = groupByPackage
+    )
 
     moduleFragment.files.toList().forEach {
         generator.lower(it)
     }
 }
 
-class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boolean) : FileLoweringPass {
+private class TestGenerator(
+    val context: JsCommonBackendContext,
+    private val groupByPackage: Boolean,
+) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
         // Additional copy to prevent ConcurrentModificationException
@@ -186,9 +189,21 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
             return
         }
 
-
-        if (context is JsIrBackendContext && (testFun.returnType as? IrSimpleType)?.isPromise == true) {
-            val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0), false, emptyList(), emptyList())
+        val returnType = testFun.returnType as? IrSimpleType
+        val promiseSymbol = context.jsPromiseSymbol
+        if (promiseSymbol != null && returnType != null && returnType.isPromise) {
+            val promiseCastedIfNeeded = if (returnType.classifier == context.jsPromiseSymbol) {
+                returnStatement.value
+            } else {
+                IrTypeOperatorCallImpl(
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    type = testFun.returnType,
+                    operator = IrTypeOperator.CAST,
+                    typeOperand = promiseSymbol.defaultType,
+                    argument = returnStatement.value
+                )
+            }
 
             val afterFunction = context.irFactory.buildFun {
                 this.name = Name.identifier("${irClass.name.asString()} after test fun")
@@ -207,16 +222,17 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
                 )
             }
 
+            val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0), false, emptyList(), emptyList())
             val finallyLambda = JsIrBuilder.buildFunctionExpression(refType, afterFunction)
+            val finally = promiseSymbol.owner.declarations
+                .findIsInstanceAnd<IrSimpleFunction> { it.name.asString() == "finally" }!!
 
-            val finally =
-                IrDynamicMemberExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.dynamicType, "finally", returnStatement.value)
-
-            val returnValue =
-                IrDynamicOperatorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.dynamicType, IrDynamicOperator.INVOKE).also {
-                    it.receiver = finally
-                    it.arguments.add(finallyLambda)
-                }
+            val returnValue = JsIrBuilder.buildCall(
+                finally.symbol
+            ).apply {
+                this.dispatchReceiver = promiseCastedIfNeeded
+                putValueArgument(0, finallyLambda)
+            }
 
             body.statements += JsIrBuilder.buildReturn(
                 fn.symbol,
@@ -271,6 +287,7 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
 
     private val IrSimpleType.isPromise: Boolean
         get() {
+            if (this.classifier == context.jsPromiseSymbol) return true
             val klass = classifier.owner as? IrClass ?: return false
             return klass.isExternal && klass.getJsModule() == null && klass.getJsNameOrKotlinName().asString() == "Promise"
         }

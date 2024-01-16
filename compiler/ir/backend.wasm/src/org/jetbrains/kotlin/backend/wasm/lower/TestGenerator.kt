@@ -7,17 +7,17 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.ir.backend.js.lower.TestGenerator
 import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 
 fun generateWasmTests(context: WasmBackendContext, moduleFragment: IrModuleFragment) {
-    val generator = TestGenerator(context, true)
-
-    moduleFragment.files.toList().forEach {
-        generator.lower(it)
-    }
+    generateJsTests(
+        context = context,
+        moduleFragment = moduleFragment,
+        groupByPackage = true
+    )
 
     if (context.testEntryPoints.isEmpty())
         return
