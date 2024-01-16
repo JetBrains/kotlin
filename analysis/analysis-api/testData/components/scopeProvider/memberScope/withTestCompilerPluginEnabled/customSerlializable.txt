@@ -46,7 +46,7 @@ KtFunctionSymbol:
         type: test/FirstTarget
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: null
+      getContainingFileSymbol: KtFileSymbol(customSerlializable.kt)
       getContainingJvmClassName: test.Serializer
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
@@ -56,7 +56,7 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: test/Serializer
-  getContainingFileSymbol: null
+  getContainingFileSymbol: KtFileSymbol(customSerlializable.kt)
   getContainingJvmClassName: test.Serializer
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -109,7 +109,7 @@ KtFunctionSymbol:
         type: test/SecondTarget
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: null
+      getContainingFileSymbol: KtFileSymbol(customSerlializable.kt)
       getContainingJvmClassName: test.Serializer
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
@@ -119,7 +119,7 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: test/Serializer
-  getContainingFileSymbol: null
+  getContainingFileSymbol: KtFileSymbol(customSerlializable.kt)
   getContainingJvmClassName: test.Serializer
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -31,7 +31,7 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: test/MyClass
-  getContainingFileSymbol: null
+  getContainingFileSymbol: KtFileSymbol(nestedClassAndMaterializeMember.kt)
   getContainingJvmClassName: test.MyClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -200,7 +200,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: null
+  getContainingFileSymbol: KtFileSymbol(nestedClassAndMaterializeMember.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

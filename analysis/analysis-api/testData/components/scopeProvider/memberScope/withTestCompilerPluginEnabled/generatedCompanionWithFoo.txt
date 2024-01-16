@@ -31,7 +31,7 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: test/WithGeneratedCompanion.Companion
-  getContainingFileSymbol: null
+  getContainingFileSymbol: KtFileSymbol(generatedCompanionWithFoo.kt)
   getContainingJvmClassName: test.WithGeneratedCompanion.Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

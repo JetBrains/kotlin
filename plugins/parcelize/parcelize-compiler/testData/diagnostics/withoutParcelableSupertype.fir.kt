@@ -4,7 +4,7 @@ import kotlinx.parcelize.Parcelize
 import android.os.Parcelable
 
 @Parcelize
-class <!NO_PARCELABLE_SUPERTYPE!>Without<!>(val firstName: String, val secondName: String, val age: Int)
+class <!NOTHING_TO_OVERRIDE, NOTHING_TO_OVERRIDE, NO_PARCELABLE_SUPERTYPE!>Without<!>(val firstName: String, val secondName: String, val age: Int)
 
 @Parcelize
 class With(val firstName: String, val secondName: String, val age: Int) : Parcelable
