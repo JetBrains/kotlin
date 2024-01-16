@@ -177,7 +177,7 @@ internal object NativeTestSupport {
         val nativeHome = getOrCreateTestProcessSettings().get<KotlinNativeHome>()
 
         val distribution = Distribution(nativeHome.dir.path)
-        val hostManager = HostManager(distribution, experimental = false)
+        val hostManager = HostManager()
         val nativeTargets = computeNativeTargets(enforcedProperties, hostManager)
 
         val cacheMode = computeCacheMode(enforcedProperties, distribution, nativeTargets, optimizationMode)

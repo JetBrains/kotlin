@@ -71,5 +71,5 @@ internal val Settings.configurables: Configurables
             // Development variant of LLVM is used to have utilities like FileCheck
             propertyOverrides = mapOf("llvmHome.${HostManager.hostName}" to "\$llvm.${HostManager.hostName}.dev")
         )
-        return PlatformManager(distribution, true).platform(get<KotlinNativeTargets>().testTarget).configurables
+        return PlatformManager(distribution).platform(get<KotlinNativeTargets>().testTarget).configurables
     }

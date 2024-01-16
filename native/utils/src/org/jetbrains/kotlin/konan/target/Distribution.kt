@@ -31,9 +31,6 @@ class Distribution private constructor(private val serialized: Serialized) : jav
 
     val konanSubdir = "$konanHome/konan"
     val mainPropertyFileName = "$konanSubdir/konan.properties"
-    val experimentalEnabled by lazy {
-        File("$konanSubdir/experimentalTargetsEnabled").exists
-    }
 
     private fun propertyFilesFromConfigDir(configDir: String, genericName: String): List<File> {
         val directory = File(configDir, "platforms/$genericName")
@@ -64,12 +61,6 @@ class Distribution private constructor(private val serialized: Serialized) : jav
         }
 
         loadPropertiesSafely(File(mainPropertyFileName))
-
-        HostManager.knownTargetTemplates.forEach { targetTemplate ->
-            additionalPropertyFiles(targetTemplate).forEach {
-                loadPropertiesSafely(it)
-            }
-        }
 
         if (onlyDefaultProfiles) {
             result.keepOnlyDefaultProfiles()
@@ -108,11 +99,6 @@ class Distribution private constructor(private val serialized: Serialized) : jav
     val dependenciesDir = DependencyDirectories
         .getDependenciesRoot(konanDataDir)
         .absolutePath
-
-    val subTargetProvider = object: SubTargetProvider {
-        override fun availableSubTarget(genericName: String) =
-                additionalPropertyFiles(genericName).map { it.name }
-    }
 
     companion object {
         /**
