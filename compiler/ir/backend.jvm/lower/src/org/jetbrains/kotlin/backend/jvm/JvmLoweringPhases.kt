@@ -280,20 +280,11 @@ private val kotlinNothingValueExceptionPhase = makeIrFilePhase<CommonBackendCont
 
 internal val functionInliningPhase = makeIrModulePhase(
     { context ->
-        class JvmInlineFunctionResolver : InlineFunctionResolver {
-            override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
-                return symbol.owner
-            }
-
-            override fun getFunctionSymbol(irFunction: IrFunction): IrFunctionSymbol {
-                return irFunction.symbol
-            }
-        }
-
         if (!context.irInlinerIsEnabled()) return@makeIrModulePhase FileLoweringPass.Empty
 
         FunctionInlining(
-            context, JvmInlineFunctionResolver(), context.innerClassesSupport,
+            context,
+            innerClassesSupport = context.innerClassesSupport,
             alwaysCreateTemporaryVariablesForArguments = true,
             regenerateInlinedAnonymousObjects = true,
             inlineArgumentsWithTheirOriginalTypeAndOffset = true

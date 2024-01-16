@@ -42,10 +42,14 @@ fun IrExpression.isAdaptedFunctionReference() =
     this is IrBlock && this.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
 
 interface InlineFunctionResolver {
-    fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction
-    fun getFunctionSymbol(irFunction: IrFunction): IrFunctionSymbol
+    fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction = symbol.owner
+    fun getFunctionSymbol(irFunction: IrFunction): IrFunctionSymbol = irFunction.symbol
     fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
         return Symbols.isLateinitIsInitializedPropertyGetter(symbol) || Symbols.isTypeOfIntrinsic(symbol)
+    }
+
+    companion object {
+        val TRIVIAL = object : InlineFunctionResolver {}
     }
 }
 
@@ -63,7 +67,7 @@ fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
         StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME.asString()
     )
 
-open class DefaultInlineFunctionResolver(open val context: CommonBackendContext) : InlineFunctionResolver {
+open class InlineFunctionResolverReplacingCoroutineIntrinsics(open val context: CommonBackendContext) : InlineFunctionResolver {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
         val function = symbol.owner
         // TODO: Remove these hacks when coroutine intrinsics are fixed.
@@ -77,15 +81,11 @@ open class DefaultInlineFunctionResolver(open val context: CommonBackendContext)
             else -> function
         }
     }
-
-    override fun getFunctionSymbol(irFunction: IrFunction): IrFunctionSymbol {
-        return irFunction.symbol
-    }
 }
 
 class FunctionInlining(
     val context: CommonBackendContext,
-    private val inlineFunctionResolver: InlineFunctionResolver = DefaultInlineFunctionResolver(context),
+    private val inlineFunctionResolver: InlineFunctionResolver = InlineFunctionResolver.TRIVIAL,
     private val innerClassesSupport: InnerClassesSupport? = null,
     private val insertAdditionalImplicitCasts: Boolean = false,
     private val alwaysCreateTemporaryVariablesForArguments: Boolean = false,

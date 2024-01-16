@@ -30,7 +30,7 @@ internal class InlineFunctionsSupport(mapping: NativeMapping) {
 }
 
 // TODO: This is a bit hacky. Think about adopting persistent IR ideas.
-internal class NativeInlineFunctionResolver(override val context: Context, val generationState: NativeGenerationState) : DefaultInlineFunctionResolver(context) {
+internal class NativeInlineFunctionResolver(override val context: Context, val generationState: NativeGenerationState) : InlineFunctionResolverReplacingCoroutineIntrinsics(context) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
         val function = super.getFunctionDeclaration(symbol)
 
