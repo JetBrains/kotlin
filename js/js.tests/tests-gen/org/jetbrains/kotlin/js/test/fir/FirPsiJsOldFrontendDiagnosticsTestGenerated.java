@@ -827,6 +827,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
         }
 
         @Test
+        @TestMetadata("nonASCIIName.kt")
+        public void testNonASCIIName() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/nonASCIIName.kt");
+        }
+
+        @Test
         @TestMetadata("overrideOverloadedNativeFunction.kt")
         public void testOverrideOverloadedNativeFunction() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/overrideOverloadedNativeFunction.kt");
