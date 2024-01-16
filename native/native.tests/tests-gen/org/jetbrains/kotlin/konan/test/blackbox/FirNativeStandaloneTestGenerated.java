@@ -175,6 +175,12 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
         }
 
         @Test
+        @TestMetadata("concurrentTerminate.kt")
+        public void testConcurrentTerminate() throws Exception {
+            runTest("native/native.tests/testData/standalone/termination/concurrentTerminate.kt");
+        }
+
+        @Test
         @TestMetadata("exitProcess.kt")
         public void testExitProcess() throws Exception {
             runTest("native/native.tests/testData/standalone/termination/exitProcess.kt");

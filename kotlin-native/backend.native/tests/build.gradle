@@ -1023,14 +1023,6 @@ createInterop("sockets") {
     it.defFile 'interop/basics/sockets.def'
 }
 
-createInterop("concurrentTerminate") {
-    it.defFile 'interop/concurrentTerminate/concurrentTerminate.def'
-    it.headers "$projectDir/interop/concurrentTerminate/async.h"
-    // TODO: Using `-Xcompile-source` does not imply dependency on that source, so the task will no re-run when the source is updated.
-    it.extraOpts "-Xcompile-source", "$projectDir/interop/concurrentTerminate/async.cpp"
-    it.extraOpts "-Xsource-compiler-option", "-std=c++17"
-}
-
 createInterop("embedStaticLibraries") {
     it.defFile 'interop/embedStaticLibraries/embedStaticLibraries.def'
     it.headers "$projectDir/interop/embedStaticLibraries/embedStaticLibraries.h"
@@ -1053,10 +1045,6 @@ createInterop("embedStaticLibraries") {
 
     it.extraOpts '-staticLibrary', "1.a"
     it.extraOpts '-staticLibrary', "2.a"
-}
-
-createInterop("kt51925") {
-    it.defFile 'interop/kt51925/kt51925.def'
 }
 
 createInterop("kt43502") {
@@ -1328,13 +1316,6 @@ standaloneTest("interop_objc_allocException") {
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
-interopTest("interop_concurrentTerminate") {
-    source = "interop/concurrentTerminate/main.kt"
-    interop = 'concurrentTerminate'
-    outputChecker = { str -> str.endsWith("Reporting error!\n") }
-    expectedExitStatus = 99
-}
-
 interopTest("interop_embedStaticLibraries") {
     source = "interop/embedStaticLibraries/main.kt"
     interop = 'embedStaticLibraries'
@@ -1347,14 +1328,6 @@ interopTest("interop_withSpaces") {
     doLast {
         assert project.layout.buildDirectory.file("cutom map.map").get().asFile.exists()
     }
-}
-
-// TODO: This test should be run with caches on.
-interopTest("interop_kt51925") {
-    interop = 'kt51925'
-    lib = 'interop/kt51925/kt51925_lib.kt'
-    source = 'interop/kt51925/kt51925_main.kt'
-    useGoldenData = true
 }
 
 interopTestBase("interop_forwardDeclarationsCast", false, true) {
