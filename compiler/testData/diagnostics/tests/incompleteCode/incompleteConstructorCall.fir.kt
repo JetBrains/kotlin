@@ -15,11 +15,11 @@ class Outer<T> {
     object Obj
 }
 
-val test = Outer<String>
+val test = <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>Outer<!><String>
 
-val test2 = Outer.Nested<String>
+val test2 = Outer.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>Nested<!><String>
 
-val test3 = Outer<Int>.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Inner<!><Double>
+val test3 = Outer<Int>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Inner<!><Double>
 
 val test4 = Outer<Int>.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Obj<!>
 

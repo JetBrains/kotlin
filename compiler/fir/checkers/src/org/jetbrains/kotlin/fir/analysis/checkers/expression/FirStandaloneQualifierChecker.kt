@@ -25,7 +25,12 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker() {
         if (!expression.isStandalone(context)) return
 
         // Note: if it's real Unit, it will be filtered by ClassKind.OBJECT check below in reportErrorOn
-        if (!expression.resolvedType.isUnit) return
+        if (!expression.resolvedType.isUnit) {
+            if (expression.typeArguments.any { it.source != null }) {
+                reporter.reportOn(expression.source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, context)
+            }
+            return
+        }
 
         expression.symbol.reportErrorOn(expression.source, context, reporter)
     }
