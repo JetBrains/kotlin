@@ -365,7 +365,13 @@ class WasmSymbols(
 
         val jsCode = getFunction("js", kotlinJsPackage)
 
-        val jsAnyType: IrType by lazy { getIrClass(FqName("kotlin.js.JsAny")).defaultType }
+        val jsReferenceClass by lazy { getIrClass(FqName("kotlin.js.JsReference")) }
+
+        val jsAnyType: IrType by lazy { getIrType("kotlin.js.JsAny") }
+        val jsBooleanType: IrType by lazy { getIrType("kotlin.js.JsBoolean") }
+        val jsStringType: IrType by lazy { getIrType("kotlin.js.JsString") }
+        val jsNumberType: IrType by lazy { getIrType("kotlin.js.JsNumber") }
+        val jsBigIntType: IrType by lazy { getIrType("kotlin.js.JsBigInt") }
 
         val newJsArray = getInternalFunction("newJsArray")
 
@@ -424,6 +430,7 @@ class WasmSymbols(
     private fun getEnumsFunction(name: String) = getFunction(name, enumsInternalPackage)
 
     private fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.descriptorExtension.referenceClass(getClass(fqName))
+    private fun getIrType(fqName: String): IrType = getIrClass(FqName(fqName)).defaultType
     private fun getInternalClass(name: String): IrClassSymbol = getIrClass(FqName("kotlin.wasm.internal.$name"))
     fun getKFunctionType(type: IrType, list: List<IrType>): IrType {
         return irBuiltIns.functionN(list.size).typeWith(list + type)

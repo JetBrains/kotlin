@@ -353,11 +353,15 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             }
 
             if (arguments.wasm) {
-                val (allModules, backendContext) = compileToLoweredIr(
+                val generateDts = configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
+                val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
+
+                val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
                     depsDescriptors = module,
                     phaseConfig = createPhaseConfig(wasmPhases, arguments, messageCollector),
                     irFactory = IrFactoryImpl,
                     exportedDeclarations = setOf(FqName("main")),
+                    generateTypeScriptFragment = generateDts,
                     propertyLazyInitialization = arguments.irPropertyLazyInitialization,
                 )
                 val dceDumpNameCache = DceDumpNameCache()
@@ -367,16 +371,15 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
                 dumpDeclarationIrSizesIfNeed(arguments.irDceDumpDeclarationIrSizesToFile, allModules, dceDumpNameCache)
 
-                val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
-
                 val res = compileWasm(
                     allModules = allModules,
                     backendContext = backendContext,
+                    typeScriptFragment = typeScriptFragment,
                     baseFileName = outputName,
                     emitNameSection = arguments.wasmDebug,
                     allowIncompleteImplementations = arguments.irDce,
                     generateWat = configuration.get(JSConfigurationKeys.WASM_GENERATE_WAT, false),
-                    generateSourceMaps = generateSourceMaps
+                    generateSourceMaps = generateSourceMaps,
                 )
 
                 writeCompilationResult(

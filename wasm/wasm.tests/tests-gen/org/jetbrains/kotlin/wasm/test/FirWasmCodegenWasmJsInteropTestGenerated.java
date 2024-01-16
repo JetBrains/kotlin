@@ -186,4 +186,62 @@ public class FirWasmCodegenWasmJsInteropTestGenerated extends AbstractFirWasmCod
     public void testWasmImport() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/wasmImport.kt");
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TypeScriptDeclarations {
+        @Test
+        public void testAllFilesPresentInTypeScriptDeclarations() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @Test
+        @TestMetadata("externalDeclarations.kt")
+        public void testExternalDeclarations() throws Exception {
+            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/externalDeclarations.kt");
+        }
+
+        @Test
+        @TestMetadata("generics.kt")
+        public void testGenerics() throws Exception {
+            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/generics.kt");
+        }
+
+        @Test
+        @TestMetadata("jsPrimitives.kt")
+        public void testJsPrimitives() throws Exception {
+            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/jsPrimitives.kt");
+        }
+
+        @Test
+        @TestMetadata("nullableJsPrimitives.kt")
+        public void testNullableJsPrimitives() throws Exception {
+            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/nullableJsPrimitives.kt");
+        }
+
+        @Test
+        @TestMetadata("nullablePrimitives.kt")
+        public void testNullablePrimitives() throws Exception {
+            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/nullablePrimitives.kt");
+        }
+
+        @Test
+        @TestMetadata("nullableUnisnged.kt")
+        public void testNullableUnisnged() throws Exception {
+            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/nullableUnisnged.kt");
+        }
+
+        @Test
+        @TestMetadata("primitives.kt")
+        public void testPrimitives() throws Exception {
+            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/primitives.kt");
+        }
+
+        @Test
+        @TestMetadata("unisnged.kt")
+        public void testUnisnged() throws Exception {
+            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/unisnged.kt");
+        }
+    }
 }

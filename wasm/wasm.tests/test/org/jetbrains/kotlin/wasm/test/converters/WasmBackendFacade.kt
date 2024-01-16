@@ -49,6 +49,7 @@ class WasmBackendFacade(
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): BinaryArtifacts.Wasm? {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val generateSourceMaps = WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP in testServices.moduleStructure.allDirectives
+        val generateDts = WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS in testServices.moduleStructure.allDirectives
 
         // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
         configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
@@ -93,12 +94,13 @@ class WasmBackendFacade(
         )
 
         val testPackage = extractTestPackage(testServices)
-        val (allModules, backendContext) = compileToLoweredIr(
+        val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
             depsDescriptors = moduleStructure,
             phaseConfig = phaseConfig,
             irFactory = IrFactoryImpl,
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, "box"))),
             propertyLazyInitialization = true,
+            generateTypeScriptFragment = generateDts
         )
         val generateWat = debugMode >= DebugMode.DEBUG
         val baseFileName = "index"
@@ -106,11 +108,12 @@ class WasmBackendFacade(
         val compilerResult = compileWasm(
             allModules = allModules,
             backendContext = backendContext,
+            typeScriptFragment = typeScriptFragment,
             baseFileName = baseFileName,
             emitNameSection = true,
             allowIncompleteImplementations = false,
             generateWat = generateWat,
-            generateSourceMaps = generateSourceMaps
+            generateSourceMaps = generateSourceMaps,
         )
 
         val dceDumpNameCache = DceDumpNameCache()
@@ -121,11 +124,12 @@ class WasmBackendFacade(
         val compilerResultWithDCE = compileWasm(
             allModules = allModules,
             backendContext = backendContext,
+            typeScriptFragment = typeScriptFragment,
             baseFileName = baseFileName,
             emitNameSection = true,
             allowIncompleteImplementations = true,
             generateWat = generateWat,
-            generateSourceMaps = generateSourceMaps
+            generateSourceMaps = generateSourceMaps,
         )
 
         return BinaryArtifacts.Wasm(
@@ -148,7 +152,8 @@ class WasmBackendFacade(
             jsUninstantiatedWrapper = jsUninstantiatedWrapper,
             jsWrapper = jsWrapper,
             wasm = newWasm,
-            debugInformation = null
+            debugInformation = null,
+            dts = dts
         )
     }
 }

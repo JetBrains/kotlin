@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+val KOTLIN_TO_JS_CLOSURE_ORIGIN by IrDeclarationOriginImpl
+
 /**
  * Create wrappers for external and @JsExport functions when type adaptation is needed
  */
@@ -466,6 +468,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val result = context.irFactory.buildFun {
             name = Name.identifier("__callFunction_${info.signatureString}")
             returnType = info.adaptedResultType
+            origin = KOTLIN_TO_JS_CLOSURE_ORIGIN
         }
         result.parent = currentParent
         result.addValueParameter {

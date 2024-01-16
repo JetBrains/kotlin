@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.wasm.test.handlers.WasmDtsHandler
 
 abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>, A : ResultingArtifact.Binary<A>>(
     private val targetFrontend: FrontendKind<R>,
@@ -94,6 +95,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
 
         wasmArtifactsHandlersStep {
             useHandlers(wasmBoxTestRunner)
+            useHandlers(::WasmDtsHandler)
         }
     }
 

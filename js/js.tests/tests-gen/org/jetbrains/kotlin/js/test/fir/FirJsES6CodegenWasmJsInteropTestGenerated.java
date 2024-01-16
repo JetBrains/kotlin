@@ -108,4 +108,14 @@ public class FirJsES6CodegenWasmJsInteropTestGenerated extends AbstractFirJsES6C
     public void testVararg() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/vararg.kt");
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TypeScriptDeclarations {
+        @Test
+        public void testAllFilesPresentInTypeScriptDeclarations() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        }
+    }
 }
