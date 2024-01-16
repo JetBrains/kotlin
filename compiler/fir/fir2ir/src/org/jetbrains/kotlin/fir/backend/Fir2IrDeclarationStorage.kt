@@ -82,7 +82,32 @@ class Fir2IrDeclarationStorage(
 
     private val initializerCache: ConcurrentHashMap<FirAnonymousInitializer, IrAnonymousInitializer> = ConcurrentHashMap()
 
-    private val propertyCache: ConcurrentHashMap<FirProperty, IrPropertySymbol> = commonMemberStorage.propertyCache
+    class PropertyCacheStorage(
+        val normal: ConcurrentHashMap<FirProperty, IrPropertySymbol>,
+        val synthetic: ConcurrentHashMap<FirFunction, IrPropertySymbol>
+    ) {
+        /**
+         * Fir synthetic properties are session-dependent, so it can't be used as a cache key
+         * That's why, we are using original java function as a key in that case.
+         */
+        private val FirSyntheticProperty.cacheKey
+            get() = symbol.getterSymbol!!.delegateFunctionSymbol.fir
+
+        operator fun set(fir: FirProperty, value: IrPropertySymbol) {
+            when (fir) {
+                is FirSyntheticProperty -> synthetic[fir.cacheKey] = value
+                else -> normal[fir] = value
+            }
+        }
+
+        operator fun get(fir: FirProperty): IrPropertySymbol? {
+            return when (fir) {
+                is FirSyntheticProperty -> synthetic[fir.cacheKey]
+                else -> normal[fir]
+            }
+        }
+    }
+    private val propertyCache = PropertyCacheStorage(commonMemberStorage.propertyCache, commonMemberStorage.syntheticPropertyCache)
     private val getterForPropertyCache: ConcurrentHashMap<IrSymbol, IrSimpleFunctionSymbol> =
         commonMemberStorage.getterForPropertyCache
     private val setterForPropertyCache: ConcurrentHashMap<IrSymbol, IrSimpleFunctionSymbol> =
@@ -104,7 +129,8 @@ class Fir2IrDeclarationStorage(
     fun forEachCachedDeclarationSymbol(block: (IrSymbol) -> Unit) {
         functionCache.values.forEachWithRemapping(symbolsMappingForLazyClasses::remapFunctionSymbol, block)
         constructorCache.values.forEach(block)
-        propertyCache.values.forEachWithRemapping(symbolsMappingForLazyClasses::remapPropertySymbol, block)
+        propertyCache.normal.values.forEachWithRemapping(symbolsMappingForLazyClasses::remapPropertySymbol, block)
+        propertyCache.synthetic.values.forEachWithRemapping(symbolsMappingForLazyClasses::remapPropertySymbol, block)
         getterForPropertyCache.values.forEachWithRemapping(symbolsMappingForLazyClasses::remapFunctionSymbol, block)
         setterForPropertyCache.values.forEachWithRemapping(symbolsMappingForLazyClasses::remapFunctionSymbol, block)
         backingFieldForPropertyCache.values.forEach(block)
@@ -315,7 +341,8 @@ class Fir2IrDeclarationStorage(
         val cachedIrCallable = getCachedIrCallableSymbol(
             function,
             fakeOverrideOwnerLookupTag,
-            functionCache,
+            functionCache::get,
+            functionCache::set,
             signatureCalculator
         ) { signature ->
             symbolTable.referenceSimpleFunctionIfAny(signature)
@@ -757,7 +784,8 @@ class Fir2IrDeclarationStorage(
         val symbol = getCachedIrCallableSymbol(
             property,
             fakeOverrideOwnerLookupTag,
-            propertyCache,
+            propertyCache::get,
+            propertyCache::set,
             signatureCalculator
         ) { signature ->
             symbolTable.referencePropertyIfAny(signature)
@@ -1138,7 +1166,8 @@ class Fir2IrDeclarationStorage(
     private inline fun <reified FC : FirCallableDeclaration, reified IS : IrSymbol> getCachedIrCallableSymbol(
         declaration: FC,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
-        cache: MutableMap<FC, IS>,
+        cacheGetter: (FC) -> IS?,
+        cacheSetter: (FC, IS) -> Unit,
         signatureCalculator: () -> IdSignature?,
         referenceIfAny: (IdSignature) -> IS?
     ): IS? {
@@ -1166,12 +1195,12 @@ class Fir2IrDeclarationStorage(
             )
             irForFirSessionDependantDeclarationMap[key]?.let { return it as IS }
         } else {
-            cache[declaration]?.let { return it }
+            cacheGetter(declaration)?.let { return it }
         }
 
         // TODO: Special case mentioned above. Should be removed after fixing creation. KT-61085
         if (declaration.isSubstitutionOrIntersectionOverride) {
-            cache[declaration]?.let { return it }
+            cacheGetter(declaration)?.let { return it }
         }
 
         /*
@@ -1222,7 +1251,7 @@ class Fir2IrDeclarationStorage(
                      *
                      * TODO: potentially this situation won't happen after migration from FIR2IR f/o generator to IR f/o generator (see KT-58861)
                      */
-                    cache[declaration] = cachedInSymbolTable
+                    cacheSetter(declaration, cachedInSymbolTable)
                 }
                 declaration.initialSignatureAttr != null -> {
                     /*
@@ -1230,20 +1259,20 @@ class Fir2IrDeclarationStorage(
                      * It leads to the situations when we have two different mapped FIR functions for the same original function
                      *   (and same IR function)
                      */
-                    cache[declaration] = cachedInSymbolTable
+                    cacheSetter(declaration, cachedInSymbolTable)
                 }
                 declaration.symbol is FirJavaOverriddenSyntheticPropertySymbol -> {
                     /*
                      * Synthetic properties for java classes, if those properties are based on real Kotlin properties are also session
                      *   dependant
                      */
-                    cache[declaration] = cachedInSymbolTable
+                    cacheSetter(declaration, cachedInSymbolTable)
                 }
                 declaration.origin.generatedAnyMethod -> {
                     /*
                      * Generated methods from Any for data and value classes are session-dependant
                      */
-                    cache[declaration] = cachedInSymbolTable
+                    cacheSetter(declaration, cachedInSymbolTable)
                 }
                 else -> {
                     error("IR declaration with signature \"$signature\" found in SymbolTable and not found in declaration storage")
@@ -1345,7 +1374,8 @@ class Fir2IrDeclarationStorage(
     @LeakedDeclarationCaches
     internal fun fillUnboundSymbols() {
         fillUnboundSymbols(functionCache)
-        fillUnboundSymbols(propertyCache)
+        fillUnboundSymbols(propertyCache.normal)
+        fillUnboundSymbols(propertyCache.synthetic)
     }
 
     @LeakedDeclarationCaches

@@ -35386,6 +35386,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
             }
 
             @Test
+            @TestMetadata("hashSetSize.kt")
+            public void testHashSetSize() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/hashSetSize.kt");
+            }
+
+            @Test
             @TestMetadata("internalOverride.kt")
             public void testInternalOverride() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/k2/internalOverride.kt");
@@ -35419,6 +35425,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
             @TestMetadata("staticjavaFieldInCommonCode.kt")
             public void testStaticjavaFieldInCommonCode() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/k2/staticjavaFieldInCommonCode.kt");
+            }
+
+            @Test
+            @TestMetadata("synteticProperty.kt")
+            public void testSynteticProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/synteticProperty.kt");
             }
 
             @Nested

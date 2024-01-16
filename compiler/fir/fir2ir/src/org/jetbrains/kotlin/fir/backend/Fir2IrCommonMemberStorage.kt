@@ -45,6 +45,7 @@ class Fir2IrCommonMemberStorage(
     val fieldCache: ConcurrentHashMap<FirField, IrFieldSymbol> = ConcurrentHashMap()
 
     val propertyCache: ConcurrentHashMap<FirProperty, IrPropertySymbol> = ConcurrentHashMap()
+    val syntheticPropertyCache: ConcurrentHashMap<FirFunction, IrPropertySymbol> = ConcurrentHashMap()
     val getterForPropertyCache: ConcurrentHashMap<IrSymbol, IrSimpleFunctionSymbol> = ConcurrentHashMap()
     val setterForPropertyCache: ConcurrentHashMap<IrSymbol, IrSimpleFunctionSymbol> = ConcurrentHashMap()
     val backingFieldForPropertyCache: ConcurrentHashMap<IrPropertySymbol, IrFieldSymbol> = ConcurrentHashMap()
