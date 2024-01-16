@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -47,6 +48,10 @@ internal data class FirJsStableName(
             when (symbol) {
                 is FirConstructorSymbol -> return null
                 is FirPropertyAccessorSymbol -> return null
+                // Skip type aliases since they cannot be external, cannot be exported to JavaScript, and cannot be marked with @JsName.
+                // Furthermore, in the generated JavaScript code, all type alias declarations are removed,
+                // and their usages are replaced with the aliased types.
+                is FirTypeAliasSymbol -> return null
             }
 
             val hasStableNameInJavaScript = when {

@@ -34,12 +34,6 @@ object FirJsNameClashFileTopLevelDeclarationsChecker : FirFileChecker() {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
         val topLevelDeclarationsWithStableName = mutableMapOf<String, MutableList<FirJsStableName>>()
         for (topLevelDeclaration in declaration.declarations) {
-            if (topLevelDeclaration is FirTypeAlias) {
-                // Skip type aliases since they cannot be external, cannot be exported to JavaScript, and cannot be marked with @JsName.
-                // Furthermore, in the generated JavaScript code, all type alias declarations are removed,
-                // and their usages are replaced with the aliased types.
-                continue
-            }
             topLevelDeclarationsWithStableName.addStableName(topLevelDeclaration.symbol, context)
             if (topLevelDeclaration is FirClass) {
                 for (classConstructor in topLevelDeclaration.constructors(context.session)) {
