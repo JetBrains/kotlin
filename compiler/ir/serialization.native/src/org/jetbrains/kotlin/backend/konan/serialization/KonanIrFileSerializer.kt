@@ -22,12 +22,12 @@ class KonanIrFileSerializer(
     compatibilityMode: CompatibilityMode,
     normalizeAbsolutePaths: Boolean,
     sourceBaseDirs: Collection<String>,
-    skipPrivateApi: Boolean = false,
+    publicAbiOnly: Boolean = false,
 ) : IrFileSerializer(
     declarationTable,
     compatibilityMode,
     languageVersionSettings,
-    skipPrivateApi = skipPrivateApi,
+    publicAbiOnly = publicAbiOnly,
     bodiesOnlyForInlines = bodiesOnlyForInlines,
     normalizeAbsolutePaths = normalizeAbsolutePaths,
     sourceBaseDirs = sourceBaseDirs

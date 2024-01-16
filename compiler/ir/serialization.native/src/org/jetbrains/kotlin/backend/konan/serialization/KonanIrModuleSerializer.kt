@@ -21,7 +21,7 @@ class KonanIrModuleSerializer(
         sourceBaseDirs: Collection<String>,
         private val languageVersionSettings: LanguageVersionSettings,
         private val bodiesOnlyForInlines: Boolean = false,
-        private val skipPrivateApi: Boolean = false,
+        private val publicAbiOnly: Boolean = false,
         shouldCheckSignaturesOnUniqueness: Boolean = true,
 ) : IrModuleSerializer<KonanIrFileSerializer>(
         diagnosticReporter,
@@ -50,6 +50,6 @@ class KonanIrModuleSerializer(
                     compatibilityMode = compatibilityMode,
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
                     sourceBaseDirs = sourceBaseDirs,
-                    skipPrivateApi = skipPrivateApi
+                    publicAbiOnly = publicAbiOnly
             )
 }
