@@ -18,7 +18,7 @@ public expect abstract class AbstractMutableList<E> : MutableList<E> {
      * or otherwise changes it in a way that iterations in progress may return incorrect results.
      *
      * This value can be used by iterators returned by [iterator] and [listIterator]
-     * to provide fail-fast behavoir when a concurrent modification is detected during iteration.
+     * to provide fail-fast behavior when a concurrent modification is detected during iteration.
      * [ConcurrentModificationException] will be thrown in this case.
      */
     // TODO: Should be @SinceKotlin("2.0"), see KT-64904

@@ -25,7 +25,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
      * or otherwise changes it in a way that iterations in progress may return incorrect results.
      *
      * This value can be used by iterators returned by [iterator] and [listIterator]
-     * to provide fail-fast behavoir when a concurrent modification is detected during iteration.
+     * to provide fail-fast behavior when a concurrent modification is detected during iteration.
      * [ConcurrentModificationException] will be thrown in this case.
      */
     protected actual var modCount: Int = 0
