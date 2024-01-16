@@ -19,6 +19,7 @@ import kotlin.io.path.*
  * Executes test cases on Firebase Test Lab for iOS arm64 devices.
  *
  * This executor requires the Goggle Cloud command-line utilities to be installed and configured.
+ * See also [Firebase guide](https://firebase.google.com/docs/test-lab/ios/command-line)
  *
  * @param configurables The configuration options for the executor.
  * @param description A description of the test execution used to identify run in the cloud console
@@ -72,13 +73,15 @@ class FirebaseCloudXCTestExecutor(
 
         // 0 - exit code for "All test executions passed."
         // 10 - exit code for "One or more test cases (tested classes or class methods) within a test execution did not pass."
+        // See https://firebase.google.com/docs/test-lab/ios/command-line#script-exit-codes
         // Treat other codes for unsuccessful execution of the Firebase run itself.
         check(firebaseResponse.exitCode == 0 || firebaseResponse.exitCode == 10) {
             "Firebase failed with exit code ${firebaseResponse.exitCode}, see stderr: $firebaseStderrString"
         }
 
         // Get the URL to the results located on Google Cloud Storage
-        // This is a default GCloud bucket and name, non-default buckets require a billing-enabled account
+        // This is a default GCloud bucket and name, non-default buckets require a billing-enabled account,
+        // see https://cloud.google.com/sdk/gcloud/reference/firebase/test/ios/run#--results-bucket
         val resultsBucketURL = Regex(
             "Raw results will be stored in your GCS bucket at \\[https://console.developers.google.com/storage/browser/(.*)]"
         ).find(firebaseStderrString.trim())
