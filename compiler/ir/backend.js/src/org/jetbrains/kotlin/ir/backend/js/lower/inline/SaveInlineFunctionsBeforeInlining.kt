@@ -31,7 +31,6 @@ internal class SaveInlineFunctionsBeforeInlining(context: JsIrBackendContext) : 
 internal class JsInlineFunctionResolver(context: JsIrBackendContext) : InlineFunctionResolverReplacingCoroutineIntrinsics(context) {
     private val enumEntriesIntrinsic = context.intrinsics.enumEntriesIntrinsic
     private val inlineFunctionsBeforeInlining = context.mapping.inlineFunctionsBeforeInlining
-    private val inlineFunctionsBeforeInliningSymbols = hashMapOf<IrFunction, IrFunctionSymbol>()
 
     override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
         // TODO: After the expect fun enumEntriesIntrinsic become non-inline function, the code will be removed
@@ -40,12 +39,6 @@ internal class JsInlineFunctionResolver(context: JsIrBackendContext) : InlineFun
 
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
         val function = super.getFunctionDeclaration(symbol)
-        val functionBeforeInlining = inlineFunctionsBeforeInlining[function] ?: return function
-        inlineFunctionsBeforeInliningSymbols[functionBeforeInlining] = function.symbol
-        return functionBeforeInlining
-    }
-
-    override fun getFunctionSymbol(irFunction: IrFunction): IrFunctionSymbol {
-        return inlineFunctionsBeforeInliningSymbols[irFunction] ?: super.getFunctionSymbol(irFunction)
+        return inlineFunctionsBeforeInlining[function] ?: return function
     }
 }

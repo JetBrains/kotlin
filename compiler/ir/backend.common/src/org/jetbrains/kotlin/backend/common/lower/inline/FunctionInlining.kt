@@ -43,7 +43,6 @@ fun IrExpression.isAdaptedFunctionReference() =
 
 interface InlineFunctionResolver {
     fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction = symbol.owner
-    fun getFunctionSymbol(irFunction: IrFunction): IrFunctionSymbol = irFunction.symbol
     fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
         return Symbols.isLateinitIsInitializedPropertyGetter(symbol) || Symbols.isTypeOfIntrinsic(symbol)
     }
