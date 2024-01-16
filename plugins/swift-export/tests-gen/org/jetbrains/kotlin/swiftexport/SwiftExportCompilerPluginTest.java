@@ -26,6 +26,12 @@ public class SwiftExportCompilerPluginTest extends AbstractSwiftExportContextTes
     }
 
     @Test
+    @TestMetadata("no_package.kt")
+    public void testNo_package() throws Exception {
+        runTest("plugins/swift-export/testData/no_package.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         runTest("plugins/swift-export/testData/simple.kt");

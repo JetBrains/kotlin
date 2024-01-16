@@ -1,0 +1,1 @@
+fun meaningOfLife(): Int = 420
