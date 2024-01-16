@@ -34,7 +34,6 @@ class ConeClassLikeTypeImpl(
         if (lookupTag != other.lookupTag) return false
         if (!typeArguments.contentEquals(other.typeArguments)) return false
         if (nullability != other.nullability) return false
-        if (attributes definitelyDifferFrom other.attributes) return false
 
         return true
     }
