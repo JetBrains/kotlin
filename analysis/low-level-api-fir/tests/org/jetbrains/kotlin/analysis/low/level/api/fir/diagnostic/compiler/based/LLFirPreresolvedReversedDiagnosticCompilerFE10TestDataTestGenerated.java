@@ -1402,6 +1402,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("tailrec.kt")
+        public void testTailrec() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/tailrec.kt");
+        }
+
+        @Test
         @TestMetadata("TraitOverrideObjectMethods.kt")
         public void testTraitOverrideObjectMethods() throws Exception {
             runTest("compiler/testData/diagnostics/tests/TraitOverrideObjectMethods.kt");
