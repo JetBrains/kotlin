@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
 class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
-    val declaredInlineFunctionSignatures = mutableSetOf<IdSignature>()
+    val declaredInlineFunctions = hashSetOf<IrSimpleFunction>()
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun processModule(module: TestModule, info: IrBackendInput) {
@@ -33,7 +33,7 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        assertions.assertTrue(declaredInlineFunctionSignatures.isNotEmpty())
+        assertions.assertTrue(declaredInlineFunctions.isNotEmpty())
     }
 
     inner class InlineFunctionsCollector : IrElementVisitorVoid {
@@ -42,7 +42,7 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
         }
 
         override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-            if (declaration.isInline) declaration.symbol.signature?.let { declaredInlineFunctionSignatures.add(it) }
+            if (declaration.isInline) declaredInlineFunctions.add(declaration)
             super.visitSimpleFunction(declaration)
         }
     }
@@ -56,8 +56,8 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
             val symbol = expression.symbol
             assertions.assertTrue(symbol.isBound)
             val callee = symbol.owner
-            if (callee.symbol.signature in declaredInlineFunctionSignatures) {
-                val trueCallee = (callee as IrSimpleFunction).resolveFakeOverrideOrFail()
+            if (callee is IrSimpleFunction && callee in declaredInlineFunctions) {
+                val trueCallee = callee.resolveFakeOverrideOrFail()
                 assertions.assertTrue(trueCallee.hasBody()) {
                     "IrInlineBodiesHandler: function with body expected"
                 }
