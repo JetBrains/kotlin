@@ -1080,6 +1080,7 @@ class ComposerLambdaMemoization(
         irCurrentComposer(),
         value,
         inferredStable = false,
+        compareInstanceForFunctionTypes = false,
         compareInstanceForUnstableValues = strongSkippingModeEnabled
     )
 
