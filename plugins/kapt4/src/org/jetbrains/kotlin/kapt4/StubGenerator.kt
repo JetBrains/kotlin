@@ -424,7 +424,7 @@ private class StubGenerator(
             private fun elementMapping(lightClass: PsiClass): Multimap<KtElement, PsiElement> =
                 HashMultimap.create<KtElement, PsiElement>().apply {
                     (lightClass.methods.asSequence() + lightClass.fields.asSequence() + lightClass.constructors.asSequence()).forEach {
-                        (it as KtLightElement<*, *>).kotlinOrigin?.let { origin -> put(origin, it) }
+                        put((it as KtLightElement<*, *>).kotlinOrigin, it)
                     }
                 }
 
