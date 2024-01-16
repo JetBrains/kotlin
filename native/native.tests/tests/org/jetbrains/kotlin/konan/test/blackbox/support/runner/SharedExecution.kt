@@ -13,29 +13,32 @@ import java.util.concurrent.ConcurrentHashMap
 internal object SharedExecution {
     private val executionResults: ConcurrentHashMap<TestExecutable, AbstractRunner<Unit>> = ConcurrentHashMap()
 
-    fun buildRunner(executor: Executor, testRun: TestRun): AbstractRunner<Unit> = executionResults.computeIfAbsent(testRun.executable) {
-        val ignoredTests = if (testRun.testCase.extras is TestCase.WithTestRunnerExtras) {
-            testRun.testCase.extras.ignoredTests
-        } else
-            emptySet()
+    fun Executor.sharedRunnerFor(testRun: TestRun): AbstractRunner<Unit> = buildRunner(this, testRun)
 
-        val ignoredParameters = ignoredTests.map { TestRunParameter.WithIgnoredTestFilter(TestName(it)) }
-        val runParameters = testRun.runParameters.filterNot { it is TestRunParameter.WithFilter } + ignoredParameters
+    private fun buildRunner(executor: Executor, testRun: TestRun): AbstractRunner<Unit> =
+        executionResults.computeIfAbsent(testRun.executable) {
+            val ignoredTests = if (testRun.testCase.extras is TestCase.WithTestRunnerExtras) {
+                testRun.testCase.extras.ignoredTests
+            } else
+                emptySet()
 
-        check(testRun.runParameters.filterNot { it is TestRunParameter.WithFilter }.none { it is TestRunParameter.WithFilter })
+            val ignoredParameters = ignoredTests.map { TestRunParameter.WithIgnoredTestFilter(TestName(it)) }
+            val runParameters = testRun.runParameters.filterNot { it is TestRunParameter.WithFilter } + ignoredParameters
 
-        val sharedTestRun = TestRun(
-            displayName = "Shared TestRun for ${testRun.displayName}",
-            executable = testRun.executable,
-            runParameters = runParameters,
-            testCase = testRun.testCase,
-            checks = testRun.checks,
-            expectedFailure = testRun.expectedFailure
-        )
-        CachedRunResultRunner(executor, sharedTestRun)
-    }
+            check(testRun.runParameters.filterNot { it is TestRunParameter.WithFilter }.none { it is TestRunParameter.WithFilter })
 
-    private class CachedRunResultRunner(executor: Executor, testRun: TestRun) : RunnerWithExecutor(executor, testRun) {
+            val sharedTestRun = TestRun(
+                displayName = "Shared TestRun for ${testRun.displayName}",
+                executable = testRun.executable,
+                runParameters = runParameters,
+                testCase = testRun.testCase,
+                checks = testRun.checks,
+                expectedFailure = testRun.expectedFailure
+            )
+            SharedRunResultRunner(executor, sharedTestRun)
+        }
+
+    private class SharedRunResultRunner(executor: Executor, testRun: TestRun) : RunnerWithExecutor(executor, testRun) {
         private val cachedRunResult by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
             super.buildRun().run()
         }

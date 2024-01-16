@@ -84,3 +84,5 @@ internal open class RunnerWithExecutor(
             .withErrorMessage("Test execution failed with unexpected exception.")
     }
 }
+
+internal fun Executor.toRunner(testRun: TestRun) = RunnerWithExecutor(this, testRun)

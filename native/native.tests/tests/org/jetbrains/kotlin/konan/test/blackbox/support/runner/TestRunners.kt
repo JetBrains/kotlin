@@ -28,7 +28,8 @@ internal object TestRunners {
                     when (configurables.target) {
                         is KonanTarget.IOS_ARM64 -> FirebaseCloudExecutor(configurables)
                         hostTarget -> XCTestHostExecutor(configurables)
-                        else -> XCTestSimulatorExecutor(configurables)
+                        is KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> XCTestSimulatorExecutor(configurables)
+                        else -> runningOnUnsupportedTarget("Target is not supported running with XCTest")
                     }
                 } else {
                     when {
@@ -43,7 +44,7 @@ internal object TestRunners {
                 }
             }
 
-            RunnerWithExecutor(executor, testRun)
+            executor.toRunner(testRun)
         }
     }
 
@@ -59,7 +60,7 @@ internal object TestRunners {
         }
     }
 
-    private fun KotlinNativeTargets.runningOnUnsupportedTarget(): Nothing = fail {
-        "Running tests for $testTarget on $hostTarget is not supported yet."
+    private fun KotlinNativeTargets.runningOnUnsupportedTarget(message: String = ""): Nothing = fail {
+        "Running tests for $testTarget on $hostTarget is not supported yet. $message"
     }
 }
