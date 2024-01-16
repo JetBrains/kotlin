@@ -30,8 +30,6 @@ internal val Family.compressedName: Char
         Family.LINUX -> 'l'
         Family.MINGW -> 'm'
         Family.ANDROID -> 'a'
-        Family.WASM -> 'j' // because 'w', 'a' and 'm' are already occupied
-        Family.ZEPHYR -> 'z'
     }
 
 internal val Architecture.compressedName: String
@@ -40,9 +38,6 @@ internal val Architecture.compressedName: String
         Architecture.X86 -> "x86"
         Architecture.ARM64 -> "a64"
         Architecture.ARM32 -> "a32"
-        Architecture.MIPS32 -> "m32"
-        Architecture.MIPSEL32 -> "e32"
-        Architecture.WASM32 -> "w32"
     }
 
 internal val Class<*>.compressedSimpleName: String

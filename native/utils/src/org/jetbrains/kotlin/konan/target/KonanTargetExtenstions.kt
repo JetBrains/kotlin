@@ -19,7 +19,6 @@ fun KonanTarget.binaryFormat() = when (family) {
     Family.ANDROID -> BinaryFormat.ELF
     Family.LINUX -> BinaryFormat.ELF
     Family.MINGW -> BinaryFormat.PE_COFF
-    Family.WASM, Family.ZEPHYR -> null
 }
 
 fun KonanTarget.pointerBits() = when (architecture) {
@@ -27,15 +26,11 @@ fun KonanTarget.pointerBits() = when (architecture) {
     Architecture.X86 -> 32
     Architecture.ARM64 -> if (this == KonanTarget.WATCHOS_ARM64) 32 else 64
     Architecture.ARM32 -> 32
-    Architecture.MIPS32 -> 32
-    Architecture.MIPSEL32 -> 32
-    Architecture.WASM32 -> 32
 }
 
 fun KonanTarget.supportsMimallocAllocator(): Boolean =
      when(this) {
         is KonanTarget.LINUX_X64 -> true
-        is KonanTarget.MINGW_X86 -> true
         is KonanTarget.MINGW_X64 -> true
         is KonanTarget.MACOS_X64 -> true
         is KonanTarget.MACOS_ARM64 -> true
@@ -43,26 +38,19 @@ fun KonanTarget.supportsMimallocAllocator(): Boolean =
         is KonanTarget.LINUX_ARM32_HFP -> true
         is KonanTarget.ANDROID_X64 -> true
         is KonanTarget.ANDROID_ARM64 -> true
-        is KonanTarget.IOS_ARM32 -> true
         is KonanTarget.IOS_ARM64 -> true
         is KonanTarget.IOS_X64 -> true
         is KonanTarget.IOS_SIMULATOR_ARM64 -> true
         is KonanTarget.WATCHOS_ARM32, is KonanTarget.WATCHOS_ARM64,
-        is KonanTarget.WATCHOS_SIMULATOR_ARM64, is KonanTarget.WATCHOS_X64, is KonanTarget.WATCHOS_X86,
+        is KonanTarget.WATCHOS_SIMULATOR_ARM64, is KonanTarget.WATCHOS_X64,
         is KonanTarget.TVOS_ARM64, is KonanTarget.TVOS_SIMULATOR_ARM64, is KonanTarget.TVOS_X64,
         is KonanTarget.ANDROID_X86, is KonanTarget.ANDROID_ARM32 -> false // aren't tested.
-        is KonanTarget.LINUX_MIPS32, is KonanTarget.LINUX_MIPSEL32 -> false // need linking with libatomic.
-        is KonanTarget.WASM32, is KonanTarget.ZEPHYR -> false // likely not supported
-        // Funny thing is we can neither access WATCHOS_DEVICE_ARM64, nor omit it explicitly due to the
-        // build's quirks. Workaround by using else clause.
-        // TODO: Add explicit WATCHOS_DEVICE_ARM64 after compiler update.
         else -> false
     }
 
 fun KonanTarget.supportsLibBacktrace(): Boolean =
         this.family.isAppleFamily ||
-                // MIPS architectures have issues, see KT-48949
-                (this.family == Family.LINUX && this.architecture !in listOf(Architecture.MIPS32, Architecture.MIPSEL32)) ||
+                this.family == Family.LINUX ||
                 this.family == Family.ANDROID
 
 // TODO: Add explicit WATCHOS_DEVICE_ARM64 after compiler update.
@@ -70,10 +58,10 @@ fun KonanTarget.supportsCoreSymbolication(): Boolean =
         this in listOf(
                 KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.IOS_X64,
                 KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.TVOS_X64, KonanTarget.TVOS_SIMULATOR_ARM64,
-                KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64
+                KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64
         )
 
-fun KonanTarget.supportsGccUnwind(): Boolean = family == Family.ANDROID || family == Family.LINUX || this is KonanTarget.MINGW_X86
+fun KonanTarget.supportsGccUnwind(): Boolean = family == Family.ANDROID || family == Family.LINUX
 // MINGW_X64 target does not support GCC unwind, since its sysroot contains libgcc version < 12 having misfeature, see KT-49240
 fun KonanTarget.supportsWinAPIUnwind(): Boolean = this is KonanTarget.MINGW_X64
 
@@ -93,12 +81,7 @@ fun KonanTarget.supportsObjcInterop(): Boolean = family.isAppleFamily
 fun KonanTarget.hasFoundationFramework(): Boolean = family.isAppleFamily
 fun KonanTarget.hasUIKitFramework(): Boolean = family == Family.IOS || family == Family.TVOS
 fun KonanTarget.supports64BitMulOverflow(): Boolean = when (this) {
-    is KonanTarget.MINGW_X86 -> false
     is KonanTarget.LINUX_ARM32_HFP -> false
-    is KonanTarget.LINUX_MIPS32 -> false
-    is KonanTarget.LINUX_MIPSEL32 -> false
-    is KonanTarget.WASM32 -> false
-    is KonanTarget.ZEPHYR -> false
     is KonanTarget.ANDROID_ARM32 -> false
     is KonanTarget.ANDROID_X86 -> false
     else -> true
@@ -106,7 +89,6 @@ fun KonanTarget.supports64BitMulOverflow(): Boolean = when (this) {
 
 // TODO: Add explicit WATCHOS_DEVICE_ARM64 after compiler update.
 fun KonanTarget.supportsIosCrashLog(): Boolean = when (this) {
-    KonanTarget.IOS_ARM32 -> true
     KonanTarget.IOS_ARM64 -> true
     KonanTarget.WATCHOS_ARM32 -> true
     KonanTarget.WATCHOS_ARM64 -> true
@@ -122,12 +104,12 @@ fun KonanTarget.supportsIosCrashLog(): Boolean = when (this) {
  * TODO: reconsider once target MIPS can do proper 64-bit load/store/CAS.
  */
 fun KonanTarget.supports64BitAtomics(): Boolean = when (architecture) {
-    Architecture.ARM32, Architecture.WASM32, Architecture.MIPS32, Architecture.MIPSEL32 -> false
+    Architecture.ARM32 -> false
     Architecture.X86, Architecture.ARM64, Architecture.X64 -> true
-} && this != KonanTarget.WATCHOS_ARM64 && this != KonanTarget.WATCHOS_X86
+} && this != KonanTarget.WATCHOS_ARM64
 
 fun KonanTarget.supportsUnalignedAccess(): Boolean = when (architecture) {
-    Architecture.ARM32, Architecture.WASM32, Architecture.MIPS32, Architecture.MIPSEL32 -> false
+    Architecture.ARM32 -> false
     Architecture.X86, Architecture.ARM64, Architecture.X64 -> true
 } && this != KonanTarget.WATCHOS_ARM64
 
@@ -151,7 +133,7 @@ fun KonanTarget.supportedSanitizers(): List<SanitizerKind> =
 fun KonanTarget.hasAddressDependencyInMemoryModel(): Boolean =
      when (this.architecture) {
          Architecture.X86, Architecture.X64, Architecture.ARM32, Architecture.ARM64 -> true
-         Architecture.MIPS32, Architecture.MIPSEL32, Architecture.WASM32 -> false
+         Architecture.MIPS32, Architecture.MIPSEL32 -> false
      }
 
 val KonanTarget.supportsGrandCentralDispatch

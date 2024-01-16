@@ -110,18 +110,7 @@ internal class InfoPListBuilder(
             )
         }
 
-        if (target == KonanTarget.IOS_ARM32) {
-            contents.append("""
-                |    <key>UIRequiredDeviceCapabilities</key>
-                |    <array>
-                |        <string>armv7</string>
-                |    </array>
-
-                """.trimMargin()
-            )
-        }
-
-        if (bundleType == BundleType.XCTEST) {
+       if (bundleType == BundleType.XCTEST) {
             val platformName = properties.platformName().lowercase()
             val platformVersion = properties.sdkVersion
 

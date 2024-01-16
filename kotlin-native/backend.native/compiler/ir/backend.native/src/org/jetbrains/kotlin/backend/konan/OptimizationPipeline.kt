@@ -114,10 +114,9 @@ internal fun createLTOFinalPipelineConfig(
         context.shouldContainDebugInfo() -> LlvmOptimizationLevel.NONE
         else -> LlvmOptimizationLevel.DEFAULT
     }
+    // TODO(KT-66501): investigate, why sizeLevel is essentially === to NONE (and inline it if it's OK)
     val sizeLevel: LlvmSizeLevel = when {
         // We try to optimize code as much as possible on embedded targets.
-        target is KonanTarget.ZEPHYR ||
-                target == KonanTarget.WASM32 -> LlvmSizeLevel.AGGRESSIVE
         context.shouldOptimize() -> LlvmSizeLevel.NONE
         context.shouldContainDebugInfo() -> LlvmSizeLevel.NONE
         else -> LlvmSizeLevel.NONE

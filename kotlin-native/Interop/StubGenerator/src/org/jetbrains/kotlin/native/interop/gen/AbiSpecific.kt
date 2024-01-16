@@ -63,10 +63,6 @@ class DarwinX86AbiInfo : ObjCAbiInfo {
 
 class DarwinArm32AbiInfo(private val target: KonanTarget) : ObjCAbiInfo {
     override fun shouldUseStret(returnType: Type): Boolean = when (target) {
-        KonanTarget.IOS_ARM32 -> when (returnType) {
-            is RecordType -> !returnType.isIntegerLikeType()
-            else -> false
-        }
         // 32-bit watchOS uses armv7k which is effectively Cortex-A7 and
         // uses AAPCS16 VPF.
         KonanTarget.WATCHOS_ARM32 -> when (returnType) {
