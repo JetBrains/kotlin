@@ -76,6 +76,34 @@ class KmpModuleSorterTest : TestWithMockProject() {
         assertEquals(listOf(p1Platform, p1Intermediate, p1Common, p2Intermediate, p2Common), this.buildDependenciesToTest(p2Platform))
     }
 
+    @Test
+    fun testPartsOfTheGroupAreMergedCorrectly1() {
+        val m1 = createKtModule("m1")
+        val m2 = createKtModule("m2", directDependsOnDependencies = listOf(m1))
+        val m3 = createKtModule("m3", directDependsOnDependencies = listOf(m2))
+        val m4 = createKtModule("m4", directDependsOnDependencies = listOf(m3))
+
+        val c = createKtModule("c", directRegularDependencies = listOf(m1, m3, m4, m2))
+        val d = createKtModule("d", directRegularDependencies = listOf(m2, m4, m3, m1))
+        assertEquals(listOf(m4, m3, m2, m1), buildDependenciesToTest(c))
+        assertEquals(listOf(m4, m3, m2, m1), buildDependenciesToTest(d))
+    }
+
+    @Test
+    fun testPartsOfTheGroupAreMergedCorrectly2() {
+        val m1 = createKtModule("m1")
+        val m2 = createKtModule("m2", directDependsOnDependencies = listOf(m1))
+        val m3 = createKtModule("m3", directDependsOnDependencies = listOf(m2))
+        val m4 = createKtModule("m4", directDependsOnDependencies = listOf(m3))
+        val m5 = createKtModule("m5", directDependsOnDependencies = listOf(m4))
+        val m6 = createKtModule("m6", directDependsOnDependencies = listOf(m5))
+
+        val c = createKtModule("c", directRegularDependencies = listOf(m3, m4, m6, m5, m2, m1))
+        val d = createKtModule("d", directRegularDependencies = listOf(m1, m2, m5, m6, m4, m3))
+        assertEquals(listOf(m6, m5, m4, m3, m2, m1), buildDependenciesToTest(c))
+        assertEquals(listOf(m6, m5, m4, m3, m2, m1), buildDependenciesToTest(d))
+    }
+
     // See [org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirAbstractSessionFactory#collectDependencySymbolProviders]
     private fun buildDependenciesToTest(module: KtModule): List<KtModule> {
         val dependenciesToSort = buildSet {

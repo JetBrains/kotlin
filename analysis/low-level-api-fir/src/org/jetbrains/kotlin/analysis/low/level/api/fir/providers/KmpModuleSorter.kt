@@ -39,10 +39,9 @@ class KmpModuleSorter private constructor(private val modules: List<KtModule>) {
     private fun groupModules() {
         for ((index, module) in modules.withIndex()) {
             originalPositions[module] = index
-            val group = findOrCreateKmpGroup(module, groupsByModules)
+            val group = findOrCreateRootKmpGroup(module)
             group.addModule(module)
             groupsByModules.putIfAbsent(module, group)
-            module.directDependsOnDependencies.forEach { dependency -> groupsByModules.putIfAbsent(dependency, group) }
         }
     }
 
@@ -60,13 +59,21 @@ class KmpModuleSorter private constructor(private val modules: List<KtModule>) {
         return sortedModules.toList().filterNotNull()
     }
 
-    private fun findOrCreateKmpGroup(
+    // The group of the root source set, e.g., commonMain
+    private fun findOrCreateRootKmpGroup(
         module: KtModule,
-        groups: MutableMap<KtModule, KmpGroup>,
     ): KmpGroup {
-        groups[module]?.let { return it }
-        module.directDependsOnDependencies.firstNotNullOfOrNull { dependency -> groups[dependency] }?.let { return it }
-        return KmpGroup()
+        groupsByModules[module]?.let { return it }
+
+        val root = if (module.directDependsOnDependencies.isEmpty()) module
+        else module.transitiveDependsOnDependencies.singleOrNull { dependency -> dependency.directDependsOnDependencies.isEmpty() }
+
+        if (root == null) {
+            hasErrors = true
+            return KmpGroup()
+        }
+
+        return groupsByModules.getOrPut(root) { KmpGroup() }
     }
 
     private fun getOriginalPositionOrSetCorrupted(module: KtModule): Int {
