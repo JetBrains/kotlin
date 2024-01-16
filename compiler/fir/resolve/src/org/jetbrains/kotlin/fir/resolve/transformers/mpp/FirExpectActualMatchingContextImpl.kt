@@ -437,7 +437,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         get() = asSymbol().rawStatus.hasStableParameterNames
 
     override val CallableSymbolMarker.isJavaField: Boolean
-        get() = this is FirFieldSymbol && fir.isJava
+        get() = this is FirFieldSymbol && this.fir.unwrapFakeOverrides().isJava
 
     override val DeclarationSymbolMarker.annotations: List<AnnotationCallInfo>
         get() = asSymbol().resolvedAnnotationsWithArguments.map(::AnnotationCallInfoImpl)
