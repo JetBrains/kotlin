@@ -226,6 +226,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
         }
 
         @Test
+        @TestMetadata("privateCustomSerializer.kt")
+        public void testPrivateCustomSerializer() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/boxIr/privateCustomSerializer.kt");
+        }
+
+        @Test
         @TestMetadata("repeatableSerialInfo.kt")
         public void testRepeatableSerialInfo() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/boxIr/repeatableSerialInfo.kt");

@@ -342,7 +342,8 @@ class SerializableIrGenerator(
                             serial,
                             compilerContext,
                             arg.typeOrNull!!,
-                            genericIdx
+                            genericIdx,
+                            irClass
                         ) { it, _ ->
                             irGet(writeSelfFunction.valueParameters[3 + it])
                         }!!

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.functionByName
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -280,6 +281,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             compilerContext,
             property.type,
             property.genericIndex,
+            property.ir.parentClassOrNull,
             genericGetter
         )
         val (functionToCall, args: List<IrExpression>) = if (innerSerial != null) whenHaveSerializer(innerSerial, sti) else whenDoNot(sti)
@@ -287,7 +289,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         return irInvoke(encoder, functionToCall, typeArguments = typeArgs, valueArguments = args, returnTypeHint = returnTypeHint)
     }
 
-    fun IrBuilderWithScope.callSerializerFromCompanion(
+    private fun IrBuilderWithScope.callSerializerFromCompanion(
         thisIrType: IrSimpleType,
         typeArgs: List<IrType>,
         args: List<IrExpression>,
@@ -323,6 +325,26 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         }
     }
 
+    private fun IrBuilderWithScope.callSerializerFromObject(
+        thisIrType: IrSimpleType,
+        args: List<IrExpression>,
+        // type parameters not allowed for object class, so its missed
+    ): IrExpression? {
+        val baseClass = thisIrType.getClass() ?: return null
+        val serializerProviderFunction = baseClass.declarations.singleOrNull {
+            it is IrFunction && it.name == SerialEntityNames.SERIALIZER_PROVIDER_NAME && it.valueParameters.size == baseClass.typeParameters.size
+        } ?: return null
+
+        with(serializerProviderFunction as IrFunction) {
+            return irInvoke(
+                irGetObject(baseClass),
+                symbol,
+                emptyList(),
+                args.takeIf { it.size == valueParameters.size }.orEmpty()
+            )
+        }
+    }
+
     // Does not use sti and therefore does not perform encoder calls optimization
     fun IrBuilderWithScope.serializerTower(
         generator: SerializerIrGenerator,
@@ -346,7 +368,8 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                 serializerClassSymbol,
                 compilerContext,
                 property.type,
-                genericIndex = property.genericIndex
+                genericIndex = property.genericIndex,
+                property.ir.parentClassOrNull,
             ) { it, _ ->
                 val ir = generator.localSerializersFieldsDescriptors[it]
                 irGetField(irGet(dispatchReceiverParameter), ir.backingField!!)
@@ -469,6 +492,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             compilerContext,
             property.type,
             null,
+            serializableClass,
             null
         )
     }
@@ -489,7 +513,8 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         pluginContext: SerializationPluginContext,
         kType: IrType,
         genericIndex: Int? = null,
-        genericGetter: ((Int, IrType) -> IrExpression)? = null
+        rootSerializableClass: IrClass? = null,
+        genericGetter: ((Int, IrType) -> IrExpression)? = null,
     ): IrExpression? {
         val nullableSerClass = compilerContext.referenceProperties(SerialEntityNames.wrapIntoNullableCallableId).single()
         if (serializerClassOriginal == null) {
@@ -497,7 +522,26 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             return genericGetter?.invoke(genericIndex, kType)
         }
         if (serializerClassOriginal.owner.kind == ClassKind.OBJECT) {
-            return irGetObject(serializerClassOriginal)
+            val serializerClass = serializerClassOriginal.owner
+
+            val samePackage = serializerClass.packageFqName == rootSerializableClass?.packageFqName
+
+            // rootSerializableClass is only if the serializer is obtained for serializer getter
+            //   In this case, the private serializer will always be located in the same package, otherwise a syntax error will occur.
+            return if (rootSerializableClass == null || serializerClass.visibility != DescriptorVisibilities.PRIVATE || samePackage) {
+                // we can access the serializer object directly only if it is not private, or is located in the same package as the class using it
+                irGetObject(serializerClassOriginal)
+            } else {
+                val simpleType = (kType as? IrSimpleType) ?: error("Don't know how to work with type ${kType.classFqName}")
+
+                if (simpleType.getClass()?.isObject == true) {
+                    callSerializerFromObject(simpleType, emptyList())
+                        ?: error("Can't get serializer from 'serializer()' function for object ${kType.classFqName}")
+                } else {
+                    callSerializerFromCompanion(simpleType, emptyList(), emptyList(), serializerClassOriginal.owner.classId)
+                        ?: error("Can't get serializer from companion's 'serializer()' function for type ${kType.classFqName}")
+                }
+            }
         }
         fun instantiate(serializer: IrClassSymbol?, type: IrType): IrExpression? {
             val expr = serializerInstance(
@@ -505,6 +549,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                 pluginContext,
                 type,
                 type.genericIndex,
+                rootSerializableClass,
                 genericGetter
             ) ?: return null
             return wrapWithNullableSerializerIfNeeded(type, expr, nullableSerClass)
@@ -593,7 +638,8 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                                     serializer,
                                     pluginContext,
                                     type,
-                                    type.genericIndex
+                                    type.genericIndex,
+                                    rootSerializableClass
                                 ) { _, genericType ->
                                     serializerInstance(
                                         pluginContext.referenceClass(polymorphicSerializerId),
