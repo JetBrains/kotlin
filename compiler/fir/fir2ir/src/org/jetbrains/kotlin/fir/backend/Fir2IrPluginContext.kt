@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
@@ -81,17 +78,8 @@ class Fir2IrPluginContext(
     }
 
     override fun referenceTypeAlias(classId: ClassId): IrTypeAliasSymbol? {
-        return referenceClassLikeSymbol(classId, symbolProvider::getClassLikeSymbolByClassId, symbolTable::referenceTypeAlias)
-    }
-
-    private inline fun <R> referenceClassLikeSymbol(
-        id: ClassId,
-        firSymbolExtractor: (ClassId) -> FirClassLikeSymbol<*>?,
-        irSymbolExtractor: (IdSignature) -> R
-    ): R? {
-        val firSymbol = firSymbolExtractor(id) ?: return null
-        val signature = components.signatureComposer.composeSignature(firSymbol.fir) ?: return null
-        return irSymbolExtractor(signature)
+        val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirTypeAliasSymbol ?: return null
+        return components.classifierStorage.referenceTypeAlias(firSymbol).symbol
     }
 
     override fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol> {

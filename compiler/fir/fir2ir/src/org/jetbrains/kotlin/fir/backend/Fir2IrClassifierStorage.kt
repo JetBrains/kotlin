@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -398,6 +399,28 @@ class Fir2IrClassifierStorage(
     }
 
     internal fun getCachedTypeAlias(firTypeAlias: FirTypeAlias): IrTypeAlias? = typeAliasCache[firTypeAlias]
+
+    fun referenceTypeAlias(firTypeAliasSymbol: FirTypeAliasSymbol): IrTypeAlias {
+        val firTypeAlias = firTypeAliasSymbol.fir
+        classifierStorage.getCachedTypeAlias(firTypeAlias)?.let { return it }
+
+        val typeAliasId = firTypeAliasSymbol.classId
+        val parentId = typeAliasId.outerClassId
+        val parentClass = parentId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it) }
+        val irParent = declarationStorage.findIrParent(
+            typeAliasId.packageFqName,
+            parentClass?.toLookupTag(),
+            firTypeAliasSymbol,
+            firTypeAlias.origin
+        )!!
+
+        val symbol = createTypeAliasSymbol(firTypeAlias)
+        val irTypeAlias = lazyDeclarationsGenerator.createIrLazyTypeAlias(firTypeAlias, irParent, symbol)
+        typeAliasCache[firTypeAlias] = irTypeAlias
+        irTypeAlias.prepareTypeParameters()
+
+        return irTypeAlias
+    }
 
     // ------------------------------------ code fragments ------------------------------------
 

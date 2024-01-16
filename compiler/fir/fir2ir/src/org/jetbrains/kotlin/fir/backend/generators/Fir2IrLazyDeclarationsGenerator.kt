@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.lazy.*
 import org.jetbrains.kotlin.fir.unwrapUseSiteSubstitutionOverrides
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 
 class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
     internal fun createIrLazyFunction(
@@ -73,6 +70,16 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
     ): Fir2IrLazyClass = firClass.convertWithOffsets { startOffset, endOffset ->
         val firClassOrigin = firClass.irOrigin()
         Fir2IrLazyClass(components, startOffset, endOffset, firClassOrigin, firClass, symbol, irParent)
+    }
+
+    fun createIrLazyTypeAlias(
+        firTypeAlias: FirTypeAlias,
+        irParent: IrDeclarationParent,
+        symbol: IrTypeAliasSymbol
+    ): Fir2IrLazyTypeAlias = firTypeAlias.convertWithOffsets { startOffset, endOffset ->
+        Fir2IrLazyTypeAlias(
+            components, startOffset, endOffset, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, firTypeAlias, symbol, irParent
+        )
     }
 
     fun createIrLazyField(
