@@ -11,6 +11,8 @@ class CallableId private constructor(
     val className: FqName?,
     val callableName: Name,
     val classId: ClassId?,
+    // Currently, it's only used for debug info
+    private val pathToLocal: FqName?
 ) {
     companion object {
         private val LOCAL_NAME = SpecialNames.LOCAL
@@ -19,10 +21,6 @@ class CallableId private constructor(
         private fun calculateClassId(packageName: FqName, className: FqName?): ClassId? =
             className?.let { ClassId(packageName, it, isLocal = packageName == PACKAGE_FQ_NAME_FOR_LOCAL) }
     }
-
-    // Effectively val (changed in constructors only)
-    // Used only for debug info
-    private var pathToLocal: FqName? = null
 
     /**
      * Return `true` if corresponding declaration is itself local or it is a member of local class
@@ -33,29 +31,27 @@ class CallableId private constructor(
 
     constructor(
         packageName: FqName, className: FqName?, callableName: Name,
-    ) : this(packageName, className, callableName, calculateClassId(packageName, className))
+    ) : this(packageName, className, callableName, calculateClassId(packageName, className), pathToLocal = null)
 
     constructor(
         packageName: FqName, className: FqName?, callableName: Name,
         // Currently, it's only used for debug info
         pathToLocal: FqName?
-    ) : this(packageName, className, callableName, calculateClassId(packageName, className)) {
-        this.pathToLocal = pathToLocal
-    }
+    ) : this(packageName, className, callableName, calculateClassId(packageName, className), pathToLocal)
 
-    constructor(classId: ClassId, callableName: Name) : this(classId.packageFqName, classId.relativeClassName, callableName, classId)
+    constructor(classId: ClassId, callableName: Name) :
+            this(classId.packageFqName, classId.relativeClassName, callableName, classId, pathToLocal = null)
 
-    constructor(packageName: FqName, callableName: Name) : this(packageName, className = null, callableName, classId = null)
+    constructor(packageName: FqName, callableName: Name) :
+            this(packageName, className = null, callableName, classId = null, pathToLocal = null)
 
     constructor(
         callableName: Name,
         // Currently, it's only used for debug info
         pathToLocal: FqName?
-    ) : this(PACKAGE_FQ_NAME_FOR_LOCAL, className = null, callableName, classId = null) {
-        this.pathToLocal = pathToLocal
-    }
+    ) : this(PACKAGE_FQ_NAME_FOR_LOCAL, className = null, callableName, classId = null, pathToLocal)
 
-    constructor(callableName: Name) : this(PACKAGE_FQ_NAME_FOR_LOCAL, className = null, callableName, classId = null)
+    constructor(callableName: Name) : this(PACKAGE_FQ_NAME_FOR_LOCAL, className = null, callableName, classId = null, pathToLocal = null)
 
     fun asFqNameForDebugInfo(): FqName {
         pathToLocal?.child(callableName)?.let { return it }
@@ -66,7 +62,7 @@ class CallableId private constructor(
         return classId?.asSingleFqName()?.child(callableName) ?: packageName.child(callableName)
     }
 
-    fun copy(callableName: Name): CallableId = CallableId(packageName, className, callableName, classId)
+    fun copy(callableName: Name): CallableId = CallableId(packageName, className, callableName, classId, pathToLocal)
 
     override fun equals(other: Any?): Boolean {
         return when {
