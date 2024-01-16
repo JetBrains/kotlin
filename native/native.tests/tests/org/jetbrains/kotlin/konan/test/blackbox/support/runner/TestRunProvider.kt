@@ -221,8 +221,15 @@ internal class TestRunProvider(
         }
 
         val compilationResult = testCompilation.result.assertSuccess() // <-- Compilation happens here.
+
         // FIXME: temp adapter: need to refactor TestRun and TestExecutable to be less artifact specific
-        val adapter = TestCompilationResult.Success(Executable(compilationResult.resultingArtifact.bundleDir), compilationResult.loggedData)
+        val adapter = TestCompilationResult.Success(
+            resultingArtifact = Executable(
+                compilationResult.resultingArtifact.bundleDir,
+                compilationResult.resultingArtifact.fileCheckStage
+            ),
+            loggedData = compilationResult.loggedData
+        )
         val executable = TestExecutable.fromCompilationResult(testCase, adapter)
 
         return action(testCase, executable)
