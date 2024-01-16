@@ -164,11 +164,11 @@ class WorkerTest {
     fun executeAfterOrdering() = withWorker {
         val counter = AtomicInt(0)
         val lastTask = AtomicInt(0)
-        executeAfter(20_000) {
+        executeAfter(500_000) {
             lastTask.value = 1
             counter.incrementAndGet()
         }
-        executeAfter(10_000) {
+        executeAfter(1_000) {
             lastTask.value = 2
             counter.incrementAndGet()
         }
