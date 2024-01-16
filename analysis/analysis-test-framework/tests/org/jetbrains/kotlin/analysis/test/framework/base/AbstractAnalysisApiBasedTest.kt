@@ -293,7 +293,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     }
 
     protected fun runTest(@TestDataFile path: String) {
-        testDataPath = configurator.preprocessTestDataPath(Paths.get(path))
+        testDataPath = configurator.computeTestDataPath(Paths.get(path))
         val testConfiguration = createTestConfiguration()
         testServices = testConfiguration.testServices
         val moduleStructure = createModuleStructure(testConfiguration)

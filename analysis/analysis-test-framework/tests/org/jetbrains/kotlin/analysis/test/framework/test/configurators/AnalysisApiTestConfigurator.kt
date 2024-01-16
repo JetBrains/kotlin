@@ -42,7 +42,7 @@ abstract class AnalysisApiTestConfigurator {
         KotlinGlobalModificationService.getInstance(project).publishGlobalModuleStateModification()
     }
 
-    open fun preprocessTestDataPath(path: Path): Path = path
+    open fun computeTestDataPath(path: Path): Path = path
 
     abstract fun createModules(moduleStructure: TestModuleStructure, testServices: TestServices, project: Project): KtModuleProjectStructure
 

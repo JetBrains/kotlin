@@ -72,7 +72,7 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
         JvmResolveUtil.analyze(project, files.filterIsInstance<KtFile>(), compilerConfiguration, packageProviderFactory)
     }
 
-    override fun preprocessTestDataPath(path: Path): Path {
+    override fun computeTestDataPath(path: Path): Path {
         val newPath = path.resolveSibling(path.nameWithoutExtension + "." + testPrefix + "." + path.extension)
         if (newPath.toFile().exists()) return newPath
         return path
