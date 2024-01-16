@@ -3,18 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 // TARGET_BACKEND: NATIVE
+// NATIVE_STANDALONE
 // FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative
 // MODULE: cinterop
 // FILE: threadStates.def
 language = C
 ---
-#include <stdint.h>
-
 void assertNativeThreadState();
 
-int32_t answer() {
+void runCallback(void(*callback)(void)) {
     assertNativeThreadState();
-    return 42;
+    callback();
+    assertNativeThreadState();
 }
 
 // FILE: threadStates.cpp
@@ -37,14 +37,32 @@ extern "C" void assertNativeThreadState() {
 
 import kotlin.native.runtime.Debugging
 import kotlin.test.*
-import kotlinx.cinterop.*
+import kotlinx.cinterop.staticCFunction
 import threadStates.*
 
-fun main() {
-    answer()
-    assertRunnableThreadState()
+fun box(): String {
+    try {
+        runCallback(staticCFunction { ->
+            assertRunnableThreadState()
+            runCallback(staticCFunction(::throwException))
+        })
+    } catch (e: CustomException) {
+        assertRunnableThreadState()
+        return "OK"
+    } catch (e: Throwable) {
+        assertRunnableThreadState()
+        fail("Wrong exception type: ${e.message}")
+    }
+    fail("No exception thrown")
 }
 
 fun assertRunnableThreadState() {
     assertTrue(Debugging.isThreadStateRunnable)
+}
+
+class CustomException() : Exception()
+
+fun throwException() {
+    assertRunnableThreadState()
+    throw CustomException()
 }

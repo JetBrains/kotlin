@@ -4622,6 +4622,16 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/packages"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/cinterop/threadStates")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ThreadStates {
+            @Test
+            public void testAllFilesPresentInThreadStates() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/threadStates"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+        }
     }
 
     @Nested

@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 // TARGET_BACKEND: NATIVE
+// NATIVE_STANDALONE
 // FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative
 // MODULE: cinterop
 // FILE: threadStates.def
@@ -39,7 +40,7 @@ import kotlin.test.*
 import kotlinx.cinterop.staticCFunction
 import threadStates.*
 
-fun main() {
+fun box(): String {
     try {
         runCallback(staticCFunction { ->
             assertRunnableThreadState()
@@ -47,7 +48,7 @@ fun main() {
         })
     } catch (e: CustomException) {
         assertRunnableThreadState()
-        return
+        return "OK"
     } finally {
         assertRunnableThreadState()
     }

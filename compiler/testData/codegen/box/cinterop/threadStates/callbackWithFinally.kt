@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 // TARGET_BACKEND: NATIVE
+// NATIVE_STANDALONE
 // FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative
 // MODULE: cinterop
 // FILE: threadStates.def
@@ -36,16 +37,28 @@ extern "C" void assertNativeThreadState() {
 
 import kotlin.native.runtime.Debugging
 import kotlin.test.*
-import kotlinx.cinterop.*
+import kotlinx.cinterop.staticCFunction
 import threadStates.*
 
-fun main() {
-    runCallback(staticCFunction { ->
+fun box(): String {
+    try {
+        runCallback(staticCFunction(::throwException))
+    } catch (e: CustomException) {
         assertRunnableThreadState()
-    })
-    assertRunnableThreadState()
+        return "OK"
+    } finally {
+        assertRunnableThreadState()
+    }
+    fail("No exception thrown")
 }
 
 fun assertRunnableThreadState() {
     assertTrue(Debugging.isThreadStateRunnable)
+}
+
+class CustomException() : Exception()
+
+fun throwException() {
+    assertRunnableThreadState()
+    throw CustomException()
 }
