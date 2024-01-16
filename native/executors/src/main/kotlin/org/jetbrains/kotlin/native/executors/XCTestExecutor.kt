@@ -53,11 +53,13 @@ abstract class AbstractXCTestExecutor(
         return stdout.toString("UTF-8").trim()
     }
 
-    private val frameworkPath: String
-        get() = "${targetPlatform()}/Developer/Library/Frameworks/"
+    private val frameworkPath: String by lazy {
+        "${targetPlatform()}/Developer/Library/Frameworks/"
+    }
 
-    private val xcTestExecutablePath: String
-        get() = "${targetPlatform()}/Developer/Library/Xcode/Agents/xctest"
+    private val xcTestExecutablePath: String by lazy {
+        "${targetPlatform()}/Developer/Library/Xcode/Agents/xctest"
+    }
 
     override fun execute(request: ExecuteRequest): ExecuteResponse {
         val bundle = XCTestBundle.Standalone(Paths.get(request.executableAbsolutePath), request.args)
