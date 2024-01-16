@@ -1979,7 +1979,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, "Property in primary constructor cannot be declared as abstract.")
         map.put(LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING, "Type parameters for local variables are deprecated.")
         map.put(LOCAL_VARIABLE_WITH_TYPE_PARAMETERS, "Local variables cannot have type parameters.")
-        map.put(EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Property access cannot have explicit type arguments.")
+        map.put(EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "{0} access cannot have explicit type arguments.", STRING)
 
         map.put(LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL, "This declaration can only be called on a property literal (e.g. 'Foo::bar').")
         map.put(LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT, "This declaration can only be called on a reference to a 'lateinit' property.")

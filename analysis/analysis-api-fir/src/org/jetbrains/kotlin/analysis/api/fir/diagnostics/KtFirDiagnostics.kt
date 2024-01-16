@@ -2514,6 +2514,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface ExplicitTypeArgumentsInPropertyAccess : KtFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = ExplicitTypeArgumentsInPropertyAccess::class
+        val kind: String
     }
 
     interface LateinitIntrinsicCallOnNonLiteral : KtFirDiagnostic<PsiElement> {

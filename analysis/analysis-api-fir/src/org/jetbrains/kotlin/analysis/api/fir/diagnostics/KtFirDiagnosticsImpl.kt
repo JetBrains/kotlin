@@ -3024,6 +3024,7 @@ internal class LocalVariableWithTypeParametersImpl(
 ) : KtAbstractFirDiagnostic<KtProperty>(firDiagnostic, token), KtFirDiagnostic.LocalVariableWithTypeParameters
 
 internal class ExplicitTypeArgumentsInPropertyAccessImpl(
+    override val kind: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.ExplicitTypeArgumentsInPropertyAccess

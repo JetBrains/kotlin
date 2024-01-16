@@ -3575,6 +3575,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS) { firDiagnostic ->
         ExplicitTypeArgumentsInPropertyAccessImpl(
+            firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
