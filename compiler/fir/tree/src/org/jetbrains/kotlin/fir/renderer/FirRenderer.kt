@@ -1157,6 +1157,10 @@ class FirRenderer(
             resolvedQualifier.typeArguments.renderTypeArguments()
         }
 
+        override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier) {
+            visitResolvedQualifier(errorResolvedQualifier)
+        }
+
         override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
             binaryLogicExpression.leftOperand.accept(this)
             print(" ${binaryLogicExpression.kind.token} ")
