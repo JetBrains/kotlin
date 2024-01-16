@@ -37,12 +37,17 @@ internal class XcodeProject(private val workDir: Path) {
     val derivedData: Path = path.resolve("DerivedData")
 
     /**
+     * Variable that represents the path to the "Products" directory of the derived data for an Xcode project.
+     */
+    val products: Path = derivedData.resolve("Build/Products")
+
+    /**
      * Represents the file path of the built application.
      *
      * This is a location of built application relative to DerivedData Xcode directory/
      * @see derivedData
      */
-    val application: Path = derivedData.resolve("Build/Products/Debug-iphoneos/${PROJECT_NAME}.app")
+    val application: Path = products.resolve("Debug-iphoneos/${PROJECT_NAME}.app")
 
     /**
      * Represents the path to the test bundle of the application.

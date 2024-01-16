@@ -15,7 +15,15 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.*
 
-class FirebaseCloudExecutor(
+/**
+ * Executes test cases on Firebase Test Lab for iOS arm64 devices.
+ *
+ * This executor requires the Goggle Cloud command-line utilities to be installed and configured.
+ *
+ * @param configurables The configuration options for the executor.
+ * @param description A description of the test execution used to identify run in the cloud console
+ */
+class FirebaseCloudXCTestExecutor(
     private val configurables: AppleConfigurables,
     private val description: String = "K/N Test execution",
 ) : Executor {
@@ -33,21 +41,14 @@ class FirebaseCloudExecutor(
     }
 
     override fun execute(request: ExecuteRequest): ExecuteResponse {
-        // Copy Xcode project
         val workDir = request.workingDirectory?.toPath() ?: Paths.get(".")
-        val projectDir = Files.createTempDirectory(workDir, "xctest-project-runner")
+        val projectDir = Files.createTempDirectory(workDir, "xctest-firebase-runner")
 
-        val xcodeProject = XcodeProject(projectDir).apply {
-            fetch()
-            build()
-            replaceTestBundleWith(Path(request.executableAbsolutePath))
-            testBundle.toFile().writeTestArguments(request.args)
-            codesign()
-        }
+        val bundle = XCTestBundle.ProjectWrapped(Path(request.executableAbsolutePath), request.args)
 
         // Make a zip with the built application and xctestrun file
         val testsZip = projectDir.resolve("KNTests.zip").apply {
-            createZip(xcodeProject.derivedData.resolve("Build/Products"))
+            createZip(bundle.prepareToRun(projectDir))
         }
 
         // Execute tests in the Firebase
@@ -58,6 +59,7 @@ class FirebaseCloudExecutor(
             args = mutableListOf(
                 "firebase", "test", "ios", "run",
                 "--test=$testsZip",
+                "--no-record-video",
                 "--device=model=iphone13pro",
                 "--client-details=matrixLabel=$description"
             ),
@@ -90,10 +92,7 @@ class FirebaseCloudExecutor(
             ExecuteRequest(
                 executableAbsolutePath = "gsutil",
                 workingDirectory = projectDir.toFile(),
-                args = mutableListOf(
-                    "-m", "cp", "-r",
-                    "gs://${resultsBucketURL}/iphone*", "."
-                )
+                args = mutableListOf("-m", "cp", "-r", "gs://${resultsBucketURL}/iphone*", ".")
             )
         ).assertSuccess()
         val executionLog = projectDir.listDirectoryEntries("iphone*")
@@ -106,17 +105,19 @@ class FirebaseCloudExecutor(
             .append(executionLog)
             .close()
 
+        bundle.cleanup()
+
         return firebaseResponse
     }
 
     private fun Path.createZip(sourceFolder: Path) {
         ZipOutputStream(Files.newOutputStream(this)).use { stream ->
             Files.walk(sourceFolder)
-                .filter { p -> !Files.isDirectory(p) }
-                .forEach { p ->
-                    val entry = ZipEntry(sourceFolder.relativize(p).toString())
+                .filter { !Files.isDirectory(it) }
+                .forEach { path ->
+                    val entry = ZipEntry(sourceFolder.relativize(path).toString())
                     stream.putNextEntry(entry)
-                    Files.copy(p, stream)
+                    Files.copy(path, stream)
                     stream.closeEntry()
                 }
         }
