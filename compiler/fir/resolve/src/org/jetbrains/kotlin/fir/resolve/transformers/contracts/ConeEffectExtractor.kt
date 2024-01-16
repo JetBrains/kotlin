@@ -124,6 +124,8 @@ class ConeEffectExtractor(
         val isNegated = when (val operation = equalityOperatorCall.operation) {
             FirOperation.EQ -> false
             FirOperation.NOT_EQ -> true
+            FirOperation.IDENTITY -> false
+            FirOperation.NOT_IDENTITY -> true
             else -> return ConeContractDescriptionError.IllegalEqualityOperator(operation).asElement()
         }
 

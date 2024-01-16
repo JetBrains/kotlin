@@ -5,7 +5,7 @@
 import kotlin.contracts.*
 
 fun <E> checkEquality(arg: E?) { contract { returns() implies (arg != null) } }
-fun <E> checkIdentity(arg: E?) { contract { <!ERROR_IN_CONTRACT_DESCRIPTION("NOT_IDENTITY operator call is illegal in contract description")!>returns() implies (arg !== null)<!> } }
+fun <E> checkIdentity(arg: E?) { contract { returns() implies (arg !== null) } }
 fun checkTrue(statement: Boolean) { contract { returns() implies statement } }
 fun checkFalse(statement: Boolean) { contract { returns() implies !statement } }
 
@@ -18,7 +18,7 @@ fun test(a: String?) {
     }
     a.let {
         checkIdentity(it)
-        consume(<!ARGUMENT_TYPE_MISMATCH!>it<!>)
+        consume(it)
     }
     a.let {
         checkTrue(it != null)
