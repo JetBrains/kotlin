@@ -79,4 +79,6 @@ So to avoid leaving such TODOs in the code without any intention the following p
 As a reviewer, please perform the following actions when you see some newly introduced `TODO` in the code:
 - Check if some ticket is mentioned
 - If it is, ensure that the ticket described enough to gather enough context to fix this `TODO` in the future
-- If it isn't please ask author of the code to introduce it
+- If it isn't, please ask the author of the code to introduce it
+
+- When an issue with `kotlin-todo` is resolved, please ensure that the author fixed all corresponding TODOs in the code. 
