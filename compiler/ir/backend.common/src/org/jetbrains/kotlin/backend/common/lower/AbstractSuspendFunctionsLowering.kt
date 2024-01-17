@@ -256,34 +256,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         }
     }
 
-    protected open class VariablesScopeTracker : IrElementVisitorVoid {
-
-        protected val scopeStack = mutableListOf<MutableSet<IrVariable>>(mutableSetOf())
-
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitContainerExpression(expression: IrContainerExpression) {
-            if (!expression.isTransparentScope)
-                scopeStack.push(mutableSetOf())
-            super.visitContainerExpression(expression)
-            if (!expression.isTransparentScope)
-                scopeStack.pop()
-        }
-
-        override fun visitCatch(aCatch: IrCatch) {
-            scopeStack.push(mutableSetOf())
-            super.visitCatch(aCatch)
-            scopeStack.pop()
-        }
-
-        override fun visitVariable(declaration: IrVariable) {
-            super.visitVariable(declaration)
-            scopeStack.peek()!!.add(declaration)
-        }
-    }
-
     fun IrClass.addField(name: Name, type: IrType, isMutable: Boolean): IrField {
         val klass = this
         return factory.buildField {
