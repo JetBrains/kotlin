@@ -12,7 +12,7 @@ abstract class Derived : Base {
 class InterfaceThenClass : Base, Derived() {}
 
 fun test_1(x: InterfaceThenClass, s: String?) {
-    x.delete(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
+    x.delete(s)
 }
 
 class ClassThenInterface : Derived(), Base {}

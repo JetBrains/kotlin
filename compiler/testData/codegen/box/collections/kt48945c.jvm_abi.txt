@@ -1,0 +1,10 @@
+MODULE main
+	CLASS Test.class
+		K1
+			getOrDefault(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/String; [public, final, bridge]
+		K2
+			---
+		K1
+			getOrDefault(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String; [public, bridge]
+		K2
+			---

@@ -1,10 +1,10 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
-// FIR status: different structure of fake overrides. Fixed in the IR fake override builder.
 // IGNORE_BACKEND: ANDROID
 //  ^ NSME: java.util.AbstractMap.remove
 // FULL_JDK
+// JVM_ABI_K1_K2_DIFF: KT-65095
+
 interface MSS : Map<String, String>
 
 class Test : MSS, java.util.AbstractMap<String, String>() {

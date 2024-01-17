@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -19,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun FirClass.constructors(session: FirSession): List<FirConstructorSymbol> {
@@ -125,4 +129,67 @@ fun FirSimpleFunction.isEquals(session: FirSession): Boolean {
     if (receiverParameter != null) return false
     val parameter = valueParameters.first()
     return parameter.returnTypeRef.coneType.fullyExpandedType(session).isNullableAny
+}
+
+
+fun FirIntersectionCallableSymbol.getNonSubsumedOverriddenSymbols(
+    session: FirSession,
+    scopeSession: ScopeSession,
+): List<FirCallableSymbol<*>> {
+    require(this is FirCallableSymbol<*>)
+
+    val dispatchReceiverScope = dispatchReceiverScope(session, scopeSession)
+    return MemberWithBaseScope(this, dispatchReceiverScope).nonSubsumedRecursively(session, scopeSession).map { it.member }
+}
+
+private fun FirCallableSymbol<*>.dispatchReceiverScope(session: FirSession, scopeSession: ScopeSession): FirTypeScope {
+    return dispatchReceiverType?.scope(
+        session,
+        scopeSession,
+        CallableCopyTypeCalculator.DoNothing,
+        FirResolvePhase.STATUS
+    ) ?: FirTypeScope.Empty
+}
+
+private fun MemberWithBaseScope<FirCallableSymbol<*>>.nonSubsumedRecursively(
+    session: FirSession,
+    scopeSession: ScopeSession,
+): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
+    if (member.origin != FirDeclarationOrigin.IntersectionOverride) return listOf(this)
+
+    return baseScope
+        .getDirectOverriddenMembersWithBaseScope(member)
+        .map {
+            if (it.member.origin != FirDeclarationOrigin.SubstitutionOverride.DeclarationSite) return@map it
+            val unwrapped = it.member.unwrapSubstitutionOverrides()
+            MemberWithBaseScope(unwrapped, unwrapped.dispatchReceiverScope(session, scopeSession))
+        }
+        .flatMap { it.nonSubsumedRecursively(session, scopeSession) }
+        // We can get the same symbol multiple times if we're overriding another intersection symbol.
+        .distinctBy { it.member }
+        .nonSubsumed()
+}
+
+/**
+ * A callable declaration D [subsumes](https://kotlinlang.org/spec/inheritance.html#matching-and-subsumption-of-declarations)
+ * a callable declaration B if D overrides B.
+ */
+private fun List<MemberWithBaseScope<FirCallableSymbol<*>>>.nonSubsumed(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
+    val baseMembers = mutableSetOf<FirCallableSymbol<*>>()
+    for ((member, scope) in this) {
+        val unwrapped = member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>()
+        val addIfDifferent = { it: FirCallableSymbol<*> ->
+            val symbol = it.unwrapSubstitutionOverrides()
+            if (symbol != unwrapped) {
+                baseMembers += symbol
+            }
+            ProcessorAction.NEXT
+        }
+        if (member is FirNamedFunctionSymbol) {
+            scope.processOverriddenFunctions(member, addIfDifferent)
+        } else if (member is FirPropertySymbol) {
+            scope.processOverriddenProperties(member, addIfDifferent)
+        }
+    }
+    return filter { (member, _) -> member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() !in baseMembers }
 }

@@ -8,4 +8,4 @@ interface B : A {
 
 open class C : A
 
-class D : C(), B
+<!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class D<!> : C(), B

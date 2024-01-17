@@ -45,16 +45,16 @@ class FinalList : SomeList<String> {
   /* fake */ override fun clone(): @EnhancedNullability Any
 
   // CHECK JVM_IR:
-  //   Mangled name: FinalList#contains(Some<kotlin.String>{EnhancedNullability}){}kotlin.Boolean
-  //   Public signature: /FinalList.contains|3096303196508390878[0]
-  //   Public signature debug description: contains(Some<kotlin.String>{EnhancedNullability}){}kotlin.Boolean
-  /* fake */ override operator fun contains(p0: @EnhancedNullability Some<String>): Boolean
+  //   Mangled name: FinalList#contains(Some<kotlin.String>){}kotlin.Boolean
+  //   Public signature: /FinalList.contains|3306019531315598892[0]
+  //   Public signature debug description: contains(Some<kotlin.String>){}kotlin.Boolean
+  /* fake */ override operator fun contains(element: Some<String>): Boolean
 
   // CHECK JVM_IR:
-  //   Mangled name: FinalList#containsAll(kotlin.collections.Collection<Some<kotlin.String>?>){}kotlin.Boolean
-  //   Public signature: /FinalList.containsAll|5422538213063988463[0]
-  //   Public signature debug description: containsAll(kotlin.collections.Collection<Some<kotlin.String>?>){}kotlin.Boolean
-  /* fake */ override fun containsAll(p0: Collection<Some<String>?>): Boolean
+  //   Mangled name: FinalList#containsAll(kotlin.collections.Collection<Some<kotlin.String>>){}kotlin.Boolean
+  //   Public signature: /FinalList.containsAll|9064771870641374979[0]
+  //   Public signature debug description: containsAll(kotlin.collections.Collection<Some<kotlin.String>>){}kotlin.Boolean
+  /* fake */ override fun containsAll(elements: Collection<Some<String>>): Boolean
 
   // CHECK:
   //   Mangled name: FinalList#ensureCapacity(kotlin.Int){}
@@ -66,7 +66,7 @@ class FinalList : SomeList<String> {
   //   Mangled name: FinalList#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /FinalList.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  /* fake */ override operator fun equals(p0: Any?): Boolean
+  /* fake */ override operator fun equals(other: Any?): Boolean
 
   // CHECK:
   //   Mangled name: FinalList#forEach(java.util.function.Consumer<in|Some<kotlin.String>?>?){}
@@ -75,10 +75,10 @@ class FinalList : SomeList<String> {
   /* fake */ override fun forEach(p0: Consumer<in Some<String>?>?): Unit
 
   // CHECK JVM_IR:
-  //   Mangled name: FinalList#get(kotlin.Int){}Some<kotlin.String>{EnhancedNullability}
-  //   Public signature: /FinalList.get|-1548509062534898774[0]
-  //   Public signature debug description: get(kotlin.Int){}Some<kotlin.String>{EnhancedNullability}
-  /* fake */ override operator fun get(p0: Int): @EnhancedNullability Some<String>
+  //   Mangled name: FinalList#get(kotlin.Int){}Some<kotlin.String>
+  //   Public signature: /FinalList.get|5550525129583729061[0]
+  //   Public signature debug description: get(kotlin.Int){}Some<kotlin.String>
+  /* fake */ override operator fun get(index: Int): Some<String>
 
   // CHECK JVM_IR:
   //   Mangled name: FinalList#hashCode(){}kotlin.Int
@@ -87,10 +87,10 @@ class FinalList : SomeList<String> {
   /* fake */ override fun hashCode(): Int
 
   // CHECK JVM_IR:
-  //   Mangled name: FinalList#indexOf(Some<kotlin.String>{EnhancedNullability}){}kotlin.Int
-  //   Public signature: /FinalList.indexOf|7750638587776299509[0]
-  //   Public signature debug description: indexOf(Some<kotlin.String>{EnhancedNullability}){}kotlin.Int
-  /* fake */ override fun indexOf(p0: @EnhancedNullability Some<String>): Int
+  //   Mangled name: FinalList#indexOf(Some<kotlin.String>){}kotlin.Int
+  //   Public signature: /FinalList.indexOf|5440857764812757471[0]
+  //   Public signature debug description: indexOf(Some<kotlin.String>){}kotlin.Int
+  /* fake */ override fun indexOf(element: Some<String>): Int
 
   // CHECK JVM_IR:
   //   Mangled name: FinalList#isEmpty(){}kotlin.Boolean
@@ -105,10 +105,10 @@ class FinalList : SomeList<String> {
   /* fake */ override operator fun iterator(): @EnhancedNullability MutableIterator<@EnhancedNullability Some<String>>
 
   // CHECK JVM_IR:
-  //   Mangled name: FinalList#lastIndexOf(Some<kotlin.String>{EnhancedNullability}){}kotlin.Int
-  //   Public signature: /FinalList.lastIndexOf|5741372771241017733[0]
-  //   Public signature debug description: lastIndexOf(Some<kotlin.String>{EnhancedNullability}){}kotlin.Int
-  /* fake */ override fun lastIndexOf(p0: @EnhancedNullability Some<String>): Int
+  //   Mangled name: FinalList#lastIndexOf(Some<kotlin.String>){}kotlin.Int
+  //   Public signature: /FinalList.lastIndexOf|-46333449251229155[0]
+  //   Public signature debug description: lastIndexOf(Some<kotlin.String>){}kotlin.Int
+  /* fake */ override fun lastIndexOf(element: Some<String>): Int
 
   // CHECK JVM_IR:
   //   Mangled name: FinalList#listIterator(){}kotlin.collections.MutableListIterator<Some<kotlin.String>{EnhancedNullability}>{EnhancedNullability}
@@ -213,10 +213,10 @@ class FinalList : SomeList<String> {
   /* fake */ override fun <T : Any?> toArray(p0: Array<out T?>?): Array<out T?>?
 
   // CHECK JVM_IR:
-  //   Mangled name: FinalList#toString(){}kotlin.String{EnhancedNullability}
-  //   Public signature: /FinalList.toString|7581629773206850948[0]
-  //   Public signature debug description: toString(){}kotlin.String{EnhancedNullability}
-  /* fake */ override fun toString(): @EnhancedNullability String
+  //   Mangled name: FinalList#toString(){}kotlin.String
+  //   Public signature: /FinalList.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
+  /* fake */ override fun toString(): String
 
   // CHECK:
   //   Mangled name: FinalList#trimToSize(){}
@@ -337,16 +337,16 @@ open class SomeList<T : Any?> : ArrayList<Some<T>>, MyList<T> {
   /* fake */ override fun clone(): @EnhancedNullability Any
 
   // CHECK JVM_IR:
-  //   Mangled name: SomeList#contains(Some<1:0>{EnhancedNullability}){}kotlin.Boolean
-  //   Public signature: /SomeList.contains|8295010842646223621[0]
-  //   Public signature debug description: contains(Some<1:0>{EnhancedNullability}){}kotlin.Boolean
-  /* fake */ override operator fun contains(p0: @EnhancedNullability Some<T>): Boolean
+  //   Mangled name: SomeList#contains(Some<1:0>){}kotlin.Boolean
+  //   Public signature: /SomeList.contains|-2920670572443692722[0]
+  //   Public signature debug description: contains(Some<1:0>){}kotlin.Boolean
+  /* fake */ override operator fun contains(element: Some<T>): Boolean
 
   // CHECK JVM_IR:
-  //   Mangled name: SomeList#containsAll(kotlin.collections.Collection<Some<1:0>?>){}kotlin.Boolean
-  //   Public signature: /SomeList.containsAll|5540597363096413063[0]
-  //   Public signature debug description: containsAll(kotlin.collections.Collection<Some<1:0>?>){}kotlin.Boolean
-  /* fake */ override fun containsAll(p0: Collection<Some<T>?>): Boolean
+  //   Mangled name: SomeList#containsAll(kotlin.collections.Collection<Some<1:0>>){}kotlin.Boolean
+  //   Public signature: /SomeList.containsAll|4060484050930787658[0]
+  //   Public signature debug description: containsAll(kotlin.collections.Collection<Some<1:0>>){}kotlin.Boolean
+  /* fake */ override fun containsAll(elements: Collection<Some<T>>): Boolean
 
   // CHECK:
   //   Mangled name: SomeList#ensureCapacity(kotlin.Int){}
@@ -358,7 +358,7 @@ open class SomeList<T : Any?> : ArrayList<Some<T>>, MyList<T> {
   //   Mangled name: SomeList#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /SomeList.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  /* fake */ override operator fun equals(p0: Any?): Boolean
+  /* fake */ override operator fun equals(other: Any?): Boolean
 
   // CHECK:
   //   Mangled name: SomeList#forEach(java.util.function.Consumer<in|Some<1:0>?>?){}
@@ -367,10 +367,10 @@ open class SomeList<T : Any?> : ArrayList<Some<T>>, MyList<T> {
   /* fake */ override fun forEach(p0: Consumer<in Some<T>?>?): Unit
 
   // CHECK JVM_IR:
-  //   Mangled name: SomeList#get(kotlin.Int){}Some<1:0>{EnhancedNullability}
-  //   Public signature: /SomeList.get|-3046572306153092239[0]
-  //   Public signature debug description: get(kotlin.Int){}Some<1:0>{EnhancedNullability}
-  /* fake */ override operator fun get(p0: Int): @EnhancedNullability Some<T>
+  //   Mangled name: SomeList#get(kotlin.Int){}Some<1:0>
+  //   Public signature: /SomeList.get|7985278152358407752[0]
+  //   Public signature debug description: get(kotlin.Int){}Some<1:0>
+  /* fake */ override operator fun get(index: Int): Some<T>
 
   // CHECK JVM_IR:
   //   Mangled name: SomeList#hashCode(){}kotlin.Int
@@ -379,10 +379,10 @@ open class SomeList<T : Any?> : ArrayList<Some<T>>, MyList<T> {
   /* fake */ override fun hashCode(): Int
 
   // CHECK JVM_IR:
-  //   Mangled name: SomeList#indexOf(Some<1:0>{EnhancedNullability}){}kotlin.Int
-  //   Public signature: /SomeList.indexOf|-8100421064396203855[0]
-  //   Public signature debug description: indexOf(Some<1:0>{EnhancedNullability}){}kotlin.Int
-  /* fake */ override fun indexOf(p0: @EnhancedNullability Some<T>): Int
+  //   Mangled name: SomeList#indexOf(Some<1:0>){}kotlin.Int
+  //   Public signature: /SomeList.indexOf|4192413876446876489[0]
+  //   Public signature debug description: indexOf(Some<1:0>){}kotlin.Int
+  /* fake */ override fun indexOf(element: Some<T>): Int
 
   // CHECK JVM_IR:
   //   Mangled name: SomeList#isEmpty(){}kotlin.Boolean
@@ -397,10 +397,10 @@ open class SomeList<T : Any?> : ArrayList<Some<T>>, MyList<T> {
   /* fake */ override operator fun iterator(): @EnhancedNullability MutableIterator<@EnhancedNullability Some<T>>
 
   // CHECK JVM_IR:
-  //   Mangled name: SomeList#lastIndexOf(Some<1:0>{EnhancedNullability}){}kotlin.Int
-  //   Public signature: /SomeList.lastIndexOf|1971452683190765047[0]
-  //   Public signature debug description: lastIndexOf(Some<1:0>{EnhancedNullability}){}kotlin.Int
-  /* fake */ override fun lastIndexOf(p0: @EnhancedNullability Some<T>): Int
+  //   Mangled name: SomeList#lastIndexOf(Some<1:0>){}kotlin.Int
+  //   Public signature: /SomeList.lastIndexOf|-4798028145670003218[0]
+  //   Public signature debug description: lastIndexOf(Some<1:0>){}kotlin.Int
+  /* fake */ override fun lastIndexOf(element: Some<T>): Int
 
   // CHECK JVM_IR:
   //   Mangled name: SomeList#listIterator(){}kotlin.collections.MutableListIterator<Some<1:0>{EnhancedNullability}>{EnhancedNullability}
@@ -505,10 +505,10 @@ open class SomeList<T : Any?> : ArrayList<Some<T>>, MyList<T> {
   /* fake */ override fun <T : Any?> toArray(p0: Array<out T?>?): Array<out T?>?
 
   // CHECK JVM_IR:
-  //   Mangled name: SomeList#toString(){}kotlin.String{EnhancedNullability}
-  //   Public signature: /SomeList.toString|7581629773206850948[0]
-  //   Public signature debug description: toString(){}kotlin.String{EnhancedNullability}
-  /* fake */ override fun toString(): @EnhancedNullability String
+  //   Mangled name: SomeList#toString(){}kotlin.String
+  //   Public signature: /SomeList.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
+  /* fake */ override fun toString(): String
 
   // CHECK:
   //   Mangled name: SomeList#trimToSize(){}
@@ -629,3 +629,4 @@ interface MyList<T : Any?> : List<Some<T>> {
     abstract /* fake */ override get(): Int
 
 }
+

@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -335,7 +334,9 @@ fun FirCallableSymbol<*>.getImplementationStatus(
     }
 
     if (symbol is FirIntersectionCallableSymbol) {
-        if (containingClassSymbol === parentClassSymbol && symbol.subjectToManyNotImplemented(sessionHolder)) {
+        val nonSubsumed = symbol.getNonSubsumedOverriddenSymbols(sessionHolder.session, sessionHolder.scopeSession)
+
+        if (containingClassSymbol === parentClassSymbol && nonSubsumed.subjectToManyNotImplemented(sessionHolder)) {
             return ImplementationStatus.AMBIGUOUSLY_INHERITED
         }
 
@@ -345,7 +346,7 @@ fun FirCallableSymbol<*>.getImplementationStatus(
         var hasImplementation = false
         var hasImplementationVar = false
 
-        for (intersection in symbol.intersections) {
+        for (intersection in nonSubsumed) {
             val unwrapped = intersection.unwrapFakeOverrides()
             val isVar = unwrapped is FirPropertySymbol && unwrapped.isVar
             val isFromClass = unwrapped.getContainingClassSymbol(sessionHolder.session)?.classKind == ClassKind.CLASS
@@ -403,11 +404,11 @@ fun FirCallableSymbol<*>.getImplementationStatus(
     }
 }
 
-private fun FirIntersectionCallableSymbol.subjectToManyNotImplemented(sessionHolder: SessionHolder): Boolean {
+private fun List<FirCallableSymbol<*>>.subjectToManyNotImplemented(sessionHolder: SessionHolder): Boolean {
     var nonAbstractCountInClass = 0
     var nonAbstractCountInInterface = 0
     var abstractCountInInterface = 0
-    for (intersectionSymbol in intersections) {
+    for (intersectionSymbol in this) {
         val containingClassSymbol = intersectionSymbol.getContainingClassSymbol(sessionHolder.session) as? FirRegularClassSymbol
         val hasInterfaceContainer = containingClassSymbol?.classKind == ClassKind.INTERFACE
         if (intersectionSymbol.modality != Modality.ABSTRACT) {

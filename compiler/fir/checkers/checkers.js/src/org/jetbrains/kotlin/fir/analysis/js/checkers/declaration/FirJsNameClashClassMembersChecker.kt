@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsStableName
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.getNonSubsumedOverriddenSymbols
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
+import org.jetbrains.kotlin.fir.resolve.SessionHolder
 
 object FirJsNameClashClassMembersChecker : FirClassChecker() {
     private class StableNamesCollector {
@@ -95,12 +97,16 @@ object FirJsNameClashClassMembersChecker : FirClassChecker() {
             }
         }
 
-        fun addAllSymbolsFrom(symbols: Collection<FirCallableSymbol<*>>) {
+        fun addAllSymbolsFrom(symbols: Collection<FirCallableSymbol<*>>, sessionHolder: SessionHolder) {
             for (symbol in symbols) {
                 when (symbol) {
                     is FirIntersectionCallableSymbol -> {
-                        addAllSymbolsFrom(symbol.intersections)
-                        for (intersectedSymbol in symbol.intersections) {
+                        val nonSubsumedOverriddenSymbols = symbol.getNonSubsumedOverriddenSymbols(
+                            sessionHolder.session,
+                            sessionHolder.scopeSession
+                        )
+                        addAllSymbolsFrom(nonSubsumedOverriddenSymbols, sessionHolder)
+                        for (intersectedSymbol in nonSubsumedOverriddenSymbols) {
                             overrideIntersections.getOrPut(intersectedSymbol) { hashSetOf() }.addAll(symbol.intersections)
                         }
                     }
@@ -118,8 +124,8 @@ object FirJsNameClashClassMembersChecker : FirClassChecker() {
 
             val scope = declaration.symbol.unsubstitutedScope(context)
 
-            addAllSymbolsFrom(scope.collectAllFunctions())
-            addAllSymbolsFrom(scope.collectAllProperties())
+            addAllSymbolsFrom(scope.collectAllFunctions(), context.sessionHolder)
+            addAllSymbolsFrom(scope.collectAllProperties(), context.sessionHolder)
 
             for (callableMemberSymbol in allSymbols) {
                 val overriddenLeaves = scope.collectOverriddenLeaves(callableMemberSymbol)

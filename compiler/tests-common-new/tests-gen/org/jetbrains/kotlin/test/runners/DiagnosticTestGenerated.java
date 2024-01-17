@@ -28505,6 +28505,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("intersectionOverridesIntersection.kt")
+            public void testIntersectionOverridesIntersection() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/intersectionOverridesIntersection.kt");
+            }
+
+            @Test
+            @TestMetadata("intersectionWithSubsumedWithSubstitution.kt")
+            public void testIntersectionWithSubsumedWithSubstitution() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/intersectionWithSubsumedWithSubstitution.kt");
+            }
+
+            @Test
             @TestMetadata("InvisiblePotentialOverride.kt")
             public void testInvisiblePotentialOverride() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/InvisiblePotentialOverride.kt");
