@@ -162,6 +162,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     override val resolvedQualifierCheckers: Set<FirResolvedQualifierChecker>
         get() = setOf(
             FirStandaloneQualifierChecker,
+            FirPackageOnLhsQualifierChecker,
             FirOptInUsageQualifierChecker,
             FirDeprecatedQualifierChecker,
             FirVisibilityQualifierChecker,
