@@ -4953,6 +4953,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("illegal_sharing_with_weak.kt")
+                public void testIllegal_sharing_with_weak() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/objc/illegal_sharing_with_weak.kt");
+                }
+
+                @Test
                 @TestMetadata("kt34467.kt")
                 public void testKt34467() throws Exception {
                     runTest("compiler/testData/codegen/box/cinterop/objc/kt34467.kt");

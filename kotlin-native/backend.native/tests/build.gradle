@@ -1165,10 +1165,6 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.headers "$projectDir/framework/gh3343/objclib.h"
         it.linkerOpts "-lobjcgh3343"
     }
-    createInterop("objc_illegal_sharing_with_weak") {
-      it.defFile 'interop/objc/illegal_sharing_with_weak/objclib.def'
-      it.headers "$projectDir/interop/objc/illegal_sharing_with_weak/objclib.h"
-    }
     createInterop("objcKt43517") {
         it.defFile 'framework/kt43517/kt43517.def'
     }
@@ -1616,13 +1612,6 @@ if (PlatformInfo.isAppleTarget(project)) {
                 UtilsKt.codesign(project, dylibFile.toString())
             }
         }
-    }
-
-    interopTest("interop_objc_illegal_sharing_with_weak") {
-        source = "interop/objc/illegal_sharing_with_weak/main.kt"
-        interop = 'objc_illegal_sharing_with_weak'
-        // Experimental MM supports arbitrary object sharing.
-        outputChecker = { it == "Before\nAfter true\n" }
     }
 
     interopTest("interop_objc_kt42172") {
