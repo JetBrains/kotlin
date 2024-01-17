@@ -147,15 +147,37 @@ class CleanableSoftValueCache<K : Any, V : Any>(
     /**
      * Adds or replaces [value] to/in the cache at the given [key]. Must be called in a read action.
      *
-     * @return The old value that has been replaced, if any. As replacement constitutes removal, the cleaner associated with the value will
-     * be invoked by [put].
+     * As replacement constitutes removal, cleanup will be performed on the replaced value. When the existing value and the new value are
+     * the same (referentially equal), cleanup will not be performed, because the existing value effectively wasn't removed from the cache.
+     *
+     * @return The old value that has been replaced, if any.
      */
     fun put(key: K, value: V): V? {
-        val oldRef = backingMap.put(key, createSoftReference(key, value))
-        oldRef?.performCleanup()
+        // We implement `put` in terms of `backingMap.compute` to avoid creation of a new soft reference when the old and the new value are
+        // referentially equal. A combination of `backingMap.get` and `backingMap.put` would not be atomic, because the existing value
+        // fetched with `backingMap.get` might be outdated by the time we invoke `backingMap.put` based on the `old === new` comparison.
+        // This function's implementation is different from `CleanableSoftValueCache.compute` because `put` needs to return the old value,
+        // not the new value.
+        var oldValue: V? = null
+        var removedRef: SoftReferenceWithCleanup<K, V>? = null
 
+        // See `compute` for additional comments on the implementation, as it is similar to this implementation.
+        backingMap.compute(key) { _, currentRef ->
+            val currentValue = currentRef?.get()
+            oldValue = currentValue
+
+            if (value === currentValue) {
+                return@compute currentRef
+            }
+
+            removedRef = currentRef
+            createSoftReference(key, value)
+        }
+
+        removedRef?.performCleanup()
         processQueue()
-        return oldRef?.get()
+
+        return oldValue
     }
 
     /**
