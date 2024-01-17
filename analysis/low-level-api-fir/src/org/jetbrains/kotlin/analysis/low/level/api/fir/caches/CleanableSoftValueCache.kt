@@ -69,20 +69,74 @@ internal class CleanableSoftValueCache<K : Any, V : Any>(
     operator fun get(key: K): V? = backingMap[key]?.get()
 
     /**
-     * If [key] is currently absent, attempts to add a value computed by [f] to the cache. [f] will not be invoked if [key] is present. Must
-     * be called from a read action.
+     * If [key] is currently absent, attempts to add a value computed by [computeValue] to the cache. [computeValue] is invoked exactly once
+     * if [key] is present, and otherwise never. Must be called in a read action.
      *
-     * The implementation is not atomic with respect to [f], i.e. the value computation may be run concurrently on multiple threads if more
-     * than one thread calls [computeIfAbsent] for the same [key]. The result of [f] may also be ignored. However, the implementation
-     * guarantees that the value eventually returned from [computeIfAbsent] for a given [key] is consistent across all calling threads.
+     * [computeValue] should not modify the cache during computation.
      *
      * @return The already present or newly computed value associated with [key].
      */
-    fun computeIfAbsent(key: K, f: (K) -> V): V {
+    fun computeIfAbsent(key: K, computeValue: (K) -> V): V {
         get(key)?.let { return it }
 
-        val newValue = f(key)
-        putIfAbsent(key, newValue)?.let { return it }
+        return compute(key) { _, currentValue -> currentValue ?: computeValue(key) }
+            ?: error("`computeIfAbsent` should always return a non-null value.")
+    }
+
+    /**
+     * Replaces the current value at [key] with a new value computed by [computeValue]. [computeValue] is invoked exactly once. Must be
+     * called in a read action.
+     *
+     * If the cache already contains a value `v` at [key], cleanup will be performed on it, *unless* the result of the computation is
+     * referentially equal to `v`. This behavior enables computation functions to decide to retain an existing value, without triggering
+     * cleanup.
+     *
+     * [computeValue] should not modify the cache during computation.
+     *
+     * @return The computed value now associated with [key].
+     */
+    fun compute(key: K, computeValue: (K, V?) -> V?): V? {
+        // We need to keep a potentially newly computed value on the stack so that it isn't accidentally garbage-collected before the end of
+        // this function. Without this variable, after `backingMap.compute` and before the end of this function, the soft reference kept in
+        // the cache might be the only reference to the new value. With unlucky GC timing, it might be collected.
+        var newValue: V? = null
+
+        // If we replace an existing reference, we need to clean it up per the contract of the cache.
+        var removedRef: SoftReferenceWithCleanup<K, V>? = null
+
+        val newRef = backingMap.compute(key) { _, currentRef ->
+            // If `currentRef` exists but its value is `null`, to the outside it will look like no value existed in the cache. It will be
+            // cleaned up at the end of `compute`.
+            val currentValue = currentRef?.get()
+            newValue = computeValue(key, currentValue)
+
+            when {
+                newValue == null -> {
+                    removedRef = currentRef
+                    null
+                }
+
+                // Avoid creating another soft reference for the same value, for example if `f` doesn't need to change the cached value,
+                // though it isn't necessary for correct functioning of the cache. If there are multiple soft references for the same value,
+                // they will all remain valid until the value itself is garbage-collected. Cleanup in `processQueue` will be performed once
+                // for each such soft reference, which will result in multiple cleanup calls. This is legal given the contract of
+                // `SoftValueCleaner`, but wasteful and thus best to avoid. Also, we shouldn't clean up such a reference, as per the
+                // contract of the `compute` function.
+                newValue === currentValue -> currentRef
+
+                else -> {
+                    removedRef = currentRef
+                    createSoftReference(key, newValue!!)
+                }
+            }
+        }
+
+        removedRef?.performCleanup()
+        processQueue()
+
+        require(newRef?.get() === newValue) {
+            "The newly computed value was already garbage-collected before the end of the `compute` function."
+        }
 
         return newValue
     }
@@ -111,37 +165,6 @@ internal class CleanableSoftValueCache<K : Any, V : Any>(
 
         processQueue()
         return ref?.get()
-    }
-
-    /**
-     * Adds [value] to the cache at the given [key] if no value exists. Must be called in a read action.
-     *
-     * @return The present value associated with [key], or `null` if it was absent.
-     */
-    fun putIfAbsent(key: K, value: V): V? {
-        val newRef = createSoftReference(key, value)
-        while (true) {
-            val currentRef = backingMap.putIfAbsent(key, newRef)
-            processQueue()
-            if (currentRef == null) return null
-
-            // If `currentRef` exists but its value has already been collected, to the outside it should look like no value existed in the
-            // cache and `putIfAbsent` should succeed.
-            val currentValue = currentRef.get()
-            if (currentValue == null) {
-                val wasReplaced = backingMap.replace(key, currentRef, newRef)
-                if (wasReplaced) {
-                    // In most cases, `processQueue` will probably already have invoked the ref's cleaner. However, if the referent is
-                    // collected between `processQueue()` and `currentRef.get()`, it won't have been cleaned yet, and we can invoke the
-                    // cleaner here. The reference will later be processed by `processQueue`, but that is fine because cleaners can be
-                    // invoked multiple times.
-                    currentRef.performCleanup()
-                    return null
-                }
-            } else {
-                return currentValue
-            }
-        }
     }
 
     /**
