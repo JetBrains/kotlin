@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android.checker
 
-import com.android.build.gradle.api.AndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
@@ -13,7 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfo
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
-import org.jetbrains.kotlin.gradle.utils.androidExtension
+import org.jetbrains.kotlin.gradle.utils.*
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.relativeTo
 
@@ -28,7 +27,7 @@ internal object MultiplatformLayoutV2MultiplatformLayoutV1StyleSourceDirUsageChe
         target: KotlinAndroidTarget,
         layout: KotlinAndroidSourceSetLayout,
         kotlinSourceSet: KotlinSourceSet,
-        androidSourceSet: AndroidSourceSet
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
     ) {
         val v1kotlinSourceSetName = multiplatformAndroidSourceSetLayoutV1.naming.kotlinSourceSetName(
             target.disambiguationClassifier, androidSourceSet.name, kotlinSourceSet.androidSourceSetInfo.androidVariantType
