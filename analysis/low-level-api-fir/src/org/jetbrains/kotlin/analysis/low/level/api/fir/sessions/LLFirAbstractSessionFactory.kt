@@ -116,11 +116,11 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
-            registerIdeComponents(project)
-            registerCommonComponents(languageVersionSettings)
+            registerAllCommonComponents(languageVersionSettings)
+
             registerCommonComponentsAfterExtensionsAreConfigured()
             registerJavaComponents(JavaModuleResolver.getInstance(project))
-            registerResolveComponents()
+
 
             val provider = LLFirProvider(
                 this,
@@ -197,12 +197,11 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
-            registerIdeComponents(project)
-            registerCommonComponents(languageVersionSettings)
+            registerAllCommonComponents(languageVersionSettings)
+
             registerCommonComponentsAfterExtensionsAreConfigured()
             registerJavaComponents(JavaModuleResolver.getInstance(project))
-            registerResolveComponents()
-            registerDefaultComponents()
+
 
             val ktFile = module.file as? KtFile
 
@@ -268,10 +267,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
-            registerIdeComponents(project)
-            registerCommonComponents(languageVersionSettings)
-            registerResolveComponents()
-            registerDefaultComponents()
+            registerAllCommonComponents(languageVersionSettings)
 
             val firProvider = LLFirProvider(
                 this,
@@ -357,11 +353,8 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
-            registerIdeComponents(project)
-            registerCommonComponents(languageVersionSettings)
+            registerAllCommonComponents(languageVersionSettings)
             registerCommonComponentsAfterExtensionsAreConfigured()
-            registerResolveComponents()
-            registerDefaultComponents()
 
             val firProvider = LLFirProvider(
                 this,
@@ -490,10 +483,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
-            registerIdeComponents(project)
-            registerCommonComponents(languageVersionSettings)
-            registerResolveComponents()
-            registerDefaultComponents()
+            registerAllCommonComponents(languageVersionSettings)
 
             val firProvider = LLFirProvider(
                 this,
@@ -634,6 +624,13 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
     private fun createModuleData(session: LLFirSession): LLFirModuleData {
         return LLFirModuleData(session)
+    }
+
+    private fun LLFirSession.registerAllCommonComponents(languageVersionSettings: LanguageVersionSettings) {
+        registerIdeComponents(project)
+        registerCommonComponents(languageVersionSettings)
+        registerResolveComponents()
+        registerDefaultComponents()
     }
 
     /**
