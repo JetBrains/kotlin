@@ -4,7 +4,6 @@
  */
 // TARGET_BACKEND: NATIVE
 // NATIVE_STANDALONE
-// FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative
 // MODULE: cinterop
 // FILE: threadStates.def
 language = C

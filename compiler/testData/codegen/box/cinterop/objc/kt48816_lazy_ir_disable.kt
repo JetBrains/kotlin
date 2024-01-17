@@ -1,3 +1,29 @@
+// TARGET_BACKEND: NATIVE
+// DISABLE_NATIVE: isAppleTarget=false
+// Without a fix, fails in two-stage mode.
+// The bug was accidentally fixed with lazy IR for caches, so testing it with this feature disabled:
+// FREE_COMPILER_ARGS: -Xlazy-ir-for-caches=disable
+
+// MODULE: cinterop
+// FILE: objclib.def
+language = Objective-C
+headers = objclib.h
+headerFilter = objclib.h **/NSObject.h **/NSDate.h **/NSUUID.h
+
+// FILE: objclib.h
+#import <Foundation/NSObject.h>
+#import <Foundation/NSDate.h>
+#import <Foundation/NSUUID.h>
+
+@interface MyClass1 : NSObject
+@end
+
+@interface MyClass2 : NSObject
+@end
+
+// MODULE: main(cinterop)
+// FILE: main.kt
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 import kotlin.reflect.*
 import kotlin.test.*
 import objclib.*
@@ -45,7 +71,8 @@ fun test2() {
     assertNull(usage.getValue(Property<MyClass2>()))
 }
 
-fun main() {
+fun box(): String {
     test1()
     test2()
+    return "OK"
 }

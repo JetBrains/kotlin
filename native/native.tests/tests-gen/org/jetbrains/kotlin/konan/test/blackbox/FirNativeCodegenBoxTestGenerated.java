@@ -5075,6 +5075,18 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
                 }
 
                 @Test
+                @TestMetadata("kt48816_lazy_ir_disable.kt")
+                public void testKt48816_lazy_ir_disable() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/objc/kt48816_lazy_ir_disable.kt");
+                }
+
+                @Test
+                @TestMetadata("kt48816_lazy_ir_enable.kt")
+                public void testKt48816_lazy_ir_enable() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/objc/kt48816_lazy_ir_enable.kt");
+                }
+
+                @Test
                 @TestMetadata("kt53151.kt")
                 public void testKt53151() throws Exception {
                     runTest("compiler/testData/codegen/box/cinterop/objc/kt53151.kt");

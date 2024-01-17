@@ -4,7 +4,6 @@
  */
 // TARGET_BACKEND: NATIVE
 // NATIVE_STANDALONE
-// FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative
 @file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class, kotlinx.cinterop.ExperimentalForeignApi::class)
 
 import kotlin.native.runtime.Debugging
