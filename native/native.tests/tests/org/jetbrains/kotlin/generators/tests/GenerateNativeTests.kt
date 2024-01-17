@@ -86,6 +86,7 @@ fun main() {
                 annotations = listOf(
                     *frontendFir(),
                     xctest(),
+                    testTimeout("10m"),
                     disabledWithoutXCTest("**.kt"),
                     provider<UseExtTestCaseGroupProvider>()
                 )
@@ -543,6 +544,12 @@ private fun TestGroup.disabledWithoutXCTest(vararg unexpandedPaths: String): Ann
         "propertyValue" to "" // if it's not set
     )
 }
+
+private fun testTimeout(value: String) = annotation(
+    EnforcedProperty::class.java,
+    "property" to ClassLevelProperty.EXECUTION_TIMEOUT,
+    "propertyValue" to value
+)
 
 private fun frontendFir() = arrayOf(
     annotation(Tag::class.java, "frontend-fir"),
