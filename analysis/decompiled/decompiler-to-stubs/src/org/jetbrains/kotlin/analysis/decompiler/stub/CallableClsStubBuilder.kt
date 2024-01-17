@@ -26,12 +26,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
-import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -55,14 +53,14 @@ fun createDeclarationsStubs(
     propertyProtos: List<ProtoBuf.Property>,
 ) {
     for (propertyProto in propertyProtos) {
-        if (mustNotBeWrittenToStubs(propertyProto.flags, outerContext.nameResolver.getName(propertyProto.name))) {
+        if (mustNotBeWrittenToStubs(propertyProto.flags, outerContext.nameResolver.getName(propertyProto.name), protoContainer)) {
             continue
         }
 
         PropertyClsStubBuilder(parentStub, outerContext, protoContainer, propertyProto).build()
     }
     for (functionProto in functionProtos) {
-        if (mustNotBeWrittenToStubs(functionProto.flags, outerContext.nameResolver.getName(functionProto.name))) {
+        if (mustNotBeWrittenToStubs(functionProto.flags, outerContext.nameResolver.getName(functionProto.name), protoContainer)) {
             continue
         }
 
@@ -90,15 +88,27 @@ fun createConstructorStub(
     ConstructorClsStubBuilder(parentStub, outerContext, protoContainer, constructorProto).build()
 }
 
-private fun mustNotBeWrittenToStubs(flags: Int, name: Name): Boolean {
+/**
+ * @see org.jetbrains.kotlin.analysis.decompiler.psi.text.mustNotBeWrittenToDecompiledText
+ */
+private fun mustNotBeWrittenToStubs(flags: Int, name: Name, protoContainer: ProtoContainer): Boolean {
     return when (Flags.MEMBER_KIND.get(flags)) {
         MemberKind.FAKE_OVERRIDE -> true
         //TODO: fix decompiler to use sane criteria
-        MemberKind.SYNTHESIZED -> !DataClassResolver.isComponentLike(name) && name !in listOf(
-            OperatorNameConventions.EQUALS,
-            StandardNames.HASHCODE_NAME,
-            OperatorNameConventions.TO_STRING
-        )
+        MemberKind.SYNTHESIZED -> syntheticMemberMustNotBeWrittenToStubs(name, protoContainer)
+        else -> false
+    }
+}
+
+private fun syntheticMemberMustNotBeWrittenToStubs(name: Name, protoContainer: ProtoContainer): Boolean {
+    val containingClass = protoContainer as? ProtoContainer.Class ?: return false
+
+    return when {
+        containingClass.isData && containingClass.kind != ProtoBuf.Class.Kind.OBJECT -> {
+            // we want to materialize every synthetic data class function except for the 'copy' (for historical reasons)
+            name == StandardNames.DATA_CLASS_COPY
+        }
+
         else -> false
     }
 }
