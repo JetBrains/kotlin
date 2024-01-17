@@ -27,8 +27,8 @@ fun foo() {
     x.add(bar())
     x.add("")
 
-    x[0] = null
-    x[0] = bar()
+    x[0] = <!NULL_FOR_NONNULL_TYPE!>null<!>
+    x[0] = <!ARGUMENT_TYPE_MISMATCH!>bar()<!>
     x[0] = ""
 
     val b1: MutableList<String?> = <!INITIALIZER_TYPE_MISMATCH!>x<!>

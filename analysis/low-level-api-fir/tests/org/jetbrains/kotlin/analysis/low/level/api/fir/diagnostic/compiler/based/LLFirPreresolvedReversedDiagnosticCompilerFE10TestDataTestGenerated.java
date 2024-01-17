@@ -346,6 +346,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("duplicateDefaultValuesSubsumedIntersection.kt")
+        public void testDuplicateDefaultValuesSubsumedIntersection() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/duplicateDefaultValuesSubsumedIntersection.kt");
+        }
+
+        @Test
         @TestMetadata("duplicateDirrectOverriddenCallables.kt")
         public void testDuplicateDirrectOverriddenCallables() throws Exception {
             runTest("compiler/testData/diagnostics/tests/duplicateDirrectOverriddenCallables.kt");
@@ -28699,6 +28705,36 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("intersectionOfAbstractAndOpen.kt")
+            public void testIntersectionOfAbstractAndOpen() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/intersectionOfAbstractAndOpen.kt");
+            }
+
+            @Test
+            @TestMetadata("intersectionOfSubstitutedProperties.kt")
+            public void testIntersectionOfSubstitutedProperties() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/intersectionOfSubstitutedProperties.kt");
+            }
+
+            @Test
+            @TestMetadata("intersectionOverrideWithSubsumedDifferentType.kt")
+            public void testIntersectionOverrideWithSubsumedDifferentType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/intersectionOverrideWithSubsumedDifferentType.kt");
+            }
+
+            @Test
+            @TestMetadata("intersectionOverridesIntersection.kt")
+            public void testIntersectionOverridesIntersection() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/intersectionOverridesIntersection.kt");
+            }
+
+            @Test
+            @TestMetadata("intersectionWithSubsumedWithSubstitution.kt")
+            public void testIntersectionWithSubsumedWithSubstitution() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/intersectionWithSubsumedWithSubstitution.kt");
+            }
+
+            @Test
             @TestMetadata("InvisiblePotentialOverride.kt")
             public void testInvisiblePotentialOverride() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/InvisiblePotentialOverride.kt");
@@ -28963,6 +28999,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 @TestMetadata("genericWithUpperBound.kt")
                 public void testGenericWithUpperBound() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/genericWithUpperBound.kt");
+                }
+
+                @Test
+                @TestMetadata("intersectionReturnTypeMismatchSubsumed.kt")
+                public void testIntersectionReturnTypeMismatchSubsumed() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/intersectionReturnTypeMismatchSubsumed.kt");
                 }
 
                 @Test

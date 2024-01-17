@@ -939,62 +939,12 @@ KtFunctionSymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
-    contextReceivers: []
-    isExtension: false
-    name: field
-    origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(kotlin/collections/List.size)
-    receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
-      type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
-    getContainingFileSymbol: null
-    getContainingJvmClassName: kotlin.collections.List
-    getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
-    deprecationStatus: null
-  callableIdIfNonLocal: kotlin/collections/List.size
+  backingFieldSymbol: null
+  callableIdIfNonLocal: kotlin/collections/MutableList.size
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
-    contextReceivers: []
-    hasBody: false
-    hasStableParameterNames: true
-    isDefault: true
-    isExtension: false
-    isInline: false
-    isOverride: false
-    modality: ABSTRACT
-    origin: LIBRARY
-    receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
-      type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
-    valueParameters: []
-    visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: [
-        KtTypeParameterType:
-          annotationsList: []
-          type: E
-      ]
-      type: kotlin/collections/List<E>
-    getContainingFileSymbol: null
-    getContainingJvmClassName: kotlin.collections.List
-    getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
-    deprecationStatus: null
+  getter: null
   hasBackingField: false
-  hasGetter: true
+  hasGetter: false
   hasSetter: false
   initializer: null
   isActual: false
@@ -1009,7 +959,7 @@ KtKotlinPropertySymbol:
   isVal: true
   modality: ABSTRACT
   name: size
-  origin: LIBRARY
+  origin: INTERSECTION_OVERRIDE
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
@@ -1026,9 +976,9 @@ KtKotlinPropertySymbol:
         annotationsList: []
         type: E
     ]
-    type: kotlin/collections/List<E>
+    type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin.collections.List
+  getContainingJvmClassName: kotlin.collections.MutableList
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -1038,7 +988,7 @@ KtKotlinPropertySymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.isEmpty
+  callableIdIfNonLocal: kotlin/collections/MutableList.isEmpty
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1055,7 +1005,7 @@ KtFunctionSymbol:
   isSuspend: false
   modality: ABSTRACT
   name: isEmpty
-  origin: LIBRARY
+  origin: INTERSECTION_OVERRIDE
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
@@ -1072,9 +1022,9 @@ KtFunctionSymbol:
         annotationsList: []
         type: E
     ]
-    type: kotlin/collections/List<E>
+    type: kotlin/collections/MutableList<E>
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin.collections.List
+  getContainingJvmClassName: kotlin.collections.MutableList
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1097,7 +1047,7 @@ KtFunctionSymbol:
   isSuspend: false
   modality: ABSTRACT
   name: contains
-  origin: SUBSTITUTION_OVERRIDE
+  origin: INTERSECTION_OVERRIDE
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
@@ -1118,7 +1068,7 @@ KtFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: element
-      origin: SUBSTITUTION_OVERRIDE
+      origin: INTERSECTION_OVERRIDE
       receiverParameter: null
       returnType: KtTypeParameterType:
         annotationsList: []
@@ -1209,7 +1159,7 @@ KtFunctionSymbol:
   isSuspend: false
   modality: ABSTRACT
   name: containsAll
-  origin: SUBSTITUTION_OVERRIDE
+  origin: INTERSECTION_OVERRIDE
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
@@ -1230,7 +1180,7 @@ KtFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: elements
-      origin: SUBSTITUTION_OVERRIDE
+      origin: INTERSECTION_OVERRIDE
       receiverParameter: null
       returnType: KtUsualClassType:
         annotationsList: []
