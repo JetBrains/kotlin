@@ -327,7 +327,7 @@ internal class ReflectiveAccessLowering(
         arguments.addAll(call.getValueArguments())
 
         return generateReflectiveMethodInvocation(
-            call.superQualifierSymbol?.defaultType ?: call.symbol.owner.resolveFakeOverrideOrFail().parentAsClass.defaultType,
+            getDeclaredClassType(call),
             call.symbol.owner.name.asString(),
             parameterTypes,
             call.dispatchReceiver,
@@ -449,8 +449,12 @@ internal class ReflectiveAccessLowering(
             }
         }
 
-        return call.dispatchReceiver!!.type to call.dispatchReceiver!!
+        val type = getDeclaredClassType(call)
+        return type to call.dispatchReceiver!!
     }
+
+    private fun getDeclaredClassType(call: IrCall) =
+        call.superQualifierSymbol?.defaultType ?: call.symbol.owner.resolveFakeOverrideOrFail().parentAsClass.defaultType
 
     private fun generateReflectiveAccessForGetter(call: IrCall): IrExpression {
         val getter = call.symbol.owner
