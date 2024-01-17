@@ -1,17 +1,14 @@
 import com.github.gradle.node.npm.task.NpmTask
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import java.io.FileOutputStream
 
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
     alias(libs.plugins.gradle.node)
     idea
 }
 
-description = "Kotlin-test integration tests for JS IR"
+description = "Kotlin-test integration tests for JS"
 
 node {
     version.set(nodejsVersion)
@@ -22,10 +19,8 @@ idea {
     module.excludeDirs.add(file("node_modules"))
 }
 
-val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures)
-
 kotlin {
-    js(IR) {
+    js {
         nodejs {
             testTask {
                 enabled = false
@@ -34,17 +29,18 @@ kotlin {
     }
 
     sourceSets {
-
-    }
-}
-
-val nodeModules by configurations.registering {
-    extendsFrom(configurations["api"])
-    attributes {
-        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
-        attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
-        attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+        val jsMain by getting {
+            kotlin.srcDir("src/main/kotlin")
+            dependencies {
+                implementation(project(":kotlin-stdlib"))
+            }
+        }
+        val jsTest by getting {
+            kotlin.srcDir("src/test/kotlin")
+            dependencies {
+                implementation(project(":kotlin-test"))
+            }
+        }
     }
 }
 
@@ -54,18 +50,7 @@ val compileTestDevelopmentExecutableKotlinJs = tasks.named<KotlinJsIrLink>("comp
 
 val populateNodeModules = tasks.register<Copy>("populateNodeModules") {
     dependsOn("compileTestDevelopmentExecutableKotlinJs")
-    dependsOn(nodeModules)
     from(compileTestDevelopmentExecutableKotlinJs.map { it.destinationDirectory })
-
-    from {
-        nodeModules.get().map {
-            // WORKAROUND: Some JS IR jars were absent and caused this task to fail.
-            // They don't contain .js thus we can skip them.
-            if (it.exists()) {
-                zipTree(it.absolutePath).matching { include("*.js") }
-            } else it
-        }
-    }
 
     into(layout.buildDirectory.dir("node_modules"))
 }
@@ -116,8 +101,3 @@ val frameworkTests = listOf(
 tasks.check {
     frameworkTests.forEach { dependsOn(it) }
 }
-
-dependencies {
-    api(project(":kotlin-test"))
-}
-
