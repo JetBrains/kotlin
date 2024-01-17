@@ -11,8 +11,8 @@ public class J {
 // MODULE: app(lib)
 fun isCast() {
     if (J.staticFinalJava is String) {
-        J.staticFinalJava.length
-        (J.staticFinalJava <!USELESS_CAST!>as String<!>).length
+        <!SMARTCAST_IMPOSSIBLE!>J.staticFinalJava<!>.length
+        (J.staticFinalJava as String).length
     }
 
     if (J.staticNonFinalJava is String) {
@@ -23,7 +23,7 @@ fun isCast() {
 
 fun asCast() {
     J.staticFinalJava as String
-    J.staticFinalJava.length
+    <!SMARTCAST_IMPOSSIBLE!>J.staticFinalJava<!>.length
 
     J.staticNonFinalJava as String
     <!SMARTCAST_IMPOSSIBLE!>J.staticNonFinalJava<!>.length
