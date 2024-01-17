@@ -634,7 +634,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
             ":tools:kotlin-stdlib-gen",
 
             ":kotlin-test",
-            ":kotlin-test:kotlin-test-js-ir:kotlin-test-js-ir-it",
+            ":kotlin-test:kotlin-test-js-it",
             ":native:native.tests"
 
     project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
@@ -652,7 +652,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
     project(':tools:ide-plugin-dependencies-validator').projectDir = "$rootDir/libraries/tools/ide-plugin-dependencies-validator" as File
 
     project(':kotlin-test').projectDir = "$rootDir/libraries/kotlin.test" as File
-    project(':kotlin-test:kotlin-test-js-ir:kotlin-test-js-ir-it').projectDir = "$rootDir/libraries/kotlin.test/js-ir/it" as File
+    project(':kotlin-test:kotlin-test-js-it').projectDir = "$rootDir/libraries/kotlin.test/js/it" as File
     project(':native:native.tests').projectDir = "$rootDir/native/native.tests" as File
 }
 include ":compiler:android-tests"

@@ -8,6 +8,7 @@ import java.io.FileOutputStream
 plugins {
     kotlin("js")
     alias(libs.plugins.gradle.node)
+    idea
 }
 
 description = "Kotlin-test integration tests for JS IR"
@@ -17,14 +18,8 @@ node {
     download.set(true)
 }
 
-val jsMainSources by task<Sync> {
-    from("$rootDir/libraries/kotlin.test/js/it/src")
-    into(layout.buildDirectory.dir("jsMainSources"))
-}
-
-val jsSources by task<Sync> {
-    from("$rootDir/libraries/kotlin.test/js/it/js")
-    into(layout.buildDirectory.dir("jsSources"))
+idea {
+    module.excludeDirs.add(file("node_modules"))
 }
 
 val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures)
@@ -32,16 +27,14 @@ val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures
 kotlin {
     js(IR) {
         nodejs {
-            testTask(Action {
+            testTask {
                 enabled = false
-            })
+            }
         }
     }
 
     sourceSets {
-        named("test") {
-            kotlin.srcDir(jsMainSources.get().destinationDir)
-        }
+
     }
 }
 
@@ -56,7 +49,7 @@ val nodeModules by configurations.registering {
 }
 
 val compileTestDevelopmentExecutableKotlinJs = tasks.named<KotlinJsIrLink>("compileTestDevelopmentExecutableKotlinJs") {
-    compilerOptions.moduleName = "kotlin-kotlin-test-js-ir-it-test"
+    compilerOptions.moduleName = "kotlin-kotlin-test-js-it-test"
 }
 
 val populateNodeModules = tasks.register<Copy>("populateNodeModules") {
@@ -128,7 +121,3 @@ dependencies {
     api(project(":kotlin-test"))
 }
 
-tasks.named("compileTestKotlinJs") {
-    dependsOn(jsMainSources)
-    dependsOn(jsSources)
-}
