@@ -213,7 +213,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
                 // If fully qualified, check that given package name matches the resolved one.
                 val segments = generateSequence(receiver.explicitReceiver) { (it as? FirQualifiedAccessExpression)?.explicitReceiver }
-                    .mapNotNull { (it.calleeReference as? FirSimpleNamedReference)?.name?.identifier }
+                    .mapNotNull { (it.toReference() as? FirSimpleNamedReference)?.name?.identifier }
                     .toList()
 
                 if (segments.isNotEmpty() && FqName.fromSegments(segments.asReversed()) != symbol.classId.packageFqName) {

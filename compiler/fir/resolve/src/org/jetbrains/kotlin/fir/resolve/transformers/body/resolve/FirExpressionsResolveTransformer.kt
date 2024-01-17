@@ -591,7 +591,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         val generator = GeneratorOfPlusAssignCalls(
             assignmentOperatorStatement,
-            assignmentOperatorStatement.calleeReference?.source,
+            assignmentOperatorStatement.toReference()?.source,
             operation,
             leftArgument,
             rightArgument

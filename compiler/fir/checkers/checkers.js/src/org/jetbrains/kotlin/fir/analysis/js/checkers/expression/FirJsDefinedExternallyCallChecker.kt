@@ -15,13 +15,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isPredefinedObject
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.toReference
 import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
 object FirJsDefinedExternallyCallChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        val symbol = expression.calleeReference?.toResolvedCallableSymbol() ?: return
+        val symbol = expression.toReference()?.toResolvedCallableSymbol() ?: return
 
         if (symbol.callableId !in JsStandardClassIds.Callables.definedExternallyPropertyNames) {
             return

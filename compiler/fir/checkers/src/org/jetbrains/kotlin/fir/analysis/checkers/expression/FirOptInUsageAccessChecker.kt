@@ -28,7 +28,7 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Com
 
         if (expression.isLhsOfAssignment(context)) return
 
-        val resolvedSymbol = expression.calleeReference?.toResolvedBaseSymbol() ?: return
+        val resolvedSymbol = expression.toReference()?.toResolvedBaseSymbol() ?: return
 
         with(FirOptInUsageBaseChecker) {
             when {

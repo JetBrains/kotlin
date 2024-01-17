@@ -35,7 +35,7 @@ internal fun mapAnnotationParameters(annotation: FirAnnotation): Map<Name, FirEx
         withClassEntry("annotationTypeRef", annotation.annotationTypeRef)
         @OptIn(UnresolvedExpressionTypeAccess::class)
         withClassEntry("coneTypeOrNull", annotation.coneTypeOrNull)
-        annotation.calleeReference?.let { withClassEntry("calleeReference", it) }
+        annotation.toReference()?.let { withClassEntry("calleeReference", it) }
     }
 
     return annotation.argumentMapping.mapping.mapKeys { (name, _) -> name }

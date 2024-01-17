@@ -785,7 +785,7 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
     }
 
     private fun FirElement.isSuperCall(): Boolean =
-        this is FirQualifiedAccessExpression && explicitReceiver?.calleeReference is FirSuperReference
+        this is FirQualifiedAccessExpression && explicitReceiver?.toReference() is FirSuperReference
 
     private fun FirCallableSymbol<*>.isHidden(isSuperCall: Boolean): Boolean {
         val fir = fir

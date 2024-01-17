@@ -222,7 +222,7 @@ internal class KtFirExpressionTypeProvider(
         val (ktCallElement, argumentExpression) = expression.getFunctionCallAsWithThisAsParameter() ?: return null
         val firCall = ktCallElement.getOrBuildFir(firResolveSession)?.unwrapSafeCall() as? FirCall ?: return null
 
-        val callee = (firCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
+        val callee = (firCall.toReference() as? FirResolvedNamedReference)?.resolvedSymbol
         if (callee?.fir?.origin == FirDeclarationOrigin.SamConstructor) {
             val substitutor = (firCall as? FirQualifiedAccessExpression)
                 ?.createConeSubstitutorFromTypeArguments(discardErrorTypes = true)

@@ -1021,7 +1021,7 @@ class CallAndReferenceGenerator(
                 putValueArgument(valueParameters.indexOf(parameter) + contextReceiverCount, irArgument)
             }
             if (visitor.annotationMode) {
-                val function = call.calleeReference?.toResolvedCallableSymbol()?.fir as? FirFunction
+                val function = call.toReference()?.toResolvedCallableSymbol()?.fir as? FirFunction
                 for ((index, parameter) in valueParameters.withIndex()) {
                     if (parameter.isVararg && !argumentMapping.containsValue(parameter)) {
                         val value = if (function?.itOrExpectHasDefaultParameterValue(index) == true) {
@@ -1132,7 +1132,7 @@ class CallAndReferenceGenerator(
             irConversionFunction: IrSimpleFunctionSymbol,
         ): IrExpression {
             return if (argument.isIntegerLiteralOrOperatorCall() ||
-                argument.calleeReference?.toResolvedCallableSymbol()?.let {
+                argument.toReference()?.toResolvedCallableSymbol()?.let {
                     it.resolvedStatus.isConst && it.isMarkedWithImplicitIntegerCoercion
                 } == true
             ) {

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.calleeReference
+import org.jetbrains.kotlin.fir.expressions.toReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
@@ -138,7 +138,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
      */
     private fun OverloadCandidate.preserveCalleeInapplicability() {
         val callSite = candidate.callInfo.callSite
-        val calleeReference = callSite.calleeReference as? FirDiagnosticHolder ?: return
+        val calleeReference = callSite.toReference() as? FirDiagnosticHolder ?: return
         val diagnostic = calleeReference.diagnostic as? ConeInapplicableCandidateError ?: return
         if (diagnostic.applicability != CandidateApplicability.INAPPLICABLE) return
 

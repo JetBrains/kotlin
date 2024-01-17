@@ -39,7 +39,7 @@ object FirJvmProtectedInSuperClassCompanionCallChecker : FirBasicExpressionCheck
         } ?: return
 
         val dispatchClassSymbol = dispatchReceiver.resolvedType.toRegularClassSymbol(context.session) ?: return
-        val calleeReference = expression.calleeReference
+        val calleeReference = expression.toReference()
         val resolvedSymbol = calleeReference?.toResolvedCallableSymbol() ?: return
 
         val visibility = if (resolvedSymbol is FirPropertySymbol) {

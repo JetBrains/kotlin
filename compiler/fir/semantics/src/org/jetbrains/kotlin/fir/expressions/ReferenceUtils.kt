@@ -11,8 +11,13 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
-fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
-    return toReference()?.resolved
+fun FirElement.toReference(): FirReference? {
+    return when (this) {
+        is FirExpression -> toReference()
+        is FirVariableAssignment -> calleeReference
+        is FirResolvable -> calleeReference
+        else -> null
+    }
 }
 
 fun FirExpression.toReference(): FirReference? {
@@ -25,11 +30,12 @@ fun FirExpression.toReference(): FirReference? {
     }
 }
 
+val FirVariableAssignment.calleeReference: FirReference? get() = lValue.toReference()
+
+fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
+    return toReference()?.resolved
+}
+
 fun FirExpression.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
     return toResolvedCallableReference()?.resolvedSymbol as? FirCallableSymbol<*>?
 }
-
-val FirElement.calleeReference: FirReference?
-    get() = (this as? FirResolvable)?.calleeReference ?: (this as? FirVariableAssignment)?.calleeReference
-
-val FirVariableAssignment.calleeReference: FirReference? get() = lValue.toReference()
