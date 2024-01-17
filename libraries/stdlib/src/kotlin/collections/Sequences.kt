@@ -34,7 +34,7 @@ public fun <T> Iterator<T>.asSequence(): Sequence<T> = Sequence { this }.constra
  *
  * @sample samples.collections.Sequences.Building.sequenceOfValues
  */
-public fun <T> sequenceOf(vararg elements: T): Sequence<T> = if (elements.isEmpty()) emptySequence() else elements.asSequence()
+public fun <T> sequenceOf(vararg elements: T): Sequence<T> = elements.asSequence()
 
 /**
  * Returns an empty sequence.

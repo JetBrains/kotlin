@@ -41,7 +41,7 @@ public fun <T> emptySet(): Set<T> = EmptySet
  * The returned set is serializable (JVM).
  * @sample samples.collections.Collections.Sets.readOnlySet
  */
-public fun <T> setOf(vararg elements: T): Set<T> = if (elements.size > 0) elements.toSet() else emptySet()
+public fun <T> setOf(vararg elements: T): Set<T> = elements.toSet()
 
 /**
  * Returns a new read-only set containing only the specified object [element].
