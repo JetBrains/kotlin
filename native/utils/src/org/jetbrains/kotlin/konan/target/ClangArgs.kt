@@ -94,15 +94,8 @@ sealed class ClangArgs(
         val targetString: String = when {
             argsForWindowsJni -> "x86_64-pc-windows-msvc"
             configurables is AppleConfigurables -> {
-                val osVersionMin = when (target) {
-                    // Here we workaround Clang 8 limitation: macOS major version should be 10.
-                    // So we compile runtime with version 10.16 and then override version in BitcodeCompiler.
-                    // TODO: Fix with LLVM Update.
-                    KonanTarget.MACOS_ARM64 -> "10.16"
-                    else -> configurables.osVersionMin
-                }
                 targetTriple.copy(
-                        os = "${targetTriple.os}$osVersionMin"
+                        os = "${targetTriple.os}${configurables.osVersionMin}"
                 ).toString()
             }
             else -> configurables.targetTriple.toString()
