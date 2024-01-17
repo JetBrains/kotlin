@@ -434,7 +434,6 @@ class LiveLiteralTransformTests(useFir: Boolean) : AbstractLiveLiteralTransformT
             import androidx.compose.runtime.*
             import androidx.compose.foundation.layout.*
             import androidx.compose.foundation.text.KeyboardActions
-            import androidx.compose.material.*
 
             object Ui {}
 
@@ -450,6 +449,17 @@ class LiveLiteralTransformTests(useFir: Boolean) : AbstractLiveLiteralTransformT
                     Text("${'$'}keyboardActions2")
                 }
             }
+        """.trimIndent(),
+        extra = """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            public fun Text(
+                text: String,
+                softWrap: Boolean = true,
+                maxLines: Int = Int.MAX_VALUE,
+                minLines: Int = 1,
+            ) {}
         """.trimIndent()
     )
 }

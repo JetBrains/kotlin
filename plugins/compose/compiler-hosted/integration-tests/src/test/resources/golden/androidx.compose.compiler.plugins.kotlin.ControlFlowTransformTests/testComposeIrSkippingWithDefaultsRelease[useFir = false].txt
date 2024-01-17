@@ -6,7 +6,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.*
 
 object Ui {}
 
@@ -61,8 +60,8 @@ fun Ui.UiTextField(isError: Boolean, keyboardActions2: Boolean, %composer: Compo
     println("t41 insideFunction %keyboardActions2")
     Column(null, null, null, { %composer: Composer?, %changed: Int ->
       sourceInformationMarkerStart(%composer, <>, "C<Text("...>,<Text("...>:Test.kt")
-      Text("%isError", null, <unsafe-coerce>(0L), <unsafe-coerce>(0L), null, null, null, <unsafe-coerce>(0L), null, null, <unsafe-coerce>(0L), <unsafe-coerce>(0), false, 0, 0, null, null, %composer, 0, 0, 0b00011111111111111110)
-      Text("%keyboardActions2", null, <unsafe-coerce>(0L), <unsafe-coerce>(0L), null, null, null, <unsafe-coerce>(0L), null, null, <unsafe-coerce>(0L), <unsafe-coerce>(0), false, 0, 0, null, null, %composer, 0, 0, 0b00011111111111111110)
+      Text("%isError", false, 0, 0, %composer, 0, 0b1110)
+      Text("%keyboardActions2", false, 0, 0, %composer, 0, 0b1110)
       sourceInformationMarkerEnd(%composer)
     }, %composer, 0, 0b0111)
     if (isTraceInProgress()) {

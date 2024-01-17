@@ -39,7 +39,6 @@ androidXMultiplatform {
                 implementation(libs.kotlinStdlibCommon)
                 implementation(kotlin("test-junit"))
                 implementation(project(":compose:runtime:runtime"))
-                implementation(project(":compose:ui:ui-util"))
             }
         }
 
@@ -56,9 +55,8 @@ androidXMultiplatform {
                 implementation(libs.protobufLite)
                 implementation(libs.guavaAndroid)
                 implementation(project(":compose:compiler:compiler-hosted"))
-                implementation(projectOrArtifact(":compose:foundation:foundation"))
-                implementation(projectOrArtifact(":compose:material:material"))
-                implementation(projectOrArtifact(":compose:ui:ui"))
+                implementation("androidx.compose.foundation:foundation:1.6.0-beta02")
+                implementation("androidx.compose.ui:ui:1.6.0-beta02")
                 implementation(project(":compose:runtime:runtime"))
                 implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
                 implementation("com.google.dagger:dagger:2.40.1")
@@ -70,8 +68,8 @@ androidXMultiplatform {
             dependencies {
                 implementation(libs.kotlinMetadataJvm)
                 implementation(libs.robolectric)
-                implementation(projectOrArtifact(":activity:activity-ktx"))
-                implementation(projectOrArtifact(":core:core-ktx"))
+                implementation("androidx.activity:activity-ktx:1.9.0-alpha01")
+                implementation("androidx.core:core-ktx:1.13.0-alpha03")
                 runtimeOnly(
                         project(":compose:compiler:compiler-hosted:integration-tests:kotlin-compiler-repackaged")
                 )
