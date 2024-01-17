@@ -36934,6 +36934,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("staticJavaFieldFromOtherModule.kt")
+                public void testStaticJavaFieldFromOtherModule() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/staticJavaFieldFromOtherModule.kt");
+                }
+
+                @Test
+                @TestMetadata("staticJavaFieldFromSameModule.kt")
+                public void testStaticJavaFieldFromSameModule() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/staticJavaFieldFromSameModule.kt");
+                }
+
+                @Test
                 @TestMetadata("varAsUse.kt")
                 public void testVarAsUse() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/variables/varAsUse.kt");
