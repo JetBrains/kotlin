@@ -166,11 +166,11 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       overridden:
         public open fun hashCode (): kotlin.Int declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractList<@[FlexibleNullability] kotlin.String?>
-    FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>, p0:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>, p0:kotlin.collections.Collection<@[EnhancedNullability] kotlin.String>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public open fun containsAll (p0: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.ArrayList?>): kotlin.Boolean declared in java.util.ArrayList
+        public open fun containsAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>
-      VALUE_PARAMETER name:p0 index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
+      VALUE_PARAMETER name:p0 index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.String>
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>) returnType:@[EnhancedNullability] kotlin.String [fake_override]
       overridden:
         public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.ArrayList
@@ -358,11 +358,11 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       overridden:
         public open fun hashCode (): kotlin.Int declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractList<@[FlexibleNullability] kotlin.String?>
-    FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>, p0:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>, p0:kotlin.collections.Collection<@[EnhancedNullability] kotlin.String>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public open fun containsAll (p0: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.ArrayList?>): kotlin.Boolean declared in java.util.ArrayList
+        public open fun containsAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>
-      VALUE_PARAMETER name:p0 index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
+      VALUE_PARAMETER name:p0 index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.String>
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>) returnType:@[EnhancedNullability] kotlin.String [fake_override]
       overridden:
         public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.ArrayList

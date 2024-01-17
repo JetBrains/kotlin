@@ -16044,6 +16044,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fakeOverride/intersectionOverrideBetweenValAndVar.kt");
         }
 
+        @TestMetadata("javaInheritsKotlinIntersectionOverride.kt")
+        public void testJavaInheritsKotlinIntersectionOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/javaInheritsKotlinIntersectionOverride.kt");
+        }
+
         @TestMetadata("kjkWithPackagePrivate.kt")
         public void testKjkWithPackagePrivate() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/kjkWithPackagePrivate.kt");

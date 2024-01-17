@@ -162,26 +162,18 @@ class FirSignatureEnhancement(
             is FirSyntheticProperty -> {
                 val accessorSymbol = firElement.symbol
                 val getterDelegate = firElement.getter.delegate
-                val enhancedGetterSymbol = if (getterDelegate.isJava) {
-                    enhancementsCache.enhancedFunctions.getValue(getterDelegate.symbol, this to getterDelegate.name)
-                } else {
-                    getterDelegate.symbol
-                }
+                val enhancedGetterSymbol = getterDelegate.enhanceAccessorOrNull()
                 val setterDelegate = firElement.setter?.delegate
-                val enhancedSetterSymbol = if (setterDelegate?.isJava == true) {
-                    enhancementsCache.enhancedFunctions.getValue(setterDelegate.symbol, this to setterDelegate.name)
-                } else {
-                    setterDelegate?.symbol
-                }
-                if (!getterDelegate.isJava && setterDelegate?.isJava != true) {
+                val enhancedSetterSymbol = setterDelegate?.enhanceAccessorOrNull()
+                if (enhancedGetterSymbol == null && enhancedSetterSymbol == null) {
                     return original
                 }
                 return buildSyntheticProperty {
                     moduleData = this@FirSignatureEnhancement.moduleData
                     this.name = name
                     symbol = FirJavaOverriddenSyntheticPropertySymbol(accessorSymbol.callableId, accessorSymbol.getterId)
-                    delegateGetter = enhancedGetterSymbol.fir as FirSimpleFunction
-                    delegateSetter = enhancedSetterSymbol?.fir as FirSimpleFunction?
+                    delegateGetter = enhancedGetterSymbol?.fir as FirSimpleFunction? ?: getterDelegate
+                    delegateSetter = enhancedSetterSymbol?.fir as FirSimpleFunction? ?: setterDelegate
                     status = firElement.status
                     deprecationsProvider = getDeprecationsProviderFromAccessors(session, delegateGetter, delegateSetter)
                 }.symbol
@@ -195,19 +187,43 @@ class FirSignatureEnhancement(
         }
     }
 
+    private fun FirSimpleFunction.enhanceAccessorOrNull(): FirFunctionSymbol<*>? {
+        if (!symbol.isEnhanceable()) return null
+        return enhancedFunction(symbol, name)
+    }
+
     @PrivateForInline
     internal fun enhance(
         original: FirFunctionSymbol<*>,
-        name: Name?
+        name: Name?,
     ): FirFunctionSymbol<*> {
-        val firMethod = original.fir
-
-        if (!firMethod.isJava) {
+        if (!original.isEnhanceable()) {
             return original
         }
 
+        val firMethod = original.fir
         val enhancedParameters = enhanceTypeParameterBoundsForMethod(firMethod)
-        return enhanceMethod(firMethod, original.callableId, name, enhancedParameters)
+        return enhanceMethod(firMethod, original.callableId, name, enhancedParameters, original is FirIntersectionOverrideFunctionSymbol)
+    }
+
+    private fun FirCallableSymbol<*>.isEnhanceable(): Boolean {
+        return origin is FirDeclarationOrigin.Java || isEnhanceableIntersection()
+    }
+
+    /**
+     * Intersection overrides with Java and Kotlin overridden symbols need to be enhanced so that we get non-flexible types
+     * in the signature.
+     * This is required for @PurelyImplements to work properly.
+     *
+     * We only enhance intersection overrides if their dispatch receiver is equal to [owner], i.e. we don't enhance inherited
+     * intersection overrides.
+     *
+     * See compiler/testData/codegen/box/fakeOverride/javaInheritsKotlinIntersectionOverride.kt.
+     */
+    private fun FirCallableSymbol<*>.isEnhanceableIntersection(): Boolean {
+        return this is FirIntersectionCallableSymbol &&
+                dispatchReceiverClassLookupTagOrNull() == owner.symbol.toLookupTag() &&
+                unwrapFakeOverrides<FirCallableSymbol<*>>().origin is FirDeclarationOrigin.Enhancement
     }
 
     /**
@@ -219,6 +235,7 @@ class FirSignatureEnhancement(
         methodId: CallableId,
         name: Name?,
         enhancedTypeParameters: List<FirTypeParameterRef>?,
+        isIntersectionOverride: Boolean,
     ): FirFunctionSymbol<*> {
         val predefinedEnhancementInfo =
             SignatureBuildingComponents.signature(
@@ -253,7 +270,7 @@ class FirSignatureEnhancement(
             if (hasReceiver && index == 0) continue
             enhancedValueParameterTypes += enhanceValueParameterType(
                 firMethod, overriddenMembers, hasReceiver,
-                defaultQualifiers, predefinedEnhancementInfo, valueParameter as FirJavaValueParameter,
+                defaultQualifiers, predefinedEnhancementInfo, valueParameter,
                 if (hasReceiver) index - 1 else index
             )
         }
@@ -263,6 +280,8 @@ class FirSignatureEnhancement(
 
         val typeParameterSubstitutionMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
         var typeParameterSubstitutor: ConeSubstitutorByMap? = null
+        val declarationOrigin =
+            if (isIntersectionOverride) FirDeclarationOrigin.IntersectionOverride else FirDeclarationOrigin.Enhancement
 
         val function = when (firMethod) {
             is FirConstructor -> {
@@ -300,7 +319,7 @@ class FirSignatureEnhancement(
                     source = firMethod.source
                     moduleData = this@FirSignatureEnhancement.moduleData
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                    origin = FirDeclarationOrigin.Enhancement
+                    origin = declarationOrigin
                     // TODO: we should set a new origin / containing declaration to type parameters (KT-60440)
                     this.typeParameters += (enhancedTypeParameters ?: firMethod.typeParameters)
                 }
@@ -310,11 +329,15 @@ class FirSignatureEnhancement(
                 FirSimpleFunctionBuilder().apply {
                     source = firMethod.source
                     moduleData = this@FirSignatureEnhancement.moduleData
-                    origin = FirDeclarationOrigin.Enhancement
+                    origin = declarationOrigin
 
                     this.name = name!!
                     status = firMethod.status
-                    symbol = FirNamedFunctionSymbol(methodId).also { functionSymbol = it }
+                    symbol = if (isIntersectionOverride) {
+                        FirIntersectionOverrideFunctionSymbol(methodId, overriddenMembers.map { it.symbol })
+                    } else {
+                        FirNamedFunctionSymbol(methodId)
+                    }.also { functionSymbol = it }
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     typeParameters += (enhancedTypeParameters ?: firMethod.typeParameters).map { typeParameter ->
                         // FirJavaMethod contains only FirTypeParameter so [enhancedTypeParameters] must have the same type
@@ -324,7 +347,7 @@ class FirSignatureEnhancement(
 
                         // TODO: we probably shouldn't build a copy second time. See performFirstRoundOfBoundsResolution (KT-60446)
                         val newTypeParameter = buildTypeParameterCopy(typeParameter) {
-                            origin = FirDeclarationOrigin.Enhancement
+                            origin = declarationOrigin
                             symbol = FirTypeParameterSymbol()
                             containingDeclarationSymbol = functionSymbol
                         }
@@ -372,7 +395,7 @@ class FirSignatureEnhancement(
                     source = valueParameter.source
                     containingFunctionSymbol = functionSymbol
                     moduleData = this@FirSignatureEnhancement.moduleData
-                    origin = FirDeclarationOrigin.Enhancement
+                    origin = declarationOrigin
                     returnTypeRef = enhancedReturnType.withReplacedConeType(
                         typeParameterSubstitutor?.substituteOrNull(enhancedReturnType.coneType)
                     )
@@ -590,7 +613,7 @@ class FirSignatureEnhancement(
         hasReceiver: Boolean,
         defaultQualifiers: JavaTypeQualifiersByElementType?,
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?,
-        ownerParameter: FirJavaValueParameter,
+        ownerParameter: FirValueParameter,
         index: Int
     ): FirResolvedTypeRef {
         return ownerFunction.enhanceValueParameter(
