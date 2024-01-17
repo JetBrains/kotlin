@@ -34,6 +34,12 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/standalone"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @Test
+    @TestMetadata("kt56048.kt")
+    public void testKt56048() throws Exception {
+        runTest("native/native.tests/testData/standalone/kt56048.kt");
+    }
+
     @Nested
     @TestMetadata("native/native.tests/testData/standalone/console")
     @TestDataPath("$PROJECT_ROOT")

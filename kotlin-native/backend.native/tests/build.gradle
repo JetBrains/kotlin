@@ -1180,9 +1180,6 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.defFile 'interop/objc/kt48816/objclib.def'
         it.headers "$projectDir/interop/objc/kt48816/objclib.h"
     }
-    createInterop("objc_kt50648") {
-        it.defFile 'interop/objc/kt50648/objclib.def'
-    }
     createInterop("objc_kt55938") {
         it.defFile 'interop/objc/kt55938/objclib.def'
         it.headers "$projectDir/interop/objc/kt55938/objclib.h"
@@ -1666,16 +1663,6 @@ if (PlatformInfo.isAppleTarget(project)) {
         source = "interop/objc/kt48816/main.kt"
         interop = "objc_kt48816"
         flags = ["-Xlazy-ir-for-caches=enable"]
-    }
-
-    interopTest("interop_objc_kt50648") {
-        source = 'interop/objc/kt50648/main.kt'
-        interop = "objc_kt50648"
-        expectedExitStatusChecker = { it != 0 }
-        outputChecker = {
-            it.contains("Converting Obj-C blocks with non-reference-typed return value to kotlin.Any is not supported (v)") &&
-                    (it.contains("kfun:#main(){}") || project.globalTestArgs.contains('-opt')) // Stacktrace.
-        }
     }
 
     interopTest("interop_objc_kt55938") {
