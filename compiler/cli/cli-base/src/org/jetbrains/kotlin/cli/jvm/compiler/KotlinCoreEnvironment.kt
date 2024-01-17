@@ -27,11 +27,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.PersistentFSConstants
-import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.impl.ZipHandler
+import com.intellij.pom.java.InternalPersistentJavaLanguageLevelReaderService
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.JavaClassSupersImpl
@@ -776,6 +774,8 @@ class KotlinCoreEnvironment private constructor(
                 application.registerService(KotlinBinaryClassCache::class.java, KotlinBinaryClassCache())
                 application.registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
                 application.registerService(TransactionGuard::class.java, TransactionGuardImpl::class.java)
+                application.registerService(VirtualFileSetFactory::class.java, getCompactVirtualFileSetFactory())
+                application.registerService(InternalPersistentJavaLanguageLevelReaderService::class.java, InternalPersistentJavaLanguageLevelReaderService.DefaultImpl())
             }
         }
 
