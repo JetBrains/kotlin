@@ -71,33 +71,35 @@ internal class XcodeProject(private val workDir: Path) {
      */
     @OptIn(ExperimentalPathApi::class)
     fun fetch() {
-        val url = this::class.java.getResource(PROJECT_RESOURCE_PATH)
-            ?: error("The Xcode project resource is missing at $PROJECT_RESOURCE_PATH")
+        synchronized(lock) {
+            val url = this::class.java.getResource(PROJECT_RESOURCE_PATH)
+                ?: error("The Xcode project resource is missing at $PROJECT_RESOURCE_PATH")
 
-        val projectPath = workDir.toAbsolutePath().also {
-            if (it.exists()) {
-                it.deleteRecursively()
-            }
-            it.createDirectory()
-        }
-
-        FileSystems.newFileSystem(url.toURI(), emptyMap<String, Any>()).use {
-            val fsRootPath = it.rootDirectories.singleOrNull()?.root ?: error("Root of the file system attached to $url not found")
-
-            fsRootPath.resolve(PROJECT_RESOURCE_PATH).visitFileTree {
-                onPreVisitDirectory { directory, _ ->
-                    val destination = projectPath.resolveRelativeToRoot(directory)
-                    if (!destination.exists()) {
-                        destination.createDirectory()
-                    }
-
-                    FileVisitResult.CONTINUE
+            val projectPath = workDir.toAbsolutePath().also {
+                if (it.exists()) {
+                    it.deleteRecursively()
                 }
-                onVisitFile { file, _ ->
-                    val destination = projectPath.resolveRelativeToRoot(file)
-                    file.copyTo(destination)
+                it.createDirectory()
+            }
 
-                    FileVisitResult.CONTINUE
+            FileSystems.newFileSystem(url.toURI(), emptyMap<String, Any>()).use {
+                val fsRootPath = it.rootDirectories.singleOrNull()?.root ?: error("Root of the file system attached to $url not found")
+
+                fsRootPath.resolve(PROJECT_RESOURCE_PATH).visitFileTree {
+                    onPreVisitDirectory { directory, _ ->
+                        val destination = projectPath.resolveRelativeToRoot(directory)
+                        if (!destination.exists()) {
+                            destination.createDirectory()
+                        }
+
+                        FileVisitResult.CONTINUE
+                    }
+                    onVisitFile { file, _ ->
+                        val destination = projectPath.resolveRelativeToRoot(file)
+                        file.copyTo(destination)
+
+                        FileVisitResult.CONTINUE
+                    }
                 }
             }
         }
@@ -137,6 +139,7 @@ internal class XcodeProject(private val workDir: Path) {
      * @param newBundle The path of the new bundle to replace the test bundle with.
      */
     fun replaceTestBundleWith(newBundle: Path) {
+        testBundle.toFile().deleteRecursively()
         newBundle.toFile().copyRecursively(testBundle.toFile(), overwrite = true)
         // place dSYM too if exists
         val dSYM = newBundle.resolveSibling("${newBundle.name}.dSYM")
@@ -200,5 +203,7 @@ internal class XcodeProject(private val workDir: Path) {
             "CODE_SIGNING_REQUIRED=NO",
             "CODE_SIGNING_ALLOWED=NO"
         )
+
+        private val lock = Any()
     }
 }
