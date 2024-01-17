@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaLibraryType

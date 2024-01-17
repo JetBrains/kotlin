@@ -20,7 +20,6 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.testFramework.RunAll
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.io.URLUtil
-import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.model.JpsDummyElement
 import org.jetbrains.jps.model.java.JpsJavaSdkType
 import org.jetbrains.jps.model.library.JpsLibrary

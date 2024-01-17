@@ -42,11 +42,14 @@ dependencies {
     compileOnly(jpsModel())
     compileOnly(jpsBuild())
     compileOnly(jpsModelSerialization())
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
     testRuntimeOnly(jpsModel())
 
     // testFramework includes too many unnecessary dependencies. Here we manually list all we need to successfully run JPS tests
+    testImplementation(jpsModelSerialization()) { isTransitive = false }
     testImplementation(testFramework()) { isTransitive = false }
     testImplementation("com.jetbrains.intellij.platform:test-framework-core:$intellijVersion") { isTransitive = false }
+    testImplementation("com.jetbrains.intellij.platform:test-framework-common:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:analysis-impl:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:boot:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:analysis:$intellijVersion") { isTransitive = false }
@@ -69,11 +72,7 @@ dependencies {
 
     testImplementation(projectTests(":compiler:incremental-compilation-impl"))
     testCompileOnly(jpsBuild())
-    testImplementation(devKitJps()) {
-        exclude(group = "com.google.code.gson", module = "gson") // Workaround for Gradle dependency resolution error
-    }
 
-    testImplementation(jpsBuildTest())
     compilerModules.forEach {
         testRuntimeOnly(project(it))
     }
