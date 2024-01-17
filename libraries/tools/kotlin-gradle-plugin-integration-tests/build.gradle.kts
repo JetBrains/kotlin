@@ -75,7 +75,7 @@ dependencies {
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
 
     testImplementation(project(":kotlin-compiler-embeddable"))
-    testImplementation(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    testImplementation(intellijJDom())
     testImplementation(project(":compiler:cli-common"))
     testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     // testCompileOnly dependency on non-shaded artifacts is needed for IDE support

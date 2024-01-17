@@ -25,6 +25,7 @@ fun Project.intellijPlatformUtilBase() = "com.jetbrains.intellij.platform:util-b
 fun Project.intellijJavaRt() = "com.jetbrains.intellij.java:java-rt:$intellijVersion"
 fun Project.intellijAnalysis() = "com.jetbrains.intellij.platform:analysis:$intellijVersion"
 fun Project.intellijResources() = "com.jetbrains.intellij.platform:resources:$intellijVersion"
+fun Project.intellijJDom() = "com.jetbrains.intellij.platform:util-jdom:$intellijVersion"
 
 /**
  * Runtime version of annotations that are already in Kotlin stdlib (historically Kotlin has older version of this one).

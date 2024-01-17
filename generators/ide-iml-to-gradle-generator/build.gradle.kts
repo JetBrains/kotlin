@@ -11,7 +11,7 @@ dependencies {
     implementation(jpsModelImpl())
     implementation(jpsModelSerialization())
     implementation(commonDependency("com.google.code.gson:gson"))
-    implementation(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    implementation(intellijJDom())
 }
 
 sourceSets {

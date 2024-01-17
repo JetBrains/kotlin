@@ -241,7 +241,7 @@ dependencies {
     fatJarContentsStripServices(jpsModel()) { isTransitive = false }
     fatJarContentsStripServices(jpsModelImpl()) { isTransitive = false }
     fatJarContentsStripMetadata(commonDependency("oro:oro")) { isTransitive = false }
-    fatJarContentsStripMetadata(commonDependency("org.jetbrains.intellij.deps:jdom")) { isTransitive = false }
+    fatJarContentsStripMetadata(intellijJDom()) { isTransitive = false }
     fatJarContentsStripMetadata(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
     fatJarContentsStripVersions(commonDependency("one.util:streamex")) { isTransitive = false }
 }

@@ -71,7 +71,7 @@ dependencies {
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     testRuntimeOnly(libs.guava)
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    testRuntimeOnly(intellijJDom())
 
     testRuntimeOnly(kotlinStdlib())
     testJsRuntime(kotlinStdlib())

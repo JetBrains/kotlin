@@ -28,8 +28,8 @@ dependencies {
     compileOnly(jpsModel())
     compileOnly(jpsModelImpl())
     compileOnly(jpsModelSerialization())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
-    testCompileOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    compileOnly(intellijJDom())
+    testCompileOnly(intellijJDom())
 
     testImplementation(project(":compiler:cli-common"))
     testImplementation(jpsModelSerialization())

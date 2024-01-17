@@ -38,7 +38,7 @@ dependencies {
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    testRuntimeOnly(intellijJDom())
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 
