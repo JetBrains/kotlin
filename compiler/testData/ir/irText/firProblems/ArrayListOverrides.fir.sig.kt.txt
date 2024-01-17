@@ -51,10 +51,10 @@ class A1 : ArrayList<String> {
   /* fake */ override operator fun contains(p0: @EnhancedNullability String): Boolean
 
   // CHECK JVM_IR:
-  //   Mangled name: A1#containsAll(kotlin.collections.Collection<kotlin.String?>){}kotlin.Boolean
-  //   Public signature: /A1.containsAll|1049727718390523309[0]
-  //   Public signature debug description: containsAll(kotlin.collections.Collection<kotlin.String?>){}kotlin.Boolean
-  /* fake */ override fun containsAll(p0: Collection<String?>): Boolean
+  //   Mangled name: A1#containsAll(kotlin.collections.Collection<kotlin.String{EnhancedNullability}>){}kotlin.Boolean
+  //   Public signature: /A1.containsAll|3856626117350599597[0]
+  //   Public signature debug description: containsAll(kotlin.collections.Collection<kotlin.String{EnhancedNullability}>){}kotlin.Boolean
+  /* fake */ override fun containsAll(p0: Collection<@EnhancedNullability String>): Boolean
 
   // CHECK:
   //   Mangled name: A1#ensureCapacity(kotlin.Int){}
@@ -290,10 +290,10 @@ class A2 : ArrayList<String> {
   /* fake */ override operator fun contains(p0: @EnhancedNullability String): Boolean
 
   // CHECK JVM_IR:
-  //   Mangled name: A2#containsAll(kotlin.collections.Collection<kotlin.String?>){}kotlin.Boolean
-  //   Public signature: /A2.containsAll|1049727718390523309[0]
-  //   Public signature debug description: containsAll(kotlin.collections.Collection<kotlin.String?>){}kotlin.Boolean
-  /* fake */ override fun containsAll(p0: Collection<String?>): Boolean
+  //   Mangled name: A2#containsAll(kotlin.collections.Collection<kotlin.String{EnhancedNullability}>){}kotlin.Boolean
+  //   Public signature: /A2.containsAll|3856626117350599597[0]
+  //   Public signature debug description: containsAll(kotlin.collections.Collection<kotlin.String{EnhancedNullability}>){}kotlin.Boolean
+  /* fake */ override fun containsAll(p0: Collection<@EnhancedNullability String>): Boolean
 
   // CHECK:
   //   Mangled name: A2#ensureCapacity(kotlin.Int){}

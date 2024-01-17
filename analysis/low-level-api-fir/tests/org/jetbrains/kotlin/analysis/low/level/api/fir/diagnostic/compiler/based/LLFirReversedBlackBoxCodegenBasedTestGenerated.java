@@ -19299,6 +19299,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
         }
 
         @Test
+        @TestMetadata("javaInheritsKotlinIntersectionOverride.kt")
+        public void testJavaInheritsKotlinIntersectionOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/javaInheritsKotlinIntersectionOverride.kt");
+        }
+
+        @Test
         @TestMetadata("kjkWithPackagePrivate.kt")
         public void testKjkWithPackagePrivate() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/kjkWithPackagePrivate.kt");

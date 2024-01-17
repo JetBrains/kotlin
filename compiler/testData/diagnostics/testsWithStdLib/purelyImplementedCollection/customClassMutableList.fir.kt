@@ -23,8 +23,8 @@ fun bar(): String? = null
 
 fun foo() {
     var x = A<String>()
-    x.add(null)
-    x.add(bar())
+    x.add(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    x.add(<!ARGUMENT_TYPE_MISMATCH!>bar()<!>)
     x.add("")
 
     x[0] = <!NULL_FOR_NONNULL_TYPE!>null<!>
