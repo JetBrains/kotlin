@@ -6,7 +6,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.*
 
 object Ui {}
 
@@ -69,8 +68,8 @@ fun Ui.UiTextField(isError: Boolean, keyboardActions2: Boolean, %composer: Compo
     println("%{LiveLiterals%TestKt.String%0%str%arg-0%call-println%fun-UiTextField()}%isError")
     println("%{LiveLiterals%TestKt.String%0%str%arg-0%call-println-1%fun-UiTextField()}%keyboardActions2")
     Column(null, null, null, { %composer: Composer?, %changed: Int ->
-      Text("%isError", null, <unsafe-coerce>(0L), <unsafe-coerce>(0L), null, null, null, <unsafe-coerce>(0L), null, null, <unsafe-coerce>(0L), <unsafe-coerce>(0), false, 0, 0, null, null, %composer, 0, 0, 0b00011111111111111110)
-      Text("%keyboardActions2", null, <unsafe-coerce>(0L), <unsafe-coerce>(0L), null, null, null, <unsafe-coerce>(0L), null, null, <unsafe-coerce>(0L), <unsafe-coerce>(0), false, 0, 0, null, null, %composer, 0, 0, 0b00011111111111111110)
+      Text("%isError", false, 0, 0, %composer, 0, 0b1110)
+      Text("%keyboardActions2", false, 0, 0, %composer, 0, 0b1110)
     }, %composer, 0, 0b0111)
     if (isTraceInProgress()) {
       traceEventEnd()
@@ -104,7 +103,7 @@ internal object LiveLiterals%TestKt {
   }
   val Boolean%param-isError%fun-UiTextField: Boolean = false
   var State%Boolean%param-isError%fun-UiTextField: State<Boolean>?
-  @LiveLiteralInfo(key = "Boolean%param-isError%fun-UiTextField", offset = 292)
+  @LiveLiteralInfo(key = "Boolean%param-isError%fun-UiTextField", offset = 257)
   fun Boolean%param-isError%fun-UiTextField(): Boolean {
     if (!enabled) {
       return Boolean%param-isError%fun-UiTextField
@@ -121,7 +120,7 @@ internal object LiveLiterals%TestKt {
   }
   val Boolean%param-keyboardActions2%fun-UiTextField: Boolean = false
   var State%Boolean%param-keyboardActions2%fun-UiTextField: State<Boolean>?
-  @LiveLiteralInfo(key = "Boolean%param-keyboardActions2%fun-UiTextField", offset = 331)
+  @LiveLiteralInfo(key = "Boolean%param-keyboardActions2%fun-UiTextField", offset = 296)
   fun Boolean%param-keyboardActions2%fun-UiTextField(): Boolean {
     if (!enabled) {
       return Boolean%param-keyboardActions2%fun-UiTextField
@@ -138,7 +137,7 @@ internal object LiveLiterals%TestKt {
   }
   val String%0%str%arg-0%call-println%fun-UiTextField: String = "t41 insideFunction "
   var State%String%0%str%arg-0%call-println%fun-UiTextField: State<String>?
-  @LiveLiteralInfo(key = "String%0%str%arg-0%call-println%fun-UiTextField", offset = 355)
+  @LiveLiteralInfo(key = "String%0%str%arg-0%call-println%fun-UiTextField", offset = 320)
   fun String%0%str%arg-0%call-println%fun-UiTextField(): String {
     if (!enabled) {
       return String%0%str%arg-0%call-println%fun-UiTextField
@@ -155,7 +154,7 @@ internal object LiveLiterals%TestKt {
   }
   val String%0%str%arg-0%call-println-1%fun-UiTextField: String = "t41 insideFunction "
   var State%String%0%str%arg-0%call-println-1%fun-UiTextField: State<String>?
-  @LiveLiteralInfo(key = "String%0%str%arg-0%call-println-1%fun-UiTextField", offset = 398)
+  @LiveLiteralInfo(key = "String%0%str%arg-0%call-println-1%fun-UiTextField", offset = 363)
   fun String%0%str%arg-0%call-println-1%fun-UiTextField(): String {
     if (!enabled) {
       return String%0%str%arg-0%call-println-1%fun-UiTextField

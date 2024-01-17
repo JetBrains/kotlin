@@ -7,9 +7,6 @@ import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
 
 
-import androidx.compose.material.Text
-import androidx.compose.ui.graphics.Color
-
 @Composable
 fun Button(colors: ButtonColors) {
     Text("hello world", color = colors.getColor())
@@ -26,7 +23,7 @@ fun Test() {
 // ------------------------------------------
 
 @Composable
-@ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
+@ComposableInferredTarget(scheme = "[0[0]]")
 fun Button(colors: ButtonColors, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Button)<getCol...>,<Text("...>:Test.kt")
@@ -43,7 +40,7 @@ fun Button(colors: ButtonColors, %composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    Text("hello world", null, colors.getColor(%composer, 0b1110 and %dirty), <unsafe-coerce>(0L), null, null, null, <unsafe-coerce>(0L), null, null, <unsafe-coerce>(0L), <unsafe-coerce>(0), false, 0, 0, null, null, %composer, 0b0110, 0, 0b00011111111111111010)
+    Text("hello world", colors.getColor(%composer, 0b1110 and %dirty), false, 0, 0, %composer, 0b0110, 0b00011100)
     if (isTraceInProgress()) {
       traceEventEnd()
     }
@@ -55,7 +52,6 @@ fun Button(colors: ButtonColors, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@ComposableTarget(applier = "androidx.compose.ui.UiComposable")
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<Button>:Test.kt")
