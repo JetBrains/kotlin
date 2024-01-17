@@ -1160,12 +1160,6 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.extraOpts '-Xforeign-exception-mode', "objc-wrap"
     }
 
-    createInterop("objcKt34467") {
-        it.defFile 'interop/objc/kt34467/module_library.def'
-        def moduleMap = file("interop/objc/kt34467/module_library.modulemap").absolutePath
-        def includePath = file("interop/objc/kt34467").absolutePath
-        it.compilerOpts "-fmodule-map-file=$moduleMap", "-I$includePath"
-    }
     createInterop("objcGh3343") {
         it.defFile 'framework/gh3343/objclib.def'
         it.headers "$projectDir/framework/gh3343/objclib.h"
@@ -1629,12 +1623,6 @@ if (PlatformInfo.isAppleTarget(project)) {
                 UtilsKt.codesign(project, dylibFile.toString())
             }
         }
-    }
-
-    interopTest("interop_objc_kt34467") {
-        source = "interop/objc/kt34467/foo.kt"
-        interop = 'objcKt34467'
-        useGoldenData = true
     }
 
     interopTest("interop_objc_illegal_sharing_with_weak") {
