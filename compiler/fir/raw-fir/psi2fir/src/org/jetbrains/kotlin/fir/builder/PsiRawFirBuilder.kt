@@ -2961,11 +2961,11 @@ open class PsiRawFirBuilder(
                         }
                     )
 
-                calleeExpression is KtSuperExpression || parenthesizedArgument?.calleeReference is FirSuperReference -> {
+                calleeExpression is KtSuperExpression || (parenthesizedArgument as? FirResolvable)?.calleeReference is FirSuperReference -> {
                     CalleeAndReceiver(
                         buildErrorNamedReference {
                             source = (calleeExpression as? KtSuperExpression)?.toFirSourceElement()
-                                ?: parenthesizedArgument?.calleeReference?.source
+                                ?: (parenthesizedArgument as? FirResolvable)?.calleeReference?.source
                             diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
                         }
                     )
