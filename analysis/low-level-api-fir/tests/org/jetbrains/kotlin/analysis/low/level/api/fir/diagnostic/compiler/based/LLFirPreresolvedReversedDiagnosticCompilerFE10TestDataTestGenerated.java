@@ -568,6 +568,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("inlineFunWithAnonymousObject.kt")
+        public void testInlineFunWithAnonymousObject() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inlineFunWithAnonymousObject.kt");
+        }
+
+        @Test
         @TestMetadata("invalidTargetCrashesCompiler.kt")
         public void testInvalidTargetCrashesCompiler() throws Exception {
             runTest("compiler/testData/diagnostics/tests/invalidTargetCrashesCompiler.kt");

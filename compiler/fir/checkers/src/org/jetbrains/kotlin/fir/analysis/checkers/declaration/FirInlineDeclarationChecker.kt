@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
@@ -230,6 +231,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         ) {
             if (calledDeclaration == null ||
                 calledDeclaration.callableId.callableName == BACKING_FIELD ||
+                accessExpression.isInsideAnonymousObject() ||
                 calledDeclaration is FirPropertySymbol && calledDeclaration.isConst &&
                 context.callsOrAssignments.any { it is FirAnnotationCall }
             ) {
@@ -260,6 +262,21 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
                 }
                 reporter.reportOn(source, factory, inlineFunction.symbol, calledDeclaration, context)
             }
+        }
+
+        private fun FirStatement.isInsideAnonymousObject(): Boolean {
+            val treeStructure = source?.treeStructure ?: return false
+            val expressionNode = source?.lighterASTNode ?: return false
+            val inlineFunctionNode = inlineFunction.source?.lighterASTNode ?: return false
+
+            var currentNode = expressionNode
+            while (currentNode != inlineFunctionNode) {
+                currentNode = treeStructure.getParent(currentNode) ?: break
+                if (currentNode.tokenType == KtNodeTypes.OBJECT_DECLARATION) {
+                    return true
+                }
+            }
+            return false
         }
 
         private fun checkPrivateClassMemberAccess(

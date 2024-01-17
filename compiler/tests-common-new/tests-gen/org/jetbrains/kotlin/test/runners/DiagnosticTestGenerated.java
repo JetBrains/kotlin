@@ -568,6 +568,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("inlineFunWithAnonymousObject.kt")
+        public void testInlineFunWithAnonymousObject() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inlineFunWithAnonymousObject.kt");
+        }
+
+        @Test
         @TestMetadata("invalidTargetCrashesCompiler.kt")
         public void testInvalidTargetCrashesCompiler() throws Exception {
             runTest("compiler/testData/diagnostics/tests/invalidTargetCrashesCompiler.kt");
