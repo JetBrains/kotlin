@@ -211,7 +211,7 @@ class FirJavaElementFinder(
     }
 
     private fun FirAnnotation.findTargets(): List<String> = buildList {
-        forEachAnnotationTarget { add(it.identifier) }
+        forEachAnnotationTarget(session) { add(it.identifier) }
     }
 
     private fun buildFieldStubForConst(firProperty: FirProperty, classStub: PsiClassStubImpl<ClsClassImpl>) {

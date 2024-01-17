@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirEnumEntryDeserializedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 fun FirRegularClass.getRetention(session: FirSession): AnnotationRetention {
@@ -22,14 +25,15 @@ fun FirRegularClassSymbol.getRetention(session: FirSession): AnnotationRetention
 }
 
 fun FirAnnotation.getRetention(): AnnotationRetention? {
-    val propertyAccess = findArgumentByName(StandardClassIds.Annotations.ParameterNames.retentionValue) as? FirQualifiedAccessExpression
-    val callableId = propertyAccess?.calleeReference?.toResolvedEnumEntrySymbol()?.callableId ?: return null
+    val (enumId, entryName) = findArgumentByName(StandardClassIds.Annotations.ParameterNames.retentionValue)
+        ?.extractEnumValueArgumentInfo()
+        ?: return null
 
-    if (callableId.classId != StandardClassIds.AnnotationRetention) {
+    if (enumId != StandardClassIds.AnnotationRetention) {
         return null
     }
 
-    return AnnotationRetention.entries.firstOrNull { it.name == callableId.callableName.asString() }
+    return AnnotationRetention.entries.firstOrNull { it.name == entryName.asString() }
 }
 
 fun FirDeclaration.getRetentionAnnotation(session: FirSession): FirAnnotation? {

@@ -199,6 +199,14 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
         return visitQualifiedAccessExpression(propertyAccessExpression, data)
     }
 
+    override fun visitEnumEntryDeserializedAccessExpression(
+        enumEntryDeserializedAccessExpression: FirEnumEntryDeserializedAccessExpression,
+        data: FirToConstantValueTransformerData,
+    ): ConstantValue<*> {
+        val element = enumEntryDeserializedAccessExpression
+        return EnumValue(element.enumClassId, element.enumEntryName)
+    }
+
     override fun visitFunctionCall(
         functionCall: FirFunctionCall,
         data: FirToConstantValueTransformerData

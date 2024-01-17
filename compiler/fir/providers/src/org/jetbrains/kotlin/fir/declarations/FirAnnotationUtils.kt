@@ -5,14 +5,10 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -43,16 +39,8 @@ fun FirAnnotation.toAnnotationClassIdSafe(session: FirSession): ClassId? =
 fun FirAnnotation.toAnnotationClassLikeSymbol(session: FirSession): FirClassLikeSymbol<*>? =
     toAnnotationLookupTag(session)?.toSymbol(session)
 
-private fun FirAnnotation.toAnnotationClass(session: FirSession): FirRegularClass? =
+fun FirAnnotation.toAnnotationClass(session: FirSession): FirRegularClass? =
     toAnnotationClassLikeSymbol(session)?.fir as? FirRegularClass
-
-// TODO: this is temporary solution, we need something better
-private val FirExpression.callableNameOfMetaAnnotationArgument: Name?
-    get() =
-        (this as? FirQualifiedAccessExpression)?.let {
-            val callableSymbol = it.calleeReference.toResolvedCallableSymbol()
-            callableSymbol?.callableId?.callableName
-        }
 
 private val sourceName = Name.identifier("SOURCE")
 
@@ -62,65 +50,12 @@ fun List<FirAnnotation>.nonSourceAnnotations(session: FirSession): List<FirAnnot
         firAnnotationClass != null && firAnnotationClass.annotations.none { meta ->
             meta.toAnnotationClassId(session) == StandardClassIds.Annotations.Retention &&
                     meta.findArgumentByName(StandardClassIds.Annotations.ParameterNames.retentionValue)
-                        ?.callableNameOfMetaAnnotationArgument == sourceName
+                        ?.extractEnumValueArgumentInfo()?.enumEntryName == sourceName
         }
     }
 
 fun FirAnnotationContainer.nonSourceAnnotations(session: FirSession): List<FirAnnotation> =
     annotations.nonSourceAnnotations(session)
-
-fun FirAnnotation.useSiteTargetsFromMetaAnnotation(session: FirSession): Set<AnnotationUseSiteTarget> {
-    return toAnnotationClass(session)
-        ?.annotations
-        ?.find { it.toAnnotationClassIdSafe(session) == StandardClassIds.Annotations.Target }
-        ?.findUseSiteTargets()
-        ?: DEFAULT_USE_SITE_TARGETS
-}
-
-private fun FirAnnotation.findUseSiteTargets(): Set<AnnotationUseSiteTarget> = buildSet {
-    forEachAnnotationTarget {
-        USE_SITE_TARGET_NAME_MAP[it.identifier]?.let { addAll(it) }
-    }
-}
-
-fun FirAnnotation.forEachAnnotationTarget(action: (Name) -> Unit) {
-    fun take(arg: FirExpression) {
-        if (arg !is FirQualifiedAccessExpression) return@take
-        val callableSymbol = arg.calleeReference.toResolvedCallableSymbol() ?: return@take
-        if (callableSymbol.containingClassLookupTag()?.classId == StandardClassIds.AnnotationTarget) {
-            action(callableSymbol.callableId.callableName)
-        }
-    }
-
-    if (this is FirAnnotationCall) {
-        for (arg in argumentList.arguments) {
-            arg.unwrapAndFlattenArgument(flattenArrays = true).forEach(::take)
-        }
-    } else {
-        argumentMapping.mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets]
-            ?.unwrapAndFlattenArgument(flattenArrays = true)
-            ?.forEach(::take)
-    }
-}
-
-
-// See [org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.USE_SITE_MAPPING] (it's in reverse)
-private val USE_SITE_TARGET_NAME_MAP = mapOf(
-    "FIELD" to setOf(AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD),
-    "FILE" to setOf(AnnotationUseSiteTarget.FILE),
-    "PROPERTY" to setOf(AnnotationUseSiteTarget.PROPERTY),
-    "PROPERTY_GETTER" to setOf(AnnotationUseSiteTarget.PROPERTY_GETTER),
-    "PROPERTY_SETTER" to setOf(AnnotationUseSiteTarget.PROPERTY_SETTER),
-    "VALUE_PARAMETER" to setOf(
-        AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER,
-        AnnotationUseSiteTarget.RECEIVER,
-        AnnotationUseSiteTarget.SETTER_PARAMETER,
-    ),
-)
-
-// See [org.jetbrains.kotlin.descriptors.annotations.KotlinTarget] (the second argument of each entry)
-private val DEFAULT_USE_SITE_TARGETS: Set<AnnotationUseSiteTarget> =
-    USE_SITE_TARGET_NAME_MAP.values.fold(setOf<AnnotationUseSiteTarget>()) { a, b -> a + b } - setOf(AnnotationUseSiteTarget.FILE)
 
 fun FirDeclaration.hasAnnotation(classId: ClassId, session: FirSession): Boolean {
     return annotations.hasAnnotation(classId, session)
@@ -237,4 +172,22 @@ private val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID: ClassId =
 fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>) = annotations.any {
     val lookupTag = it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return@any false
     lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
+}
+
+data class EnumValueArgumentInfo(val enumClassId: ClassId?, val enumEntryName: Name)
+
+fun FirExpression.extractEnumValueArgumentInfo(): EnumValueArgumentInfo? {
+    return when (this) {
+        is FirPropertyAccessExpression -> {
+            if (isResolved) {
+                val entrySymbol = calleeReference.toResolvedEnumEntrySymbol() ?: return null
+                EnumValueArgumentInfo(entrySymbol.callableId.classId!!, entrySymbol.callableId.callableName)
+            } else {
+                val enumEntryName = (calleeReference as? FirNamedReference)?.name ?: return null
+                EnumValueArgumentInfo(null, enumEntryName)
+            }
+        }
+        is FirEnumEntryDeserializedAccessExpression -> EnumValueArgumentInfo(enumClassId, enumEntryName)
+        else -> null
+    }
 }

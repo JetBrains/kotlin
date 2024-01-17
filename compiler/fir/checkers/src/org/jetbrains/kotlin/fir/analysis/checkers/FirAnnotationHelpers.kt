@@ -61,8 +61,7 @@ fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(session: FirSession): Set<
     val arguments = targetAnnotation.findArgumentByName(ParameterNames.targetAllowedTargets)?.unwrapAndFlattenArgument(flattenArrays = true).orEmpty()
 
     return arguments.mapNotNullTo(mutableSetOf()) { argument ->
-        val targetExpression = argument as? FirQualifiedAccessExpression
-        val calleeReference = targetExpression?.calleeReference
+        val calleeReference = argument.toReference(session)
         val targetName =
             calleeReference?.resolved?.name?.asString()
             //for java annotations mappings: if java annotation is found in sdk and no kotlin dependency there is provided
