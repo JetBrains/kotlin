@@ -1,0 +1,13 @@
+// MODULE: m1-common
+// FILE: common.kt
+expect fun <!AMBIGUOUS_ACTUALS{JVM}, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>main<!>()
+
+// FILE: common2.kt
+actual fun <!AMBIGUOUS_EXPECTS{JVM}, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>main<!>() {}
+
+// MODULE: m1-jvm()()(m1-common)
+// FILE: jvm.kt
+expect fun <!AMBIGUOUS_ACTUALS, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>main<!>()
+
+// FILE: jvm2.kt
+actual fun <!AMBIGUOUS_EXPECTS, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>main<!>() {}

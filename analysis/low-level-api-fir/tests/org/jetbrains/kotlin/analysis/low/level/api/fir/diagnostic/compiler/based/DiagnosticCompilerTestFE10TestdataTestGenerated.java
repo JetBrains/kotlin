@@ -24855,6 +24855,24 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("expectActualInTheSameModule.kt")
+            public void testExpectActualInTheSameModule() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualInTheSameModule.kt");
+            }
+
+            @Test
+            @TestMetadata("expectActualInTheSameModuleDifferentFiles.kt")
+            public void testExpectActualInTheSameModuleDifferentFiles() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualInTheSameModuleDifferentFiles.kt");
+            }
+
+            @Test
+            @TestMetadata("expectActualMainInTheSameModuleDifferentFiles.kt")
+            public void testExpectActualMainInTheSameModuleDifferentFiles() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualMainInTheSameModuleDifferentFiles.kt");
+            }
+
+            @Test
             @TestMetadata("expectDataObject.kt")
             public void testExpectDataObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/expectDataObject.kt");

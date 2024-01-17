@@ -501,6 +501,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PACKAGE_CANNOT_BE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPILER_REQUIRED_ANNOTATION_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NON_REPORTED_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRE_RELEASE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED
@@ -1800,6 +1801,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(CONFLICTING_OVERLOADS, "Conflicting overloads: {0}", SYMBOLS)
         map.put(REDECLARATION, "Conflicting declarations: {0}", SYMBOLS)
         map.put(PACKAGE_OR_CLASSIFIER_REDECLARATION, "Redeclaration: {0}", SYMBOLS)
+        map.put(EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, "{0}: expect and corresponding actual are declared in the same module", DECLARATION_NAME)
+
         map.put(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, "Interfaces cannot implement a method of 'Any'.")
 
         // Invalid local declarations

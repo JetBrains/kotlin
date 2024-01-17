@@ -2577,6 +2577,12 @@ internal class PackageOrClassifierRedeclarationImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.PackageOrClassifierRedeclaration
 
+internal class ExpectAndActualInTheSameModuleImpl(
+    override val declaration: KtSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.ExpectAndActualInTheSameModule
+
 internal class MethodOfAnyImplementedInInterfaceImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
