@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSuspendableExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSuspensionPointImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -89,16 +87,11 @@ internal class NativeSuspendFunctionsLowering(
 
             val liveLocals = LivenessAnalysis.run(originalBody) { it is IrSuspensionPoint }
 
-            val immutableLiveLocals = liveLocals.values.flatten().filterNot { it.isVar }.toSet()
-            val localsMap = immutableLiveLocals.associate { it to irVar(it.name, it.type, true) }
-
-            if (localsMap.isNotEmpty())
-                transformVariables(originalBody, localsMap)    // Make variables mutable in order to save/restore them.
-
             val localToPropertyMap = mutableMapOf<IrVariableSymbol, IrField>()
             // TODO: optimize by using the same property for different locals.
             liveLocals.values.forEach { scope ->
                 scope.forEach {
+                    it.isVar = true // Make variables mutable in order to save/restore them.
                     localToPropertyMap.getOrPut(it.symbol) {
                         coroutineClass.addField(it.name, it.type, true)
                     }
@@ -148,10 +141,8 @@ internal class NativeSuspendFunctionsLowering(
                                 saveState.symbol -> {
                                     val scope = liveLocals[suspensionPoint]!!
                                     return irBlock(expression) {
-                                        scope.forEach {
-                                            val variable = localsMap[it] ?: it
-                                            +irSetField(irGet(thisReceiver), localToPropertyMap[it.symbol]!!, irGet(variable))
-                                        }
+                                        for (variable in scope)
+                                            +irSetField(irGet(thisReceiver), localToPropertyMap[variable.symbol]!!, irGet(variable))
                                         +irSetField(
                                                 irGet(thisReceiver),
                                                 labelField,
@@ -162,10 +153,8 @@ internal class NativeSuspendFunctionsLowering(
                                 restoreState.symbol -> {
                                     val scope = liveLocals[suspensionPoint]!!
                                     return irBlock(expression) {
-                                        scope.forEach {
-                                            +irSet(localsMap[it]
-                                                    ?: it, irGetField(irGet(thisReceiver), localToPropertyMap[it.symbol]!!))
-                                        }
+                                        for (variable in scope)
+                                            +irSet(variable, irGetField(irGet(thisReceiver), localToPropertyMap[variable.symbol]!!))
                                     }
                                 }
                             }
@@ -194,51 +183,6 @@ internal class NativeSuspendFunctionsLowering(
 
     private var tempIndex = 0
     private var suspensionPointIdIndex = 0
-
-    private fun transformVariables(element: IrElement, variablesMap: Map<IrVariable, IrVariable>) {
-        element.transformChildrenVoid(object: IrElementTransformerVoid() {
-
-            override fun visitGetValue(expression: IrGetValue): IrExpression {
-                expression.transformChildrenVoid(this)
-
-                val newVariable = variablesMap[expression.symbol.owner]
-                        ?: return expression
-
-                return IrGetValueImpl(
-                        startOffset = expression.startOffset,
-                        endOffset   = expression.endOffset,
-                        type        = newVariable.type,
-                        symbol      = newVariable.symbol,
-                        origin      = expression.origin)
-            }
-
-            override fun visitSetValue(expression: IrSetValue): IrExpression {
-                expression.transformChildrenVoid(this)
-
-                val newVariable = variablesMap[expression.symbol.owner]
-                        ?: return expression
-
-                return IrSetValueImpl(
-                        startOffset = expression.startOffset,
-                        endOffset   = expression.endOffset,
-                        type        = context.irBuiltIns.unitType,
-                        symbol      = newVariable.symbol,
-                        value       = expression.value,
-                        origin      = expression.origin)
-            }
-
-            override fun visitVariable(declaration: IrVariable): IrStatement {
-                declaration.transformChildrenVoid(this)
-
-                val newVariable = variablesMap[declaration]
-                        ?: return declaration
-
-                newVariable.initializer = declaration.initializer
-
-                return newVariable
-            }
-        })
-    }
 
     private inner class ExpressionSlicer(val suspensionPointIdType: IrType, val irFunction: IrFunction,
                                          val saveState: IrFunction, val restoreState: IrFunction,
