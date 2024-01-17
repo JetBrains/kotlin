@@ -7,12 +7,14 @@ package markdown
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.*
+import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.WithGenerics
 import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.ContentDRILink
 import org.jetbrains.dokka.pages.MemberPageNode
+import utils.OnlySymbols
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -117,6 +119,138 @@ class LinkTest : BaseAbstractTest() {
                     .dfs { it is DocumentationLink } as DocumentationLink
 
                 assertEquals(parameter!!.dri, link.dri)
+            }
+        }
+    }
+
+    @Test
+    @OnlySymbols("#3207 - In Dokka K1 [this] has an incorrect link that leads to a page of containing package")
+    fun `link to this keyword with receiver to some class`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/Test.kt
+            |package example
+            |
+            |/** 
+            |* Link to [this]
+            |*/
+            |fun String.stop() {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val fn = module.dfs { it.name == "stop" } as DFunction
+                val link = fn.documentation.values.single()
+                    .dfs { it is DocumentationLink } as DocumentationLink
+
+                assertEquals(DRI("kotlin", "String"), link.dri)
+            }
+        }
+    }
+
+    @Test
+    @OnlySymbols("#3207 In Dokka K1 [this] has an incorrect link that leads to a page of containing package")
+    fun `link to this keyword with receiver to type parameter`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/Test.kt
+            |package example
+            |
+            |/** 
+            |* Link to [this]
+            |*/
+            |fun <T> T.stop() {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val fn = module.dfs { it.name == "stop" } as DFunction
+                val link = fn.documentation.values.single()
+                    .dfs { it is DocumentationLink } as DocumentationLink
+
+                assertEquals(fn.generics.first().dri, link.dri)
+            }
+        }
+    }
+
+    @Test
+    @OnlySymbols("#3207 In Dokka K1 [this] has an incorrect link that leads to a page of containing package")
+    fun `link to this keyword with receiver of dynamic that is prohibited by compiler`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/Test.kt
+            |package example
+            |
+            |/** 
+            |* Link to [this]
+            |*/
+            |fun dynamic.stop() {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val fn = module.dfs { it.name == "stop" } as DFunction
+                val link = fn.documentation.values.single()
+                    .dfs { it is DocumentationLink } as DocumentationLink
+
+                assertEquals(DRI(packageName = "", classNames = "<ERROR CLASS> dynamic"), link.dri)
+            }
+        }
+    }
+
+    @Test
+    @OnlySymbols("#3207 In Dokka K1 [this] has an incorrect link that leads to a page of containing package")
+    fun `link to this keyword with receiver of DNN-type`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/Test.kt
+            |package example
+            |
+            |/** 
+            |* Link to [this]
+            |*/
+            |fun <T> (T&Any).stop() {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val fn = module.dfs { it.name == "stop" } as DFunction
+                val link = fn.documentation.values.single()
+                    .dfs { it is DocumentationLink } as DocumentationLink
+
+                assertEquals(fn.generics.first().dri, link.dri)
             }
         }
     }
