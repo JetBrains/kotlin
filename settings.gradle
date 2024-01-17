@@ -283,16 +283,16 @@ include ":kotlin-atomicfu-compiler-plugin",
         ":kotlinx-atomicfu-runtime",
         ":atomicfu"
 
-include ":plugins:jso:compiler-plugin",
-        ":plugins:jso:compiler-plugin-embeddable",
-        ":plugins:jso:compiler-plugin:jso.common",
-        ":plugins:jso:compiler-plugin:jso.k2",
-        ":plugins:jso:compiler-plugin:jso.backend",
-        ":plugins:jso:compiler-plugin:jso.cli"
+include ":plugins:js-plain-objects:compiler-plugin",
+        ":plugins:js-plain-objects:compiler-plugin-embeddable",
+        ":plugins:js-plain-objects:compiler-plugin:js-plain-objects.common",
+        ":plugins:js-plain-objects:compiler-plugin:js-plain-objects.k2",
+        ":plugins:js-plain-objects:compiler-plugin:js-plain-objects.backend",
+        ":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli"
 
 if (!buildProperties.inJpsBuildIdeaSync) {
-    include ":plugins:jso:runtime",
-            ":libraries:tools:jso"
+    include ":plugins:js-plain-objects:runtime",
+            ":libraries:tools:js-plain-objects"
 }
 
 include ":compiler:fir",
