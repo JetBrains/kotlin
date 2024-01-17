@@ -7,14 +7,15 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
 internal val Class<*>.sanitizedName: String get() = sanitize(name)
 
-internal fun getSanitizedFileName(fileName: String): String = sanitize(fileName, allowDots = true)
+internal fun getSanitizedFileName(fileName: String): String = sanitize(fileName, allowDots = true, allowSlashes = true)
 
-private fun sanitize(s: String, allowDots: Boolean = false) = buildString {
+private fun sanitize(s: String, allowDots: Boolean = false, allowSlashes: Boolean = false) = buildString {
     s.forEach { ch ->
         append(
             when {
                 ch.isLetterOrDigit() || ch == '_' -> ch
                 allowDots && ch == '.' -> ch
+                allowSlashes && ch == '/' -> ch
                 else -> '_'
             }
         )

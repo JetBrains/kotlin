@@ -6294,6 +6294,16 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/cinterop/objc")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Objc {
+            @Test
+            public void testAllFilesPresentInObjc() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/objc"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/cinterop/packages")
         @TestDataPath("$PROJECT_ROOT")
         public class Packages {

@@ -177,6 +177,7 @@ private class ExtTestDataFile(
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
         val freeCInteropArgs = structure.directives.listValues(FREE_CINTEROP_ARGS.name)
             .orEmpty().flatMap { it.split(" ") }
+            .map { it.replace("\$generatedSourcesDir", testDataFileSettings.generatedSourcesDir.absolutePath) }
         return TestCompilerArgs(args, freeCInteropArgs, testDataFileSettings.assertionsMode)
     }
 
@@ -719,6 +720,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
 
             source.files.forEach { extTestFile ->
                 val file = moduleDir.resolve(extTestFile.name)
+                file.parentFile.mkdirs()
                 file.writeText(extTestFile.text)
                 process(destination, TestFile.createCommitted(file, destination))
             }

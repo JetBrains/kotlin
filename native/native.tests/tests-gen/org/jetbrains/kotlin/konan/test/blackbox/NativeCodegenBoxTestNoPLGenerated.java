@@ -5058,6 +5058,25 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/cinterop/objc")
+            @TestDataPath("$PROJECT_ROOT")
+            @UseExtTestCaseGroupProvider()
+            @UsePartialLinkage(mode = Mode.DISABLED)
+            @Tag("no-partial-linkage-may-be-skipped")
+            public class Objc {
+                @Test
+                public void testAllFilesPresentInObjc() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/objc"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("kt53151.kt")
+                public void testKt53151() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/objc/kt53151.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/cinterop/packages")
             @TestDataPath("$PROJECT_ROOT")
             @UseExtTestCaseGroupProvider()
