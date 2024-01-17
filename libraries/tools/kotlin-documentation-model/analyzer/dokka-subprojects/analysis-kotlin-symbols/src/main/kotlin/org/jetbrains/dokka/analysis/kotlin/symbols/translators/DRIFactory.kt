@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -93,6 +93,28 @@ internal fun KtAnalysisSession.getDRIFromValueParameter(symbol: KtValueParameter
     return funDRI.copy(target = PointingToCallableParameters(index))
 }
 
+/**
+ * @return [DRI] to receiver type
+ */
+internal fun KtAnalysisSession.getDRIFromReceiverParameter(receiverParameterSymbol: KtReceiverParameterSymbol): DRI =
+    getDRIFromReceiverType(receiverParameterSymbol.type)
+
+private fun KtAnalysisSession.getDRIFromReceiverType(type: KtType): DRI {
+    return when(type) {
+        is KtNonErrorClassType -> getDRIFromNonErrorClassType(type)
+        is KtTypeParameterType -> getDRIFromTypeParameter(type.symbol)
+        is KtDefinitelyNotNullType -> getDRIFromReceiverType(type.original)
+        is KtTypeErrorType -> DRI(packageName = "", classNames = "$ERROR_CLASS_NAME $type")
+        is KtClassErrorType -> DRI(packageName = "", classNames = "$ERROR_CLASS_NAME $type")
+        is KtDynamicType -> DRI(packageName = "", classNames = "$ERROR_CLASS_NAME $type") // prohibited by a compiler, but it's a possible input
+
+        is KtCapturedType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
+        is KtFlexibleType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
+        is KtIntegerLiteralType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
+        is KtIntersectionType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
+    }
+}
+
 internal fun KtAnalysisSession.getDRIFromSymbol(symbol: KtSymbol): DRI =
     when (symbol) {
         is KtEnumEntrySymbol -> getDRIFromEnumEntry(symbol)
@@ -103,6 +125,7 @@ internal fun KtAnalysisSession.getDRIFromSymbol(symbol: KtSymbol): DRI =
         is KtFunctionLikeSymbol -> getDRIFromFunctionLike(symbol)
         is KtClassLikeSymbol -> getDRIFromClassLike(symbol)
         is KtPackageSymbol -> getDRIFromPackage(symbol)
+        is KtReceiverParameterSymbol -> getDRIFromReceiverParameter(symbol)
         else -> throw IllegalStateException("Unknown symbol while creating DRI $symbol")
     }
 
