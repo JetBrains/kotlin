@@ -401,7 +401,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         samType: IrType,
         lambdaMetafactoryArguments: LambdaMetafactoryArguments,
         startOffset: Int = UNDEFINED_OFFSET,
-        endOffset:Int = UNDEFINED_OFFSET
+        endOffset: Int = UNDEFINED_OFFSET,
     ): IrCall {
         val notNullSamType = samType.makeNotNull()
             .removeAnnotations { it.type.classFqName in specialNullabilityAnnotationsFqNames }

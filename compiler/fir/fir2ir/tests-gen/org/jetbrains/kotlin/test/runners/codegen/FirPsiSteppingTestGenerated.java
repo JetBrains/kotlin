@@ -296,6 +296,12 @@ public class FirPsiSteppingTestGenerated extends AbstractFirPsiSteppingTest {
     }
 
     @Test
+    @TestMetadata("javaSam.kt")
+    public void testJavaSam() throws Exception {
+        runTest("compiler/testData/debug/stepping/javaSam.kt");
+    }
+
+    @Test
     @TestMetadata("kt15259.kt")
     public void testKt15259() throws Exception {
         runTest("compiler/testData/debug/stepping/kt15259.kt");
