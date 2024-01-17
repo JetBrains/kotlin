@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android.checker
 
-import com.android.build.gradle.api.AndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSetLayout
+import org.jetbrains.kotlin.gradle.utils.*
 
 internal interface KotlinAndroidSourceSetLayoutChecker {
     fun checkBeforeLayoutApplied(
@@ -23,7 +23,7 @@ internal interface KotlinAndroidSourceSetLayoutChecker {
         target: KotlinAndroidTarget,
         layout: KotlinAndroidSourceSetLayout,
         kotlinSourceSet: KotlinSourceSet,
-        androidSourceSet: AndroidSourceSet
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
     ) = Unit
 }
 
@@ -52,7 +52,7 @@ private class CompositeKotlinAndroidSourceSetLayoutChecker(
         target: KotlinAndroidTarget,
         layout: KotlinAndroidSourceSetLayout,
         kotlinSourceSet: KotlinSourceSet,
-        androidSourceSet: AndroidSourceSet
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
     ) {
         checkers.forEach { checker ->
             checker.checkCreatedSourceSet(diagnosticsCollector, target, layout, kotlinSourceSet, androidSourceSet)
