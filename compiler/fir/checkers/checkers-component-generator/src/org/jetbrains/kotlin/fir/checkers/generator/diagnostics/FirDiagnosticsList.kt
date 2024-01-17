@@ -1079,6 +1079,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val PACKAGE_OR_CLASSIFIER_REDECLARATION by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME) {
             parameter<Collection<Symbol>>("conflictingDeclarations")
         }
+        val EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME) {
+            parameter<Symbol>("declaration")
+        }
         val METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE by error<PsiElement>()
     }
 
