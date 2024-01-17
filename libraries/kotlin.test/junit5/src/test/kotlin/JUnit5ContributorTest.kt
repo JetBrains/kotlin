@@ -10,7 +10,7 @@ import kotlin.test.*
 import java.util.concurrent.*
 import kotlin.test.junit5.JUnit5Asserter
 
-class JUnitContributorTest {
+class JUnit5ContributorTest {
     @Test
     fun smokeTest() {
         assertSame(JUnit5Asserter, kotlin.test.asserter)
