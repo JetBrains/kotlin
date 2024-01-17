@@ -17,7 +17,7 @@ import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.model.module.JpsModuleDependency
 import org.jetbrains.jps.model.serialization.JpsProjectLoader
 import java.io.File
-import java.net.URL
+import java.nio.file.Paths
 import java.util.*
 
 fun String.trimMarginWithInterpolations(): String {
@@ -63,7 +63,7 @@ val JpsDependencyElement.isExported: Boolean
 fun File.loadJpsProject(): JpsProject {
     val model = JpsElementFactory.getInstance().createModel()
     val project = model.project
-    JpsProjectLoader.loadProject(project, mapOf(), this.canonicalPath)
+    JpsProjectLoader.loadProject(project, mapOf(), Paths.get(this.canonicalPath))
     return project
 }
 
