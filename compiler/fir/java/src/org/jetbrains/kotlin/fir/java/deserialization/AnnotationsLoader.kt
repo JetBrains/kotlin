@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.java.deserialization
 
 import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.createConstantOrError
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.utils.toMetadataVersion
 
 internal class AnnotationsLoader(private val session: FirSession, private val kotlinClassFinder: KotlinClassFinder) {
-    private abstract inner class AnnotationsLoaderVisitorImpl(val enumEntryReferenceCreator: (ClassId, Name) -> FirExpression) : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+    private abstract inner class AnnotationsLoaderVisitorImpl : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
         abstract fun visitExpression(name: Name?, expr: FirExpression)
 
         abstract val visitNullNames: Boolean
@@ -54,7 +53,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
 
         override fun visitEnum(name: Name?, enumClassId: ClassId, enumEntryName: Name) {
             if (name == null && !visitNullNames) return
-            visitExpression(name, enumEntryReferenceCreator(enumClassId, enumEntryName))
+            visitExpression(name, createEnumEntryAccess(enumClassId, enumEntryName))
         }
 
         override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor? {
@@ -67,7 +66,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                 }
 
                 override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {
-                    elements.add(enumEntryReferenceCreator(enumClassId, enumEntryName))
+                    elements.add(createEnumEntryAccess(enumClassId, enumEntryName))
                 }
 
                 override fun visitClassLiteral(value: ClassLiteralValue) {
@@ -80,7 +79,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
 
                 override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
                     val list = mutableListOf<FirAnnotation>()
-                    val visitor = loadAnnotation(classId, list, enumEntryReferenceCreator)
+                    val visitor = loadAnnotation(classId, list)
                     return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
                         override fun visitEnd() {
                             visitor.visitEnd()
@@ -120,7 +119,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
         override fun visitAnnotation(name: Name?, classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
             if (name == null && !visitNullNames) return null
             val list = mutableListOf<FirAnnotation>()
-            val visitor = loadAnnotation(classId, list, enumEntryReferenceCreator)
+            val visitor = loadAnnotation(classId, list)
             return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
                 override fun visitEnd() {
                     visitor.visitEnd()
@@ -135,11 +134,12 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
     }
 
     private fun loadAnnotation(
-        annotationClassId: ClassId, result: MutableList<FirAnnotation>, enumEntryReferenceCreator: (ClassId, Name) -> FirExpression
+        annotationClassId: ClassId,
+        result: MutableList<FirAnnotation>
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
         val lookupTag = annotationClassId.toLookupTag()
 
-        return object : AnnotationsLoaderVisitorImpl(enumEntryReferenceCreator) {
+        return object : AnnotationsLoaderVisitorImpl() {
             private val argumentMap = mutableMapOf<Name, FirExpression>()
 
             override fun visitExpression(name: Name?, expr: FirExpression) {
@@ -174,7 +174,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
         methodSignature: MemberSignature,
         consumeResult: (FirExpression) -> Unit
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-        return object : AnnotationsLoaderVisitorImpl(this::toEnumEntryReferenceExpressionUnresolved) {
+        return object : AnnotationsLoaderVisitorImpl() {
             var defaultValue: FirExpression? = null
 
             override fun visitExpression(name: Name?, expr: FirExpression) {
@@ -219,7 +219,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
         if (annotationClassId in SpecialJvmAnnotations.SPECIAL_ANNOTATIONS) return null
         // Note: we shouldn't resolve enum entries here either: KT-58294
-        return loadAnnotation(annotationClassId, result, this::toEnumEntryReferenceExpressionWithResolve)
+        return loadAnnotation(annotationClassId, result)
     }
 
     private fun ConeClassLikeLookupTag.toDefaultResolvedTypeRef(): FirResolvedTypeRef =
@@ -227,10 +227,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             type = constructClassType(emptyArray(), isNullable = false)
         }
 
-    private fun toEnumEntryReferenceExpressionWithResolve(classId: ClassId, name: Name): FirPropertyAccessExpression =
-        toEnumEntryReferenceExpressionUnresolved(classId, name).toQualifiedPropertyAccessExpression(session)
-
-    private fun toEnumEntryReferenceExpressionUnresolved(classId: ClassId, name: Name): FirEnumEntryDeserializedAccessExpression =
+    private fun createEnumEntryAccess(classId: ClassId, name: Name): FirEnumEntryDeserializedAccessExpression =
         buildEnumEntryDeserializedAccessExpression {
             enumClassId = classId
             enumEntryName = name

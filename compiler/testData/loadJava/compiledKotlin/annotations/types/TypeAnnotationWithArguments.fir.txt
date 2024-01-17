@@ -1,4 +1,4 @@
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class Ann : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.TYPE)) public final annotation class Ann : R|kotlin/Annotation| {
     public final val x: R|kotlin/String|
         public get(): R|kotlin/String|
 

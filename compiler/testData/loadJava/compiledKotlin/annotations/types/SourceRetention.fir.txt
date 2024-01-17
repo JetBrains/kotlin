@@ -1,6 +1,6 @@
 public final fun typeAnnotation(): R|kotlin/Unit|
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPEALIAS|, R|kotlin/annotation/AnnotationTarget.TYPE|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|) public final annotation class A : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.TYPE_PARAMETER, kotlin/annotation/AnnotationTarget.TYPEALIAS, kotlin/annotation/AnnotationTarget.TYPE)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.SOURCE) public final annotation class A : R|kotlin/Annotation| {
     public constructor(): R|test/A|
 
 }
@@ -13,4 +13,3 @@ public final class TypeParameterAnnotation : R|kotlin/Any| {
     public constructor(): R|test/TypeParameterAnnotation|
 
 }
-

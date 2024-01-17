@@ -7,10 +7,20 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 annotation class UnsafeExpressionUtility
@@ -49,11 +59,33 @@ fun FirExpression.toReferenceUnsafe(): FirReference? {
 
 private fun FirExpression.toReferenceImpl(session: FirSession?): FirReference? {
     return when (this) {
+        is FirEnumEntryDeserializedAccessExpression -> {
+            requireNotNull(session)
+            toReference(session)
+        }
         is FirWrappedArgumentExpression -> expression.toResolvedCallableReferenceImpl(session)
         is FirSmartCastExpression -> originalExpression.toReferenceImpl(session)
         is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.toReferenceImpl(session)
         is FirResolvable -> calleeReference
         else -> null
+    }
+}
+
+fun FirEnumEntryDeserializedAccessExpression.toReference(session: FirSession): FirReference {
+    fun createErrorReference(diagnostic: ConeDiagnostic): FirErrorNamedReference {
+        return buildErrorNamedReference {
+            this.diagnostic = diagnostic
+        }
+    }
+
+    val enumSymbol = this.resolvedType.toRegularClassSymbol(session)
+        ?: return createErrorReference(ConeUnresolvedSymbolError(resolvedType.classId!!))
+    val enumEntrySymbol = enumSymbol.collectEnumEntries().firstOrNull { it.name == enumEntryName }
+        ?: return createErrorReference(ConeUnresolvedNameError(enumEntryName))
+
+    return buildResolvedNamedReference {
+        name = enumEntryName
+        resolvedSymbol = enumEntrySymbol
     }
 }
 

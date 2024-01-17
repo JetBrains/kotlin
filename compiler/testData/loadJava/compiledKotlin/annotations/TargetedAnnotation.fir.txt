@@ -1,4 +1,4 @@
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|)) public final annotation class TargetedAnnotation : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS)) public final annotation class TargetedAnnotation : R|kotlin/Annotation| {
     public constructor(): R|test/TargetedAnnotation|
 
 }

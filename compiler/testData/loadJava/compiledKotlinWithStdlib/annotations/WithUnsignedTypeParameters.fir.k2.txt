@@ -21,7 +21,7 @@ public final class A : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final annotation class Ann : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER)) public final annotation class Ann : R|kotlin/Annotation| {
     public final val ubyte: R|kotlin/UByte|
         public get(): R|kotlin/UByte|
 

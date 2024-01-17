@@ -12,7 +12,7 @@ public final class A : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final annotation class Ann : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.VALUE_PARAMETER)) public final annotation class Ann : R|kotlin/Annotation| {
     public constructor(): R|test/Ann|
 
 }

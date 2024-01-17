@@ -365,7 +365,7 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.7)) public final annotation class ContextFunctionTypeParams : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.TYPE)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.7)) public final annotation class ContextFunctionTypeParams : R|kotlin/Annotation| {
     public final val count: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
@@ -373,7 +373,7 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|, R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, R|kotlin/annotation/AnnotationTarget.TYPEALIAS|)) @R|kotlin/annotation/MustBeDocumented|() public final annotation class Deprecated : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/MustBeDocumented|() public final annotation class Deprecated : R|kotlin/Annotation| {
     public final val level: R|kotlin/DeprecationLevel|
         public get(): R|kotlin/DeprecationLevel|
 
@@ -387,7 +387,7 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|, R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, R|kotlin/annotation/AnnotationTarget.TYPEALIAS|)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.4)) public final annotation class DeprecatedSinceKotlin : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.4)) public final annotation class DeprecatedSinceKotlin : R|kotlin/Annotation| {
     public final val errorSince: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -565,7 +565,7 @@ public final class DoubleArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/S
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class DslMarker : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class DslMarker : R|kotlin/Annotation| {
     public constructor(): R|kotlin/DslMarker|
 
 }
@@ -596,17 +596,17 @@ public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|j
 
 }
 
-@R|kotlin/RequiresOptIn|(level = R|kotlin/RequiresOptIn.Level.ERROR|) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|) @R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|, R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|, R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.FIELD|, R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, R|kotlin/annotation/AnnotationTarget.TYPEALIAS|)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class ExperimentalStdlibApi : R|kotlin/Annotation| {
+@R|kotlin/RequiresOptIn|(level = kotlin/RequiresOptIn.Level.ERROR) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class ExperimentalStdlibApi : R|kotlin/Annotation| {
     public constructor(): R|kotlin/ExperimentalStdlibApi|
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|) @R|kotlin/SinceKotlin|(version = String(1.8)) @R|kotlin/RequiresOptIn|() public final annotation class ExperimentalSubclassOptIn : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/SinceKotlin|(version = String(1.8)) @R|kotlin/RequiresOptIn|() public final annotation class ExperimentalSubclassOptIn : R|kotlin/Annotation| {
     public constructor(): R|kotlin/ExperimentalSubclassOptIn|
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|)) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ExtensionFunctionType : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.TYPE)) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ExtensionFunctionType : R|kotlin/Annotation| {
     public constructor(): R|kotlin/ExtensionFunctionType|
 
 }
@@ -1123,7 +1123,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|, R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, R|kotlin/annotation/AnnotationTarget.EXPRESSION|, R|kotlin/annotation/AnnotationTarget.FILE|, R|kotlin/annotation/AnnotationTarget.TYPEALIAS|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|) @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class OptIn : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.EXPRESSION, kotlin/annotation/AnnotationTarget.FILE, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.SOURCE) @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class OptIn : R|kotlin/Annotation| {
     public final val markerClass: R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
         public get(): R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
 
@@ -1131,7 +1131,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class ParameterName : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.TYPE)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class ParameterName : R|kotlin/Annotation| {
     public final val name: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1139,12 +1139,12 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|, R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.PROPERTY|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class PublishedApi : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class PublishedApi : R|kotlin/Annotation| {
     public constructor(): R|kotlin/PublishedApi|
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>()) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ReplaceWith : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>()) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ReplaceWith : R|kotlin/Annotation| {
     public final val expression: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1155,7 +1155,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|) @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class RequiresOptIn : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class RequiresOptIn : R|kotlin/Annotation| {
     public final val level: R|kotlin/RequiresOptIn.Level|
         public get(): R|kotlin/RequiresOptIn.Level|
 
@@ -1336,7 +1336,7 @@ public final class ShortArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Se
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|, R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.FIELD|, R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, R|kotlin/annotation/AnnotationTarget.TYPEALIAS|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|) @R|kotlin/annotation/MustBeDocumented|() public final annotation class SinceKotlin : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/MustBeDocumented|() public final annotation class SinceKotlin : R|kotlin/Annotation| {
     public final val version: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1369,7 +1369,7 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|) @R|kotlin/SinceKotlin|(version = String(1.8)) @R|kotlin/ExperimentalSubclassOptIn|() public final annotation class SubclassOptInRequired : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/SinceKotlin|(version = String(1.8)) @R|kotlin/ExperimentalSubclassOptIn|() public final annotation class SubclassOptInRequired : R|kotlin/Annotation| {
     public final val markerClass: R|kotlin/reflect/KClass<out kotlin/Annotation>|
         public get(): R|kotlin/reflect/KClass<out kotlin/Annotation>|
 
@@ -1377,7 +1377,7 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|, R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.FIELD|, R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, R|kotlin/annotation/AnnotationTarget.TYPE|, R|kotlin/annotation/AnnotationTarget.EXPRESSION|, R|kotlin/annotation/AnnotationTarget.FILE|, R|kotlin/annotation/AnnotationTarget.TYPEALIAS|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|) public final annotation class Suppress : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.EXPRESSION, kotlin/annotation/AnnotationTarget.FILE, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.SOURCE) public final annotation class Suppress : R|kotlin/Annotation| {
     public final val names: R|kotlin/Array<out kotlin/String>|
         public get(): R|kotlin/Array<out kotlin/String>|
 
@@ -1409,16 +1409,15 @@ public final object Unit : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|) @R|kotlin/annotation/MustBeDocumented|() public final annotation class UnsafeVariance : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.TYPE)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.SOURCE) @R|kotlin/annotation/MustBeDocumented|() public final annotation class UnsafeVariance : R|kotlin/Annotation| {
     public constructor(): R|kotlin/UnsafeVariance|
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|, R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.TYPEALIAS|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|) internal final annotation class WasExperimental : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) internal final annotation class WasExperimental : R|kotlin/Annotation| {
     public final val markerClass: R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
         public get(): R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
 
     public constructor(vararg markerClass: R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|): R|kotlin/WasExperimental|
 
 }
-

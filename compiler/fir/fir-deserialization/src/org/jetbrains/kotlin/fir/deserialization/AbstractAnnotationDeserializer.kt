@@ -280,26 +280,9 @@ abstract class AbstractAnnotationDeserializer(
                 )
                 coneTypeOrNull = resolvedType
             }
-            ENUM -> buildPropertyAccessExpression {
-                val classId = nameResolver.getClassId(value.classId)
-                val entryName = nameResolver.getName(value.enumValueId)
-
-                val enumLookupTag = classId.toLookupTag()
-                val enumSymbol = enumLookupTag.toSymbol(session)
-                val firClass = enumSymbol?.fir as? FirRegularClass
-                val enumEntries = firClass?.collectEnumEntries() ?: emptyList()
-                val enumEntrySymbol = enumEntries.find { it.name == entryName }
-                calleeReference = enumEntrySymbol?.let {
-                    buildResolvedNamedReference {
-                        name = entryName
-                        resolvedSymbol = it.symbol
-                    }
-                } ?: buildFromMissingDependenciesNamedReference {
-                    name = entryName
-                }
-                if (enumEntrySymbol != null) {
-                    coneTypeOrNull = enumEntrySymbol.returnTypeRef.coneTypeOrNull
-                }
+            ENUM -> buildEnumEntryDeserializedAccessExpression {
+                enumClassId = nameResolver.getClassId(value.classId)
+                enumEntryName = nameResolver.getName(value.enumValueId)
             }
             ARRAY -> {
                 val expectedArrayElementType = expectedType()?.arrayElementType() ?: session.builtinTypes.anyType.type
