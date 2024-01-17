@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.sir.tree.generator
 
+import org.jetbrains.kotlin.generators.tree.StandardTypes.boolean
 import org.jetbrains.kotlin.generators.tree.StandardTypes.string
 import org.jetbrains.kotlin.sir.tree.generator.config.AbstractSwiftIrTreeBuilder
 import org.jetbrains.kotlin.sir.tree.generator.model.Element
@@ -81,6 +82,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = callable
         parent(callable)
 
+        +field("isStatic", boolean) // todo: KT-65046 Method|function distinction in SIR
         +field("name", string)
         +listField("parameters", parameterType)
         +field("returnType", typeType)

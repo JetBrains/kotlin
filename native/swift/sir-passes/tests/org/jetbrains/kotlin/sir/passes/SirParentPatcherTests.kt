@@ -29,6 +29,7 @@ class SirParentPatcherTests {
         val function = buildFunction {
             name = "foo"
             returnType = SirNominalType(SirSwiftModule.bool)
+            isStatic = false
         }
         function.parent = wrongEnum
         val wrongModule = buildModule { name = "wrongModule" }

@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.sir.mock
 
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirKotlinOrigin
 
 data class MockFunction(
-    override val fqName: List<String>,
+    override val fqName: FqName,
     override val parameters: List<SirKotlinOrigin.Parameter>,
     override val returnType: SirKotlinOrigin.Type,
 ) : SirKotlinOrigin.Function

@@ -90,6 +90,7 @@ private fun readRequestFromFile(file: File): BridgeRequest {
         this.name = fqName.last()
         this.returnType = returnType
         this.parameters += parameters
+        this.isStatic = false
     }
     return BridgeRequest(function, bridgeName, fqName)
 }

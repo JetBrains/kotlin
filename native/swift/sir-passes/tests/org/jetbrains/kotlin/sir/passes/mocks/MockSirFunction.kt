@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
 
 class MockSirFunction(
     override val origin: SirOrigin = SirOrigin.Unknown,
+    override val isStatic: Boolean,
     override val visibility: SirVisibility = SirVisibility.PUBLIC,
     override var parent: SirDeclarationParent,
     override val name: String,

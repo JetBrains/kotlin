@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.sir.passes
 
-import org.jetbrains.kotlin.sir.SirOrigin
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.builder.buildForeignFunction
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.mock.MockFunction
 import org.jetbrains.kotlin.sir.mock.MockKotlinType
-import org.jetbrains.sir.passes.utility.PatchDeclarationParentVisitor
 import org.jetbrains.sir.passes.utility.SirValidatorConfig
 import org.jetbrains.sir.passes.utility.ValidationError
 import org.jetbrains.sir.passes.utility.validate
@@ -40,9 +39,9 @@ class SirValidatorTests {
         }
         val foreignFunction = buildForeignFunction {
             val kotlinEntity = MockFunction(
-                fqName = listOf("foo"),
+                fqName = FqName.fromSegments(listOf("foo")),
                 parameters = emptyList(),
-                returnType = MockKotlinType("kotlin/Byte")
+                returnType = MockKotlinType("kotlin/Byte"),
             )
             origin = kotlinEntity
         }

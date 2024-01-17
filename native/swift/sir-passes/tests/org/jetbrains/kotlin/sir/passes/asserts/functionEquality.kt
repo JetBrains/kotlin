@@ -25,4 +25,8 @@ fun assertSirFunctionsEquals(expected: SirFunction, actual: SirFunction) {
         actual = actual.returnType,
         expected = expected.returnType
     )
+    assertEquals(
+        actual = actual.isStatic,
+        expected = expected.isStatic
+    )
 }

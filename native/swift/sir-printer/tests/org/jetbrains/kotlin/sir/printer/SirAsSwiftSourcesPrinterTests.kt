@@ -37,6 +37,7 @@ class SirAsSwiftSourcesPrinterTests {
             declarations.add(
                 buildFunction {
                     origin = SirOrigin.Unknown
+                    isStatic = false
                     visibility = SirVisibility.PUBLIC
                     name = "foo"
                     returnType = SirNominalType(SirSwiftModule.bool)
@@ -57,6 +58,7 @@ class SirAsSwiftSourcesPrinterTests {
             declarations.add(
                 buildFunction {
                     origin = SirOrigin.Unknown
+                    isStatic = false
                     visibility = SirVisibility.PUBLIC
                     name = "foo1"
                     returnType = SirNominalType(SirSwiftModule.bool)
@@ -65,6 +67,7 @@ class SirAsSwiftSourcesPrinterTests {
             declarations.add(
                 buildFunction {
                     origin = SirOrigin.Unknown
+                    isStatic = false
                     visibility = SirVisibility.PUBLIC
                     name = "foo2"
                     returnType = SirNominalType(SirSwiftModule.bool)
@@ -85,6 +88,7 @@ class SirAsSwiftSourcesPrinterTests {
             declarations.add(
                 buildFunction {
                     origin = SirOrigin.Unknown
+                    isStatic = false
                     visibility = SirVisibility.PUBLIC
                     name = "foo"
                     parameters.add(
@@ -112,6 +116,7 @@ class SirAsSwiftSourcesPrinterTests {
             declarations.add(
                 buildFunction {
                     origin = SirOrigin.Unknown
+                    isStatic = false
                     visibility = SirVisibility.PUBLIC
                     name = "foo"
                     parameters.add(
@@ -146,6 +151,7 @@ class SirAsSwiftSourcesPrinterTests {
             declarations.add(
                 buildFunction {
                     origin = SirOrigin.Unknown
+                    isStatic = false
                     visibility = SirVisibility.PUBLIC
                     name = "foo"
                     parameters.addAll(
@@ -199,6 +205,7 @@ class SirAsSwiftSourcesPrinterTests {
             declarations.add(
                 buildFunction {
                     origin = SirOrigin.Unknown
+                    isStatic = false
                     visibility = SirVisibility.PUBLIC
                     name = "foo"
                     parameters.add(
@@ -216,6 +223,35 @@ class SirAsSwiftSourcesPrinterTests {
         runTest(
             module,
             "testData/non_empty_body"
+        )
+    }
+
+    @Test
+    fun `should print static`() {
+
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildFunction {
+                    origin = SirOrigin.Unknown
+                    isStatic = true
+                    visibility = SirVisibility.PUBLIC
+                    name = "foo"
+                    parameters.add(
+                        SirParameter(
+                            argumentName = "arg1",
+                            type = SirNominalType(SirSwiftModule.int32)
+                        )
+                    )
+                    returnType = SirNominalType(SirSwiftModule.bool)
+                    body = SirFunctionBody(listOf("return foo_wrapped(arg1)"))
+                }
+            )
+        }
+
+        runTest(
+            module,
+            "testData/static_function"
         )
     }
 

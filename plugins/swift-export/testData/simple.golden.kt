@@ -17,3 +17,9 @@ public fun namespace2_bar(): Int {
     val result = namespace2.bar()
     return result
 }
+
+@ExportedBridge("__root___foo")
+public fun __root___foo(): Int {
+    val result = foo()
+    return result
+}

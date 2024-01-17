@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.sir.analysisapi.transformers
 
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildForeignFunction
@@ -24,8 +24,8 @@ private fun KtValueParameterSymbol.toSirParam(): SirKotlinOrigin.Parameter = AAP
 private class AAFunction(
     private val originalFunction: KtNamedFunction
 ) : SirKotlinOrigin.Function {
-    override val fqName: List<String>
-        get() = originalFunction.fqName?.pathSegments()?.toListString() ?: emptyList()
+    override val fqName: FqName
+        get() = originalFunction.fqName ?: FqName.fromSegments(emptyList())
 
     override val parameters: List<SirKotlinOrigin.Parameter>
         get() = analyze(originalFunction) {
@@ -48,5 +48,3 @@ private data class AAParameter(
 private data class AAKotlinType(
     override val name: String
 ) : SirKotlinOrigin.Type
-
-private fun List<Name>.toListString() = map { it.asString() }

@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.sir.passes
 
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirVisibility
+import org.jetbrains.kotlin.sir.builder.buildEnum
 import org.jetbrains.kotlin.sir.builder.buildForeignFunction
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.constants.*
@@ -19,9 +21,7 @@ import org.jetbrains.kotlin.sir.passes.asserts.assertSirFunctionsEquals
 import org.jetbrains.kotlin.sir.passes.mocks.MockSirFunction
 import org.jetbrains.kotlin.sir.passes.util.runWithAsserts
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
-import org.jetbrains.sir.passes.run
 import org.jetbrains.sir.passes.translation.ForeignIntoSwiftFunctionTranslationPass
-import org.jetbrains.sir.passes.utility.assertValid
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 
@@ -33,7 +33,7 @@ class SirPassTests {
         }
         val mySirElement = buildForeignFunction {
             origin = MockFunction(
-                fqName = listOf("foo"),
+                fqName = FqName.fromSegments(listOf("foo")),
                 parameters = emptyList(),
                 returnType = MockKotlinType(BOOLEAN),
             )
@@ -48,6 +48,38 @@ class SirPassTests {
             parameters = emptyList(),
             returnType = SirNominalType(SirSwiftModule.bool),
             parent = module,
+            isStatic = false,
+        )
+        assertSirFunctionsEquals(actual = result, expected = exp)
+    }
+
+    @Test
+    fun `foreign toplevel function without params with package should be translated as static`() {
+        val module = buildModule {
+            name = "demo"
+        }
+        val mySirEnum = buildEnum {
+            name = "bar"
+        }
+        mySirEnum.parent = module
+        val mySirElement = buildForeignFunction {
+            origin = MockFunction(
+                fqName = FqName.fromSegments(listOf("bar", "foo")),
+                parameters = emptyList(),
+                returnType = MockKotlinType(BOOLEAN),
+            )
+            visibility = SirVisibility.PUBLIC
+        }
+        mySirElement.parent = mySirEnum
+        val myPass = ForeignIntoSwiftFunctionTranslationPass()
+        val result = myPass.runWithAsserts(mySirElement, null) as? SirFunction
+        assertNotNull(result, "SirFunction should be produced")
+        val exp = MockSirFunction(
+            name = "foo",
+            parameters = emptyList(),
+            returnType = SirNominalType(SirSwiftModule.bool),
+            parent = mySirEnum,
+            isStatic = true,
         )
         assertSirFunctionsEquals(actual = result, expected = exp)
     }
@@ -59,7 +91,7 @@ class SirPassTests {
         }
         val mySirElement = buildForeignFunction {
             origin = MockFunction(
-                fqName = listOf("foo"),
+                fqName = FqName.fromSegments(listOf("foo")),
                 parameters = listOf(
                     MockParameter(
                         name = "arg1",
@@ -112,7 +144,8 @@ class SirPassTests {
                 SirParameter(argumentName = "arg7", type = SirNominalType(SirSwiftModule.bool)),
             ),
             returnType = SirNominalType(SirSwiftModule.int8),
-            parent = module
+            parent = module,
+            isStatic = false,
         )
         assertSirFunctionsEquals(actual = result, expected = exp)
     }

@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.name.FqName
+
 sealed interface SirKotlinOrigin : SirOrigin.Foreign {
-    val fqName: List<String>
+    val fqName: FqName
 
     override val path: List<String>
-        get() = fqName
+        get() = fqName.pathSegments().map { it.asString() }
 
     interface Function : SirKotlinOrigin {
         val parameters: List<Parameter>

@@ -1,5 +1,8 @@
 // WITH_STDLIB
 
+// FILE: no_package.kt
+fun foo(): Int = 123
+
 // FILE: foo.kt
 package namespace1
 fun foo(): Int = 123

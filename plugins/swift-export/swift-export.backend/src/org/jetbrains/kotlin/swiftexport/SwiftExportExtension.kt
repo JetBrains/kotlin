@@ -164,7 +164,7 @@ class SwiftExportExtension(
             }
 
             override fun visitFunction(function: SirFunction) {
-                val fqName = (function.origin as? SirKotlinOrigin.Function)?.fqName
+                val fqName = (function.origin as? SirKotlinOrigin.Function)?.path
                     ?: return
                 val fqNameForBridge = if (fqName.count() == 1) {
                     listOf("__root__", fqName.first()) // todo: should be changed with correct mangling KT-64970

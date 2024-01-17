@@ -35,7 +35,9 @@ public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Nothi
             return buildFunction {
                 origin = function.origin
                 visibility = function.visibility
-                name = kotlinOrigin.fqName.last()
+
+                isStatic = function.parent is SirDeclaration
+                name = kotlinOrigin.path.last()
                 kotlinOrigin.parameters.mapTo(parameters) { it.toSir() }
 
                 returnType = kotlinOrigin.returnType.toSir()

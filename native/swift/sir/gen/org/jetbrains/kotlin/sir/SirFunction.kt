@@ -18,6 +18,7 @@ abstract class SirFunction : SirElementBase(), SirCallable {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override var parent: SirDeclarationParent
+    abstract val isStatic: Boolean
     abstract val name: String
     abstract val parameters: List<SirParameter>
     abstract val returnType: SirType
