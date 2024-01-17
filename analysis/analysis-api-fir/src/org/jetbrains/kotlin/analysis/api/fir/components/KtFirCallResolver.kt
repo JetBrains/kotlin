@@ -220,7 +220,7 @@ internal class KtFirCallResolver(
 
         return when (this) {
             is FirResolvable, is FirVariableAssignment -> {
-                when (val calleeReference = toReference()) {
+                when (val calleeReference = toReference(analysisSession.useSiteSession)) {
                     is FirResolvedErrorReference -> transformErrorReference(this, calleeReference)
                     is FirResolvedNamedReference -> when (calleeReference.resolvedSymbol) {
                         // `calleeReference.resolvedSymbol` isn't guaranteed to be callable. For example, function type parameters used in
@@ -794,7 +794,10 @@ internal class KtFirCallResolver(
 
     @OptIn(SymbolInternals::class)
     private fun getInitializerOfReferencedLocalVariable(variableReference: FirExpression): FirFunctionCall? {
-        return variableReference.toReference()?.toResolvedVariableSymbol()?.fir?.initializer as? FirFunctionCall
+        return variableReference.toReference(firResolveSession.useSiteFirSession)
+            ?.toResolvedVariableSymbol()
+            ?.fir
+            ?.initializer as? FirFunctionCall
     }
 
     private fun getOperationPartiallyAppliedSymbolsForCompoundVariableAccess(

@@ -776,7 +776,7 @@ class CallAndReferenceGenerator(
                 )
             }
 
-            val firConstructorSymbol = annotation.toResolvedCallableSymbol() as? FirConstructorSymbol
+            val firConstructorSymbol = annotation.toResolvedCallableSymbol(session) as? FirConstructorSymbol
                 ?: run {
                     // Fallback for FirReferencePlaceholderForResolvedAnnotations from jar
                     val fir = coneType.lookupTag.toSymbol(session)?.fir as? FirClass
@@ -1021,7 +1021,7 @@ class CallAndReferenceGenerator(
                 putValueArgument(valueParameters.indexOf(parameter) + contextReceiverCount, irArgument)
             }
             if (visitor.annotationMode) {
-                val function = call.toReference()?.toResolvedCallableSymbol()?.fir as? FirFunction
+                val function = call.toReference(session)?.toResolvedCallableSymbol()?.fir as? FirFunction
                 for ((index, parameter) in valueParameters.withIndex()) {
                     if (parameter.isVararg && !argumentMapping.containsValue(parameter)) {
                         val value = if (function?.itOrExpectHasDefaultParameterValue(index) == true) {
@@ -1132,7 +1132,7 @@ class CallAndReferenceGenerator(
             irConversionFunction: IrSimpleFunctionSymbol,
         ): IrExpression {
             return if (argument.isIntegerLiteralOrOperatorCall() ||
-                argument.toReference()?.toResolvedCallableSymbol()?.let {
+                argument.toReference(session)?.toResolvedCallableSymbol()?.let {
                     it.resolvedStatus.isConst && it.isMarkedWithImplicitIntegerCoercion
                 } == true
             ) {

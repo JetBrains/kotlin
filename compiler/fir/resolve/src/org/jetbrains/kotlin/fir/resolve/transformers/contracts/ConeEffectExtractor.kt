@@ -235,7 +235,7 @@ class ConeEffectExtractor(
 
     private fun FirExpression.parseInvocationKind(): EventOccurrencesRange? {
         if (this !is FirQualifiedAccessExpression) return null
-        val resolvedId = toResolvedCallableSymbol()?.callableId ?: return null
+        val resolvedId = toResolvedCallableSymbol(session)?.callableId ?: return null
         return when (resolvedId) {
             FirContractsDslNames.EXACTLY_ONCE_KIND -> EventOccurrencesRange.EXACTLY_ONCE
             FirContractsDslNames.AT_LEAST_ONCE_KIND -> EventOccurrencesRange.AT_LEAST_ONCE

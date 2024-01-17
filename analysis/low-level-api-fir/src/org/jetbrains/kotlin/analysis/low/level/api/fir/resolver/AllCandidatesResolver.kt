@@ -138,7 +138,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
      */
     private fun OverloadCandidate.preserveCalleeInapplicability() {
         val callSite = candidate.callInfo.callSite
-        val calleeReference = callSite.toReference() as? FirDiagnosticHolder ?: return
+        val calleeReference = callSite.toReference(firSession) as? FirDiagnosticHolder ?: return
         val diagnostic = calleeReference.diagnostic as? ConeInapplicableCandidateError ?: return
         if (diagnostic.applicability != CandidateApplicability.INAPPLICABLE) return
 

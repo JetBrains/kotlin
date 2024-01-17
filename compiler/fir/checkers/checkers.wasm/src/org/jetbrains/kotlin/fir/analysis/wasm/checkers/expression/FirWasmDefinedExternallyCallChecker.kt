@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirWasmDefinedExternallyCallChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        val symbol = expression.toReference()?.toResolvedCallableSymbol() ?: return
+        val symbol = expression.toReference(context.session)?.toResolvedCallableSymbol() ?: return
 
         if (symbol.callableId != WebCommonStandardClassIds.Callables.JsDefinedExternally) {
             return

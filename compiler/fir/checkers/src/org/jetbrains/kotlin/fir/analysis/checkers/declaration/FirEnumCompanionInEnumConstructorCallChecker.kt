@@ -97,7 +97,7 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
             is FirResolvedQualifier -> {
                 this.resolvedType.toRegularClassSymbol(session)
             }
-            else -> (this.toReference() as? FirThisReference)?.boundSymbol
+            else -> (this.toReference(session) as? FirThisReference)?.boundSymbol
         } as? FirRegularClassSymbol
     }
 }

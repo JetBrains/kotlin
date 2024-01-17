@@ -591,7 +591,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         val generator = GeneratorOfPlusAssignCalls(
             assignmentOperatorStatement,
-            assignmentOperatorStatement.toReference()?.source,
+            assignmentOperatorStatement.toReference(session)?.source,
             operation,
             leftArgument,
             rightArgument
@@ -623,7 +623,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // following `!!` is safe since `operatorIsSuccessful = true` implies `operatorCallReference != null`
         val operatorReturnTypeMatches = operatorIsSuccessful && operatorReturnTypeMatches(operatorCallReference!!.candidate)
 
-        val lhsReference = leftArgument.toReference()
+        val lhsReference = leftArgument.toReference(session)
         val lhsSymbol = lhsReference?.toResolvedVariableSymbol()
         val lhsVariable = lhsSymbol?.fir
         val lhsIsVar = lhsVariable?.isVar == true

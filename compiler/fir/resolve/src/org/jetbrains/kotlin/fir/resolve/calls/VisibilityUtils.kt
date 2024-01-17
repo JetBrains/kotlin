@@ -166,7 +166,8 @@ private fun FirMemberDeclaration.getBackingFieldIfApplicable(): FirBackingField?
 private fun isExplicitReceiverExpression(receiverExpression: FirExpression?): Boolean {
     if (receiverExpression == null) return false
     // Only FirThisReference may be a reference in implicit receiver
-    val thisReference = receiverExpression.toReference() as? FirThisReference ?: return true
+    @OptIn(UnsafeExpressionUtility::class)
+    val thisReference = receiverExpression.toReferenceUnsafe() as? FirThisReference ?: return true
     return !thisReference.isImplicit
 }
 

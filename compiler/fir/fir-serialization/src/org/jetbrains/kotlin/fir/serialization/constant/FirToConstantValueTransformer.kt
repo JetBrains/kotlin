@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -108,7 +107,7 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
         val mapping = annotation.argumentMapping.mapping.convertToConstantValues(
             data.session,
             data.constValueProvider
-        ).addEmptyVarargValuesFor(annotation.toReference()?.toResolvedFunctionSymbol())
+        ).addEmptyVarargValuesFor(annotation.toReference(data.session)?.toResolvedFunctionSymbol())
         return AnnotationValue.create(annotation.annotationTypeRef.coneType, mapping)
     }
 

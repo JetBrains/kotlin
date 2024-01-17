@@ -129,7 +129,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
                 is FirField -> {
                     if (innerDeclaration.isSynthetic) {
-                        val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol()
+                        val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol(context.session)
                         if (context.languageVersionSettings.supportsFeature(LanguageFeature.InlineClassImplementationByDelegation) &&
                             symbol != null && symbol in primaryConstructorParametersSymbolsSet
                         ) {

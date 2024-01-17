@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.toReference
-import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -84,7 +82,8 @@ object FirDiagnosticRenderers {
     }
 
     val CALLEE_NAME = Renderer { element: FirExpression ->
-        when (val reference = element.unwrapSmartcastExpression().toReference()) {
+        @OptIn(UnsafeExpressionUtility::class)
+        when (val reference = element.unwrapSmartcastExpression().toReferenceUnsafe()) {
             is FirNamedReference -> reference.name.asString()
             is FirThisReference -> "this"
             is FirSuperReference -> "super"

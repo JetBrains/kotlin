@@ -40,7 +40,7 @@ abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker(M
         // Do not report the diagnostic on kotlin-reflect sources.
         if (isReflectionSource(context)) return
 
-        val resolvedReference = expression.toReference()?.resolved ?: return
+        val resolvedReference = expression.toReference(context.session)?.resolved ?: return
         val referencedSymbol = resolvedReference.resolvedSymbol as? FirCallableSymbol ?: return
 
         val containingClassId = (expression as? FirQualifiedAccessExpression)?.dispatchReceiver?.resolvedType?.fullyExpandedClassId(context.session)

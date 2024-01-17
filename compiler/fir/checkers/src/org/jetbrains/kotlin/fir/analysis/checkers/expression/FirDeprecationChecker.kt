@@ -49,7 +49,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         if (expression is FirAnnotation) return // checked by FirDeprecatedTypeChecker
         if (expression.isLhsOfAssignment(context)) return
 
-        val calleeReference = expression.toReference() ?: return
+        val calleeReference = expression.toReference(context.session) ?: return
         val resolvedReference = calleeReference.resolved ?: return
         val referencedSymbol = resolvedReference.resolvedSymbol
 

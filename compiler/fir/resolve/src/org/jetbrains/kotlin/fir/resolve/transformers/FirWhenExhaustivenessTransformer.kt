@@ -306,7 +306,9 @@ private object WhenOnEnumExhaustivenessChecker : WhenExhaustivenessChecker() {
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: MutableSet<FirEnumEntry>) {
             if (!equalityOperatorCall.operation.let { it == FirOperation.EQ || it == FirOperation.IDENTITY }) return
             val argument = equalityOperatorCall.arguments[1]
-            val symbol = argument.toResolvedCallableReference()?.resolvedSymbol as? FirVariableSymbol<*> ?: return
+
+            @OptIn(UnsafeExpressionUtility::class)
+            val symbol = argument.toResolvedCallableReferenceUnsafe()?.resolvedSymbol as? FirVariableSymbol<*> ?: return
             val checkedEnumEntry = symbol.fir as? FirEnumEntry ?: return
             data.add(checkedEnumEntry)
         }
@@ -360,7 +362,8 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                     }
                 }
                 else -> {
-                    argument.toResolvedCallableSymbol()?.takeIf { it.fir is FirEnumEntry }
+                    @OptIn(UnsafeExpressionUtility::class)
+                    argument.toResolvedCallableSymbolUnsafe()?.takeIf { it.fir is FirEnumEntry }
                 }
             } ?: return
             processBranch(symbol, isNegated, data)

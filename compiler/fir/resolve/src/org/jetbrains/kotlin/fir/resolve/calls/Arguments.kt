@@ -533,7 +533,7 @@ private fun getExpectedTypeWithImplicitIntegerCoercion(
         if (argument.isIntegerLiteralOrOperatorCall()) {
             argument.resolvedType
         } else {
-            argument.toReference()?.toResolvedCallableSymbol()?.takeIf {
+            argument.toReference(session)?.toResolvedCallableSymbol()?.takeIf {
                 it.rawStatus.isConst && it.isMarkedWithImplicitIntegerCoercion
             }?.resolvedReturnType
         }

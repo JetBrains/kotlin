@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -194,7 +193,7 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
     override fun visitPropertyAccessExpression(
         propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?
     ): ConstantArgumentKind {
-        val propertySymbol = propertyAccessExpression.toReference()?.toResolvedCallableSymbol(discardErrorReference = true)
+        val propertySymbol = propertyAccessExpression.toReference(session)?.toResolvedCallableSymbol(discardErrorReference = true)
         when (propertySymbol) {
             // Null symbol means some error occurred.
             // We use the same logic as in `visitErrorExpression`.

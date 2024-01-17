@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.JsStandardClassIds
 
 object FirJsDefinedExternallyCallChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        val symbol = expression.toReference()?.toResolvedCallableSymbol() ?: return
+        val symbol = expression.toReference(context.session)?.toResolvedCallableSymbol() ?: return
 
         if (symbol.callableId !in JsStandardClassIds.Callables.definedExternallyPropertyNames) {
             return

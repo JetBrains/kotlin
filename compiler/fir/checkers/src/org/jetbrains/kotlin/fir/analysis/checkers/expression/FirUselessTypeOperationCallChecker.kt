@@ -53,7 +53,7 @@ object FirUselessTypeOperationCallChecker : FirTypeOperatorCallChecker(MppChecke
         return when (expression.operation) {
             FirOperation.AS, FirOperation.SAFE_AS -> {
                 if (arg is FirFunctionCall) {
-                    val functionSymbol = arg.toResolvedCallableSymbol() as? FirFunctionSymbol<*>
+                    val functionSymbol = arg.toResolvedCallableSymbol(context.session) as? FirFunctionSymbol<*>
                     if (functionSymbol != null && functionSymbol.isFunctionForExpectTypeFromCastFeature()) return false
                 }
 

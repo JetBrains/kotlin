@@ -27,7 +27,7 @@ object FirDelegateFieldTypeMismatchChecker : FirRegularClassChecker(MppCheckerKi
             val supertype = declaration.superTypeRefs[it]
             val field = declaration.delegateFieldsMap?.get(it)?.fir ?: continue
             val initializer = field.initializer ?: continue
-            val isReportedByErrorNodeDiagnosticCollector = initializer is FirCall && initializer.toReference()?.isError() == true
+            val isReportedByErrorNodeDiagnosticCollector = initializer is FirCall && initializer.toReference(context.session)?.isError() == true
 
             if (
                 !isReportedByErrorNodeDiagnosticCollector &&
