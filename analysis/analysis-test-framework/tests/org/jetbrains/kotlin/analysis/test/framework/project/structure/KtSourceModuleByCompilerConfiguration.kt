@@ -125,7 +125,7 @@ class KtSourceModuleByCompilerConfiguration(
     override val ktModule: KtModule get() = this
 
     override val contentScope: GlobalSearchScope =
-        TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, psiFiles.filterIsInstance<KtFile>())
+        GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
 }
 
 class KtScriptModuleByCompilerConfiguration(
