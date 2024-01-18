@@ -1,7 +1,6 @@
 package
 
 private fun fClient(): HttpClientImpl
-private fun </*0*/ T> lazy(/*0*/ init: () -> T): [Error type: Unresolved type for kotlin.Lazy<T>]<T>
 
 public object DefaultFqHttpClient : HttpClient {
     private constructor DefaultFqHttpClient()
@@ -21,7 +20,7 @@ public object DefaultHttpClient : HttpClient {
 
 public object DefaultHttpClientWithBy : HttpClient {
     private constructor DefaultHttpClientWithBy()
-    public final val client: [Error type: Error delegation type for lazy { HttpClientImpl() }]
+    public final val client: HttpClientImpl
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

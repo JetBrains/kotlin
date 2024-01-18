@@ -96,8 +96,11 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
     doNotReportConstantUninitialized: Boolean,
     scopes: MutableMap<FirPropertySymbol, FirDeclaration?>,
 ) {
-    fun FirQualifiedAccessExpression.hasCorrectReceiver() =
-        (dispatchReceiver?.unwrapSmartcastExpression() as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == receiver
+    fun FirQualifiedAccessExpression.hasMatchingReceiver(): Boolean {
+        val expression = dispatchReceiver?.unwrapSmartcastExpression()
+        return (expression as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == receiver ||
+                (expression as? FirResolvedQualifier)?.symbol == receiver
+    }
 
     for (node in graph.nodes) {
         when {
@@ -115,7 +118,7 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
 
             node is VariableAssignmentNode -> {
                 val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: continue
-                if (!symbol.isVal || node.fir.unwrapLValue()?.hasCorrectReceiver() != true || symbol !in properties) continue
+                if (!symbol.isVal || node.fir.unwrapLValue()?.hasMatchingReceiver() != true || symbol !in properties) continue
 
                 if (getValue(node).values.any { it[symbol]?.canBeRevisited() == true }) {
                     reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
@@ -133,7 +136,7 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
                 if (node.fir.resolvedType.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes)) continue
                 val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: continue
                 if (doNotReportConstantUninitialized && symbol.isConst) continue
-                if (!symbol.isLateInit && !symbol.isExternal && node.fir.hasCorrectReceiver() && symbol in properties &&
+                if (!symbol.isLateInit && !symbol.isExternal && node.fir.hasMatchingReceiver() && symbol in properties &&
                     getValue(node).values.any { it[symbol]?.isDefinitelyVisited() != true }
                 ) {
                     reporter.reportOn(node.fir.source, FirErrors.UNINITIALIZED_VARIABLE, symbol, context)
