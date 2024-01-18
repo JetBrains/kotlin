@@ -51,18 +51,25 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
     }
 
     protected fun doTestByFileStructure(ktFile: KtFile, caretPosition: Int, mainModule: TestModule, testServices: TestServices) {
-        val ktReferences = findReferencesAtCaret(ktFile, caretPosition)
-        if (ktReferences.isEmpty()) {
-            testServices.assertions.fail { "No references at caret found" }
+
+        fun getRenderedReferencesForCaretPosition(caretPosition: Int): String {
+            val ktReferences = findReferencesAtCaret(ktFile, caretPosition)
+            if (ktReferences.isEmpty()) {
+                testServices.assertions.fail { "No references at caret position $caretPosition found" }
+            }
+
+            val resolvedTo = analyzeReferenceElement(ktReferences.first().element, mainModule) {
+                val symbols = ktReferences.flatMap { it.resolveToSymbols() }
+                val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in mainModule.directives
+                renderResolvedTo(symbols, renderPsiClassName, renderingOptions) { getAdditionalSymbolInfo(it) }
+            }
+
+            return resolvedTo
         }
 
-        val resolvedTo = analyzeReferenceElement(ktReferences.first().element, mainModule) {
-            val symbols = ktReferences.flatMap { it.resolveToSymbols() }
-            val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in mainModule.directives
-            renderResolvedTo(symbols, renderPsiClassName, renderingOptions) { getAdditionalSymbolInfo(it) }
-        }
-
+        val resolvedTo = getRenderedReferencesForCaretPosition(caretPosition)
         val actual = "Resolved to:\n$resolvedTo"
+
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
