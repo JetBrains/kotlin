@@ -1,1 +1,0 @@
-length + foo.length

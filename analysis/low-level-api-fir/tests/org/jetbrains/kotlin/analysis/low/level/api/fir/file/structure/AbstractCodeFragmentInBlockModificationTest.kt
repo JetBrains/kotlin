@@ -5,23 +5,26 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractLowLevelApiCodeFragmentTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import kotlin.test.assertNull
 
-abstract class AbstractCodeFragmentInBlockModificationTest : AbstractLowLevelApiCodeFragmentTest() {
-    override fun doTest(ktCodeFragment: KtCodeFragment, moduleStructure: TestModuleStructure, testServices: TestServices) {
+abstract class AbstractCodeFragmentInBlockModificationTest : AbstractAnalysisApiBasedTest() {
+    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
         val targetElement = testServices.expressionMarkerProvider
-            .getBottommostSelectedElementOfType(ktCodeFragment, KtElement::class.java)
+            .getBottommostSelectedElementOfType(mainFile, KtElement::class.java)
 
         assertNull(targetElement.getNonLocalReanalyzableContainingDeclaration())
 
-        val actualText = testInBlockModification(ktCodeFragment, ktCodeFragment, testServices, dumpFirFile = false)
+        val actualText = testInBlockModification(mainFile, mainFile, testServices, dumpFirFile = false)
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
     }

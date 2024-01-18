@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
@@ -67,38 +68,31 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        val testFile = mainModule.files.single { it.name == mainFile.name }
+
         val irCollector = CollectingIrGenerationExtension()
 
         val project = mainFile.project
         project.extensionArea.getExtensionPoint(IrGenerationExtension.extensionPointName)
             .registerExtension(irCollector, LoadingOrder.LAST, project)
 
-        val ktCodeFragment = createCodeFragment(mainFile, mainModule, testServices)
-        if (ktCodeFragment != null) {
-            for (importNameString in mainModule.directives[Directives.CODE_FRAGMENT_IMPORT]) {
-                ktCodeFragment.addImport("import $importNameString")
-            }
-        }
-
         val compilerConfiguration = CompilerConfiguration().apply {
             put(CommonConfigurationKeys.MODULE_NAME, mainModule.name)
             put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, mainModule.languageVersionSettings)
             put(JVMConfigurationKeys.IR, true)
 
-            mainModule.directives[Directives.CODE_FRAGMENT_CLASS_NAME].singleOrNull()
+            testFile.directives[Directives.CODE_FRAGMENT_CLASS_NAME].singleOrNull()
                 ?.let { put(KtCompilerFacility.CODE_FRAGMENT_CLASS_NAME, it) }
 
-            mainModule.directives[Directives.CODE_FRAGMENT_METHOD_NAME].singleOrNull()
+            testFile.directives[Directives.CODE_FRAGMENT_METHOD_NAME].singleOrNull()
                 ?.let { put(KtCompilerFacility.CODE_FRAGMENT_METHOD_NAME, it) }
         }
 
-        val ktTargetFile = ktCodeFragment ?: mainFile
-
-        analyze(ktTargetFile) {
+        analyze(mainFile) {
             val target = KtCompilerTarget.Jvm(ClassBuilderFactories.TEST)
             val allowedErrorFilter: (KtDiagnostic) -> Boolean = { it.factoryName in ALLOWED_ERRORS }
 
-            val result = compile(ktTargetFile, compilerConfiguration, target, allowedErrorFilter)
+            val result = compile(mainFile, compilerConfiguration, target, allowedErrorFilter)
 
             val actualText = when (result) {
                 is KtCompilationResult.Failure -> result.errors.joinToString("\n") { dumpDiagnostic(it) }
@@ -172,10 +166,19 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
     }
 
     object Directives : SimpleDirectivesContainer() {
-        val CODE_FRAGMENT_IMPORT by stringDirective("Import directive for a code fragment")
-        val CODE_FRAGMENT_CLASS_NAME by stringDirective("Short name of a code fragment class")
-        val CODE_FRAGMENT_METHOD_NAME by stringDirective("Name of a code fragment facade method")
-        val ATTACH_DUPLICATE_STDLIB by directive("Attach the 'stdlib-jvm-minimal-for-test' library to simulate duplicate stdlib dependency")
+        val CODE_FRAGMENT_CLASS_NAME by stringDirective(
+            "Short name of a code fragment class",
+            applicability = DirectiveApplicability.File
+        )
+
+        val CODE_FRAGMENT_METHOD_NAME by stringDirective(
+            "Name of a code fragment facade method",
+            applicability = DirectiveApplicability.File
+        )
+
+        val ATTACH_DUPLICATE_STDLIB by directive(
+            "Attach the 'stdlib-jvm-minimal-for-test' library to simulate duplicate stdlib dependency"
+        )
     }
 }
 

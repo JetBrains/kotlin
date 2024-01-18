@@ -43,7 +43,7 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
 
     @Test
     public void testAllFilesPresentInCompilation() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilation"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilation"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     public class CodeFragments {
         @Test
         public void testAllFilesPresentInCodeFragments() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -151,7 +151,7 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
         public class Capturing {
             @Test
             public void testAllFilesPresentInCapturing() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
             }
 
             @Test

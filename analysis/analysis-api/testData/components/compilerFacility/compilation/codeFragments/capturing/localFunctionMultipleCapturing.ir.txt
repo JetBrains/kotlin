@@ -1,5 +1,5 @@
 MODULE_FRAGMENT
-  FILE fqName:<root> fileName:localFunctionMultipleCapturing.kt
+  FILE fqName:<root> fileName:context.kt
     CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo
       CONSTRUCTOR visibility:public <> () returnType:<root>.Foo [primary]

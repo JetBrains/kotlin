@@ -1,3 +1,20 @@
+// MODULE: context
+
+// FILE: context.kt
 fun test() {
-    <caret>Unit
+    <caret_context>Unit
 }
+
+
+// MODULE: main
+// MODULE_KIND: CodeFragment
+
+// FILE: fragment.kt
+// CODE_FRAGMENT_KIND: BLOCK
+fun foo(a: Int, b: String) {}
+
+fun bar() {
+    <expr>foo(1, "foo")</expr>
+}
+
+bar()

@@ -4,11 +4,11 @@ public final class CodeFragment {
     public final static method run(p0: Foo): void
 }
 
+public final class ContextKt
+
 public final class Foo {
-    // source: 'localFunctionContainingClassClosure.kt'
+    // source: 'context.kt'
     public method <init>(): void
     private final static method test$call(p0: Foo): void
     public final method test(): void
 }
-
-public final class LocalFunctionContainingClassClosureKt

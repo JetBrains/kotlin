@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpressionCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeCodeFragment
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -50,10 +51,9 @@ object KtCodeFragmentModuleFactory : KtModuleFactory {
             error("Imports cannot be configured for type code fragments")
         }
 
-        val expressionMarkerProvider = testServices.expressionMarkerProvider
         val contextElement = contextModule.files
             .filterIsInstance<KtFile>()
-            .firstNotNullOfOrNull { expressionMarkerProvider.getElementOfTypeAtCaret<KtElement>(it, "context") }
+            .firstNotNullOfOrNull { findContextElement(it, testServices) }
 
         val codeFragment = when (codeFragmentKind) {
             CodeFragmentKind.EXPRESSION -> KtExpressionCodeFragment(project, fileName, fileText, codeFragmentImports, contextElement)
@@ -68,6 +68,11 @@ object KtCodeFragmentModuleFactory : KtModuleFactory {
         )
 
         return KtModuleWithFiles(module, listOf(codeFragment))
+    }
+
+    private fun findContextElement(file: KtFile, testServices: TestServices): KtElement? {
+        val offset = testServices.expressionMarkerProvider.getCaretPositionOrNull(file, "context") ?: return null
+        return file.findElementAt(offset)?.getParentOfType<KtElement>(strict = false)
     }
 }
 

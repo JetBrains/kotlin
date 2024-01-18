@@ -1,3 +1,6 @@
+// MODULE: context
+
+// FILE: context.kt
 import kotlin.reflect.KProperty
 
 class Delegate(private var value: String) {
@@ -12,5 +15,14 @@ class Delegate(private var value: String) {
 
 fun test() {
     var x by Delegate("a")
-    <caret>x
+    <caret_context>x
 }
+
+
+// MODULE: main
+// MODULE_KIND: CodeFragment
+
+// FILE: fragment.kt
+// CODE_FRAGMENT_KIND: BLOCK
+x = "O"
+x + "K"

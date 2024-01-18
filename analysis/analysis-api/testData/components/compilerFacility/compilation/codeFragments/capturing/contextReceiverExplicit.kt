@@ -1,3 +1,8 @@
+// LANGUAGE: +ContextReceivers
+
+// MODULE: context
+
+// FILE: context.kt
 fun test() {
     with(Foo()) {
         call()
@@ -6,11 +11,17 @@ fun test() {
 
 context(Foo)
 fun call() {
-    <caret>val x = 0
+    <caret_context>val x = 0
 }
 
 class Foo {
     val foo: String = "foo"
 }
 
-// LANGUAGE: +ContextReceivers
+
+// MODULE: main
+// MODULE_KIND: CodeFragment
+
+// FILE: fragment.kt
+// CODE_FRAGMENT_KIND: EXPRESSION
+this@Foo.foo

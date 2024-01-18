@@ -1,5 +1,5 @@
 MODULE_FRAGMENT
-  FILE fqName:<root> fileName:localFunctionLambdaParameterClosure.kt
+  FILE fqName:<root> fileName:context.kt
     FUN name:block visibility:public modality:FINAL <T> (obj:T of <root>.block, block:kotlin.Function1<T of <root>.block, kotlin.Unit>) returnType:kotlin.Unit
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       VALUE_PARAMETER name:obj index:0 type:T of <root>.block

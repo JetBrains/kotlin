@@ -1,1 +1,0 @@
-this@ext.dec()

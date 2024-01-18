@@ -4,4 +4,4 @@ public final class CodeFragment {
     public final static method run(p0: int): void
 }
 
-public final class LocalFunctionLocalClosureKt
+public final class ContextKt

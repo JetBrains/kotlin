@@ -5,12 +5,12 @@ public final class CodeFragment {
     public final inner class kotlin/jvm/internal/Ref$IntRef
 }
 
+public final class ContextKt
+
 public final class Foo {
-    // source: 'localFunctionMultipleCapturing.kt'
+    // source: 'context.kt'
     public method <init>(): void
     private final static method test$call(p0: Foo, p1: java.lang.String, p2: kotlin.jvm.internal.Ref$IntRef, p3: int): void
     public final method test(p0: java.lang.String): void
     public final inner class kotlin/jvm/internal/Ref$IntRef
 }
-
-public final class LocalFunctionMultipleCapturingKt

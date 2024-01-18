@@ -1,6 +1,16 @@
+// MODULE: context
+
+// FILE: context.kt
 fun test() {
-    <caret>val x = 0
+    <caret_context>val x = 0
 }
 
+
+// MODULE: main
+// MODULE_KIND: CodeFragment
+
+// FILE: fragment.kt
+// CODE_FRAGMENT_KIND: EXPRESSION
 // CODE_FRAGMENT_CLASS_NAME: MyCodeFragment
 // CODE_FRAGMENT_METHOD_NAME: invoke
+"foo"

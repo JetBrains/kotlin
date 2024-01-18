@@ -1,2 +1,0 @@
-this as FooImpl
-n

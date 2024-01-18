@@ -10,6 +10,6 @@ MODULE_FRAGMENT
         VALUE_PARAMETER name:p1 index:1 type:<root>.Ctx2
         EXPRESSION_BODY
           BLOCK type=kotlin.Int origin=null
-            CALL 'public final fun useWithCtx1Ctx2 ($context_receiver_0: <root>.Ctx1, $context_receiver_1: <root>.Ctx2): kotlin.Int declared in <root>.MultipleFunctionContextReceiversKt' type=kotlin.Int origin=null
+            CALL 'public final fun useWithCtx1Ctx2 ($context_receiver_0: <root>.Ctx1, $context_receiver_1: <root>.Ctx2): kotlin.Int declared in <root>.ContextKt' type=kotlin.Int origin=null
               $context_receiver_0: GET_VAR 'p0: <root>.Ctx1 declared in <root>.CodeFragment.run' type=<root>.Ctx1 origin=null
               $context_receiver_1: GET_VAR 'p1: <root>.Ctx2 declared in <root>.CodeFragment.run' type=<root>.Ctx2 origin=null

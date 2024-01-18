@@ -4,4 +4,4 @@ public final class CodeFragment {
     public final static method run(): void
 }
 
-public final class InlineFunctionUsageSourceKt
+public final class ContextKt

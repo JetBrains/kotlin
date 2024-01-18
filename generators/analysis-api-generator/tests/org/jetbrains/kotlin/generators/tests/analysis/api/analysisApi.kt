@@ -106,11 +106,11 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
                 and analysisApiModeIs(AnalysisApiMode.Ide)
     ) {
         test(AbstractCompilerFacilityTest::class) {
-            model("compilation", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            model("compilation", pattern = TestGeneratorUtil.KT)
         }
 
         test(AbstractMultiModuleCompilerFacilityTest::class, filter = testModuleKindIs(TestModuleKind.Source)) {
-            model("compilationMultiModule", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            model("compilationMultiModule", pattern = TestGeneratorUtil.KT)
         }
     }
 

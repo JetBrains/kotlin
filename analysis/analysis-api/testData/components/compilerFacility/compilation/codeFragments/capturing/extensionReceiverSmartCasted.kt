@@ -1,3 +1,6 @@
+// MODULE: context
+
+// FILE: context.kt
 interface Foo
 
 class FooImpl : Foo {
@@ -8,6 +11,15 @@ fun makeFoo(): Foo = FooImpl()
 
 fun main() {
     makeFoo().apply {
-        <caret>Unit
+        <caret_context>Unit
     }
 }
+
+
+// MODULE: main
+// MODULE_KIND: CodeFragment
+
+// FILE: fragment.kt
+// CODE_FRAGMENT_KIND: BLOCK
+this as FooImpl
+n

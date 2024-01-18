@@ -1,7 +1,10 @@
+// MODULE: context
+
+// FILE: context.kt
 fun test() {
     with("Hello, world!") {
         with(Foo()) {
-            <caret>val x = 0
+            <caret_context>val x = 0
         }
     }
 }
@@ -9,3 +12,10 @@ fun test() {
 class Foo {
     val foo: String = "foo"
 }
+
+// MODULE: main
+// MODULE_KIND: CodeFragment
+
+// FILE: fragment.kt
+// CODE_FRAGMENT_KIND: EXPRESSION
+length + foo.length
