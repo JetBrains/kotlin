@@ -717,6 +717,196 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CodeFragment {
+        @Test
+        public void testAllFilesPresentInCodeFragment() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
+        }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment")
+        @TestDataPath("$PROJECT_ROOT")
+        public class BlockCodeFragment {
+            @Test
+            public void testAllFilesPresentInBlockCodeFragment() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
+            }
+
+            @Test
+            @TestMetadata("BinaryExpression.kt")
+            public void testBinaryExpression() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment/BinaryExpression.kt");
+            }
+
+            @Test
+            @TestMetadata("CompanionCall.kt")
+            public void testCompanionCall() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment/CompanionCall.kt");
+            }
+
+            @Test
+            @TestMetadata("ContextFunctionCall.kt")
+            public void testContextFunctionCall() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment/ContextFunctionCall.kt");
+            }
+
+            @Test
+            @TestMetadata("FunctionCall.kt")
+            public void testFunctionCall() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment/FunctionCall.kt");
+            }
+
+            @Test
+            @TestMetadata("LocalFunctionCall.kt")
+            public void testLocalFunctionCall() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment/LocalFunctionCall.kt");
+            }
+
+            @Test
+            @TestMetadata("NestedCodeFragment.kt")
+            public void testNestedCodeFragment() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment/NestedCodeFragment.kt");
+            }
+
+            @Test
+            @TestMetadata("NestedCodeFragmentClass.kt")
+            public void testNestedCodeFragmentClass() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment/NestedCodeFragmentClass.kt");
+            }
+
+            @Test
+            @TestMetadata("NestedCodeFragmentClassMember.kt")
+            public void testNestedCodeFragmentClassMember() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment/NestedCodeFragmentClassMember.kt");
+            }
+
+            @Test
+            @TestMetadata("NestedCodeFragmentFunction.kt")
+            public void testNestedCodeFragmentFunction() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment/NestedCodeFragmentFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("PropertyCall.kt")
+            public void testPropertyCall() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment/PropertyCall.kt");
+            }
+
+            @Test
+            @TestMetadata("SecondStatement.kt")
+            public void testSecondStatement() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment/SecondStatement.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ExpressionCodeFragment {
+            @Test
+            public void testAllFilesPresentInExpressionCodeFragment() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
+            }
+
+            @Test
+            @TestMetadata("BinaryExpression.kt")
+            public void testBinaryExpression() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment/BinaryExpression.kt");
+            }
+
+            @Test
+            @TestMetadata("CompanionCall.kt")
+            public void testCompanionCall() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment/CompanionCall.kt");
+            }
+
+            @Test
+            @TestMetadata("ContextFunctionCall.kt")
+            public void testContextFunctionCall() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment/ContextFunctionCall.kt");
+            }
+
+            @Test
+            @TestMetadata("FunctionCall.kt")
+            public void testFunctionCall() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment/FunctionCall.kt");
+            }
+
+            @Test
+            @TestMetadata("LocalFunctionCall.kt")
+            public void testLocalFunctionCall() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment/LocalFunctionCall.kt");
+            }
+
+            @Test
+            @TestMetadata("NestedCodeFragment.kt")
+            public void testNestedCodeFragment() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment/NestedCodeFragment.kt");
+            }
+
+            @Test
+            @TestMetadata("NestedCodeFragmentUsage.kt")
+            public void testNestedCodeFragmentUsage() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment/NestedCodeFragmentUsage.kt");
+            }
+
+            @Test
+            @TestMetadata("PropertyCall.kt")
+            public void testPropertyCall() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment/PropertyCall.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment")
+        @TestDataPath("$PROJECT_ROOT")
+        public class TypeCodeFragment {
+            @Test
+            public void testAllFilesPresentInTypeCodeFragment() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
+            }
+
+            @Test
+            @TestMetadata("FromContextFile.kt")
+            public void testFromContextFile() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment/FromContextFile.kt");
+            }
+
+            @Test
+            @TestMetadata("FromContextModule.kt")
+            public void testFromContextModule() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment/FromContextModule.kt");
+            }
+
+            @Test
+            @TestMetadata("GenericType.kt")
+            public void testGenericType() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment/GenericType.kt");
+            }
+
+            @Test
+            @TestMetadata("GenericTypeArgument.kt")
+            public void testGenericTypeArgument() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment/GenericTypeArgument.kt");
+            }
+
+            @Test
+            @TestMetadata("Simple.kt")
+            public void testSimple() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment/Simple.kt");
+            }
+
+            @Test
+            @TestMetadata("TypeAnnotation.kt")
+            public void testTypeAnnotation() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment/TypeAnnotation.kt");
+            }
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/constructorDelegatingReference")
     @TestDataPath("$PROJECT_ROOT")
     public class ConstructorDelegatingReference {
