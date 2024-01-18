@@ -62,6 +62,8 @@ object FirNativeErrors {
     val CONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER: KtDiagnosticFactory1<FqName> by error1<KtElement, FqName>()
     val CONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR: KtDiagnosticFactory1<FqName> by error1<KtElement, FqName>()
     val CONSTRUCTOR_MATCHES_SEVERAL_SUPER_CONSTRUCTORS: KtDiagnosticFactory1<FqName> by error1<KtElement, FqName>()
+    val CONFLICTING_OBJC_OVERLOADS: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> by error1<PsiElement, Collection<FirBasedSymbol<*>>>()
+    val INAPPLICABLE_OBJC_OVERRIDE: KtDiagnosticFactory0 by error0<PsiElement>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirNativeErrorsDefaultMessages)

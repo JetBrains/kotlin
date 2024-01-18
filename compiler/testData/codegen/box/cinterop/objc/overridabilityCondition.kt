@@ -42,28 +42,34 @@ headerFilter = lib.h
 // FILE: main.kt
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
-import lib.ObjCClass
+// required for K1
+@file:Suppress("CONFLICTING_OVERLOADS", "UNRESOLVED_REFERENCE", "API_NOT_AVAILABLE")
 
-@Suppress("CONFLICTING_OVERLOADS")
+import lib.ObjCClass
+import kotlinx.cinterop.ObjCSignatureOverride
+
 class OverrideAll : ObjCClass() {
+    @ObjCSignatureOverride
     override fun fooWithArg(arg: Int, arg2: String?) = "D"
+    @ObjCSignatureOverride
     override fun fooWithArg(ohNoOtherName: Int, name2: String?) = "E"
+    @ObjCSignatureOverride
     override fun fooWithArg(arg: Int, name3: String?) = "F"
 }
 
-@Suppress("CONFLICTING_OVERLOADS")
 class OverrideNone : ObjCClass() {
 }
 
-@Suppress("CONFLICTING_OVERLOADS")
 class OverrideOne : ObjCClass() {
     override fun fooWithArg(arg: Int, arg2: String?) = "G"
 }
 
-@Suppress("CONFLICTING_OVERLOADS")
 class OverrideWithDifferentFirstArgName : ObjCClass() {
+    @ObjCSignatureOverride
     override fun fooWithArg(a: Int, arg2: String?) = "H"
+    @ObjCSignatureOverride
     override fun fooWithArg(b: Int, name2: String?) = "I"
+    @ObjCSignatureOverride
     override fun fooWithArg(c: Int, name3: String?) = "J"
 }
 

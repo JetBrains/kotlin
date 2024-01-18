@@ -7,23 +7,25 @@ package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.PlatformConflictDeclarationsDiagnosticDispatcher
 import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeCastChecker
+import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeConflictDeclarationsDiagnosticDispatcher
 import org.jetbrains.kotlin.fir.backend.native.FirNativeClassMapper
+import org.jetbrains.kotlin.fir.backend.native.FirNativeOverrideChecker
 import org.jetbrains.kotlin.fir.checkers.registerNativeCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
-import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 
 object FirNativeSessionFactory : FirAbstractSessionFactory() {
-    @OptIn(SessionConfiguration::class)
     fun createLibrarySession(
         mainModuleName: Name,
         resolvedLibraries: List<KotlinResolvedLibrary>,
@@ -63,7 +65,6 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             })
     }
 
-    @OptIn(SessionConfiguration::class)
     fun createModuleBasedSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
@@ -102,5 +103,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
     fun FirSession.registerNativeComponents() {
         register(FirPlatformClassMapper::class, FirNativeClassMapper())
         register(FirPlatformSpecificCastChecker::class, FirNativeCastChecker)
+        register(PlatformConflictDeclarationsDiagnosticDispatcher::class, NativeConflictDeclarationsDiagnosticDispatcher)
+        register(FirOverrideChecker::class, FirNativeOverrideChecker(this))
     }
 }

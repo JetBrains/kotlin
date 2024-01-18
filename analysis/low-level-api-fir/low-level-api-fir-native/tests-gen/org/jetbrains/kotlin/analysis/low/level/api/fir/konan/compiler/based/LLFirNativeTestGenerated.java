@@ -69,6 +69,18 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
     }
 
     @Test
+    @TestMetadata("noObjcOverrideConflictingOverloadsDisabled.kt")
+    public void testNoObjcOverrideConflictingOverloadsDisabled() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/noObjcOverrideConflictingOverloadsDisabled.kt");
+    }
+
+    @Test
+    @TestMetadata("noObjcOverrideConflictingOverloadsEnabled.kt")
+    public void testNoObjcOverrideConflictingOverloadsEnabled() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/noObjcOverrideConflictingOverloadsEnabled.kt");
+    }
+
+    @Test
     @TestMetadata("objCName.kt")
     public void testObjCName() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/objCName.kt");
@@ -102,6 +114,12 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
     @TestMetadata("objCRefinement.kt")
     public void testObjCRefinement() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/objCRefinement.kt");
+    }
+
+    @Test
+    @TestMetadata("objcOverrideApplicability.kt")
+    public void testObjcOverrideApplicability() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/objcOverrideApplicability.kt");
     }
 
     @Test

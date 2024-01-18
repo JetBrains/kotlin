@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirNameConflictsTrackerComponent
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -18,13 +22,42 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.PACKAGE_MEMBER
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.SmartSet
+
+interface PlatformConflictDeclarationsDiagnosticDispatcher : FirSessionComponent {
+    fun getDiagnostic(
+        conflictingDeclaration: FirBasedSymbol<*>,
+        symbols: SmartSet<FirBasedSymbol<*>>,
+        context: CheckerContext
+    ): KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>>?
+
+    object DEFAULT : PlatformConflictDeclarationsDiagnosticDispatcher {
+        override fun getDiagnostic(
+            conflictingDeclaration: FirBasedSymbol<*>,
+            symbols: SmartSet<FirBasedSymbol<*>>,
+            context: CheckerContext
+        ): KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> {
+            return when {
+                conflictingDeclaration is FirNamedFunctionSymbol || conflictingDeclaration is FirConstructorSymbol -> {
+                    FirErrors.CONFLICTING_OVERLOADS
+                }
+                conflictingDeclaration is FirClassLikeSymbol<*> &&
+                        conflictingDeclaration.getContainingClassSymbol(context.session) == null &&
+                        symbols.any { it is FirClassLikeSymbol<*> } -> {
+                    FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION
+                }
+                else -> {
+                    FirErrors.REDECLARATION
+                }
+            }
+        }
+    }
+}
+
+val FirSession.conflictDeclarationsDiagnosticDispatcher: PlatformConflictDeclarationsDiagnosticDispatcher? by FirSession.nullableSessionComponentAccessor()
 
 object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -90,21 +123,16 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
                 conflictingDeclaration.isPrimaryConstructor && symbols.all { it.isPrimaryConstructor }
             ) return@forEach
 
-            when {
-                symbols.singleOrNull()?.let { isExpectAndActual(conflictingDeclaration, it) } == true -> {
-                    reporter.reportOn(source, FirErrors.EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, conflictingDeclaration, context)
-                }
-                conflictingDeclaration is FirNamedFunctionSymbol || conflictingDeclaration is FirConstructorSymbol -> {
-                    reporter.reportOn(source, FirErrors.CONFLICTING_OVERLOADS, symbols, context)
-                }
-                conflictingDeclaration is FirClassLikeSymbol<*> &&
-                        conflictingDeclaration.getContainingClassSymbol(context.session) == null &&
-                        symbols.any { it is FirClassLikeSymbol<*> } -> {
-                    reporter.reportOn(source, FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION, symbols, context)
-                }
-                else -> {
-                    reporter.reportOn(source, FirErrors.REDECLARATION, symbols, context)
-                }
+            if (symbols.singleOrNull()?.let { isExpectAndActual(conflictingDeclaration, it) } == true) {
+                reporter.reportOn(source, FirErrors.EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, conflictingDeclaration, context)
+                return@forEach
+            }
+
+            val dispatcher = context.session.conflictDeclarationsDiagnosticDispatcher ?: PlatformConflictDeclarationsDiagnosticDispatcher.DEFAULT
+            val factory = dispatcher.getDiagnostic(conflictingDeclaration, symbols, context)
+
+            if (factory != null) {
+                reporter.reportOn(source, factory, symbols, context)
             }
         }
     }

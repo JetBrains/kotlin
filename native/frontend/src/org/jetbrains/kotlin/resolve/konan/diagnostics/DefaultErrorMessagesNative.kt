@@ -90,6 +90,15 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             "Can't refer to forward declaration ''{0}'' from class literal",
             Renderers.RENDER_TYPE
         )
+        put(
+            ErrorsNative.CONFLICTING_OBJC_OVERLOADS,
+            "Conflicting overloads: {0}. Add @ObjCSignatureOverride to allow collision for functions inherited from Objective-C.",
+            CommonRenderers.commaSeparated(Renderers.FQ_NAMES_IN_TYPES)
+        )
+        put(
+            ErrorsNative.INAPPLICABLE_OBJC_OVERRIDE,
+            "@ObjCSignatureOverride is only allowed on functions inherited from Objective-C.",
+        )
     }
 }
 
