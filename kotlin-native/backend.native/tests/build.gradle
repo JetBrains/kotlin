@@ -1210,11 +1210,6 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.defFile 'interop/objc/objCAction/objclib.def'
         it.headers "$projectDir/interop/objc/objCAction/objclib.h"
     }
-    createInterop("overridabilityCondition") {
-        it.defFile 'interop/objc/overridabilityCondition/lib.def'
-        it.headers "$projectDir/interop/objc/overridabilityCondition/lib.h"
-        it.extraOpts "-Xcompile-source", "$projectDir/interop/objc/overridabilityCondition/lib.m"
-    }
     createInterop("kt63423_dispose_on_main_stress") {
         it.defFile 'interop/objc/kt63423_dispose_on_main_stress/objclib.def'
         it.headers "$projectDir/interop/objc/kt63423_dispose_on_main_stress/objclib.h"
@@ -1547,12 +1542,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_direct") {
         source = "interop/objc/direct/main.kt"
         interop = "objcDirect"
-    }
-
-    interopTest("interop_objc_overridabilityCondition") {
-        interop = "overridabilityCondition"
-        source = "interop/objc/overridabilityCondition/main.kt"
-        flags = [ "-Xuse-ir-fake-override-builder" ]
     }
 
     interopTest("interop_objc_foreignException") {

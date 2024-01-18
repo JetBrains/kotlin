@@ -4981,6 +4981,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testKt53151() throws Exception {
                     runTest("compiler/testData/codegen/box/cinterop/objc/kt53151.kt");
                 }
+
+                @Test
+                @TestMetadata("overridabilityCondition.kt")
+                public void testOverridabilityCondition() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/objc/overridabilityCondition.kt");
+                }
             }
 
             @Nested

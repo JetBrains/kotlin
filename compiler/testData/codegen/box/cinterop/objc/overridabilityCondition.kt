@@ -1,3 +1,45 @@
+// TARGET_BACKEND: NATIVE
+// DISABLE_NATIVE: isAppleTarget=false
+
+// MODULE: cinterop
+// FILE: lib.def
+language = Objective-C
+headers = lib.h
+headerFilter = lib.h
+
+// FILE: lib.h
+#import <Foundation/NSObject.h>
+#import <Foundation/NSDate.h>
+#import <Foundation/NSUUID.h>
+
+@interface ObjCClass : NSObject
+- (NSString*)fooWithArg:(int)arg arg2:(NSString*)arg2;
+- (NSString*)fooWithArg:(int)ohNoOtherName name2:(NSString*)name2;
+- (NSString*)fooWithArg:(int)arg name3:(NSString*)name3;
+@end
+
+// FILE: lib.m
+#import "lib.h"
+
+@implementation ObjCClass {
+}
+
+- (NSString*)fooWithArg:(int)arg arg2:(NSString*)arg2 {
+    return @"A";
+}
+
+- (NSString*)fooWithArg:(int)ohNoOtherName name2:(NSString*)name2 {
+    return @"B";
+}
+
+- (NSString*)fooWithArg:(int)arg name3:(NSString*)name3 {
+    return @"C";
+}
+
+@end
+
+// MODULE: main(cinterop)
+// FILE: main.kt
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
 import lib.ObjCClass
@@ -32,7 +74,7 @@ fun test(x: ObjCClass, expected: String) {
     if (res != expected) throw IllegalStateException("Fail ${x::class}: ${res} instead of $expected")
 }
 
-fun main() {
+fun box(): String {
     test(ObjCClass(), "ABC")
     test(OverrideAll(), "DEF")
     test(OverrideNone(), "ABC")
@@ -51,4 +93,6 @@ fun main() {
             x2.fooWithArg(ohNoOtherName = 0, name2="") +
             x2.fooWithArg(arg = 0, name3 = "")
     if (res2 != "ABC") throw IllegalStateException("Fail OverrideNone non-virtual: ${res2} instead of ABC")
+
+    return "OK"
 }
