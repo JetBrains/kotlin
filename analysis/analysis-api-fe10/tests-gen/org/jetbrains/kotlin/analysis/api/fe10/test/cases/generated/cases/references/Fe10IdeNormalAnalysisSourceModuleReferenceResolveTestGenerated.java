@@ -335,6 +335,12 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
     }
 
     @Test
+    @TestMetadata("JsAsDynamic.kt")
+    public void testJsAsDynamic() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/JsAsDynamic.kt");
+    }
+
+    @Test
     @TestMetadata("KotlinPropertyAssignment.kt")
     public void testKotlinPropertyAssignment() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/KotlinPropertyAssignment.kt");
