@@ -1,0 +1,9 @@
+depends = Foundation darwin posix
+language = Objective-C
+package = platform.XCTest
+modules = XCTest
+
+compilerOpts = -framework XCTest
+linkerOpts = -framework XCTest
+
+foreignExceptionMode = objc-wrap
