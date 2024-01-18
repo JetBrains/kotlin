@@ -1861,6 +1861,7 @@ if (PlatformInfo.isAppleTarget(project)) {
         // Test depends on macOS-specific AppKit
         enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null)
             && !isNoopGC // requires some GC
+            && !isAggressiveGC // requires careful timing of GC
         source = 'interop/objc/kt63423_dispose_on_main_stress/main.kt'
         interop = "kt63423_dispose_on_main_stress"
         flags = [
