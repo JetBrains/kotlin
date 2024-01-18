@@ -72,13 +72,6 @@ tasks.test {
     }
 }
 
-// i think template compiler is used only as POC,
-// so these classes are added as a temporary solution.
-// If it still be used later, then they should be copied from kotlin compiler jar
-tasks.named<Jar>("jar") {
-    from(file("lightTree"))
-}
-
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     kotlinOptions {
         freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi"
