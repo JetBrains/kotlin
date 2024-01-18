@@ -163,7 +163,8 @@ class FirCompilerOutputTest : CompilerOutputTestBase() {
         // TODO: use the Compiler Core test infrastructure for testing these diagnostics (KT-64393)
         val rootDir = File("native/native.tests/testData/compilerOutput/SignatureClashDiagnostics")
         val settings = testRunSettings
-        val compilationResult = compileLibrary(settings, rootDir.resolve("main.kt"))
+        val lib = compileLibrary(settings, rootDir.resolve("lib.kt")).assertSuccess().resultingArtifact
+        val compilationResult = compileLibrary(settings, rootDir.resolve("main.kt"), dependencies = listOf(lib))
         val goldenData = rootDir.resolve("output.txt")
 
         KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput())

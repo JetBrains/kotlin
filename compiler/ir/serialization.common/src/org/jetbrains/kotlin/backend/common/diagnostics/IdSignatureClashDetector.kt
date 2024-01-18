@@ -23,7 +23,7 @@ class IdSignatureClashDetector : SignatureClashDetector<IdSignature, IrDeclarati
             SerializationErrors.CONFLICTING_KLIB_SIGNATURES_ERROR,
             declarations,
             ConflictingKlibSignaturesData(signature, declarations),
-            reportOnIfSynthetic = { it.parentClassOrNull ?: it.file },
+            reportOnIfSynthetic = { it.parentClassOrNull },
         )
     }
 }
