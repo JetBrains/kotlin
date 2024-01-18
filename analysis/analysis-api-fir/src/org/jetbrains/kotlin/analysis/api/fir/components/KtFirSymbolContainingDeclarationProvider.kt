@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KtFirSymbolContainingDeclarationProvider(
@@ -286,9 +287,13 @@ internal class KtFirSymbolContainingDeclarationProvider(
         }
     }
 
-    private fun PsiElement.getContainingKtDeclaration(): KtDeclaration? =
-        when (val container = this.parentOfType<KtDeclaration>()) {
-            is KtDestructuringDeclaration -> container.parentOfType()
-            else -> container
-        }?.let { it.originalDeclaration ?: it }
+    private fun PsiElement.getContainingPsiDeclaration(): KtDeclaration? {
+        for (parent in parents) {
+            if (parent is KtDeclaration && parent !is KtDestructuringDeclaration) {
+                return parent.originalDeclaration ?: parent
+            }
+        }
+
+        return null
+    }
 }
