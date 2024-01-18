@@ -1,7 +1,7 @@
 // FILE: B.kt
 class AK: A<String>() {
     inner class BK: B<String>() {
-        override fun <K : String?> f<caret_onAirContext>oo(): K {
+        override fun <K : String?> foo(): K {
         }
     }
 }

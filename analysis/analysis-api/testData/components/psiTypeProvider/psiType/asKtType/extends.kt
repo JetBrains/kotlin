@@ -1,6 +1,6 @@
 // FILE: B.kt
 interface B: A {
-    fun f<caret_onAirContext>oo(): java.util.List<String?>?
+    fun foo(): java.util.List<String?>?
 }
 // FILE: A.java
 public interface A {

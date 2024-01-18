@@ -1,6 +1,6 @@
 // FILE: B.kt
 class B: A<String> {
-    override fun <K : String?> f<caret_onAirContext>oo(): K? {
+    override fun <K : String?> foo(): K? {
         TODO("Not yet implemented")
     }
 }

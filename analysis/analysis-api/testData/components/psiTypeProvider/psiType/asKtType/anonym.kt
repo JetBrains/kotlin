@@ -1,5 +1,5 @@
 // FILE: B.kt
-class A<caret_onAirContext>K: A<String>() {
+class AK: A<String>() {
 }
 // FILE: A.java
 class A<T> {

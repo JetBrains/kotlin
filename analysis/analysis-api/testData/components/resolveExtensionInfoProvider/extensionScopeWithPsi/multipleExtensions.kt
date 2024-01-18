@@ -33,6 +33,6 @@ package main
 import rex1.*
 import rex2.*
 
-object <caret_onAirContext>MainObject : RexClass1, RexClass2 {
+object MainObject : RexClass1, RexClass2 {
     fun foo(): List<Any> = listOf(rexCallable1(), rexCallable2())
 }

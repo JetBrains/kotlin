@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendK
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.analysis.test.framework.utils.singleOrZeroValue
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestConfiguration
@@ -379,20 +378,6 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         }
     }
 
-    /**
-     * Invoke the analysis in the context of given [file]
-     *
-     * To perform the test for in-air analysis, it will look for the declaration marked with the caret `<caret_onAirContext>`
-     */
-    protected fun <R> analyseForTest(file: KtFile, action: KtAnalysisSession.(KtElement) -> R): R {
-        return if (configurator.analyseInDependentSession) {
-            val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(file, ON_AIR_CONTEXT_CARET_TAG)
-            analyseForTest(declaration, action)
-        } else {
-            analyze(file, action = { action(file) })
-        }
-    }
-
     @BeforeEach
     fun initTestInfo(testInfo: TestInfo) {
         this.testInfo = KotlinTestInfo(
@@ -400,9 +385,5 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
             methodName = testInfo.testMethod.orElseGet(null)?.name ?: "_testUndefined_",
             tags = testInfo.tags
         )
-    }
-
-    companion object {
-        private const val ON_AIR_CONTEXT_CARET_TAG = "onAirContext"
     }
 }

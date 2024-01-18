@@ -41,4 +41,4 @@ package generated
 open class GenClass2
 
 // FILE: main.kt
-fun <caret_onAirContext>main() {}
+fun main() {}

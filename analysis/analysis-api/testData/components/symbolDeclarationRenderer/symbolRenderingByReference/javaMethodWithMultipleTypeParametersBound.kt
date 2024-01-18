@@ -4,7 +4,7 @@
 class J: JavaClass<String> {}
 
 fun some(j: J) {
-  j.f<caret>o<caret_onAirContext>o()
+  j.f<caret>oo()
 }
 
 // FILE: JavaClass.java
