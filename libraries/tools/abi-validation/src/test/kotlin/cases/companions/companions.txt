@@ -1,3 +1,9 @@
+public final class cases/companions/FilteredCompanionObjectHolder {
+}
+
+public final class cases/companions/FilteredNamedCompanionObjectHolder {
+}
+
 public final class cases/companions/InternalClasses {
 	public static final field INSTANCE Lcases/companions/InternalClasses;
 }

@@ -27,7 +27,7 @@ class CasesPublicAPITest {
 
     @Test fun annotations() { snapshotAPIAndCompare(testName.methodName) }
 
-    @Test fun companions() { snapshotAPIAndCompare(testName.methodName) }
+    @Test fun companions() { snapshotAPIAndCompare(testName.methodName, setOf("cases/companions/PrivateApi")) }
 
     @Test fun default() { snapshotAPIAndCompare(testName.methodName) }
 

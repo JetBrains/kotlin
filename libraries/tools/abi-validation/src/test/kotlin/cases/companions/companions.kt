@@ -140,3 +140,20 @@ object PrivateInterfaces {
     }
 }
 
+@PrivateApi
+annotation class PrivateApi
+
+
+class FilteredCompanionObjectHolder private constructor() {
+    @PrivateApi
+    companion object {
+        val F: Int = 42
+    }
+}
+
+class FilteredNamedCompanionObjectHolder private constructor() {
+    @PrivateApi
+    companion object Named {
+        val F: Int = 42
+    }
+}
