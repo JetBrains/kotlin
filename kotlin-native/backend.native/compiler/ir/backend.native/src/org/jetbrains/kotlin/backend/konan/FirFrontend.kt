@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.native.FirNativeOverrideChecker
+import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
@@ -39,6 +40,16 @@ internal inline fun <F> PhaseContext.firFrontend(
     val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
 
     // FIR
+    if (configuration.getBoolean(KonanConfigKeys.SWIFT_EXPORT_RUN)) {
+        /**
+         * This code exists only for swift-export tool. Currently, Swift Export Tool is implemented as a mode of the compiler.
+         * Kotlin-Native compiler currently does not provide support for FirAnalysisHandlerExtension.
+         * This implementation can and will be changed in the future.
+         * */
+        FirAnalysisHandlerExtension.analyze(input.project, input.configuration)
+        return FirOutput.ShouldNotGenerateCode // we do not run full compiler in this mode
+    }
+
     val extensionRegistrars = FirExtensionRegistrar.getInstances(input.project)
     val mainModuleName = Name.special("<${config.moduleId}>")
     val syntaxErrors = files.fold(false) { errorsFound, file -> fileHasSyntaxErrors(file) or errorsFound }

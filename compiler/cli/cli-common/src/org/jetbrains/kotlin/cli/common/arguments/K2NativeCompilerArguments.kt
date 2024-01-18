@@ -356,6 +356,9 @@ The default value is 1."""
     @Argument(value = "-Xno-objc-generics", description = "Disable generics support for framework header.")
     var noObjcGenerics: Boolean = false
 
+    @Argument(value = "-Xswift-export-run", description = "Run compiler as swift export CLI.")
+    var swiftExportRun: Boolean = false
+
     @Argument(value="-Xoverride-clang-options", valueDescription = "<arg1,arg2,...>", description = "Explicit list of Clang options.")
     var clangOptions: Array<String>? = null
 

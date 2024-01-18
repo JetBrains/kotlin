@@ -174,6 +174,8 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(OBJC_GENERICS, !arguments.noObjcGenerics)
     put(DEBUG_PREFIX_MAP, parseDebugPrefixMap(arguments, this@setupFromArguments))
 
+    put(SWIFT_EXPORT_RUN, arguments.swiftExportRun)
+
     val libraryToAddToCache = parseLibraryToAddToCache(arguments, this@setupFromArguments, outputKind)
     if (libraryToAddToCache != null && !arguments.outputName.isNullOrEmpty())
         report(ERROR, "${K2NativeCompilerArguments.ADD_CACHE} already implicitly sets output file name")

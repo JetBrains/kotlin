@@ -40,7 +40,7 @@ abstract class AbstractSwiftExportContextTestBase(
             ::JvmEnvironmentConfigurator,
         )
 
-        facadeStep(::JvmCompilerWithSwiftExportPluginFacade)
+        facadeStep(::NativeCompilerWithSwiftExportPluginFacade)
 
         handlersStep(SwiftExportArtifact.Kind) {
             useHandlers(::SirExportHandler)

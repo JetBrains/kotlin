@@ -36,6 +36,11 @@ private fun mainImpl(args: Array<String>, runFromDaemon: Boolean, konancMain: (A
         "llvm" -> runLlvmTool(utilityArgs)
         "clang" -> runLlvmClangToolWithTarget(utilityArgs)
 
+        "swift-export" -> {
+            val kotlinNativeCArgs = transformSwiftExportArgsIntoKotilnNativeCArgs(utilityArgs)
+            konancMain(kotlinNativeCArgs)
+        }
+
         else ->
             error("Unexpected utility name")
     }

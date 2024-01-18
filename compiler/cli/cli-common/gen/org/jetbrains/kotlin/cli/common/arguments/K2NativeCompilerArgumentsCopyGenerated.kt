@@ -92,6 +92,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.shortModuleName = from.shortModuleName
     to.singleLinkerArguments = from.singleLinkerArguments?.copyOf()
     to.staticFramework = from.staticFramework
+    to.swiftExportRun = from.swiftExportRun
     to.target = from.target
     to.temporaryFilesDir = from.temporaryFilesDir
     to.testDumpOutputPath = from.testDumpOutputPath

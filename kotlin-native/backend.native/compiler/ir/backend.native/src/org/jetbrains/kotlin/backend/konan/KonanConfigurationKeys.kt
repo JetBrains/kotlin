@@ -158,6 +158,7 @@ class KonanConfigKeys {
         val SAVE_DEPENDENCIES_PATH: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to save serialized dependencies to")
         val SAVE_LLVM_IR_DIRECTORY: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("directory to store LLVM IR from phases")
         val KONAN_DATA_DIR: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("directory for storing konan dependencies, cache and prebuilds")
+        val SWIFT_EXPORT_RUN: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("running compiler as swift-export CLI")
     }
 }
 
