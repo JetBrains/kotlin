@@ -15,16 +15,24 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
 
 object TestReferenceResolveResultRenderer {
+    private const val UNRESOLVED_REFERENCE_RESULT = "Nothing (Unresolved reference)"
+
+    /**
+     * Empty [symbols] list equals to unresolved reference.
+     */
     fun KtAnalysisSession.renderResolvedTo(
         symbols: List<KtSymbol>,
         renderPsiClassName: Boolean = false,
         renderer: KtDeclarationRenderer = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES,
         additionalInfo: KtAnalysisSession.(KtSymbol) -> String? = { null }
-    ) =
-        symbols.map { renderResolveResult(it, renderPsiClassName, renderer, additionalInfo) }
+    ): String {
+        if (symbols.isEmpty()) return UNRESOLVED_REFERENCE_RESULT
+
+        return symbols.map { renderResolveResult(it, renderPsiClassName, renderer, additionalInfo) }
             .sorted()
             .withIndex()
             .joinToString(separator = "\n") { "${it.index}: ${it.value}" }
+    }
 
     private fun KtAnalysisSession.renderResolveResult(
         symbol: KtSymbol,

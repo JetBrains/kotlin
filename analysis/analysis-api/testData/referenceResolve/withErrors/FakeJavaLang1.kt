@@ -1,5 +1,3 @@
-// UNRESOLVED_REFERENCE
-
 // FILE: main.kt
 import java.lang.* // will not import Fake
 

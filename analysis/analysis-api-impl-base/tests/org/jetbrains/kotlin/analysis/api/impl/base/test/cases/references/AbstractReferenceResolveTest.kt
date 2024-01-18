@@ -58,13 +58,8 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
 
         val resolvedTo = analyzeReferenceElement(ktReferences.first().element, mainModule) {
             val symbols = ktReferences.flatMap { it.resolveToSymbols() }
-            checkReferenceResultForValidity(ktReferences, mainModule, testServices, symbols)
             val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in mainModule.directives
             renderResolvedTo(symbols, renderPsiClassName, renderingOptions) { getAdditionalSymbolInfo(it) }
-        }
-
-        if (Directives.UNRESOLVED_REFERENCE in mainModule.directives) {
-            return
         }
 
         val actual = "Resolved to:\n$resolvedTo"
@@ -80,28 +75,7 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
     private fun findReferencesAtCaret(mainKtFile: KtFile, caretPosition: Int): List<KtReference> =
         mainKtFile.findReferenceAt(caretPosition)?.unwrapMultiReferences().orEmpty().filterIsInstance<KtReference>()
 
-    private fun KtAnalysisSession.checkReferenceResultForValidity(
-        references: List<KtReference>,
-        module: TestModule,
-        testServices: TestServices,
-        resolvedTo: List<KtSymbol>,
-    ) {
-        if (Directives.UNRESOLVED_REFERENCE in module.directives) {
-            testServices.assertions.assertTrue(resolvedTo.isEmpty()) {
-                "Reference should be unresolved, but was resolved to ${renderResolvedTo(resolvedTo)}"
-            }
-        } else {
-            if (resolvedTo.isEmpty()) {
-                testServices.assertions.fail { "Unresolved reference ${references.first().element.text}" }
-            }
-        }
-    }
-
     private object Directives : SimpleDirectivesContainer() {
-        val UNRESOLVED_REFERENCE by directive(
-            "Reference should be unresolved",
-        )
-
         val RENDER_PSI_CLASS_NAME by directive(
             "Render also PSI class name for resolved reference"
         )
