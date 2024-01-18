@@ -446,6 +446,13 @@ private val coroutinesPhase = createFileLoweringPhase(
         prerequisite = setOf(localFunctionsPhase, finallyBlocksPhase, kotlinNothingValueExceptionPhase)
 )
 
+private val coroutinesVarSpillingPhase = createFileLoweringPhase(
+        ::CoroutinesVarSpillingLowering,
+        name = "CoroutinesVarSpilling",
+        description = "Save/restore coroutines variables before/after suspension",
+        prerequisite = setOf(coroutinesPhase)
+)
+
 private val typeOperatorPhase = createFileLoweringPhase(
         ::TypeOperatorLowering,
         name = "TypeOperators",
@@ -627,6 +634,7 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         varargPhase,
         kotlinNothingValueExceptionPhase,
         coroutinesPhase,
+        coroutinesVarSpillingPhase,
         typeOperatorPhase,
         expressionBodyTransformPhase,
         objectClassesPhase,
