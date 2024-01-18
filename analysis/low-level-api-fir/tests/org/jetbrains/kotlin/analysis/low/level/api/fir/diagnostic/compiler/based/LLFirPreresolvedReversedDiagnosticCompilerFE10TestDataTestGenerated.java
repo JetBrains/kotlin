@@ -16933,6 +16933,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("kt63577.kt")
+            public void testKt63577() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/kt63577.kt");
+            }
+
+            @Test
             @TestMetadata("kt63982.kt")
             public void testKt63982() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/kt63982.kt");
