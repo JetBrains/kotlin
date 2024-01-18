@@ -54,6 +54,16 @@ object ContextCollector {
         BODY
     }
 
+    /**
+     * Represents resolution context of a specific place in code (a context).
+     *
+     * @param towerDataContext a list of tower data elements that may define declaration scopes, implicit receivers,
+     * and additional information applicable either to the context element or its semantic parents.
+     *
+     * @param smartCasts a set of smart-casts (potentially) available to the context element. Note that the key, [RealVariable], includes
+     * stability. Only stable smart casts impact data flow. Check the "Smart cast sink stability" in the Kotlin language specification.
+     * Unstable smart casts are still provided for more precise checking and diagnosing.
+     */
     class Context(
         val towerDataContext: FirTowerDataContext,
         val smartCasts: Map<RealVariable, Set<ConeKotlinType>>,
