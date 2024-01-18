@@ -1,0 +1,11 @@
+Caret 1 resolved to:
+0: (in test) val test.Foo.extProp: kotlin.Int
+
+Caret 2 resolved to:
+0: (in test) val test.Foo.extProp: kotlin.Int
+
+Caret 3 resolved to:
+Nothing (Unresolved reference)
+
+Caret 4 resolved to:
+Nothing (Unresolved reference)

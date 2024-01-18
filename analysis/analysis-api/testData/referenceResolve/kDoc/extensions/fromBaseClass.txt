@@ -1,0 +1,5 @@
+Caret 1 resolved to:
+Nothing (Unresolved reference)
+
+Caret 2 resolved to:
+Nothing (Unresolved reference)

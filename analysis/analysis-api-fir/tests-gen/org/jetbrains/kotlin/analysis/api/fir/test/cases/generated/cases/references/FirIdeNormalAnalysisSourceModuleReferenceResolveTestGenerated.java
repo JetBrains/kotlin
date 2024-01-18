@@ -1448,6 +1448,104 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
         }
 
         @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/extensions")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Extensions {
+            @Test
+            public void testAllFilesPresentInExtensions() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/extensions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("callablesWithSameName.kt")
+            public void testCallablesWithSameName() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/callablesWithSameName.kt");
+            }
+
+            @Test
+            @TestMetadata("fromBaseClass.kt")
+            public void testFromBaseClass() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/fromBaseClass.kt");
+            }
+
+            @Test
+            @TestMetadata("functionOverloads.kt")
+            public void testFunctionOverloads() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/functionOverloads.kt");
+            }
+
+            @Test
+            @TestMetadata("nonExtensions.kt")
+            public void testNonExtensions() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/nonExtensions.kt");
+            }
+
+            @Test
+            @TestMetadata("qualifiers.kt")
+            public void testQualifiers() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/qualifiers.kt");
+            }
+
+            @Test
+            @TestMetadata("topLevelFunction.kt")
+            public void testTopLevelFunction() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/topLevelFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("topLevelProperty.kt")
+            public void testTopLevelProperty() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/topLevelProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("topLevelTypeVsMemberFunctionAsReceiver.kt")
+            public void testTopLevelTypeVsMemberFunctionAsReceiver() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/topLevelTypeVsMemberFunctionAsReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("typeAliasReceiver.kt")
+            public void testTypeAliasReceiver() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/typeAliasReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("typeCompatibility.kt")
+            public void testTypeCompatibility() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/typeCompatibility.kt");
+            }
+
+            @Nested
+            @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/generics")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Generics {
+                @Test
+                public void testAllFilesPresentInGenerics() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/generics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("genericParameterReceiver.kt")
+                public void testGenericParameterReceiver() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/generics/genericParameterReceiver.kt");
+                }
+
+                @Test
+                @TestMetadata("genericsCompatibility.kt")
+                public void testGenericsCompatibility() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/generics/genericsCompatibility.kt");
+                }
+
+                @Test
+                @TestMetadata("typeWithGenericsReceiver.kt")
+                public void testTypeWithGenericsReceiver() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/generics/typeWithGenericsReceiver.kt");
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/imports")
         @TestDataPath("$PROJECT_ROOT")
         public class Imports {

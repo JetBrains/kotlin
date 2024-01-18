@@ -1,0 +1,13 @@
+Caret 1 resolved to:
+0: (in test) fun kotlin.Any.function()
+1: (in test) fun test.Base.function(i: kotlin.Int)
+
+Caret 2 resolved to:
+0: (in test) fun kotlin.Any.function()
+1: (in test) fun test.Base.function(i: kotlin.Int)
+
+Caret 3 resolved to:
+0: (in test.Base) fun function()
+
+Caret 4 resolved to:
+0: (in test.Base) fun function()

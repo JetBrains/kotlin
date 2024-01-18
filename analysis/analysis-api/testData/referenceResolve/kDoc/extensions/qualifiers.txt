@@ -1,0 +1,17 @@
+Caret 1 resolved to:
+0: package one
+
+Caret 2 resolved to:
+0: package one.two
+
+Caret 3 resolved to:
+0: (in one.two) class Foo
+
+Caret 4 resolved to:
+0: (in one.two) class Foo
+
+Caret 5 resolved to:
+0: package one
+
+Caret 6 resolved to:
+0: package one.two
