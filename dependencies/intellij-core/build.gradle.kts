@@ -22,7 +22,6 @@ val intellijVersion = rootProject.extra["versions.intellijSdk"]
 dependencies {
     api("com.jetbrains.intellij.platform:util-rt:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:util-class-loader:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.platform:util-text-matching:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:util:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:util-base:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
