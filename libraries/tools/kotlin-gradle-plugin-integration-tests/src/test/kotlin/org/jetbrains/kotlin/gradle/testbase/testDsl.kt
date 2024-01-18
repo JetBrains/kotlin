@@ -26,6 +26,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.*
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 /**
  * Create a new test project.
@@ -487,9 +488,7 @@ val konanDir
     get() =
         System.getProperty("konanDataDirForIntegrationTests")?.let {
             Paths.get(it)
-        } ?: Paths.get(".")
-            .resolve("../../../.kotlin")
-            .resolve("konan-for-gradle-tests")
+        } ?: fail("Test.applyKotlinNativeFromCurrentBranchIfNeeded should set \'konanDataDirForIntegrationTests\' system property")
 
 /**
  * On changing test kit dir location update related location in 'cleanTestKitCache' task.
