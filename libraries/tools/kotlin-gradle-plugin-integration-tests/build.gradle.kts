@@ -145,42 +145,13 @@ tasks.register<Delete>("cleanUserHomeKonanDir") {
         logger.info("Default .konan directory user's home has been deleted: $userHomeKonanDir")
     }
 }
+tasks.register<Task>("prepareNativeBundleForGradleIT") {
 
-tasks.register<Copy>("prepareNativeBundleForGradleIT") {
-
-    description = "This task adds dependency on :kotlin-native:bundle and then copying built bundle into the tests' konan dir"
+    description = "This task adds dependency on :kotlin-native:bundle"
 
     if (project.kotlinBuildProperties.isKotlinNativeEnabled) {
         // 1. Build full Kotlin Native bundle
         dependsOn(":kotlin-native:bundle")
-
-        // 2. Coping and extracting k/n artifacts from the 1st step to tests' konan data directory
-        val (extension, unzipFunction) = when (HostManager.host) {
-            KonanTarget.MINGW_X64 -> Pair("zip", ::zipTree)
-            else -> Pair("tar.gz", ::tarTree)
-        }
-
-        val kotlinNativeRootDir = rootProject.findProject(":kotlin-native")?.projectDir
-            ?: throw IllegalStateException("The path to kotlin-native module is undefined.")
-
-        from(
-            unzipFunction(
-                kotlinNativeRootDir.resolve("kotlin-native-${HostManager.platformName()}-${project.kotlinBuildProperties.defaultSnapshotVersion}.$extension")
-            )
-        )
-        from(
-            unzipFunction(
-                kotlinNativeRootDir.resolve("kotlin-native-prebuilt-${HostManager.platformName()}-${project.kotlinBuildProperties.defaultSnapshotVersion}.$extension")
-            )
-        )
-
-        into(
-            konanDataDir
-        )
-
-        doFirst {
-            delete(konanDataDir)
-        }
     }
 }
 
@@ -194,6 +165,8 @@ fun Test.includeNative(include: Boolean) = includeTestsWithPattern(include) {
 
 fun Test.applyKotlinNativeFromCurrentBranchIfNeeded() {
     val kotlinNativeFromMasterEnabled = project.kotlinBuildProperties.isKotlinNativeEnabled && project.kotlinBuildProperties.useKotlinNativeLocalDistributionForTests
+
+    //add native bundle dependencies for local test run
     if (kotlinNativeFromMasterEnabled && !project.kotlinBuildProperties.isTeamcityBuild) {
         dependsOn(":kotlin-gradle-plugin-integration-tests:prepareNativeBundleForGradleIT")
     }

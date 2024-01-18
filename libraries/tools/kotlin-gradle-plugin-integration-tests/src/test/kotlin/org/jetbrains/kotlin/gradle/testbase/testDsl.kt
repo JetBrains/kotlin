@@ -27,6 +27,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.*
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 /**
  * Create a new test project.
