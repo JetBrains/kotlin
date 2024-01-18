@@ -2,6 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = "Kotlin JVM metadata manipulation library"
+group = "org.jetbrains.kotlin"
 
 plugins {
     kotlin("jvm")
@@ -10,23 +11,6 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
-/*
- * To publish this library use `:kotlin-metadata-jvm:publish` task and specify the following parameters
- *
- *      - `-PdeployVersion=1.2.nn`: the version of the standard library dependency to put into .pom
- *      - `-PkotlinxMetadataDeployVersion=0.0.n`: the version of the library itself
- *      - `-Pdeploy-url=repository_url`: (optional) the url of repository to deploy to;
- *          if not specified, the local directory repository `build/repo` will be used
- *      - `-Pkotlin.build.deploy-username=username`: (optional) the username to authenticate in the deployment repository
- *      - `-Pkotlin.build.deploy-password=password`: (optional) the password to authenticate in the deployment repository
- */
-group = "org.jetbrains.kotlin"
-val deployVersion = findProperty("kotlinxMetadataDeployVersion") as String?
-version = deployVersion ?: "0.1-SNAPSHOT"
-
-//kotlin {
-//    explicitApiWarning()
-//}
 
 sourceSets {
     "main" { projectDefault() }
@@ -57,9 +41,7 @@ kotlin {
     }
 }
 
-if (deployVersion != null) {
-    publish()
-}
+publish()
 
 val runtimeJar = runtimeJarWithRelocation {
     from(mainSourceSet.output)
