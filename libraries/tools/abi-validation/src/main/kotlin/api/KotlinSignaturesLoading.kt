@@ -63,11 +63,22 @@ public fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String
                 val methodSignatures = methods.map { it.buildMethodSignature(mVisibility, this) }
                     .filter { it.isEffectivelyPublic(classAccess, mVisibility) }
 
+                /**
+                 * For synthetic $DefaultImpls classes copy annotations from the original interface
+                 */
+                val inheritedAnnotations = mutableListOf<AnnotationNode>().apply {
+                    if (classNode.isDefaultImpls(kotlinMetadata)) {
+                        val originalInterface = classNodeMap[classNode.name.dropLast(DefaultImplsNameSuffix.length)]
+                        addAll(originalInterface?.visibleAnnotations.orEmpty())
+                        addAll(originalInterface?.invisibleAnnotations.orEmpty())
+                    }
+                }
+
                 ClassBinarySignature(
                     name, superName, outerClassName, supertypes, fieldSignatures + methodSignatures, classAccess,
                     isEffectivelyPublic(mVisibility),
                     metadata.isFileOrMultipartFacade() || isDefaultImpls(metadata),
-                    annotations(visibleAnnotations, invisibleAnnotations)
+                    annotations(visibleAnnotations, invisibleAnnotations) + inheritedAnnotations
                 )
             }
         }
@@ -182,7 +193,7 @@ public fun List<ClassBinarySignature>.filterOutAnnotated(targetAnnotations: Set<
         }
 
         signature.copy(memberSignatures = notAnnotatedMemberSignatures)
-    }
+    }.filterNot { it.isNotUsedWhenEmpty && it.memberSignatures.isEmpty() }
 }
 
 private fun List<ClassBinarySignature>.filterOutNotAnnotated(
