@@ -11,3 +11,9 @@ class A {
         body()
     }
 }
+
+context(Ctx)
+fun bar(body: Ctx.() -> Unit) {
+    foo()
+    body()
+}

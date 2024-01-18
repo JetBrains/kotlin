@@ -11,3 +11,9 @@ class A {
         body<!NO_VALUE_FOR_PARAMETER!>()<!>
     }
 }
+
+context(Ctx)
+fun bar(body: Ctx.() -> Unit) {
+    foo()
+    body<!NO_VALUE_FOR_PARAMETER!>()<!>
+}

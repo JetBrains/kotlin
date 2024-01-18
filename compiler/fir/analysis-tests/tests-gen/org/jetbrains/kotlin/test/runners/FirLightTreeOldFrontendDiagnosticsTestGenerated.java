@@ -13564,6 +13564,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("lambdaReceiverFromContextWithSameFunctions.kt")
+                public void testLambdaReceiverFromContextWithSameFunctions() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/lambdaReceiverFromContextWithSameFunctions.kt");
+                }
+
+                @Test
                 @TestMetadata("lazy.kt")
                 public void testLazy() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/lazy.kt");
