@@ -29,7 +29,7 @@ class CasesPublicAPITest {
 
     @Test fun companions() { snapshotAPIAndCompare(testName.methodName, setOf("cases/companions/PrivateApi")) }
 
-    @Test fun default() { snapshotAPIAndCompare(testName.methodName) }
+    @Test fun default() { snapshotAPIAndCompare(testName.methodName, setOf("cases/default/PrivateApi")) }
 
     @Test fun inline() { snapshotAPIAndCompare(testName.methodName) }
 

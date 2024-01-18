@@ -22,3 +22,18 @@ interface InterfaceFunctions {
     fun withSomeDefaults(par1: Int, par2: String? = null)
 
 }
+
+@PrivateApi
+annotation class PrivateApi
+
+@PrivateApi
+interface PrivateInterfaceWithDefaultMethod {
+    fun foo() {}
+
+    fun bar() {}
+}
+
+interface PublicInterfaceWithAllFunctionsFilteredOut {
+    @PrivateApi
+    fun foo() {}
+}

@@ -51,7 +51,9 @@ private const val publishedApiAnnotationName = "kotlin/PublishedApi"
 private fun ClassNode.isPublishedApi() = findAnnotation(publishedApiAnnotationName, includeInvisible = true) != null
 internal fun List<AnnotationNode>.isPublishedApi() = firstOrNull { it.refersToName(publishedApiAnnotationName) } != null
 
-internal fun ClassNode.isDefaultImpls(metadata: KotlinClassMetadata?) = isInner() && name.endsWith("\$DefaultImpls") && metadata.isSyntheticClass()
+internal const val DefaultImplsNameSuffix = "\$DefaultImpls"
+internal fun ClassNode.isDefaultImpls(metadata: KotlinClassMetadata?) =
+    isInner() && name.endsWith(DefaultImplsNameSuffix) && metadata.isSyntheticClass()
 
 internal fun ClassNode.findAnnotation(annotationName: String, includeInvisible: Boolean = false) =
     findAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
