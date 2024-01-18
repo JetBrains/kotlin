@@ -37,14 +37,18 @@
 
 ### Analysis. Light Classes
 
-- [`KT-64795`](https://youtrack.jetbrains.com/issue/KT-64795) SLC: distinguish last v.s. non-last `vararg` value parameter type during binary resolution
+- [`KT-63087`](https://youtrack.jetbrains.com/issue/KT-63087) K2 IDE: in .java source reference to JvmName names on unsigned type / value class are unresolved
 - [`KT-64605`](https://youtrack.jetbrains.com/issue/KT-64605) K2 IDE: usage of `@Repeatable` annotation in Java: false positive "Duplicate annotation"
+- [`KT-64795`](https://youtrack.jetbrains.com/issue/KT-64795) SLC: distinguish last v.s. non-last `vararg` value parameter type during binary resolution
 - [`KT-61605`](https://youtrack.jetbrains.com/issue/KT-61605) K2 IDE: Light elements do not obey platform contracts
 - [`KT-57536`](https://youtrack.jetbrains.com/issue/KT-57536) SLC: no need to populate members with `expect` modifier
-- [`KT-63087`](https://youtrack.jetbrains.com/issue/KT-63087) K2 IDE: in .java source reference to JvmName names on unsigned type / value class are unresolved
 - [`KT-63949`](https://youtrack.jetbrains.com/issue/KT-63949) K2 IDE. Analyze hang on `@Autowired` constructor analysis
 - [`KT-64320`](https://youtrack.jetbrains.com/issue/KT-64320) Decouple kotlin psi from java PSI
 - [`KT-64282`](https://youtrack.jetbrains.com/issue/KT-64282) Decouple KotlinIconProviderService from java PSI
+
+### Apple Ecosystem
+
+- [`KT-63821`](https://youtrack.jetbrains.com/issue/KT-63821) Copy framework to BUILT_PRODUCTS_DIR in the embedAndSign task
 
 ### Backend. Wasm
 
@@ -58,14 +62,15 @@
 
 #### Fixes
 
-- [`KT-64400`](https://youtrack.jetbrains.com/issue/KT-64400) K2: allow to use simple boolean expressions as constants
+- [`KT-64261`](https://youtrack.jetbrains.com/issue/KT-64261) K2 / WASM: Extension function with star projection throws "RuntimeError: unreachable"
+- [`KT-64877`](https://youtrack.jetbrains.com/issue/KT-64877) K2: PCLA doesn't allow infer types from value parameter having TV type
+- [`KT-63932`](https://youtrack.jetbrains.com/issue/KT-63932) K2/Native codegen test failures around builder inference
+- [`KT-64222`](https://youtrack.jetbrains.com/issue/KT-64222) K2: "return type is not a subtype of the return type of the overridden member"
 - [`KT-57094`](https://youtrack.jetbrains.com/issue/KT-57094) K1: wrong type inferred for an instance of a local class inside a generic property
 - [`KT-62069`](https://youtrack.jetbrains.com/issue/KT-62069) K2: ASSIGNMENT_TYPE_MISMATCH is reported in addition to NO_ELSE_IN_WHEN
 - [`KT-62776`](https://youtrack.jetbrains.com/issue/KT-62776) FirLazyResolveContractViolationException: "lazyResolveToPhase(STATUS) cannot be called from a transformer with a phase TYPES" on Java annotation usage
-- [`KT-64222`](https://youtrack.jetbrains.com/issue/KT-64222) K2: "return type is not a subtype of the return type of the overridden member"
 - [`KT-60056`](https://youtrack.jetbrains.com/issue/KT-60056) K2: Introduced UNRESOLVED_REFERENCE
 - [`KT-59791`](https://youtrack.jetbrains.com/issue/KT-59791) K2: Implement partially constrained lambda analysis
-- [`KT-64877`](https://youtrack.jetbrains.com/issue/KT-64877) K2: PCLA doesn't allow infer types from value parameter having TV type
 - [`KT-42020`](https://youtrack.jetbrains.com/issue/KT-42020) Psi2ir: IllegalStateException: "IrSimpleFunctionPublicSymbolImpl for public [...] is already bound" on generic function whose substitution leads to IdSignature clash
 - [`KT-64771`](https://youtrack.jetbrains.com/issue/KT-64771) Investigate subtle FIR_DUMP difference for reversed order analysis
 - [`KT-62584`](https://youtrack.jetbrains.com/issue/KT-62584) K2: different signature in subclass of local class declared in extension value getter
@@ -104,7 +109,6 @@
 - [`KT-62386`](https://youtrack.jetbrains.com/issue/KT-62386) K2: Proofread quotes in diagnostic messages
 - [`KT-64081`](https://youtrack.jetbrains.com/issue/KT-64081) K2: Incorrect smartcast candidate calculation in MemberScopeTowerLevel
 - [`KT-63994`](https://youtrack.jetbrains.com/issue/KT-63994) K2: Investigate K2 failures in IntelliJ-Rust plugin
-- [`KT-64261`](https://youtrack.jetbrains.com/issue/KT-64261) K2 / WASM: Extension function with star projection throws "RuntimeError: unreachable"
 - [`KT-58767`](https://youtrack.jetbrains.com/issue/KT-58767) Inheritance opt-in enforcement via `@SubclassOptInRequired` can be avoided with type aliases
 - [`KT-63941`](https://youtrack.jetbrains.com/issue/KT-63941) K2: "IllegalStateException: Unsupported compile-time value STRING_CONCATENATION" caused by class reference in string expression as annotation parameter
 - [`KT-59818`](https://youtrack.jetbrains.com/issue/KT-59818) K2: Explore the TODO about suspend functions overridden in Java in FirHelpers
@@ -153,7 +157,6 @@
 - [`KT-57788`](https://youtrack.jetbrains.com/issue/KT-57788) Fix computing mangled names of types with `@EnhancedNullability` from IR-based declaration descriptors
 - [`KT-63249`](https://youtrack.jetbrains.com/issue/KT-63249) K2: change in annotation resolve when ambiguous
 - [`KT-63514`](https://youtrack.jetbrains.com/issue/KT-63514) ISE “Inline class types should have the same representation: [I != I” during compilation on submitting UIntArray to vararg
-- [`KT-63932`](https://youtrack.jetbrains.com/issue/KT-63932) K2/Native codegen test failures around builder inference
 - [`KT-62553`](https://youtrack.jetbrains.com/issue/KT-62553) K2: Add `topLevelClassifierPackageNames` to symbol name providers
 - [`KT-64148`](https://youtrack.jetbrains.com/issue/KT-64148) K2: class cast exception org.jetbrains.kotlin.fir.types.ConeStarProjection
 - [`KT-63665`](https://youtrack.jetbrains.com/issue/KT-63665) K2: "NullPointerException" caused by class with the companion object and extra curly brace
@@ -204,12 +207,12 @@
 
 ### JavaScript
 
+- [`KT-61929`](https://youtrack.jetbrains.com/issue/KT-61929) KJS: "IllegalStateException: No dispatch receiver parameter for FUN LOCAL_FUNCTION_FOR_LAMBDA" caused by `run` function in init block
 - [`KT-64366`](https://youtrack.jetbrains.com/issue/KT-64366) KJS / K2: Exported declaration uses non-exportable return type: 'kotlin.<X>?'
 - [`KT-64426`](https://youtrack.jetbrains.com/issue/KT-64426) K2: Implement JsIrLineNumberTestGenerated for K2
 - [`KT-64422`](https://youtrack.jetbrains.com/issue/KT-64422) K2: Implement IrJsSteppingTestGenerated for K2
 - [`KT-64364`](https://youtrack.jetbrains.com/issue/KT-64364) K2 / KJS: `@JSExports` generates clashing declarations for companion objects that extends its own class
 - [`KT-63038`](https://youtrack.jetbrains.com/issue/KT-63038) Compilation of suspend functions into ES2015 generators
-- [`KT-61929`](https://youtrack.jetbrains.com/issue/KT-61929) KJS: "IllegalStateException: No dispatch receiver parameter for FUN LOCAL_FUNCTION_FOR_LAMBDA" caused by `run` function in init block
 
 ### Klibs
 
@@ -229,6 +232,7 @@
 
 ### Native
 
+- [`KT-61695`](https://youtrack.jetbrains.com/issue/KT-61695) [K/N] Empty list error in FakeOverridesActualizer with K2
 - [`KT-64508`](https://youtrack.jetbrains.com/issue/KT-64508) IndexOutOfBoundsException in  Konan StaticInitializersOptimization
 
 ### Native. C and ObjC Import
@@ -262,8 +266,8 @@
 
 ### Tools. Compiler Plugins
 
-- [`KT-64707`](https://youtrack.jetbrains.com/issue/KT-64707) K2: Parcelize ignores `@TypeParceler` set for typealias
 - [`KT-33020`](https://youtrack.jetbrains.com/issue/KT-33020) Support stripping debug information in the jvm-abi-gen plugin
+- [`KT-64707`](https://youtrack.jetbrains.com/issue/KT-64707) K2: Parcelize ignores `@TypeParceler` set for typealias
 
 ### Tools. Compiler plugins. Serialization
 
@@ -272,12 +276,16 @@
 
 ### Tools. Gradle
 
+- [`KT-64653`](https://youtrack.jetbrains.com/issue/KT-64653) Add Kotlin DslMarker into Gradle plugin DSL
 - [`KT-64251`](https://youtrack.jetbrains.com/issue/KT-64251) KGP: Cannot re-use tooling model cache with Project Isolation due to "~/.gradle/kotlin-profile" changing
 - [`KT-58768`](https://youtrack.jetbrains.com/issue/KT-58768) Support configuration cache and project isolation for FUS statistics
-- [`KT-64653`](https://youtrack.jetbrains.com/issue/KT-64653) Add Kotlin DslMarker into Gradle plugin DSL
 - [`KT-64379`](https://youtrack.jetbrains.com/issue/KT-64379) Remove `kotlin.useK2` gradle property
 - [`KT-62527`](https://youtrack.jetbrains.com/issue/KT-62527) Gradle: get rid of the `Project.buildDir` usages
 - [`KT-55322`](https://youtrack.jetbrains.com/issue/KT-55322) Kotlin daemon: Cannot perform operation, requested state: Alive > actual: LastSession
+
+### Tools. Gradle. Cocoapods
+
+- [`KT-57650`](https://youtrack.jetbrains.com/issue/KT-57650) Gradle Cocoapods: use pod install --repo-update instead of pod install
 
 ### Tools. Gradle. JS
 
@@ -286,10 +294,12 @@
 
 ### Tools. Gradle. Multiplatform
 
+- [`KT-56440`](https://youtrack.jetbrains.com/issue/KT-56440) TCS: Gradle Sync: Add API to populate extras only during sync
 - [`KT-63226`](https://youtrack.jetbrains.com/issue/KT-63226) KGP Multiplatform Ide Dependency Resolution: Use gradle variants instead/in addition of ArtifactResolutionQuery
 
 ### Tools. Gradle. Native
 
+- [`KT-62745`](https://youtrack.jetbrains.com/issue/KT-62745) iOS application build is failing if script sandboxing option is enabled in Xcode
 - [`KT-62800`](https://youtrack.jetbrains.com/issue/KT-62800) CInteropProcess should not require .def file to exist
 - [`KT-62795`](https://youtrack.jetbrains.com/issue/KT-62795) CInteropProcess task resolves cinterop def file eagerly, breaking Gradle task dependencies
 
@@ -309,7 +319,6 @@
 
 ### Tools. Kapt
 
-- [`KT-64385`](https://youtrack.jetbrains.com/issue/KT-64385) K2: Enable K2 KAPT by default
 - [`KT-64719`](https://youtrack.jetbrains.com/issue/KT-64719) K2 KAPT Stub genertaion doesn't fail on files with syntax errors
 - [`KT-64680`](https://youtrack.jetbrains.com/issue/KT-64680) Kapt: remove the flag to enable old JVM backend
 - [`KT-64639`](https://youtrack.jetbrains.com/issue/KT-64639) KAPT+JVM_IR: erased error types in JvmStatic and JvmOverloads
