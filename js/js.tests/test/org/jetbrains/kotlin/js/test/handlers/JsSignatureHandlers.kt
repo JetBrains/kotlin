@@ -83,7 +83,7 @@ private fun loadJsModules(testServices: TestServices, libraries: Collection<Kotl
     return LoadedModules(libraryDescriptors, listOf(stdlibDescriptor))
 }
 
-private fun createJsIrLinker(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable, irMessageLogger: IrMessageLogger) =
+private fun createJsIrLinker(irMessageLogger: IrMessageLogger, irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) =
     JsIrLinker(
         currentModule = null,
         messageLogger = irMessageLogger,

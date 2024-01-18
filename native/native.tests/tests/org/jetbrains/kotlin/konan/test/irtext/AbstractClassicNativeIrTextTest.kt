@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.irtext
 
 import org.jetbrains.kotlin.konan.test.ClassicFrontend2NativeIrConverter
+import org.jetbrains.kotlin.konan.test.NativeKlibBackendFacade
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -15,7 +16,15 @@ import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 
-open class AbstractClassicNativeIrTextTest: AbstractNativeIrTextTestBase<ClassicFrontendOutputArtifact>() {
+open class AbstractClassicNativeIrTextTest : AbstractNativeIrTextTestBase<ClassicFrontendOutputArtifact>() {
+    final override val klibSignatureVerification = KlibSignatureVerification(
+        collectAndMemorizeIdSignatures = ::NativeCollectAndMemorizeIdSignatures,
+        verifySignaturesByDeserializedIr = ::NativeVerifyIdSignaturesByDeserializedIr,
+        verifySignaturesByK1LazyIr = ::NativeVerifyIdSignaturesByK1LazyIr,
+        verifySignaturesByK2LazyIr = ::NativeVerifyIdSignaturesByK2LazyIr,
+        backendFacade = ::NativeKlibBackendFacade
+    )
+
     override val frontend: FrontendKind<*>
         get() = FrontendKinds.ClassicFrontend
 

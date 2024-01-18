@@ -127,7 +127,7 @@ abstract class AbstractDescriptorAwareVerifyIdSignaturesByKlib(
     }
 
     protected abstract fun loadModules(libraries: Collection<KotlinLibrary>): LoadedModules
-    protected abstract val createIrLinker: (IrBuiltIns, SymbolTable, IrMessageLogger) -> KotlinIrLinker
+    protected abstract val createIrLinker: (IrMessageLogger, IrBuiltIns, SymbolTable) -> KotlinIrLinker
     protected abstract fun extractDeclarations(loadedModules: LoadedModules, irLinker: KotlinIrLinker): Sequence<IrDeclaration>
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -142,7 +142,7 @@ abstract class AbstractDescriptorAwareVerifyIdSignaturesByKlib(
         val irBuiltIns = IrBuiltInsOverDescriptors(loadedModules.builtIns, typeTranslator, symbolTable)
         val irMessageLogger = testServices.compilerConfigurationProvider.getCompilerConfiguration(arbitraryTestModule).irMessageLogger
 
-        val irLinker = createIrLinker(irBuiltIns, symbolTable, irMessageLogger)
+        val irLinker = createIrLinker(irMessageLogger, irBuiltIns, symbolTable)
 
         val collector = SignatureCollector.createForK1(testServices)
         for (declaration in extractDeclarations(loadedModules, irLinker)) {

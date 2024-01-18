@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.irtext
 
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
+import org.jetbrains.kotlin.konan.test.FirNativeKlibBackendFacade
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -19,6 +20,14 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 
 abstract class AbstractFirNativeIrTextTestBase(private val parser: FirParser) : AbstractNativeIrTextTestBase<FirOutputArtifact>() {
+    final override val klibSignatureVerification = KlibSignatureVerification(
+        collectAndMemorizeIdSignatures = ::NativeCollectAndMemorizeIdSignatures,
+        verifySignaturesByDeserializedIr = ::NativeVerifyIdSignaturesByDeserializedIr,
+        verifySignaturesByK1LazyIr = null,
+        verifySignaturesByK2LazyIr = ::NativeVerifyIdSignaturesByK2LazyIr,
+        backendFacade = ::FirNativeKlibBackendFacade
+    )
+
     override val frontend: FrontendKind<*>
         get() = FrontendKinds.FIR
 

@@ -22,8 +22,6 @@ abstract class AbstractNativeIrTextTestBase<FrontendOutput> :
         TargetBackend.NATIVE
     ) where FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput> {
 
-    final override val klibSignatureVerification: KlibSignatureVerification? get() = null
-
     final override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(
             ::CommonEnvironmentConfigurator,
