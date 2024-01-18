@@ -385,6 +385,9 @@ internal class KonanSymbols(
     override val coroutineSuspendedGetter =
             findTopLevelPropertyGetter(StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME, COROUTINE_SUSPENDED_NAME, null)
 
+    val saveCoroutineState = internalFunction("saveCoroutineState")
+    val restoreCoroutineState = internalFunction("restoreCoroutineState")
+
     val cancellationException = topLevelClass(KonanFqNames.cancellationException)
 
     val kotlinResult = irBuiltIns.findClass(Name.identifier("Result"))!!
