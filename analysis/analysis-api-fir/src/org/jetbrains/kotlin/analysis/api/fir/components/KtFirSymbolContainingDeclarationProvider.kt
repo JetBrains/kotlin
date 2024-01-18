@@ -114,12 +114,28 @@ internal class KtFirSymbolContainingDeclarationProvider(
 
     private fun hasParentSymbol(symbol: KtSymbol): Boolean {
         when (symbol) {
-            is KtReceiverParameterSymbol -> return true // KT-55124
-            !is KtDeclarationSymbol -> return false
-            is KtSamConstructorSymbol -> return false // SAM constructors are always top-level
-            is KtScriptSymbol -> return false // Scripts are always top-level
-            else -> {
-                if (symbol is KtSymbolWithKind && symbol.symbolKind == KtSymbolKind.TOP_LEVEL) {
+            is KtReceiverParameterSymbol -> {
+                // KT-55124
+                return true
+            }
+
+            !is KtDeclarationSymbol -> {
+                // File, package, etc.
+                return false
+            }
+
+            is KtSamConstructorSymbol -> {
+                // SAM constructors are always top-level
+                return false
+            }
+
+            is KtScriptSymbol -> {
+                // Scripts are always top-level
+                return false
+            }
+
+            is KtSymbolWithKind -> {
+                if (symbol.symbolKind == KtSymbolKind.TOP_LEVEL) {
                     val containingFile = (symbol.firSymbol.fir as? FirElementWithResolveState)?.getContainingFile()
                     if (containingFile == null || containingFile.declarations.firstOrNull() !is FirScript) {
                         // Should be replaced with proper check after KT-61451 and KT-61887
@@ -127,6 +143,10 @@ internal class KtFirSymbolContainingDeclarationProvider(
                     }
                 }
 
+                return true
+            }
+
+            else -> {
                 return true
             }
         }
