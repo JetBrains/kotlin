@@ -1137,13 +1137,6 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.headers "$projectDir/interop/objc/msg_send/messaging.h"
     }
 
-    createInterop("objcDirect") {
-        it.defFile 'interop/objc/direct/direct.def'
-        it.headers "$projectDir/interop/objc/direct/direct.h"
-        it.extraOpts "-Xcompile-source", "$projectDir/interop/objc/direct/direct.m", "-Xsource-compiler-option", "-DNS_FORMAT_ARGUMENT(A)="
-        it.compilerOpts '-DNS_FORMAT_ARGUMENT(A)='
-    }
-
     createInterop("foreignException") {
         it.defFile 'interop/objc/foreignException/objc_wrap.def'
         it.headers "$projectDir/interop/objc/foreignException/objc_wrap.h"
@@ -1537,11 +1530,6 @@ if (PlatformInfo.isAppleTarget(project)) {
                 UtilsKt.codesign(project, dylibFile.toString())
             }
         }
-    }
-
-    interopTest("interop_objc_direct") {
-        source = "interop/objc/direct/main.kt"
-        interop = "objcDirect"
     }
 
     interopTest("interop_objc_foreignException") {
@@ -2642,14 +2630,6 @@ fileCheckTest("filecheck_signext_zeroext_objc_export") {
     generateFramework = true
     enabled = target.family.appleFamily
 }
-
-fileCheckTest("filecheck_objc_direct") {
-    enabled = enabled && cacheTesting == null
-    annotatedSource = project.file('filecheck/objc_direct.kt')
-    interop = "objcDirect"
-    enabled = target.family.appleFamily
-}
-
 
 dependencies {
     nopPluginApi kotlinCompilerModule

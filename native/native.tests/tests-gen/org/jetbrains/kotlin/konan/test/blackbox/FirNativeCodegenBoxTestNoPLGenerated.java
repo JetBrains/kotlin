@@ -5185,6 +5185,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                 }
 
                 @Test
+                @TestMetadata("direct.kt")
+                public void testDirect() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/objc/direct.kt");
+                }
+
+                @Test
                 @TestMetadata("illegal_sharing_with_weak.kt")
                 public void testIllegal_sharing_with_weak() throws Exception {
                     runTest("compiler/testData/codegen/box/cinterop/objc/illegal_sharing_with_weak.kt");

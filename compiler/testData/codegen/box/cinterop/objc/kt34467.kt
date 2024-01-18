@@ -2,7 +2,6 @@
 // DISABLE_NATIVE: isAppleTarget=false
 
 // FREE_CINTEROP_ARGS: -compiler-option -fmodule-map-file=$generatedSourcesDir/cinterop/module_library.modulemap
-// FREE_CINTEROP_ARGS: -compiler-option -I$generatedSourcesDir/cinterop
 // MODULE: cinterop
 // FILE: module_library.def
 language = Objective-C
