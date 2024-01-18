@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiKtModuleProvider
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiKtModuleProviderImpl
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiTestCodeFragmentDirectives
 import org.jetbrains.kotlin.analysis.test.framework.services.*
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
@@ -33,4 +34,5 @@ fun TestConfigurationBuilder.registerAnalysisApiBaseTestServices(
     useCustomCompilerConfigurationProvider(::AnalysisApiTestCompilerConfiguratorProvider)
     usePreAnalysisHandlers(::ProjectStructureInitialisationPreAnalysisHandler.bind(configurator))
     useDirectives(AnalysisApiTestDirectives)
+    useDirectives(AnalysisApiTestCodeFragmentDirectives)
 }

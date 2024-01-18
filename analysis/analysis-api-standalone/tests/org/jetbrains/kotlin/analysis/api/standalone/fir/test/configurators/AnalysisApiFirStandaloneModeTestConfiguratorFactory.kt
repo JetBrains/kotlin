@@ -36,10 +36,14 @@ object AnalysisApiFirStandaloneModeTestConfiguratorFactory : AnalysisApiTestConf
             else -> when (data.moduleKind) {
                 TestModuleKind.Source,
                 TestModuleKind.LibraryBinary,
-                -> true
+                TestModuleKind.CodeFragment -> {
+                    true
+                }
+
                 TestModuleKind.ScriptSource,
-                TestModuleKind.LibrarySource
-                -> false
+                TestModuleKind.LibrarySource -> {
+                    false
+                }
             }
         }
     }

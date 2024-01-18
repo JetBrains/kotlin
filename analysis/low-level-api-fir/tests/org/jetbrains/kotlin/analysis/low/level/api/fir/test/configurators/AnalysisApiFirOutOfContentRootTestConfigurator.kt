@@ -57,7 +57,12 @@ object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirSourceLike
 private class SkipWhenOutOfContentRootException : SkipTestException()
 
 private object KtOutOfContentRootModuleFactory : KtModuleFactory {
-    override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
+    override fun createModule(
+        testModule: TestModule,
+        contextModule: KtModuleWithFiles?,
+        testServices: TestServices,
+        project: Project,
+    ): KtModuleWithFiles {
         val psiFiles = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
         val platform = testModule.targetPlatform
         val module = KtNotUnderContentRootModuleForTest(testModule.name, psiFiles.first(), platform)

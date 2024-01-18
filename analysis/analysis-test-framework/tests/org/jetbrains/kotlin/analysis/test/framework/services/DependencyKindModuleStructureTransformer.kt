@@ -47,10 +47,21 @@ object DependencyKindModuleStructureTransformer : ModuleStructureTransformer() {
     ): DependencyDescription {
         val dependencyModule = moduleMapping.getValue(dependency.moduleName)
         val newKind = when (dependencyModule.moduleKind) {
-            TestModuleKind.Source, TestModuleKind.LibrarySource, TestModuleKind.ScriptSource -> DependencyKind.Source
-            TestModuleKind.LibraryBinary -> DependencyKind.Binary
-            // There is no explicit module kind, so the dependency already has the right kind
-            null -> return dependency
+            TestModuleKind.Source,
+            TestModuleKind.LibrarySource,
+            TestModuleKind.ScriptSource,
+            TestModuleKind.CodeFragment -> {
+                DependencyKind.Source
+            }
+
+            TestModuleKind.LibraryBinary -> {
+                DependencyKind.Binary
+            }
+
+            null -> {
+                // There is no explicit module kind, so the dependency already has the right kind
+                return dependency
+            }
         }
 
         return dependency.copy(kind = newKind)

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtMod
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
+import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
@@ -45,11 +46,11 @@ object TestModuleStructureFactory {
         testServices: TestServices,
         project: Project
     ): KtModuleProjectStructure {
-        val moduleEntries = moduleStructure.modules.map { testModule ->
-            testServices.getKtModuleFactoryForTestModule(testModule).createModule(testModule, testServices, project)
+        val modules = moduleStructure.modules.mapWithPrevious<TestModule, KtModuleWithFiles> { contextModule, testModule ->
+            testServices.getKtModuleFactoryForTestModule(testModule).createModule(testModule, contextModule, testServices, project)
         }
 
-        val modulesByName = moduleEntries.associateByName()
+        val modulesByName = modules.associateByName()
 
         val libraryCache: LibraryCache = mutableMapOf()
 
@@ -60,7 +61,18 @@ object TestModuleStructureFactory {
             ktModule.addDependencies(testModule, testServices, modulesByName, libraryCache)
         }
 
-        return KtModuleProjectStructure(moduleEntries, libraryCache.values)
+        return KtModuleProjectStructure(modules, libraryCache.values)
+    }
+
+    private fun <T : Any, R> List<T>.mapWithPrevious(transform: (R?, T) -> R): List<R> {
+        val result = ArrayList<R>(this.size)
+        var previousResult: R? = null
+        for (item in this) {
+            val newResult = transform(previousResult, item)
+            result.add(newResult)
+            previousResult = newResult
+        }
+        return result
     }
 
     private fun ModulesByName.getByTestModule(testModule: TestModule): KtModuleWithFiles =
@@ -86,6 +98,9 @@ object TestModuleStructureFactory {
     ) = when (this) {
         is KtNotUnderContentRootModule -> {
             // Not-under-content-root modules have no external dependencies on purpose
+        }
+        is KtDanglingFileModule -> {
+            // Dangling file modules get dependencies from their context
         }
         is KtModuleWithModifiableDependencies -> {
             addModuleDependencies(testModule, modulesByName, this)

@@ -38,6 +38,11 @@ enum class TestModuleKind(val suffix: String) {
      * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtScriptModuleFactory
      */
     ScriptSource("ScriptSource"),
+
+    /**
+     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtCodeFragmentModuleFactory
+     */
+    CodeFragment("CodeFragment")
 }
 
 val TestModule.moduleKind: TestModuleKind?
