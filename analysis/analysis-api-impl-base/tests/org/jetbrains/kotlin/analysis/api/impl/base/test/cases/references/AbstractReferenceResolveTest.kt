@@ -46,7 +46,7 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
-        val caretPosition = testServices.expressionMarkerProvider.getCaretPosition(mainFile)
+        val caretPosition = testServices.expressionMarkerProvider.getAllCaretsPositions(mainFile).single()
         doTestByFileStructure(mainFile, caretPosition, mainModule, testServices)
     }
 

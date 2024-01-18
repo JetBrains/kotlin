@@ -99,6 +99,10 @@ class ExpressionMarkerProvider : TestService {
             }
     }
 
+    fun getAllCaretsPositions(file: PsiFile): List<Int> {
+        return carets.getAllCaretsOffsets(file.name)
+    }
+
     fun getSelectedRangeOrNull(file: PsiFile): TextRange? = selected[file.name]
     fun getSelectedRange(file: PsiFile): TextRange = getSelectedRangeOrNull(file) ?: error("No selected expression found in file")
 
@@ -265,6 +269,10 @@ private class CaretProvider {
         return cartsInFile.getCaretOffsetByTag(caretTag)
     }
 
+    fun getAllCaretsOffsets(filename: String): List<Int> {
+        return caretToFile[filename]?.getAllCaretsOffsets().orEmpty()
+    }
+
     fun addCaret(filename: String, caretTag: String?, caretOffset: Int) {
         val cartsInFile = caretToFile.getOrPut(filename) { CaretsInFile() }
         cartsInFile.addCaret(caretTag, caretOffset)
@@ -275,6 +283,10 @@ private class CaretProvider {
 
         fun getCaretOffsetByTag(tag: String?): Int? {
             return carets[tag.orEmpty()]
+        }
+
+        fun getAllCaretsOffsets(): List<Int> {
+            return carets.values.toList()
         }
 
         fun addCaret(caretTag: String?, caretOffset: Int) {
