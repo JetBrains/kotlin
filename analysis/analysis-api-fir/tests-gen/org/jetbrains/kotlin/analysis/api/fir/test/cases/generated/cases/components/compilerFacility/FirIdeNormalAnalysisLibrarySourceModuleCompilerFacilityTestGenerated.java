@@ -47,6 +47,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
   }
 
   @Test
+  @TestMetadata("annotationWithVararg.kt")
+  public void testAnnotationWithVararg() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/annotationWithVararg.kt");
+  }
+
+  @Test
   @TestMetadata("classKinds.kt")
   public void testClassKinds() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/classKinds.kt");
