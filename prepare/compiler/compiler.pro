@@ -240,6 +240,13 @@
     public static java.lang.String getJarPathForClass(java.lang.Class);
 }
 
+-keep class com.intellij.openapi.roots.ContentIterator  { *; }
+
+-keepclassmembers class com.intellij.openapi.vfs.VfsUtilCore {
+    public static boolean iterateChildrenRecursively(com.intellij.openapi.vfs.VirtualFile,com.intellij.openapi.vfs.VirtualFileFilter,com.intellij.openapi.roots.ContentIterator);
+}
+
+
 -keepclassmembers class com.intellij.util.PathUtil {
     public static java.lang.String getJarPathForClass(java.lang.Class);
 }
