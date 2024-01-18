@@ -145,7 +145,6 @@ class JvmAbiOutputExtension(
 
                             override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor? {
                                 // Strip @SourceDebugExtension annotation if we're removing debug info.
-                                // to make failing test pass it is enough to just remove @SourceDebugExtension
                                 if (descriptor == JvmAnnotationNames.SOURCE_DEBUG_EXTENSION_DESC) {
                                     if (removeDebugInfo || noMethodsKept) return null
                                 }
