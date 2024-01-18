@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
@@ -12,7 +13,10 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
+import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
@@ -27,28 +31,46 @@ abstract class CallableCopyTypeCalculator {
 
     abstract class AbstractCallableCopyTypeCalculator : CallableCopyTypeCalculator() {
         override fun computeReturnType(declaration: FirCallableDeclaration): FirResolvedTypeRef? {
-            val callableCopySubstitutionForTypeUpdater = declaration.attributes.callableCopySubstitutionForTypeUpdater
+            val callableCopyDeferredTypeCalculation = declaration.attributes.callableCopyDeferredTypeCalculation
                 ?: return declaration.getResolvedTypeRef()
 
             // TODO: drop synchronized in KT-60385
-            synchronized(callableCopySubstitutionForTypeUpdater) {
-                if (declaration.attributes.callableCopySubstitutionForTypeUpdater == null) {
+            synchronized(callableCopyDeferredTypeCalculation) {
+                if (declaration.attributes.callableCopyDeferredTypeCalculation == null) {
                     return declaration.returnTypeRef as FirResolvedTypeRef
                 }
 
-                val (substitutor, baseSymbol) = callableCopySubstitutionForTypeUpdater
-                val baseDeclaration = baseSymbol.fir as FirCallableDeclaration
-                val baseReturnType = computeReturnType(baseDeclaration)?.type ?: return null
-                val coneType = substitutor.substituteOrSelf(baseReturnType)
-                val returnType = declaration.returnTypeRef.resolvedTypeFromPrototype(coneType)
-                declaration.replaceReturnTypeRef(returnType)
+                val returnType = when (callableCopyDeferredTypeCalculation) {
+                    is CallableCopySubstitution -> computeSubstitution(callableCopyDeferredTypeCalculation)
+                    is CallableCopyIntersection -> computeIntersection(callableCopyDeferredTypeCalculation)
+                } ?: return null
+                val returnTypeRef = declaration.returnTypeRef.resolvedTypeFromPrototype(returnType)
+
+                declaration.replaceReturnTypeRef(returnTypeRef)
                 if (declaration is FirProperty) {
-                    declaration.getter?.replaceReturnTypeRef(returnType)
-                    declaration.setter?.valueParameters?.firstOrNull()?.replaceReturnTypeRef(returnType)
+                    declaration.getter?.replaceReturnTypeRef(returnTypeRef)
+                    declaration.setter?.valueParameters?.firstOrNull()?.replaceReturnTypeRef(returnTypeRef)
                 }
 
-                declaration.attributes.callableCopySubstitutionForTypeUpdater = null
-                return returnType
+                declaration.attributes.callableCopyDeferredTypeCalculation = null
+
+                return returnTypeRef
+            }
+        }
+
+        private fun computeSubstitution(callableCopySubstitutionForTypeUpdater: CallableCopySubstitution): ConeKotlinType? {
+            val (substitutor, baseSymbol) = callableCopySubstitutionForTypeUpdater
+            val baseDeclaration = baseSymbol.fir as FirCallableDeclaration
+            val baseReturnType = computeReturnType(baseDeclaration)?.type ?: return null
+            val coneType = substitutor.substituteOrSelf(baseReturnType)
+
+            return coneType
+        }
+
+        private fun computeIntersection(callableCopyIntersection: CallableCopyIntersection): ConeKotlinType? {
+            val (mostSpecific, session) = callableCopyIntersection
+            return FirTypeIntersectionScopeContext.intersectReturnTypes(mostSpecific, session) {
+                computeReturnType(this)?.type
             }
         }
 
@@ -65,13 +87,24 @@ abstract class CallableCopyTypeCalculator {
 
 // ---------------------------------------------------------------------------------------------------------------------------------------
 
-private object CallableCopySubstitutionKey : FirDeclarationDataKey()
+private object CallableCopyDeferredReturnTypeCalculationKey : FirDeclarationDataKey()
 
-var FirDeclarationAttributes.callableCopySubstitutionForTypeUpdater: CallableCopySubstitution? by FirDeclarationDataRegistry.attributesAccessor(
-    CallableCopySubstitutionKey
+var FirDeclarationAttributes.callableCopyDeferredTypeCalculation: CallableCopyDeferredReturnTypeCalculation? by FirDeclarationDataRegistry.attributesAccessor(
+    CallableCopyDeferredReturnTypeCalculationKey
 )
+
+sealed class CallableCopyDeferredReturnTypeCalculation
 
 data class CallableCopySubstitution internal constructor(
     val substitutor: ConeSubstitutor,
     val baseSymbol: FirBasedSymbol<*>
-)
+) : CallableCopyDeferredReturnTypeCalculation()
+
+data class CallableCopyIntersection internal constructor(
+    val mostSpecific: Collection<FirCallableSymbol<*>>,
+    val session: FirSession,
+) : CallableCopyDeferredReturnTypeCalculation() {
+    override fun toString(): String {
+        return "CallableCopyIntersection(mostSpecific=$mostSpecific)"
+    }
+}
