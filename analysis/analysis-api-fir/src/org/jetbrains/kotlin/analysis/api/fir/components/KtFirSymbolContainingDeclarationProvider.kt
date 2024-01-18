@@ -153,8 +153,8 @@ internal class KtFirSymbolContainingDeclarationProvider(
         }
     }
 
-    fun getContainingDeclarationByPsi(symbol: KtSymbol): KtDeclarationSymbol {
-        val containingDeclaration = getContainingPsi(symbol)
+    fun getContainingDeclarationByPsi(symbol: KtSymbol): KtDeclarationSymbol? {
+        val containingDeclaration = getContainingPsi(symbol) ?: return null
         return with(analysisSession) { containingDeclaration.getSymbol() }
     }
 
@@ -221,7 +221,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
         return symbol.getContainingKtModule(analysisSession.firResolveSession)
     }
 
-    private fun getContainingPsi(symbol: KtSymbol): KtDeclaration {
+    private fun getContainingPsi(symbol: KtSymbol): KtDeclaration? {
         val source = symbol.firSymbol.source
             ?: errorWithAttachment("PSI should present for declaration built by Kotlin code") {
                 withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
@@ -245,10 +245,21 @@ internal class KtFirSymbolContainingDeclarationProvider(
         }
 
         if (isOrdinarySymbolWithSource(symbol)) {
-            return psi.getContainingKtDeclaration()
-                ?: errorWithAttachment("Containing declaration should present for nested declaration ${psi::class}") {
+            val result = psi.getContainingPsiDeclaration()
+
+            if (result == null) {
+                val containingFile = psi.containingFile
+                if (containingFile is KtCodeFragment) {
+                    // All content inside a code fragment is implicitly local, but there is no non-local parent
+                    return null
+                }
+
+                errorWithAttachment("Containing declaration should present for nested declaration ${psi::class}") {
                     withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
                 }
+            }
+
+            return result
         }
 
         errorWithAttachment("Unsupported declaration origin ${symbol.origin} ${psi::class}") {
