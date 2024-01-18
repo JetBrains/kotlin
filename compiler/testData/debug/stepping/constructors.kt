@@ -244,7 +244,7 @@ class O<T>(i: T) {
 // test.kt:68 $N.<init>
 // test.kt:16 $box (4, 6, 6, 6, 6, 4, 4)
 // test.kt:76 $O.<init> (1, 1)
-// test.kt:17 $box (4, 6, 10, 10, 10, 10, 4, 4)
+// test.kt:17 $box (4, 6, 9, 9, 9, 9, 4, 4)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8)
 // ThrowHelpers.kt:29 $kotlin.wasm.internal.rangeCheck (6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19)

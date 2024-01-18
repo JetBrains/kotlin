@@ -1,6 +1,6 @@
 // IGNORE_INLINER: IR
-// IGNORE_BACKEND_K2: WASM
 // FILE: test.kt
+
 
 public val MASSERTIONS_ENABLED: Boolean = true
 

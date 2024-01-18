@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: WASM
+
 // FILE: test.kt
 
 fun stringSwitch(x: String) {
@@ -121,7 +121,7 @@ fun box() {
 
 // EXPECTATIONS WASM
 // test.kt:1 $box
-// test.kt:30 $box (18, 18, 18, 18, 4)
+// test.kt:30 $box (17, 17, 17, 17, 4)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8)
 // ThrowHelpers.kt:29 $kotlin.wasm.internal.rangeCheck (6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19)
@@ -135,7 +135,7 @@ fun box() {
 // Array.kt:75 $kotlin.Array.set (8, 20, 27, 16, 8, 20, 27, 16, 8, 20, 27, 16, 8, 20, 27, 16)
 // Array.kt:76 $kotlin.Array.set (5, 5, 5, 5)
 // String.kt:149 $kotlin.stringLiteral (11, 4, 11, 4, 11, 4, 11, 4)
-// test.kt:6 $stringSwitch (8, 14, 14, 14, 14, 8, 20, 8, 8, 8)
+// test.kt:6 $stringSwitch (8, 13, 13, 13, 13, 8, 20, 8, 8, 8)
 // String.kt:122 $kotlin.String.hashCode (12, 25, 12, 12, 12, 25, 12, 12, 35, 28, 12, 25, 12, 12, 35, 28, 12, 25, 12, 12, 12, 25, 12, 12, 35, 28, 12, 25, 12, 12, 35, 28, 12, 25, 12, 12, 12, 25, 12, 12, 35, 28, 12, 25, 12, 12, 35, 28, 12, 25, 12, 12, 12, 25, 12, 12, 35, 28, 12, 25, 12, 12, 35, 28)
 // String.kt:123 $kotlin.String.hashCode (30, 30, 30, 30)
 // String.kt:124 $kotlin.String.hashCode (12, 26, 12, 12, 26, 12, 12, 26, 12, 12, 26, 12)
@@ -159,20 +159,20 @@ fun box() {
 // test.kt:1 $stringSwitch (0, 0, 0, 0, 0, 0, 0, 0, 0)
 // test.kt:5 $stringSwitch (4, 4, 4, 4)
 // test.kt:12 $stringSwitch (19, 4, 19, 4, 19, 4, 19, 4)
-// test.kt:13 $stringSwitch (8, 9, 9, 9, 9, 8, 15, 8, 8, 8)
+// test.kt:13 $stringSwitch (8, 15, 8, 8, 8)
 // test.kt:20 $stringSwitch (9, 9, 9, 9)
-// test.kt:22 $stringSwitch (8, 9, 9, 9, 9, 8, 15, 8, 8, 8)
+// test.kt:22 $stringSwitch (8, 15, 8, 8, 8)
 // test.kt:19 $stringSwitch (4, 4, 4, 4)
 // test.kt:27 $stringSwitch (1, 1, 1, 1)
-// test.kt:31 $box (18, 18, 18, 18, 4)
-// test.kt:7 $stringSwitch (8, 14, 14, 14, 14, 8, 21)
-// test.kt:14 $stringSwitch (8, 9, 9, 9, 9, 8, 16)
-// test.kt:23 $stringSwitch (8, 9, 9, 9, 9, 8, 16)
-// test.kt:32 $box (18, 18, 18, 18, 4)
-// test.kt:8 $stringSwitch (8, 14, 14, 14, 14, 8, 22)
-// test.kt:15 $stringSwitch (8, 9, 9, 9, 9, 8, 17)
-// test.kt:24 $stringSwitch (8, 9, 9, 9, 9, 8, 17)
-// test.kt:33 $box (18, 18, 18, 18, 4)
+// test.kt:31 $box (17, 17, 17, 17, 4)
+// test.kt:7 $stringSwitch (8, 13, 13, 13, 13, 8, 21)
+// test.kt:14 $stringSwitch (8, 16)
+// test.kt:23 $stringSwitch (8, 16)
+// test.kt:32 $box (17, 17, 17, 17, 4)
+// test.kt:8 $stringSwitch (8, 13, 13, 13, 13, 8, 22)
+// test.kt:15 $stringSwitch (8, 17)
+// test.kt:24 $stringSwitch (8, 17)
+// test.kt:33 $box (17, 17, 17, 17, 4)
 // test.kt:9 $stringSwitch
 // test.kt:16 $stringSwitch
 // test.kt:25 $stringSwitch

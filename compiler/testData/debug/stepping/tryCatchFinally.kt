@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: WASM
+
 // FILE: test.kt
 
 fun foo() {
@@ -137,7 +137,7 @@ fun box() {
 // test.kt:26 $mightThrow (8, 8, 8, 22, 22, 16)
 // test.kt:27 $mightThrow (1, 1)
 // test.kt:5 $foo (4, 4, 4)
-// test.kt:10 $foo (9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9)
+// test.kt:10 $foo (8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8)
 // ThrowHelpers.kt:29 $kotlin.wasm.internal.rangeCheck (6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19)
@@ -155,7 +155,7 @@ fun box() {
 // test.kt:30 $mightThrow2 (8, 8, 22, 22, 16, 8, 22, 22, 16)
 // test.kt:31 $mightThrow2
 // test.kt:13 $foo (12, 12, 4, 12, 12, 4, 12, 12, 4)
-// test.kt:18 $foo (9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9)
+// test.kt:18 $foo (8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8)
 // test.kt:20 $foo (1, 1, 1)
 // test.kt:35 $box (13, 4)
 // test.kt:36 $box
@@ -170,9 +170,9 @@ fun box() {
 // Throwable.kt:49 $kotlin.Throwable.<init> (1, 1, 1)
 // Exceptions.kt:20 $kotlin.Exception.<init> (1, 1, 1)
 // test.kt:15 $foo (13, 13)
-// test.kt:16 $foo (9, 9, 9, 9, 9, 9, 9, 9)
+// test.kt:16 $foo (8, 8, 8, 8, 8, 8, 8, 8)
 // test.kt:37 $box (13, 4)
 // test.kt:38 $box
 // test.kt:7 $foo
-// test.kt:8 $foo (9, 9, 9, 9)
+// test.kt:8 $foo (8, 8, 8, 8)
 // test.kt:39 $box

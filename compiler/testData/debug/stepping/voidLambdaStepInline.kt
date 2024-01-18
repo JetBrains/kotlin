@@ -43,7 +43,7 @@ fun box(): String {
 // test.kt:6 $box
 // Standard.kt:3 $box (16, 16, 16, 16)
 // String.kt:143 $kotlin.stringLiteral (15, 8, 15, 8)
-// test.kt:9 $box (12, 12, 12, 12, 4)
+// test.kt:9 $box (11, 11, 11, 11, 4)
 // ExternalWrapper.kt:200 $kotlin.wasm.internal.kotlinToJsStringAdapter
 // ExternalWrapper.kt:201 $kotlin.wasm.internal.kotlinToJsStringAdapter
 // Strings.kt:161 $kotlin.wasm.internal.kotlinToJsStringAdapter

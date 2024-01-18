@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: WASM
+
 // FILE: test.kt
 
 fun foo(x: Int) {
@@ -50,7 +50,7 @@ fun box() {
 // test.kt:1 $box
 // test.kt:21 $box (8, 4)
 // test.kt:5 $foo (8, 12, 8, 8, 12, 8)
-// test.kt:6 $foo (9, 9, 9, 9)
+// test.kt:6 $foo (8, 8, 8, 8)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8)
 // ThrowHelpers.kt:29 $kotlin.wasm.internal.rangeCheck (6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19)
@@ -66,10 +66,10 @@ fun box() {
 // String.kt:149 $kotlin.stringLiteral (11, 4, 11, 4)
 // test.kt:9 $foo (8, 12, 8, 8, 12, 8)
 // test.kt:13 $foo (8, 12, 8, 8, 12, 8)
-// test.kt:14 $foo (9, 9, 9, 9)
+// test.kt:14 $foo (8, 8, 8, 8)
 // String.kt:143 $kotlin.stringLiteral (15, 8, 15, 8)
 // test.kt:18 $foo (1, 1)
 // test.kt:22 $box (8, 4)
-// test.kt:10 $foo (9, 9, 9, 9)
-// test.kt:16 $foo (9, 9, 9, 9)
+// test.kt:10 $foo (8, 8, 8, 8)
+// test.kt:16 $foo (8, 8, 8, 8)
 // test.kt:23 $box
