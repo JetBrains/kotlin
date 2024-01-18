@@ -23,10 +23,11 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         reportDiagnostics(module, info)
         reportKtDiagnostics(module, info)
-        checkFullDiagnosticRender(module)
     }
 
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        checkFullDiagnosticRender()
+    }
 
     private fun reportDiagnostics(module: TestModule, info: BinaryArtifacts.Jvm) {
         val testFiles = module.files.associateBy { "/${it.name}" }
