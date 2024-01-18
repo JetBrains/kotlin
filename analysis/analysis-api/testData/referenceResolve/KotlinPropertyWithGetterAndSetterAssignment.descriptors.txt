@@ -6,23 +6,18 @@ Caret 2 resolved to:
 
 Caret 3 resolved to:
 0: (in A) var something: kotlin.Int
-1: (in A) var something: kotlin.Int
 
 Caret 4 resolved to:
 0: (in A) var something: kotlin.Int
-1: (in A) var something: kotlin.Int
 
 Caret 5 resolved to:
 0: (in A) var something: kotlin.Int
-1: (in A) var something: kotlin.Int
 
 Caret 6 resolved to:
 0: (in A) var something: kotlin.Int
-1: (in A) var something: kotlin.Int
 
 Caret 7 resolved to:
 0: (in A) var something: kotlin.Int
-1: (in A) var something: kotlin.Int
 
 Caret 8 resolved to:
 0: (in A) var something: kotlin.Int

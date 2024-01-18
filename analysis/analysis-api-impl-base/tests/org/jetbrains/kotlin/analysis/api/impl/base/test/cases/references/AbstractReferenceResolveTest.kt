@@ -46,11 +46,14 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
-        val caretPosition = testServices.expressionMarkerProvider.getAllCaretsPositions(mainFile).single()
-        doTestByFileStructure(mainFile, caretPosition, mainModule, testServices)
+        val caretPositions = testServices.expressionMarkerProvider.getAllCaretsPositions(mainFile)
+        doTestByFileStructure(mainFile, caretPositions, mainModule, testServices)
     }
 
-    protected fun doTestByFileStructure(ktFile: KtFile, caretPosition: Int, mainModule: TestModule, testServices: TestServices) {
+    protected fun doTestByFileStructure(ktFile: KtFile, caretPositions: List<Int>, mainModule: TestModule, testServices: TestServices) {
+        if (caretPositions.isEmpty()) {
+            testServices.assertions.fail { "No carets were specified for resolve test" }
+        }
 
         fun getRenderedReferencesForCaretPosition(caretPosition: Int): String {
             val ktReferences = findReferencesAtCaret(ktFile, caretPosition)
@@ -67,8 +70,19 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
             return resolvedTo
         }
 
-        val resolvedTo = getRenderedReferencesForCaretPosition(caretPosition)
-        val actual = "Resolved to:\n$resolvedTo"
+        val resolutionAtPositions = caretPositions.map { getRenderedReferencesForCaretPosition(it) }
+
+        val actual = if (resolutionAtPositions.size == 1) {
+            val singleResolutionResult = resolutionAtPositions.single()
+
+            "Resolved to:\n$singleResolutionResult"
+        } else {
+            resolutionAtPositions
+                .withIndex()
+                .joinToString(separator = "\n\n") { (idx, resolutionResult) ->
+                    "Caret ${idx + 1} resolved to:\n$resolutionResult"
+                }
+        }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
