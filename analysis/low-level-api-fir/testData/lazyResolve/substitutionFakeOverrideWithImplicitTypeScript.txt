@@ -1,5 +1,5 @@
 STATUS:
-TARGET: public final [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
+TARGET: public final [ResolvedTo(STATUS)] [CallableCopyDeferredReturnTypeCalculationKey=CallableCopySubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
 
 
 EXPECT_ACTUAL_MATCHING:
-TARGET: public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
+TARGET: public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CallableCopyDeferredReturnTypeCalculationKey=CallableCopySubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
 
 
 CONTRACTS:
-TARGET: public final [ResolvedTo(CONTRACTS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
+TARGET: public final [ResolvedTo(CONTRACTS)] [CallableCopyDeferredReturnTypeCalculationKey=CallableCopySubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
