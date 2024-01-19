@@ -65,6 +65,12 @@ public class FirIdeNormalAnalysisSourceModuleDoubleColonReceiverTypeTestGenerate
     }
 
     @Test
+    @TestMetadata("methodReference_java.kt")
+    public void testMethodReference_java() throws Exception {
+        runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_java.kt");
+    }
+
+    @Test
     @TestMetadata("methodReference_type.kt")
     public void testMethodReference_type() throws Exception {
         runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_type.kt");
