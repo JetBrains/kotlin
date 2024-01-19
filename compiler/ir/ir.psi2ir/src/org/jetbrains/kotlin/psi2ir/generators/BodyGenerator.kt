@@ -128,7 +128,7 @@ internal class BodyGenerator(
                     irReturnedValue is IrExpression &&
                     irReturnedValue !is IrReturn && irReturnedValue !is IrThrow
                 ) {
-                    generateReturnExpression(irReturnedValue.startOffset, irReturnedValue.endOffset, irReturnedValue)
+                    generateReturnExpression(irReturnedValue.endOffset, irReturnedValue.endOffset, irReturnedValue)
                 } else {
                     irReturnedValue
                 }
