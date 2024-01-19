@@ -16,8 +16,6 @@ void setObject(NSObject* obj) {
     globalObject = obj;
 }
 
-// Make sure this function persists, because the test expects to find this function in the stack trace.
-__attribute__((noinline))
 bool isObjectAlive() {
     return globalObject != nil;
 }
@@ -29,8 +27,6 @@ import kotlin.native.concurrent.*
 import kotlin.test.*
 import kotlinx.cinterop.autoreleasepool
 import objclib.*
-
-val sb = StringBuilder()
 
 fun box(): String {
     val success = autoreleasepool {
