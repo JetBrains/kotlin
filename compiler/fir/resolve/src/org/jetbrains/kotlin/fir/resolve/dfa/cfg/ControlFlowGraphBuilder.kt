@@ -436,8 +436,18 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Classes -----------------------------------
 
-    private fun FirClass.firstInPlaceInitializedMember(): FirDeclaration? =
-        declarations.find { it is FirControlFlowGraphOwner && it !is FirConstructor && it.isUsedInControlFlowGraphBuilderForClass }
+    /**
+     * The first in-place initializer is either:
+     * 1. The primary constructor.
+     * 2. The first property or anonymous initializer.
+     */
+    private fun FirClass.firstInPlaceInitializer(): FirDeclaration? {
+        return declarations.find {
+            it is FirControlFlowGraphOwner &&
+                    (it !is FirConstructor || it.isPrimary) &&
+                    it.isUsedInControlFlowGraphBuilderForClass
+        }
+    }
 
     private inline fun List<FirElement>.forEachGraphOwner(block: (FirControlFlowGraphOwner) -> Unit) {
         for (member in this) {
@@ -486,14 +496,19 @@ class ControlFlowGraphBuilder {
         }
 
         if (enterNode.previousNodes.isNotEmpty()) {
-            val firstInPlace = klass.firstInPlaceInitializedMember()
+            val firstInPlace = klass.firstInPlaceInitializer()
             klass.declarations.forEachGraphOwner {
-                // For local classes, the first in-place initializer, all constructors when there are no in-place initializers, or any
-                // this-delegating constructors should have a forward edge from ClassEnterNode, while everything else should have a
-                // DFG-only forward edge.
-                val kind = if (firstInPlace == it ||
-                    (it is FirConstructor && (firstInPlace == null || it.delegatedConstructor?.isThis == true))
-                ) EdgeKind.Forward else EdgeKind.DfgForward
+                // For local classes,
+                //  - the first in-place initializer,
+                //  - all constructors when there are no in-place initializers,
+                //  - or any this-delegating constructors,
+                // should have a forward edge from ClassEnterNode.
+                // Everything else should have a DFG-only forward edge.
+                val kind = when {
+                    firstInPlace == it -> EdgeKind.Forward
+                    it is FirConstructor && (firstInPlace == null || it.delegatedConstructor?.isThis == true) -> EdgeKind.Forward
+                    else -> EdgeKind.DfgForward
+                }
                 enterToLocalClassesMembers[(it as FirDeclaration).symbol] = enterNode to kind
             }
         }
@@ -521,13 +536,23 @@ class ControlFlowGraphBuilder {
         }
 
         val isLocalClass = klass.isLocal
+        var primaryConstructor: ControlFlowGraph? = null
         val calledInPlace = mutableListOf<ControlFlowGraph>()
+        val secondaryConstructors = mutableMapOf<FirConstructor, ControlFlowGraph>()
         val calledLater = mutableListOf<ControlFlowGraph>()
-        val constructors = mutableMapOf<FirConstructor, ControlFlowGraph>()
         klass.declarations.forEachGraphOwner {
             val graph = it.controlFlowGraphReference?.controlFlowGraph ?: return@forEachGraphOwner
             when (it) {
-                is FirConstructor -> constructors[it] = graph
+                is FirConstructor -> when {
+                    it.isPrimary -> {
+                        // The primary constructor is treated as an in-place initializer since it is always called, but a specific
+                        // reference needs to be saved to inject into any secondary constructor delegation.
+                        calledInPlace.add(graph)
+                        primaryConstructor = graph
+                    }
+                    else -> secondaryConstructors[it] = graph
+                }
+
                 is FirPropertyAccessor, is FirFunction, is FirClass -> if (isLocalClass) {
                     calledLater.add(graph)
                 }
@@ -536,22 +561,29 @@ class ControlFlowGraphBuilder {
             }
         }
 
+        // Create primary constructor and in-place initializer edges.
+        val firstInPlaceEnter = calledInPlace.firstOrNull()?.enterNode
         val lastInPlaceExit = calledInPlace.fold<_, CFGNode<*>>(enterNode) { lastNode, graph ->
             // In local classes, we already have control flow (+ data flow) edge from `enterNode`
-            // to first in-place initializer.
+            // to primary constructor or first in-place initializer.
             if (lastNode !== enterNode || lastNode.previousNodes.isEmpty()) {
                 addEdgeToSubGraph(lastNode, graph.enterNode)
             }
             graph.exitNode
         }
-        if (exitNode.isUnion) {
-            // => this is an anonymous object => there's only one constructor => can use `exitNode`
-            // to unify data flow from all in-place-called members, including said constructor.
-            for (graph in calledInPlace) {
-                addEdge(graph.exitNode, exitNode, preferredKind = EdgeKind.DfgForward)
-            }
+
+        for (graph in calledInPlace) {
+            EdgeKind.forward(
+                // => this class has a primary constructor => the last in-place initializer must have a
+                // control flow edge to the exit node.
+                usedInCfa = primaryConstructor != null && graph.exitNode == lastInPlaceExit,
+                // => this is an anonymous object => there's only one constructor => can use `exitNode`
+                // to unify data flow from all in-place-called members, including said constructor.
+                usedInDfa = exitNode.isUnion,
+            )?.let { edgeKind -> addEdge(graph.exitNode, exitNode, preferredKind = edgeKind) }
         }
 
+        // Create secondary constructor edges.
         val parentConstructors = mutableMapOf<FirConstructor, FirConstructor?>()
         fun FirConstructor.parentConstructor(): FirConstructor? = parentConstructors.getOrPutNullable(this) {
             // Break cycles in some way; there will be errors on delegated constructor calls in that case.
@@ -561,15 +593,23 @@ class ControlFlowGraphBuilder {
                 ?.takeIf { parent -> this !in generateSequence(parent) { it.parentConstructor() } }
         }
 
-        for ((ctor, graph) in constructors) {
-            val delegatedConstructorGraph = constructors[ctor.parentConstructor()]
-            if (delegatedConstructorGraph != null) {
+        fun getDelegateNodes(ctor: FirConstructor): Pair<CFGNode<FirElement>?, CFGNode<FirElement>?> {
+            val parentConstructor = ctor.parentConstructor()
+            val secondaryGraph = secondaryConstructors[parentConstructor]
+            return when {
+                secondaryGraph != null -> (firstInPlaceEnter ?: secondaryGraph.enterNode) to secondaryGraph.exitNode
+                primaryConstructor != null && primaryConstructor == parentConstructor?.controlFlowGraphReference?.controlFlowGraph -> firstInPlaceEnter to lastInPlaceExit
+                else -> null to null
+            }
+        }
+
+        for ((ctor, graph) in secondaryConstructors) {
+            val (delegatedEnter, delegatedExit) = getDelegateNodes(ctor)
+            if (delegatedEnter != null && delegatedExit != null) {
                 // Inject delegated constructor and other in-place initializer sub-graphs after the delegated constructor call node. This
                 // ensures property initialization and use is calculated correctly when there are complex calculations for the arguments to
                 // the delegated constructor.
 
-                val delegatedConstructorEnter = calledInPlace.firstOrNull()?.enterNode ?: delegatedConstructorGraph.enterNode
-                val delegatedConstructorExit = delegatedConstructorGraph.exitNode
                 val delegatedConstructorCall = graph.nodes.single { it is DelegatedConstructorCallNode }
                 val edgeLabel = graph.exitNode as FunctionExitNode
 
@@ -578,9 +618,9 @@ class ControlFlowGraphBuilder {
 
                 if (!isLocalClass) addEdgeToSubGraph(enterNode, graph.enterNode)
 
-                addEdgeToSubGraph(delegatedConstructorCall, delegatedConstructorEnter, label = edgeLabel)
+                addEdgeToSubGraph(delegatedConstructorCall, delegatedEnter, label = edgeLabel)
                 for (node in followingNodes) {
-                    addEdge(delegatedConstructorExit, node, preferredKind = EdgeKind.CfgForward, label = edgeLabel)
+                    addEdge(delegatedExit, node, preferredKind = EdgeKind.CfgForward, label = edgeLabel)
                     addEdge(delegatedConstructorCall, node, preferredKind = EdgeKind.DfgForward)
                 }
             } else if (lastInPlaceExit !== enterNode || lastInPlaceExit.previousNodes.isEmpty()) {
@@ -591,7 +631,7 @@ class ControlFlowGraphBuilder {
             addEdge(graph.exitNode, exitNode, preferredKind = if (exitNode.isUnion) EdgeKind.Forward else EdgeKind.CfgForward)
         }
 
-        if (constructors.isEmpty()) {
+        if (primaryConstructor == null && secondaryConstructors.isEmpty()) {
             // Interfaces have no constructors, add an edge from enter to exit so that methods aren't marked as dead.
             addEdge(enterNode, exitNode, preferredKind = EdgeKind.CfgForward)
         } else {
@@ -605,7 +645,7 @@ class ControlFlowGraphBuilder {
             addEdgeToSubGraph(exitNode, graph.enterNode)
         }
 
-        enterNode.subGraphs = calledInPlace + constructors.values
+        enterNode.subGraphs = calledInPlace + secondaryConstructors.values
         exitNode.subGraphs = calledLater
         return exitNode.takeIf { it.isUnion } to popGraph()
     }

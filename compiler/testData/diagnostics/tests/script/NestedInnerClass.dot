@@ -121,35 +121,35 @@ digraph NestedInnerClass_fir_kts {
         35 [label="Enter class Inner [3]" style="filled" fillcolor=red];
         subgraph cluster_13 {
             color=blue
-            36 [label="Enter property [4]" style="filled" fillcolor=red];
-            37 [label="Access variable R|/property| [4]"];
-            38 [label="Exit property [4]" style="filled" fillcolor=red];
+            36 [label="Enter function <init> [4]" style="filled" fillcolor=red];
+            37 [label="Delegated constructor call: super<R|kotlin/Any|>() [4]" style="filled" fillcolor=yellow];
+            38 [label="Exit function <init> [4]" style="filled" fillcolor=red];
         }
         subgraph cluster_14 {
             color=blue
             39 [label="Enter property [4]" style="filled" fillcolor=red];
-            40 [label="Access variable this@NestedInnerClass# [4]"];
-            41 [label="Access variable <Unresolved name: property># [4]"];
-            42 [label="Exit property [4]" style="filled" fillcolor=red];
+            40 [label="Access variable R|/property| [4]"];
+            41 [label="Exit property [4]" style="filled" fillcolor=red];
         }
         subgraph cluster_15 {
             color=blue
-            43 [label="Enter function <init> [4]" style="filled" fillcolor=red];
-            44 [label="Delegated constructor call: super<R|kotlin/Any|>() [4]" style="filled" fillcolor=yellow];
-            45 [label="Exit function <init> [4]" style="filled" fillcolor=red];
+            42 [label="Enter property [4]" style="filled" fillcolor=red];
+            43 [label="Access variable this@NestedInnerClass# [4]"];
+            44 [label="Access variable <Unresolved name: property># [4]"];
+            45 [label="Exit property [4]" style="filled" fillcolor=red];
         }
         46 [label="Exit class Inner [3]" style="filled" fillcolor=red];
     }
     35 -> {36} [color=green];
     35 -> {46} [style=dotted];
-    35 -> {36 39 43} [style=dashed];
+    35 -> {36 39 42} [style=dashed];
     36 -> {37};
     37 -> {38};
     38 -> {39} [color=green];
     39 -> {40};
     40 -> {41};
-    41 -> {42};
-    42 -> {43} [color=green];
+    41 -> {42} [color=green];
+    42 -> {43};
     43 -> {44};
     44 -> {45};
     45 -> {46} [color=green];

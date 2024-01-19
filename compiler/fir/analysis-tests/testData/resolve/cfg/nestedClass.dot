@@ -15,21 +15,21 @@ digraph nestedClass_kt {
         2 [label="Enter class OuterClass" style="filled" fillcolor=red];
         subgraph cluster_2 {
             color=blue
-            3 [label="Enter property" style="filled" fillcolor=red];
-            4 [label="Const: Int(1)"];
-            5 [label="Exit property" style="filled" fillcolor=red];
+            3 [label="Enter function <init>" style="filled" fillcolor=red];
+            4 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            5 [label="Exit function <init>" style="filled" fillcolor=red];
         }
         subgraph cluster_3 {
             color=blue
             6 [label="Enter property" style="filled" fillcolor=red];
-            7 [label="Access variable R|/OuterClass.outerProperty|"];
+            7 [label="Const: Int(1)"];
             8 [label="Exit property" style="filled" fillcolor=red];
         }
         subgraph cluster_4 {
             color=blue
-            9 [label="Enter function <init>" style="filled" fillcolor=red];
-            10 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-            11 [label="Exit function <init>" style="filled" fillcolor=red];
+            9 [label="Enter property" style="filled" fillcolor=red];
+            10 [label="Access variable R|/OuterClass.outerProperty|"];
+            11 [label="Exit property" style="filled" fillcolor=red];
         }
         12 [label="Exit class OuterClass" style="filled" fillcolor=red];
     }
@@ -65,21 +65,21 @@ digraph nestedClass_kt {
         17 [label="Enter class NestedClass" style="filled" fillcolor=red];
         subgraph cluster_8 {
             color=blue
-            18 [label="Enter property" style="filled" fillcolor=red];
-            19 [label="Const: Int(1)"];
-            20 [label="Exit property" style="filled" fillcolor=red];
+            18 [label="Enter function <init>" style="filled" fillcolor=red];
+            19 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            20 [label="Exit function <init>" style="filled" fillcolor=red];
         }
         subgraph cluster_9 {
             color=blue
             21 [label="Enter property" style="filled" fillcolor=red];
-            22 [label="Access variable R|/OuterClass.NestedClass.nestedProperty|"];
+            22 [label="Const: Int(1)"];
             23 [label="Exit property" style="filled" fillcolor=red];
         }
         subgraph cluster_10 {
             color=blue
-            24 [label="Enter function <init>" style="filled" fillcolor=red];
-            25 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-            26 [label="Exit function <init>" style="filled" fillcolor=red];
+            24 [label="Enter property" style="filled" fillcolor=red];
+            25 [label="Access variable R|/OuterClass.NestedClass.nestedProperty|"];
+            26 [label="Exit property" style="filled" fillcolor=red];
         }
         27 [label="Exit class NestedClass" style="filled" fillcolor=red];
     }
