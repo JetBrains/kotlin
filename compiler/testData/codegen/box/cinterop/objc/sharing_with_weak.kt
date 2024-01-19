@@ -18,7 +18,7 @@ void setObject(NSObject* obj) {
 
 // Make sure this function persists, because the test expects to find this function in the stack trace.
 __attribute__((noinline))
-bool isObjectAliveShouldCrash() {
+bool isObjectAlive() {
     return globalObject != nil;
 }
 
@@ -33,12 +33,11 @@ import objclib.*
 val sb = StringBuilder()
 
 fun box(): String {
-    autoreleasepool {
+    val success = autoreleasepool {
         run()
     }
     // Experimental MM supports arbitrary object sharing.
-    assertEquals("Before\nAfter true\n", sb.toString())
-    return "OK"
+    return if (success) "OK" else "FAIL"
 }
 
 private class NSObjectImpl : NSObject() {
@@ -49,13 +48,11 @@ fun run() = withWorker {
     val obj = NSObjectImpl()
     setObject(obj)
 
-    sb.appendLine("Before")
-    val isAlive = try {
+    try {
         execute(TransferMode.SAFE, {}) {
-            isObjectAliveShouldCrash()
+            isObjectAlive()
         }.result
     } catch (e: Throwable) {
         false
     }
-    sb.appendLine("After $isAlive")
 }
