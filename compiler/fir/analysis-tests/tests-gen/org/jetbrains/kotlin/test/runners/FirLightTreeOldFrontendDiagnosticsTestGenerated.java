@@ -17894,12 +17894,6 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
-                @TestMetadata("capturedForIncorporationEscapes.kt")
-                public void testCapturedForIncorporationEscapes() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedForIncorporationEscapes.kt");
-                }
-
-                @Test
                 @TestMetadata("capturedInTypeInference.kt")
                 public void testCapturedInTypeInference() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedInTypeInference.kt");

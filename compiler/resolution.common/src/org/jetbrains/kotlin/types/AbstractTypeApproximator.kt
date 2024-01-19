@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
-import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.concurrent.ConcurrentHashMap
@@ -482,11 +481,7 @@ abstract class AbstractTypeApproximator(
             // In approximateCapturedType, we check if the super/subtypes of captured types need approximation even if captured types
             // themselves don't need approximation, and will land here.
             // To support this case, we also don't want to approximate captured types here if the configuration says so.
-            if (capturedType != null &&
-                isK2 &&
-                !conf.capturedType(ctx, capturedType) &&
-                ctx.hasRecursiveTypeParametersWithGivenSelfType(capturedType.typeConstructor())
-            ) {
+            if (capturedType != null && isK2 && !conf.capturedType(ctx, capturedType)) {
                 continue@loop
             }
 
