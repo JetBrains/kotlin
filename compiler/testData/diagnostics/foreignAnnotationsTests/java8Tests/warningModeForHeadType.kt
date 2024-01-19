@@ -1,6 +1,6 @@
+// FIR_IDENTICAL
 // FULL_JDK
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// LANGUAGE: -SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced
 
 // FILE: ElementTypesAreNonnullByDefault.java
 import java.lang.annotation.ElementType;
@@ -22,7 +22,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 // Here it's important that @ElementTypesAreNonnullByDefault is a JSR-305 default qualifier and disabled by default (resulting in warnings-only)
 // Thus return type (head type) is considered as warningly-annotated as not-nullable and that makes annotations on bounds for K and V
 // be effectively ignored on non-warnings level.
-// Behavior was changed in K2, see KT-63209.
 @ElementTypesAreNonnullByDefault
 public final class Maps {
     public static <K extends @Nullable Object, V extends @Nullable Object> java.util.HashMap<K,V> newHashMap() { return null; }

@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -16,11 +15,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitutor
-import org.jetbrains.kotlin.fir.java.enhancement.isEnhancedTypeForWarningDeprecation
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
+import java.util.*
 
 // TODO reimplement using AdditionalTypeChecker KT-62864
 object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpressionChecker() {
@@ -143,7 +142,7 @@ internal fun FirExpression.checkExpressionForEnhancedTypeMismatch(
     expectedType: ConeKotlinType?,
     reporter: DiagnosticReporter,
     context: CheckerContext,
-    factory: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, String>,
+    factory: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType>,
 ) {
     if (expectedType == null) return
     val actualType = resolvedType
@@ -155,14 +154,7 @@ internal fun FirExpression.checkExpressionForEnhancedTypeMismatch(
         // Don't report anything if the original types didn't match.
         actualType.isSubtypeOf(context.session.typeContext, expectedType)
     ) {
-        val suffix =
-            if (actualType.isEnhancedTypeForWarningDeprecation || expectedType.isEnhancedTypeForWarningDeprecation) {
-                val versionString = LanguageFeature.SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced.sinceVersion?.versionString
-                "This will become an error in Kotlin $versionString. See https://youtrack.jetbrains.com/issue/KT-63209"
-            } else {
-                ""
-            }
-        reporter.reportOn(source, factory, actualTypeForComparison, expectedTypeForComparison, suffix, context)
+        reporter.reportOn(source, factory, actualTypeForComparison, expectedTypeForComparison, context)
     }
 }
 
