@@ -1,0 +1,255 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java2 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar(){}java.util.ArrayList<out|kotlin.Number>
+  //   Public signature: /A.bar|-7954994543431492117[0]
+  //   Public signature debug description: bar(){}java.util.ArrayList<out|kotlin.Number>
+  /* fake */ override fun bar(): ArrayList<out Number>
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar2(){}java.util.ArrayList<in|kotlin.Number>
+  //   Public signature: /A.bar2|-6698323934578274174[0]
+  //   Public signature debug description: bar2(){}java.util.ArrayList<in|kotlin.Number>
+  /* fake */ override fun bar2(): ArrayList<in Number>
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar3(){}kotlin.collections.List<*>
+  //   Public signature: /A.bar3|-8948143415825357304[0]
+  //   Public signature debug description: bar3(){}kotlin.collections.List<*>
+  /* fake */ override fun bar3(): List<*>
+
+  // CHECK:
+  //   Mangled name: A#foo(java.util.ArrayList<out|kotlin.Number>){}
+  //   Public signature: /A.foo|-1751770228733092422[0]
+  //   Public signature debug description: foo(java.util.ArrayList<out|kotlin.Number>){}
+  /* fake */ override fun foo(a: ArrayList<out Number>): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo2(java.util.ArrayList<in|kotlin.Number>){}
+  //   Public signature: /A.foo2|-3336973974877588163[0]
+  //   Public signature debug description: foo2(java.util.ArrayList<in|kotlin.Number>){}
+  /* fake */ override fun foo2(a: ArrayList<in Number>): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo3(kotlin.collections.List<*>){}
+  //   Public signature: /A.foo3|8988661382169244788[0]
+  //   Public signature debug description: foo3(kotlin.collections.List<*>){}
+  /* fake */ override fun foo3(a: List<*>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java2 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar(){}java.util.ArrayList<out|kotlin.Number>
+  //   Public signature: /B.bar|-7954994543431492117[0]
+  //   Public signature debug description: bar(){}java.util.ArrayList<out|kotlin.Number>
+  override fun bar(): ArrayList<out Number>
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar2(){}java.util.ArrayList<in|kotlin.Number>
+  //   Public signature: /B.bar2|-6698323934578274174[0]
+  //   Public signature debug description: bar2(){}java.util.ArrayList<in|kotlin.Number>
+  override fun bar2(): ArrayList<in Number>
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar3(){}kotlin.collections.List<*>
+  //   Public signature: /B.bar3|-8948143415825357304[0]
+  //   Public signature debug description: bar3(){}kotlin.collections.List<*>
+  override fun bar3(): List<*>
+
+  // CHECK:
+  //   Mangled name: B#foo(java.util.ArrayList<out|kotlin.Number>){}
+  //   Public signature: /B.foo|-1751770228733092422[0]
+  //   Public signature debug description: foo(java.util.ArrayList<out|kotlin.Number>){}
+  override fun foo(a: ArrayList<out Number>): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo2(java.util.ArrayList<in|kotlin.Number>){}
+  //   Public signature: /B.foo2|-3336973974877588163[0]
+  //   Public signature debug description: foo2(java.util.ArrayList<in|kotlin.Number>){}
+  override fun foo2(a: ArrayList<in Number>): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo3(kotlin.collections.List<*>){}
+  //   Public signature: /B.foo3|8988661382169244788[0]
+  //   Public signature debug description: foo3(kotlin.collections.List<*>){}
+  override fun foo3(a: List<*>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java1 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar(){}java.util.ArrayList<out|kotlin.Number{EnhancedNullability}>{EnhancedNullability}
+  //   Public signature: /C.bar|-255470625699623912[0]
+  //   Public signature debug description: bar(){}java.util.ArrayList<out|kotlin.Number{EnhancedNullability}>{EnhancedNullability}
+  @Override
+  /* fake */ override fun bar(): @EnhancedNullability ArrayList<out @EnhancedNullability Number>
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar2(){}java.util.ArrayList<in|kotlin.Number{EnhancedNullability}>{EnhancedNullability}
+  //   Public signature: /C.bar2|277479901441470639[0]
+  //   Public signature debug description: bar2(){}java.util.ArrayList<in|kotlin.Number{EnhancedNullability}>{EnhancedNullability}
+  @Override
+  /* fake */ override fun bar2(): @EnhancedNullability ArrayList<in @EnhancedNullability Number>
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar3(){}kotlin.collections.List<*>{EnhancedNullability}
+  //   Public signature: /C.bar3|-2742805382800269802[0]
+  //   Public signature debug description: bar3(){}kotlin.collections.List<*>{EnhancedNullability}
+  @Override
+  /* fake */ override fun bar3(): @EnhancedNullability List<*>
+
+  // CHECK:
+  //   Mangled name: C#foo(java.util.ArrayList<out|kotlin.Number{EnhancedNullability}>{EnhancedNullability}){}
+  //   Public signature: /C.foo|-942792604386436178[0]
+  //   Public signature debug description: foo(java.util.ArrayList<out|kotlin.Number{EnhancedNullability}>{EnhancedNullability}){}
+  @Override
+  /* fake */ override fun foo(a: @EnhancedNullability ArrayList<out @EnhancedNullability Number>): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo2(java.util.ArrayList<in|kotlin.Number{EnhancedNullability}>{EnhancedNullability}){}
+  //   Public signature: /C.foo2|2861357128523319092[0]
+  //   Public signature debug description: foo2(java.util.ArrayList<in|kotlin.Number{EnhancedNullability}>{EnhancedNullability}){}
+  @Override
+  /* fake */ override fun foo2(a: @EnhancedNullability ArrayList<in @EnhancedNullability Number>): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo3(kotlin.collections.List<*>{EnhancedNullability}){}
+  //   Public signature: /C.foo3|7555357842428981953[0]
+  //   Public signature debug description: foo3(kotlin.collections.List<*>{EnhancedNullability}){}
+  @Override
+  /* fake */ override fun foo3(a: @EnhancedNullability List<*>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java1 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar2(){}java.util.ArrayList<in|kotlin.Number{EnhancedNullability}>{EnhancedNullability}
+  //   Public signature: /D.bar2|277479901441470639[0]
+  //   Public signature debug description: bar2(){}java.util.ArrayList<in|kotlin.Number{EnhancedNullability}>{EnhancedNullability}
+  @Override
+  /* fake */ override fun bar2(): @EnhancedNullability ArrayList<in @EnhancedNullability Number>
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar3(){}kotlin.collections.List<*>{EnhancedNullability}
+  //   Public signature: /D.bar3|-2742805382800269802[0]
+  //   Public signature debug description: bar3(){}kotlin.collections.List<*>{EnhancedNullability}
+  @Override
+  /* fake */ override fun bar3(): @EnhancedNullability List<*>
+
+  // CHECK:
+  //   Mangled name: D#foo2(java.util.ArrayList<in|kotlin.Number{EnhancedNullability}>{EnhancedNullability}){}
+  //   Public signature: /D.foo2|2861357128523319092[0]
+  //   Public signature debug description: foo2(java.util.ArrayList<in|kotlin.Number{EnhancedNullability}>{EnhancedNullability}){}
+  @Override
+  /* fake */ override fun foo2(a: @EnhancedNullability ArrayList<in @EnhancedNullability Number>): Unit
+
+  // CHECK:
+  //   Mangled name: D#foo3(kotlin.collections.List<*>{EnhancedNullability}){}
+  //   Public signature: /D.foo3|7555357842428981953[0]
+  //   Public signature debug description: foo3(kotlin.collections.List<*>{EnhancedNullability}){}
+  @Override
+  /* fake */ override fun foo3(a: @EnhancedNullability List<*>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar(){}java.util.ArrayList<out|kotlin.Number>
+  //   Public signature: /D.bar|-7954994543431492117[0]
+  //   Public signature debug description: bar(){}java.util.ArrayList<out|kotlin.Number>
+  override fun bar(): ArrayList<out Number>
+
+  // CHECK:
+  //   Mangled name: D#foo(java.util.ArrayList<out|kotlin.Number>){}
+  //   Public signature: /D.foo|-1751770228733092422[0]
+  //   Public signature debug description: foo(java.util.ArrayList<out|kotlin.Number>){}
+  override fun foo(a: ArrayList<out Number>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinClass
+//   Public signature: /KotlinClass|null[0]
+open class KotlinClass {
+  // CHECK:
+  //   Mangled name: KotlinClass#<init>(){}
+  //   Public signature: /KotlinClass.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinClass#bar(){}java.util.ArrayList<out|kotlin.Number>
+  //   Public signature: /KotlinClass.bar|-7954994543431492117[0]
+  //   Public signature debug description: bar(){}java.util.ArrayList<out|kotlin.Number>
+  open fun bar(): ArrayList<out Number>
+
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinClass#bar2(){}java.util.ArrayList<in|kotlin.Number>
+  //   Public signature: /KotlinClass.bar2|-6698323934578274174[0]
+  //   Public signature debug description: bar2(){}java.util.ArrayList<in|kotlin.Number>
+  open fun bar2(): ArrayList<in Number>
+
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinClass#bar3(){}kotlin.collections.List<*>
+  //   Public signature: /KotlinClass.bar3|-8948143415825357304[0]
+  //   Public signature debug description: bar3(){}kotlin.collections.List<*>
+  open fun bar3(): List<*>
+
+  // CHECK:
+  //   Mangled name: KotlinClass#foo(java.util.ArrayList<out|kotlin.Number>){}
+  //   Public signature: /KotlinClass.foo|-1751770228733092422[0]
+  //   Public signature debug description: foo(java.util.ArrayList<out|kotlin.Number>){}
+  open fun foo(a: ArrayList<out Number>): Unit
+
+  // CHECK:
+  //   Mangled name: KotlinClass#foo2(java.util.ArrayList<in|kotlin.Number>){}
+  //   Public signature: /KotlinClass.foo2|-3336973974877588163[0]
+  //   Public signature debug description: foo2(java.util.ArrayList<in|kotlin.Number>){}
+  open fun foo2(a: ArrayList<in Number>): Unit
+
+  // CHECK:
+  //   Mangled name: KotlinClass#foo3(kotlin.collections.List<*>){}
+  //   Public signature: /KotlinClass.foo3|8988661382169244788[0]
+  //   Public signature debug description: foo3(kotlin.collections.List<*>){}
+  open fun foo3(a: List<*>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D){}
+//   Public signature: /test|7656439746344069424[0]
+//   Public signature debug description: test(A;B;C;D){}
+fun test(a: A, b: B, c: C, d: D): Unit
