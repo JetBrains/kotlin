@@ -29,9 +29,6 @@ class BirVariableImpl(
     isLateinit: Boolean,
     initializer: BirExpression?,
 ) : BirVariable(BirVariable) {
-    override val owner: BirVariableImpl
-        get() = this
-
     private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

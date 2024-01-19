@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.bir.types
 
 import org.jetbrains.kotlin.bir.BirBuiltIns
 import org.jetbrains.kotlin.bir.symbols.BirTypeParameterSymbol
+import org.jetbrains.kotlin.bir.symbols.owner
 import org.jetbrains.kotlin.bir.types.utils.buildSimpleType
 import org.jetbrains.kotlin.bir.types.utils.makeNullable
 import org.jetbrains.kotlin.bir.types.utils.toBuilder

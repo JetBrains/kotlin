@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.bir.backend.jvm
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 import org.jetbrains.kotlin.bir.backend.builders.*
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.expressions.BirFunctionAccessExpression
 import org.jetbrains.kotlin.bir.expressions.BirGetValue
+import org.jetbrains.kotlin.bir.symbols.owner
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.bir.types.utils.classOrNull
 import org.jetbrains.kotlin.bir.types.utils.getArrayElementType

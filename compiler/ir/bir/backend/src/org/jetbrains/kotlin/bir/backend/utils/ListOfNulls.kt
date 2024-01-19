@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.bir.backend.utils
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 private class ListOfNulls<E>(
     override val size: Int,
 ) : List<E?> {

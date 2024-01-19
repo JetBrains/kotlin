@@ -21,9 +21,6 @@ class BirExternalPackageFragmentImpl(
     packageFqName: FqName,
     containerSource: DeserializedContainerSource?,
 ) : BirExternalPackageFragment(BirExternalPackageFragment) {
-    override val owner: BirExternalPackageFragmentImpl
-        get() = this
-
     private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

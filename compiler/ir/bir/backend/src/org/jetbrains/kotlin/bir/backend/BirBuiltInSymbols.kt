@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.bir.backend
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.symbols.BirClassifierSymbol

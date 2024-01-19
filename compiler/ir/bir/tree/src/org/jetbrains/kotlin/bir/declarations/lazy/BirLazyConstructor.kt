@@ -23,9 +23,6 @@ class BirLazyConstructor(
     override val originalIrElement: IrConstructor,
     converter: Ir2BirConverter,
 ) : BirLazyElementBase(BirConstructor, converter), BirConstructor {
-    override val owner: BirConstructor
-        get() = this
-
     override var isPrimary: Boolean
         get() = originalIrElement.isPrimary
         set(value) = mutationNotSupported()

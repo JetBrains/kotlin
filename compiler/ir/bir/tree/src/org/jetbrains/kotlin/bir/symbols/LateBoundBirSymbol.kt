@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 
 abstract class LateBoundBirSymbol<E : BirSymbolOwner>(
     override val signature: IdSignature?,
-) : BirSymbol<E> {
+) : BirSymbolWithOwner<E> {
     private var _owner: E? = null
     override val owner: E
         get() = _owner ?: error("The symbol is not yet bound")

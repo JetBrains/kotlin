@@ -28,8 +28,6 @@ class BirLazySimpleFunction(
     override val originalIrElement: IrSimpleFunction,
     converter: Ir2BirConverter,
 ) : BirLazyElementBase(BirSimpleFunction, converter), BirSimpleFunction {
-    override val owner: BirSimpleFunction
-        get() = this
     override var isExternal: Boolean
         get() = originalIrElement.isExternal
         set(value) = mutationNotSupported()

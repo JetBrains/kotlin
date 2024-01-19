@@ -23,8 +23,6 @@ class BirLazyClass(
     override val originalIrElement: IrClass,
     converter: Ir2BirConverter,
 ) : BirLazyElementBase(BirClass, converter), BirClass {
-    override val owner: BirClass
-        get() = this
     override var kind: ClassKind
         get() = originalIrElement.kind
         set(value) = mutationNotSupported()

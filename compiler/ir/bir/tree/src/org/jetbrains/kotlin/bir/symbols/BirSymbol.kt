@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.bir.symbols
 
+import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirReturnableBlock
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -12,13 +13,25 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
 interface BirSymbol<out E : BirSymbolOwner> {
-    val owner: E
     val isBound: Boolean
     val signature: IdSignature?
 }
 
+val <E : BirSymbolOwner> BirSymbol<E>.owner: E
+    get() {
+        return if (this is BirElementBase) {
+            this as E
+        } else {
+            (this as BirSymbolWithOwner<E>).owner
+        }
+    }
+
 val <E : BirSymbolOwner> BirSymbol<E>.ownerIfBound: E?
     get() = if (isBound) owner else null
+
+interface BirSymbolWithOwner<out E : BirSymbolOwner> : BirSymbol<E> {
+    val owner: E
+}
 
 interface BirPackageFragmentSymbol : BirSymbol<BirPackageFragment>
 
@@ -90,5 +103,6 @@ interface AirSimpleFunctionSymbol : AirFunctionSymbol<BirSimpleFunction>
 //interface AirSimpleFunction : AirFunction, AirSimpleFunctionSymbol
 
 interface AirFunction : AirSymbol<BirFunction>
+
 @Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
 interface AirSimpleFunction : AirFunction, AirSymbol<BirSimpleFunction>

@@ -39,9 +39,6 @@ class BirClassImpl(
     thisReceiver: BirValueParameter?,
     valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?,
 ) : BirImplElementBase(BirClass), BirClass {
-    override val owner: BirClassImpl
-        get() = this
-
     private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

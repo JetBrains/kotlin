@@ -22,9 +22,6 @@ class BirFileImpl(
     packageFqName: FqName,
     fileEntry: IrFileEntry,
 ) : BirFile(BirFile) {
-    override val owner: BirFileImpl
-        get() = this
-
     private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

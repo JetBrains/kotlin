@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.bir.backend.builders
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.bir.declarations.BirValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin

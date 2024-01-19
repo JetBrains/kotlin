@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.bir.backend
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.CompressedSourceSpan

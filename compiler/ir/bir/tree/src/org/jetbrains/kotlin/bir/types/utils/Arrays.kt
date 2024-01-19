@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.bir.types.utils
 
 import org.jetbrains.kotlin.bir.BirBuiltIns
+import org.jetbrains.kotlin.bir.symbols.owner
 import org.jetbrains.kotlin.bir.types.BirSimpleType
 import org.jetbrains.kotlin.bir.types.BirStarProjection
 import org.jetbrains.kotlin.bir.types.BirType

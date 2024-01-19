@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.bir.backend.utils
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
 import org.jetbrains.kotlin.bir.expressions.BirBlock
 import org.jetbrains.kotlin.bir.expressions.BirExpression

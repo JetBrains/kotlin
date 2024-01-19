@@ -29,8 +29,6 @@ class BirLazyEnumEntry(
     override val originalIrElement: IrEnumEntry,
     converter: Ir2BirConverter,
 ) : BirLazyElementBase(BirEnumEntry, converter), BirEnumEntry {
-    override val owner: BirEnumEntry
-        get() = this
     override var name: Name
         get() = originalIrElement.name
         set(value) = mutationNotSupported()

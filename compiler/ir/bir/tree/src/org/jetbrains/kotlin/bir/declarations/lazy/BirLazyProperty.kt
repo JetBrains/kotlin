@@ -25,8 +25,6 @@ class BirLazyProperty(
     override val originalIrElement: IrProperty,
     converter: Ir2BirConverter,
 ) : BirLazyElementBase(BirProperty, converter), BirProperty {
-    override val owner: BirProperty
-        get() = this
     override var isExternal: Boolean
         get() = originalIrElement.isExternal
         set(value) = mutationNotSupported()

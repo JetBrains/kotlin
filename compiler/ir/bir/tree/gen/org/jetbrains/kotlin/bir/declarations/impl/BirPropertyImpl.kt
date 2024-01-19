@@ -40,9 +40,6 @@ class BirPropertyImpl(
     setter: BirSimpleFunction?,
     overriddenSymbols: List<BirPropertySymbol>,
 ) : BirImplElementBase(BirProperty), BirProperty {
-    override val owner: BirPropertyImpl
-        get() = this
-
     private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

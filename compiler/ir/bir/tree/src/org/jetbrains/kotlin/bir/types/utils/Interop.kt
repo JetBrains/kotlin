@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.bir.declarations.BirClass
 import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
 import org.jetbrains.kotlin.bir.declarations.BirTypeParameter
 import org.jetbrains.kotlin.bir.declarations.BirTypeParametersContainer
-import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
-import org.jetbrains.kotlin.bir.symbols.BirClassifierSymbol
-import org.jetbrains.kotlin.bir.symbols.BirScriptSymbol
-import org.jetbrains.kotlin.bir.symbols.BirTypeParameterSymbol
+import org.jetbrains.kotlin.bir.symbols.*
 import org.jetbrains.kotlin.bir.types.*
 import org.jetbrains.kotlin.bir.types.impl.BirTypeBase
 import org.jetbrains.kotlin.bir.util.*

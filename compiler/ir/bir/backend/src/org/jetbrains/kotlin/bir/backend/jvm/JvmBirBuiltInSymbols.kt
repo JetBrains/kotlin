@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.bir.backend.jvm
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.bir.backend.BirBuiltInSymbols
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol

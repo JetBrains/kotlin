@@ -29,9 +29,6 @@ class BirLocalDelegatedPropertyImpl(
     getter: BirSimpleFunction?,
     setter: BirSimpleFunction?,
 ) : BirLocalDelegatedProperty(BirLocalDelegatedProperty) {
-    override val owner: BirLocalDelegatedPropertyImpl
-        get() = this
-
     private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

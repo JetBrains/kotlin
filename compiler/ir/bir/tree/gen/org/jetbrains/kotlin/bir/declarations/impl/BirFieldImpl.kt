@@ -32,9 +32,6 @@ class BirFieldImpl(
     initializer: BirExpressionBody?,
     correspondingPropertySymbol: BirPropertySymbol?,
 ) : BirImplElementBase(BirField), BirField {
-    override val owner: BirFieldImpl
-        get() = this
-
     private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

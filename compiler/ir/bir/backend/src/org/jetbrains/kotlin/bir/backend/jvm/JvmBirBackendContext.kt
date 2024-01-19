@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.bir.backend.jvm
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.bir.BirBuiltIns

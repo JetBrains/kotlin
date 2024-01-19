@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.bir.backend.jvm
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 import org.jetbrains.kotlin.bir.BirElementDynamicPropertyKey
 import org.jetbrains.kotlin.bir.declarations.BirClass
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName

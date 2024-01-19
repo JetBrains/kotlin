@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.bir.backend
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirGetValue
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
+import org.jetbrains.kotlin.bir.symbols.owner
 import kotlin.reflect.KProperty1
 
 context(BirBackendContext)
@@ -173,7 +176,7 @@ abstract class BirLoweringPhase {
         })
 
     @JvmName("registerBackReferencesKeyWithSymbolProperty")
-    protected inline fun <reified E : BirElement, R : BirElement, S : BirSymbol<R>> registerBackReferencesKey(
+    protected inline fun <reified E : BirElement, R : BirSymbolOwner, S : BirSymbol<R>> registerBackReferencesKey(
         elementType: BirElementType<E>,
         forwardReferenceProperty: KProperty1<E, S>,
     ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(

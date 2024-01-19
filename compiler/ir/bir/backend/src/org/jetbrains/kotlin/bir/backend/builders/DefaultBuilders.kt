@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.bir.backend.builders
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 import org.jetbrains.kotlin.bir.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.declarations.impl.*
@@ -265,7 +267,7 @@ inline fun BirConst.Companion.build(init: BirConstImpl<Any?>.() -> Unit) =
 @PublishedApi
 internal val UninitializedName = Name.identifier("UNNAMED")
 
-abstract class UninitializedBirSymbol<E : BirSymbolOwner>() : BirSymbol<E> {
+abstract class UninitializedBirSymbol<E : BirSymbolOwner>() : BirSymbolWithOwner<E> {
     final override val isBound: Boolean
         get() = false
     final override val owner: E

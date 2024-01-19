@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.bir.backend.builders
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 import org.jetbrains.kotlin.bir.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.backend.BirBackendContext
 import org.jetbrains.kotlin.bir.backend.utils.listOfNulls

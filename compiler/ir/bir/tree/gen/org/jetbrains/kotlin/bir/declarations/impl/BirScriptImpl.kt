@@ -37,9 +37,6 @@ class BirScriptImpl(
     targetClass: BirClassSymbol?,
     constructor: BirConstructor?,
 ) : BirScript(BirScript) {
-    override val owner: BirScriptImpl
-        get() = this
-
     private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

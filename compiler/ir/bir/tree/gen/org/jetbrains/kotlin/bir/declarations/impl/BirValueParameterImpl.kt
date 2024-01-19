@@ -31,9 +31,6 @@ class BirValueParameterImpl(
     isHidden: Boolean,
     defaultValue: BirExpressionBody?,
 ) : BirImplElementBase(BirValueParameter), BirValueParameter {
-    override val owner: BirValueParameterImpl
-        get() = this
-
     private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.bir.backend.lower
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.builders.*
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext

@@ -24,8 +24,6 @@ class BirLazyTypeAlias(
     override val originalIrElement: IrTypeAlias,
     converter: Ir2BirConverter,
 ) : BirLazyElementBase(BirTypeAlias, converter), BirTypeAlias {
-    override val owner: BirTypeAlias
-        get() = this
     override var isActual: Boolean
         get() = originalIrElement.isActual
         set(value) = mutationNotSupported()

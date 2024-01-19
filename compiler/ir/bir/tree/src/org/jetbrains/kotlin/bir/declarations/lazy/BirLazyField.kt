@@ -27,8 +27,6 @@ class BirLazyField(
     override val originalIrElement: IrField,
     converter: Ir2BirConverter,
 ) : BirLazyElementBase(BirField, converter), BirField {
-    override val owner: BirField
-        get() = this
     override var isFinal: Boolean
         get() = originalIrElement.isFinal
         set(value) = mutationNotSupported()

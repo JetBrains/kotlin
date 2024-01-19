@@ -36,9 +36,6 @@ class BirConstructorImpl(
     body: BirBody?,
     isPrimary: Boolean,
 ) : BirImplElementBase(BirConstructor), BirConstructor {
-    override val owner: BirConstructorImpl
-        get() = this
-
     private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

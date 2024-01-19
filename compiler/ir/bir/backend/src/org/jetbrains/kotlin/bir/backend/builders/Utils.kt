@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.bir.backend.builders
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 import org.jetbrains.kotlin.bir.backend.utils.listOfNulls
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.*
+import org.jetbrains.kotlin.bir.symbols.owner
 import org.jetbrains.kotlin.bir.util.parentAsClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.name.Name

@@ -19,9 +19,6 @@ class BirErrorDeclarationImpl(
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
 ) : BirErrorDeclaration(BirErrorDeclaration) {
-    override val owner: BirErrorDeclarationImpl
-        get() = this
-
     private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

@@ -50,15 +50,6 @@ private fun SmartPrinter.printElementImpl(element: Element) {
 
     val body = SmartPrinter(StringBuilder()).apply {
         withIndent {
-            if (element.ownerSymbolType != null) {
-                printPropertyHeader("owner", element.elementImplName, false, override = true)
-                println()
-                withIndent {
-                    println("get() = this")
-                }
-                println()
-            }
-
             val childrenLists = element.walkableChildren.filterIsInstance<ListField>()
             for (field in allFields.sortedBy { it is ListField && it.isChild }) {
                 if (field.isReadWriteTrackedProperty) {

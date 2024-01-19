@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.bir.types.utils
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.symbols.BirScriptSymbol
 import org.jetbrains.kotlin.bir.symbols.BirTypeParameterSymbol
+import org.jetbrains.kotlin.bir.symbols.owner
 import org.jetbrains.kotlin.bir.types.BirDynamicType
 import org.jetbrains.kotlin.bir.types.BirErrorType
 import org.jetbrains.kotlin.bir.types.BirSimpleType

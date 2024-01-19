@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirConst
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
-import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
-import org.jetbrains.kotlin.bir.symbols.BirClassifierSymbol
-import org.jetbrains.kotlin.bir.symbols.BirTypeParameterSymbol
-import org.jetbrains.kotlin.bir.symbols.ownerIfBound
+import org.jetbrains.kotlin.bir.symbols.*
 import org.jetbrains.kotlin.bir.types.utils.*
 import org.jetbrains.kotlin.bir.util.*
 import org.jetbrains.kotlin.builtins.PrimitiveType

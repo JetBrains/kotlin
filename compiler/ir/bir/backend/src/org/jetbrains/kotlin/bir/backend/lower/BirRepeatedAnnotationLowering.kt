@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.bir.backend.lower
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 import org.jetbrains.kotlin.bir.BirElementDynamicPropertyKey
 import org.jetbrains.kotlin.bir.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase

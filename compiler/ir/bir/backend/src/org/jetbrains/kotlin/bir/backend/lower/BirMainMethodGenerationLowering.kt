@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.bir.backend.lower
 
+import org.jetbrains.kotlin.bir.symbols.owner
+
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.bir.CompressedSourceSpan
