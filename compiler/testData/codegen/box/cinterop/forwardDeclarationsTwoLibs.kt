@@ -1,4 +1,41 @@
 // This test mostly checks frontend behaviour.
+// TARGET_BACKEND: NATIVE
+// MODULE: cinterop1
+// FILE: cForwardDeclarationsTwoLibs1.def
+---
+struct StructDeclaredUndeclared;
+struct StructDeclaredDeclared;
+struct StructDeclaredDefined;
+struct StructDefinedUndeclared {};
+struct StructDefinedDeclared {};
+struct StructDefinedDefined {};
+
+int use1StructDeclaredUndeclared(struct StructDeclaredUndeclared* declaredUndeclared) { return -3; }
+int use1StructDeclaredDeclared(struct StructDeclaredDeclared* declaredDeclared) { return -4; }
+int use1StructDeclaredDefined(struct StructDeclaredDefined* declaredDefined) { return -5; }
+int use1StructDefinedUndeclared(struct StructDefinedUndeclared* definedUndeclared) { return -6; }
+int use1StructDefinedDeclared(struct StructDefinedDeclared* definedDeclared) { return -7; }
+int use1StructDefinedDefined(struct StructDefinedDefined* definedDefined) { return -8; }
+
+// MODULE: cinterop2
+// FILE: cForwardDeclarationsTwoLibs2.def
+---
+struct StructUndeclaredDeclared;
+struct StructUndeclaredDefined {};
+struct StructDeclaredDeclared;
+struct StructDeclaredDefined {};
+struct StructDefinedDeclared;
+struct StructDefinedDefined {};
+
+int use2StructUndeclaredDeclared(struct StructUndeclaredDeclared* undeclaredDeclared) { return 1; }
+int use2StructUndeclaredDefined(struct StructUndeclaredDefined* undeclaredDefined) { return 2; }
+int use2StructDeclaredDeclared(struct StructDeclaredDeclared* declaredDeclared) { return 4; }
+int use2StructDeclaredDefined(struct StructDeclaredDefined* declaredDefined) { return 5; }
+int use2StructDefinedDeclared(struct StructDefinedDeclared* definedDeclared) { return 7; }
+int use2StructDefinedDefined(struct StructDefinedDefined* definedDefined) { return 8; }
+
+// MODULE: main(cinterop1, cinterop2)
+// FILE: main.kt
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
 import cForwardDeclarationsTwoLibs1.*
@@ -34,7 +71,7 @@ fun checkDifferentTypes(s: StructDefinedDeclared?) = 7
 fun checkDifferentTypes(s: cForwardDeclarationsTwoLibs1.StructDefinedDefined?) = 8
 fun checkDifferentTypes(s: cForwardDeclarationsTwoLibs2.StructDefinedDefined?) = 9
 
-fun main() {
+fun box(): String {
     checkSubtype2<StructUndeclaredDeclared, COpaque>()
 
     checkSubtype2<StructUndeclaredDefined, CStructVar>()
@@ -88,4 +125,6 @@ fun main() {
     assertEquals(7, use2StructDefinedDeclared(cnamesDefinedDeclared?.ptr))
     assertEquals(-8, use1StructDefinedDefined(definedDefined1?.ptr))
     assertEquals(8, use2StructDefinedDefined(definedDefined2?.ptr))
+
+    return "OK"
 }

@@ -4693,6 +4693,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("forwardDeclarationsTwoLibs.kt")
+            public void testForwardDeclarationsTwoLibs() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/forwardDeclarationsTwoLibs.kt");
+            }
+
+            @Test
             @TestMetadata("funptr.kt")
             public void testFunptr() throws Exception {
                 runTest("compiler/testData/codegen/box/cinterop/funptr.kt");

@@ -1087,23 +1087,10 @@ createInterop("cppSkiaSignature") {
     it.defFile 'interop/cpp/skiaSignature.def'
 }
 
-createInterop("threadStates") {
-    it.defFile "interop/threadStates/threadStates.def"
-    it.extraOpts "-Xcompile-source", "$projectDir/interop/threadStates/threadStates.cpp"
-}
-
 createInterop("workerSignals") {
     it.defFile "interop/workerSignals/workerSignals.def"
     it.headers "$projectDir/interop/workerSignals/workerSignals.h"
     it.extraOpts "-Xcompile-source", "$projectDir/interop/workerSignals/workerSignals.cpp"
-}
-
-createInterop("cForwardDeclarationsTwoLibs1") {
-    it.defFile "interop/forwardDeclarationsTwoLibs/cForwardDeclarationsTwoLibs1.def"
-}
-
-createInterop("cForwardDeclarationsTwoLibs2") {
-    it.defFile "interop/forwardDeclarationsTwoLibs/cForwardDeclarationsTwoLibs2.def"
 }
 
 if (PlatformInfo.isAppleTarget(project)) {
@@ -1342,12 +1329,6 @@ interopTest("interop_workerSignals") {
     disabled = project.testTarget == 'mingw_x64' // cross-thread signalling does not work on Windows
     source = "interop/workerSignals/workerSignals.kt"
     interop = "workerSignals"
-}
-
-interopTest("interop_forwardDeclarationsTwoLibs") {
-    source = "interop/forwardDeclarationsTwoLibs/forwardDeclarationsTwoLibs.kt"
-    interop = "cForwardDeclarationsTwoLibs1"
-    interop2 = "cForwardDeclarationsTwoLibs2"
 }
 
 /*
