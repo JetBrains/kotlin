@@ -20079,6 +20079,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
         }
 
         @Test
+        @TestMetadata("kotlinJavaKotlin.kt")
+        public void testKotlinJavaKotlin() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/kotlinJavaKotlin.kt");
+        }
+
+        @Test
         @TestMetadata("kt61856.kt")
         public void testKt61856() throws Exception {
             runTest("compiler/testData/codegen/box/fir/kt61856.kt");

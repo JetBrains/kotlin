@@ -16529,6 +16529,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/KotlinDocumentationProvider.kt");
         }
 
+        @TestMetadata("kotlinJavaKotlin.kt")
+        public void testKotlinJavaKotlin() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/kotlinJavaKotlin.kt");
+        }
+
         @TestMetadata("kt61856.kt")
         public void testKt61856() throws Exception {
             runTest("compiler/testData/codegen/box/fir/kt61856.kt");
