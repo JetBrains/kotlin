@@ -21,7 +21,6 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @DisplayName("works with native tasks in complex project")
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_7_4,
-        maxVersion = TestVersions.Gradle.G_8_4,
     )
     @GradleTest
     fun testNativeTasks(gradleVersion: GradleVersion) {

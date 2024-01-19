@@ -193,7 +193,13 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
     @GradleTest
     fun `test - sample1 - assemble and execute - included build using older version of Kotlin`(gradleVersion: GradleVersion) {
-        project("mpp-composite-build/sample1", gradleVersion) {
+        project(
+            "mpp-composite-build/sample1",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.suppressDeprecationWarningsOn(
+                reason = "KGP 1.7.21 produces deprecation warnings with Gradle 8.4"
+            ) { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4) }
+        ) {
             projectPath.resolve("included-build").addDefaultBuildFiles()
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", "1.7.21")
