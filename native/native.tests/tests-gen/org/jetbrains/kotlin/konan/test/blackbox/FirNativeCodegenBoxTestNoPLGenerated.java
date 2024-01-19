@@ -16631,6 +16631,27 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/fileCheck/cinterop")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @UseExtTestCaseGroupProvider()
+            @UsePartialLinkage(mode = Mode.DISABLED)
+            @Tag("no-partial-linkage-may-be-skipped")
+            public class Cinterop {
+                @Test
+                public void testAllFilesPresentInCinterop() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fileCheck/cinterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("direct.kt")
+                public void testDirect() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/cinterop/direct.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/fileCheck/kt53261")
             @TestDataPath("$PROJECT_ROOT")
             @Tag("frontend-fir")

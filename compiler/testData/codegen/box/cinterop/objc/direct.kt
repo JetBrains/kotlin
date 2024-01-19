@@ -1,6 +1,5 @@
 // TARGET_BACKEND: NATIVE
 // DISABLE_NATIVE: isAppleTarget=false
-// FILECHECK_STAGE: CStubs
 // LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 
 // MODULE: cinterop
@@ -76,8 +75,6 @@ NS_ASSUME_NONNULL_END
 // MODULE: main(cinterop)
 // FILE: main.kt
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-import kotlin.native.Retain
 import direct.*
 import kotlinx.cinterop.*
 import kotlin.test.*
@@ -124,25 +121,5 @@ fun box(): String {
         assertEquals(42UL, ccn .directExt(42UL))
     }
 
-    // FileCheck part
-    callDirect()
-    callRegular()
     return "OK"
 }
-
-@Retain
-//CHECK-LABEL: define i64 @"kfun:#callDirect(){}kotlin.ULong"()
-fun callDirect(): ULong {
-    val cc = CallingConventions()
-    //CHECK: invoke i64 @_{{[a-zA-Z0-9]+}}_knbridge{{[0-9]+}}(i8* %{{[0-9]+}}, i64 42)
-    return cc.direct(42uL)
-}
-
-@Retain
-//CHECK-LABEL: define i64 @"kfun:#callRegular(){}kotlin.ULong"()
-fun callRegular(): ULong {
-    val cc = CallingConventions()
-    //CHECK: invoke i64 @_{{[a-zA-Z0-9]+}}_knbridge{{[0-9]+}}(i8* %{{[0-9]+}}, i8* %{{[0-9]+}}, i64 42)
-    return cc.regular(42uL)
-}
-

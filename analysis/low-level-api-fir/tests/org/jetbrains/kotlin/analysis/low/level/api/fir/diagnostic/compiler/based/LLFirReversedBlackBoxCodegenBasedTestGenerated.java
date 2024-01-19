@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFirReversedBlackBoxCodegenBasedTest {
     @Test
     public void testAllFilesPresentInBox() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "cinterop", "script");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "script", "cinterop", "fileCheck/cinterop");
     }
 
     @Nested
@@ -19369,7 +19369,7 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
 
         @Test
         public void testAllFilesPresentInFileCheck() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fileCheck"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fileCheck"), Pattern.compile("^(.+)\\.kt$"), null, true, "cinterop");
         }
 
         @Test
