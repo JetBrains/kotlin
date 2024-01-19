@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
 import kotlin.reflect.KClass
 
-data class EnhancedTypeForWarningAttribute(
+class EnhancedTypeForWarningAttribute(
     override val coneType: ConeKotlinType,
     val isDeprecation: Boolean,
 ) : ConeAttributeWithConeType<EnhancedTypeForWarningAttribute>() {
@@ -29,6 +29,24 @@ data class EnhancedTypeForWarningAttribute(
 
     override val implementsEquality: Boolean
         get() = true
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as EnhancedTypeForWarningAttribute
+
+        if (coneType != other.coneType) return false
+        if (isDeprecation != other.isDeprecation) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = coneType.hashCode()
+        result = 31 * result + isDeprecation.hashCode()
+        return result
+    }
 }
 
 val ConeAttributes.enhancedTypeForWarning: EnhancedTypeForWarningAttribute? by ConeAttributes.attributeAccessor<EnhancedTypeForWarningAttribute>()
