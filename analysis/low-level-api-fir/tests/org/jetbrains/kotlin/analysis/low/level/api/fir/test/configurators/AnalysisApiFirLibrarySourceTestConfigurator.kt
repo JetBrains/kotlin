@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendK
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
 object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
@@ -38,7 +39,10 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
             useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
             useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
             usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
-            useConfigurators(::AnalysisApiJvmEnvironmentConfigurator)
+            useConfigurators(
+                ::AnalysisApiJvmEnvironmentConfigurator,
+                ::JsEnvironmentConfigurator,
+            )
         }
     }
 
