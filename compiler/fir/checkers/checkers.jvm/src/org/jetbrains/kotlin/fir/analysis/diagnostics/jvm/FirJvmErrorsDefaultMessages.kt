@@ -95,7 +95,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
-            "Java type mismatch: inferred type is ''{0}'', but ''{1}'' was expected.{2}",
+            "Java type mismatch: inferred type is ''{1}'', but ''{0}'' was expected.{2}",
             RENDER_TYPE,
             RENDER_TYPE,
             OPTIONAL_SENTENCE,
