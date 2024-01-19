@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.native.executors
 
 import kotlinx.coroutines.*
+import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -17,6 +18,12 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Logger
 import kotlin.time.*
+
+fun Logger.debugKt65113(msg: String) {
+    if (!HostManager.hostIsMingw)
+        return
+    info("DEBUG(KT-65113): $msg")
+}
 
 class ProcessStreams(
     process: Process,
@@ -58,12 +65,16 @@ class ProcessStreams(
         }
     }
 
-    suspend fun drain() {
+    suspend fun drain(logger: Logger) {
         // First finish passing input into the process.
+        logger.debugKt65113("Will join stdin")
         stdin.join()
         // Now receive all the output in whatever order.
+        logger.debugKt65113("Will join stdout")
         stdout.join()
+        logger.debugKt65113("Will join stderr")
         stderr.join()
+        logger.debugKt65113("Drained the streams")
     }
 
     fun cancel() {
@@ -110,21 +121,26 @@ private object ProcessKiller {
     fun deregister(process: Process) = processes.remove(process)
 }
 
-private fun <T> ProcessBuilder.scoped(block: suspend CoroutineScope.(Process) -> T): T {
+private fun <T> ProcessBuilder.scoped(logger: Logger, block: suspend CoroutineScope.(Process) -> T): T {
     val process = start()
     // Make sure the process is killed even if the jvm process is being destroyed.
     // e.g. gradle --no-daemon task execution was cancelled by the user pressing ^C
     ProcessKiller.register(process)
     return try {
-        runBlocking(Dispatchers.IO) {
+        val result = runBlocking(Dispatchers.IO) {
             block(process)
         }
+        logger.debugKt65113("Successfully finished executing the process")
+        result
     } finally {
+        logger.debugKt65113("Will destroy the process")
         // Make sure the process is killed even if the current thread was interrupted.
         // e.g. gradle task execution was cancelled by the user pressing ^C
         process.destroyForcibly()
+        logger.debugKt65113("Will deregister the process")
         // The process is dead, no need to ensure its destruction during the shutdown.
         ProcessKiller.deregister(process)
+        logger.debugKt65113("Finished executing altogether")
     }
 }
 
@@ -150,7 +166,7 @@ class HostExecutor : Executor {
         return ProcessBuilder(listOf(request.executableAbsolutePath) + request.args).apply {
             directory(workingDirectory)
             environment().putAll(request.environment)
-        }.scoped { process ->
+        }.scoped(logger) { process ->
             val streams = pumpStreams(process, request.stdin, request.stdout, request.stderr)
             val (isTimeout, duration) = measureTimedValue {
                 !process.waitFor(request.timeout.inWholeMilliseconds, TimeUnit.MILLISECONDS)
@@ -159,11 +175,11 @@ class HostExecutor : Executor {
                 logger.warning("Timeout running $commandLine in $duration")
                 streams.cancel()
                 process.destroyForcibly()
-                streams.drain()
+                streams.drain(logger)
                 ExecuteResponse(null, duration)
             } else {
                 logger.info("Finished executing $commandLine in $duration exit code ${process.exitValue()}")
-                streams.drain()
+                streams.drain(logger)
                 ExecuteResponse(process.exitValue(), duration)
             }
         }
