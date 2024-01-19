@@ -176,7 +176,7 @@ abstract class BirLoweringPhase {
         })
 
     @JvmName("registerBackReferencesKeyWithSymbolProperty")
-    protected inline fun <reified E : BirElement, R : BirSymbolOwner, S : BirSymbol<R>> registerBackReferencesKey(
+    protected inline fun <reified E : BirElement, reified R : BirSymbolOwner, S : BirSymbol<R>> registerBackReferencesKey(
         elementType: BirElementType<E>,
         forwardReferenceProperty: KProperty1<E, S>,
     ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(

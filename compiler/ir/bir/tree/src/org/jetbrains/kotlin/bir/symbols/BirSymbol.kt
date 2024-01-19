@@ -17,16 +17,16 @@ interface BirSymbol<out E : BirSymbolOwner> {
     val signature: IdSignature?
 }
 
-val <E : BirSymbolOwner> BirSymbol<E>.owner: E
+inline val <reified E : BirSymbolOwner> BirSymbol<E>.owner: E
     get() {
-        return if (this is BirElementBase) {
-            this as E
+        return if (this is E) {
+            this
         } else {
             (this as BirSymbolWithOwner<E>).owner
         }
     }
 
-val <E : BirSymbolOwner> BirSymbol<E>.ownerIfBound: E?
+inline val <reified E : BirSymbolOwner> BirSymbol<E>.ownerIfBound: E?
     get() = if (isBound) owner else null
 
 interface BirSymbolWithOwner<out E : BirSymbolOwner> : BirSymbol<E> {
