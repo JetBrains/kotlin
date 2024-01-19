@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.io.File
 
 class FirJsKlibBackendFacade(
     testServices: TestServices,
@@ -52,7 +51,7 @@ class FirJsKlibBackendFacade(
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val outputFile = JsEnvironmentConfigurator.getJsKlibArtifactPath(testServices, module.name)
+        val outputFile = JsEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
 
         // TODO: consider avoiding repeated libraries resolution
         val libraries = resolveLibraries(configuration, getAllJsDependenciesPaths(module, testServices))
@@ -64,7 +63,7 @@ class FirJsKlibBackendFacade(
                 configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
                 inputArtifact.diagnosticReporter,
                 inputArtifact.sourceFiles,
-                klibPath = outputFile,
+                klibPath = outputFile.path,
                 libraries.map { it.library },
                 inputArtifact.irModuleFragment,
                 cleanFiles = inputArtifact.icData,
@@ -80,7 +79,7 @@ class FirJsKlibBackendFacade(
 
         // TODO: consider avoiding repeated libraries resolution
         val lib = CommonKLibResolver.resolve(
-            getAllJsDependenciesPaths(module, testServices) + listOf(outputFile),
+            getAllJsDependenciesPaths(module, testServices) + listOf(outputFile.path),
             configuration.getLogger(treatWarningsAsErrors = true)
         ).getFullResolvedList().last().library
 
@@ -101,8 +100,8 @@ class FirJsKlibBackendFacade(
         if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
             testServices.jsIrIncrementalDataProvider.recordIncrementalData(module, lib)
         }
-        testServices.libraryProvider.setDescriptorAndLibraryByName(outputFile, moduleDescriptor, lib)
+        testServices.libraryProvider.setDescriptorAndLibraryByName(outputFile.path, moduleDescriptor, lib)
 
-        return BinaryArtifacts.KLib(File(outputFile), inputArtifact.diagnosticReporter)
+        return BinaryArtifacts.KLib(outputFile, inputArtifact.diagnosticReporter)
     }
 }
