@@ -79,7 +79,13 @@ class FirJavaElementFinder(
 
     override fun findPackage(qualifiedName: String): PsiPackage? {
         if (firProviders.none { it.symbolProvider.getPackage(FqName(qualifiedName)) != null }) return null
-        return PsiPackageImpl(psiManager, qualifiedName)
+        return FirPsiPackage(psiManager, qualifiedName)
+    }
+
+    private class FirPsiPackage(psiManager: PsiManager, qualifiedName: String) : PsiPackageImpl(psiManager, qualifiedName) {
+        // Note: for standard PsiPackageImpl, PsiPackageImplementationHelper.getInstance().packagePrefixExists returns false here
+        // See KT-65111
+        override fun isValid(): Boolean = true
     }
 
     override fun getClasses(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiClass> {
