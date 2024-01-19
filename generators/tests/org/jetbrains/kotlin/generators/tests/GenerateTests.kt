@@ -377,9 +377,6 @@ fun main(args: Array<String>) {
             testClass<AbstractKaptToolIntegrationTest> {
                 model("integration", recursive = false, extension = null)
             }
-            testClass<AbstractKapt4ToolIntegrationTest> {
-                model("integration-kapt4", recursive = false, extension = null)
-            }
         }
 
         testGroup("plugins/kapt3/kapt3-compiler/tests-gen", "plugins/kapt3/kapt3-compiler/testData") {
