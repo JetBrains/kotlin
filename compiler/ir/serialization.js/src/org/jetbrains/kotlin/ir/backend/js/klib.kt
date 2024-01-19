@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
@@ -57,6 +56,7 @@ import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
@@ -99,8 +99,6 @@ private val CompilerConfiguration.metadataVersion
 
 internal val SerializedIrFile.fileMetadata: ByteArray
     get() = backendSpecificMetadata ?: error("Expect file caches to have backendSpecificMetadata, but '$path' doesn't")
-
-class KotlinFileSerializedData(val metadata: ByteArray, val irData: SerializedIrFile)
 
 fun generateKLib(
     depsDescriptors: ModulesStructure,
@@ -624,100 +622,72 @@ fun serializeModuleIntoKlib(
     builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
     serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
 ) {
-    assert(files.size == moduleFragment.files.size)
-
-    val compatibilityMode = CompatibilityMode(abiVersion)
-    val sourceBaseDirs = configuration[CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES] ?: emptyList()
-    val absolutePathNormalization = configuration[CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH] ?: false
-    val signatureClashChecks = configuration[CommonConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS] ?: true
-
     val moduleExportedNames = moduleFragment.collectExportedNames()
-
-    val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
-    if (builtInsPlatform == BuiltInsPlatform.JS) {
-        val cleanFilesIrData = cleanFiles.map { it.irData }
-        JsKlibCheckers.check(cleanFilesIrData, moduleFragment, moduleExportedNames, irDiagnosticReporter, configuration)
-    }
-
-    val serializedIr =
-        JsIrModuleSerializer(
-            irDiagnosticReporter,
-            moduleFragment.irBuiltins,
-            compatibilityMode,
-            normalizeAbsolutePaths = absolutePathNormalization,
-            sourceBaseDirs = sourceBaseDirs,
-            configuration.languageVersionSettings,
-            signatureClashChecks,
-        ) { JsIrFileMetadata(moduleExportedNames[it]?.values?.toSmartList() ?: emptyList()) }.serializedIrModule(moduleFragment)
-
-    val moduleDescriptor = moduleFragment.descriptor
-
     val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
     val empty = ByteArray(0)
-
-    fun processCompiledFileData(ioFile: File, compiledFile: KotlinFileSerializedData) {
-        incrementalResultsConsumer?.run {
-            processPackagePart(ioFile, compiledFile.metadata, empty, empty)
-            with(compiledFile.irData) {
-                processIrFile(
-                    ioFile,
-                    fileData,
-                    types,
-                    signatures,
-                    strings,
-                    declarations,
-                    bodies,
-                    fqName.toByteArray(),
-                    fileMetadata,
-                    debugInfo,
-                )
+    val serializerOutput = serializeModuleIntoKlib(
+        moduleName = moduleFragment.name.asString(),
+        irModuleFragment = moduleFragment,
+        configuration = configuration,
+        diagnosticReporter = diagnosticReporter,
+        sourceFiles = files,
+        compatibilityMode = CompatibilityMode(abiVersion),
+        cleanFiles = cleanFiles,
+        dependencies = dependencies,
+        createModuleSerializer = {
+                irDiagnosticReporter,
+                irBuiltins,
+                compatibilityMode,
+                normalizeAbsolutePaths,
+                sourceBaseDirs,
+                languageVersionSettings,
+                shouldCheckSignaturesOnUniqueness,
+            ->
+            JsIrModuleSerializer(
+                irDiagnosticReporter,
+                irBuiltins,
+                compatibilityMode,
+                normalizeAbsolutePaths,
+                sourceBaseDirs,
+                languageVersionSettings,
+                shouldCheckSignaturesOnUniqueness,
+            ) { JsIrFileMetadata(moduleExportedNames[it]?.values?.toSmartList() ?: emptyList()) }
+        },
+        serializeFileMetadata = { serializeSingleFile(it) to FqName.ROOT },
+        runKlibCheckers = { irModuleFragment, irDiagnosticReporter, compilerConfiguration ->
+            if (builtInsPlatform == BuiltInsPlatform.JS) {
+                val cleanFilesIrData = cleanFiles.map { it.irData ?: error("Metadata-only KLIBs are not supported in Kotlin/JS") }
+                JsKlibCheckers.check(cleanFilesIrData, irModuleFragment, moduleExportedNames, irDiagnosticReporter, compilerConfiguration)
             }
-        }
-    }
+        },
+        processCompiledFileData = { ioFile, compiledFile ->
+            incrementalResultsConsumer?.run {
+                processPackagePart(ioFile, compiledFile.metadata, empty, empty)
+                with(compiledFile.irData!!) {
+                    processIrFile(
+                        ioFile,
+                        fileData,
+                        types,
+                        signatures,
+                        strings,
+                        declarations,
+                        bodies,
+                        fqName.toByteArray(),
+                        fileMetadata,
+                        debugInfo,
+                    )
+                }
+            }
+        },
+        processKlibHeader = {
+            incrementalResultsConsumer?.processHeader(it)
+        },
+    )
 
-    val additionalFiles = mutableListOf<KotlinFileSerializedData>()
-
-    for ((ktSourceFile, binaryFile) in files.zip(serializedIr.files)) {
-        assert(ktSourceFile.path == binaryFile.path) {
-            """The Kt and Ir files are put in different order
-                Kt: ${ktSourceFile.path}
-                Ir: ${binaryFile.path}
-            """.trimMargin()
-        }
-        val packageFragment = serializeSingleFile(ktSourceFile)
-        val compiledKotlinFile = KotlinFileSerializedData(packageFragment.toByteArray(), binaryFile)
-
-        additionalFiles += compiledKotlinFile
-        val ioFile = ktSourceFile.toIoFileOrNull()
-        assert(ioFile != null) {
-            "No file found for source ${ktSourceFile.path}"
-        }
-        processCompiledFileData(ioFile!!, compiledKotlinFile)
-    }
-
-    val compiledKotlinFiles = cleanFiles + additionalFiles
-
-    val header = serializeKlibHeader(
-        configuration.languageVersionSettings, moduleDescriptor,
-        compiledKotlinFiles.map { it.irData.fqName }.distinct().sorted(),
-        emptyList()
-    ).toByteArray()
-
-    incrementalResultsConsumer?.run {
-        processHeader(header)
-    }
-
-    val serializedMetadata =
-        makeSerializedKlibMetadata(
-            compiledKotlinFiles.groupBy { it.irData.fqName }
-                .map { (fqn, data) -> fqn to data.sortedBy { it.irData.path }.map { it.metadata } }.toMap(),
-            header
-        )
-
-    val fullSerializedIr = SerializedIrModule(compiledKotlinFiles.map { it.irData })
+    val fullSerializedIr = serializerOutput.serializedIr ?: error("Metadata-only KLIBs are not supported in Kotlin/JS")
 
     val versions = KotlinLibraryVersioning(
-        abiVersion = compatibilityMode.abiVersion,
+        abiVersion = abiVersion,
         libraryVersion = null,
         compilerVersion = KotlinCompilerVersion.VERSION,
         metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
@@ -737,9 +707,9 @@ fun serializeModuleIntoKlib(
     }
 
     buildKotlinLibrary(
-        linkDependencies = dependencies,
+        linkDependencies = serializerOutput.neededLibraries,
         ir = fullSerializedIr,
-        metadata = serializedMetadata,
+        metadata = serializerOutput.serializedMetadata ?: error("expected serialized metadata"),
         dataFlowGraph = null,
         manifestProperties = properties,
         moduleName = moduleName,
@@ -807,13 +777,6 @@ private fun Map<IrModuleFragment, KotlinLibrary>.getUniqueNameForEachFragment():
     return this.entries.mapNotNull { (moduleFragment, klib) ->
         klib.jsOutputName?.let { moduleFragment to it }
     }.toMap()
-}
-
-fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
-    is KtIoFileSourceFile -> file
-    is KtVirtualFileSourceFile -> VfsUtilCore.virtualToIoFile(virtualFile)
-    is KtPsiSourceFile -> VfsUtilCore.virtualToIoFile(psiFile.virtualFile)
-    else -> path?.let(::File)
 }
 
 fun IncrementalDataProvider.getSerializedData(newSources: List<KtSourceFile>): List<KotlinFileSerializedData> {
