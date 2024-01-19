@@ -9,8 +9,11 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
+import org.jetbrains.kotlin.cli.konan.klib.TopDownAnalyzerFacadeForNative
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -19,6 +22,7 @@ import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.CastCompatibleKotlinNativeClassLoader
+import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -33,8 +37,8 @@ import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.reflect.KClass
-
 
 class ClassicFrontend2NativeIrConverter(
     testServices: TestServices,
@@ -66,12 +70,13 @@ class ClassicFrontend2NativeIrConverter(
         val (psiFiles, analysisResult, project, _) = inputArtifact
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val allowErrors = CodegenTestDirectives.IGNORE_ERRORS in module.directives
 
         val sourceFiles: List<KtFile> = psiFiles.values.toList()
         val translator = Psi2IrTranslator(
             configuration.languageVersionSettings,
             Psi2IrConfiguration(
-                ignoreErrors = CodegenTestDirectives.IGNORE_ERRORS in module.directives,
+                ignoreErrors = allowErrors,
                 configuration.partialLinkageConfig.isEnabled
             ),
             configuration.irMessageLogger::checkNoUnboundSymbols
@@ -103,9 +108,7 @@ class ClassicFrontend2NativeIrConverter(
                 signature: IdSignature,
                 kind: IrDeserializer.TopLevelSymbolKind,
                 moduleName: Name
-            ): IrSymbol {
-                error("Should not be called")
-            }
+            ): Nothing = shouldNotBeCalled()
 
             override fun postProcess(inOrAfterLinkageStep: Boolean) = Unit
         }
@@ -129,14 +132,31 @@ class ClassicFrontend2NativeIrConverter(
             diagnosticReporter = configuration.irMessageLogger
         )
 
+        val topDownAnalyzer = kotlinNativeClass("org.jetbrains.kotlin.backend.konan.TopDownAnalyzerFacadeForKonan")
+            .objectInstance as TopDownAnalyzerFacadeForNative
+        val hasErrors = topDownAnalyzer.checkForErrors(sourceFiles, analysisResult.bindingContext)
+
         return IrBackendInput.NativeBackendInput(
             moduleFragment,
             pluginContext,
             diagnosticReporter = DiagnosticReporterFactory.createReporter(),
+            hasErrors = hasErrors,
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer.mangler,
             irMangler = KonanManglerIr,
             firMangler = null,
-        )
+        ) {
+            val metadataSerializer = KlibMetadataMonolithicSerializer(
+                configuration.languageVersionSettings,
+                metadataVersion = configuration[CommonConfigurationKeys.METADATA_VERSION] as? KlibMetadataVersion
+                    ?: KlibMetadataVersion.INSTANCE,
+                project,
+                exportKDoc = false,
+                skipExpects = true,
+                allowErrorTypes = allowErrors,
+            )
+
+            metadataSerializer.serializeModule(analysisResult.moduleDescriptor)
+        }
     }
 
     private fun kotlinNativeClass(name: String): KClass<out Any> {

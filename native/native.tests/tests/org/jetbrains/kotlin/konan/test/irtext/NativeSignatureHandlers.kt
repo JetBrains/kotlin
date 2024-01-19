@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.containsErrorCode
 import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
@@ -171,7 +172,8 @@ private class LightWeightKonanLinker(
             moduleDescriptor = moduleDescriptor,
             klib = klib,
             strategyResolver = strategyResolver,
-            libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
+            libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT,
+            containsErrorCode = klib.containsErrorCode
         ) {}
     }
 

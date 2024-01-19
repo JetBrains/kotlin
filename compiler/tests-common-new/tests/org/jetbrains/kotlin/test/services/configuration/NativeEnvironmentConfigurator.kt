@@ -56,7 +56,7 @@ private fun hostOs(): String {
     }
 }
 
-fun hostArch(): String =
+private fun hostArch(): String =
     when (val arch = System.getProperty("os.arch")) {
         "x86_64" -> "x64"
         "amd64" -> "x64"

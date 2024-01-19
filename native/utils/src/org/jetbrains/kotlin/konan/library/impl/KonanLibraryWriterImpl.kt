@@ -44,7 +44,7 @@ class KonanLibraryWriterImpl(
 fun buildLibrary(
     natives: List<String>,
     included: List<String>,
-    linkDependencies: List<KonanLibrary>,
+    linkDependencies: List<KotlinLibrary>,
     metadata: SerializedMetadata,
     ir: SerializedIrModule?,
     versions: KotlinLibraryVersioning,

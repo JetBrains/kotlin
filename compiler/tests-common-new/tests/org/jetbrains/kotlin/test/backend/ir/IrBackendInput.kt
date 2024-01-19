@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.ir.backend.js.KotlinFileSerializedData
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -121,15 +121,14 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
             get() = state.diagnosticReporter as BaseDiagnosticsCollector
     }
 
-    // Actually, class won't be used as a real input for the Native backend during blackbox testing, since such testing is done via a different engine.
-    // In irText tests, this class is used only to hold Native-specific FIR2IR output (module fragments) to render and dump IR.
-    // So, other fields are actually not needed: source files, icData, error flag, serialization lambda, etc...
     class NativeBackendInput(
         override val irModuleFragment: IrModuleFragment,
         override val irPluginContext: IrPluginContext,
         override val diagnosticReporter: BaseDiagnosticsCollector,
+        val hasErrors: Boolean,
         override val descriptorMangler: KotlinMangler.DescriptorMangler,
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
+        val serializeMetadata: () -> SerializedMetadata,
     ) : IrBackendInput()
 }
