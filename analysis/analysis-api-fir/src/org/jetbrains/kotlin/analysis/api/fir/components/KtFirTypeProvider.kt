@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.components.KtBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.components.KtTypeProvider
+import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
@@ -34,10 +35,7 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
-import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitutor
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
@@ -195,8 +193,16 @@ internal class KtFirTypeProvider(
             }
             is FirCallableReferenceAccess -> {
                 when (val explicitReceiver = fir.explicitReceiver) {
-                    is FirPropertyAccessExpression -> explicitReceiver.resolvedType.asKtType()
-                    else -> fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
+                    is FirPropertyAccessExpression -> {
+                        explicitReceiver.resolvedType.asKtType()
+                    }
+                    is FirResolvedQualifier -> {
+                        explicitReceiver.classId?.let { analysisSession.buildClassType(it) }
+                            ?: fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
+                    }
+                    else -> {
+                        fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
+                    }
                 }
             }
             else -> {
