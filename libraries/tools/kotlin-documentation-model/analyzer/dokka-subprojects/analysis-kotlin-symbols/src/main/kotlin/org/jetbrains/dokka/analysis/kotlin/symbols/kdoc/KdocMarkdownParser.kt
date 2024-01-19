@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 
 internal fun parseFromKDocTag(
     kDocTag: KDocTag?,
@@ -34,7 +34,11 @@ internal fun parseFromKDocTag(
             listOf(kDocTag) + if (kDocTag.canHaveParent() && parseWithChildren) getAllKDocTags(findParent(kDocTag)) else emptyList()
         DocumentationNode(
             allTags.map { tag ->
-                val links = tag.allChildren.filterIsInstance<KDocLink>().associate { it.getLinkText() to externalDri(it) }
+                val links = mutableMapOf<String, DRI?>()
+                tag.forEachDescendantOfType<KDocLink>{
+                    links[it.getLinkText()] = externalDri(it)
+                }
+
                 val externalDRIProvider = { linkText: String -> links[linkText] }
 
                 when (tag.knownTag) {

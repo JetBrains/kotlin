@@ -7,6 +7,7 @@ package markdown
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.*
+import org.jetbrains.dokka.model.DClass
 import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.WithGenerics
 import org.jetbrains.dokka.model.dfs
@@ -368,6 +369,59 @@ class LinkTest : BaseAbstractTest() {
                     )
                 )
 
+                assertEquals(expected, functionDocs.children.first())
+            }
+        }
+    }
+
+    @Test
+    fun `link should be resolved in @constructor section`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |
+            |/**
+            |* @constructor reference in constructor [AllKDocTagsClass]
+            | */
+            |class AllKDocTagsClass(paramInt: Int, paramStr: String = "100"){}
+            |
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val functionDocs = (module.packages.flatMap { it.classlikes }.first() as DClass).constructors.first().documentation.values.first()
+                val expected = Description(
+                    root = CustomDocTag(
+                        children = listOf(
+                            P(
+                                children = listOf(
+                                    Text("reference in constructor "),
+                                    DocumentationLink(
+                                        dri = DRI(
+                                            packageName = "example",
+                                            classNames = "AllKDocTagsClass",
+                                            target = PointingToDeclaration
+                                        ),
+                                        children = listOf(
+                                            Text("AllKDocTagsClass")
+                                        ),
+                                        params = mapOf("href" to "[AllKDocTagsClass]")
+                                    )
+                                )
+                            )
+                        ),
+                        name = "MARKDOWN_FILE"
+                    )
+                )
                 assertEquals(expected, functionDocs.children.first())
             }
         }
