@@ -63,11 +63,7 @@ inline fun <T : ConeAttributeWithConeType<T>> ConeAttributeWithConeType<T>.trans
 ): ConeAttributeWithConeType<T>? {
     val transformedType = transform(coneType) ?: return null
     if (transformedType == coneType) return this
-
-    // If the type contains the attribute itself, use the nested type from the attribute to prevent exponential growth.
-    // As an example, consider a substitution {T -> Attr(Foo) Bar} applied to a type `Attr(T) T`.
-    // If we don't flatten the attribute chain, we would get `Attr(Attr(Foo) Bar) Bar`.
-    return copyWith(transformedType.attributes[key]?.coneType ?: transformedType)
+    return copyWith(transformedType)
 }
 
 typealias ConeAttributeKey = KClass<out ConeAttribute<*>>
@@ -124,13 +120,8 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
     }
 
     operator fun contains(attributeKey: KClass<out ConeAttribute<*>>): Boolean {
-        return get(attributeKey) != null
-    }
-
-    operator fun <T : ConeAttribute<*>> get(attributeKey: KClass<T>) : T? {
         val index = getId(attributeKey)
-        @Suppress("UNCHECKED_CAST")
-        return arrayMap[index] as T?
+        return arrayMap[index] != null
     }
 
     operator fun plus(attribute: ConeAttribute<*>): ConeAttributes {
