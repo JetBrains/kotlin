@@ -116,7 +116,7 @@ typealias NotSoLongSignatureFunction = (
     Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int
 ) -> Int
 
-fun box(): String {
+fun main() {
     val atoiPtr = getAtoiPtr()!!
 
     val getPrintIntPtrPtr = getGetPrintIntPtrPtr()!!
@@ -145,8 +145,6 @@ fun box(): String {
     val notSoLongSignaturePtr: CPointer<CFunction<NotSoLongSignatureFunction>>? = getNotSoLongSignatureFunctionPtr()
     printIntPtr(notSoLongSignaturePtr!!.invoke(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
     printIntPtr(notSoLongSignatureFunction(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
-
-    return "OK"
 }
 
 fun Boolean.ifThenOneElseZero() = if (this) 1 else 0

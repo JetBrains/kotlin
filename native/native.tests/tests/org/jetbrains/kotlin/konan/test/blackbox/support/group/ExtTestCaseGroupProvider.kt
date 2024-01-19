@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMP
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE_K1
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE_K2
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2
 import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
@@ -126,7 +128,11 @@ private class ExtTestDataFile(
         else
             MANDATORY_SOURCE_TRANSFORMERS + customSourceTransformers
 
-        structureFactory.ExtTestDataFileStructure(testDataFile, allSourceTransformers)
+        structureFactory.ExtTestDataFileStructure(testDataFile, allSourceTransformers).also {
+            assertFalse(it.directives.contains(OUTPUT_DATA_FILE.name)) {
+                "${testDataFile.absolutePath}: directive ${OUTPUT_DATA_FILE.name} is not supported by ExtTestDataFile"
+            }
+        }
     }
 
     private val isExpectedFailure: Boolean = settings.isIgnoredTarget(structure.directives)

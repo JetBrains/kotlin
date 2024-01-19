@@ -4809,12 +4809,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
-            @TestMetadata("funptr.kt")
-            public void testFunptr() throws Exception {
-                runTest("compiler/testData/codegen/box/cinterop/funptr.kt");
-            }
-
-            @Test
             @TestMetadata("globals.kt")
             public void testGlobals() throws Exception {
                 runTest("compiler/testData/codegen/box/cinterop/globals.kt");

@@ -35,6 +35,12 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
     }
 
     @Test
+    @TestMetadata("funptr.kt")
+    public void testFunptr() throws Exception {
+        runTest("native/native.tests/testData/standalone/funptr.kt");
+    }
+
+    @Test
     @TestMetadata("kt56048.kt")
     public void testKt56048() throws Exception {
         runTest("native/native.tests/testData/standalone/kt56048.kt");
