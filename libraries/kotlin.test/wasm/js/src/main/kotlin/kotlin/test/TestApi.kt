@@ -5,6 +5,9 @@
 
 package kotlin.test
 
+private fun isJasmine(): Boolean =
+    js("typeof describe === 'function' && typeof it === 'function'")
+
 /**
  * Overrides current framework adapter with a provided instance of [FrameworkAdapter]. Use in order to support custom test frameworks.
  *
@@ -17,11 +20,28 @@ internal fun setAdapter(adapter: FrameworkAdapter) {
 
 internal var currentAdapter: FrameworkAdapter? = null
 
-private fun isJasmine(): Boolean =
-    js("typeof describe === 'function' && typeof it === 'function'")
+@JsName("kotlinTest")
+internal external val kotlinTestNamespace: ExternalKotlinTestNamespace?
+
+internal external interface ExternalKotlinTestNamespace : JsAny {
+    public val adapterTransformer: ((ExternalFrameworkAdapter) -> ExternalFrameworkAdapter)?
+}
 
 internal actual fun adapter(): FrameworkAdapter {
-    val result = currentAdapter ?: if (isJasmine()) JasmineLikeAdapter() else TeamcityAdapterWithPromiseSupport()
-    currentAdapter = result
-    return result
+    currentAdapter?.let { return it }
+
+    val adapter: FrameworkAdapter
+    if (isJasmine()) {
+        val jasmineLikeAdapter = JasmineLikeAdapter()
+        val transformer = kotlinTestNamespace?.adapterTransformer
+        if (transformer != null) {
+            adapter = transformer(jasmineLikeAdapter.externalize()).internalize()
+        } else {
+            adapter = jasmineLikeAdapter
+        }
+    } else {
+        adapter = TeamcityAdapterWithPromiseSupport()
+    }
+    currentAdapter = adapter
+    return adapter
 }
