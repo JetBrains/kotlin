@@ -605,6 +605,7 @@ private class JsIrAstSerializer {
             writeBoolean(name.isTemporary)
             ifNotNull(name.localAlias) { writeLocalAlias(it) }
             writeBoolean(name.imported && name !in importedNames)
+            writeBoolean(name.constant)
             ifNotNull(name.specialFunction) { writeByte(it.ordinal) }
         }
         nameMap.size

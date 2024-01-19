@@ -459,6 +459,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         } ?: JsDynamicScope.declareName(identifier)
         ifTrue { name.localAlias = readLocalAlias() }
         ifTrue { name.imported = true }
+        ifTrue { name.constant = true }
         ifTrue { name.specialFunction = specialFunctionValues[readInt()] }
         return name
     }

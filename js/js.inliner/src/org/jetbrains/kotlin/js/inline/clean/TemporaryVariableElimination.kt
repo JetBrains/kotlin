@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
-import org.jetbrains.kotlin.js.backend.ast.metadata.imported
-import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
-import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 import org.jetbrains.kotlin.js.translate.context.Namer
@@ -481,8 +478,8 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
 
         override fun visitNameRef(nameRef: JsNameRef) {
             val name = nameRef.name
-            if (name != null && name in localVariables) {
-                if (name !in namesToSubstitute && shouldConsiderTemporary(name)) {
+            if (name != null && (name in localVariables || name.constant)) {
+                if (name.constant || (name !in namesToSubstitute && shouldConsiderTemporary(name))) {
                     if (!sideEffectOccurred) {
                         substitutableVariableReferences += name
                     }
@@ -637,16 +634,18 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
     private fun isTrivial(expr: JsExpression): Boolean = when (expr) {
         is JsNameRef -> {
             val qualifier = expr.qualifier
-            if (expr.sideEffects == SideEffectKind.PURE && (qualifier == null || isTrivial(qualifier))) {
-                expr.name !in temporary
-            }
-            else {
-                val name = expr.name
-                name in localVariables && when (definitions[name]) {
-                    // Local variables with zero definitions are function parameters. We can relocate and copy them.
-                    null, 0 -> true
-                    1 -> name !in namesToSubstitute || definedValues[name]?.let { isTrivial(it) } ?: false
-                    else -> false
+            when {
+                expr.name?.constant == true -> true
+                expr.sideEffects == SideEffectKind.PURE && (qualifier == null || isTrivial(qualifier)) ->
+                    expr.name !in temporary
+                else -> {
+                    val name = expr.name
+                    name in localVariables && when (definitions[name]) {
+                        // Local variables with zero definitions are function parameters. We can relocate and copy them.
+                        null, 0 -> true
+                        1 -> name !in namesToSubstitute || definedValues[name]?.let { isTrivial(it) } ?: false
+                        else -> false
+                    }
                 }
             }
         }

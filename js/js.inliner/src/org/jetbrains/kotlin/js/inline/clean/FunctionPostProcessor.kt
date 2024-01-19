@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
+import org.jetbrains.kotlin.js.backend.ast.JsName
 
-class FunctionPostProcessor(val root: JsFunction) {
+class FunctionPostProcessor(val root: JsFunction, private val voidName: JsName? = null) {
     val optimizations = listOf(
         { RedundantLabelRemoval(root.body).apply() },
         { EmptyStatementElimination(root.body).apply() },
@@ -32,7 +33,8 @@ class FunctionPostProcessor(val root: JsFunction) {
         { RedundantStatementElimination(root).apply() },
         { CoroutineStateElimination(root.body).apply() },
         { BoxingUnboxingElimination(root.body).apply() },
-        { MoveTemporaryVariableDeclarationToAssignment(root.body).apply() }
+        { MoveTemporaryVariableDeclarationToAssignment(root.body).apply() },
+        { voidName?.let { VoidPropertiesElimination(root.body, voidName).apply() } ?: false }
     )
     // TODO: reduce to A || B, A && B if possible
 

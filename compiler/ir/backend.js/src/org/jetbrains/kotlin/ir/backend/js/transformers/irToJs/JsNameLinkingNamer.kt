@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.constant
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -50,7 +51,11 @@ class JsNameLinkingNamer(
             }
         }
 
-        return declaration.getName()
+        return declaration.getName().also {
+            if (declaration == context.intrinsics.void.owner.backingField) {
+                it.constant = true
+            }
+        }
     }
 
     override fun getNameForMemberFunction(function: IrSimpleFunction): JsName {

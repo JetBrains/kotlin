@@ -77,6 +77,7 @@ var JsFunction.functionDescriptor: FunctionDescriptor? by MetadataProperty(defau
  */
 var JsReturn.returnTarget: FunctionDescriptor? by MetadataProperty(default = null)
 
+var HasMetadata.constant: Boolean by MetadataProperty(default = false)
 var HasMetadata.synthetic: Boolean by MetadataProperty(default = false)
 
 var HasMetadata.isInlineClassBoxing: Boolean by MetadataProperty(default = false)

@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
+import org.jetbrains.kotlin.ir.backend.js.utils.JsStaticContext
+import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.backend.ast.JsClass
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
@@ -35,11 +37,13 @@ fun optimizeProgramByIr(
     }
 }
 
-fun optimizeFragmentByJsAst(fragment: JsIrProgramFragment) {
+fun optimizeFragmentByJsAst(fragment: JsIrProgramFragment, context: JsStaticContext) {
+    val voidName = context.backendContext.intrinsics.void.owner.backingField?.let(context::getNameForField)
+
     val optimizer = object : RecursiveJsVisitor() {
         override fun visitFunction(x: JsFunction) {
             super.visitFunction(x)
-            FunctionPostProcessor(x).apply()
+            FunctionPostProcessor(x, voidName).apply()
         }
 
         override fun visitClass(x: JsClass) {

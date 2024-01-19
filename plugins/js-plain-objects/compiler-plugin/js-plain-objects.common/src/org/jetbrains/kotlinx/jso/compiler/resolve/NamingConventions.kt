@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.Name
 object StandardIds {
     val KOTLIN_JS_FQN = FqName("kotlin.js")
     val JS_FUNCTION_ID = CallableId(KOTLIN_JS_FQN, Name.identifier("js"))
+    val VOID_PROPERTY_NAME = Name.identifier("VOID")
 }
 
 object JsPlainObjectsAnnotations {

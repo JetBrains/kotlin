@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -40,11 +40,11 @@ import org.jetbrains.kotlin.fir.types.toFirResolvedTypeRef
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.jspo.compiler.fir.services.jsPlainObjectPropertiesProvider
 import org.jetbrains.kotlinx.jspo.compiler.resolve.JsPlainObjectsPluginKey
+import org.jetbrains.kotlinx.jspo.compiler.resolve.StandardIds
 
 /**
  * The extension generate a synthetic factory and copy-method for an `external interface` annotated with @JsPlainObjects
@@ -56,6 +56,7 @@ import org.jetbrains.kotlinx.jspo.compiler.resolve.JsPlainObjectsPluginKey
  * @JsPlainObjects
  * external interface Admin {
  *   val chat: Chat
+ *   val email: String?
  * }
  * ```
  *
@@ -64,21 +65,26 @@ import org.jetbrains.kotlinx.jspo.compiler.resolve.JsPlainObjectsPluginKey
  * external interface Admin {
  *   val chat: Chat
  *
- *  inline fun copy(chat: Chat = this.chat, name: String = this.name): Admin =
+ *  inline fun copy(chat: Chat = this.chat, email: String = this.email): Admin =
  *      Admin.Companion.invoke(chat, name)
  *
  *   companion object {
- *      inline operator fun invoke(chat: Chat, name: String): Admin =
+ *      inline operator fun invoke(chat: Chat, email: String? = VOID): Admin =
  *          js("{ chat: chat, name: name }")
  *   }
  * }
  * ```
  */
 class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
-    private val predicateBasedProvider = session.predicateBasedProvider
+    private val voidPropertySymbol by lazy {
+        session.symbolProvider
+            .getTopLevelPropertySymbols(StandardIds.KOTLIN_JS_FQN, StandardIds.VOID_PROPERTY_NAME)
+            .single()
+    }
 
-    private val matchedInterfaces by lazy {
-        predicateBasedProvider.getSymbolsByPredicate(JsPlainObjectsPredicates.AnnotatedWithJsPlainObject.LOOKUP)
+   private val matchedInterfaces by lazy {
+        session.predicateBasedProvider
+            .getSymbolsByPredicate(JsPlainObjectsPredicates.AnnotatedWithJsPlainObject.LOOKUP)
             .filterIsInstance<FirRegularClassSymbol>()
             .toSet()
     }
@@ -102,7 +108,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
         return if (
             owner is FirRegularClassSymbol &&
             owner.isJsPlainObject &&
-            name == org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
+            name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
         ) generateCompanionDeclaration(owner)
         else null
     }
@@ -167,12 +173,13 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
     ): FirSimpleFunction {
         return createJsPlainObjectsFunction(callableId, parent, jsPlainObjectInterface) {
             runIf(resolvedReturnTypeRef.type.isNullable) {
-                buildConstExpression(
-                    source = null,
-                    value = null,
-                    kind = ConstantValueKind.Null,
-                    setType = true
-                )
+                buildPropertyAccessExpression {
+                    calleeReference = buildResolvedNamedReference {
+                        name = StandardIds.VOID_PROPERTY_NAME
+                        resolvedSymbol = voidPropertySymbol
+                    }
+                    coneTypeOrNull = voidPropertySymbol.resolvedReturnType
+                }
             }
         }
     }
@@ -185,15 +192,11 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
         val interfaceType = jsPlainObjectInterface.defaultType()
         return createJsPlainObjectsFunction(callableId, parent, jsPlainObjectInterface) {
             buildPropertyAccessExpression {
-                dispatchReceiver = buildThisReceiverExpression {
-                    calleeReference = buildImplicitThisReference { boundSymbol = jsPlainObjectInterface }
-                    coneTypeOrNull = interfaceType
-                }
                 calleeReference = buildResolvedNamedReference {
-                    name = this@createJsPlainObjectsFunction.name
-                    resolvedSymbol = this@createJsPlainObjectsFunction
+                    name = StandardIds.VOID_PROPERTY_NAME
+                    resolvedSymbol = voidPropertySymbol
                 }
-                coneTypeOrNull = resolvedReturnType
+                coneTypeOrNull = voidPropertySymbol.resolvedReturnType
             }
         }
     }

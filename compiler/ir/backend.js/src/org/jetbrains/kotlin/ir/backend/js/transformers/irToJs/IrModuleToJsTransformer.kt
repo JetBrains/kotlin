@@ -471,7 +471,7 @@ class IrModuleToJsTransformer(
         result.computeAndSaveDefinitions(definitionSet, fileExports)
 
         if (optimizeGeneratedJs) {
-            optimizeFragmentByJsAst(result)
+            optimizeFragmentByJsAst(result, staticContext)
         }
 
         return JsIrProgramFragments(result, exportFragment)
