@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
     val k2BoxTestDir = listOf("multiplatform/k2")
+    val excludedScriptDirs = listOf("script")
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup(testsRoot = "compiler/tests-common-new/tests-gen", testDataRoot = "compiler/testData") {
@@ -79,7 +80,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
             // We split JVM ABI tests into two parts, to avoid creation of a huge file, unable to analyze by IntelliJ with default settings
             testClass<AbstractJvmAbiConsistencyTest>("JvmAbiConsistencyTestBoxGenerated") {
-                model("codegen/box", excludeDirs = k2BoxTestDir)
+                model("codegen/box", excludeDirs = k2BoxTestDir + excludedScriptDirs)
             }
 
             testClass<AbstractJvmAbiConsistencyTest>("JvmAbiConsistencyTestRestGenerated") {
@@ -276,7 +277,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractFirLightTreeBlackBoxCodegenTest> {
-                model("codegen/box")
+                model("codegen/box", excludeDirs = excludedScriptDirs)
             }
 
             testClass<AbstractFirPsiBlackBoxCodegenTest> {
@@ -284,7 +285,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractFirLightTreeBlackBoxCodegenWithIrFakeOverrideGeneratorTest> {
-                model("codegen/box")
+                model("codegen/box", excludeDirs = excludedScriptDirs)
             }
 
             testClass<AbstractFirLightTreeBlackBoxCodegenTest>("FirLightTreeBlackBoxModernJdkCodegenTestGenerated") {

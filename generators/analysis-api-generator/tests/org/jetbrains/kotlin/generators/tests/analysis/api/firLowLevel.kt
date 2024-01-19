@@ -332,14 +332,16 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         testClass<AbstractLLFirBlackBoxCodegenBasedTest> {
             model(
                 "codegen/box",
-                excludeDirs = listOf("cinterop")  // CInterop tests contain .DEF .H .CPP .M files, which are invalid for Compiler Core new test system
+                excludeDirs = listOf("cinterop", "script")  // CInterop tests contain .DEF .H .CPP .M files, which are invalid for Compiler Core new test system
+                // script is excluded until KT-60127 is implemented
             )
         }
 
         testClass<AbstractLLFirReversedBlackBoxCodegenBasedTest> {
             model(
                 "codegen/box",
-                excludeDirs = listOf("cinterop")  // CInterop tests contain .DEF .H .CPP .M files, which are invalid for Compiler Core new test system
+                excludeDirs = listOf("cinterop", "script")  // CInterop tests contain .DEF .H .CPP .M files, which are invalid for Compiler Core new test system
+                // script is excluded until KT-60127 is implemented
             )
         }
 

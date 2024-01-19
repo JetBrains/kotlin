@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistencyTest {
     @Test
     public void testAllFilesPresentInBox() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "multiplatform/k2");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "multiplatform/k2", "script");
     }
 
     @Nested
@@ -50425,58 +50425,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
         @TestMetadata("propertyDeclaration.kt")
         public void testPropertyDeclaration() throws Exception {
             runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/propertyDeclaration.kt");
-        }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/script")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Script {
-        @Test
-        public void testAllFilesPresentInScript() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/script"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-        }
-
-        @Test
-        @TestMetadata("classReference.kt")
-        public void testClassReference() throws Exception {
-            runTest("compiler/testData/codegen/box/script/classReference.kt");
-        }
-
-        @Test
-        @TestMetadata("localCaptureTests.kt")
-        public void testLocalCaptureTests() throws Exception {
-            runTest("compiler/testData/codegen/box/script/localCaptureTests.kt");
-        }
-
-        @Test
-        @TestMetadata("localCaptureTestsK2.kt")
-        public void testLocalCaptureTestsK2() throws Exception {
-            runTest("compiler/testData/codegen/box/script/localCaptureTestsK2.kt");
-        }
-
-        @Test
-        @TestMetadata("scripInstance.kt")
-        public void testScripInstance() throws Exception {
-            runTest("compiler/testData/codegen/box/script/scripInstance.kt");
-        }
-
-        @Test
-        @TestMetadata("scriptNestedClassInstance.kt")
-        public void testScriptNestedClassInstance() throws Exception {
-            runTest("compiler/testData/codegen/box/script/scriptNestedClassInstance.kt");
-        }
-
-        @Test
-        @TestMetadata("scriptNestedClassInstanceK2.kt")
-        public void testScriptNestedClassInstanceK2() throws Exception {
-            runTest("compiler/testData/codegen/box/script/scriptNestedClassInstanceK2.kt");
-        }
-
-        @Test
-        @TestMetadata("scriptPropFromAnotherModuleK2.kt")
-        public void testScriptPropFromAnotherModuleK2() throws Exception {
-            runTest("compiler/testData/codegen/box/script/scriptPropFromAnotherModuleK2.kt");
         }
     }
 
