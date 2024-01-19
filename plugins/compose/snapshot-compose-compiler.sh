@@ -16,6 +16,6 @@
 set -e
 GRADLEW_LOCATION="$(dirname $0)"/../../gradlew
 VERIFICATION_METADATA="$(dirname $0)"/../../gradle/verification-metadata.xml
-REPOSITORY_LOCATION="$(realpath $(dirname $0))"/compose-compiler-snapshot-repository
+REPOSITORY_LOCATION="$(realpath $(dirname $0))"/compiler/compose-compiler-snapshot-repository
 COMPOSE_CUSTOM_VERSION=99.0.0 $GRADLEW_LOCATION -Dmaven.repo.local=$REPOSITORY_LOCATION -Pandroidx.versionExtraCheckEnabled=false :compose:compiler:compiler:publishToMavenLocal --stacktrace
 rm -f $VERIFICATION_METADATA
