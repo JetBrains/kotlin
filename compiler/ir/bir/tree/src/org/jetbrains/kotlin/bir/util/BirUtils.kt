@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl.descriptor
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -133,7 +132,7 @@ val BirClass.packageFqName: FqName?
     get() = signature?.packageFqName() ?: ancestors().firstNotNullOfOrNull { (it as? BirPackageFragment)?.packageFqName }
 
 fun BirDeclarationWithName.hasEqualFqName(fqName: FqName): Boolean {
-    if ((this as BirSymbol).hasEqualFqName(fqName)) {
+    if ((this as BirSymbol<*>).hasEqualFqName(fqName)) {
         return true
     }
     if (name != fqName.shortName()) {
@@ -150,7 +149,7 @@ fun BirDeclarationWithName.hasEqualFqName(fqName: FqName): Boolean {
     return false
 }
 
-fun BirSymbol.hasEqualFqName(fqName: FqName): Boolean {
+fun BirSymbol<*>.hasEqualFqName(fqName: FqName): Boolean {
     return /*todo: is public && */ with(signature as? IdSignature.CommonSignature ?: return false) {
         FqName("$packageFqName.$declarationFqName") == fqName
     }

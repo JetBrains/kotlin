@@ -11,64 +11,84 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
-interface BirSymbol {
-    val owner: BirSymbolOwner
+interface BirSymbol<out E : BirSymbolOwner> {
+    val owner: E
     val isBound: Boolean
     val signature: IdSignature?
 }
 
-interface BirTypedSymbol<out E : BirSymbolOwner> : BirSymbol {
-    override val owner: E
-}
-
-val BirSymbol.ownerIfBound: BirSymbolOwner?
+val <E : BirSymbolOwner> BirSymbol<E>.ownerIfBound: E?
     get() = if (isBound) owner else null
 
-val <E : BirSymbolOwner> BirTypedSymbol<E>.ownerIfBound: E?
-    get() = if (isBound) owner else null
+interface BirPackageFragmentSymbol : BirSymbol<BirPackageFragment>
 
-interface BirPackageFragmentSymbol : BirSymbol
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
+interface BirFileSymbol : BirPackageFragmentSymbol, BirSymbol<BirFile>
 
-interface BirFileSymbol : BirPackageFragmentSymbol, BirTypedSymbol<BirFile>
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
+interface BirExternalPackageFragmentSymbol : BirPackageFragmentSymbol,
+    BirSymbol<BirExternalPackageFragment>
 
-interface BirExternalPackageFragmentSymbol : BirPackageFragmentSymbol, BirTypedSymbol<BirExternalPackageFragment>
+interface BirAnonymousInitializerSymbol : BirSymbol<BirAnonymousInitializer>
 
-interface BirAnonymousInitializerSymbol : BirTypedSymbol<BirAnonymousInitializer>
+interface BirEnumEntrySymbol : BirSymbol<BirEnumEntry>
 
-interface BirEnumEntrySymbol : BirTypedSymbol<BirEnumEntry>
+interface BirFieldSymbol : BirSymbol<BirField>
 
-interface BirFieldSymbol : BirTypedSymbol<BirField>
+interface BirClassifierSymbol : BirSymbol<BirDeclaration>, TypeConstructorMarker
 
-interface BirClassifierSymbol : BirSymbol, TypeConstructorMarker
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
+interface BirClassSymbol : BirClassifierSymbol, BirSymbol<BirClass>
 
-interface BirClassSymbol : BirClassifierSymbol, BirTypedSymbol<BirClass>
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
+interface BirScriptSymbol : BirClassifierSymbol, BirSymbol<BirScript>
 
-interface BirScriptSymbol : BirClassifierSymbol, BirTypedSymbol<BirScript>
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
+interface BirTypeParameterSymbol : BirClassifierSymbol, BirSymbol<BirTypeParameter>, TypeParameterMarker
 
-interface BirTypeParameterSymbol : BirClassifierSymbol, BirTypedSymbol<BirTypeParameter>, TypeParameterMarker
+interface BirValueSymbol : BirSymbol<BirValueDeclaration>
 
-interface BirValueSymbol : BirSymbol {
-    override val owner: BirValueDeclaration
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
+interface BirValueParameterSymbol : BirValueSymbol, BirSymbol<BirValueParameter>
+
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
+interface BirVariableSymbol : BirValueSymbol, BirSymbol<BirVariable>
+
+interface BirReturnTargetSymbol : BirSymbol<BirReturnTarget>
+
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
+interface BirFunctionSymbol : BirReturnTargetSymbol, BirSymbol<BirFunction>
+
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
+interface BirConstructorSymbol : BirFunctionSymbol, BirSymbol<BirConstructor>
+
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
+interface BirSimpleFunctionSymbol : BirFunctionSymbol, BirSymbol<BirSimpleFunction>
+
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
+interface BirReturnableBlockSymbol : BirReturnTargetSymbol,
+    BirSymbol<BirReturnableBlock>
+
+interface BirPropertySymbol : BirSymbol<BirProperty>
+
+interface BirLocalDelegatedPropertySymbol : BirSymbol<BirLocalDelegatedProperty>
+
+interface BirTypeAliasSymbol : BirSymbol<BirTypeAlias>
+
+
+interface AirSymbol<out E : BirSymbolOwner> {
+    val owner: E
 }
 
-interface BirValueParameterSymbol : BirValueSymbol, BirTypedSymbol<BirValueParameter>
+//interface AirReturnTargetSymbol<out E : BirReturnTarget> : AirSymbol<E>
+interface AirFunctionSymbol<out E : BirFunction> : AirSymbol<E> //AirReturnTargetSymbol<E>
+interface AirConstructorSymbol : AirFunctionSymbol<BirConstructor>
+interface AirSimpleFunctionSymbol : AirFunctionSymbol<BirSimpleFunction>
 
-interface BirVariableSymbol : BirValueSymbol, BirTypedSymbol<BirVariable>
+//interface AirReturnTarget : AirReturnTargetSymbol<BirReturnTarget>
+//interface AirFunction : AirFunctionSymbol<BirFunction>
+//interface AirSimpleFunction : AirFunction, AirSimpleFunctionSymbol
 
-interface BirReturnTargetSymbol : BirSymbol
-
-interface BirFunctionSymbol : BirReturnTargetSymbol {
-    override val owner: BirFunction
-}
-
-interface BirConstructorSymbol : BirFunctionSymbol, BirTypedSymbol<BirConstructor>
-
-interface BirSimpleFunctionSymbol : BirFunctionSymbol, BirTypedSymbol<BirSimpleFunction>
-
-interface BirReturnableBlockSymbol : BirReturnTargetSymbol, BirTypedSymbol<BirReturnableBlock>
-
-interface BirPropertySymbol : BirTypedSymbol<BirProperty>
-
-interface BirLocalDelegatedPropertySymbol : BirTypedSymbol<BirLocalDelegatedProperty>
-
-interface BirTypeAliasSymbol : BirTypedSymbol<BirTypeAlias>
+interface AirFunction : AirSymbol<BirFunction>
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
+interface AirSimpleFunction : AirFunction, AirSymbol<BirSimpleFunction>

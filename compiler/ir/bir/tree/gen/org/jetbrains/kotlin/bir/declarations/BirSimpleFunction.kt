@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.simpleFunction]
  */
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
 interface BirSimpleFunction : BirElement, BirFunction, BirOverridableDeclaration<BirSimpleFunctionSymbol>, BirAttributeContainer, BirSimpleFunctionSymbol {
     var isTailrec: Boolean
     var isSuspend: Boolean

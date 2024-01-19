@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.bir.symbols.BirConstructorSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.constructor]
  */
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
 interface BirConstructor : BirElement, BirFunction, BirConstructorSymbol {
     var isPrimary: Boolean
 

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.name.Name
 
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
 class BirLazyConstructor(
     override val originalIrElement: IrConstructor,
     converter: Ir2BirConverter,

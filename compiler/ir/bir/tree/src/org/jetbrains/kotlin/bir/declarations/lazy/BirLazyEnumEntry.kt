@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.name.Name
 
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
 class BirLazyEnumEntry(
     override val originalIrElement: IrEnumEntry,
     converter: Ir2BirConverter,

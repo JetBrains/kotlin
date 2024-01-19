@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.bir.symbols.BirSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.overridableDeclaration]
  */
-interface BirOverridableDeclaration<S : BirSymbol> : BirElement, BirOverridableMember, BirSymbol {
+interface BirOverridableDeclaration<S : BirSymbol<BirSymbolOwner>> : BirElement, BirOverridableMember, BirSymbol<BirSymbolOwner> {
     var isFakeOverride: Boolean
     var overriddenSymbols: List<S>
 

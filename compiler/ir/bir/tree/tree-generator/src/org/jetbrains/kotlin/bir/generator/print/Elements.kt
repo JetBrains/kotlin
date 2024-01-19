@@ -26,6 +26,11 @@ private fun SmartPrinter.printElement(element: Element) {
     val kind = element.kind ?: error("Expected non-null element kind")
 
     printKDoc(element.extendedKDoc("A ${if (element.isLeaf) "leaf" else "non-leaf"} IR tree element."))
+
+    if (element.needsSuppressInconsistentTypeArgument) {
+        println("@Suppress(\"INCONSISTENT_TYPE_PARAMETER_VALUES\")")
+    }
+
     print(kind.title, " ", element.typeName)
     print(element.params.typeParameters())
     if (element.kind == ImplementationKind.AbstractClass) {

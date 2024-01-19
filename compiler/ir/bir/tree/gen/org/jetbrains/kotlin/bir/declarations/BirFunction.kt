@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.bir.types.BirType
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.function]
  */
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
 interface BirFunction : BirElement, BirDeclaration, BirPossiblyExternalDeclaration, BirDeclarationWithVisibility, BirTypeParametersContainer, BirSymbolOwner, BirDeclarationParent, BirReturnTarget, BirMemberWithContainerSource, BirMetadataSourceOwner, BirFunctionSymbol {
     var isInline: Boolean
     var isExpect: Boolean

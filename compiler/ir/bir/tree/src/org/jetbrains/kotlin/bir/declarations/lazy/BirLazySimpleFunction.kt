@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.name.Name
 
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
 class BirLazySimpleFunction(
     override val originalIrElement: IrSimpleFunction,
     converter: Ir2BirConverter,

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.class]
  */
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
 interface BirClass : BirElement, BirDeclaration, BirPossiblyExternalDeclaration, BirDeclarationWithVisibility, BirTypeParametersContainer, BirDeclarationContainer, BirAttributeContainer, BirMetadataSourceOwner, BirClassSymbol {
     var kind: ClassKind
     var modality: Modality

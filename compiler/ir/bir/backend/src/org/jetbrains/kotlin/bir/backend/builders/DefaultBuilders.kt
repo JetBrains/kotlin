@@ -265,7 +265,7 @@ inline fun BirConst.Companion.build(init: BirConstImpl<Any?>.() -> Unit) =
 @PublishedApi
 internal val UninitializedName = Name.identifier("UNNAMED")
 
-abstract class UninitializedBirSymbol<E : BirSymbolOwner>() : BirTypedSymbol<E> {
+abstract class UninitializedBirSymbol<E : BirSymbolOwner>() : BirSymbol<E> {
     final override val isBound: Boolean
         get() = false
     final override val owner: E
@@ -273,18 +273,37 @@ abstract class UninitializedBirSymbol<E : BirSymbolOwner>() : BirTypedSymbol<E> 
     final override val signature: IdSignature
         get() = error("Uninitialzied")
 
+    @Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
     object FileSymbol : UninitializedBirSymbol<BirFile>(), BirFileSymbol
+
+    @Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
     object ExternalPackageFragmentSymbol : UninitializedBirSymbol<BirExternalPackageFragment>(), BirExternalPackageFragmentSymbol
     object AnonymousInitializerSymbol : UninitializedBirSymbol<BirAnonymousInitializer>(), BirAnonymousInitializerSymbol
     object EnumEntrySymbol : UninitializedBirSymbol<BirEnumEntry>(), BirEnumEntrySymbol
     object FieldSymbol : UninitializedBirSymbol<BirField>(), BirFieldSymbol
+
+    @Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
     object ClassSymbol : UninitializedBirSymbol<BirClass>(), BirClassSymbol
+
+    @Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
     object ScriptSymbol : UninitializedBirSymbol<BirScript>(), BirScriptSymbol
+
+    @Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
     object TypeParameterSymbol : UninitializedBirSymbol<BirTypeParameter>(), BirTypeParameterSymbol
+
+    @Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
     object ValueParameterSymbol : UninitializedBirSymbol<BirValueParameter>(), BirValueParameterSymbol
+
+    @Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
     object VariableSymbol : UninitializedBirSymbol<BirVariable>(), BirVariableSymbol
+
+    @Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
     object ConstructorSymbol : UninitializedBirSymbol<BirConstructor>(), BirConstructorSymbol
+
+    @Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
     object SimpleFunctionSymbol : UninitializedBirSymbol<BirSimpleFunction>(), BirSimpleFunctionSymbol
+
+    @Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
     object ReturnableBlockSymbol : UninitializedBirSymbol<BirReturnableBlock>(), BirReturnableBlockSymbol
     object PropertySymbol : UninitializedBirSymbol<BirProperty>(), BirPropertySymbol
     object LocalDelegatedPropertySymbol : UninitializedBirSymbol<BirLocalDelegatedProperty>(), BirLocalDelegatedPropertySymbol

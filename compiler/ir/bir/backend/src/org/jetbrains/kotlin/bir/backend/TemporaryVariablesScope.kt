@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.bir.backend
 
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
 
-class TemporaryVariablesScope(val scopeOwnerSymbol: BirSymbol) {
+class TemporaryVariablesScope(val scopeOwnerSymbol: BirSymbol<*>) {
     private var lastTemporaryIndex: Int = 0
     private fun nextTemporaryIndex(): Int = lastTemporaryIndex++
 

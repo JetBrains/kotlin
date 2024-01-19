@@ -179,7 +179,7 @@ abstract class Ir2BirConverterBase(
     @JvmName("remapElementNullable")
     fun <Bir : BirElement> remapElement(old: IrElement?): Bir? = if (old == null) null else copyElement(old)
 
-    fun <IrS : IrSymbol, BirS : BirSymbol> remapSymbol(old: IrS): BirS {
+    fun <IrS : IrSymbol, BirS : BirSymbol<*>> remapSymbol(old: IrS): BirS {
         check(old.isBound) { "All symbols should be bound at this stage" }
         val owner = old.owner
         return if (symbolOwnersCurrentlyBeingConverted.isNotEmpty() && owner in symbolOwnersCurrentlyBeingConverted) {
@@ -191,7 +191,7 @@ abstract class Ir2BirConverterBase(
     }
 
     @JvmName("remapSymbolNullable")
-    fun <IrS : IrSymbol, BirS : BirSymbol> remapSymbol(old: IrS?): BirS? = if (old == null) null else remapSymbol(old)
+    fun <IrS : IrSymbol, BirS : BirSymbol<*>> remapSymbol(old: IrS?): BirS? = if (old == null) null else remapSymbol(old)
 
     private fun <BirS : LateBoundBirSymbol<*>, IrS : IrSymbol> convertLateBindSymbol(old: IrS): BirS {
         val signature = old.signature

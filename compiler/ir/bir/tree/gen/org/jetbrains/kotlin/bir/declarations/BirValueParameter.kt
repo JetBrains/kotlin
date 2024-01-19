@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.bir.types.BirType
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.valueParameter]
  */
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
 interface BirValueParameter : BirElement, BirDeclaration, BirValueDeclaration, BirValueParameterSymbol {
     var index: Int
     var varargElementType: BirType?

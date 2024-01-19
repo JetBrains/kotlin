@@ -139,7 +139,7 @@ abstract class Bir2IrConverterBase(
         return null
     }
 
-    fun <IrS : IrSymbol, BirS : BirSymbol> remapSymbol(old: BirS): IrS {
+    fun <IrS : IrSymbol, BirS : BirSymbol<*>> remapSymbol(old: BirS): IrS {
         val birElement = old.owner
         if (birElement is BirLazyElementBase) {
             @Suppress("UNCHECKED_CAST")
@@ -152,9 +152,9 @@ abstract class Bir2IrConverterBase(
     }
 
     @JvmName("remapSymbolNullable")
-    fun <IrS : IrSymbol, BirS : BirSymbol> remapSymbol(old: BirS?): IrS? = if (old == null) null else remapSymbol(old)
+    fun <IrS : IrSymbol, BirS : BirSymbol<*>> remapSymbol(old: BirS?): IrS? = if (old == null) null else remapSymbol(old)
 
-    protected fun <BirS : BirSymbol, IrS : IrBindableSymbol<*, *>> createBindableSymbol(old: BirS): IrS {
+    protected fun <BirS : BirSymbol<*>, IrS : IrBindableSymbol<*, *>> createBindableSymbol(old: BirS): IrS {
         val descriptor = (old as? BirModuleFragment)?.descriptor
             ?: (old as? BirDeclaration)?.get(Descriptor)
 

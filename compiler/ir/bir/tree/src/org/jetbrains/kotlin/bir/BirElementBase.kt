@@ -306,7 +306,7 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
 
     final override fun equals(other: Any?): Boolean {
         return other === this ||
-                (other is BirSymbol && other.ownerIfBound === this)
+                (other is BirSymbol<*> && other.ownerIfBound === this)
     }
 
 

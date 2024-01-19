@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.name.Name
 
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
 class BirLazyTypeAlias(
     override val originalIrElement: IrTypeAlias,
     converter: Ir2BirConverter,

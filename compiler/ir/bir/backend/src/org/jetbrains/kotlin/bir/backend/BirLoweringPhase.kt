@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.bir.backend
 import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirGetValue
-import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
-import org.jetbrains.kotlin.bir.symbols.BirReturnTargetSymbol
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
-import org.jetbrains.kotlin.bir.symbols.BirTypedSymbol
 import kotlin.reflect.KProperty1
 
 context(BirBackendContext)
@@ -176,29 +173,10 @@ abstract class BirLoweringPhase {
         })
 
     @JvmName("registerBackReferencesKeyWithSymbolProperty")
-    protected inline fun <reified E : BirElement, R : BirElement, S : BirTypedSymbol<R>> registerBackReferencesKey(
+    protected inline fun <reified E : BirElement, R : BirElement, S : BirSymbol<R>> registerBackReferencesKey(
         elementType: BirElementType<E>,
         forwardReferenceProperty: KProperty1<E, S>,
-    ) = registerBackReferencesKeyWithUntypedSymbolProperty<E>(elementType, forwardReferenceProperty)
-            as BirElementBackReferencesKey<E, R>
-
-    // xxx: those overloads overcome the inability to define all [BirSymbol]s as generic
-    protected inline fun <reified E : BirElement> registerBackReferencesKey_functionSymbol(
-        elementType: BirElementType<E>,
-        forwardReferenceProperty: KProperty1<E, BirFunctionSymbol>,
-    ) = registerBackReferencesKeyWithUntypedSymbolProperty<E>(elementType, forwardReferenceProperty)
-            as BirElementBackReferencesKey<E, BirFunction>
-
-    protected inline fun <reified E : BirElement> registerBackReferencesKey_returnTargetSymbol(
-        elementType: BirElementType<E>,
-        forwardReferenceProperty: KProperty1<E, BirReturnTargetSymbol>,
-    ) = registerBackReferencesKeyWithUntypedSymbolProperty<E>(elementType, forwardReferenceProperty)
-            as BirElementBackReferencesKey<E, BirReturnTarget>
-
-    protected inline fun <reified E : BirElement> registerBackReferencesKeyWithUntypedSymbolProperty(
-        elementType: BirElementType<E>,
-        forwardReferenceProperty: KProperty1<E, BirSymbol>,
-    ): BirElementBackReferencesKey<E, BirElement> = registerBackReferencesKey<E, BirElement>(
+    ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(
         elementType, forwardReferenceProperty
     ) { element ->
         if (element is E) {

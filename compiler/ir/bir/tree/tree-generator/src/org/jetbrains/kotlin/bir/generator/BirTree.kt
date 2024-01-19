@@ -99,7 +99,7 @@ object BirTree : AbstractTreeBuilder() {
         +field("modality", type<Modality>())
     }
     val overridableDeclaration: Element by element(Declaration) {
-        val s = +param("S", symbolType)
+        val s = +param("S", symbolType.withArgs(symbolOwner))
 
         parent(overridableMember)
 
@@ -120,6 +120,7 @@ object BirTree : AbstractTreeBuilder() {
     }
     val valueParameter: Element by element(Declaration) {
         typeKind = TypeKind.Interface
+        needsSuppressInconsistentTypeArgument = true
 
         parent(declaration)
         parent(valueDeclaration)
@@ -163,6 +164,7 @@ object BirTree : AbstractTreeBuilder() {
     }
     val `class`: Element by element(Declaration) {
         typeKind = TypeKind.Interface
+        needsSuppressInconsistentTypeArgument = true
 
         parent(declaration)
         parent(possiblyExternalDeclaration)
@@ -253,6 +255,8 @@ object BirTree : AbstractTreeBuilder() {
         +symbol(SymbolTypes.returnTarget)
     }
     val function: Element by element(Declaration) {
+        needsSuppressInconsistentTypeArgument = true
+
         parent(declaration)
         parent(possiblyExternalDeclaration)
         parent(declarationWithVisibility)
@@ -277,6 +281,7 @@ object BirTree : AbstractTreeBuilder() {
     }
     val constructor: Element by element(Declaration) {
         typeKind = TypeKind.Interface
+        needsSuppressInconsistentTypeArgument = true
 
         parent(function)
 
@@ -296,7 +301,7 @@ object BirTree : AbstractTreeBuilder() {
     val errorDeclaration: Element by element(Declaration) {
         parent(declaration)
 
-        +symbol(symbolType)
+        +symbol(symbolType.withArgs(symbolOwner))
     }
     val field: Element by element(Declaration) {
         typeKind = TypeKind.Interface
@@ -388,6 +393,7 @@ object BirTree : AbstractTreeBuilder() {
     val simpleFunction: Element by element(Declaration) {
         isLeaf = true
         typeKind = TypeKind.Interface
+        needsSuppressInconsistentTypeArgument = true
 
         parent(function)
         parent(overridableDeclaration.withArgs("S" to SymbolTypes.simpleFunction))
@@ -471,10 +477,10 @@ object BirTree : AbstractTreeBuilder() {
     val declarationReference: Element by element(Expression) {
         parent(expression)
 
-        +symbol(symbolType)
+        +symbol(symbolType.withArgs(TypeRef.Star))
     }
     val memberAccessExpression: Element by element(Expression) {
-        val s = +param("S", symbolType)
+        val s = +param("S", symbolType.withArgs(TypeRef.Star))
 
         parent(declarationReference)
 
@@ -576,7 +582,7 @@ object BirTree : AbstractTreeBuilder() {
         +field("superQualifierSymbol", SymbolTypes.`class`, nullable = true)
     }
     val callableReference: Element by element(Expression) {
-        val s = +param("S", symbolType)
+        val s = +param("S", symbolType.withArgs(TypeRef.Star))
 
         parent(memberAccessExpression.withArgs("S" to s))
 

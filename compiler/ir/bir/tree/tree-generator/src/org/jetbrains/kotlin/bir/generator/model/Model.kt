@@ -114,6 +114,7 @@ class Element(
     val usedTypes = mutableListOf<Importable>()
 
     var ownerSymbolType: TypeRef? = null
+    var needsSuppressInconsistentTypeArgument = false
 
     override val hasTransformMethod get() = false
     override val transformableChildren: List<Field> get() = emptyList()

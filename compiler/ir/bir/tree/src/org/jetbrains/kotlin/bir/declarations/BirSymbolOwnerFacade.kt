@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
 
-sealed interface BirSymbolOwnerFacade : BirSymbol {
+sealed interface BirSymbolOwnerFacade : BirSymbol<BirSymbolOwner> {
     override val isBound: Boolean
         get() = true
 }

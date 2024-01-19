@@ -146,7 +146,7 @@ open class BirTreeDeepCopier {
         }
     }
 
-    open fun <S : BirSymbol> remapSymbol(old: S): S {
+    open fun <S : BirSymbol<*>> remapSymbol(old: S): S {
         if (old is BirElementBase) {
             return remapElement(old)
         } else {
