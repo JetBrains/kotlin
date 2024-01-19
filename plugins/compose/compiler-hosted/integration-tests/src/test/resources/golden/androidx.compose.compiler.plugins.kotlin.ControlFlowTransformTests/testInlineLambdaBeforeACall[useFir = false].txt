@@ -20,8 +20,7 @@ private fun Test(param: String?): String? {
 
 @Composable
 private fun Test(param: String?, %composer: Composer?, %changed: Int): String? {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Test)<Test("...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Test)<Test("...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -40,6 +39,6 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int): String? {
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   return tmp0
 }

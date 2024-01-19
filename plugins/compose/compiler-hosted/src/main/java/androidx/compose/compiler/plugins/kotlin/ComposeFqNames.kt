@@ -85,6 +85,10 @@ object ComposeCallableIds {
     val traceEventEnd = topLevelCallableId(KtxNameConventions.TRACE_EVENT_END)
     val traceEventStart = topLevelCallableId(KtxNameConventions.TRACE_EVENT_START)
     val updateChangedFlags = topLevelCallableId(KtxNameConventions.UPDATE_CHANGED_FLAGS)
+    val rememberComposableLambda =
+        internalTopLevelCallableId(KtxNameConventions.REMEMBER_COMPOSABLE_LAMBDA)
+    val rememberComposableLambdaN =
+        internalTopLevelCallableId(KtxNameConventions.REMEMBER_COMPOSABLE_LAMBDAN)
 }
 
 object ComposeFqNames {
@@ -112,6 +116,7 @@ object ComposeFqNames {
     val DontMemoize = fqNameFor("DontMemoize")
     val composableLambdaType = ComposeClassIds.ComposableLambda.asSingleFqName()
     val composableLambda = ComposeCallableIds.composableLambda.asSingleFqName()
+    val rememberComposableLambda = ComposeCallableIds.rememberComposableLambda.asSingleFqName()
     val composableLambdaFullName =
         internalFqNameFor("ComposableLambdaKt.composableLambda")
     val remember = ComposeCallableIds.remember.asSingleFqName()

@@ -49,8 +49,7 @@ class Foo {
 }
 @Composable
 fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): Foo {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(getValue)P(1):Test.kt#2487m")
+  sourceInformationMarkerStart(%composer, <>, "C(getValue)P(1):Test.kt#2487m")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -58,15 +57,14 @@ fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %c
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   return tmp0
 }
 @StabilityInferred(parameters = 1)
 class FooDelegate {
   @Composable
   fun getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): FooDelegate {
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "C(getValue)P(1):Test.kt#2487m")
+    sourceInformationMarkerStart(%composer, <>, "C(getValue)P(1):Test.kt#2487m")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -74,7 +72,7 @@ class FooDelegate {
     if (isTraceInProgress()) {
       traceEventEnd()
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
     return tmp0
   }
   static val %stable: Int = 0

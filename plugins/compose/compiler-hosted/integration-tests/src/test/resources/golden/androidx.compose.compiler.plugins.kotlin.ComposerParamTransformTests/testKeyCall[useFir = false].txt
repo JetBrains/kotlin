@@ -98,8 +98,8 @@ fun Test(value: Int, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     %composer.startMovableGroup(<>, value)
-    sourceInformation(%composer, "<Wrappe...>")
-    Wrapper(composableLambda(%composer, <>, true) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "<{>,<Wrappe...>")
+    Wrapper(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
       sourceInformation(%composer, "C<Leaf("...>:Test.kt#2487m")
       if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
         if (isTraceInProgress()) {
@@ -112,7 +112,7 @@ fun Test(value: Int, %composer: Composer?, %changed: Int) {
       } else {
         %composer.skipToGroupEnd()
       }
-    }, %composer, 0b0110)
+    }, %composer, 0b00110110), %composer, 0b0110)
     %composer.endMovableGroup()
     if (isTraceInProgress()) {
       traceEventEnd()

@@ -30,12 +30,11 @@ fun Test(inlineInt: InlineInt, %composer: Composer?, %changed: Int) {
     }
     val a = InlineInt(123)
     val foo = <block>{
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
         Foo()
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
       tmp0_group
     }
     if (isTraceInProgress()) {

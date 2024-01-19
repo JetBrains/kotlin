@@ -893,17 +893,19 @@ class IrSourcePrinterVisitor(
                 val rhsStatement = expression.statements[1]
                 val rhs = when (rhsStatement) {
                     is IrBlock -> {
-                        val target = rhsStatement.statements[1]
-                        when (target) {
-                            is IrVariable -> target.initializer
-                            else -> target
-                        }
+                        if (rhsStatement.statements.size == 2) {
+                            val target = rhsStatement.statements[1]
+                            when (target) {
+                                is IrVariable -> target.initializer
+                                else -> target
+                            }
+                        } else rhsStatement
                     }
                     else -> {
                         rhsStatement
                     }
-                } as IrWhen
-                val call = rhs.branches.last().result as? IrCall
+                } as? IrWhen
+                val call = rhs?.let { it.branches.last().result as? IrCall }
                 if (call == null) {
                     expression.statements.printJoin("\n")
                     return

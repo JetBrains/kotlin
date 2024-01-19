@@ -52,12 +52,11 @@ private fun KeyContent1(items: List<Int>, %composer: Composer?, %changed: Int) {
       if (item > -1) {
         %composer.startMovableGroup(<>, item)
         sourceInformation(%composer, "<rememb...>")
-        %composer.startReplaceableGroup(<>)
-        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
         %composer.cache(false) {
           item
         }
-        %composer.endReplaceableGroup()
+        sourceInformationMarkerEnd(%composer)
         %composer.endMovableGroup()
       }
       %composer.endReplaceableGroup()
@@ -93,12 +92,11 @@ private fun KeyContent2(items: List<Int>, %composer: Composer?, %changed: Int) {
         %composer.startMovableGroup(<>, item)
         sourceInformation(%composer, "<rememb...>")
         val tmp0 = <block>{
-          %composer.startReplaceableGroup(<>)
-          sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+          sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
           val tmp1_group = %composer.cache(false) {
             item
           }
-          %composer.endReplaceableGroup()
+          sourceInformationMarkerEnd(%composer)
           tmp1_group
         }
         %composer.endMovableGroup()

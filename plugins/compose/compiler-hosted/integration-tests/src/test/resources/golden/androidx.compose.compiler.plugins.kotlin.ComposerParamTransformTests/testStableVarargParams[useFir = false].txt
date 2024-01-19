@@ -61,8 +61,7 @@ fun B(values: IntArray, %composer: Composer?, %changed: Int) {
 @NonRestartableComposable
 @Composable
 fun Test(%composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Test)<B(0,>:Test.kt#2487m")
+  sourceInformationMarkerStart(%composer, <>, "C(Test)<B(0,>:Test.kt#2487m")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -70,5 +69,5 @@ fun Test(%composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

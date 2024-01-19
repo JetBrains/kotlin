@@ -25,12 +25,9 @@ fun Something(%composer: Composer?, %changed: Int) {
     }
     val x = <block>{
       val tmp0 = unstable
-      %composer.startReplaceableGroup(<>)
-      val tmp0_group = %composer.cache(%composer.changedInstance(tmp0)) {
+      %composer.cache(%composer.changedInstance(tmp0)) {
         tmp0::method
       }
-      %composer.endReplaceableGroup()
-      tmp0_group
     }
     if (isTraceInProgress()) {
       traceEventEnd()

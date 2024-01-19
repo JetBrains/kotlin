@@ -20,5 +20,5 @@ internal class ParameterizedFoo<K> (val value: K) {
 }
 @StabilityInferred(parameters = 3)
 internal class MultipleFoo<K, T> (val value: K, val param: T) {
-  static val %stable: Int = 0 or 0
+  static val %stable: Int = 0
 }

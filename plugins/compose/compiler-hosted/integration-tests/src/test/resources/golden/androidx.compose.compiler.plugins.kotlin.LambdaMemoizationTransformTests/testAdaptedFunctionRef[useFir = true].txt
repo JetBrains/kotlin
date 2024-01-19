@@ -40,8 +40,7 @@ fun scrollState(): ScrollState {
 }
 @Composable
 fun rememberFooInline(%composer: Composer?, %changed: Int): Int {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(rememberFooInline)<fooInl...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(rememberFooInline)<fooInl...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -57,20 +56,18 @@ fun rememberFooInline(%composer: Composer?, %changed: Int): Int {
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   return tmp0
 }
 @Composable
 fun rememberFoo(%composer: Composer?, %changed: Int): Int {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(rememberFoo)<test>,<foo(sc...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(rememberFoo)<test>,<foo(sc...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
   val tmp0 = foo(<block>{
     val tmp0 = scrollState()
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp1_group = %composer.cache(%composer.changed(tmp0)) {
       fun ScrollState.test(p0: Int): Int {
         receiver.test(
@@ -79,19 +76,18 @@ fun rememberFoo(%composer: Composer?, %changed: Int): Int {
       }
       tmp0::test
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
     tmp1_group
   }, %composer, 0)
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   return tmp0
 }
 @Composable
 fun rememberFooExactInline(%composer: Composer?, %changed: Int): Int {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(rememberFooExactInline)<fooInl...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(rememberFooExactInline)<fooInl...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -99,44 +95,40 @@ fun rememberFooExactInline(%composer: Composer?, %changed: Int): Int {
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   return tmp0
 }
 @Composable
 fun rememberFooExact(%composer: Composer?, %changed: Int): Int {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(rememberFooExact)<testEx...>,<foo(sc...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(rememberFooExact)<testEx...>,<foo(sc...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
   val tmp0 = foo(<block>{
     val tmp0 = scrollState()
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp1_group = %composer.cache(%composer.changed(tmp0)) {
       tmp0::testExact
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
     tmp1_group
   }, %composer, 0)
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   return tmp0
 }
 @Composable
 fun fooInline(block: Function1<Int, Int>, %composer: Composer?, %changed: Int): Int {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "CC(fooInline):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "CC(fooInline):Test.kt")
   val tmp0 = block(0)
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   return tmp0
 }
 @Composable
 fun foo(block: Function1<Int, Int>, %composer: Composer?, %changed: Int): Int {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(foo):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(foo):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -144,6 +136,6 @@ fun foo(block: Function1<Int, Int>, %composer: Composer?, %changed: Int): Int {
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   return tmp0
 }

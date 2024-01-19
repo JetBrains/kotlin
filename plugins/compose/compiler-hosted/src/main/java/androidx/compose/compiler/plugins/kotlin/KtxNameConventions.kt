@@ -23,4 +23,6 @@ object KtxNameConventions {
     val UPDATE_CHANGED_FLAGS = "updateChangedFlags"
     val CURRENTMARKER = Name.identifier("currentMarker")
     val ENDTOMARKER = Name.identifier("endToMarker")
+    val REMEMBER_COMPOSABLE_LAMBDA = "rememberComposableLambda"
+    val REMEMBER_COMPOSABLE_LAMBDAN = "rememberComposableLambdaN"
 }

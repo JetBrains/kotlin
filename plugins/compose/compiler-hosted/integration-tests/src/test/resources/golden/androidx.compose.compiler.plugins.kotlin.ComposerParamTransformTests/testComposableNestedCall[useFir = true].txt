@@ -67,8 +67,7 @@ fun composeVector(composable: Function2<Composer, Int, Unit>, %composer: Compose
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun emit(composable: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "CC(emit)<compos...>:Test.kt#2487m")
+  sourceInformationMarkerStart(%composer, <>, "CC(emit)<compos...>:Test.kt#2487m")
   composable(%composer, 0b1110 and %changed)
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

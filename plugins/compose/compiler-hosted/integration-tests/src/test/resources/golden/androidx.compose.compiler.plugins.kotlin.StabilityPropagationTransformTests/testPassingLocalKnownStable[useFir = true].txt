@@ -33,12 +33,11 @@ fun Test(x: Foo, %composer: Composer?, %changed: Int) {
     A(x, %composer, 0b1110 and %dirty)
     A(Foo(0), %composer, 0)
     A(<block>{
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
         Foo(0)
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
       tmp0_group
     }, %composer, 0b0110)
     if (isTraceInProgress()) {

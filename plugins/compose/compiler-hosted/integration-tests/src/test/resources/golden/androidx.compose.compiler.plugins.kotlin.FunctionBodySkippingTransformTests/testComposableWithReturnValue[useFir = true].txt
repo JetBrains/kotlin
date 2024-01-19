@@ -19,8 +19,7 @@ fun Test(x: Int = 0, y: Int = 0): Int {
 
 @Composable
 fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int): Int {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Test)<A(x,>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Test)<A(x,>:Test.kt")
   if (%default and 0b0001 != 0) {
     x = 0
   }
@@ -35,6 +34,6 @@ fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int): In
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   return tmp0
 }

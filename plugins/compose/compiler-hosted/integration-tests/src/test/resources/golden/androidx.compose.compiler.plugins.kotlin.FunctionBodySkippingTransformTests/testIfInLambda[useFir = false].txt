@@ -26,7 +26,7 @@ fun Test(x: Int = 0, y: Int = 0) {
 @Composable
 fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<Wrap>:Test.kt")
+  sourceInformation(%composer, "C(Test)<{>,<Wrap>:Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110
@@ -49,7 +49,7 @@ fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     used(y)
-    Wrap(composableLambda(%composer, <>, true) { %composer: Composer?, %changed: Int ->
+    Wrap(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
       sourceInformation(%composer, "C:Test.kt")
       if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
         if (isTraceInProgress()) {
@@ -72,7 +72,7 @@ fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
       } else {
         %composer.skipToGroupEnd()
       }
-    }, %composer, 0b0110)
+    }, %composer, 0b00110110), %composer, 0b0110)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

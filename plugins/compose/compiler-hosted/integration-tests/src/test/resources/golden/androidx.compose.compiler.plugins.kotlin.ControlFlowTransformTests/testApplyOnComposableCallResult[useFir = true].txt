@@ -23,25 +23,23 @@ fun <T> provided(value: T): State<T> = remember { mutableStateOf(value) }.apply 
 
 @Composable
 fun <T> provided(value: T, %composer: Composer?, %changed: Int): State<T> {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(provided)*<rememb...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(provided)*<rememb...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  val tmp0 = %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+  val tmp0 = sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
   val tmp1_group = %composer.cache(false) {
     mutableStateOf(
       value = value
     )
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   tmp1_group.apply {
     %this%apply.value = value
   }
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   return tmp0
 }

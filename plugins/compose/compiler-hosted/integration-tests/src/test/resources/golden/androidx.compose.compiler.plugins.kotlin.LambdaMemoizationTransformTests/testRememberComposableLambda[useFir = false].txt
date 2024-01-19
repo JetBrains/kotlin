@@ -26,8 +26,7 @@ fun Test(s: String, %composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp0_group = %composer.cache(false) {
       composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
         sourceInformation(%composer, "C<Text(s...>:Test.kt")
@@ -44,7 +43,7 @@ fun Test(s: String, %composer: Composer?, %changed: Int) {
         }
       }
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
     tmp0_group(%composer, 6)
     %composer.cache(false) {
       composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
