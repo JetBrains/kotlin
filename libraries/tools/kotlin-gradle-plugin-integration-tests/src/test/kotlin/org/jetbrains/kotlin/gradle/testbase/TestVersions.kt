@@ -29,6 +29,7 @@ interface TestVersions {
         const val G_8_3 = "8.3"
         const val G_8_4 = "8.4"
         const val G_8_5 = "8.5"
+        const val G_8_6 = "8.6-rc-2"
         
         const val MIN_SUPPORTED = minSupportedGradleVersion
         const val MIN_SUPPORTED_KPM = G_7_0
