@@ -301,9 +301,8 @@ internal class StatementGenerator(
 
             1 -> {
                 val first = entries.first()
-                @Suppress("CANNOT_CHECK_FOR_ERASED")
-                if (first is IrConst<String> && first.kind == IrConstKind.String)
-                    IrConstImpl.string(startOffset, endOffset, first.type, first.value)
+                if (first is IrConst<*> && first.kind == IrConstKind.String)
+                    IrConstImpl.string(startOffset, endOffset, first.type, first.value as String)
                 else
                     IrStringConcatenationImpl(startOffset, endOffset, resultType, listOf(first))
             }
