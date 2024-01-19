@@ -19269,6 +19269,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
         }
 
         @Test
+        @TestMetadata("kjkWithPackagePrivate.kt")
+        public void testKjkWithPackagePrivate() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/kjkWithPackagePrivate.kt");
+        }
+
+        @Test
         @TestMetadata("kt49371.kt")
         public void testKt49371() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/kt49371.kt");

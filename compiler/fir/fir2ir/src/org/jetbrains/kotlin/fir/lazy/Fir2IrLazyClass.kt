@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.backend.generators.isFakeOverride
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.hasEnumEntries
-import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
-import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
@@ -228,13 +226,18 @@ class Fir2IrLazyClass(
         result
     }
 
-    private fun shouldBuildStub(fir: FirDeclaration): Boolean =
-        fir !is FirMemberDeclaration ||
-                !Visibilities.isPrivate(fir.visibility) ||
-                // This exception is needed for K/N caches usage
-                (isObject && fir is FirConstructor) ||
-                // Needed for enums
-                (this.isEnumClass && fir is FirConstructor)
+    private fun shouldBuildStub(fir: FirDeclaration): Boolean {
+        if (fir !is FirMemberDeclaration) return true
+        return when {
+            fir is FirConstructor -> isObject || isEnumClass || !Visibilities.isPrivate(fir.visibility) // This special case seams to be not needed anymore - KT-65172
+            fir is FirCallableDeclaration && fir.isFakeOverride(this.fir) -> session.visibilityChecker.isVisibleForOverriding(
+                this.fir.moduleData,
+                this.fir.classId.packageFqName,
+                fir
+            )
+            else -> !Visibilities.isPrivate(fir.visibility)
+        }
+    }
 
     override var metadata: MetadataSource?
         get() = null

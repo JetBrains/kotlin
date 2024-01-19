@@ -16044,6 +16044,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fakeOverride/intersectionOverrideBetweenValAndVar.kt");
         }
 
+        @TestMetadata("kjkWithPackagePrivate.kt")
+        public void testKjkWithPackagePrivate() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/kjkWithPackagePrivate.kt");
+        }
+
         @TestMetadata("kt49371.kt")
         public void testKt49371() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/kt49371.kt");
