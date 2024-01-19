@@ -117,12 +117,10 @@ fun generateKLib(
     val files = (depsDescriptors.mainModule as MainModule.SourceFiles).files.map(::KtPsiSourceFile)
     val configuration = depsDescriptors.compilerConfiguration
     val allDependencies = depsDescriptors.allDependencies
-    val messageLogger = configuration.irMessageLogger
 
     serializeModuleIntoKlib(
         configuration[CommonConfigurationKeys.MODULE_NAME]!!,
         configuration,
-        messageLogger,
         diagnosticReporter,
         files,
         outputKlibPath,
@@ -612,7 +610,6 @@ private fun String.parseSerializedIrFileFingerprints(): List<SerializedIrFileFin
 fun serializeModuleIntoKlib(
     moduleName: String,
     configuration: CompilerConfiguration,
-    messageLogger: IrMessageLogger,
     diagnosticReporter: DiagnosticReporter,
     files: List<KtSourceFile>,
     klibPath: String,
@@ -645,7 +642,6 @@ fun serializeModuleIntoKlib(
     val serializedIr =
         JsIrModuleSerializer(
             irDiagnosticReporter,
-            messageLogger,
             moduleFragment.irBuiltins,
             compatibilityMode,
             normalizeAbsolutePaths = absolutePathNormalization,

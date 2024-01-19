@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 
 fun interface JsIrFileMetadataFactory {
     fun createJsIrFileMetadata(irFile: IrFile): JsIrFileMetadata
@@ -22,7 +21,6 @@ object JsIrFileEmptyMetadataFactory : JsIrFileMetadataFactory {
 }
 
 class JsIrFileSerializer(
-    messageLogger: IrMessageLogger,
     declarationTable: DeclarationTable,
     compatibilityMode: CompatibilityMode,
     languageVersionSettings: LanguageVersionSettings,
@@ -31,7 +29,6 @@ class JsIrFileSerializer(
     sourceBaseDirs: Collection<String>,
     private val jsIrFileMetadataFactory: JsIrFileMetadataFactory
 ) : IrFileSerializer(
-    messageLogger,
     declarationTable,
     compatibilityMode = compatibilityMode,
     languageVersionSettings = languageVersionSettings,

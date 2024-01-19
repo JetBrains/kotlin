@@ -8,16 +8,13 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleSerializer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 
 class KonanIrModuleSerializer(
         diagnosticReporter: IrDiagnosticReporter,
-        messageLogger: IrMessageLogger,
         irBuiltIns: IrBuiltIns,
         compatibilityMode: CompatibilityMode,
         normalizeAbsolutePaths: Boolean,
@@ -28,7 +25,6 @@ class KonanIrModuleSerializer(
         shouldCheckSignaturesOnUniqueness: Boolean = true,
 ) : IrModuleSerializer<KonanIrFileSerializer>(
         diagnosticReporter,
-        messageLogger,
         compatibilityMode,
         normalizeAbsolutePaths,
         sourceBaseDirs,
@@ -47,11 +43,13 @@ class KonanIrModuleSerializer(
         file.fileEntry.name != NativeStandardInteropNames.cTypeDefinitionsFileName
 
     override fun createSerializerForFile(file: IrFile): KonanIrFileSerializer =
-            KonanIrFileSerializer(messageLogger, KonanDeclarationTable(globalDeclarationTable),
+            KonanIrFileSerializer(
+                    KonanDeclarationTable(globalDeclarationTable),
+                    languageVersionSettings = languageVersionSettings,
+                    bodiesOnlyForInlines = bodiesOnlyForInlines,
                     compatibilityMode = compatibilityMode,
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
                     sourceBaseDirs = sourceBaseDirs,
-                    languageVersionSettings = languageVersionSettings,
-                    bodiesOnlyForInlines = bodiesOnlyForInlines,
-                    skipPrivateApi = skipPrivateApi)
+                    skipPrivateApi = skipPrivateApi
+            )
 }

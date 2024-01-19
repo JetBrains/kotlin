@@ -13,19 +13,18 @@ import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.synthetic.isVisibleOutside
 
 class JvmIrSerializerSession(
-    messageLogger: IrMessageLogger,
     private val declarationTable: DeclarationTable,
     private val mode: JvmSerializeIrMode,
     private val fileClassFqName: FqName,
     languageVersionSettings: LanguageVersionSettings,
 ) : IrFileSerializer(
-    messageLogger, declarationTable, compatibilityMode = CompatibilityMode.CURRENT,
+    declarationTable,
+    compatibilityMode = CompatibilityMode.CURRENT,
     languageVersionSettings = languageVersionSettings,
     bodiesOnlyForInlines = mode == JvmSerializeIrMode.INLINE,
     normalizeAbsolutePaths = false, sourceBaseDirs = emptyList()

@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
@@ -76,7 +75,6 @@ internal fun PhaseContext.firSerializerBase(
     val serializerOutput = serializeNativeModule(
             configuration = configuration,
             diagnosticReporter = diagnosticReporter,
-            messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
             sourceFiles,
             usedResolvedLibraries?.map { it.library as KonanLibrary },
             fir2IrOutput?.irModuleFragment,
@@ -127,7 +125,7 @@ class KotlinFileSerializedData(
 
 private fun serializeNativeModule(
         configuration: CompilerConfiguration,
-        diagnosticReporter: DiagnosticReporter,messageLogger: IrMessageLogger,
+        diagnosticReporter: DiagnosticReporter,
         files: List<KtSourceFile>,
         dependencies: List<KonanLibrary>?,
         moduleFragment: IrModuleFragment?,
@@ -148,7 +146,6 @@ private fun serializeNativeModule(
     val serializedIr = moduleFragment?.let {
         KonanIrModuleSerializer(
                 KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings),
-                messageLogger,
                 moduleFragment.irBuiltins,
                 CompatibilityMode.CURRENT,
                 normalizeAbsolutePaths = absolutePathNormalization,

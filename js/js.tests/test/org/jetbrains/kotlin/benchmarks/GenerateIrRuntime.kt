@@ -498,7 +498,6 @@ class GenerateIrRuntime {
         serializeModuleIntoKlib(
             moduleName,
             configuration,
-            IrMessageLogger.None,
             diagnosticReporter,
             files.map(::KtPsiSourceFile),
             tmpKlibDir,
@@ -534,7 +533,6 @@ class GenerateIrRuntime {
                 DiagnosticReporterFactory.createPendingReporter(),
                 configuration.languageVersionSettings,
             ),
-            IrMessageLogger.None,
             module.irBuiltins,
             CompatibilityMode.CURRENT,
             normalizeAbsolutePaths = false,

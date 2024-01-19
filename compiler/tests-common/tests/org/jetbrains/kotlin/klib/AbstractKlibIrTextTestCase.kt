@@ -153,7 +153,6 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
                 DiagnosticReporterFactory.createPendingReporter(),
                 myEnvironment.configuration.languageVersionSettings,
             ),
-            IrMessageLogger.None,
             irModuleFragment.irBuiltins,
             CompatibilityMode.CURRENT,
             false,
