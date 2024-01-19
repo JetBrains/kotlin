@@ -1170,20 +1170,6 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.headers "$projectDir/interop/objc/kt55938/objclib.h"
     }
 
-    createInterop("kt49034_struct") {
-        it.defFile 'interop/objc/kt49034/struct/kt49034.def'
-        it.headers "$projectDir/interop/objc/kt49034/struct/kt49034.h"
-        it.extraOpts "-Xcompile-source", "$projectDir/interop/objc/kt49034/struct/impl.c"
-    }
-
-    createInterop("kt49034_objcclass") {
-        it.defFile 'interop/objc/kt49034/objcclass/kt49034.def'
-        it.headers "$projectDir/interop/objc/kt49034/objcclass/kt49034.h"
-    }
-    createInterop("kt49034_objcprotocol") {
-        it.defFile 'interop/objc/kt49034/objcprotocol/kt49034.def'
-        it.headers "$projectDir/interop/objc/kt49034/objcprotocol/kt49034.h"
-    }
     createInterop("objc_include_categories") {
         it.defFile 'interop/objc/include_categories/objc_include_categories.def'
         it.headers "$projectDir/interop/objc/include_categories/objc_include_categories.h"
@@ -1469,24 +1455,6 @@ if (PlatformInfo.isAppleTarget(project)) {
                 UtilsKt.codesign(project, dylibFile.toString())
             }
         }
-    }
-
-    // KT-49034 tests don't need whole compilation pipeline (only frontend) or platform libraries. Consider simplifying them when porting
-    // to the new test infra.
-    interopTest("interop_kt49034_struct") {
-        interop = 'kt49034_struct'
-        source = 'interop/objc/kt49034/struct/main.kt'
-
-        // The test depends on collision between kt49034.JSContext and platform.JavaScriptCore.JSContext
-        UtilsKt.dependsOnPlatformLibs(it)
-    }
-
-    interopTest("interop_kt49034_objcclass") {
-        interop = 'kt49034_objcclass'
-        source = 'interop/objc/kt49034/objcclass/main.kt'
-
-        // The test depends on collision between kt49034.__darwin_fp_control and platform.darwin.__darwin_fp_control
-        UtilsKt.dependsOnPlatformLibs(it)
     }
 
     standaloneTest("interop_objc_kt61441") {

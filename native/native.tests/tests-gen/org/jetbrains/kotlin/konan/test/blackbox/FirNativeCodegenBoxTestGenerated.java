@@ -5093,6 +5093,18 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
                 }
 
                 @Test
+                @TestMetadata("kt49034_objcclass.kt")
+                public void testKt49034_objcclass() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/objc/kt49034_objcclass.kt");
+                }
+
+                @Test
+                @TestMetadata("kt49034_struct.kt")
+                public void testKt49034_struct() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/objc/kt49034_struct.kt");
+                }
+
+                @Test
                 @TestMetadata("kt53151.kt")
                 public void testKt53151() throws Exception {
                     runTest("compiler/testData/codegen/box/cinterop/objc/kt53151.kt");
