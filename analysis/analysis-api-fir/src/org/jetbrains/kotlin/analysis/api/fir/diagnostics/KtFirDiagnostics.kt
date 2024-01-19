@@ -1927,6 +1927,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val containingClassName: Name
     }
 
+    interface CannotInferVisibility : KtFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = CannotInferVisibility::class
+        val callable: KtCallableSymbol
+    }
+
     interface MultipleDefaultsInheritedFromSupertypes : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = MultipleDefaultsInheritedFromSupertypes::class
         val name: Name

@@ -37,6 +37,10 @@ fun Visibility.toEffectiveVisibility(
         }
         Visibilities.Public -> EffectiveVisibility.Public
         Visibilities.Local -> EffectiveVisibility.Local
+        // Unknown visibility should not provoke errors,
+        // because they can naturally appear when intersection
+        // overrides' bases have inconsistent forms.
+        Visibilities.Unknown -> EffectiveVisibility.Unknown
         else -> errorWithAttachment("Unknown visibility: $this") {
             withFirLookupTagEntry("owner", owner)
         }

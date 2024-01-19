@@ -1060,6 +1060,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("phantomIntersections.kt")
+        public void testPhantomIntersections() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/phantomIntersections.kt");
+        }
+
+        @Test
         @TestMetadata("prefixIncReturnType.kt")
         public void testPrefixIncReturnType() throws Exception {
             runTest("compiler/testData/diagnostics/tests/prefixIncReturnType.kt");
@@ -26698,12 +26704,6 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             @TestMetadata("kt2052.kt")
             public void testKt2052() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/kt2052.kt");
-            }
-
-            @Test
-            @TestMetadata("kt2491.kt")
-            public void testKt2491() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/override/kt2491.kt");
             }
 
             @Test

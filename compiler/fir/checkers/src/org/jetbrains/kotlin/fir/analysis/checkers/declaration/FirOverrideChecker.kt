@@ -25,10 +25,6 @@ import org.jetbrains.kotlin.fir.declarations.CallToPotentiallyHiddenSymbolResult
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.originalOrSelf
-import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -46,7 +42,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visibilityChecker
-import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
@@ -183,6 +178,16 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         overriddenSymbols: List<FirCallableSymbol<*>>,
         context: CheckerContext
     ) {
+        if (visibility == Visibilities.Unknown) {
+            // MANY_*_NOT_IMPLEMENTED implies CANNOT_INFER_VISIBILITY as per KT-63741
+            val isManyNotImplementedDiagnosticReported = overriddenSymbols.count { !it.isAbstract } != 1
+            val isSimpleToReasonAboutSituation = overriddenSymbols.none { it.isIntersectionOverride }
+            if (!(isManyNotImplementedDiagnosticReported && isSimpleToReasonAboutSituation)) {
+                reporter.reportOn(source, FirErrors.CANNOT_INFER_VISIBILITY, this, context)
+            }
+            return
+        }
+
         if (overriddenSymbols.isEmpty()) return
         val visibilities = overriddenSymbols.map {
             it to it.visibility
