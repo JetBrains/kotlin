@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.test.services.runtimeClasspathProviders
 import java.io.File
 
 class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    companion object {
+    companion object : KlibBasedEnvironmentConfiguratorUtils {
         private val nativeHome
             get() = System.getProperty("kotlin.internal.native.test.nativeHome")
                 ?: error("No nativeHome provided. Are you sure the test are executed within :native:native.tests?")

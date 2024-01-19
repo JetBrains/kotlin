@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getJsArtifactSimpleName
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getJsModuleArtifactName
 import org.jetbrains.kotlin.test.services.configuration.getDependencies
 import org.jetbrains.kotlin.test.services.libraryProvider
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -127,7 +127,7 @@ class JsIrBackendFacade(
         val phaseConfig = if (debugMode >= DebugMode.SUPER_DEBUG) {
             val dumpOutputDir = File(
                 JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices),
-                JsEnvironmentConfigurator.getJsArtifactSimpleName(testServices, module.name) + "-irdump"
+                JsEnvironmentConfigurator.getKlibArtifactSimpleName(testServices, module.name) + "-irdump"
             )
             PhaseConfig(
                 jsPhases,
@@ -181,7 +181,7 @@ class JsIrBackendFacade(
             loweredIr.context,
             moduleToName = runIf(isEsModules) {
                 loweredIr.allModules.associateWith {
-                    "./${getJsArtifactSimpleName(testServices, it.safeName)}_v5".minifyIfNeed()
+                    "./${getJsModuleArtifactName(testServices, it.safeName)}".minifyIfNeed()
                 }
             } ?: emptyMap(),
             shouldReferMainFunction,

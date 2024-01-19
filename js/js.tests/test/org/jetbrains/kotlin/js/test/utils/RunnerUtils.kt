@@ -33,7 +33,7 @@ import java.io.File
 const val MODULE_EMULATION_FILE = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/moduleEmulation.js"
 
 fun TestModule.getNameFor(filePath: String, testServices: TestServices): String {
-    return JsEnvironmentConfigurator.getJsArtifactSimpleName(testServices, name) + "-js-" + filePath
+    return JsEnvironmentConfigurator.getKlibArtifactSimpleName(testServices, name) + "-js-" + filePath
 }
 
 fun TestModule.getNameFor(file: TestFile, testServices: TestServices): String {
