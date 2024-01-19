@@ -13,21 +13,14 @@ class Builder<B : Builder<B>> {
     fun <T : B> test(): T = TODO()
 
     fun foo() {}
-    fun bar(block: () -> Out<B>) {}
 }
 
-class Out<out T>
-
 fun testStar(builder: Builder<*>) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)")!>builder.test()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer argument for type parameter T")!>builder.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!>()<!>
 
     builder
-        .test()
-        .foo()
-
-    builder
-        .test()
-        .bar { Out() }
+        .<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!>()
+        .<!UNRESOLVED_REFERENCE!>foo<!>()
 }
 
 fun <K : Builder<K>> testTypeParam(builder: Builder<K>) {
@@ -36,18 +29,14 @@ fun <K : Builder<K>> testTypeParam(builder: Builder<K>) {
     builder
         .test()
         .foo()
-
-    builder
-        .test()
-        .bar { Out() }
 }
 
 fun testStarJava(builder: JavaBuilder<*>) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)!!..CapturedType(*)?!")!>builder.test()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer argument for type parameter T")!>builder.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!>()<!>
 
     builder
-        .test()
-        .foo()
+        .<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!>()
+        .<!UNRESOLVED_REFERENCE!>foo<!>()
 }
 
 fun <K : JavaBuilder<K>> testTypeParamJava(builder: JavaBuilder<K>) {

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
 import org.jetbrains.kotlin.resolve.calls.inference.extractTypeForGivenRecursiveTypeParameter
-import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -349,10 +348,6 @@ class ResultTypeResolver(
 
         if (upperConstraints.isNotEmpty()) {
             val upperType = computeUpperType(upperConstraints)
-
-            if (isK2 && hasRecursiveTypeParametersWithGivenSelfType(upperType.typeConstructor())) {
-                return upperType
-            }
 
             return typeApproximator.approximateToSubType(
                 upperType,
