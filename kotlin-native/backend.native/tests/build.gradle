@@ -1094,16 +1094,6 @@ createInterop("workerSignals") {
 }
 
 if (PlatformInfo.isAppleTarget(project)) {
-    createInterop("forwardDeclarationsCastA") {
-        it.defFile "interop/forwardDeclarationsCast/a.def"
-    }
-
-    createInterop("forwardDeclarationsCastB") {
-        it.defFile "interop/forwardDeclarationsCast/b.def"
-        it.headers "$projectDir/interop/forwardDeclarationsCast/b.h"
-        it.extraOpts "-Xcompile-source", "$projectDir/interop/forwardDeclarationsCast/b.m"
-    }
-
     createInterop("objcSmoke") {
         it.defFile 'interop/objc/objcSmoke.def'
         it.headers "$projectDir/interop/objc/smoke.h"
@@ -1273,14 +1263,6 @@ interopTest("interop_withSpaces") {
     doLast {
         assert project.layout.buildDirectory.file("cutom map.map").get().asFile.exists()
     }
-}
-
-interopTestBase("interop_forwardDeclarationsCast", false, true) {
-    enabled = PlatformInfo.isAppleTarget(project)
-    interop = 'forwardDeclarationsCastA'
-    interop2 = 'forwardDeclarationsCastB'
-    lib = 'interop/forwardDeclarationsCast/lib.kt'
-    source = 'interop/forwardDeclarationsCast/main.kt'
 }
 
 dynamicTest("interop_kt43502") {

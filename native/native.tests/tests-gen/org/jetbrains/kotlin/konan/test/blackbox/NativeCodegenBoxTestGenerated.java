@@ -4959,6 +4959,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("forwardDeclarationsCast.kt")
+                public void testForwardDeclarationsCast() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/objc/forwardDeclarationsCast.kt");
+                }
+
+                @Test
                 @TestMetadata("kt34467.kt")
                 public void testKt34467() throws Exception {
                     runTest("compiler/testData/codegen/box/cinterop/objc/kt34467.kt");
