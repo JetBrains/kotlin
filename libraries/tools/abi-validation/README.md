@@ -89,6 +89,11 @@ apiValidation {
      * Flag to programmatically disable compatibility validator
      */
     validationDisabled = true
+
+    /**
+     * A path to a subdirectory inside the project root directory where dumps should be stored.
+     */
+    apiDumpDirectory = "api"
 }
 ```
 
@@ -123,6 +128,11 @@ apiValidation {
      * Flag to programmatically disable compatibility validator
      */
     validationDisabled = false
+
+    /**
+     * A path to a subdirectory inside the project root directory where dumps should be stored.
+     */
+    apiDumpDirectory = "aux/validation"
 }
 ```
 

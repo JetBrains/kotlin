@@ -1,6 +1,7 @@
 public class kotlinx/validation/ApiValidationExtension {
 	public fun <init> ()V
 	public final fun getAdditionalSourceSets ()Ljava/util/Set;
+	public final fun getApiDumpDirectory ()Ljava/lang/String;
 	public final fun getIgnoredClasses ()Ljava/util/Set;
 	public final fun getIgnoredPackages ()Ljava/util/Set;
 	public final fun getIgnoredProjects ()Ljava/util/Set;
@@ -10,6 +11,7 @@ public class kotlinx/validation/ApiValidationExtension {
 	public final fun getPublicPackages ()Ljava/util/Set;
 	public final fun getValidationDisabled ()Z
 	public final fun setAdditionalSourceSets (Ljava/util/Set;)V
+	public final fun setApiDumpDirectory (Ljava/lang/String;)V
 	public final fun setIgnoredClasses (Ljava/util/Set;)V
 	public final fun setIgnoredPackages (Ljava/util/Set;)V
 	public final fun setIgnoredProjects (Ljava/util/Set;)V

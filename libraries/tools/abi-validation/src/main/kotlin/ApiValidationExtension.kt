@@ -64,4 +64,11 @@ public open class ApiValidationExtension {
      * By default, only the `main` source set is checked.
      */
     public var additionalSourceSets: MutableSet<String> = HashSet()
+
+    /**
+     * A path to a directory containing an API dump.
+     * The path should be relative to the project's root directory and should resolve to its subdirectory.
+     * By default, it's `api`.
+     */
+    public var apiDumpDirectory: String = "api"
 }

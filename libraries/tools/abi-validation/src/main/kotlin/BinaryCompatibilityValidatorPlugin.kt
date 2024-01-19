@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import java.io.*
 
-private const val API_DIR = "api" // Mirrored in functional tests
-
 public class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
 
     override fun apply(target: Project): Unit = with(target) {
@@ -85,7 +83,7 @@ public class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
         kotlin.targets.matching {
             it.platformType == KotlinPlatformType.jvm || it.platformType == KotlinPlatformType.androidJvm
         }.all { target ->
-            val targetConfig = TargetConfig(project, target.name, dirConfig)
+            val targetConfig = TargetConfig(project, extension, target.name, dirConfig)
             if (target.platformType == KotlinPlatformType.jvm) {
                 target.compilations.matching { it.name == "main" }.all {
                     project.configureKotlinCompilation(it, extension, targetConfig, commonApiDump, commonApiCheck)
@@ -130,30 +128,43 @@ public class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
         project: Project,
         extension: ApiValidationExtension
     ) = configurePlugin("kotlin", project, extension) {
-        project.configureApiTasks(extension, TargetConfig(project))
+        project.configureApiTasks(extension, TargetConfig(project, extension))
     }
 }
 
 private class TargetConfig constructor(
     project: Project,
+    extension: ApiValidationExtension,
     val targetName: String? = null,
-    private val dirConfig: Provider<DirConfig>? = null,
+    dirConfig: Provider<DirConfig>? = null,
 ) {
+    private val apiDirProvider = project.provider {
+        val dir = extension.apiDumpDirectory
 
-    private val API_DIR_PROVIDER = project.provider { API_DIR }
+        val root = project.layout.projectDirectory.asFile.toPath().toAbsolutePath().normalize()
+        val resolvedDir = root.resolve(dir).normalize()
+        if (!resolvedDir.startsWith(root)) {
+            throw IllegalArgumentException(
+                "apiDumpDirectory (\"$dir\") should be inside the project directory, " +
+                        "but it resolves to a path outside the project root.\n" +
+                        "Project's root path: $root\nResolved apiDumpDirectory: $resolvedDir"
+            )
+        }
+
+        dir
+    }
+
+    val apiDir = dirConfig?.map { dirConfig ->
+        when (dirConfig) {
+            DirConfig.COMMON -> apiDirProvider.get()
+            else -> "${apiDirProvider.get()}/$targetName"
+        }
+    } ?: apiDirProvider
 
     fun apiTaskName(suffix: String) = when (targetName) {
         null, "" -> "api$suffix"
-        else     -> "${targetName}Api$suffix"
+        else -> "${targetName}Api$suffix"
     }
-
-    val apiDir
-        get() = dirConfig?.map { dirConfig ->
-            when (dirConfig) {
-                DirConfig.COMMON -> API_DIR
-                else -> "$API_DIR/$targetName"
-            }
-        } ?: API_DIR_PROVIDER
 }
 
 private enum class DirConfig {
@@ -162,6 +173,7 @@ private enum class DirConfig {
      * Used in single target projects
      */
     COMMON,
+
     /**
      * Target-based directory, used in multitarget setups.
      * E.g. for the project with targets jvm and android,
@@ -174,7 +186,7 @@ private enum class DirConfig {
 private fun Project.configureKotlinCompilation(
     compilation: KotlinCompilation<KotlinCommonOptions>,
     extension: ApiValidationExtension,
-    targetConfig: TargetConfig = TargetConfig(this),
+    targetConfig: TargetConfig = TargetConfig(this, extension),
     commonApiDump: TaskProvider<Task>? = null,
     commonApiCheck: TaskProvider<Task>? = null,
     useOutput: Boolean = false,
@@ -221,7 +233,7 @@ private fun apiCheckEnabled(projectName: String, extension: ApiValidationExtensi
 
 private fun Project.configureApiTasks(
     extension: ApiValidationExtension,
-    targetConfig: TargetConfig = TargetConfig(this),
+    targetConfig: TargetConfig = TargetConfig(this, extension),
 ) {
     val projectName = project.name
     val apiBuildDir = targetConfig.apiDir.map { layout.buildDirectory.asFile.get().resolve(it) }
