@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.makeSerializedKlibMetadata

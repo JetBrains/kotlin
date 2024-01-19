@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.extensions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
+import org.jetbrains.kotlin.ir.PsiSourceManager
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.backend.jvm.ir.psiElement
