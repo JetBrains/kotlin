@@ -1,0 +1,305 @@
+// MODULE: separate
+// MODULE: main
+// FILE: test.kt
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java2 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#foo(){}
+  //   Public signature: /A.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java2 {
+  // CHECK:
+  //   Mangled name: B{}a
+  //   Public signature: /B.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-a>(){}kotlin.Int
+    //   Public signature: /B.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    get
+
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#foo(){}
+  //   Public signature: /B.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java4 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#foo(){}
+  //   Public signature: /C.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  protected_and_package /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java4 {
+  // CHECK:
+  //   Mangled name: D{}a
+  //   Public signature: /D.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: D#<get-a>(){}kotlin.Int
+    //   Public signature: /D.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    get
+
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: D#foo(){}
+  //   Public signature: /D.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+class E : Java6 {
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: E#foo(){}
+  //   Public signature: /E.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  package /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: F
+//   Public signature: /F|null[0]
+class F : Java6 {
+  // CHECK:
+  //   Mangled name: F{}a
+  //   Public signature: /F.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: F#<get-a>(){}kotlin.Int
+    //   Public signature: /F.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    get
+
+  // CHECK:
+  //   Mangled name: F#<init>(){}
+  //   Public signature: /F.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: F#foo(){}
+  //   Public signature: /F.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: G
+//   Public signature: /G|null[0]
+class G : Java7 {
+  // CHECK:
+  //   Mangled name: G#<init>(){}
+  //   Public signature: /G.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: G#foo(){}
+  //   Public signature: /G.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  protected_and_package /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: H
+//   Public signature: /H|null[0]
+class H : Java7 {
+  // CHECK:
+  //   Mangled name: H{}a
+  //   Public signature: /H.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: H#<get-a>(){}kotlin.Int
+    //   Public signature: /H.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    get
+
+  // CHECK:
+  //   Mangled name: H#<init>(){}
+  //   Public signature: /H.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: H#foo(){}
+  //   Public signature: /H.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+class I : Java8 {
+  // CHECK:
+  //   Mangled name: I#<init>(){}
+  //   Public signature: /I.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: I#foo(){}
+  //   Public signature: /I.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  package /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinClass
+//   Public signature: /KotlinClass|null[0]
+open class KotlinClass : Java1 {
+  // CHECK:
+  //   Mangled name: KotlinClass#<init>(){}
+  //   Public signature: /KotlinClass.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: KotlinClass#foo(){}
+  //   Public signature: /KotlinClass.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinClass2
+//   Public signature: /KotlinClass2|null[0]
+open class KotlinClass2 : Java3 {
+  // CHECK:
+  //   Mangled name: KotlinClass2#<init>(){}
+  //   Public signature: /KotlinClass2.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: KotlinClass2#foo(){}
+  //   Public signature: /KotlinClass2.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  protected_and_package /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinClass3
+//   Public signature: /KotlinClass3|null[0]
+open class KotlinClass3 : Java5 {
+  // CHECK:
+  //   Mangled name: KotlinClass3#<init>(){}
+  //   Public signature: /KotlinClass3.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: KotlinClass3#foo(){}
+  //   Public signature: /KotlinClass3.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  package /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinClass4
+//   Public signature: /KotlinClass4|null[0]
+open class KotlinClass4 : JavaSeparate1 {
+  // CHECK:
+  //   Mangled name: KotlinClass4#<init>(){}
+  //   Public signature: /KotlinClass4.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: KotlinClass4#foo(){}
+  //   Public signature: /KotlinClass4.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  protected_and_package /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinClass5
+//   Public signature: /KotlinClass5|null[0]
+open class KotlinClass5 : JavaSeparate2 {
+  // CHECK:
+  //   Mangled name: KotlinClass5#<init>(){}
+  //   Public signature: /KotlinClass5.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: KotlinClass5#foo(){}
+  //   Public signature: /KotlinClass5.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  package /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D;E;H){}
+//   Public signature: /test|-3642480073833557067[0]
+//   Public signature debug description: test(A;B;C;D;E;H){}
+fun test(a: A, b: B, c: C, d: D, e: E, h: H): Unit

@@ -1,0 +1,257 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java5 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#foo(){}
+  //   Public signature: /A.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java6 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#foo(){}
+  //   Public signature: /B.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java7 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#foo(){}
+  //   Public signature: /C.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java8 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: D#foo(){}
+  //   Public signature: /D.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+class E : Java9 {
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: E#foo(){}
+  //   Public signature: /E.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  protected_and_package /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: F
+//   Public signature: /F|null[0]
+class F : Java10 {
+  // CHECK:
+  //   Mangled name: F#<init>(){}
+  //   Public signature: /F.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: F#foo(){}
+  //   Public signature: /F.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  protected_and_package /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: G
+//   Public signature: /G|null[0]
+class G : Java11 {
+  // CHECK:
+  //   Mangled name: G#<init>(){}
+  //   Public signature: /G.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: G#foo(){}
+  //   Public signature: /G.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  package /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: H
+//   Public signature: /H|null[0]
+class H : Java5 {
+  // CHECK:
+  //   Mangled name: H#<init>(){}
+  //   Public signature: /H.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: H#foo(){}
+  //   Public signature: /H.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+class I : Java6 {
+  // CHECK:
+  //   Mangled name: I#<init>(){}
+  //   Public signature: /I.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: I#foo(){}
+  //   Public signature: /I.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: J
+//   Public signature: /J|null[0]
+class J : Java7 {
+  // CHECK:
+  //   Mangled name: J#<init>(){}
+  //   Public signature: /J.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: J#foo(){}
+  //   Public signature: /J.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: K
+//   Public signature: /K|null[0]
+class K : Java8 {
+  // CHECK:
+  //   Mangled name: K#<init>(){}
+  //   Public signature: /K.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: K#foo(){}
+  //   Public signature: /K.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: L
+//   Public signature: /L|null[0]
+class L : Java9 {
+  // CHECK:
+  //   Mangled name: L#<init>(){}
+  //   Public signature: /L.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: L#foo(){}
+  //   Public signature: /L.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: M
+//   Public signature: /M|null[0]
+class M : Java10 {
+  // CHECK:
+  //   Mangled name: M#<init>(){}
+  //   Public signature: /M.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: M#foo(){}
+  //   Public signature: /M.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: N
+//   Public signature: /N|null[0]
+class N : Java11 {
+  // CHECK:
+  //   Mangled name: N#<init>(){}
+  //   Public signature: /N.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: N#foo(){}
+  //   Public signature: /N.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  internal override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D;E;F;G;H;I;J;K;L;M;N){}
+//   Public signature: /test|7668676700290094940[0]
+//   Public signature debug description: test(A;B;C;D;E;F;G;H;I;J;K;L;M;N){}
+fun test(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, m: M, n: N): Unit

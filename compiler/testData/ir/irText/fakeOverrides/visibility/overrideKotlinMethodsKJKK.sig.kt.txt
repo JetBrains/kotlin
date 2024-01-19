@@ -1,0 +1,95 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+abstract class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#funA1(){}
+  //   Public signature: /A.funA1|-1861570915489783750[0]
+  //   Public signature debug description: funA1(){}
+  open fun funA1(): Unit
+
+  // CHECK:
+  //   Mangled name: A#funA2(){}
+  //   Public signature: /A.funA2|4227004615447903242[0]
+  //   Public signature debug description: funA2(){}
+  protected open fun funA2(): Unit
+
+  // CHECK:
+  //   Mangled name: A#funA3(){}
+  //   Public signature: /A.funA3|220898698606415605[0]
+  //   Public signature debug description: funA3(){}
+  internal open fun funA3(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+abstract class B : A {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#funA1(){}
+  //   Public signature: /B.funA1|-1861570915489783750[0]
+  //   Public signature debug description: funA1(){}
+  override fun funA1(): Unit
+
+  // CHECK:
+  //   Mangled name: B#funA2(){}
+  //   Public signature: /B.funA2|4227004615447903242[0]
+  //   Public signature debug description: funA2(){}
+  protected override fun funA2(): Unit
+
+  // CHECK:
+  //   Mangled name: B#funA3(){}
+  //   Public signature: /B.funA3|220898698606415605[0]
+  //   Public signature debug description: funA3(){}
+  internal override fun funA3(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : J {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#funA1(){}
+  //   Public signature: /C.funA1|-1861570915489783750[0]
+  //   Public signature debug description: funA1(){}
+  /* fake */ override fun funA1(): Unit
+
+  // CHECK:
+  //   Mangled name: C#funA2(){}
+  //   Public signature: /C.funA2|4227004615447903242[0]
+  //   Public signature debug description: funA2(){}
+  protected /* fake */ override fun funA2(): Unit
+
+  // CHECK:
+  //   Mangled name: C#funA3(){}
+  //   Public signature: /C.funA3|220898698606415605[0]
+  //   Public signature debug description: funA3(){}
+  internal /* fake */ override fun funA3(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(C){}
+//   Public signature: /test|-3170651145558428552[0]
+//   Public signature debug description: test(C){}
+fun test(c: C): Unit

@@ -1,0 +1,510 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+abstract class A : Number {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#toByte(){}kotlin.Byte
+  //   Public signature: /A.toByte|6564132604093419[0]
+  //   Public signature debug description: toByte(){}kotlin.Byte
+  abstract /* fake */ override fun toByte(): Byte
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#toChar(){}kotlin.Char
+  //   Public signature: /A.toChar|-555627748136403860[0]
+  //   Public signature debug description: toChar(){}kotlin.Char
+  @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3")
+  /* fake */ override fun toChar(): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#toDouble(){}kotlin.Double
+  //   Public signature: /A.toDouble|-2422520430979869925[0]
+  //   Public signature debug description: toDouble(){}kotlin.Double
+  abstract /* fake */ override fun toDouble(): Double
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#toFloat(){}kotlin.Float
+  //   Public signature: /A.toFloat|5566667750088681187[0]
+  //   Public signature debug description: toFloat(){}kotlin.Float
+  abstract /* fake */ override fun toFloat(): Float
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#toInt(){}kotlin.Int
+  //   Public signature: /A.toInt|-5424593704201214685[0]
+  //   Public signature debug description: toInt(){}kotlin.Int
+  abstract /* fake */ override fun toInt(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#toLong(){}kotlin.Long
+  //   Public signature: /A.toLong|5613274327741145669[0]
+  //   Public signature debug description: toLong(){}kotlin.Long
+  abstract /* fake */ override fun toLong(): Long
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#toShort(){}kotlin.Short
+  //   Public signature: /A.toShort|-291365914034102706[0]
+  //   Public signature debug description: toShort(){}kotlin.Short
+  abstract /* fake */ override fun toShort(): Short
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+abstract class B : Java1 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#toByte(){}kotlin.Byte
+  //   Public signature: /B.toByte|6564132604093419[0]
+  //   Public signature debug description: toByte(){}kotlin.Byte
+  abstract /* fake */ override fun toByte(): Byte
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#toChar(){}kotlin.Char
+  //   Public signature: /B.toChar|-555627748136403860[0]
+  //   Public signature debug description: toChar(){}kotlin.Char
+  @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3")
+  /* fake */ override fun toChar(): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#toDouble(){}kotlin.Double
+  //   Public signature: /B.toDouble|-2422520430979869925[0]
+  //   Public signature debug description: toDouble(){}kotlin.Double
+  abstract /* fake */ override fun toDouble(): Double
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#toFloat(){}kotlin.Float
+  //   Public signature: /B.toFloat|5566667750088681187[0]
+  //   Public signature debug description: toFloat(){}kotlin.Float
+  abstract /* fake */ override fun toFloat(): Float
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#toInt(){}kotlin.Int
+  //   Public signature: /B.toInt|-5424593704201214685[0]
+  //   Public signature debug description: toInt(){}kotlin.Int
+  abstract /* fake */ override fun toInt(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#toLong(){}kotlin.Long
+  //   Public signature: /B.toLong|5613274327741145669[0]
+  //   Public signature debug description: toLong(){}kotlin.Long
+  abstract /* fake */ override fun toLong(): Long
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#toShort(){}kotlin.Short
+  //   Public signature: /B.toShort|-291365914034102706[0]
+  //   Public signature debug description: toShort(){}kotlin.Short
+  abstract /* fake */ override fun toShort(): Short
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+abstract class C : Java1 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#toChar(){}kotlin.Char
+  //   Public signature: /C.toChar|-555627748136403860[0]
+  //   Public signature debug description: toChar(){}kotlin.Char
+  @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3")
+  /* fake */ override fun toChar(): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#toDouble(){}kotlin.Double
+  //   Public signature: /C.toDouble|-2422520430979869925[0]
+  //   Public signature debug description: toDouble(){}kotlin.Double
+  abstract /* fake */ override fun toDouble(): Double
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#toFloat(){}kotlin.Float
+  //   Public signature: /C.toFloat|5566667750088681187[0]
+  //   Public signature debug description: toFloat(){}kotlin.Float
+  abstract /* fake */ override fun toFloat(): Float
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#toInt(){}kotlin.Int
+  //   Public signature: /C.toInt|-5424593704201214685[0]
+  //   Public signature debug description: toInt(){}kotlin.Int
+  abstract /* fake */ override fun toInt(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#toLong(){}kotlin.Long
+  //   Public signature: /C.toLong|5613274327741145669[0]
+  //   Public signature debug description: toLong(){}kotlin.Long
+  abstract /* fake */ override fun toLong(): Long
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#toShort(){}kotlin.Short
+  //   Public signature: /C.toShort|-291365914034102706[0]
+  //   Public signature debug description: toShort(){}kotlin.Short
+  abstract /* fake */ override fun toShort(): Short
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#toByte(){}kotlin.Byte
+  //   Public signature: /C.toByte|6564132604093419[0]
+  //   Public signature debug description: toByte(){}kotlin.Byte
+  override fun toByte(): Byte
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+abstract class D : Java2 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#toByte(){}kotlin.Byte
+  //   Public signature: /D.toByte|6564132604093419[0]
+  //   Public signature debug description: toByte(){}kotlin.Byte
+  @Override
+  /* fake */ override fun toByte(): Byte
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#toChar(){}kotlin.Char
+  //   Public signature: /D.toChar|-555627748136403860[0]
+  //   Public signature debug description: toChar(){}kotlin.Char
+  @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3")
+  /* fake */ override fun toChar(): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#toDouble(){}kotlin.Double
+  //   Public signature: /D.toDouble|-2422520430979869925[0]
+  //   Public signature debug description: toDouble(){}kotlin.Double
+  @Override
+  /* fake */ override fun toDouble(): Double
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#toFloat(){}kotlin.Float
+  //   Public signature: /D.toFloat|5566667750088681187[0]
+  //   Public signature debug description: toFloat(){}kotlin.Float
+  @Override
+  /* fake */ override fun toFloat(): Float
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#toInt(){}kotlin.Int
+  //   Public signature: /D.toInt|-5424593704201214685[0]
+  //   Public signature debug description: toInt(){}kotlin.Int
+  @Override
+  /* fake */ override fun toInt(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#toLong(){}kotlin.Long
+  //   Public signature: /D.toLong|5613274327741145669[0]
+  //   Public signature debug description: toLong(){}kotlin.Long
+  @Override
+  /* fake */ override fun toLong(): Long
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#toShort(){}kotlin.Short
+  //   Public signature: /D.toShort|-291365914034102706[0]
+  //   Public signature debug description: toShort(){}kotlin.Short
+  @Override
+  /* fake */ override fun toShort(): Short
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+class E : Java2 {
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#toChar(){}kotlin.Char
+  //   Public signature: /E.toChar|-555627748136403860[0]
+  //   Public signature debug description: toChar(){}kotlin.Char
+  @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3")
+  /* fake */ override fun toChar(): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#toDouble(){}kotlin.Double
+  //   Public signature: /E.toDouble|-2422520430979869925[0]
+  //   Public signature debug description: toDouble(){}kotlin.Double
+  @Override
+  /* fake */ override fun toDouble(): Double
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#toFloat(){}kotlin.Float
+  //   Public signature: /E.toFloat|5566667750088681187[0]
+  //   Public signature debug description: toFloat(){}kotlin.Float
+  @Override
+  /* fake */ override fun toFloat(): Float
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#toInt(){}kotlin.Int
+  //   Public signature: /E.toInt|-5424593704201214685[0]
+  //   Public signature debug description: toInt(){}kotlin.Int
+  @Override
+  /* fake */ override fun toInt(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#toLong(){}kotlin.Long
+  //   Public signature: /E.toLong|5613274327741145669[0]
+  //   Public signature debug description: toLong(){}kotlin.Long
+  @Override
+  /* fake */ override fun toLong(): Long
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#toByte(){}kotlin.Byte
+  //   Public signature: /E.toByte|6564132604093419[0]
+  //   Public signature debug description: toByte(){}kotlin.Byte
+  override fun toByte(): Byte
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#toShort(){}kotlin.Short
+  //   Public signature: /E.toShort|-291365914034102706[0]
+  //   Public signature debug description: toShort(){}kotlin.Short
+  override fun toShort(): Short
+
+}
+
+// CHECK:
+//   Mangled name: F
+//   Public signature: /F|null[0]
+abstract class F : A, Java3 {
+  // CHECK:
+  //   Mangled name: F#<init>(){}
+  //   Public signature: /F.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#toByte(){}kotlin.Byte
+  //   Public signature: /F.toByte|6564132604093419[0]
+  //   Public signature debug description: toByte(){}kotlin.Byte
+  abstract /* fake */ override fun toByte(): Byte
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#toChar(){}kotlin.Char
+  //   Public signature: /F.toChar|-555627748136403860[0]
+  //   Public signature debug description: toChar(){}kotlin.Char
+  @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3")
+  /* fake */ override fun toChar(): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#toDouble(){}kotlin.Double
+  //   Public signature: /F.toDouble|-2422520430979869925[0]
+  //   Public signature debug description: toDouble(){}kotlin.Double
+  /* fake */ override fun toDouble(): Double
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#toFloat(){}kotlin.Float
+  //   Public signature: /F.toFloat|5566667750088681187[0]
+  //   Public signature debug description: toFloat(){}kotlin.Float
+  abstract /* fake */ override fun toFloat(): Float
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#toInt(){}kotlin.Int
+  //   Public signature: /F.toInt|-5424593704201214685[0]
+  //   Public signature debug description: toInt(){}kotlin.Int
+  abstract /* fake */ override fun toInt(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#toLong(){}kotlin.Long
+  //   Public signature: /F.toLong|5613274327741145669[0]
+  //   Public signature debug description: toLong(){}kotlin.Long
+  abstract /* fake */ override fun toLong(): Long
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#toShort(){}kotlin.Short
+  //   Public signature: /F.toShort|-291365914034102706[0]
+  //   Public signature debug description: toShort(){}kotlin.Short
+  abstract /* fake */ override fun toShort(): Short
+
+}
+
+// CHECK:
+//   Mangled name: G
+//   Public signature: /G|null[0]
+abstract class G : A, Java3 {
+  // CHECK:
+  //   Mangled name: G#<init>(){}
+  //   Public signature: /G.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: G#toByte(){}kotlin.Byte
+  //   Public signature: /G.toByte|6564132604093419[0]
+  //   Public signature debug description: toByte(){}kotlin.Byte
+  abstract /* fake */ override fun toByte(): Byte
+
+  // CHECK JVM_IR:
+  //   Mangled name: G#toChar(){}kotlin.Char
+  //   Public signature: /G.toChar|-555627748136403860[0]
+  //   Public signature debug description: toChar(){}kotlin.Char
+  @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3")
+  /* fake */ override fun toChar(): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: G#toDouble(){}kotlin.Double
+  //   Public signature: /G.toDouble|-2422520430979869925[0]
+  //   Public signature debug description: toDouble(){}kotlin.Double
+  /* fake */ override fun toDouble(): Double
+
+  // CHECK JVM_IR:
+  //   Mangled name: G#toLong(){}kotlin.Long
+  //   Public signature: /G.toLong|5613274327741145669[0]
+  //   Public signature debug description: toLong(){}kotlin.Long
+  abstract /* fake */ override fun toLong(): Long
+
+  // CHECK JVM_IR:
+  //   Mangled name: G#toShort(){}kotlin.Short
+  //   Public signature: /G.toShort|-291365914034102706[0]
+  //   Public signature debug description: toShort(){}kotlin.Short
+  abstract /* fake */ override fun toShort(): Short
+
+  // CHECK JVM_IR:
+  //   Mangled name: G#toFloat(){}kotlin.Float
+  //   Public signature: /G.toFloat|5566667750088681187[0]
+  //   Public signature debug description: toFloat(){}kotlin.Float
+  override fun toFloat(): Float
+
+  // CHECK JVM_IR:
+  //   Mangled name: G#toInt(){}kotlin.Int
+  //   Public signature: /G.toInt|-5424593704201214685[0]
+  //   Public signature debug description: toInt(){}kotlin.Int
+  override fun toInt(): Int
+
+}
+
+// CHECK:
+//   Mangled name: H
+//   Public signature: /H|null[0]
+abstract class H : Java1, Java3 {
+  // CHECK:
+  //   Mangled name: H#<init>(){}
+  //   Public signature: /H.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: H#toByte(){}kotlin.Byte
+  //   Public signature: /H.toByte|6564132604093419[0]
+  //   Public signature debug description: toByte(){}kotlin.Byte
+  abstract /* fake */ override fun toByte(): Byte
+
+  // CHECK JVM_IR:
+  //   Mangled name: H#toChar(){}kotlin.Char
+  //   Public signature: /H.toChar|-555627748136403860[0]
+  //   Public signature debug description: toChar(){}kotlin.Char
+  @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3")
+  /* fake */ override fun toChar(): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: H#toDouble(){}kotlin.Double
+  //   Public signature: /H.toDouble|-2422520430979869925[0]
+  //   Public signature debug description: toDouble(){}kotlin.Double
+  /* fake */ override fun toDouble(): Double
+
+  // CHECK JVM_IR:
+  //   Mangled name: H#toFloat(){}kotlin.Float
+  //   Public signature: /H.toFloat|5566667750088681187[0]
+  //   Public signature debug description: toFloat(){}kotlin.Float
+  abstract /* fake */ override fun toFloat(): Float
+
+  // CHECK JVM_IR:
+  //   Mangled name: H#toInt(){}kotlin.Int
+  //   Public signature: /H.toInt|-5424593704201214685[0]
+  //   Public signature debug description: toInt(){}kotlin.Int
+  abstract /* fake */ override fun toInt(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: H#toLong(){}kotlin.Long
+  //   Public signature: /H.toLong|5613274327741145669[0]
+  //   Public signature debug description: toLong(){}kotlin.Long
+  abstract /* fake */ override fun toLong(): Long
+
+  // CHECK JVM_IR:
+  //   Mangled name: H#toShort(){}kotlin.Short
+  //   Public signature: /H.toShort|-291365914034102706[0]
+  //   Public signature debug description: toShort(){}kotlin.Short
+  abstract /* fake */ override fun toShort(): Short
+
+}
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+abstract class I : Java1, Java3 {
+  // CHECK:
+  //   Mangled name: I#<init>(){}
+  //   Public signature: /I.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#toByte(){}kotlin.Byte
+  //   Public signature: /I.toByte|6564132604093419[0]
+  //   Public signature debug description: toByte(){}kotlin.Byte
+  abstract /* fake */ override fun toByte(): Byte
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#toChar(){}kotlin.Char
+  //   Public signature: /I.toChar|-555627748136403860[0]
+  //   Public signature debug description: toChar(){}kotlin.Char
+  @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3")
+  /* fake */ override fun toChar(): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#toDouble(){}kotlin.Double
+  //   Public signature: /I.toDouble|-2422520430979869925[0]
+  //   Public signature debug description: toDouble(){}kotlin.Double
+  /* fake */ override fun toDouble(): Double
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#toFloat(){}kotlin.Float
+  //   Public signature: /I.toFloat|5566667750088681187[0]
+  //   Public signature debug description: toFloat(){}kotlin.Float
+  abstract /* fake */ override fun toFloat(): Float
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#toInt(){}kotlin.Int
+  //   Public signature: /I.toInt|-5424593704201214685[0]
+  //   Public signature debug description: toInt(){}kotlin.Int
+  abstract /* fake */ override fun toInt(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#toLong(){}kotlin.Long
+  //   Public signature: /I.toLong|5613274327741145669[0]
+  //   Public signature debug description: toLong(){}kotlin.Long
+  override fun toLong(): Long
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#toShort(){}kotlin.Short
+  //   Public signature: /I.toShort|-291365914034102706[0]
+  //   Public signature debug description: toShort(){}kotlin.Short
+  override fun toShort(): Short
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D;E;F;G;H;I){}
+//   Public signature: /test|-1897371180652527268[0]
+//   Public signature debug description: test(A;B;C;D;E;F;G;H;I){}
+fun test(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I): Unit

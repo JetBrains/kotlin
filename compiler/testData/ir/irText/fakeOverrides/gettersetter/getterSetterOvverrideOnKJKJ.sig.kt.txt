@@ -1,0 +1,207 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java1 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#getA(){}kotlin.Int
+  //   Public signature: /A.getA|5691569834379572517[0]
+  //   Public signature debug description: getA(){}kotlin.Int
+  /* fake */ override fun getA(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#isB(){}kotlin.Boolean
+  //   Public signature: /A.isB|-4094540604250872999[0]
+  //   Public signature debug description: isB(){}kotlin.Boolean
+  /* fake */ override fun isB(): Boolean
+
+  // CHECK:
+  //   Mangled name: A#setA(kotlin.Int){}
+  //   Public signature: /A.setA|-2839184409429581850[0]
+  //   Public signature debug description: setA(kotlin.Int){}
+  /* fake */ override fun setA(t: Int): Unit
+
+  // CHECK:
+  //   Mangled name: A#setB(kotlin.Boolean){}
+  //   Public signature: /A.setB|2046027712198185521[0]
+  //   Public signature debug description: setB(kotlin.Boolean){}
+  /* fake */ override fun setB(t: Boolean): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java1 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#getA(){}kotlin.Int
+  //   Public signature: /B.getA|5691569834379572517[0]
+  //   Public signature debug description: getA(){}kotlin.Int
+  override fun getA(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#isB(){}kotlin.Boolean
+  //   Public signature: /B.isB|-4094540604250872999[0]
+  //   Public signature debug description: isB(){}kotlin.Boolean
+  override fun isB(): Boolean
+
+  // CHECK:
+  //   Mangled name: B#setA(kotlin.Int){}
+  //   Public signature: /B.setA|-2839184409429581850[0]
+  //   Public signature debug description: setA(kotlin.Int){}
+  override fun setA(t: Int): Unit
+
+  // CHECK:
+  //   Mangled name: B#setB(kotlin.Boolean){}
+  //   Public signature: /B.setB|2046027712198185521[0]
+  //   Public signature debug description: setB(kotlin.Boolean){}
+  override fun setB(t: Boolean): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java3 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#getA(){}kotlin.Int
+  //   Public signature: /C.getA|5691569834379572517[0]
+  //   Public signature debug description: getA(){}kotlin.Int
+  /* fake */ override fun getA(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#isB(){}kotlin.Boolean
+  //   Public signature: /C.isB|-4094540604250872999[0]
+  //   Public signature debug description: isB(){}kotlin.Boolean
+  /* fake */ override fun isB(): Boolean
+
+  // CHECK:
+  //   Mangled name: C#setA(kotlin.Int){}
+  //   Public signature: /C.setA|-2839184409429581850[0]
+  //   Public signature debug description: setA(kotlin.Int){}
+  /* fake */ override fun setA(t: Int): Unit
+
+  // CHECK:
+  //   Mangled name: C#setB(kotlin.Boolean){}
+  //   Public signature: /C.setB|2046027712198185521[0]
+  //   Public signature debug description: setB(kotlin.Boolean){}
+  /* fake */ override fun setB(t: Boolean): Unit
+
+  // CHECK:
+  //   Mangled name: C{}b
+  //   Public signature: /C.b|772347207915745207[0]
+  //   Public signature debug description: {}b
+  /* fake */ override val b: Boolean
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-b>(){}kotlin.Boolean
+    //   Public signature: /C.b.<get-b>|-7029388108626198383[0]
+    //   Public signature debug description: <get-b>(){}kotlin.Boolean
+    /* fake */ override get(): Boolean
+
+}
+
+// CHECK:
+//   Mangled name: KotlinClass
+//   Public signature: /KotlinClass|null[0]
+open class KotlinClass : Java2 {
+  // CHECK:
+  //   Mangled name: KotlinClass#<init>(){}
+  //   Public signature: /KotlinClass.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinClass#getA(){}kotlin.Int
+  //   Public signature: /KotlinClass.getA|5691569834379572517[0]
+  //   Public signature debug description: getA(){}kotlin.Int
+  /* fake */ override fun getA(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinClass#isB(){}kotlin.Boolean
+  //   Public signature: /KotlinClass.isB|-4094540604250872999[0]
+  //   Public signature debug description: isB(){}kotlin.Boolean
+  /* fake */ override fun isB(): Boolean
+
+  // CHECK:
+  //   Mangled name: KotlinClass#setA(kotlin.Int){}
+  //   Public signature: /KotlinClass.setA|-2839184409429581850[0]
+  //   Public signature debug description: setA(kotlin.Int){}
+  /* fake */ override fun setA(t: Int): Unit
+
+  // CHECK:
+  //   Mangled name: KotlinClass#setB(kotlin.Boolean){}
+  //   Public signature: /KotlinClass.setB|2046027712198185521[0]
+  //   Public signature debug description: setB(kotlin.Boolean){}
+  /* fake */ override fun setB(t: Boolean): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinClass2
+//   Public signature: /KotlinClass2|null[0]
+open class KotlinClass2 : Java2 {
+  // CHECK:
+  //   Mangled name: KotlinClass2{}b
+  //   Public signature: /KotlinClass2.b|772347207915745207[0]
+  //   Public signature debug description: {}b
+  val b: Boolean
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinClass2#<get-b>(){}kotlin.Boolean
+    //   Public signature: /KotlinClass2.b.<get-b>|-7029388108626198383[0]
+    //   Public signature debug description: <get-b>(){}kotlin.Boolean
+    get
+
+  // CHECK:
+  //   Mangled name: KotlinClass2#<init>(){}
+  //   Public signature: /KotlinClass2.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinClass2#getA(){}kotlin.Int
+  //   Public signature: /KotlinClass2.getA|5691569834379572517[0]
+  //   Public signature debug description: getA(){}kotlin.Int
+  /* fake */ override fun getA(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinClass2#isB(){}kotlin.Boolean
+  //   Public signature: /KotlinClass2.isB|-4094540604250872999[0]
+  //   Public signature debug description: isB(){}kotlin.Boolean
+  /* fake */ override fun isB(): Boolean
+
+  // CHECK:
+  //   Mangled name: KotlinClass2#setA(kotlin.Int){}
+  //   Public signature: /KotlinClass2.setA|-2839184409429581850[0]
+  //   Public signature debug description: setA(kotlin.Int){}
+  /* fake */ override fun setA(t: Int): Unit
+
+  // CHECK:
+  //   Mangled name: KotlinClass2#setB(kotlin.Boolean){}
+  //   Public signature: /KotlinClass2.setB|2046027712198185521[0]
+  //   Public signature debug description: setB(kotlin.Boolean){}
+  /* fake */ override fun setB(t: Boolean): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C){}
+//   Public signature: /test|-4981009800298118531[0]
+//   Public signature debug description: test(A;B;C){}
+fun test(a: A, b: B, c: C): Unit

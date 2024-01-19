@@ -1,0 +1,511 @@
+// MODULE: separate
+// FILE: Test.kt
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+class I : J2 {
+  // CHECK:
+  //   Mangled name: I{}j1
+  //   Public signature: /I.j1|-928676043469958746[0]
+  //   Public signature debug description: {}j1
+  internal val j1: Int
+    // CHECK JVM_IR:
+    //   Mangled name: I#<get-j1>(){}kotlin.Int
+    //   Public signature: /I.j1.<get-j1>|6087532728828337697[0]
+    //   Public signature debug description: <get-j1>(){}kotlin.Int
+    internal get
+
+  // CHECK:
+  //   Mangled name: I{}j2
+  //   Public signature: /I.j2|-2140420436483753491[0]
+  //   Public signature debug description: {}j2
+  internal val j2: Int
+    // CHECK JVM_IR:
+    //   Mangled name: I#<get-j2>(){}kotlin.Int
+    //   Public signature: /I.j2.<get-j2>|4162516175041800910[0]
+    //   Public signature debug description: <get-j2>(){}kotlin.Int
+    internal get
+
+  // CHECK:
+  //   Mangled name: I{}j3
+  //   Public signature: /I.j3|2185908363147527217[0]
+  //   Public signature debug description: {}j3
+  internal val j3: Int
+    // CHECK JVM_IR:
+    //   Mangled name: I#<get-j3>(){}kotlin.Int
+    //   Public signature: /I.j3.<get-j3>|3827766923255029220[0]
+    //   Public signature debug description: <get-j3>(){}kotlin.Int
+    internal get
+
+  // CHECK:
+  //   Mangled name: I{}j4
+  //   Public signature: /I.j4|-8411170540719817799[0]
+  //   Public signature debug description: {}j4
+  internal val j4: Int
+    // CHECK JVM_IR:
+    //   Mangled name: I#<get-j4>(){}kotlin.Int
+    //   Public signature: /I.j4.<get-j4>|6634477083645281651[0]
+    //   Public signature debug description: <get-j4>(){}kotlin.Int
+    internal get
+
+  // CHECK:
+  //   Mangled name: I#<init>(){}
+  //   Public signature: /I.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: I#funJ1(){}
+  //   Public signature: /I.funJ1|4805019183111937798[0]
+  //   Public signature debug description: funJ1(){}
+  /* fake */ override fun funJ1(): Unit
+
+  // CHECK:
+  //   Mangled name: I#funJ2(){}
+  //   Public signature: /I.funJ2|1015642222742993127[0]
+  //   Public signature debug description: funJ2(){}
+  protected_and_package /* fake */ override fun funJ2(): Unit
+
+  // CHECK:
+  //   Mangled name: I#funJ4(){}
+  //   Public signature: /I.funJ4|1072240279403770455[0]
+  //   Public signature debug description: funJ4(){}
+  package /* fake */ override fun funJ4(): Unit
+
+}
+
+// MODULE: main
+// FILE: test.kt
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : J {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#funJ1(){}
+  //   Public signature: /A.funJ1|4805019183111937798[0]
+  //   Public signature debug description: funJ1(){}
+  /* fake */ override fun funJ1(): Unit
+
+  // CHECK:
+  //   Mangled name: A#funJ2(){}
+  //   Public signature: /A.funJ2|1015642222742993127[0]
+  //   Public signature debug description: funJ2(){}
+  protected_and_package /* fake */ override fun funJ2(): Unit
+
+  // CHECK:
+  //   Mangled name: A#funJ4(){}
+  //   Public signature: /A.funJ4|1072240279403770455[0]
+  //   Public signature debug description: funJ4(){}
+  package /* fake */ override fun funJ4(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : J2 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#funJ1(){}
+  //   Public signature: /B.funJ1|4805019183111937798[0]
+  //   Public signature debug description: funJ1(){}
+  /* fake */ override fun funJ1(): Unit
+
+  // CHECK:
+  //   Mangled name: B#funJ2(){}
+  //   Public signature: /B.funJ2|1015642222742993127[0]
+  //   Public signature debug description: funJ2(){}
+  protected_and_package /* fake */ override fun funJ2(): Unit
+
+  // CHECK:
+  //   Mangled name: B#funJ4(){}
+  //   Public signature: /B.funJ4|1072240279403770455[0]
+  //   Public signature debug description: funJ4(){}
+  package /* fake */ override fun funJ4(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : J {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#funJ1(){}
+  //   Public signature: /C.funJ1|4805019183111937798[0]
+  //   Public signature debug description: funJ1(){}
+  override fun funJ1(): Unit
+
+  // CHECK:
+  //   Mangled name: C#funJ2(){}
+  //   Public signature: /C.funJ2|1015642222742993127[0]
+  //   Public signature debug description: funJ2(){}
+  override fun funJ2(): Unit
+
+  // CHECK:
+  //   Mangled name: C#funJ4(){}
+  //   Public signature: /C.funJ4|1072240279403770455[0]
+  //   Public signature debug description: funJ4(){}
+  internal override fun funJ4(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : J2 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: D#funJ4(){}
+  //   Public signature: /D.funJ4|1072240279403770455[0]
+  //   Public signature debug description: funJ4(){}
+  package /* fake */ override fun funJ4(): Unit
+
+  // CHECK:
+  //   Mangled name: D#funJ1(){}
+  //   Public signature: /D.funJ1|4805019183111937798[0]
+  //   Public signature debug description: funJ1(){}
+  override fun funJ1(): Unit
+
+  // CHECK:
+  //   Mangled name: D#funJ2(){}
+  //   Public signature: /D.funJ2|1015642222742993127[0]
+  //   Public signature debug description: funJ2(){}
+  override fun funJ2(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+class E : J {
+  // CHECK:
+  //   Mangled name: E{}j1
+  //   Public signature: /E.j1|-928676043469958746[0]
+  //   Public signature debug description: {}j1
+  val j1: Int
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-j1>(){}kotlin.Int
+    //   Public signature: /E.j1.<get-j1>|6087532728828337697[0]
+    //   Public signature debug description: <get-j1>(){}kotlin.Int
+    get
+
+  // CHECK:
+  //   Mangled name: E{}j2
+  //   Public signature: /E.j2|-2140420436483753491[0]
+  //   Public signature debug description: {}j2
+  val j2: Int
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-j2>(){}kotlin.Int
+    //   Public signature: /E.j2.<get-j2>|4162516175041800910[0]
+    //   Public signature debug description: <get-j2>(){}kotlin.Int
+    get
+
+  // CHECK:
+  //   Mangled name: E{}j3
+  //   Public signature: /E.j3|2185908363147527217[0]
+  //   Public signature debug description: {}j3
+  val j3: Int
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-j3>(){}kotlin.Int
+    //   Public signature: /E.j3.<get-j3>|3827766923255029220[0]
+    //   Public signature debug description: <get-j3>(){}kotlin.Int
+    get
+
+  // CHECK:
+  //   Mangled name: E{}j4
+  //   Public signature: /E.j4|-8411170540719817799[0]
+  //   Public signature debug description: {}j4
+  val j4: Int
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-j4>(){}kotlin.Int
+    //   Public signature: /E.j4.<get-j4>|6634477083645281651[0]
+    //   Public signature debug description: <get-j4>(){}kotlin.Int
+    get
+
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: E#funJ1(){}
+  //   Public signature: /E.funJ1|4805019183111937798[0]
+  //   Public signature debug description: funJ1(){}
+  /* fake */ override fun funJ1(): Unit
+
+  // CHECK:
+  //   Mangled name: E#funJ2(){}
+  //   Public signature: /E.funJ2|1015642222742993127[0]
+  //   Public signature debug description: funJ2(){}
+  protected_and_package /* fake */ override fun funJ2(): Unit
+
+  // CHECK:
+  //   Mangled name: E#funJ4(){}
+  //   Public signature: /E.funJ4|1072240279403770455[0]
+  //   Public signature debug description: funJ4(){}
+  package /* fake */ override fun funJ4(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: F
+//   Public signature: /F|null[0]
+open class F : J {
+  // CHECK:
+  //   Mangled name: F{}j1
+  //   Public signature: /F.j1|-928676043469958746[0]
+  //   Public signature debug description: {}j1
+  protected val j1: Int
+    // CHECK JVM_IR:
+    //   Mangled name: F#<get-j1>(){}kotlin.Int
+    //   Public signature: /F.j1.<get-j1>|6087532728828337697[0]
+    //   Public signature debug description: <get-j1>(){}kotlin.Int
+    protected get
+
+  // CHECK:
+  //   Mangled name: F{}j2
+  //   Public signature: /F.j2|-2140420436483753491[0]
+  //   Public signature debug description: {}j2
+  protected val j2: Int
+    // CHECK JVM_IR:
+    //   Mangled name: F#<get-j2>(){}kotlin.Int
+    //   Public signature: /F.j2.<get-j2>|4162516175041800910[0]
+    //   Public signature debug description: <get-j2>(){}kotlin.Int
+    protected get
+
+  // CHECK:
+  //   Mangled name: F{}j3
+  //   Public signature: /F.j3|2185908363147527217[0]
+  //   Public signature debug description: {}j3
+  protected val j3: Int
+    // CHECK JVM_IR:
+    //   Mangled name: F#<get-j3>(){}kotlin.Int
+    //   Public signature: /F.j3.<get-j3>|3827766923255029220[0]
+    //   Public signature debug description: <get-j3>(){}kotlin.Int
+    protected get
+
+  // CHECK:
+  //   Mangled name: F{}j4
+  //   Public signature: /F.j4|-8411170540719817799[0]
+  //   Public signature debug description: {}j4
+  protected var j4: Int
+    // CHECK JVM_IR:
+    //   Mangled name: F#<get-j4>(){}kotlin.Int
+    //   Public signature: /F.j4.<get-j4>|6634477083645281651[0]
+    //   Public signature debug description: <get-j4>(){}kotlin.Int
+    protected get
+    // CHECK:
+    //   Mangled name: F#<set-j4>(kotlin.Int){}
+    //   Public signature: /F.j4.<set-j4>|8664647862219023612[0]
+    //   Public signature debug description: <set-j4>(kotlin.Int){}
+    protected set
+
+  // CHECK:
+  //   Mangled name: F#<init>(){}
+  //   Public signature: /F.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: F#funJ1(){}
+  //   Public signature: /F.funJ1|4805019183111937798[0]
+  //   Public signature debug description: funJ1(){}
+  /* fake */ override fun funJ1(): Unit
+
+  // CHECK:
+  //   Mangled name: F#funJ2(){}
+  //   Public signature: /F.funJ2|1015642222742993127[0]
+  //   Public signature debug description: funJ2(){}
+  protected_and_package /* fake */ override fun funJ2(): Unit
+
+  // CHECK:
+  //   Mangled name: F#funJ4(){}
+  //   Public signature: /F.funJ4|1072240279403770455[0]
+  //   Public signature debug description: funJ4(){}
+  package /* fake */ override fun funJ4(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: G
+//   Public signature: /G|null[0]
+class G : J {
+  // CHECK:
+  //   Mangled name: G{}j1
+  //   Public signature: /G.j1|-928676043469958746[0]
+  //   Public signature debug description: {}j1
+  internal val j1: Int
+    // CHECK JVM_IR:
+    //   Mangled name: G#<get-j1>(){}kotlin.Int
+    //   Public signature: /G.j1.<get-j1>|6087532728828337697[0]
+    //   Public signature debug description: <get-j1>(){}kotlin.Int
+    internal get
+
+  // CHECK:
+  //   Mangled name: G{}j2
+  //   Public signature: /G.j2|-2140420436483753491[0]
+  //   Public signature debug description: {}j2
+  internal val j2: Int
+    // CHECK JVM_IR:
+    //   Mangled name: G#<get-j2>(){}kotlin.Int
+    //   Public signature: /G.j2.<get-j2>|4162516175041800910[0]
+    //   Public signature debug description: <get-j2>(){}kotlin.Int
+    internal get
+
+  // CHECK:
+  //   Mangled name: G{}j3
+  //   Public signature: /G.j3|2185908363147527217[0]
+  //   Public signature debug description: {}j3
+  internal val j3: Int
+    // CHECK JVM_IR:
+    //   Mangled name: G#<get-j3>(){}kotlin.Int
+    //   Public signature: /G.j3.<get-j3>|3827766923255029220[0]
+    //   Public signature debug description: <get-j3>(){}kotlin.Int
+    internal get
+
+  // CHECK:
+  //   Mangled name: G{}j4
+  //   Public signature: /G.j4|-8411170540719817799[0]
+  //   Public signature debug description: {}j4
+  internal var j4: Int
+    // CHECK JVM_IR:
+    //   Mangled name: G#<get-j4>(){}kotlin.Int
+    //   Public signature: /G.j4.<get-j4>|6634477083645281651[0]
+    //   Public signature debug description: <get-j4>(){}kotlin.Int
+    internal get
+    // CHECK:
+    //   Mangled name: G#<set-j4>(kotlin.Int){}
+    //   Public signature: /G.j4.<set-j4>|8664647862219023612[0]
+    //   Public signature debug description: <set-j4>(kotlin.Int){}
+    internal set
+
+  // CHECK:
+  //   Mangled name: G#<init>(){}
+  //   Public signature: /G.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: G#funJ1(){}
+  //   Public signature: /G.funJ1|4805019183111937798[0]
+  //   Public signature debug description: funJ1(){}
+  /* fake */ override fun funJ1(): Unit
+
+  // CHECK:
+  //   Mangled name: G#funJ2(){}
+  //   Public signature: /G.funJ2|1015642222742993127[0]
+  //   Public signature debug description: funJ2(){}
+  protected_and_package /* fake */ override fun funJ2(): Unit
+
+  // CHECK:
+  //   Mangled name: G#funJ4(){}
+  //   Public signature: /G.funJ4|1072240279403770455[0]
+  //   Public signature debug description: funJ4(){}
+  package /* fake */ override fun funJ4(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: H
+//   Public signature: /H|null[0]
+class H : J {
+  // CHECK:
+  //   Mangled name: H{}j1
+  //   Public signature: /H.j1|-928676043469958746[0]
+  //   Public signature debug description: {}j1
+  private val j1: Int
+    // CHECK JVM_IR:
+    //   Mangled name: H#<get-j1>(){}kotlin.Int
+    //   Public signature: /H.j1.<get-j1>|6087532728828337697[0]
+    //   Public signature debug description: <get-j1>(){}kotlin.Int
+    private get
+
+  // CHECK:
+  //   Mangled name: H{}j2
+  //   Public signature: /H.j2|-2140420436483753491[0]
+  //   Public signature debug description: {}j2
+  private val j2: Int
+    // CHECK JVM_IR:
+    //   Mangled name: H#<get-j2>(){}kotlin.Int
+    //   Public signature: /H.j2.<get-j2>|4162516175041800910[0]
+    //   Public signature debug description: <get-j2>(){}kotlin.Int
+    private get
+
+  // CHECK:
+  //   Mangled name: H{}j3
+  //   Public signature: /H.j3|2185908363147527217[0]
+  //   Public signature debug description: {}j3
+  private val j3: Int
+    // CHECK JVM_IR:
+    //   Mangled name: H#<get-j3>(){}kotlin.Int
+    //   Public signature: /H.j3.<get-j3>|3827766923255029220[0]
+    //   Public signature debug description: <get-j3>(){}kotlin.Int
+    private get
+
+  // CHECK:
+  //   Mangled name: H{}j4
+  //   Public signature: /H.j4|-8411170540719817799[0]
+  //   Public signature debug description: {}j4
+  private val j4: Int
+    // CHECK JVM_IR:
+    //   Mangled name: H#<get-j4>(){}kotlin.Int
+    //   Public signature: /H.j4.<get-j4>|6634477083645281651[0]
+    //   Public signature debug description: <get-j4>(){}kotlin.Int
+    private get
+
+  // CHECK:
+  //   Mangled name: H#<init>(){}
+  //   Public signature: /H.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: H#funJ1(){}
+  //   Public signature: /H.funJ1|4805019183111937798[0]
+  //   Public signature debug description: funJ1(){}
+  /* fake */ override fun funJ1(): Unit
+
+  // CHECK:
+  //   Mangled name: H#funJ2(){}
+  //   Public signature: /H.funJ2|1015642222742993127[0]
+  //   Public signature debug description: funJ2(){}
+  protected_and_package /* fake */ override fun funJ2(): Unit
+
+  // CHECK:
+  //   Mangled name: H#funJ4(){}
+  //   Public signature: /H.funJ4|1072240279403770455[0]
+  //   Public signature debug description: funJ4(){}
+  package /* fake */ override fun funJ4(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D;E;F;G;H;I){}
+//   Public signature: /test|-1897371180652527268[0]
+//   Public signature debug description: test(A;B;C;D;E;F;G;H;I){}
+fun test(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I): Unit

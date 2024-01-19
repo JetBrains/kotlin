@@ -1,0 +1,197 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  //   Public signature: /A.foo|3353484914788718511[0]
+  //   Public signature debug description: foo(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  inline fun foo(noinline lambda: Function1<Int, Int>): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo2(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  //   Public signature: /A.foo2|-5242771116800942755[0]
+  //   Public signature debug description: foo2(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  inline fun foo2(crossinline lambda: Function1<Int, Int>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java1 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  //   Public signature: /B.foo|3353484914788718511[0]
+  //   Public signature debug description: foo(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  /* fake */ override inline fun foo(noinline lambda: Function1<Int, Int>): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo2(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  //   Public signature: /B.foo2|-5242771116800942755[0]
+  //   Public signature debug description: foo2(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  /* fake */ override inline fun foo2(crossinline lambda: Function1<Int, Int>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+abstract class C : Java1, Java2 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#foo(java.util.function.Function<kotlin.Int?,kotlin.Int?>?){}
+  //   Public signature: /C.foo|-2027646979113418157[0]
+  //   Public signature debug description: foo(java.util.function.Function<kotlin.Int?,kotlin.Int?>?){}
+  abstract /* fake */ override fun foo(lambda: Function<Int?, Int?>?): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  //   Public signature: /C.foo|3353484914788718511[0]
+  //   Public signature debug description: foo(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  /* fake */ override inline fun foo(noinline lambda: Function1<Int, Int>): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo2(java.util.function.Function<kotlin.Int?,kotlin.Int?>?){}
+  //   Public signature: /C.foo2|6174587955000626338[0]
+  //   Public signature debug description: foo2(java.util.function.Function<kotlin.Int?,kotlin.Int?>?){}
+  abstract /* fake */ override fun foo2(lambda: Function<Int?, Int?>?): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo2(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  //   Public signature: /C.foo2|-5242771116800942755[0]
+  //   Public signature debug description: foo2(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  /* fake */ override inline fun foo2(crossinline lambda: Function1<Int, Int>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java1, Java2 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: D#foo(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  //   Public signature: /D.foo|3353484914788718511[0]
+  //   Public signature debug description: foo(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  /* fake */ override inline fun foo(noinline lambda: Function1<Int, Int>): Unit
+
+  // CHECK:
+  //   Mangled name: D#foo2(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  //   Public signature: /D.foo2|-5242771116800942755[0]
+  //   Public signature debug description: foo2(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  /* fake */ override inline fun foo2(crossinline lambda: Function1<Int, Int>): Unit
+
+  // CHECK:
+  //   Mangled name: D#foo(java.util.function.Function<kotlin.Int,kotlin.Int>?){}
+  //   Public signature: /D.foo|8736849080221256301[0]
+  //   Public signature debug description: foo(java.util.function.Function<kotlin.Int,kotlin.Int>?){}
+  override fun foo(lambda: Function<Int, Int>?): Unit
+
+  // CHECK:
+  //   Mangled name: D#foo2(java.util.function.Function<kotlin.Int,kotlin.Int>?){}
+  //   Public signature: /D.foo2|6738159652500587505[0]
+  //   Public signature debug description: foo2(java.util.function.Function<kotlin.Int,kotlin.Int>?){}
+  override fun foo2(lambda: Function<Int, Int>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+abstract class E : A, Java2 {
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: E#foo(java.util.function.Function<kotlin.Int?,kotlin.Int?>?){}
+  //   Public signature: /E.foo|-2027646979113418157[0]
+  //   Public signature debug description: foo(java.util.function.Function<kotlin.Int?,kotlin.Int?>?){}
+  abstract /* fake */ override fun foo(lambda: Function<Int?, Int?>?): Unit
+
+  // CHECK:
+  //   Mangled name: E#foo(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  //   Public signature: /E.foo|3353484914788718511[0]
+  //   Public signature debug description: foo(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  /* fake */ override inline fun foo(noinline lambda: Function1<Int, Int>): Unit
+
+  // CHECK:
+  //   Mangled name: E#foo2(java.util.function.Function<kotlin.Int?,kotlin.Int?>?){}
+  //   Public signature: /E.foo2|6174587955000626338[0]
+  //   Public signature debug description: foo2(java.util.function.Function<kotlin.Int?,kotlin.Int?>?){}
+  abstract /* fake */ override fun foo2(lambda: Function<Int?, Int?>?): Unit
+
+  // CHECK:
+  //   Mangled name: E#foo2(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  //   Public signature: /E.foo2|-5242771116800942755[0]
+  //   Public signature debug description: foo2(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  /* fake */ override inline fun foo2(crossinline lambda: Function1<Int, Int>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: F
+//   Public signature: /F|null[0]
+class F : A, Java2 {
+  // CHECK:
+  //   Mangled name: F#<init>(){}
+  //   Public signature: /F.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: F#foo(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  //   Public signature: /F.foo|3353484914788718511[0]
+  //   Public signature debug description: foo(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  /* fake */ override inline fun foo(noinline lambda: Function1<Int, Int>): Unit
+
+  // CHECK:
+  //   Mangled name: F#foo2(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  //   Public signature: /F.foo2|-5242771116800942755[0]
+  //   Public signature debug description: foo2(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+  /* fake */ override inline fun foo2(crossinline lambda: Function1<Int, Int>): Unit
+
+  // CHECK:
+  //   Mangled name: F#foo(java.util.function.Function<kotlin.Int,kotlin.Int>?){}
+  //   Public signature: /F.foo|8736849080221256301[0]
+  //   Public signature debug description: foo(java.util.function.Function<kotlin.Int,kotlin.Int>?){}
+  override fun foo(lambda: Function<Int, Int>?): Unit
+
+  // CHECK:
+  //   Mangled name: F#foo2(java.util.function.Function<kotlin.Int,kotlin.Int>?){}
+  //   Public signature: /F.foo2|6738159652500587505[0]
+  //   Public signature debug description: foo2(java.util.function.Function<kotlin.Int,kotlin.Int>?){}
+  override fun foo2(lambda: Function<Int, Int>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(B;C;D;E;F){}
+//   Public signature: /test|-7946478318145452671[0]
+//   Public signature debug description: test(B;C;D;E;F){}
+fun test(b: B, c: C, d: D, e: E, f: F): Unit

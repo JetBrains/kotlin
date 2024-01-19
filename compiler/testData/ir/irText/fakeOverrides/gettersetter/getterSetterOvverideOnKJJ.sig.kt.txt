@@ -1,0 +1,144 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java1 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#getA(){}kotlin.Int
+  //   Public signature: /A.getA|5691569834379572517[0]
+  //   Public signature debug description: getA(){}kotlin.Int
+  /* fake */ override fun getA(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#isB(){}kotlin.Boolean
+  //   Public signature: /A.isB|-4094540604250872999[0]
+  //   Public signature debug description: isB(){}kotlin.Boolean
+  /* fake */ override fun isB(): Boolean
+
+  // CHECK:
+  //   Mangled name: A#setA(kotlin.Int){}
+  //   Public signature: /A.setA|-2839184409429581850[0]
+  //   Public signature debug description: setA(kotlin.Int){}
+  /* fake */ override fun setA(t: Int): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java1 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#setA(kotlin.Int){}
+  //   Public signature: /B.setA|-2839184409429581850[0]
+  //   Public signature debug description: setA(kotlin.Int){}
+  /* fake */ override fun setA(t: Int): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#getA(){}kotlin.Int
+  //   Public signature: /B.getA|5691569834379572517[0]
+  //   Public signature debug description: getA(){}kotlin.Int
+  override fun getA(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#isB(){}kotlin.Boolean
+  //   Public signature: /B.isB|-4094540604250872999[0]
+  //   Public signature debug description: isB(){}kotlin.Boolean
+  override fun isB(): Boolean
+
+  // CHECK:
+  //   Mangled name: B#setB(kotlin.Boolean){}
+  //   Public signature: /B.setB|2046027712198185521[0]
+  //   Public signature debug description: setB(kotlin.Boolean){}
+  fun setB(t: Boolean): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java3 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#getA(){}kotlin.Int
+  //   Public signature: /C.getA|5691569834379572517[0]
+  //   Public signature debug description: getA(){}kotlin.Int
+  /* fake */ override fun getA(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#isB(){}kotlin.Boolean
+  //   Public signature: /C.isB|-4094540604250872999[0]
+  //   Public signature debug description: isB(){}kotlin.Boolean
+  /* fake */ override fun isB(): Boolean
+
+  // CHECK:
+  //   Mangled name: C#setA(kotlin.Int){}
+  //   Public signature: /C.setA|-2839184409429581850[0]
+  //   Public signature debug description: setA(kotlin.Int){}
+  @Override
+  /* fake */ override fun setA(t: Int): Unit
+
+  // CHECK:
+  //   Mangled name: C#setB(kotlin.Boolean){}
+  //   Public signature: /C.setB|2046027712198185521[0]
+  //   Public signature debug description: setB(kotlin.Boolean){}
+  /* fake */ override fun setB(t: Boolean): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java3 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#getA(){}kotlin.Int
+  //   Public signature: /D.getA|5691569834379572517[0]
+  //   Public signature debug description: getA(){}kotlin.Int
+  /* fake */ override fun getA(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#isB(){}kotlin.Boolean
+  //   Public signature: /D.isB|-4094540604250872999[0]
+  //   Public signature debug description: isB(){}kotlin.Boolean
+  /* fake */ override fun isB(): Boolean
+
+  // CHECK:
+  //   Mangled name: D#setA(kotlin.Int){}
+  //   Public signature: /D.setA|-2839184409429581850[0]
+  //   Public signature debug description: setA(kotlin.Int){}
+  override fun setA(t: Int): Unit
+
+  // CHECK:
+  //   Mangled name: D#setB(kotlin.Boolean){}
+  //   Public signature: /D.setB|2046027712198185521[0]
+  //   Public signature debug description: setB(kotlin.Boolean){}
+  override fun setB(t: Boolean): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D){}
+//   Public signature: /test|7656439746344069424[0]
+//   Public signature debug description: test(A;B;C;D){}
+fun test(a: A, b: B, c: C, d: D): Unit

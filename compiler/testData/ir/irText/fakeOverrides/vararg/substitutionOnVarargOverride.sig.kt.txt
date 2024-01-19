@@ -1,0 +1,41 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java1<Int> {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.Array<out|kotlin.Int?>?...){}
+  //   Public signature: /A.foo|-8810383277274806385[0]
+  //   Public signature debug description: foo(kotlin.Array<out|kotlin.Int?>?...){}
+  /* fake */ override fun foo(vararg a: Int?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java1<Any> {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.Array<out|kotlin.Any>...){}
+  //   Public signature: /B.foo|3529166924447590762[0]
+  //   Public signature debug description: foo(kotlin.Array<out|kotlin.Any>...){}
+  override fun foo(vararg a: Any): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B){}
+//   Public signature: /test|-2533013708701322011[0]
+//   Public signature debug description: test(A;B){}
+fun test(a: A, b: B): Unit

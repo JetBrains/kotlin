@@ -1,0 +1,131 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java1 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java2 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java2, Java3 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+class E : A, Java3 {
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #foo@A(kotlin.Int){}
+//   Public signature: /foo|-6186268904683510789[0]
+//   Public signature debug description: foo@A(kotlin.Int){}
+fun A.foo(a: Int): Unit
+
+// CHECK:
+//   Mangled name: #foo@Java2(kotlin.Int){}
+//   Public signature: /foo|-7830593942430915020[0]
+//   Public signature debug description: foo@Java2(kotlin.Int){}
+fun Java2.foo(a: Int): Unit
+
+// CHECK:
+//   Mangled name: #foo@Java3(kotlin.Any){}
+//   Public signature: /foo|1460465834488203451[0]
+//   Public signature debug description: foo@Java3(kotlin.Any){}
+fun Java3.foo(a: Any): Unit
+
+// CHECK:
+//   Mangled name: #test(B;C;D;E){}
+//   Public signature: /test|-2264777070922935105[0]
+//   Public signature debug description: test(B;C;D;E){}
+fun test(b: B, c: C, d: D, e: E): Unit
+
+// CHECK:
+//   Mangled name: @A{}a
+//   Public signature: /a|-112912227296012367[0]
+//   Public signature debug description: @A{}a
+var A.a: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-a>@A(){}kotlin.Int
+  //   Public signature: /a.<get-a>|-5182152274603237009[0]
+  //   Public signature debug description: <get-a>@A(){}kotlin.Int
+  get(): Int
+  // CHECK:
+  //   Mangled name: #<set-a>@A(kotlin.Int){}
+  //   Public signature: /a.<set-a>|6195122733392538441[0]
+  //   Public signature debug description: <set-a>@A(kotlin.Int){}
+  set(value: Int): Unit
+
+// CHECK:
+//   Mangled name: @Java2{}a
+//   Public signature: /a|6282677371177159489[0]
+//   Public signature debug description: @Java2{}a
+var Java2.a: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-a>@Java2(){}kotlin.String
+  //   Public signature: /a.<get-a>|6032259885091372080[0]
+  //   Public signature debug description: <get-a>@Java2(){}kotlin.String
+  get(): String
+  // CHECK:
+  //   Mangled name: #<set-a>@Java2(kotlin.String){}
+  //   Public signature: /a.<set-a>|-9081416691016033755[0]
+  //   Public signature debug description: <set-a>@Java2(kotlin.String){}
+  set(value: String): Unit
+
+// CHECK:
+//   Mangled name: @Java3{}a
+//   Public signature: /a|-2751463959158715061[0]
+//   Public signature debug description: @Java3{}a
+var Java3.a: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-a>@Java3(){}kotlin.String
+  //   Public signature: /a.<get-a>|9187131099263723507[0]
+  //   Public signature debug description: <get-a>@Java3(){}kotlin.String
+  get(): String
+  // CHECK:
+  //   Mangled name: #<set-a>@Java3(kotlin.String){}
+  //   Public signature: /a.<set-a>|8472946520744369884[0]
+  //   Public signature debug description: <set-a>@Java3(kotlin.String){}
+  set(value: String): Unit

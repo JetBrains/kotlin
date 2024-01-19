@@ -1,0 +1,137 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java1 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.Array<out|kotlin.String?>?...){}
+  //   Public signature: /A.foo|8054057531003812461[0]
+  //   Public signature debug description: foo(kotlin.Array<out|kotlin.String?>?...){}
+  /* fake */ override fun foo(vararg a: String?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java1 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.Array<out|kotlin.String?>...){}
+  //   Public signature: /B.foo|-5715392979344006765[0]
+  //   Public signature debug description: foo(kotlin.Array<out|kotlin.String?>...){}
+  override fun foo(vararg a: String?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+abstract class C : Java2 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#foo(kotlin.Array<out|kotlin.Any>...){}
+  //   Public signature: /C.foo|3529166924447590762[0]
+  //   Public signature debug description: foo(kotlin.Array<out|kotlin.Any>...){}
+  abstract /* fake */ override fun foo(vararg a: Any): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java2 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: D#foo(kotlin.Array<out|kotlin.Any>...){}
+  //   Public signature: /D.foo|3529166924447590762[0]
+  //   Public signature debug description: foo(kotlin.Array<out|kotlin.Any>...){}
+  override fun foo(vararg a: Any): Unit
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+abstract class E : KotlinInterface2 {
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: E#foo(kotlin.Array<out|kotlin.Any>...){}
+  //   Public signature: /E.foo|3529166924447590762[0]
+  //   Public signature debug description: foo(kotlin.Array<out|kotlin.Any>...){}
+  abstract /* fake */ override fun foo(vararg a: Any): Unit
+
+}
+
+// CHECK:
+//   Mangled name: F
+//   Public signature: /F|null[0]
+class F : KotlinInterface2 {
+  // CHECK:
+  //   Mangled name: F#<init>(){}
+  //   Public signature: /F.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: F#foo(kotlin.Array<out|kotlin.Any>...){}
+  //   Public signature: /F.foo|3529166924447590762[0]
+  //   Public signature debug description: foo(kotlin.Array<out|kotlin.Any>...){}
+  override fun foo(vararg a: Any): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinInterface
+//   Public signature: /KotlinInterface|null[0]
+interface KotlinInterface {
+  // CHECK:
+  //   Mangled name: KotlinInterface#foo(kotlin.Array<out|kotlin.Any>...){}
+  //   Public signature: /KotlinInterface.foo|3529166924447590762[0]
+  //   Public signature debug description: foo(kotlin.Array<out|kotlin.Any>...){}
+  abstract fun foo(vararg a: Any): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinInterface2
+//   Public signature: /KotlinInterface2|null[0]
+interface KotlinInterface2 : Java2 {
+  // CHECK:
+  //   Mangled name: KotlinInterface2#foo(kotlin.Array<out|kotlin.Any>...){}
+  //   Public signature: /KotlinInterface2.foo|3529166924447590762[0]
+  //   Public signature debug description: foo(kotlin.Array<out|kotlin.Any>...){}
+  abstract /* fake */ override fun foo(vararg a: Any): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D;E;F){}
+//   Public signature: /test|-4390352378432875580[0]
+//   Public signature debug description: test(A;B;C;D;E;F){}
+fun test(a: A, b: B, c: C, d: D, e: E, f: F): Unit
