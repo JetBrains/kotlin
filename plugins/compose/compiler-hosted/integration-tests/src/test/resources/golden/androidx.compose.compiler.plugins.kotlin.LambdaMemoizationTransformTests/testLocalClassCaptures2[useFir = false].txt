@@ -21,8 +21,7 @@ fun Example(z: Int) {
 @NonRestartableComposable
 @Composable
 fun Example(z: Int, %composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Example)<{>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Example)<{>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -30,18 +29,17 @@ fun Example(z: Int, %composer: Composer?, %changed: Int) {
     val y: Int = z
   }
   val lambda = <block>{
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp0_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(z) || %changed and 0b0110 == 0b0100) {
       {
         Foo(1)
       }
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
     tmp0_group
   }
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

@@ -35,12 +35,11 @@ fun test1(x: KnownStable, %composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
       1
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
     tmp0_group
     if (isTraceInProgress()) {
       traceEventEnd()
@@ -59,12 +58,11 @@ fun test2(x: KnownUnstable, %composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+  sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
   val tmp0_group = %composer.cache(%composer.changed(x)) {
     1
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   tmp0_group
   if (isTraceInProgress()) {
     traceEventEnd()
@@ -85,12 +83,11 @@ fun test3(x: Uncertain, %composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 || %dirty and 0b1000 != 0 && %composer.changed(x)) {
       1
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
     tmp0_group
     if (isTraceInProgress()) {
       traceEventEnd()

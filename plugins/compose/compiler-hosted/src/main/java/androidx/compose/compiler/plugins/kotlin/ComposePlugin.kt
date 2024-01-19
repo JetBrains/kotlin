@@ -64,6 +64,10 @@ object ComposeConfiguration {
         CompilerConfigurationKey<String>("Directory to save compose build reports")
     val INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Enable optimization to treat remember as an intrinsic")
+    val NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY =
+        CompilerConfigurationKey<Boolean>(
+            "Enabled optimization to remove groups around non-skipping functions"
+        )
     val SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK = CompilerConfigurationKey<String?>(
         "Version of Kotlin for which version compatibility check should be suppressed"
     )
@@ -133,6 +137,13 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             required = false,
             allowMultipleOccurrences = false
         )
+        val NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_OPTION = CliOption(
+            optionName = "nonSkippingGroupOptimization",
+            valueDescription = "<true|false>",
+            description = "Remove groups around non-skipping composable functions",
+            required = false,
+            allowMultipleOccurrences = false
+        )
         val SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION = CliOption(
             "suppressKotlinVersionCompatibilityCheck",
             "<true|false>",
@@ -179,6 +190,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         METRICS_DESTINATION_OPTION,
         REPORTS_DESTINATION_OPTION,
         INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION,
+        NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_OPTION,
         SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION,
         DECOYS_ENABLED_OPTION,
         STRONG_SKIPPING_OPTION,
@@ -217,6 +229,10 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         )
         INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
+            value == "true"
+        )
+        NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_OPTION -> configuration.put(
+            ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY,
             value == "true"
         )
         SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION -> configuration.put(
@@ -388,6 +404,10 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
                 true
             )
+            val nonSkippingGroupOptimizationEnabled = configuration.get(
+                ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY,
+                false
+            )
             val decoysEnabled = configuration.getBoolean(
                 ComposeConfiguration.DECOYS_ENABLED_KEY,
             )
@@ -436,6 +456,7 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 sourceInformationEnabled = sourceInformationEnabled,
                 traceMarkersEnabled = traceMarkersEnabled,
                 intrinsicRememberEnabled = intrinsicRememberEnabled,
+                nonSkippingGroupOptimizationEnabled = nonSkippingGroupOptimizationEnabled,
                 decoysEnabled = decoysEnabled,
                 metricsDestination = metricsDestination,
                 reportsDestination = reportsDestination,

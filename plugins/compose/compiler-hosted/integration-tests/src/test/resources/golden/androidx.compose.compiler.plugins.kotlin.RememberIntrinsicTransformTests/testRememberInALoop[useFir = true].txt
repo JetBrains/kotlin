@@ -28,23 +28,21 @@ internal object ComposableSingletons%TestKt {
     while (<iterator>.hasNext()) {
       val index = <iterator>.next()
       val i = <block>{
-        %composer.startReplaceableGroup(<>)
-        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
         val tmp0_group = %composer.cache(false) {
           index
         }
-        %composer.endReplaceableGroup()
+        sourceInformationMarkerEnd(%composer)
         tmp0_group
       }
     }
     %composer.endReplaceableGroup()
     val a = <block>{
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp1_group = %composer.cache(false) {
         1
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
       tmp1_group
     }
     if (isTraceInProgress()) {

@@ -28,6 +28,7 @@ import org.junit.runners.model.Statement
 private const val ENV_GENERATE_GOLDEN = "GENERATE_GOLDEN"
 private const val GOLDEN_FILE_TYPE = "txt"
 private fun env(name: String): Boolean = (System.getenv(name) ?: "false").toBoolean()
+private fun envList(name: String): List<String> = (System.getenv(name) ?: "").quotedSplit()
 
 /**
  * GoldenTransformRule
@@ -38,11 +39,14 @@ private fun env(name: String): Boolean = (System.getenv(name) ?: "false").toBool
  *
  * @param pathToGoldens: Path to golden files
  * @param generateGoldens: When true, will generate the golden test file and replace any existing
+ * @param generateGoldenFiles: Generate the golden file if the name (without extension, is in the
+ *          list.
  * @param generateMissingGoldens: When true, will generate a golden file for any that are not found.
  **/
 class GoldenTransformRule(
     private val pathToGoldens: String,
     private val generateGoldens: Boolean = env(ENV_GENERATE_GOLDEN),
+    private val generateGoldenFiles: Set<String> = envList(ENV_GENERATE_GOLDEN).toSet(),
     private val generateMissingGoldens: Boolean = true
 ) : TestRule {
     private lateinit var goldenFile: File
@@ -72,7 +76,10 @@ class GoldenTransformRule(
      * If generateGoldens is true, the golden file will first be generated.
      */
     fun verifyGolden(testInfo: GoldenTransformTestInfo) {
-        if (generateGoldens || (!goldenFile.exists() && generateMissingGoldens)) {
+        if (
+            generateGoldens || (!goldenFile.exists() && generateMissingGoldens) ||
+            goldenFile.nameWithoutExtension in generateGoldenFiles
+        ) {
             saveGolden(testInfo)
         }
 
@@ -90,7 +97,11 @@ class GoldenTransformRule(
         Assert.assertEquals(
             "Transformed source does not match golden file:" +
                 "\n${goldenFile.absolutePath}\n" +
-                "To regenerate golden files, pass GENERATE_GOLDEN=true as an env variable.",
+                "To regenerate golden files, set GENERATE_GOLDEN=\"${
+                    goldenFile.nameWithoutExtension}\" as an env variable (or set it to 'true' " +
+                "to generate all the files).\n" +
+                "The environment variable can be a comma delimited list of names (the quotes are " +
+                "optional)",
             loadedTestInfo.transformed,
             testInfo.transformed
         )
@@ -150,4 +161,35 @@ data class GoldenTransformTestInfo(
             return GoldenTransformTestInfo(split[0].trim(), split[1].trim())
         }
     }
+}
+
+private fun String.quotedSplit(): List<String> {
+    val result = mutableListOf<String>()
+    var current = 0
+
+    while (current < length) {
+        var start = current
+        var end: Int
+        when (get(current)) {
+            ' ', '\n', '\r', ',' -> {
+                current++
+                continue
+            }
+            '"' -> {
+                start = ++current
+                while (current < length && get(current) != '"') {
+                    current++
+                }
+                end = current++
+            }
+            else -> {
+                while (current < length && get(current) != ',') {
+                    current++
+                }
+                end = current++
+            }
+        }
+        result.add(substring(start, end))
+    }
+    return result
 }

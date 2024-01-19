@@ -33,8 +33,7 @@ fun Example(a: Int, %composer: Composer?, %changed: Int) {
     }
     @Composable
     fun Inner(%composer: Composer?, %changed: Int) {
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "C(Inner)<A(a)>:Test.kt")
+      sourceInformationMarkerStart(%composer, <>, "C(Inner)<A(a)>:Test.kt")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
@@ -42,7 +41,7 @@ fun Example(a: Int, %composer: Composer?, %changed: Int) {
       if (isTraceInProgress()) {
         traceEventEnd()
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
     }
     Inner(%composer, 0)
     if (isTraceInProgress()) {

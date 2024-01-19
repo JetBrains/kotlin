@@ -14,25 +14,23 @@ fun Test(foo: Foo): Int =
 
 @Composable
 fun Test(foo: Foo, %composer: Composer?, %changed: Int): Int {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Test)<{>,<Consum...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Test)<{>,<Consum...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
   val tmp0 = Consume(<block>{
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp1_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(foo) || %changed and 0b0110 == 0b0100) {
       {
         foo.value
       }
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
     tmp1_group
   }, %composer, 0)
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   return tmp0
 }

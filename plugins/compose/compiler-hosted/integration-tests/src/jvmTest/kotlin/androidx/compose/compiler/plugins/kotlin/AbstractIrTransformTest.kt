@@ -31,6 +31,7 @@ abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(us
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
         put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, true)
+        put(ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY, true)
     }
 
     @JvmField
@@ -179,6 +180,11 @@ abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(us
                 )
             ) {
                 "${it.groupValues[1]}\"${generateSourceInfo(it.groupValues[2], source)}\")"
+            }
+            .replace(
+                Regex("(rememberComposableLambda[N]?)\\((-?\\d+)")
+            ) {
+                "${it.groupValues[1]}(<>"
             }
             // replace source keys for joinKey calls
             .replace(

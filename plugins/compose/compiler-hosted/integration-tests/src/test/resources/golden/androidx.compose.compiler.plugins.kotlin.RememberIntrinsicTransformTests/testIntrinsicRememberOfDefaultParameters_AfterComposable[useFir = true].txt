@@ -40,12 +40,11 @@ fun Test(a: Int, b: Int, c: Int, %composer: Composer?, %changed: Int, %default: 
     if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
       if (%default and 0b0001 != 0) {
         a = <block>{
-          %composer.startReplaceableGroup(<>)
-          sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+          sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
           val tmp0_group = %composer.cache(false) {
             0
           }
-          %composer.endReplaceableGroup()
+          sourceInformationMarkerEnd(%composer)
           tmp0_group
         }
       }
@@ -55,12 +54,11 @@ fun Test(a: Int, b: Int, c: Int, %composer: Composer?, %changed: Int, %default: 
       }
       if (%default and 0b0100 != 0) {
         c = <block>{
-          %composer.startReplaceableGroup(<>)
-          sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+          sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
           val tmp1_group = %composer.cache(false) {
             0
           }
-          %composer.endReplaceableGroup()
+          sourceInformationMarkerEnd(%composer)
           tmp1_group
         }
       }

@@ -24,8 +24,7 @@ val myProperty: () -> Unit @Composable get() {
 val myProperty: Function0<Unit>
   @Composable @JvmName(name = "getMyProperty")
   get() {
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "C:Test.kt#2487m")
+    sourceInformationMarkerStart(%composer, <>, "C:Test.kt#2487m")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -34,6 +33,6 @@ val myProperty: Function0<Unit>
     if (isTraceInProgress()) {
       traceEventEnd()
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
     return tmp0
   }

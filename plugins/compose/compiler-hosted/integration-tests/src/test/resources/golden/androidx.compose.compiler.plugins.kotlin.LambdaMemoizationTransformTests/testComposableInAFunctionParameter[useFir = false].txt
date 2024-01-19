@@ -19,7 +19,7 @@ fun Test(enabled: Boolean, content: @Composable () -> Unit = {
 @Composable
 fun Test(enabled: Boolean, content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)P(1)<Wrap(c...>:Test.kt")
+  sourceInformation(%composer, "C(Test)P(1)<{>,<Wrap(c...>:Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110
@@ -33,7 +33,7 @@ fun Test(enabled: Boolean, content: Function2<Composer, Int, Unit>?, %composer: 
   }
   if (%dirty and 0b01011011 != 0b00010010 || !%composer.skipping) {
     if (%default and 0b0010 != 0) {
-      content = composableLambda(%composer, <>, true) { %composer: Composer?, %changed: Int ->
+      content = rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
         sourceInformation(%composer, "C<Displa...>:Test.kt")
         if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
           if (isTraceInProgress()) {
@@ -46,7 +46,7 @@ fun Test(enabled: Boolean, content: Function2<Composer, Int, Unit>?, %composer: 
         } else {
           %composer.skipToGroupEnd()
         }
-      }
+      }, %composer, 0b00110110)
     }
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)

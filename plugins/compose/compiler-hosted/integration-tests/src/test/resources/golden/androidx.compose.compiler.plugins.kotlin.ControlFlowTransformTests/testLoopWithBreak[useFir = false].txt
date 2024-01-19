@@ -30,11 +30,12 @@ fun Example(a: Iterator<Int>, b: Iterator<Int>) {
 @NonRestartableComposable
 @Composable
 fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Example)*<A()>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
+  %composer.startReplaceableGroup(<>)
+  sourceInformation(%composer, "*<A()>")
   a@while (a.hasNext()) {
     val x = a.next()
     %composer.startReplaceableGroup(<>)
@@ -50,8 +51,9 @@ fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer?, %changed: 
     %composer.endReplaceableGroup()
     A(%composer, 0)
   }
+  %composer.endReplaceableGroup()
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

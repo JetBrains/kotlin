@@ -28,11 +28,12 @@ fun Example(x: Int) {
 @NonRestartableComposable
 @Composable
 fun Example(x: Int, %composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Example):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
+  %composer.startReplaceableGroup(<>)
+  sourceInformation(%composer, "")
   when {
     %composer.startReplaceableGroup(<>)
     sourceInformation(%composer, "<R(a)>")
@@ -52,8 +53,9 @@ fun Example(x: Int, %composer: Composer?, %changed: Int) {
       NA()
     }
   }
+  %composer.endReplaceableGroup()
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

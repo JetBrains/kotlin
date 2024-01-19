@@ -37,14 +37,13 @@ fun Test(int: Int, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     Example(<block>{
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
         Consumer { it: Int ->
           println(int)
         }
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
       tmp0_group
     }, %composer, 0)
     if (isTraceInProgress()) {
@@ -59,7 +58,6 @@ fun Test(int: Int, %composer: Composer?, %changed: Int) {
 }
 @Composable
 fun Example(consumer: Consumer, %composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "CC(Example):Test.kt")
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerStart(%composer, <>, "CC(Example):Test.kt")
+  sourceInformationMarkerEnd(%composer)
 }

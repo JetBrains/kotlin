@@ -36,12 +36,11 @@ fun Something(param: String, rcvr: Int, %composer: Composer?, %changed: Int) {
     }
     val x = <block>{
       val tmp0 = rcvr
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 or %dirty and 0b01110000 == 0b00100000) {
         tmp0::method
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
       tmp0_group
     }
     if (isTraceInProgress()) {

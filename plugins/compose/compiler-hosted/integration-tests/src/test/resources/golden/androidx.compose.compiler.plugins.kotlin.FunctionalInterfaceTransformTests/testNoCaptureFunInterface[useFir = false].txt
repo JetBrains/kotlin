@@ -47,7 +47,6 @@ fun Test(int: Int, %composer: Composer?, %changed: Int) {
 }
 @Composable
 fun Example(consumer: Consumer, %composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "CC(Example):Test.kt")
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerStart(%composer, <>, "CC(Example):Test.kt")
+  sourceInformationMarkerEnd(%composer)
 }

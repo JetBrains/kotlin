@@ -38,21 +38,19 @@ fun Foo(x: Int) {
 @NonRestartableComposable
 @Composable
 fun Wat(%composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Wat):Test.kt#2487m")
+  sourceInformationMarkerStart(%composer, <>, "C(Wat):Test.kt#2487m")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }
 @NonRestartableComposable
 @Composable
 fun Foo(x: Int, %composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Foo)<Wat()>,<goo()>,<baz()>:Test.kt#2487m")
+  sourceInformationMarkerStart(%composer, <>, "C(Foo)<Wat()>,<goo()>,<baz()>:Test.kt#2487m")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -60,8 +58,7 @@ fun Foo(x: Int, %composer: Composer?, %changed: Int) {
   @NonRestartableComposable
   @Composable
   fun goo(%composer: Composer?, %changed: Int) {
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "C(goo)<Wat()>:Test.kt#2487m")
+    sourceInformationMarkerStart(%composer, <>, "C(goo)<Wat()>:Test.kt#2487m")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -69,14 +66,13 @@ fun Foo(x: Int, %composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventEnd()
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
   }
   class Bar {
     @NonRestartableComposable
     @Composable
     fun baz(%composer: Composer?, %changed: Int) {
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "C(baz)<Wat()>:Test.kt#2487m")
+      sourceInformationMarkerStart(%composer, <>, "C(baz)<Wat()>:Test.kt#2487m")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
@@ -84,7 +80,7 @@ fun Foo(x: Int, %composer: Composer?, %changed: Int) {
       if (isTraceInProgress()) {
         traceEventEnd()
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
     }
   }
   goo(%composer, 0)
@@ -92,5 +88,5 @@ fun Foo(x: Int, %composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

@@ -33,12 +33,11 @@ fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
     if (condition) {
       A(%composer, 0)
       val foo = <block>{
-        %composer.startReplaceableGroup(<>)
-        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
         val tmp0_group = %composer.cache(false) {
           Foo()
         }
-        %composer.endReplaceableGroup()
+        sourceInformationMarkerEnd(%composer)
         tmp0_group
       }
     }

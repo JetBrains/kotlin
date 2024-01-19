@@ -29,16 +29,14 @@ import androidx.compose.runtime.NonRestartableComposable
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun Example(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "CC(Example)<conten...>:Test.kt#2487m")
+  sourceInformationMarkerStart(%composer, <>, "CC(Example)<conten...>:Test.kt#2487m")
   content(%composer, 0b1110 and %changed)
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }
 @NonRestartableComposable
 @Composable
 fun Test(%composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Test)<Exampl...>:Test.kt#2487m")
+  sourceInformationMarkerStart(%composer, <>, "C(Test)<Exampl...>:Test.kt#2487m")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -50,5 +48,5 @@ fun Test(%composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

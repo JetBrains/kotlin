@@ -24,8 +24,7 @@ fun <T> loadResourceInternal(
 
 @Composable
 fun <T> loadResourceInternal(key: String, pendingResource: T?, failedResource: T?, %composer: Composer?, %changed: Int, %default: Int): Boolean {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(loadResourceInternal)P(1,2)<rememb...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(loadResourceInternal)P(1,2)<rememb...>:Test.kt")
   if (%default and 0b0010 != 0) {
     pendingResource = null
   }
@@ -36,18 +35,17 @@ fun <T> loadResourceInternal(key: String, pendingResource: T?, failedResource: T
     traceEventStart(<>, %changed, -1, <>)
   }
   val deferred = <block>{
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp1_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(key) || %changed and 0b0110 == 0b0100 or %changed and 0b01110000 xor 0b00110000 > 32 && %composer.changed(pendingResource) || %changed and 0b00110000 == 0b00100000 or %changed and 0b001110000000 xor 0b000110000000 > 256 && %composer.changed(failedResource) || %changed and 0b000110000000 == 0b000100000000) {
       123
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
     tmp1_group
   }
   val tmp0 = deferred > 10
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   return tmp0
 }

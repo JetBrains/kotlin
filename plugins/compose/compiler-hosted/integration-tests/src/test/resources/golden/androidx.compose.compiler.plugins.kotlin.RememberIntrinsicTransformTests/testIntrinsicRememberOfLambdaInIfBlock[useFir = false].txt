@@ -50,8 +50,7 @@ fun Test(a: Boolean, visible: Boolean, onDismiss: Function0<Unit>, %composer: Co
       val dismissModifier = <block>{
         val tmp1_group = if (visible) {
           m.pointerInput(Unit, <block>{
-            %composer.startReplaceableGroup(<>)
-            sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+            sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
             val tmp0_group = %composer.cache(%dirty and 0b001110000000 == 0b000100000000) {
               {
                 detectTapGestures {
@@ -59,7 +58,7 @@ fun Test(a: Boolean, visible: Boolean, onDismiss: Function0<Unit>, %composer: Co
                 }
               }
             }
-            %composer.endReplaceableGroup()
+            sourceInformationMarkerEnd(%composer)
             tmp0_group
           })
         } else {

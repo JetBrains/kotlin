@@ -24,8 +24,7 @@ open class Foo {
   @NonRestartableComposable
   @Composable
   fun foo(x: Int, %composer: Composer?, %changed: Int, %default: Int) {
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "C(foo):Test.kt")
+    sourceInformationMarkerStart(%composer, <>, "C(foo):Test.kt")
     if (%default and 0b0001 != 0) {
       x = 0
     }
@@ -35,7 +34,7 @@ open class Foo {
     if (isTraceInProgress()) {
       traceEventEnd()
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
   }
   static val %stable: Int = 0
 }
@@ -44,8 +43,7 @@ class Bar : Foo {
   @NonRestartableComposable
   @Composable
   fun Example(%composer: Composer?, %changed: Int) {
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "C(Example)<foo()>:Test.kt")
+    sourceInformationMarkerStart(%composer, <>, "C(Example)<foo()>:Test.kt")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -53,7 +51,7 @@ class Bar : Foo {
     if (isTraceInProgress()) {
       traceEventEnd()
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
   }
   static val %stable: Int = 0
 }
