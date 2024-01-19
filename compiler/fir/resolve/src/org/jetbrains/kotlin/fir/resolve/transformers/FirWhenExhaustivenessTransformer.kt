@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyResolveComponents) : FirTransformer<Any?>() {
     companion object {
@@ -120,9 +119,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         }
 
         val session = bodyResolveComponents.session
-        val subjectType = getSubjectType(session, whenExpression)?.let {
-            session.typeApproximator.approximateToSuperType(it, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference) ?: it
-        } ?: run {
+        val subjectType = getSubjectType(session, whenExpression) ?: run {
             whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH)
             return
         }

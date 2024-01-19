@@ -113,24 +113,6 @@ open class TypeApproximatorConfiguration {
         override val convertToNonRawVersionAfterApproximationInK2: Boolean get() = true
     }
 
-    object IntermediateApproximationToSupertypeAfterCompletionInK2 :
-        AbstractCapturedTypesApproximation(null) {
-        override val integerLiteralConstantType: Boolean get() = true
-        override val integerConstantOperatorType: Boolean get() = true
-        override val intersectionTypesInContravariantPositions: Boolean get() = true
-
-        override val convertToNonRawVersionAfterApproximationInK2: Boolean get() = true
-
-        override fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean {
-            /**
-             * Only approximate captured types when they contain a raw supertype.
-             * This is an awful hack required to keep K1 compatibility.
-             * See [convertToNonRawVersionAfterApproximationInK2].
-             */
-            return type.captureStatus(ctx) == CaptureStatus.FROM_EXPRESSION && with(ctx) { type.hasRawSuperType() }
-        }
-    }
-
     object TypeArgumentApproximation : AbstractCapturedTypesApproximation(null) {
         override val integerLiteralConstantType: Boolean get() = true
         override val integerConstantOperatorType: Boolean get() = true

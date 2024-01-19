@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.resolve.AnnotationTargetList
 import org.jetbrains.kotlin.resolve.AnnotationTargetLists
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.util.ImplementationStatus
@@ -815,13 +814,6 @@ fun ConeKotlinType.fullyExpandedClassId(session: FirSession): ClassId? {
 fun ConeKotlinType.hasDiagnosticKind(kind: DiagnosticKind): Boolean {
     contract { returns(true) implies (this@hasDiagnosticKind is ConeErrorType) }
     return this is ConeErrorType && (diagnostic as? ConeSimpleDiagnostic)?.kind == kind
-}
-
-fun ConeKotlinType.finalApproximationOrSelf(context: CheckerContext): ConeKotlinType {
-    return context.session.typeApproximator.approximateToSuperType(
-        this,
-        TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-    ) ?: this
 }
 
 fun FirResolvedQualifier.isStandalone(

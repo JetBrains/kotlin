@@ -495,8 +495,7 @@ class FirCallCompletionResultsWriterTransformer(
         val initialType = candidate.substitutor.substituteOrSelf(type)
         val substitutedType = finallySubstituteOrNull(initialType)
         val finalType = typeApproximator.approximateToSuperType(
-            type = substitutedType ?: initialType,
-            TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2,
+            type = substitutedType ?: initialType, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference,
         ) ?: substitutedType
 
         // This is probably a temporary hack, but it seems necessary because elvis has that attribute and it may leak further like
@@ -969,7 +968,7 @@ class FirCallCompletionResultsWriterTransformer(
         arrayLiteral.transformChildren(this, expectedArrayElementType?.toExpectedType())
         val arrayElementType =
             session.typeContext.commonSuperTypeOrNull(arrayLiteral.arguments.map { it.resolvedType })?.let {
-                typeApproximator.approximateToSuperType(it, TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2)
+                typeApproximator.approximateToSuperType(it, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference)
                     ?: it
             } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.type
         arrayLiteral.resultType =

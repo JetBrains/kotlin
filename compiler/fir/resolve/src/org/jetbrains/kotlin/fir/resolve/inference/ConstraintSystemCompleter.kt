@@ -416,21 +416,8 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             variableWithConstraints,
             TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
         )
-
-        val resultTypeForOnlyInputTypes =
-            if (with(ConeConstraintSystemUtilContext) { variableWithConstraints.typeVariable.hasOnlyInputTypesAttribute() }) {
-                inferenceComponents.resultTypeResolver.findResultType(
-                    c,
-                    variableWithConstraints,
-                    TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN,
-                    isForOnlyInputTypes = true
-                )
-            } else {
-                resultType
-            }
-
         val variable = variableWithConstraints.typeVariable
-        c.fixVariable(variable, resultType, ConeFixVariableConstraintPosition(variable), resultTypeForOnlyInputTypes)
+        c.fixVariable(variable, resultType, ConeFixVariableConstraintPosition(variable))
     }
 
     companion object {

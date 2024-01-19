@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Inv<T : CharSequence>
 
 fun <E : CharSequence> id(i: Inv<E>): Inv<E> = i

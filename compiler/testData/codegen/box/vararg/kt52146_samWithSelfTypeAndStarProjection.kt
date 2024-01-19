@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // JVM_TARGET: 1.8
-// JVM_ABI_K1_K2_DIFF: KT-64954
 // FILE: J.java
 
 import java.util.function.*;

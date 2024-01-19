@@ -425,26 +425,8 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
         }
 
         require(newArgument is ConeCapturedType)
-
-        newArgument.constructor.supertypes = if (status == CaptureStatus.FROM_EXPRESSION) {
-            // By intersecting the bounds and the projection type, we eliminate "redundant" super types.
-            // Redundant is defined by the implementation of the type intersector,
-            // e.g., at the moment of writing the intersection of Foo<String!> and Foo<String> was Foo<String>.
-            // Note, it's not just an optimization, but actually influences behavior because the nullability can change like in the
-            // example above.
-            // We only run it for status == CaptureStatus.FROM_EXPRESSION to prevent infinite loops with recursive types because
-            // during intersection AbstractTypeChecker is called which in turn can capture super types with status
-            // CaptureStatus.FOR_SUBTYPING.
-            val intersectedUpperBounds = intersectTypes(upperBounds)
-            if (intersectedUpperBounds is ConeIntersectionType) {
-                intersectedUpperBounds.intersectedTypes.toList()
-            } else {
-                listOf(intersectedUpperBounds)
-            }
-        } else {
-            @Suppress("UNCHECKED_CAST")
-            upperBounds as List<ConeKotlinType>
-        }
+        @Suppress("UNCHECKED_CAST")
+        newArgument.constructor.supertypes = upperBounds as List<ConeKotlinType>
     }
     return newArguments
 }

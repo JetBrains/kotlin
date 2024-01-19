@@ -229,11 +229,6 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun CapturedTypeMarker.typeParameter(): TypeParameterMarker?
     fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker
 
-    /**
-     * Only for K2.
-     */
-    fun CapturedTypeMarker.hasRawSuperType(): Boolean
-
     fun TypeVariableMarker.defaultType(): SimpleTypeMarker
 
     fun createTypeWithAlternativeForIntersectionResult(

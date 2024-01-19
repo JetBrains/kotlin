@@ -3,7 +3,6 @@
 // SAM_CONVERSIONS: CLASS
 //   ^ test checks reflection for synthetic classes
 // MODULE: lib
-// JVM_ABI_K1_K2_DIFF: KT-64954
 // FILE: Promise.java
 import org.jetbrains.annotations.NotNull;
 

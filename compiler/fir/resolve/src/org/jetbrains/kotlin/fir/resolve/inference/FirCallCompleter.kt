@@ -389,7 +389,7 @@ class FirCallCompleter(
         }
 
         return session.typeApproximator.approximateToSuperType(
-            this, TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2
+            this, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
         ) ?: this
     }
 

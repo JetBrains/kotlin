@@ -17936,12 +17936,6 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
-                @TestMetadata("capturingOfDnn.kt")
-                public void testCapturingOfDnn() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturingOfDnn.kt");
-                }
-
-                @Test
                 @TestMetadata("differentCapturedTypes.kt")
                 public void testDifferentCapturedTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/differentCapturedTypes.kt");
@@ -31484,12 +31478,6 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             @TestMetadata("DoubleInner.kt")
             public void testDoubleInner() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sealed/DoubleInner.kt");
-            }
-
-            @Test
-            @TestMetadata("ExhaustiveOnCaptured.kt")
-            public void testExhaustiveOnCaptured() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/sealed/ExhaustiveOnCaptured.kt");
             }
 
             @Test
