@@ -51,8 +51,8 @@ interface TestVersions {
         const val AGP_80 = "8.0.2"
         const val AGP_81 = "8.1.3"
         const val AGP_82 = "8.2.0"
-        const val AGP_83 = "8.3.0-beta01"
-        const val AGP_84 = "8.4.0-alpha03"
+        const val AGP_83 = "8.3.0-beta02"
+        const val AGP_84 = "8.4.0-alpha04"
 
         const val MIN_SUPPORTED = AGP_71 // KotlinAndroidPlugin.minimalSupportedAgpVersion
         const val MAX_SUPPORTED = AGP_82 // Update once Gradle MAX_SUPPORTED version will be bumped
