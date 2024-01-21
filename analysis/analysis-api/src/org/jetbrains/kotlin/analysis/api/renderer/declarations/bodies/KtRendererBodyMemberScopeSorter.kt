@@ -14,7 +14,7 @@ public interface KtRendererBodyMemberScopeSorter {
     context(KtAnalysisSession)
     public fun sortMembers(members: List<KtDeclarationSymbol>, owner: KtSymbolWithMembers): List<KtDeclarationSymbol>
 
-    public object ENUM_ENTRIES_AT_BEGINING : KtRendererBodyMemberScopeSorter {
+    public object ENUM_ENTRIES_AT_BEGINNING : KtRendererBodyMemberScopeSorter {
         context(KtAnalysisSession)
         override fun sortMembers(members: List<KtDeclarationSymbol>, owner: KtSymbolWithMembers): List<KtDeclarationSymbol> {
             return members.sortedBy { it !is KtEnumEntrySymbol }

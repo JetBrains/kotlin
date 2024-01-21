@@ -35,7 +35,7 @@ public object KtDeclarationRendererForSource {
         modifiersRenderer = KtDeclarationModifiersRendererForSource.NO_IMPLICIT_MODIFIERS
         classifierBodyRenderer = KtClassifierBodyRenderer.NO_BODY
         bodyMemberScopeProvider = KtRendererBodyMemberScopeProvider.ALL_DECLARED
-        bodyMemberScopeSorter = KtRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINING
+        bodyMemberScopeSorter = KtRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINNING
 
         superTypeRenderer = KtSuperTypeRenderer.WITH_OUT_APPROXIMATION
         superTypeListRenderer = KtSuperTypeListRenderer.AS_LIST

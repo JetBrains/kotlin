@@ -42,9 +42,9 @@ private class AdaptiveClassifierNamePolicy(private val ambiguousNames: List<Name
             classifier is TypeParameterDescriptor -> {
                 val name = classifier.name
                 val typeParametersWithSameName = renderedParameters.getOrPut(name) { LinkedHashSet() }
-                val isFirstOccurence = typeParametersWithSameName.add(classifier)
+                val isFirstOccurrence = typeParametersWithSameName.add(classifier)
                 val index = typeParametersWithSameName.indexOf(classifier)
-                renderer.renderAmbiguousTypeParameter(classifier, index + 1, isFirstOccurence)
+                renderer.renderAmbiguousTypeParameter(classifier, index + 1, isFirstOccurrence)
             }
             else -> error("Unexpected classifier: ${classifier::class.java}")
         }
@@ -55,11 +55,11 @@ private class AdaptiveClassifierNamePolicy(private val ambiguousNames: List<Name
     }
 
     private fun DescriptorRenderer.renderAmbiguousTypeParameter(
-        typeParameter: TypeParameterDescriptor, index: Int, firstOccurence: Boolean
+        typeParameter: TypeParameterDescriptor, index: Int, firstOccurrence: Boolean
     ) = buildString {
         append(typeParameter.name)
         append("#$index")
-        if (firstOccurence) {
+        if (firstOccurrence) {
             append(renderMessage(" (type parameter of ${renderFqName(typeParameter.containingDeclaration.fqNameUnsafe)})"))
         }
     }

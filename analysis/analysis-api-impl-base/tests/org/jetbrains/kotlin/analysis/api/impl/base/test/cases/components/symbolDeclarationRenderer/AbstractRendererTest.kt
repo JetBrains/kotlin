@@ -25,7 +25,7 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
             bodyMemberScopeSorter = object : KtRendererBodyMemberScopeSorter {
                 context(KtAnalysisSession)
                 override fun sortMembers(members: List<KtDeclarationSymbol>, owner: KtSymbolWithMembers): List<KtDeclarationSymbol> {
-                    return KtRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINING
+                    return KtRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINNING
                         .sortMembers(members, owner)
                         .sortedBy { it.render() }
                 }

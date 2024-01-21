@@ -218,7 +218,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
 
         fun run() {
             val enumEntries = transformEnumBody()
-            // These fields are inserted into begining to be initialized before companion object
+            // These fields are inserted into beginning to be initialized before companion object
             // The values field should be initialized first, so we need to insert entries field first
             defineEntriesField()
             defineValuesField(enumEntries)
