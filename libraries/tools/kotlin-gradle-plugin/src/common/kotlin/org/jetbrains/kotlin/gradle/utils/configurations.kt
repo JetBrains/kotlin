@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
+import org.gradle.util.GradleVersion
 
 const val COMPILE_ONLY = "compileOnly"
 const val COMPILE = "compile"
@@ -16,6 +18,7 @@ const val API = "api"
 const val RUNTIME_ONLY = "runtimeOnly"
 const val RUNTIME = "runtime"
 internal const val INTRANSITIVE = "intransitive"
+private val gradleVersionWithNewApi = GradleVersion.version("8.4")
 
 internal fun ConfigurationContainer.createResolvable(name: String): Configuration = create(name).apply {
     isCanBeConsumed = false
@@ -62,10 +65,19 @@ internal fun ConfigurationContainer.findConsumable(name: String): Configuration?
 internal fun ConfigurationContainer.maybeCreateConsumable(name: String): Configuration =
     findConsumable(name) ?: createConsumable(name)
 
-internal fun ConfigurationContainer.createDependencyScope(name: String) = create(name).apply {
-    isCanBeResolved = false
-    isCanBeConsumed = false
-}
+internal fun ConfigurationContainer.createDependencyScope(
+    name: String,
+    configuration: Configuration.() -> Unit = {}
+): NamedDomainObjectProvider<out Configuration> =
+    if (GradleVersion.current() >= gradleVersionWithNewApi) {
+        dependencyScope(name, configuration)
+    } else {
+        register(name) {
+            it.isCanBeResolved = false
+            it.isCanBeConsumed = false
+            configuration(it)
+        }
+    }
 
 internal fun ConfigurationContainer.findDependencyScope(name: String): Configuration? = findByName(name)?.apply {
     if (isCanBeResolved && isCanBeConsumed) {
@@ -77,5 +89,7 @@ internal fun ConfigurationContainer.findDependencyScope(name: String): Configura
     }
 }
 
-internal fun ConfigurationContainer.maybeCreateDependencyScope(name: String): Configuration =
-    findDependencyScope(name) ?: createDependencyScope(name)
+internal fun ConfigurationContainer.maybeCreateDependencyScope(
+    name: String,
+    configurationOnCreate: Configuration.() -> Unit = {}
+): Configuration = findDependencyScope(name) ?: createDependencyScope(name, configurationOnCreate).get()

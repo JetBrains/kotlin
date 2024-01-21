@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
-import org.jetbrains.kotlin.gradle.utils.createDependencyScope
-import org.jetbrains.kotlin.gradle.utils.findDependencyScope
+import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 internal fun KotlinTargetSoftwareComponent(
@@ -34,20 +33,19 @@ internal fun KotlinTargetSoftwareComponent(
             /* Explicitly typing 'Project' to avoid smart cast from 'target.project as ProjectInternal' */
             val project: Project = target.project
             val publishedConfigurationName = publishedConfigurationName(kotlinUsageContext.name)
-            val configuration = project.configurations.findDependencyScope(publishedConfigurationName)
-                ?: project.configurations.createDependencyScope(publishedConfigurationName).also { publishedConfiguration ->
-                    publishedConfiguration.isVisible = false
-                    publishedConfiguration.extendsFrom(project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName))
-                    publishedConfiguration.artifacts.addAll(kotlinUsageContext.artifacts)
-                    // KT-64789: workaround for missing 'org.gradle.libraryelements' attribute on the kotlinUsageContext returned keys Set
-                    // So far I don't know the reason why it appears only on the second call to `keySet()`
-                    // Test failing without it - KotlinAndroidMppIT#testMppAndroidLibFlavorsPublication
-                    kotlinUsageContext.attributes.keySet()
-                    kotlinUsageContext.copyAttributesTo(
-                        project,
-                        dest = publishedConfiguration
-                    )
-                }
+            val configuration = project.configurations.maybeCreateDependencyScope(publishedConfigurationName) {
+                isVisible = false
+                extendsFrom(project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName))
+                artifacts.addAll(kotlinUsageContext.artifacts)
+                // KT-64789: workaround for missing 'org.gradle.libraryelements' attribute on the kotlinUsageContext returned keys Set
+                // So far I don't know the reason why it appears only on the second call to `keySet()`
+                // Test failing without it - KotlinAndroidMppIT#testMppAndroidLibFlavorsPublication
+                kotlinUsageContext.attributes.keySet()
+                kotlinUsageContext.copyAttributesTo(
+                    project,
+                    dest = this
+                )
+            }
 
             adhocVariant.addVariantsFromConfiguration(configuration) { configurationVariantDetails ->
                 val mavenScope = kotlinUsageContext.mavenScope

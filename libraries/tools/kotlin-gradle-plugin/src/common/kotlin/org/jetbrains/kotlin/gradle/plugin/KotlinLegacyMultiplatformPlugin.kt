@@ -54,8 +54,8 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
     override fun apply(project: Project) {
         warnAboutKotlin12xMppDeprecation(project)
 
-        val implementConfig = project.configurations.createDependencyScope(IMPLEMENT_CONFIG_NAME)
-        val expectedByConfig = project.configurations.createDependencyScope(EXPECTED_BY_CONFIG_NAME)
+        val implementConfig = project.configurations.createDependencyScope(IMPLEMENT_CONFIG_NAME).get()
+        val expectedByConfig = project.configurations.createDependencyScope(EXPECTED_BY_CONFIG_NAME).get()
 
         implementConfig.dependencies.whenObjectAdded {
             if (!implementConfigurationIsUsed) {
