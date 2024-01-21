@@ -26,6 +26,7 @@ fun Logger.debugKt65113(msg: String) {
 }
 
 class ProcessStreams(
+    private val logger: Logger,
     process: Process,
     stdin: InputStream,
     stdout: OutputStream,
@@ -42,17 +43,25 @@ class ProcessStreams(
     }
     private val stdout = jobLauncher {
         stdout.apply {
+            logger.debugKt65113("Will copy from process.inputStream to stdout")
             copyStreams(process.inputStream, this)
+            logger.debugKt65113("Will close stdout")
             close()
         }
+        logger.debugKt65113("Will close process.inputStream")
         process.inputStream.close()
+        logger.debugKt65113("Finished stdout job")
     }
     private val stderr = jobLauncher {
         stderr.apply {
+            logger.debugKt65113("Will copy from process.errorStream to stderr")
             copyStreams(process.errorStream, this)
+            logger.debugKt65113("Will close stderr")
             close()
         }
+        logger.debugKt65113("Will close process.errorStream")
         process.errorStream.close()
+        logger.debugKt65113("Finished stderr job")
     }
 
     private fun copyStreams(from: InputStream, to: OutputStream) {
@@ -65,7 +74,7 @@ class ProcessStreams(
         }
     }
 
-    suspend fun drain(logger: Logger) {
+    suspend fun drain() {
         // First finish passing input into the process.
         logger.debugKt65113("Will join stdin")
         stdin.join()
@@ -86,11 +95,13 @@ class ProcessStreams(
 }
 
 fun CoroutineScope.pumpStreams(
+    logger: Logger,
     process: Process,
     stdin: InputStream,
     stdout: OutputStream,
     stderr: OutputStream,
 ) = ProcessStreams(
+    logger,
     process,
     stdin,
     stdout,
@@ -167,7 +178,7 @@ class HostExecutor : Executor {
             directory(workingDirectory)
             environment().putAll(request.environment)
         }.scoped(logger) { process ->
-            val streams = pumpStreams(process, request.stdin, request.stdout, request.stderr)
+            val streams = pumpStreams(logger, process, request.stdin, request.stdout, request.stderr)
             val (isTimeout, duration) = measureTimedValue {
                 !process.waitFor(request.timeout.inWholeMilliseconds, TimeUnit.MILLISECONDS)
             }
@@ -175,11 +186,11 @@ class HostExecutor : Executor {
                 logger.warning("Timeout running $commandLine in $duration")
                 streams.cancel()
                 process.destroyForcibly()
-                streams.drain(logger)
+                streams.drain()
                 ExecuteResponse(null, duration)
             } else {
                 logger.info("Finished executing $commandLine in $duration exit code ${process.exitValue()}")
-                streams.drain(logger)
+                streams.drain()
                 ExecuteResponse(process.exitValue(), duration)
             }
         }
