@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedFilter
@@ -62,7 +62,13 @@ class ExportModelGenerator(val context: WasmBackendContext) {
 
             override fun visitClass(declaration: IrClass) {
                 declaration.superTypes.forEach(::visitType)
-                declaration.acceptChildrenVoid(this)
+                declaration.typeParameters.forEach(::visitTypeParameter)
+                declaration.declarations.forEach { it.acceptVoid(this) }
+            }
+
+            override fun visitProperty(declaration: IrProperty) {
+                declaration.backingField?.let(::visitField)
+                declaration.getter?.let(::visitFunction)
             }
 
             override fun visitField(declaration: IrField) {
@@ -306,8 +312,10 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             )
         }
 
+        val parentFqName = declaration.getFqNameWithJsNameWhenAvailable(shouldIncludePackage = true).parentOrNull()
+
         return ExportedNamespace(
-            name = "$NOT_EXPORTED_NAMESPACE${declaration.packageFqName?.asString()?.takeIf { it.isNotEmpty() }?.let { ".$it" }.orEmpty()}",
+            name = "$NOT_EXPORTED_NAMESPACE${parentFqName?.asString()?.takeIf { it.isNotEmpty() }?.let { ".$it" }.orEmpty()}",
             declarations = listOf(exportedDeclaration),
             isPrivate = true
         )

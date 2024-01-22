@@ -3,8 +3,29 @@
 // MODULE: main
 
 // FILE: first.kt
+external object MentionedParent {
+    val value: String
+    interface Nested {
+        val value: Int
+    }
+}
+
+external class Parent {
+    object OneMoreLayer {
+        interface MentionedNested {
+            val value: MentionedParent
+        }
+    }
+    companion object {
+        class AnotherMentionedNested {
+            val value: String
+        }
+    }
+}
+
 external interface Bar {
-    val bar: Int
+    val bar: Parent.OneMoreLayer.MentionedNested
+    val oneMore: Parent.Companion.AnotherMentionedNested
 }
 
 external interface Baz<T: JsAny?> : Bar {
@@ -18,8 +39,9 @@ import Bar
 import Baz
 
 external object Foo : Baz<JsString> {
-    override val bar: Int
+    override val bar: Parent.OneMoreLayer.MentionedNested
     override val baz: JsString
+    override val oneMore: Parent.Companion.AnotherMentionedNested
 }
 
 external abstract class BaseResult<T: JsAny>(foo: Foo)
