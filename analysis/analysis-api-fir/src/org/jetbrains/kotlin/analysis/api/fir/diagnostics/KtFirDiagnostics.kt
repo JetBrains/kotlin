@@ -2517,6 +2517,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val kind: String
     }
 
+    interface SafeCallableReferenceCall : KtFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = SafeCallableReferenceCall::class
+    }
+
     interface LateinitIntrinsicCallOnNonLiteral : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = LateinitIntrinsicCallOnNonLiteral::class
     }

@@ -55,7 +55,7 @@ fun rain() {
     a.b.c::foo
 
     <!EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>a.b.c<!>?::class
-    a.b.c?::foo
+    <!SAFE_CALLABLE_REFERENCE_CALL!>a.b.c?::foo<!>
 
     <!EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>a.b<!UNNECESSARY_SAFE_CALL!>?.<!>c<!>::class
     a.b<!UNNECESSARY_SAFE_CALL!>?.<!>c::<!UNSAFE_CALL!>foo<!>
@@ -70,5 +70,5 @@ fun rain() {
     a.b.maybeC::<!UNSAFE_CALL!>foo<!>
 
     <!EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>a.b.maybeC<!>?::class
-    a.b.maybeC?::<!UNSAFE_CALL!>foo<!>
+    <!SAFE_CALLABLE_REFERENCE_CALL!>a.b.maybeC?::<!UNSAFE_CALL!>foo<!><!>
 }

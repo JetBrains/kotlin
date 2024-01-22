@@ -646,6 +646,7 @@ object FirErrors {
     val LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING: KtDiagnosticFactory0 by warning0<KtProperty>(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)
     val LOCAL_VARIABLE_WITH_TYPE_PARAMETERS: KtDiagnosticFactory0 by error0<KtProperty>(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)
     val EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS: KtDiagnosticFactory1<String> by error1<KtExpression, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val SAFE_CALLABLE_REFERENCE_CALL: KtDiagnosticFactory0 by error0<KtExpression>()
     val LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL: KtDiagnosticFactory0 by error0<PsiElement>()
     val LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT: KtDiagnosticFactory0 by error0<PsiElement>()
     val LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION: KtDiagnosticFactory0 by error0<PsiElement>()

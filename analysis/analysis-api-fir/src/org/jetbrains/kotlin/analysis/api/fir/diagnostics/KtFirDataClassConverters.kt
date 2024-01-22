@@ -3580,6 +3580,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.SAFE_CALLABLE_REFERENCE_CALL) { firDiagnostic ->
+        SafeCallableReferenceCallImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL) { firDiagnostic ->
         LateinitIntrinsicCallOnNonLiteralImpl(
             firDiagnostic as KtPsiDiagnostic,

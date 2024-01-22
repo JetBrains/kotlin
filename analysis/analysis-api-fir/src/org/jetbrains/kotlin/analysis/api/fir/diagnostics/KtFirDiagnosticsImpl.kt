@@ -3029,6 +3029,11 @@ internal class ExplicitTypeArgumentsInPropertyAccessImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.ExplicitTypeArgumentsInPropertyAccess
 
+internal class SafeCallableReferenceCallImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.SafeCallableReferenceCall
+
 internal class LateinitIntrinsicCallOnNonLiteralImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
