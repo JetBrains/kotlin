@@ -828,6 +828,11 @@ public class KtPsiUtil {
         PsiElement current = PsiTreeUtil.getStubOrPsiParent(declaration);
         boolean isNonLocalCallable = isNonLocalCallable(declaration);
         while (current != null) {
+            if (current instanceof PsiFile) {
+                // Avoid directory traversal
+                return null;
+            }
+
             PsiElement parent = PsiTreeUtil.getStubOrPsiParent(current);
             if (parent instanceof KtScript) return null;
             if (current instanceof KtAnonymousInitializer) {
