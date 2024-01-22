@@ -5,6 +5,8 @@ gradlePlugin-kotlin = "1.9.22"
 gradlePlugin-android = "4.2.2"
 gradlePlugin-android-dokkatoo = "8.0.2"
 gradlePlugin-dokka = "1.9.10"
+gradlePlugin-gradle-customUserData = "1.12"
+gradlePlugin-gradle-enterprise = "3.14.1"
 
 kotlinx-coroutines = "1.7.3"
 kotlinx-collections-immutable = "0.3.6"
@@ -63,6 +65,7 @@ eclipse-jgit = "5.13.2.202306221912-r" # jgit 6.X requires Java 11 to run
 
 [libraries]
 
+#### Kotlin Libs ####
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm", version.ref = "kotlinx-collections-immutable" }
 kotlinx-serialization-bom = { module = "org.jetbrains.kotlinx:kotlinx-serialization-bom", version.ref = "kotlinx-serialization" }
@@ -83,7 +86,10 @@ gradlePlugin-android-dokkatoo = { module = "com.android.tools.build:gradle", ver
 gradlePlugin-androidApi-dokkatoo = { module = "com.android.tools.build:gradle-api", version.ref = "gradlePlugin-android-dokkatoo" }
 gradlePlugin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "gradlePlugin-dokka" }
 gradlePlugin-shadow = { module = "com.github.johnrengelman:shadow", version.ref = "gradlePlugin-shadow" }
-gradlePlugin-gradlePublish= { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradlePlugin-gradlePluginPublish" }
+gradlePlugin-gradlePublish = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradlePlugin-gradlePluginPublish" }
+
+gradlePlugin-gradle-customUserData = { module = "com.gradle:common-custom-user-data-gradle-plugin", version.ref = "gradlePlugin-gradle-customUserData" }
+gradlePlugin-gradle-enterprise = { module = "com.gradle:gradle-enterprise-gradle-plugin", version.ref = "gradlePlugin-gradle-enterprise" }
 
 #### Kotlin analysis ####
 kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-compiler" }
