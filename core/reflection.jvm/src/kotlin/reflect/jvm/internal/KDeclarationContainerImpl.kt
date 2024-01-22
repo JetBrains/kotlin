@@ -263,7 +263,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             result.add(Integer.TYPE)
         }
 
-        if (isConstructor) result.add(DEFAULT_CONSTRUCTOR_MARKER) else result.add(Any::class.java)
+        result.add(if (isConstructor) DEFAULT_CONSTRUCTOR_MARKER else Any::class.java)
     }
 
     private class FunctionJvmDescriptor(val parameters: List<Class<*>>, val returnType: Class<*>?)
