@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirLazyResolveContractChecker
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
@@ -17,9 +16,6 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 import java.util.concurrent.locks.ReentrantLock
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
 /**
  * Keyed locks provider.
@@ -85,7 +81,9 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         phase: FirResolvePhase,
         action: () -> Unit,
     ) {
-        withLock(target, phase, updatePhase = true, action)
+        checker.lazyResolveToPhaseInside(phase) {
+            target.withLock(toPhase = phase, updatePhase = true, action = action)
+        }
     }
 
     /**
@@ -101,17 +99,8 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         phase: FirResolvePhase,
         action: () -> Unit,
     ) {
-        withLock(target, phase, updatePhase = false, action)
-    }
-
-    private inline fun withLock(
-        target: FirElementWithResolveState,
-        phase: FirResolvePhase,
-        updatePhase: Boolean,
-        action: () -> Unit,
-    ) {
         checker.lazyResolveToPhaseInside(phase) {
-            target.withCriticalSection(toPhase = phase, updatePhase = updatePhase, action = action)
+            target.withLock(toPhase = phase, updatePhase = false, action = action)
         }
     }
 
@@ -121,7 +110,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         action: () -> Unit,
     ) {
         checker.lazyResolveToPhaseInside(phase, isJumpingPhase = true) {
-            target.withCriticalSection(toPhase = phase, updatePhase = true, action = action)
+            target.withLock(toPhase = phase, updatePhase = true, action = action)
         }
     }
 
@@ -145,7 +134,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
      *  - If some other thread tries to resolve current [FirElementWithResolveState], it changes `resolveState` and puts the barrier there. Then it awaits on it until the initial thread which hold the lock finishes its job.
      *  - This way, no barrier is used in a case when no contention arise.
      */
-    private inline fun FirElementWithResolveState.withCriticalSection(
+    private inline fun FirElementWithResolveState.withLock(
         toPhase: FirResolvePhase,
         updatePhase: Boolean,
         action: () -> Unit,
@@ -223,7 +212,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
                 stateSnapshotAfter.barrier.countDown()
             }
             is FirResolvedToPhaseState -> {
-                error("phase is unexpectedly unlocked $stateSnapshotAfter")
+                errorWithFirSpecificEntries("phase is unexpectedly unlocked $stateSnapshotAfter", fir = this)
             }
         }
     }
