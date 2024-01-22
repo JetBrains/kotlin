@@ -8,23 +8,24 @@ rootProject.name = "dokka"
 
 pluginManagement {
     includeBuild("build-logic")
+    includeBuild("build-settings-logic")
 
     repositories {
-        gradlePluginPortal()
         mavenCentral()
+        gradlePluginPortal()
     }
 }
 
 dependencyResolutionManagement {
     repositories {
-        mavenCentral()
-        google()
-
         maven("https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide")
         maven("https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide-plugin-dependencies")
 
         maven("https://cache-redirector.jetbrains.com/intellij-repository/releases")
         maven("https://cache-redirector.jetbrains.com/intellij-third-party-dependencies")
+
+        mavenCentral()
+        google()
 
         // Declare the Node.js & Yarn download repositories
         // Required by Gradle Node plugin: https://github.com/node-gradle/gradle-node-plugin/blob/3.5.1/docs/faq.md#is-this-plugin-compatible-with-centralized-repositories-declaration
@@ -55,8 +56,9 @@ dependencyResolutionManagement {
 }
 
 plugins {
-    `gradle-enterprise`
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
+    id("dokkasettings.gradle-enterprise")
+    id("dokkasettings.build-cache")
 }
 
 includeBuild("dokka-integration-tests")
@@ -93,16 +95,6 @@ include(
     ":dokka-subprojects:plugin-templating",
     ":dokka-subprojects:plugin-versioning",
 )
-
-val isCiBuild = System.getenv("GITHUB_ACTIONS") != null || System.getenv("TEAMCITY_VERSION") != null
-
-gradleEnterprise {
-    buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
-        publishAlwaysIf(isCiBuild)
-    }
-}
 
 // This hack is required for included build support.
 // The name of the published artifact is `dokka-core`, but the module is named `core`.
