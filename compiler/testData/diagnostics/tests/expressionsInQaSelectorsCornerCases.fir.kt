@@ -1,4 +1,5 @@
 // ISSUE: KT-64891
+// FIR_DUMP
 
 fun <T> T.b(): Int = 10
 

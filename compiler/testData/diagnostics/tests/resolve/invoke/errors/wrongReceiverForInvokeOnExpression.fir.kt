@@ -1,3 +1,4 @@
+// FIR_DUMP
 
 fun test1() {
     1. <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>(fun String.(i: Int) = i )<!>(1)

@@ -1,3 +1,5 @@
+// FIR_DUMP
+
 fun test1(f: String.() -> Unit) {
     (f)<!NO_VALUE_FOR_PARAMETER!>()<!>
 
