@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.chooseFactory
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -54,6 +53,12 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker() {
                 containingDeclaration is FirRegularClassSymbol && containingDeclaration.classId == StandardClassIds.Array
     }
 
+    private fun ConeKotlinType.cannotBeReified() = when (this) {
+        is ConeCapturedType -> true
+        is ConeDynamicType -> true
+        else -> isNothing || isNullableNothing
+    }
+
     private fun checkArgumentAndReport(
         typeArgument: ConeKotlinType,
         source: KtSourceElement,
@@ -85,7 +90,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker() {
         } else if (typeArgument is ConeDefinitelyNotNullType && isExplicit) {
             // We sometimes infer type arguments to DNN types, which seems to be ok. Only report explicit DNN types written by user.
             reporter.reportOn(source, FirErrors.DEFINITELY_NON_NULLABLE_AS_REIFIED, context)
-        } else if (typeArgument.isNothing || typeArgument.isNullableNothing || typeArgument is ConeCapturedType) {
+        } else if (typeArgument.cannotBeReified()) {
             reporter.reportOn(source, FirErrors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, typeArgument, context)
         }
     }
