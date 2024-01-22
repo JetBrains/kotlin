@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -1412,6 +1413,15 @@ class IrSourcePrinterVisitor(
 
     override fun visitTypeAlias(declaration: IrTypeAlias) {
         print("<<TYPEALIAS>>")
+    }
+
+    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
+        println("init {")
+        indented {
+            declaration.body.print()
+        }
+        println()
+        println("}")
     }
 
     private fun IrType.renderSrc() =

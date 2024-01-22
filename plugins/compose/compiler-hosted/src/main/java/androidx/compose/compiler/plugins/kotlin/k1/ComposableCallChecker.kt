@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -61,12 +60,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getValueArgumentForExpression
-import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinedArgument
 import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
-import org.jetbrains.kotlin.resolve.scopes.utils.parents
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -182,46 +177,26 @@ open class ComposableCallChecker :
                         return
                     }
 
-                    val containingScope = context.scope.parents.firstOrNull {
-                        it is LexicalScope &&
-                            it.kind == LexicalScopeKind.FUNCTION_INNER_SCOPE &&
-                            (it.ownerDescriptor as? FunctionDescriptor)
-                                ?.hasComposableAnnotation() == true
-                    }
-                    val containingComposable = (containingScope as? LexicalScope)?.ownerDescriptor
-
-                    if (containingComposable != null) {
-                        // TODO(lmr): in future, we should check for CALLS_IN_PLACE contract
-                        val isInlined = checkInlineUsage(
-                            containingComposable,
-                            context,
-                            resolvedCall
-                        )
-                        if (!isInlined) {
-                            illegalCall(context, reportOn)
-                            return
-                        } else {
-                            // since the function is inlined, we continue going up the PSI tree
-                            // until we find a composable context. We also mark this lambda
-                            context.trace.record(
-                                FrontendWritableSlices.LAMBDA_CAPABLE_OF_COMPOSER_CAPTURE,
-                                descriptor,
-                                true
-                            )
-                        }
+                    val isResolvedInline = bindingContext.get(
+                        BindingContext.NEW_INFERENCE_IS_LAMBDA_FOR_OVERLOAD_RESOLUTION_INLINE,
+                        node.functionLiteral
+                    ) == true
+                    val isInlined = isResolvedInline || isInlinedArgument(
+                        node.functionLiteral,
+                        bindingContext,
+                        true
+                    )
+                    if (!isInlined) {
+                        illegalCall(context, reportOn)
+                        return
                     } else {
-                        // if we didn't find a containing composable, the call is invalid. Stop
-                        // iteration when lambda is not inlined, as the lambda itself should be
-                        // composable to resolve compilation error here.
-                        val isInlined = isInlinedArgument(
-                            node.functionLiteral,
-                            bindingContext,
+                        // since the function is inlined, we continue going up the PSI tree
+                        // until we find a composable context. We also mark this lambda
+                        context.trace.record(
+                            FrontendWritableSlices.LAMBDA_CAPABLE_OF_COMPOSER_CAPTURE,
+                            descriptor,
                             true
                         )
-                        if (!isInlined) {
-                            illegalCall(context, reportOn)
-                            return
-                        }
                     }
                 }
                 is KtTryExpression -> {
@@ -344,17 +319,6 @@ open class ComposableCallChecker :
             }
         }
     }
-
-    private fun checkInlineUsage(
-        containingComposable: DeclarationDescriptor,
-        context: CallCheckerContext,
-        resolvedCall: ResolvedCall<*>
-    ): Boolean =
-        InlineUtil.checkNonLocalReturnUsage(
-            containingComposable as FunctionDescriptor,
-            resolvedCall.call.callElement as KtExpression,
-            context.resolutionContext
-        )
 
     private fun missingDisallowedComposableCallPropagation(
         context: CallCheckerContext,
