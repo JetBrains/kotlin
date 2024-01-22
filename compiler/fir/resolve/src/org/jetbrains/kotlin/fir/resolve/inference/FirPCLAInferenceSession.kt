@@ -191,11 +191,17 @@ class FirPCLAInferenceSession(
         return Pair(coneTypeVariableTypeConstructor, resultType)
     }
 
-    private fun FirExpression.shouldBePostponed(): Boolean {
-        if (this is FirWrappedArgumentExpression) return expression.shouldBePostponed()
+    private fun FirExpression.doesArgumentLeadToCallPostponement(): Boolean {
+        if (this is FirWrappedArgumentExpression) return expression.doesArgumentLeadToCallPostponement()
+
+        if (doesArgumentUseOuterCS()) return true
+        if (isQualifiedAccessContainingTypeVariables()) return true
+
+        // Postponed atoms
         if (this is FirAnonymousFunctionExpression) return true
         if (this is FirCallableReferenceAccess) return true
         if (this is FirAnonymousObjectExpression) return true
+
         return false
     }
 
@@ -203,13 +209,12 @@ class FirPCLAInferenceSession(
         if (dispatchReceiver?.isReceiverPostponed() == true) return true
         if (givenExtensionReceiverOptions.any { it.isReceiverPostponed() }) return true
 
-        if (callInfo.arguments.any { it.shouldBePostponed() }) return true
+        if (callInfo.arguments.any { it.doesArgumentLeadToCallPostponement() }) return true
 
         if (callInfo.callKind == CallKind.VariableAccess) {
             val returnType = (symbol as? FirVariableSymbol)?.let(returnTypeCalculator::tryCalculateReturnType)
             if (returnType?.type?.containsNotFixedTypeVariables() == true) return true
         }
-        if (callInfo.arguments.any { it.isQualifiedAccessContainingTypeVariables() || it.doesArgumentUseOuterCS() }) return true
 
         if (callInfo.resolutionMode is ResolutionMode.Delegate) return true
 
