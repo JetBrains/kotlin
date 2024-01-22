@@ -1610,6 +1610,22 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
         }
 
         @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/packages")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Packages {
+            @Test
+            public void testAllFilesPresentInPackages() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/packages"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("longPackage.kt")
+            public void testLongPackage() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/packages/longPackage.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/parameters")
         @TestDataPath("$PROJECT_ROOT")
         public class Parameters {
