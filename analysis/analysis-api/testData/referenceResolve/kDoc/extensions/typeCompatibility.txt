@@ -1,20 +1,20 @@
 Caret 1 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun kotlin.Any.anyExt()
 
 Caret 2 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun kotlin.Any.anyExt()
 
 Caret 3 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun kotlin.Any.anyExt()
 
 Caret 4 resolved to:
 Nothing (Unresolved reference)
 
 Caret 5 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun test.Base.baseExt()
 
 Caret 6 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun test.Base.baseExt()
 
 Caret 7 resolved to:
 Nothing (Unresolved reference)
@@ -23,4 +23,4 @@ Caret 8 resolved to:
 Nothing (Unresolved reference)
 
 Caret 9 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun test.Child.childExt()

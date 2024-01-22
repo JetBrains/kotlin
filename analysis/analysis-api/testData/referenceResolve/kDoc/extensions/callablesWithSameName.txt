@@ -7,7 +7,9 @@ Caret 2 resolved to:
 1: (in test) val test.Foo.ext: kotlin.Int
 
 Caret 3 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun test.Foo.ext()
+1: (in test) val test.Foo.ext: kotlin.Int
 
 Caret 4 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun test.Foo.ext()
+1: (in test) val test.Foo.ext: kotlin.Int

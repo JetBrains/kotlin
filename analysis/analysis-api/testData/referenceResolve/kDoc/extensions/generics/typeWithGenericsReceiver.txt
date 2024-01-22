@@ -1,5 +1,5 @@
 Caret 1 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun test.WithGenerics<kotlin.Int>.intExt()
 
 Caret 2 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun test.WithGenerics<kotlin.String>.stringExt()

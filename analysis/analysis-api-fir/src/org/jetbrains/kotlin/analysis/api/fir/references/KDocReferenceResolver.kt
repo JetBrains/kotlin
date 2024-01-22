@@ -9,11 +9,14 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KtScopeKind
+import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KtTypeParameterType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -26,9 +29,16 @@ import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object KDocReferenceResolver {
-    private data class ResolveResult(val symbol: KtSymbol)
+    /**
+     * [symbol] is the symbol referenced by this resolve result.
+     *
+     * [receiverClassReference] is an optional receiver type in
+     * the case of extension function references (see [getTypeQualifiedExtensions]).
+     */
+    private data class ResolveResult(val symbol: KtSymbol, val receiverClassReference: KtClassLikeSymbol?)
 
-    private fun KtSymbol.toResolveResult(): ResolveResult = ResolveResult(this)
+    private fun KtSymbol.toResolveResult(receiverClassReference: KtClassLikeSymbol? = null): ResolveResult =
+        ResolveResult(symbol = this, receiverClassReference)
 
     /**
      * Resolves the [selectedFqName] of KDoc
@@ -59,9 +69,23 @@ internal object KDocReferenceResolver {
         check(goBackSteps > 0) {
             "Selected FqName ($selectedFqName) should be smaller than the whole FqName ($fullFqName)"
         }
-        return fullSymbolsResolved.mapNotNullTo(mutableSetOf()) { findParentSymbol(it.symbol, goBackSteps, selectedFqName) }
+        return fullSymbolsResolved.mapNotNullTo(mutableSetOf()) { findParentSymbol(it, goBackSteps, selectedFqName) }
     }
 
+    /**
+     * Finds the parent symbol of the given [ResolveResult] by traversing back up the symbol hierarchy a [goBackSteps] steps,
+     * or until the containing class or object symbol is found.
+     *
+     * Knows about the [ResolveResult.receiverClassReference] field and uses it in case it's not empty.
+     */
+    context(KtAnalysisSession)
+    private fun findParentSymbol(resolveResult: ResolveResult, goBackSteps: Int, selectedFqName: FqName): KtSymbol? {
+        return if (resolveResult.receiverClassReference != null) {
+            findParentSymbol(resolveResult.receiverClassReference, goBackSteps - 1, selectedFqName)
+        } else {
+            findParentSymbol(resolveResult.symbol, goBackSteps, selectedFqName)
+        }
+    }
 
     /**
      * Finds the parent symbol of the given KtSymbol by traversing back up the symbol hierarchy a certain number of steps,
@@ -88,9 +112,17 @@ internal object KDocReferenceResolver {
     context(KtAnalysisSession)
     private fun resolveKdocFqName(fqName: FqName, contextElement: KtElement): Collection<ResolveResult> {
         getExtensionReceiverSymbolByThisQualifier(fqName, contextElement).ifNotEmpty { return this }
-        getSymbolsFromExistingScopes(fqName, contextElement).ifNotEmpty { return this }
+
+        buildList {
+            getSymbolsFromScopes(fqName, contextElement).mapTo(this) { it.toResolveResult() }
+            addAll(getTypeQualifiedExtensions(fqName, contextElement))
+            addIfNotNull(getPackageSymbolIfPackageExists(fqName)?.toResolveResult())
+        }.ifNotEmpty { return this }
+
         getNonImportedSymbolsByFullyQualifiedName(fqName).map { it.toResolveResult() }.ifNotEmpty { return this }
+
         AdditionalKDocResolutionProvider.resolveKdocFqName(fqName, contextElement).map { it.toResolveResult() }.ifNotEmpty { return this }
+
         return emptyList()
     }
 
@@ -100,18 +132,11 @@ internal object KDocReferenceResolver {
         if (fqName.pathSegments().singleOrNull()?.asString() == "this") {
             if (owner is KtCallableDeclaration && owner.receiverTypeReference != null) {
                 val symbol = owner.getSymbol() as? KtCallableSymbol ?: return emptyList()
-                return listOfNotNull(symbol.receiverParameter).map { it.toResolveResult() }
+                return listOfNotNull(symbol.receiverParameter?.toResolveResult())
             }
         }
         return emptyList()
     }
-
-    context(KtAnalysisSession)
-    private fun getSymbolsFromExistingScopes(fqName: FqName, contextElement: KtElement): Collection<ResolveResult> =
-        buildList {
-            getSymbolsFromScopes(fqName, contextElement).mapTo(this) { it.toResolveResult() }
-            addIfNotNull(getPackageSymbolIfPackageExists(fqName)?.toResolveResult())
-        }
 
     context(KtAnalysisSession)
     private fun getSymbolsFromScopes(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> {
@@ -235,6 +260,107 @@ internal object KDocReferenceResolver {
             addAll(getCallableSymbols(shortName))
             addAll(getClassifierSymbols(shortName))
         }
+    }
+
+    /**
+     * Tries to resolve [fqName] into available extension callables (functions or properties)
+     * prefixed with a suitable extension receiver type (like in `Foo.bar`, or `foo.Foo.bar`).
+     *
+     * Relies on the fact that in such references only the last qualifier refers to the
+     * actual extension callable, and the part before that refers to the receiver type (either fully
+     * or partially qualified).
+     *
+     * For example, `foo.Foo.bar` may only refer to the extension callable `bar` with
+     * a `foo.Foo` receiver type, and this function will only look for such combinations.
+     *
+     * N.B. This function only searches for extension callables qualified by receiver types!
+     * It does not try to resolve fully qualified or member functions, because they are dealt
+     * with by the other parts of [KDocReferenceResolver].
+     */
+    context(KtAnalysisSession)
+    private fun getTypeQualifiedExtensions(fqName: FqName, contextElement: KtElement): Collection<ResolveResult> {
+        if (fqName.isRoot) return emptyList()
+        val extensionName = fqName.shortName()
+
+        val receiverTypeName = fqName.parent()
+        if (receiverTypeName.isRoot) return emptyList()
+
+        val possibleExtensions = getExtensionCallableSymbolsByShortName(extensionName, contextElement)
+        if (possibleExtensions.isEmpty()) return emptyList()
+
+        val possibleReceivers = getReceiverTypeCandidates(receiverTypeName, contextElement)
+
+        // we abandon resolve if there are multiple different classifiers in scope
+        val receiverClassSymbol = possibleReceivers.singleOrNull() ?: return emptyList()
+        val receiverType = buildClassType(receiverClassSymbol)
+
+        return possibleExtensions
+            .filter { it.canBeReferencedAsExtensionOn(receiverType) }
+            .map { it.toResolveResult(receiverClassReference = receiverClassSymbol) }
+    }
+
+    context(KtAnalysisSession)
+    private fun getExtensionCallableSymbolsByShortName(name: Name, contextElement: KtElement): List<KtCallableSymbol> {
+        return getSymbolsFromScopes(FqName.topLevel(name), contextElement)
+            .filterIsInstance<KtCallableSymbol>()
+            .filter { it.isExtension }
+    }
+
+    context(KtAnalysisSession)
+    private fun getReceiverTypeCandidates(receiverTypeName: FqName, contextElement: KtElement): List<KtClassLikeSymbol> {
+        val possibleReceivers =
+            getSymbolsFromScopes(receiverTypeName, contextElement).ifEmpty { null }
+                ?: getNonImportedSymbolsByFullyQualifiedName(receiverTypeName).ifEmpty { null }
+                ?: emptyList()
+
+        return possibleReceivers.filterIsInstance<KtClassLikeSymbol>()
+    }
+
+    /**
+     * Returns true if we consider that [this] extension function prefixed with [actualReceiverType] in
+     * a KDoc reference should be considered as legal and resolved, and false otherwise.
+     *
+     * This is **not** an actual type check, it is just an opinionated approximation.
+     * The main guideline was K1 KDoc resolve.
+     *
+     * This check might change in the future, as Dokka team advances with KDoc rules.
+     */
+    context(KtAnalysisSession)
+    private fun KtCallableSymbol.canBeReferencedAsExtensionOn(actualReceiverType: KtType): Boolean {
+        val extensionReceiverType = receiverParameter?.type ?: return false
+
+        return extensionReceiverType.isPossiblySuperTypeOf(actualReceiverType)
+    }
+
+    /**
+     * Same constraints as in [canBeReferencedAsExtensionOn].
+     *
+     * For a similar function in the `intellij` repository, see `isPossiblySubTypeOf`.
+     */
+    context(KtAnalysisSession)
+    private fun KtType.isPossiblySuperTypeOf(actualReceiverType: KtType): Boolean {
+        // Type parameters cannot act as receiver types in KDoc
+        if (actualReceiverType is KtTypeParameterType) return false
+
+        val expectedType = this
+
+        if (expectedType is KtTypeParameterType) {
+            return expectedType.symbol.upperBounds.all { it.isPossiblySuperTypeOf(actualReceiverType) }
+        }
+
+        val receiverExpanded = actualReceiverType.expandedClassSymbol
+        val expectedExpanded = expectedType.expandedClassSymbol
+
+        // if the underlying classes are equal, we consider the check successful
+        // despite the possibility of different type bounds
+        if (
+            receiverExpanded != null &&
+            receiverExpanded == expectedExpanded
+        ) {
+            return true
+        }
+
+        return actualReceiverType.isSubTypeOf(expectedType)
     }
 
     context(KtAnalysisSession)

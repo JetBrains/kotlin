@@ -1,20 +1,20 @@
 Caret 1 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun <T> T.anyExt()
 
 Caret 2 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun <T> T.anyExt()
 
 Caret 3 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun <T> T.anyExt()
 
 Caret 4 resolved to:
 Nothing (Unresolved reference)
 
 Caret 5 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun <T : test.Base> T.baseExt()
 
 Caret 6 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun <T : test.Base> T.baseExt()
 
 Caret 7 resolved to:
 Nothing (Unresolved reference)
@@ -23,4 +23,4 @@ Caret 8 resolved to:
 Nothing (Unresolved reference)
 
 Caret 9 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun <T : test.Child> T.childExt()

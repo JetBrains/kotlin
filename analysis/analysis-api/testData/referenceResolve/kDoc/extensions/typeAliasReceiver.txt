@@ -1,14 +1,14 @@
 Caret 1 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun test.Foo.fooExt()
 
 Caret 2 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun test.FooAlias.fooAliasExt()
 
 Caret 3 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun test.FooAlias.fooAliasExt()
 
 Caret 4 resolved to:
-Nothing (Unresolved reference)
+0: (in test) fun kotlin.Any.anyExt()
 
 Caret 5 resolved to:
 Nothing (Unresolved reference)
