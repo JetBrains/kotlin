@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -42,6 +42,8 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         phase: FirResolvePhase,
         action: () -> Unit,
     ) {
+        if (!implicitPhaseLockEnabled) return action()
+
         val lock = when (phase) {
             FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> implicitTypesLock
             else -> null
@@ -235,6 +237,10 @@ private val resolveStateFieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
 
 private val globalLockEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
     Registry.`is`("kotlin.parallel.resolve.under.global.lock", false)
+}
+
+private val implicitPhaseLockEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    Registry.`is`("kotlin.implicit.resolve.phase.under.global.lock", true)
 }
 
 private const val DEFAULT_LOCKING_INTERVAL = 50L
