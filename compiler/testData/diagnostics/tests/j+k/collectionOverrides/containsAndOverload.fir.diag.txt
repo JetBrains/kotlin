@@ -1,0 +1,10 @@
+/main.kt:(70,78): error: This function accidentally overrides both 'public open operator fun /A.contains(x: kotlin/String!): kotlin/Boolean' and a function with erased parameters 'public open operator fun /A.contains(x: kotlin/Any!): kotlin/Boolean' from JVM point of view because of mixed Java/Kotlin hierarchy.
+This situation provokes a JVM clash and thus is forbidden. To fix it, you have to delete either this function or one of overridden functions.
+
+/main.kt:(159,160): error: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String!' was expected.
+
+/main.kt:(178,179): error: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String!' was expected.
+
+/main.kt:(222,223): error: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.
+
+/main.kt:(242,243): error: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.

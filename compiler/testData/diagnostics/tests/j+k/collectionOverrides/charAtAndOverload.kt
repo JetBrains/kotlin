@@ -1,4 +1,5 @@
 // SCOPE_DUMP: KA:get
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 // FILE: A.java
 abstract public class A implements CharSequence {

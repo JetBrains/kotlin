@@ -565,7 +565,7 @@ class JavaClassUseSiteMemberScope(
                 symbol = newSymbol
                 dispatchReceiverType = klass.defaultType()
             }.apply {
-                initialSignatureAttr = original
+                initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters.fir
                 isHiddenToOvercomeSignatureClash = true
             }
             // Collect synthetic function which is a hidden copy of declared one with unerased parameters
