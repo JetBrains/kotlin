@@ -383,56 +383,29 @@ tasks.register("worker10", KonanLocalTest) {
 }
 
 standaloneTest("worker_exceptions") {
-    flags = ["-tr", "-Xworker-exception-handling=use-hook"]
+    flags = ["-tr"]
     outputChecker = {
         !it.contains("testExecuteAfterStartQuiet error") && it.contains("testExecuteStart error") && !it.contains("testExecuteStartQuiet error")
     }
     source = "runtime/workers/worker_exceptions.kt"
 }
 
-standaloneTest("worker_exceptions_legacy") {
-    flags = ["-tr", "-Xworker-exception-handling=legacy"]
-    outputChecker = {
-        it.contains("testExecuteAfterStartLegacy error") && it.contains("testExecuteStartLegacy error")
-    }
-    source = "runtime/workers/worker_exceptions_legacy.kt"
-}
-
 standaloneTest("worker_exceptions_terminate") {
-    flags = ["-Xworker-exception-handling=use-hook"]
     expectedExitStatusChecker = { it != 0 }
     outputChecker = {
         it.contains("some error") && !it.contains("Will not happen")
-    }
-    source = "runtime/workers/worker_exceptions_terminate.kt"
-}
-
-standaloneTest("worker_exceptions_terminate_legacy") {
-    flags = ["-Xworker-exception-handling=legacy"]
-    outputChecker = {
-        it.contains("some error") && it.contains("Will not happen")
     }
     source = "runtime/workers/worker_exceptions_terminate.kt"
 }
 
 standaloneTest("worker_exceptions_terminate_hook") {
-    flags = ["-Xworker-exception-handling=use-hook"]
     outputChecker = {
         it.contains("hook called") && !it.contains("some error") && it.contains("Will happen")
     }
     source = "runtime/workers/worker_exceptions_terminate_hook.kt"
 }
 
-standaloneTest("worker_exceptions_terminate_hook_legacy") {
-    flags = ["-Xworker-exception-handling=legacy"]
-    outputChecker = {
-        !it.contains("hook called") && it.contains("some error") && it.contains("Will happen")
-    }
-    source = "runtime/workers/worker_exceptions_terminate_hook.kt"
-}
-
 standaloneTest("worker_exceptions_terminate_current") {
-    flags = ["-Xworker-exception-handling=use-hook"]
     expectedExitStatusChecker = { it != 0 }
     outputChecker = {
         it.contains("some error") && !it.contains("Will not happen")
@@ -440,26 +413,9 @@ standaloneTest("worker_exceptions_terminate_current") {
     source = "runtime/workers/worker_exceptions_terminate_current.kt"
 }
 
-standaloneTest("worker_exceptions_terminate_current_legacy") {
-    flags = ["-Xworker-exception-handling=legacy"]
-    outputChecker = {
-        it.contains("some error") && it.contains("Will not happen")
-    }
-    source = "runtime/workers/worker_exceptions_terminate_current.kt"
-}
-
 standaloneTest("worker_exceptions_terminate_hook_current") {
-    flags = ["-Xworker-exception-handling=use-hook"]
     outputChecker = {
         it.contains("hook called") && !it.contains("some error") && it.contains("Will happen")
-    }
-    source = "runtime/workers/worker_exceptions_terminate_hook_current.kt"
-}
-
-standaloneTest("worker_exceptions_terminate_hook_current_legacy") {
-    flags = ["-Xworker-exception-handling=legacy"]
-    outputChecker = {
-        !it.contains("hook called") && it.contains("some error") && it.contains("Will happen")
     }
     source = "runtime/workers/worker_exceptions_terminate_hook_current.kt"
 }

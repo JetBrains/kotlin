@@ -119,7 +119,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
     val workerExceptionHandling: WorkerExceptionHandling get() = configuration.get(KonanConfigKeys.WORKER_EXCEPTION_HANDLING)?.also {
         if (it != WorkerExceptionHandling.USE_HOOK) {
-            configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Legacy exception handling in workers is deprecated")
+            configuration.report(CompilerMessageSeverity.ERROR, "Legacy exception handling in workers is deprecated")
+        } else {
+            configuration.report(CompilerMessageSeverity.STRONG_WARNING, "-Xworker-exception-handling is deprecated")
         }
     } ?: WorkerExceptionHandling.USE_HOOK
 
