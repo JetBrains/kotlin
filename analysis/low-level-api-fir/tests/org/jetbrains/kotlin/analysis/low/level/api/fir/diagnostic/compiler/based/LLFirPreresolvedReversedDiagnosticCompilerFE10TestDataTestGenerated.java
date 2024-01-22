@@ -4860,6 +4860,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("reservedExpressionSyntax4.kt")
+                public void testReservedExpressionSyntax4() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/bound/reservedExpressionSyntax4.kt");
+                }
+
+                @Test
                 @TestMetadata("syntheticExtensionOnLHS.kt")
                 public void testSyntheticExtensionOnLHS() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/bound/syntheticExtensionOnLHS.kt");
