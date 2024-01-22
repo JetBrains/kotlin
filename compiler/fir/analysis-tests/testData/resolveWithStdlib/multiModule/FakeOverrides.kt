@@ -14,7 +14,7 @@ open class C : B() {
     open fun baz(arg: CharSequence): String = arg.toString()
 }
 
-// MODULE: m1-jvm(m1-common)
+// MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual open class A<T> {
