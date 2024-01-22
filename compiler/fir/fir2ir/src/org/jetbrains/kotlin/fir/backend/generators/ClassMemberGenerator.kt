@@ -211,7 +211,13 @@ internal class ClassMemberGenerator(
                 declarationStorage.leaveScope(irFunction.symbol)
             }
             if (irFunction is IrSimpleFunction && firFunction is FirSimpleFunction && containingClass != null) {
-                irFunction.overriddenSymbols = firFunction.generateOverriddenFunctionSymbols(containingClass)
+                /**
+                 * In useIrFakeOverrideBuilder it would be dropped anyway, as [org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder.buildFakeOverridesForClass]
+                 * recalculates this value from scratch. Also, it's quite meaningless in non-platform modules anyway.
+                 */
+                if (!configuration.useIrFakeOverrideBuilder) {
+                    irFunction.overriddenSymbols = firFunction.generateOverriddenFunctionSymbols(containingClass)
+                }
             }
         }
         return irFunction
@@ -223,7 +229,13 @@ internal class ClassMemberGenerator(
         val propertyType = property.returnTypeRef.toIrType()
         irProperty.initializeBackingField(property, initializerExpression = initializer ?: delegate)
         if (containingClass != null) {
-            irProperty.overriddenSymbols = property.generateOverriddenPropertySymbols(containingClass)
+            /**
+             * In useIrFakeOverrideBuilder it would be dropped anyway, as [org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder.buildFakeOverridesForClass]
+             * recalculates this value from scratch. Also, it's quite meaningless in non-platform modules anyway.
+             */
+            if (!configuration.useIrFakeOverrideBuilder) {
+                irProperty.overriddenSymbols = property.generateOverriddenPropertySymbols(containingClass)
+            }
         }
         val needGenerateDefaultGetter =
             property.getter is FirDefaultPropertyGetter ||

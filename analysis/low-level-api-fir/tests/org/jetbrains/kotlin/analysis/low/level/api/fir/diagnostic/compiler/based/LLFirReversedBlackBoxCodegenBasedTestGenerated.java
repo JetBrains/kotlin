@@ -19281,6 +19281,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
         }
 
         @Test
+        @TestMetadata("kt65116.kt")
+        public void testKt65116() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/kt65116.kt");
+        }
+
+        @Test
         @TestMetadata("methodOfAnyFromInterface.kt")
         public void testMethodOfAnyFromInterface() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/methodOfAnyFromInterface.kt");
