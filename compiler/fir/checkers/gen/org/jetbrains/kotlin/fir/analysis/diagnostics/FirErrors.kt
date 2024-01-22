@@ -665,6 +665,7 @@ object FirErrors {
     val EXPECTED_LATEINIT_PROPERTY: KtDiagnosticFactory0 by error0<KtModifierListOwner>(SourceElementPositioningStrategies.LATEINIT_MODIFIER)
     val SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC)
     val EXPECTED_PRIVATE_DECLARATION: KtDiagnosticFactory0 by error0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val ACTUAL_PRIVATE_DECLARATION: KtDiagnosticFactory0 by error0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val EXPECTED_EXTERNAL_DECLARATION: KtDiagnosticFactory0 by error0<KtModifierListOwner>(SourceElementPositioningStrategies.EXTERNAL_MODIFIER)
     val EXPECTED_TAILREC_FUNCTION: KtDiagnosticFactory0 by error0<KtModifierListOwner>(SourceElementPositioningStrategies.TAILREC_MODIFIER)
     val IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS: KtDiagnosticFactory0 by error0<KtDelegatedSuperTypeEntry>()

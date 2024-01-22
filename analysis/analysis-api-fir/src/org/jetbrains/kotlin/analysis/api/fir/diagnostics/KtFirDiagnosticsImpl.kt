@@ -3117,6 +3117,11 @@ internal class ExpectedPrivateDeclarationImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KtFirDiagnostic.ExpectedPrivateDeclaration
 
+internal class ActualPrivateDeclarationImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KtFirDiagnostic.ActualPrivateDeclaration
+
 internal class ExpectedExternalDeclarationImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

@@ -2588,6 +2588,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ExpectedPrivateDeclaration::class
     }
 
+    interface ActualPrivateDeclaration : KtFirDiagnostic<KtModifierListOwner> {
+        override val diagnosticClass get() = ActualPrivateDeclaration::class
+    }
+
     interface ExpectedExternalDeclaration : KtFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = ExpectedExternalDeclaration::class
     }
