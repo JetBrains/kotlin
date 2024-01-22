@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.test.backend.ir
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.KotlinFileSerializedData
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
-import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
@@ -66,14 +66,13 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
     class JsIrBackendInput(
         override val irModuleFragment: IrModuleFragment,
         override val irPluginContext: IrPluginContext,
-        val sourceFiles: List<KtSourceFile>,
         val icData: List<KotlinFileSerializedData>,
         override val diagnosticReporter: BaseDiagnosticsCollector,
         val hasErrors: Boolean,
         override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
-        val serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment,
+        val metadataSerializer: KlibSingleFileMetadataSerializer<*>,
     ) : IrBackendInput()
 
     data class JsIrDeserializedFromKlibBackendInput(
@@ -92,14 +91,13 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
     class WasmBackendInput(
         override val irModuleFragment: IrModuleFragment,
         override val irPluginContext: IrPluginContext,
-        val sourceFiles: List<KtSourceFile>,
         val icData: List<KotlinFileSerializedData>,
         override val diagnosticReporter: BaseDiagnosticsCollector,
         val hasErrors: Boolean,
         override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
-        val serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment,
+        val metadataSerializer: KlibSingleFileMetadataSerializer<*>,
     ) : IrBackendInput()
 
     class JvmIrBackendInput(

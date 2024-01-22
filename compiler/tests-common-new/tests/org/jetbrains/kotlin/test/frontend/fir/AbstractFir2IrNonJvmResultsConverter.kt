@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -17,12 +16,8 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
-import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
-import org.jetbrains.kotlin.fir.pipeline.FirResult
-import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
-import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
+import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.KotlinMangler
@@ -74,8 +69,6 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
         inputArtifact: FirOutputArtifact
     ): IrBackendInput {
         val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val sourceFiles = mutableListOf<KtSourceFile>()
-        val firFilesAndComponentsBySourceFile = mutableMapOf<KtSourceFile, Pair<FirFile, Fir2IrComponents>>()
 
         val irMangler = createIrMangler()
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
@@ -87,7 +80,8 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
             compilerConfiguration,
             diagnosticReporter,
         )
-        val fir2irResult = inputArtifact.toFirResult().convertToIrAndActualize(
+        val firResult = inputArtifact.toFirResult()
+        val fir2irResult = firResult.convertToIrAndActualize(
             Fir2IrExtensions.Default,
             fir2IrConfiguration,
             module.irGenerationExtensions(testServices),
@@ -96,16 +90,23 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
             Fir2IrVisibilityConverter.Default,
             builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
             ::IrTypeSystemContextImpl
-        ) { firPart, irPart ->
-            sourceFiles.addAll(firPart.fir.mapNotNull { it.sourceFile })
-            for (firFile in firPart.fir) {
-                firFilesAndComponentsBySourceFile[firFile.sourceFile!!] = firFile to irPart.components
-            }
-        }.also {
+        ).also {
             (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
         }
 
-        return createBackendInput(compilerConfiguration, diagnosticReporter, inputArtifact, fir2irResult, firFilesAndComponentsBySourceFile, sourceFiles)
+        return createBackendInput(
+            compilerConfiguration,
+            diagnosticReporter,
+            inputArtifact,
+            fir2irResult,
+            Fir2KlibMetadataSerializer(
+                compilerConfiguration,
+                firResult.outputs,
+                fir2irResult,
+                exportKDoc = false,
+                produceHeaderKlib = false,
+            ),
+        )
     }
 
     protected abstract fun createBackendInput(
@@ -113,8 +114,7 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
         diagnosticReporter: BaseDiagnosticsCollector,
         inputArtifact: FirOutputArtifact,
         fir2IrResult: Fir2IrActualizedResult,
-        firFilesAndComponentsBySourceFile: Map<KtSourceFile, Pair<FirFile, Fir2IrComponents>>,
-        sourceFiles: List<KtSourceFile>
+        fir2KlibMetadataSerializer: Fir2KlibMetadataSerializer,
     ): IrBackendInput
 
     private fun loadResolvedLibraries(

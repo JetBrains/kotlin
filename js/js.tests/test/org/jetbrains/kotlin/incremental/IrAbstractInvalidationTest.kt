@@ -106,10 +106,6 @@ abstract class IrAbstractInvalidationTest(
         ) {
             sourceModule.getModuleDescriptor(it)
         }
-        val metadataSerializer =
-            KlibMetadataIncrementalSerializer(configuration, sourceModule.project, sourceModule.jsFrontEndResult.hasErrors)
-
-        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
         generateKLib(
             sourceModule,
             outputKlibFile.canonicalPath,
@@ -117,9 +113,7 @@ abstract class IrAbstractInvalidationTest(
             jsOutputName = moduleName,
             icData = icData,
             moduleFragment = moduleFragment,
-            diagnosticReporter = diagnosticReporter
-        ) { file ->
-            metadataSerializer.serializeScope(file, sourceModule.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
-        }
+            diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(),
+        )
     }
 }

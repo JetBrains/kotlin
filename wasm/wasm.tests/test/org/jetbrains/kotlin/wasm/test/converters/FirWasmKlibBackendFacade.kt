@@ -61,7 +61,7 @@ class FirWasmKlibBackendFacade(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,
                 configuration,
                 inputArtifact.diagnosticReporter,
-                inputArtifact.sourceFiles,
+                inputArtifact.metadataSerializer,
                 klibPath = outputFile,
                 libraries.map { it.library },
                 inputArtifact.irModuleFragment,
@@ -71,9 +71,7 @@ class FirWasmKlibBackendFacade(
                 containsErrorCode = inputArtifact.hasErrors,
                 abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
                 jsOutputName = null
-            ) {
-                inputArtifact.serializeSingleFile(it)
-            }
+            )
         }
 
         // TODO: consider avoiding repeated libraries resolution

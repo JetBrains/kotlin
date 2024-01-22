@@ -5,21 +5,15 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.KotlinFileSerializedData
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.backend.ConstValueProviderImpl
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMangler
-import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
 import org.jetbrains.kotlin.fir.backend.js.FirJsKotlinMangler
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
-import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
-import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
+import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.incrementalDataProvider
@@ -28,25 +22,22 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
-import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.utils.metadataVersion
 
 abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : AbstractFir2IrNonJvmResultsConverter(testServices) {
     protected abstract val artifactFactory: (
         IrModuleFragment,
         IrPluginContext,
-        List<KtSourceFile>,
         List<KotlinFileSerializedData>,
         BaseDiagnosticsCollector,
         Boolean,
         KotlinMangler.DescriptorMangler?,
         KotlinMangler.IrMangler,
         FirMangler?,
-        (KtSourceFile) -> ProtoBuf.PackageFragment
+        KlibSingleFileMetadataSerializer<*>,
     ) -> IrBackendInput
 
     override fun createIrMangler(): KotlinMangler.IrMangler {
@@ -65,46 +56,25 @@ abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : Abstra
         diagnosticReporter: BaseDiagnosticsCollector,
         inputArtifact: FirOutputArtifact,
         fir2IrResult: Fir2IrActualizedResult,
-        firFilesAndComponentsBySourceFile: Map<KtSourceFile, Pair<FirFile, Fir2IrComponents>>,
-        sourceFiles: List<KtSourceFile>,
+        fir2KlibMetadataSerializer: Fir2KlibMetadataSerializer,
     ): IrBackendInput {
-        val languageVersionSettings = compilerConfiguration.languageVersionSettings
-        val metadataVersion = compilerConfiguration.metadataVersion(languageVersionSettings.languageVersion)
-        val fir2IrComponents = fir2IrResult.components
-        val manglers = fir2IrComponents.manglers
+        val manglers = fir2IrResult.components.manglers
         return artifactFactory(
             fir2IrResult.irModuleFragment,
             fir2IrResult.pluginContext,
-            sourceFiles,
-            compilerConfiguration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList(),
+            compilerConfiguration.incrementalDataProvider?.getSerializedData(fir2KlibMetadataSerializer.sourceFiles) ?: emptyList(),
             diagnosticReporter,
             testServices.firDiagnosticCollectorService.containsErrors(inputArtifact),
             /*descriptorMangler = */null,
             manglers.irMangler,
             manglers.firMangler,
-        ) { file ->
-            val (firFile, components) = firFilesAndComponentsBySourceFile[file]
-                ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
-            val actualizedExpectDeclarations = fir2IrResult.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
-            serializeSingleFirFile(
-                firFile,
-                components.session,
-                components.scopeSession,
-                actualizedExpectDeclarations,
-                FirKLibSerializerExtension(
-                    components.session, components.firProvider, metadataVersion,
-                    ConstValueProviderImpl(components),
-                    allowErrorTypes = false, exportKDoc = false,
-                    components.annotationsFromPluginRegistrar.createAdditionalMetadataProvider()
-                ),
-                languageVersionSettings,
-            )
-        }
+            fir2KlibMetadataSerializer,
+        )
     }
 }
 
 class Fir2IrJsResultsConverter(testServices: TestServices) : Fir2IrJsWasmResultsConverter(testServices) {
-    override val artifactFactory: (IrModuleFragment, IrPluginContext, List<KtSourceFile>, List<KotlinFileSerializedData>, BaseDiagnosticsCollector, Boolean, KotlinMangler.DescriptorMangler?, KotlinMangler.IrMangler, FirMangler?, (KtSourceFile) -> ProtoBuf.PackageFragment) -> IrBackendInput
+    override val artifactFactory: (IrModuleFragment, IrPluginContext, List<KotlinFileSerializedData>, BaseDiagnosticsCollector, Boolean, KotlinMangler.DescriptorMangler?, KotlinMangler.IrMangler, FirMangler?, KlibSingleFileMetadataSerializer<*>) -> IrBackendInput
         get() = IrBackendInput::JsIrBackendInput
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary> {
@@ -114,7 +84,7 @@ class Fir2IrJsResultsConverter(testServices: TestServices) : Fir2IrJsWasmResults
 
 
 class Fir2IrWasmResultsConverter(testServices: TestServices) : Fir2IrJsWasmResultsConverter(testServices) {
-    override val artifactFactory: (IrModuleFragment, IrPluginContext, List<KtSourceFile>, List<KotlinFileSerializedData>, BaseDiagnosticsCollector, Boolean, KotlinMangler.DescriptorMangler?, KotlinMangler.IrMangler, FirMangler?, (KtSourceFile) -> ProtoBuf.PackageFragment) -> IrBackendInput
+    override val artifactFactory: (IrModuleFragment, IrPluginContext, List<KotlinFileSerializedData>, BaseDiagnosticsCollector, Boolean, KotlinMangler.DescriptorMangler?, KotlinMangler.IrMangler, FirMangler?, KlibSingleFileMetadataSerializer<*>) -> IrBackendInput
         get() = IrBackendInput::WasmBackendInput
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary> {

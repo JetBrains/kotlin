@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.classic
 
-import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
@@ -105,21 +104,26 @@ class ClassicFrontend2IrConverter(
 
         val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
         val hasErrors = TopDownAnalyzerFacadeForJSIR.checkForErrors(sourceFiles, analysisResult.bindingContext, errorPolicy)
-        val metadataSerializer = KlibMetadataIncrementalSerializer(configuration, project, hasErrors)
+        val metadataSerializer = KlibMetadataIncrementalSerializer(
+            sourceFiles,
+            configuration,
+            project,
+            analysisResult.bindingContext,
+            moduleFragment.descriptor,
+            hasErrors,
+        )
 
         return IrBackendInput.JsIrBackendInput(
             moduleFragment,
             pluginContext,
-            sourceFiles.map(::KtPsiSourceFile),
             icData,
             diagnosticReporter = DiagnosticReporterFactory.createReporter(),
             hasErrors,
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer!!.mangler,
             irMangler = JsManglerIr,
             firMangler = null,
-        ) { file ->
-            metadataSerializer.serializeScope(file, analysisResult.bindingContext, moduleFragment.descriptor)
-        }
+            metadataSerializer = metadataSerializer,
+        )
     }
 
     private fun transformToWasmIr(module: TestModule, inputArtifact: ClassicFrontendOutputArtifact): IrBackendInput {
@@ -147,20 +151,25 @@ class ClassicFrontend2IrConverter(
         val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
         val analyzerFacade = TopDownAnalyzerFacadeForWasm.facadeFor(configuration.get(JSConfigurationKeys.WASM_TARGET))
         val hasErrors = analyzerFacade.checkForErrors(sourceFiles, analysisResult.bindingContext, errorPolicy)
-        val metadataSerializer = KlibMetadataIncrementalSerializer(configuration, project, hasErrors)
+        val metadataSerializer = KlibMetadataIncrementalSerializer(
+            sourceFiles,
+            configuration,
+            project,
+            analysisResult.bindingContext,
+            moduleFragment.descriptor,
+            hasErrors,
+        )
 
         return IrBackendInput.WasmBackendInput(
             moduleFragment,
             pluginContext,
-            sourceFiles.map(::KtPsiSourceFile),
             icData,
             diagnosticReporter = DiagnosticReporterFactory.createReporter(),
             hasErrors,
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer!!.mangler,
             irMangler = JsManglerIr,
             firMangler = null,
-        ) { file ->
-            metadataSerializer.serializeScope(file, analysisResult.bindingContext, moduleFragment.descriptor)
-        }
+            metadataSerializer = metadataSerializer,
+        )
     }
 }

@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtPsiSourceFile
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
@@ -22,12 +21,12 @@ import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
-import org.jetbrains.kotlin.backend.common.serialization.metadata.*
+import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.common.toLogger
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -55,8 +54,6 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
-import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
@@ -66,7 +63,6 @@ import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.DFS
@@ -94,9 +90,6 @@ val KotlinLibrary.serializedIrFileFingerprints: List<SerializedIrFileFingerprint
 val KotlinLibrary.serializedKlibFingerprint: SerializedKlibFingerprint?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_SERIALIZED_KLIB_FINGERPRINT)?.let { SerializedKlibFingerprint.fromString(it) }
 
-private val CompilerConfiguration.metadataVersion
-    get() = get(CommonConfigurationKeys.METADATA_VERSION) as? KlibMetadataVersion ?: KlibMetadataVersion.INSTANCE
-
 internal val SerializedIrFile.fileMetadata: ByteArray
     get() = backendSpecificMetadata ?: error("Expect file caches to have backendSpecificMetadata, but '$path' doesn't")
 
@@ -110,9 +103,7 @@ fun generateKLib(
     moduleFragment: IrModuleFragment,
     diagnosticReporter: DiagnosticReporter,
     builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
-    serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
 ) {
-    val files = (depsDescriptors.mainModule as MainModule.SourceFiles).files.map(::KtPsiSourceFile)
     val configuration = depsDescriptors.compilerConfiguration
     val allDependencies = depsDescriptors.allDependencies
 
@@ -120,7 +111,7 @@ fun generateKLib(
         configuration[CommonConfigurationKeys.MODULE_NAME]!!,
         configuration,
         diagnosticReporter,
-        files,
+        KlibMetadataIncrementalSerializer(depsDescriptors, moduleFragment),
         outputKlibPath,
         allDependencies,
         moduleFragment,
@@ -131,7 +122,6 @@ fun generateKLib(
         abiVersion,
         jsOutputName,
         builtInsPlatform,
-        serializeSingleFile
     )
 }
 
@@ -521,8 +511,19 @@ class ModulesStructure(
 
         val analysisResult = analyzer.analysisResult
         if (compilerConfiguration.getBoolean(CommonConfigurationKeys.INCREMENTAL_COMPILATION)) {
-            /** can throw [IncrementalNextRoundException] */
-            compareMetadataAndGoToNextICRoundIfNeeded(analysisResult, compilerConfiguration, project, files, errorPolicy.allowErrors)
+            val shouldGoToNextIcRound = shouldGoToNextIcRound(compilerConfiguration) {
+                KlibMetadataIncrementalSerializer(
+                    files,
+                    compilerConfiguration,
+                    project,
+                    analysisResult.bindingContext,
+                    analysisResult.moduleDescriptor,
+                    errorPolicy.allowErrors,
+                )
+            }
+            if (shouldGoToNextIcRound) {
+                throw IncrementalNextRoundException()
+            }
         }
 
         var hasErrors = false
@@ -589,12 +590,6 @@ class ModulesStructure(
             null // null in case compiling builtInModule itself
 }
 
-private fun getDescriptorForElement(
-    context: BindingContext,
-    element: PsiElement
-): DeclarationDescriptor = BindingContextUtils.getNotNull(context, BindingContext.DECLARATION_TO_DESCRIPTOR, element)
-
-
 private const val FILE_FINGERPRINTS_SEPARATOR = " "
 
 private fun List<SerializedIrFileFingerprint>.joinIrFileFingerprints(): String {
@@ -609,7 +604,7 @@ fun serializeModuleIntoKlib(
     moduleName: String,
     configuration: CompilerConfiguration,
     diagnosticReporter: DiagnosticReporter,
-    files: List<KtSourceFile>,
+    metadataSerializer: KlibSingleFileMetadataSerializer<*>,
     klibPath: String,
     dependencies: List<KotlinLibrary>,
     moduleFragment: IrModuleFragment,
@@ -620,7 +615,6 @@ fun serializeModuleIntoKlib(
     abiVersion: KotlinAbiVersion,
     jsOutputName: String?,
     builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
-    serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
 ) {
     val moduleExportedNames = moduleFragment.collectExportedNames()
     val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
@@ -630,7 +624,6 @@ fun serializeModuleIntoKlib(
         irModuleFragment = moduleFragment,
         configuration = configuration,
         diagnosticReporter = diagnosticReporter,
-        sourceFiles = files,
         compatibilityMode = CompatibilityMode(abiVersion),
         cleanFiles = cleanFiles,
         dependencies = dependencies,
@@ -653,7 +646,7 @@ fun serializeModuleIntoKlib(
                 shouldCheckSignaturesOnUniqueness,
             ) { JsIrFileMetadata(moduleExportedNames[it]?.values?.toSmartList() ?: emptyList()) }
         },
-        serializeFileMetadata = { serializeSingleFile(it) to FqName.ROOT },
+        metadataSerializer = metadataSerializer,
         runKlibCheckers = { irModuleFragment, irDiagnosticReporter, compilerConfiguration ->
             if (builtInsPlatform == BuiltInsPlatform.JS) {
                 val cleanFilesIrData = cleanFiles.map { it.irData ?: error("Metadata-only KLIBs are not supported in Kotlin/JS") }
@@ -725,53 +718,21 @@ const val KLIB_PROPERTY_JS_OUTPUT_NAME = "jsOutputName"
 const val KLIB_PROPERTY_SERIALIZED_IR_FILE_FINGERPRINTS = "serializedIrFileFingerprints"
 const val KLIB_PROPERTY_SERIALIZED_KLIB_FINGERPRINT = "serializedKlibFingerprint"
 
-fun KlibMetadataIncrementalSerializer.serializeScope(
-    ktFile: KtFile,
-    bindingContext: BindingContext,
-    moduleDescriptor: ModuleDescriptor
-): ProtoBuf.PackageFragment {
-    val memberScope = ktFile.declarations.map { getDescriptorForElement(bindingContext, it) }
-    return serializePackageFragment(moduleDescriptor, memberScope, ktFile.packageFqName)
-}
-
-fun KlibMetadataIncrementalSerializer.serializeScope(
-    ktSourceFile: KtSourceFile,
-    bindingContext: BindingContext,
-    moduleDescriptor: ModuleDescriptor
-): ProtoBuf.PackageFragment {
-    val ktFile = (ktSourceFile as KtPsiSourceFile).psiFile as KtFile
-    val memberScope = ktFile.declarations.map { getDescriptorForElement(bindingContext, it) }
-    return serializePackageFragment(moduleDescriptor, memberScope, ktFile.packageFqName)
-}
-
-private fun compareMetadataAndGoToNextICRoundIfNeeded(
-    analysisResult: AnalysisResult,
-    config: CompilerConfiguration,
-    project: Project,
-    files: List<KtFile>,
-    allowErrors: Boolean
-) {
-    val nextRoundChecker = config.get(JSConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER) ?: return
-    val bindingContext = analysisResult.bindingContext
-    val serializer = KlibMetadataIncrementalSerializer(config, project, allowErrors)
-    for (ktFile in files) {
-        val packageFragment = serializer.serializeScope(ktFile, bindingContext, analysisResult.moduleDescriptor)
-        // to minimize a number of IC rounds, we should inspect all proto for changes first,
-        // then go to a next round if needed, with all new dirty files
-        nextRoundChecker.checkProtoChanges(VfsUtilCore.virtualToIoFile(ktFile.virtualFile), packageFragment.toByteArray())
+fun <SourceFile> shouldGoToNextIcRound(
+    compilerConfiguration: CompilerConfiguration,
+    createMetadataSerializer: () -> KlibSingleFileMetadataSerializer<SourceFile>,
+): Boolean {
+    val nextRoundChecker = compilerConfiguration.get(JSConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER) ?: return false
+    createMetadataSerializer().run {
+        forEachFile { _, sourceFile, ktSourceFile, _ ->
+            val protoBuf = serializeSingleFileMetadata(sourceFile)
+            // to minimize the number of IC rounds, we should inspect all proto for changes first,
+            // then go to the next round if needed, with all new dirty files
+            nextRoundChecker.checkProtoChanges(ktSourceFile.toIoFileOrNull()!!, protoBuf.toByteArray())
+        }
     }
-
-    if (nextRoundChecker.shouldGoToNextRound()) throw IncrementalNextRoundException()
+    return nextRoundChecker.shouldGoToNextRound()
 }
-
-fun KlibMetadataIncrementalSerializer(configuration: CompilerConfiguration, project: Project, allowErrors: Boolean) =
-    KlibMetadataIncrementalSerializer(
-        languageVersionSettings = configuration.languageVersionSettings,
-        metadataVersion = configuration.metadataVersion,
-        project = project,
-        exportKDoc = false,
-        allowErrorTypes = allowErrors
-    )
 
 private fun Map<IrModuleFragment, KotlinLibrary>.getUniqueNameForEachFragment(): Map<IrModuleFragment, String> {
     return this.entries.mapNotNull { (moduleFragment, klib) ->

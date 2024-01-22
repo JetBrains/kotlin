@@ -92,7 +92,7 @@ internal fun PhaseContext.fir2Ir(
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
     val fir2IrConfiguration = Fir2IrConfiguration.forKlibCompilation(configuration, diagnosticsReporter)
-    val (irModuleFragment, components, pluginContext, irActualizedResult) = input.firResult.convertToIrAndActualize(
+    val actualizedResult = input.firResult.convertToIrAndActualize(
             NativeFir2IrExtensions,
             fir2IrConfiguration,
             IrGenerationExtension.getInstances(config.project),
@@ -104,8 +104,8 @@ internal fun PhaseContext.fir2Ir(
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
     }
-    assert(irModuleFragment.name.isSpecial) {
-        "`${irModuleFragment.name}` must be Name.special, since it's required by KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns()"
+    assert(actualizedResult.irModuleFragment.name.isSpecial) {
+        "`${actualizedResult.irModuleFragment.name}` must be Name.special, since it's required by KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns()"
     }
 
     @OptIn(DelicateDeclarationStorageApi::class)
@@ -116,8 +116,8 @@ internal fun PhaseContext.fir2Ir(
             val fragment = (p.getPackageFragment() as? IrExternalPackageFragment) ?: return
             add(fragment.packageFqName)
         }
-        components.declarationStorage.forEachCachedDeclarationSymbol(::addExternalPackage)
-        components.classifierStorage.forEachCachedDeclarationSymbol(::addExternalPackage)
+        actualizedResult.components.declarationStorage.forEachCachedDeclarationSymbol(::addExternalPackage)
+        actualizedResult.components.classifierStorage.forEachCachedDeclarationSymbol(::addExternalPackage)
 
         // These packages exist in all platform libraries, but can contain only synthetic declarations.
         // These declarations are not really located in klib, so we don't need to depend on klib to use them.
@@ -135,7 +135,7 @@ internal fun PhaseContext.fir2Ir(
         }
     }
 
-    val symbols = createKonanSymbols(components, pluginContext)
+    val symbols = createKonanSymbols(actualizedResult.components, actualizedResult.pluginContext)
 
     val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
@@ -144,7 +144,7 @@ internal fun PhaseContext.fir2Ir(
         throw KonanCompilationException("Compilation failed: there were some diagnostics during fir2ir")
     }
 
-    return Fir2IrOutput(input.firResult, symbols, irModuleFragment, components, pluginContext, irActualizedResult, usedLibraries)
+    return Fir2IrOutput(input.firResult, symbols, actualizedResult, usedLibraries)
 }
 
 private fun PhaseContext.createKonanSymbols(

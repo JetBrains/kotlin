@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibHeader
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -24,8 +25,6 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.library.SerializedMetadata
-import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.name.FqName
 import java.io.File
 
 /**
@@ -86,24 +85,22 @@ fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
  * @param irModuleFragment The IR to be serialized into the KLIB being produced, or `null` if this is going to be a metadata-only KLIB.
  * @param configuration Used to determine certain serialization parameters and enable/disable serialization diagnostics.
  * @param diagnosticReporter Used for reporting serialization-time diagnostics, for example, about clashing IR signatures.
- * @param sourceFiles The source files from which the KLIB is being compiled. Used for serializing file metadata.
  * @param compatibilityMode The information about KLIB ABI.
  * @param cleanFiles In the case of incremental compilation, the list of files that were not changed and therefore don't need to be
  *     serialized again.
  * @param dependencies The list of KLIBs that the KLIB being produced depends on.
  * @param createModuleSerializer Used for creating a backend-specific instance of [IrModuleSerializer].
- * @param serializeFileMetadata The name of this argument kind of speaks for itself.
+ * @param metadataSerializer Something capable of serializing the metadata of the source files. See the corresponding interface KDoc.
  * @param runKlibCheckers Additional checks to be run before serializing [irModuleFragment]. Can be used to report serialization-time
  *     diagnostics.
  * @param processCompiledFileData Called for each newly serialized file. Useful for incremental compilation.
  * @param processKlibHeader Called after serializing the KLIB header. Useful for incremental compilation.
  */
-fun <Dependency : KotlinLibrary> serializeModuleIntoKlib(
+fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
     moduleName: String,
     irModuleFragment: IrModuleFragment?,
     configuration: CompilerConfiguration,
     diagnosticReporter: DiagnosticReporter,
-    sourceFiles: List<KtSourceFile>,
     compatibilityMode: CompatibilityMode,
     cleanFiles: List<KotlinFileSerializedData>,
     dependencies: List<Dependency>,
@@ -116,14 +113,14 @@ fun <Dependency : KotlinLibrary> serializeModuleIntoKlib(
         languageVersionSettings: LanguageVersionSettings,
         shouldCheckSignaturesOnUniqueness: Boolean,
     ) -> IrModuleSerializer<*>,
-    serializeFileMetadata: (KtSourceFile) -> Pair<ProtoBuf.PackageFragment, FqName>,
+    metadataSerializer: KlibSingleFileMetadataSerializer<SourceFile>,
     runKlibCheckers: (IrModuleFragment, IrDiagnosticReporter, CompilerConfiguration) -> Unit = { _, _, _ -> },
     processCompiledFileData: ((File, KotlinFileSerializedData) -> Unit)? = null,
     processKlibHeader: (ByteArray) -> Unit = {},
 ): SerializerOutput<Dependency> {
     if (irModuleFragment != null) {
-        assert(sourceFiles.size == irModuleFragment.files.size) {
-            "The number of source files (${sourceFiles.size}) does not match the number of IrFiles (${irModuleFragment.files.size})"
+        assert(metadataSerializer.numberOfSourceFiles == irModuleFragment.files.size) {
+            "The number of source files (${metadataSerializer.numberOfSourceFiles}) does not match the number of IrFiles (${irModuleFragment.files.size})"
         }
     }
 
@@ -147,28 +144,31 @@ fun <Dependency : KotlinLibrary> serializeModuleIntoKlib(
 
     val serializedFiles = serializedIr?.files?.toList()
 
-    val compiledKotlinFiles = sourceFiles.mapIndexedTo(cleanFiles.toMutableList()) { i, ktSourceFile ->
-        val binaryFile = serializedFiles?.get(i)?.also {
-            assert(ktSourceFile.path == it.path) {
-                """The Kt and Ir files are put in different order
-                Kt: ${ktSourceFile.path}
-                Ir: ${it.path}
-                """.trimMargin()
+    val compiledKotlinFiles = buildList {
+        addAll(cleanFiles)
+        metadataSerializer.forEachFile { i, sourceFile, ktSourceFile, packageFqName ->
+            val binaryFile = serializedFiles?.get(i)?.also {
+                assert(ktSourceFile.path == it.path) {
+                    """The Kt and Ir files are put in different order
+                    Kt: ${ktSourceFile.path}
+                    Ir: ${it.path}
+                    """.trimMargin()
+                }
             }
-        }
-        val (packageFragment, fqName) = serializeFileMetadata(ktSourceFile)
-        val metadata = packageFragment.toByteArray()
-        val compiledKotlinFile = if (binaryFile == null)
-            KotlinFileSerializedData(metadata, ktSourceFile.path, fqName.asString())
-        else
-            KotlinFileSerializedData(metadata, binaryFile)
+            val protoBuf = metadataSerializer.serializeSingleFileMetadata(sourceFile)
+            val metadata = protoBuf.toByteArray()
+            val compiledKotlinFile = if (binaryFile == null)
+                KotlinFileSerializedData(metadata, ktSourceFile.path, packageFqName.asString())
+            else
+                KotlinFileSerializedData(metadata, binaryFile)
 
-        if (processCompiledFileData != null) {
-            val ioFile = ktSourceFile.toIoFileOrNull() ?: error("No file found for source ${ktSourceFile.path}")
-            processCompiledFileData(ioFile, compiledKotlinFile)
-        }
+            if (processCompiledFileData != null) {
+                val ioFile = ktSourceFile.toIoFileOrNull() ?: error("No file found for source ${ktSourceFile.path}")
+                processCompiledFileData(ioFile, compiledKotlinFile)
+            }
 
-        compiledKotlinFile
+            add(compiledKotlinFile)
+        }
     }
 
     val header = serializeKlibHeader(

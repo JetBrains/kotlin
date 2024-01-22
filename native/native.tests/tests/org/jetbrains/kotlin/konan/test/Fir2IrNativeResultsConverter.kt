@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.konan.test
 
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.fir.backend.native.FirNativeKotlinMangler
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
+import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
@@ -48,8 +46,7 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrN
         diagnosticReporter: BaseDiagnosticsCollector,
         inputArtifact: FirOutputArtifact,
         fir2IrResult: Fir2IrActualizedResult,
-        firFilesAndComponentsBySourceFile: Map<KtSourceFile, Pair<FirFile, Fir2IrComponents>>,
-        sourceFiles: List<KtSourceFile>,
+        fir2KlibMetadataSerializer: Fir2KlibMetadataSerializer,
     ): IrBackendInput {
         val fir2IrComponents = fir2IrResult.components
         val manglers = fir2IrComponents.manglers

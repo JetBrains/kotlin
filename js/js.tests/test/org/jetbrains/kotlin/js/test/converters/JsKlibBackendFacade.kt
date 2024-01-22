@@ -51,7 +51,7 @@ class JsKlibBackendFacade(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,
                 configuration,
                 inputArtifact.diagnosticReporter,
-                inputArtifact.sourceFiles,
+                inputArtifact.metadataSerializer,
                 klibPath = outputFile,
                 JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).keys.toList(),
                 inputArtifact.irModuleFragment,
@@ -61,9 +61,7 @@ class JsKlibBackendFacade(
                 containsErrorCode = inputArtifact.hasErrors,
                 abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
                 jsOutputName = null
-            ) {
-                inputArtifact.serializeSingleFile(it)
-            }
+            )
         }
 
         val dependencies = JsEnvironmentConfigurator.getAllRecursiveDependenciesFor(module, testServices).toList()

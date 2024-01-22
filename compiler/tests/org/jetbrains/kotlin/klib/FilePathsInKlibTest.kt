@@ -74,9 +74,6 @@ class FilePathsInKlibTest : CodegenTestCase() {
             module.getModuleDescriptor(it)
         }
 
-        val metadataSerializer =
-            KlibMetadataIncrementalSerializer(module.compilerConfiguration, module.project, module.jsFrontEndResult.hasErrors)
-
         val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
         generateKLib(
             module,
@@ -85,10 +82,8 @@ class FilePathsInKlibTest : CodegenTestCase() {
             jsOutputName = MODULE_NAME,
             icData = icData,
             moduleFragment = moduleFragment,
-            diagnosticReporter = diagnosticReporter
-        ) { file ->
-            metadataSerializer.serializeScope(file, module.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
-        }
+            diagnosticReporter = diagnosticReporter,
+        )
     }
 
     private fun setupEnvironment(): CompilerConfiguration {
