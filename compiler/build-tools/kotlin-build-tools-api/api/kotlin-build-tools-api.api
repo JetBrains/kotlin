@@ -12,6 +12,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilationS
 	public abstract fun calculateClasspathSnapshot (Ljava/io/File;Lorg/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshotGranularity;)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathEntrySnapshot;
 	public abstract fun compileJvm (Lorg/jetbrains/kotlin/buildtools/api/ProjectId;Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmCompilationConfiguration;Ljava/util/List;Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/api/CompilationResult;
 	public abstract fun finishProjectCompilation (Lorg/jetbrains/kotlin/buildtools/api/ProjectId;)V
+	public abstract fun getCompilerVersion ()Ljava/lang/String;
 	public abstract fun getCustomKotlinScriptFilenameExtensions (Ljava/util/List;)Ljava/util/Collection;
 	public static fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/CompilationService;
 	public abstract fun makeCompilerExecutionStrategyConfiguration ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;

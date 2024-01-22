@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.common.CompilerId
@@ -230,6 +231,8 @@ internal object CompilationServiceImpl : CompilationService {
             ExitCode.COMPILATION_ERROR
         }).asCompilationResult
     }
+
+    override fun getCompilerVersion(): String = KotlinCompilerVersion.VERSION
 }
 
 internal class CompilationServiceProxy : CompilationService by CompilationServiceImpl

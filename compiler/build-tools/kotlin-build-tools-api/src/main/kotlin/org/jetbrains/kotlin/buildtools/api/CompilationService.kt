@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import java.io.File
-import java.util.*
 
 /**
  * A facade for invoking compilation and related stuff (such as [calculateClasspathSnapshot]) in Kotlin compiler.
@@ -77,6 +76,13 @@ public interface CompilationService {
      * @return A collection of strings representing the custom Kotlin script filename extensions.
      */
     public fun getCustomKotlinScriptFilenameExtensions(classpath: List<File>): Collection<String>
+
+    /**
+     * Returns the version of the Kotlin compiler used to run compilation.
+     *
+     * @return A string representing the version of the Kotlin compiler, for example `2.0.0-Beta4`.
+     */
+    public fun getCompilerVersion(): String
 
     @ExperimentalBuildToolsApi
     public companion object {
