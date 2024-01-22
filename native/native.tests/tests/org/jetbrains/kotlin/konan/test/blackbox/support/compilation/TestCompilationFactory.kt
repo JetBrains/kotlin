@@ -109,7 +109,11 @@ internal class TestCompilationFactory {
         }
     }
 
-    fun testCaseToObjCFrameworkCompilation(testCase: TestCase, settings: Settings): ObjCFrameworkCompilation {
+    fun testCaseToObjCFrameworkCompilation(
+        testCase: TestCase,
+        settings: Settings,
+        exportedLibraries: Iterable<KLIB> = emptyList(),
+    ): ObjCFrameworkCompilation {
         val cacheKey = ObjCFrameworkCacheKey(testCase.rootModules)
         cachedObjCFrameworkCompilations[cacheKey]?.let { return it }
 
@@ -126,8 +130,9 @@ internal class TestCompilationFactory {
                 freeCompilerArgs = testCase.freeCompilerArgs,
                 sourceModules = sourceModules,
                 dependencies = dependencies,
+                exportedLibraries = exportedLibraries,
                 expectedArtifact = ObjCFramework(
-                    settings.artifactDirForPackageName(testCase.nominalPackageName),
+                    settings.get<Binaries>().testBinariesDir,
                     testCase.nominalPackageName.compressedPackageName
                 )
             )
@@ -184,7 +189,8 @@ internal class TestCompilationFactory {
             }
             TestMode.TWO_STAGE_MULTI_MODULE -> {
                 // Compile root modules to KLIB. Pass this KLIB as included dependency to executable compilation.
-                val klibCompilations = modulesToKlib(rootModules, freeCompilerArgs, produceStaticCache(), settings)
+                val klibCompilations =
+                    modulesToKlib(rootModules, freeCompilerArgs, produceStaticCache(), settings)
 
                 Pair(
                     // Include just compiled KLIB as -Xinclude dependency.

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Binaries
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_MODULE_NAME
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LAUNCHER_MODULE_NAME
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.jupiter.api.Assumptions
@@ -267,6 +268,31 @@ internal fun AbstractNativeSimpleTest.generateCInteropTestCaseFromSingleDefFile(
         extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT)
     ).apply {
         initialize(null, null)
+    }
+}
+
+internal fun AbstractNativeSimpleTest.generateObjCFrameworkTestCase(
+    kind: TestKind,
+    extras: TestCase.Extras,
+    moduleName: String,
+    sources: List<File>,
+    freeCompilerArgs: TestCompilerArgs = TestCompilerArgs.EMPTY,
+    givenDependencies: Set<TestModule.Given>? = null,
+    checks: TestRunChecks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
+): TestCase {
+    val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
+    sources.forEach { module.files += TestFile.createCommitted(it, module) }
+
+    return TestCase(
+        id = TestCaseId.Named(moduleName),
+        kind = kind,
+        modules = setOf(module),
+        freeCompilerArgs = freeCompilerArgs,
+        nominalPackageName = PackageName(moduleName),
+        checks = checks,
+        extras = extras,
+    ).apply {
+        initialize(givenDependencies, null)
     }
 }
 

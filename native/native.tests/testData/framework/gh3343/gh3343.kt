@@ -1,5 +1,6 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 import kotlinx.cinterop.*
-import objclib.*
+import gh3343.*
 import kotlin.native.ref.*
 
 fun run(): List<Any?> {

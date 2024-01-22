@@ -1,3 +1,4 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 import kt43517.*
 
 fun produceEnum(): E =

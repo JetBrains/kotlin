@@ -2,7 +2,7 @@ import Foundation
 import Gh3343
 
 func testGh3343() throws {
-    let list = KtlibKt.run()
+    let list = Gh3343Kt.run()
     try assertEquals(actual: list[0] as? String, expected: "42")
     try assertEquals(actual: list[1] as? Int, expected: 2)
     try assertEquals(actual: list[2] as? Int, expected: 117)
@@ -11,7 +11,7 @@ func testGh3343() throws {
 
 // -------- Execution of the test --------
 
-class UselibTests : TestProvider {
+class Gh3343Tests : TestProvider {
     var tests: [TestCase] = []
 
     init() {

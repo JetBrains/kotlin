@@ -1,7 +1,6 @@
 @file:OptIn(kotlin.ExperimentalStdlibApi::class)
 
 import kotlin.native.internal.GC
-import kotlin.native.internal.gc.GCInfo
 import kotlin.native.internal.isPermanent
 import kotlin.test.*
 

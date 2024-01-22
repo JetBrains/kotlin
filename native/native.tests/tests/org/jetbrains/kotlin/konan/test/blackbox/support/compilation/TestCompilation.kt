@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
+import org.jetbrains.kotlin.konan.target.AppleConfigurables
+import org.jetbrains.kotlin.konan.target.withOSVersion
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOn
@@ -76,7 +78,16 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     protected abstract fun applyDependencies(argsBuilder: ArgsBuilder)
 
     private fun ArgsBuilder.applyFreeArgs() {
-        add(freeCompilerArgs.compilerArgs)
+        when (this@BasicCompilation) {
+            is LibraryCompilation, is StaticCacheCompilation ->
+                // In TWO_STAGE_MULTI_MODULE mode, source->framework compilation is split to
+                // - `source -> klib` stage,
+                // - `klib -> static_cache stage(if caches enabled) and
+                // - klib+static_cache -> framework
+                // option `-Xstatic-framework` can be supplied only to `-p framework` stage, so must be filtered out for other stages
+                add(freeCompilerArgs.compilerArgs.filter { it != "-Xstatic-framework" })
+            else -> add(freeCompilerArgs.compilerArgs)
+        }
     }
 
     private fun ArgsBuilder.applyCompilerPlugins() {
@@ -159,6 +170,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     private val gcScheduler: GCScheduler,
     private val allocator: Allocator,
     private val pipelineType: PipelineType,
+    private val cacheMode: CacheMode,
     freeCompilerArgs: TestCompilerArgs,
     compilerPlugins: CompilerPlugins,
     override val sourceModules: Collection<TestModule>,
@@ -190,6 +202,9 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
             add("-friend-modules", friends.joinToString(File.pathSeparator) { friend -> friend.path })
         }
         add(dependencies.includedLibraries) { include -> "-Xinclude=${include.path}" }
+        // static caches of distlibs should be used, like in old testinfra. Relates to KT-65289 for ObjC frameworks
+        cacheMode.staticCacheForDistributionLibrariesRootDir
+            ?.let { cacheRootDir -> add("-Xcache-directory=$cacheRootDir") }
     }
 
     private fun applyK2MPPArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
@@ -222,6 +237,7 @@ internal class LibraryCompilation(
     gcScheduler = settings.get(),
     allocator = settings.get(),
     pipelineType = settings.get(),
+    cacheMode = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
     sourceModules = sourceModules,
@@ -244,7 +260,8 @@ internal class ObjCFrameworkCompilation(
     freeCompilerArgs: TestCompilerArgs,
     sourceModules: Collection<TestModule>,
     dependencies: Iterable<TestCompilationDependency<*>>,
-    expectedArtifact: ObjCFramework
+    expectedArtifact: ObjCFramework,
+    val exportedLibraries: Iterable<KLIB> = emptyList(),
 ) : SourceBasedCompilation<ObjCFramework>(
     targets = settings.get(),
     home = settings.get(),
@@ -257,6 +274,7 @@ internal class ObjCFrameworkCompilation(
     gcScheduler = settings.get(),
     allocator = settings.get(),
     pipelineType = settings.getStageDependentPipelineType(),
+    cacheMode = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
     sourceModules = sourceModules,
@@ -271,6 +289,14 @@ internal class ObjCFrameworkCompilation(
             "-output", expectedArtifact.frameworkDir.absolutePath
         )
         super.applySpecificArgs(argsBuilder)
+    }
+
+    override fun applyDependencies(argsBuilder: ArgsBuilder) = with(argsBuilder) {
+        exportedLibraries.forEach {
+            assertTrue(it in dependencies.libraries)
+            add("-Xexport-library=${it.path}")
+        }
+        super.applyDependencies(argsBuilder)
     }
 }
 
@@ -292,6 +318,7 @@ internal class BinaryLibraryCompilation(
     gcScheduler = settings.get(),
     allocator = settings.get(),
     pipelineType = settings.getStageDependentPipelineType(),
+    cacheMode = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
     sourceModules = sourceModules,
@@ -328,7 +355,14 @@ internal class CInteropCompilation(
 ) : TestCompilation<KLIB>() {
 
     override val result: TestCompilationResult<out KLIB> by lazy {
-        val extraArgsArray = buildList {
+        val args = buildList {
+            add("-def")
+            add(defFile.canonicalPath)
+            add("-target")
+            add(targets.testTarget.name)
+            add("-o")
+            add(expectedArtifact.klibFile.canonicalPath)
+            add("-no-default-libs")
             dependencies.forEach {
                 add("-l")
                 add(it.artifact.path)
@@ -344,16 +378,14 @@ internal class CInteropCompilation(
             add("-DNS_FORMAT_ARGUMENT(A)=")
             add("-compiler-option")
             add("-I${defFile.parentFile}")
-        }.toTypedArray()
+        }
 
-        val loggedCInteropParameters = LoggedData.CInteropParameters(extraArgs = extraArgsArray, defFile = defFile)
+        val loggedCInteropParameters = LoggedData.CInteropParameters(args, defFile)
         val (loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out KLIB>) = try {
             val (exitCode, cinteropOutput, cinteropOutputHasErrors, duration) = invokeCInterop(
                 classLoader.classLoader,
-                targets,
-                defFile,
                 expectedArtifact.klibFile,
-                extraArgsArray
+                args.toTypedArray()
             )
 
             val loggedInteropCall = LoggedData.CompilationToolCall(
@@ -383,6 +415,56 @@ internal class CInteropCompilation(
     }
 }
 
+internal class SwiftCompilation(
+    testRunSettings: Settings,
+    sources: List<File>,
+    expectedArtifact: Executable,
+    swiftExtraOpts: List<String>,
+) : TestCompilation<Executable>() {
+    override val result: TestCompilationResult<out Executable> by lazy {
+        val buildDir = testRunSettings.get<Binaries>().testBinariesDir
+        val configs = testRunSettings.configurables as AppleConfigurables
+        val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
+        val args = swiftExtraOpts + sources.map { it.absolutePath } + listOf(
+            "-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget,
+            "-g", "-o", expectedArtifact.executableFile.absolutePath,
+            "-Xlinker", "-rpath", "-Xlinker", "@executable_path/Frameworks",
+            "-Xlinker", "-rpath", "-Xlinker", buildDir.absolutePath,
+            "-F", buildDir.absolutePath,
+            "-Xcc", "-Werror", // To fail compilation on warnings in framework header.
+        )
+
+        val loggedSwiftCParameters = LoggedData.SwiftCParameters(args, sources)
+        val (loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out Executable>) = try {
+            val (exitCode, swiftcOutput, swiftcOutputHasErrors, duration) =
+                invokeSwiftC(testRunSettings, args)
+
+            val loggedSwiftCCall = LoggedData.CompilationToolCall(
+                toolName = "SWIFTC",
+                input = null,
+                parameters = loggedSwiftCParameters,
+                exitCode = exitCode,
+                toolOutput = swiftcOutput,
+                toolOutputHasErrors = swiftcOutputHasErrors,
+                duration = duration
+            )
+            val res = if (exitCode != ExitCode.OK || swiftcOutputHasErrors)
+                TestCompilationResult.CompilationToolFailure(loggedSwiftCCall)
+            else
+                TestCompilationResult.Success(expectedArtifact, loggedSwiftCCall)
+
+            loggedSwiftCCall to res
+        } catch (unexpectedThrowable: Throwable) {
+            val loggedFailure = LoggedData.CompilationToolCallUnexpectedFailure(loggedSwiftCParameters, unexpectedThrowable)
+            val res = TestCompilationResult.UnexpectedFailure(loggedFailure)
+
+            loggedFailure to res
+        }
+        expectedArtifact.logFile.writeText(loggedCall.toString())
+        immediateResult
+    }
+}
+
 internal class ExecutableCompilation(
     settings: Settings,
     freeCompilerArgs: TestCompilerArgs,
@@ -403,6 +485,7 @@ internal class ExecutableCompilation(
     gcScheduler = settings.get(),
     allocator = settings.get(),
     pipelineType = settings.getStageDependentPipelineType(),
+    cacheMode = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
     sourceModules = sourceModules,

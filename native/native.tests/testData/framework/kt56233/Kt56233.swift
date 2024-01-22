@@ -40,7 +40,7 @@ func kt56233() {
 
 // -------- Execution of the test --------
 
-class TestTests : SimpleTestProvider {
+class Kt56233Tests : SimpleTestProvider {
     override init() {
         super.init()
 

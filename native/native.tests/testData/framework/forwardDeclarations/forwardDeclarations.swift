@@ -2,7 +2,7 @@ import ForwardDeclarations
 
 private func test1() throws {
     let ptr = UnsafeMutableRawPointer(bitPattern: 0x1234)
-    try assertEquals(actual: LibKt.sameForwardDeclaredStruct(ptr: ptr), expected: ptr)
+    try assertEquals(actual: ForwardDeclarationsKt.sameForwardDeclaredStruct(ptr: ptr), expected: ptr)
 
     // We can't actually test this, because Swift can't import neither types nor functions due to
     // "interface/protocol '...' is incomplete":
@@ -16,7 +16,7 @@ private func test1() throws {
 
 // -------- Execution of the test --------
 
-class TestTests : SimpleTestProvider {
+class ForwardDeclarationsTests : SimpleTestProvider {
     override init() {
         super.init()
 

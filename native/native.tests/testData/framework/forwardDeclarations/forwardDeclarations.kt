@@ -1,4 +1,5 @@
-import clib.*
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+import forwardDeclarations.*
 import cnames.structs.ForwardDeclaredStruct
 import objcnames.classes.ForwardDeclaredClass
 import objcnames.protocols.ForwardDeclaredProtocolProtocol

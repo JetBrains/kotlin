@@ -1,21 +1,21 @@
 import PermanentObjects
 
 func testPermanentObjects() throws {
-    PermanentObjects.KnlibraryKt.assertIsPermanent()
-    let stableRefsBefore = PermanentObjects.KnlibraryKt.stableRefsCount()
+    PermanentObjects.PermanentObjectsKt.assertIsPermanent()
+    let stableRefsBefore = PermanentObjects.PermanentObjectsKt.stableRefsCount()
     autoreleasepool {
         for i in 0..<1000 {
             PermanentObjects.Permanent().counter += 1
         }
     }
-    let stableRefsAfter = PermanentObjects.KnlibraryKt.stableRefsCount()
+    let stableRefsAfter = PermanentObjects.PermanentObjectsKt.stableRefsCount()
     try assertEquals(actual: PermanentObjects.Permanent().counter, expected: 1000)
     try assertEquals(actual: stableRefsAfter, expected: stableRefsBefore)
 }
 
 // -------- Execution of the test --------
 
-class TestTests : SimpleTestProvider {
+class PermanentObjectsTests : SimpleTestProvider {
     override init() {
         super.init()
 

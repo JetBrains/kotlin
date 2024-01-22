@@ -7,7 +7,7 @@ class Results {
 
 func runTestKt42397(pointer: UnsafeMutableRawPointer) -> UnsafeMutableRawPointer? {
     autoreleasepool {
-        KnlibraryKt.enableMemoryChecker()
+        Kt42397Kt.enableMemoryChecker()
         let results = pointer.bindMemory(to: Results.self, capacity: 1).pointee
         results.aFoo = A().foo()
         results.bFoo = B.Companion().foo()
@@ -31,7 +31,7 @@ func testKt42397() throws {
 
 // -------- Execution of the test --------
 
-class TestTests : SimpleTestProvider {
+class Kt42397Tests : SimpleTestProvider {
     override init() {
         super.init()
 

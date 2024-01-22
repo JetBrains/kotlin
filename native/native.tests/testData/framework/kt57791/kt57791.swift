@@ -6,10 +6,10 @@ class FooImpl : Foo {
 }
 
 func testKt57791() throws {
-    try assertTrue(KnlibraryKt.foobar(foo: FooImpl()))
+    try assertTrue(Kt57791Kt.foobar(foo: FooImpl()))
 }
 
-class TestTests : TestProvider {
+class Kt57791Tests : TestProvider {
     var tests: [TestCase] = []
 
     init() {
