@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
@@ -13,14 +14,13 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFr
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
+import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
@@ -33,7 +33,9 @@ import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
 import org.jetbrains.kotlin.backend.konan.lower.UnboxInlineLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTransformer
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -385,8 +387,32 @@ private val coroutinesPhase = createFileLoweringPhase(
         prerequisite = setOf(localFunctionsPhase, finallyBlocksPhase, kotlinNothingValueExceptionPhase)
 )
 
+private val coroutinesLivenessAnalysisFallbackPhase = createFileLoweringPhase(
+        lowering = ::CoroutinesLivenessAnalysisFallback,
+        name = "CoroutinesLivenessAnalysisFallback",
+        description = "Compute visible variables at suspension points",
+        prerequisite = setOf(coroutinesPhase)
+)
+
+private val coroutinesLivenessAnalysisPhase = createFileLoweringPhase(
+        lowering = { context: NativeGenerationState ->
+            object : BodyLoweringPass {
+                override fun lower(irBody: IrBody, container: IrDeclaration) {
+                    val liveVariablesAtSuspensionPoints = context.liveVariablesAtSuspensionPoints
+                    LivenessAnalysis.run(irBody) { it is IrSuspensionPoint }
+                            .forEach { (irElement, liveVariables) ->
+                                liveVariablesAtSuspensionPoints[irElement as IrSuspensionPoint] = liveVariables
+                            }
+                }
+            }
+        },
+        name = "CoroutinesLivenessAnalysis",
+        description = "Run liveness analysis for coroutines",
+        prerequisite = setOf(coroutinesPhase)
+)
+
 private val coroutinesVarSpillingPhase = createFileLoweringPhase(
-        ::CoroutinesVarSpillingLowering,
+        lowering = ::CoroutinesVarSpillingLowering,
         name = "CoroutinesVarSpilling",
         description = "Save/restore coroutines variables before/after suspension",
         prerequisite = setOf(coroutinesPhase)
@@ -554,6 +580,9 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         varargPhase,
         kotlinNothingValueExceptionPhase,
         coroutinesPhase,
+        // Either of these could be turned off without losing correctness.
+        coroutinesLivenessAnalysisPhase, // This is more optimal
+        coroutinesLivenessAnalysisFallbackPhase, // While this is simple
         coroutinesVarSpillingPhase,
         typeOperatorPhase,
         expressionBodyTransformPhase,
