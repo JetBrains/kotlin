@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object KDocReferenceResolver {
+    private data class ResolveResult(val symbol: KtSymbol)
+
+    private fun KtSymbol.toResolveResult(): ResolveResult = ResolveResult(this)
 
     /**
      * Resolves the [selectedFqName] of KDoc
@@ -47,7 +50,7 @@ internal object KDocReferenceResolver {
     context(KtAnalysisSession)
     internal fun resolveKdocFqName(selectedFqName: FqName, fullFqName: FqName, contextElement: KtElement): Collection<KtSymbol> {
         val fullSymbolsResolved = resolveKdocFqName(fullFqName, contextElement)
-        if (selectedFqName == fullFqName) return fullSymbolsResolved
+        if (selectedFqName == fullFqName) return fullSymbolsResolved.map { it.symbol }
         if (fullSymbolsResolved.isEmpty()) {
             val parent = fullFqName.parent()
             return resolveKdocFqName(selectedFqName = selectedFqName, fullFqName = parent, contextElement = contextElement)
@@ -56,7 +59,7 @@ internal object KDocReferenceResolver {
         check(goBackSteps > 0) {
             "Selected FqName ($selectedFqName) should be smaller than the whole FqName ($fullFqName)"
         }
-        return fullSymbolsResolved.mapNotNullTo(mutableSetOf()) { findParentSymbol(it, goBackSteps, selectedFqName) }
+        return fullSymbolsResolved.mapNotNullTo(mutableSetOf()) { findParentSymbol(it.symbol, goBackSteps, selectedFqName) }
     }
 
 
@@ -83,31 +86,31 @@ internal object KDocReferenceResolver {
     }
 
     context(KtAnalysisSession)
-    private fun resolveKdocFqName(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> {
+    private fun resolveKdocFqName(fqName: FqName, contextElement: KtElement): Collection<ResolveResult> {
         getExtensionReceiverSymbolByThisQualifier(fqName, contextElement).ifNotEmpty { return this }
         getSymbolsFromExistingScopes(fqName, contextElement).ifNotEmpty { return this }
-        getNonImportedSymbolsByFullyQualifiedName(fqName).ifNotEmpty { return this }
-        AdditionalKDocResolutionProvider.resolveKdocFqName(fqName, contextElement).ifNotEmpty { return this }
+        getNonImportedSymbolsByFullyQualifiedName(fqName).map { it.toResolveResult() }.ifNotEmpty { return this }
+        AdditionalKDocResolutionProvider.resolveKdocFqName(fqName, contextElement).map { it.toResolveResult() }.ifNotEmpty { return this }
         return emptyList()
     }
 
     context(KtAnalysisSession)
-    fun getExtensionReceiverSymbolByThisQualifier(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> {
+    private fun getExtensionReceiverSymbolByThisQualifier(fqName: FqName, contextElement: KtElement): Collection<ResolveResult> {
         val owner = contextElement.parentOfType<KtDeclaration>() ?: return emptyList()
         if (fqName.pathSegments().singleOrNull()?.asString() == "this") {
             if (owner is KtCallableDeclaration && owner.receiverTypeReference != null) {
                 val symbol = owner.getSymbol() as? KtCallableSymbol ?: return emptyList()
-                return listOfNotNull(symbol.receiverParameter)
+                return listOfNotNull(symbol.receiverParameter).map { it.toResolveResult() }
             }
         }
         return emptyList()
     }
 
     context(KtAnalysisSession)
-    private fun getSymbolsFromExistingScopes(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> =
+    private fun getSymbolsFromExistingScopes(fqName: FqName, contextElement: KtElement): Collection<ResolveResult> =
         buildList {
-            addAll(getSymbolsFromScopes(fqName, contextElement))
-            addIfNotNull(getPackageSymbolIfPackageExists(fqName))
+            getSymbolsFromScopes(fqName, contextElement).mapTo(this) { it.toResolveResult() }
+            addIfNotNull(getPackageSymbolIfPackageExists(fqName)?.toResolveResult())
         }
 
     context(KtAnalysisSession)
