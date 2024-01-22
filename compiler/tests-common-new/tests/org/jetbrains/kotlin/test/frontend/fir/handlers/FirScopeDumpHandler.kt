@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.isHiddenEverywhereBesideSuperCalls
+import org.jetbrains.kotlin.fir.declarations.isHiddenToOvercomeSignatureClash
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -144,6 +146,11 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
     private fun SmartPrinter.printInfo(declaration: FirCallableDeclaration, scope: FirTypeScope, counter: SymbolCounter) {
         val origin = declaration.origin.takeUnless { it == FirDeclarationOrigin.BuiltIns } ?: FirDeclarationOrigin.Library
         print("[$origin]: ")
+        if (declaration.isHiddenEverywhereBesideSuperCalls == true) {
+            print("/* hidden beside supers */ ")
+        } else if (declaration.isHiddenToOvercomeSignatureClash == true) {
+            print("/* hidden due to clash */ ")
+        }
         val renderedDeclaration = FirRenderer.noAnnotationBodiesAccessorAndArguments().renderElementAsString(declaration).trim()
         print(renderedDeclaration)
         print(" from $scope")
