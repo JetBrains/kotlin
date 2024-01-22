@@ -408,6 +408,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             shouldBeAnInterface()
         }
 
+        implicitInvokeCall.configure {
+            +booleanField("isCallWithExplicitReceiver")
+        }
+
         constructor.configure {
             +annotations
             +symbol("FirConstructorSymbol")

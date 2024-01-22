@@ -1074,6 +1074,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     arguments.add(receiver)
                     arguments.addAll(firSelector.arguments)
                 }
+                isCallWithExplicitReceiver = true
                 calleeReference = firSelector.calleeReference
             }
         } else {

@@ -36,6 +36,7 @@ abstract class FirImplicitInvokeCall : FirFunctionCall() {
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirNamedReference
     abstract override val origin: FirFunctionCallOrigin
+    abstract val isCallWithExplicitReceiver: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitImplicitInvokeCall(this, data)

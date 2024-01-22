@@ -7,5 +7,5 @@ fun test1(f: String.() -> Unit) {
 fun test2(f: (Int) -> Int) {
     1.<!UNRESOLVED_REFERENCE!>f<!>(2)
 
-    2.(f)(<!TOO_MANY_ARGUMENTS!>2<!>)
+    <!NO_RECEIVER_ALLOWED!>2.(f)(<!TOO_MANY_ARGUMENTS!>2<!>)<!>
 }

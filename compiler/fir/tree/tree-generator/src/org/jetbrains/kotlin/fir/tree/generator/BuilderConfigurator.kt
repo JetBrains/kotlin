@@ -227,7 +227,10 @@ object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirT
             }
         }
         builder(integerLiteralOperatorCall, config = configurationForFunctionCallBuilder)
-        builder(implicitInvokeCall, config = configurationForFunctionCallBuilder)
+        builder(implicitInvokeCall) {
+            configurationForFunctionCallBuilder()
+            defaultFalse("isCallWithExplicitReceiver")
+        }
 
         builder(getClassCall) {
             parents += callBuilder

@@ -35,6 +35,7 @@ open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnn
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     override lateinit var calleeReference: FirNamedReference
+    open var isCallWithExplicitReceiver: Boolean = false
 
     override fun build(): FirImplicitInvokeCall {
         return FirImplicitInvokeCallImpl(
@@ -49,6 +50,7 @@ open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnn
             nonFatalDiagnostics.toMutableOrEmpty(),
             argumentList,
             calleeReference,
+            isCallWithExplicitReceiver,
         )
     }
 

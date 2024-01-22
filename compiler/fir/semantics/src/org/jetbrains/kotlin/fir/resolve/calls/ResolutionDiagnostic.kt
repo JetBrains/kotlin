@@ -142,6 +142,8 @@ class DslScopeViolation(val calleeSymbol: FirBasedSymbol<*>) : ResolutionDiagnos
 
 class MultipleContextReceiversApplicableForExtensionReceivers : ResolutionDiagnostic(INAPPLICABLE)
 
+object NoReceiverAllowed : ResolutionDiagnostic(INAPPLICABLE)
+
 class NoApplicableValueForContextReceiver(
     val expectedContextReceiverType: ConeKotlinType
 ) : ResolutionDiagnostic(INAPPLICABLE)

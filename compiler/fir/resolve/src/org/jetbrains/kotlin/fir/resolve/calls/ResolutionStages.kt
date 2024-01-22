@@ -76,6 +76,18 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
 
 object CheckExtensionReceiver : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+        val callSite = callInfo.callSite
+
+        if (callSite is FirImplicitInvokeCall) {
+            val isInvokeFromExtensionFunctionType = candidate.isInvokeFromExtensionFunctionType
+            val isImplicitInvokeCallWithExplicitReceiver = callSite.isCallWithExplicitReceiver
+
+            // We do allow automatic conversion in the other direction, though
+            if (!isInvokeFromExtensionFunctionType && isImplicitInvokeCallWithExplicitReceiver) {
+                sink.reportDiagnostic(NoReceiverAllowed)
+            }
+        }
+
         val expectedReceiverType = candidate.getExpectedReceiverType() ?: return
         val expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType.type)
 
@@ -506,10 +518,7 @@ internal object CheckArguments : CheckerStage() {
         candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val argumentMapping =
             candidate.argumentMapping ?: error("Argument should be already mapped while checking arguments!")
-
-        val isInvokeFromExtensionFunctionType = candidate.explicitReceiverKind == DISPATCH_RECEIVER
-                && candidate.dispatchReceiver?.resolvedType?.isExtensionFunctionType == true
-                && (candidate.symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
+        val isInvokeFromExtensionFunctionType = candidate.isInvokeFromExtensionFunctionType
 
         for ((index, argument) in callInfo.arguments.withIndex()) {
             candidate.resolveArgument(
@@ -542,6 +551,11 @@ internal object CheckArguments : CheckerStage() {
         }
     }
 }
+
+private val Candidate.isInvokeFromExtensionFunctionType: Boolean
+    get() = explicitReceiverKind == DISPATCH_RECEIVER
+            && dispatchReceiver?.resolvedType?.isExtensionFunctionType == true
+            && (symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
 
 internal fun Candidate.shouldHaveLowPriorityDueToSAM(bodyResolveComponents: BodyResolveComponents): Boolean {
     if (!usesSAM || isJavaApplicableCandidate()) return false

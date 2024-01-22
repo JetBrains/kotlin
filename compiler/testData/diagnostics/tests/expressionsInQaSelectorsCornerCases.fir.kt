@@ -30,5 +30,5 @@ fun rain() {
 
     5.(<!UNRESOLVED_REFERENCE!>::<!UNRESOLVED_REFERENCE!>x<!><!>)().inv()
 
-    5.(Int::x)().inv()
+    <!NO_RECEIVER_ALLOWED!>5.(Int::x)()<!>.inv()
 }

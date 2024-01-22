@@ -38,6 +38,7 @@ internal class FirImplicitInvokeCallImpl(
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
+    override val isCallWithExplicitReceiver: Boolean,
 ) : FirImplicitInvokeCall() {
     override val origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Operator
 
