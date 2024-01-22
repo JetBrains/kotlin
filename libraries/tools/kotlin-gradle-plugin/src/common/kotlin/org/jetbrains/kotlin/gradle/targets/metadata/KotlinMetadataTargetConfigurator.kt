@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinMetadataConfigurationMetrics
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropMetadataDependencyClasspath
 import org.jetbrains.kotlin.gradle.targets.native.internal.sharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
 
 internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
@@ -55,7 +55,7 @@ class KotlinMetadataTargetConfigurator :
 
         if (target.project.isKotlinGranularMetadataEnabled) {
             target.project.addConfigurationMetrics {
-                it.put(BooleanMetrics.ENABLED_HMPP, true)
+                KotlinMetadataConfigurationMetrics.collectMetrics(it)
             }
 
             target.compilations.withType(KotlinCommonCompilation::class.java).getByName(KotlinCompilation.MAIN_COMPILATION_NAME).run {

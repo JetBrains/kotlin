@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Contri
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.statistics.CompileKotlinJsTaskMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
-import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.io.File
 import javax.inject.Inject
 
@@ -70,11 +70,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     internal var incrementalJsKlib: Boolean = true
 
     override fun isIncrementalCompilationEnabled(): Boolean {
-        val result = incrementalJsKlib || incremental
-        buildFusService.orNull?.reportFusMetrics {
-            it.report(BooleanMetrics.JS_KLIB_INCREMENTAL, result)
-        }
-        return result
+        return incrementalJsKlib || incremental
     }
 
     // Workaround to be able to use default value and change it later based on external input
@@ -270,6 +266,10 @@ abstract class Kotlin2JsCompile @Inject constructor(
                 icFeatures = makeIncrementalCompilationFeatures(),
             )
         } else null
+
+        buildFusService.orNull?.reportFusMetrics {
+            CompileKotlinJsTaskMetrics.collectMetrics(icEnv != null, it)
+        }
 
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Create
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.statistics.NativeCompilerOptionMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
@@ -54,8 +55,6 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.project.model.LanguageSettings
-import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
-import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import java.nio.file.Files
@@ -555,7 +554,12 @@ internal constructor(
                 val output = outputFile.get()
                 output.parentFile.mkdirs()
 
-                collectCommonCompilerStats()
+                buildFusService.orNull?.use {
+                    it.reportFusMetrics {
+                        NativeCompilerOptionMetrics.collectMetrics(compilerOptions, it)
+                    }
+                }
+
                 ArgumentUtils.convertArgumentsToStringList(arguments)
             }
 
@@ -571,17 +575,6 @@ internal constructor(
     private fun resolveLanguageVersion() =
         compilerOptions.languageVersion.orNull?.version?.let { v -> KotlinVersion.fromVersion(v) }
 
-    private fun collectCommonCompilerStats() {
-        buildFusService.orNull?.reportFusMetrics {
-            it.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
-            compilerOptions.apiVersion.orNull?.also { v ->
-                it.report(StringMetrics.KOTLIN_API_VERSION, v.version)
-            }
-            compilerOptions.languageVersion.orNull?.also { v ->
-                it.report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v.version)
-            }
-        }
-    }
 }
 
 internal class ExternalDependenciesBuilder(
