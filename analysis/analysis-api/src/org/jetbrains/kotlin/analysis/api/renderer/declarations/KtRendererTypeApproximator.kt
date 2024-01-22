@@ -16,6 +16,8 @@ public interface KtRendererTypeApproximator {
     public object TO_DENOTABLE : KtRendererTypeApproximator {
         context(KtAnalysisSession)
         override fun approximateType(type: KtType, position: Variance): KtType {
+            type.getEnhancedType()?.let { return it }
+
             return when (position) {
                 Variance.INVARIANT -> type
                 Variance.IN_VARIANCE -> type.approximateToSubPublicDenotableOrSelf(approximateLocalTypes = false)

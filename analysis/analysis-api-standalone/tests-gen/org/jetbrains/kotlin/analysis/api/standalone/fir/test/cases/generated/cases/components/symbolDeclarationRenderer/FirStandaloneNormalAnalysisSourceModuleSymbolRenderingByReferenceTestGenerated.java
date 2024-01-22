@@ -47,6 +47,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolRenderingByReferenceTe
     }
 
     @Test
+    @TestMetadata("javaEnhancedType.kt")
+    public void testJavaEnhancedType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaEnhancedType.kt");
+    }
+
+    @Test
+    @TestMetadata("javaEnhancedTypeExternalAnnotation.kt")
+    public void testJavaEnhancedTypeExternalAnnotation() throws Exception {
+        runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaEnhancedTypeExternalAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("javaMethodWithMultipleTypeParametersBound.kt")
     public void testJavaMethodWithMultipleTypeParametersBound() throws Exception {
         runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaMethodWithMultipleTypeParametersBound.kt");

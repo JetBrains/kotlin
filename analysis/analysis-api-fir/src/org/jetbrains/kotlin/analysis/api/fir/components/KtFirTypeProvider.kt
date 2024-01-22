@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitutor
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
@@ -83,6 +84,15 @@ internal class KtFirTypeProvider(
         )
 
         return approximatedConeType?.asKtType()
+    }
+
+    override fun getEnhancedType(type: KtType): KtType? {
+        require(type is KtFirType)
+        val coneType = type.coneType
+        val substitutor = EnhancedForWarningConeSubstitutor(typeContext)
+        val enhancedConeType = substitutor.substituteType(coneType)
+
+        return enhancedConeType?.asKtType()
     }
 
     override fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType {
