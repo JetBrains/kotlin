@@ -43,18 +43,12 @@ private constructor(
     val project: Project,
     val firResolveSession: LLFirResolveSession,
     token: KtLifetimeToken,
-    private val mode: AnalysisSessionMode,
 ) : KtAnalysisSession(token) {
 
     internal val firSymbolBuilder: KtSymbolByFirBuilder = KtSymbolByFirBuilder(project, this, token)
 
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override val useSiteModule: KtModule get() = firResolveSession.useSiteKtModule
-
-    private enum class AnalysisSessionMode {
-        REGULAR,
-        DEPENDENT_COPY
-    }
 
     override val smartCastProviderImpl = KtFirSmartcastProvider(this, token)
 
@@ -187,14 +181,7 @@ private constructor(
             firResolveSession: LLFirResolveSession,
             token: KtLifetimeToken,
         ): KtFirAnalysisSession {
-            val project = firResolveSession.project
-
-            return KtFirAnalysisSession(
-                project,
-                firResolveSession,
-                token,
-                AnalysisSessionMode.REGULAR,
-            )
+            return KtFirAnalysisSession(firResolveSession.project, firResolveSession, token)
         }
     }
 }
