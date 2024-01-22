@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirSt
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.LLFirStandaloneLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLSealedInheritorsProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
@@ -140,9 +140,9 @@ public class StandaloneAnalysisAPISessionBuilder(
             registerService(KotlinPackageProviderMerger::class.java, KotlinStaticPackageProviderMerger(this))
 
             registerService(
-                FirSealedClassInheritorsProcessorFactory::class.java,
-                object : FirSealedClassInheritorsProcessorFactory() {
-                    override fun createSealedClassInheritorsProvider(): SealedClassInheritorsProvider {
+                LLSealedInheritorsProviderFactory::class.java,
+                object : LLSealedInheritorsProviderFactory {
+                    override fun createSealedInheritorsProvider(): SealedClassInheritorsProvider {
                         return SealedClassInheritorsProviderImpl
                     }
                 }
