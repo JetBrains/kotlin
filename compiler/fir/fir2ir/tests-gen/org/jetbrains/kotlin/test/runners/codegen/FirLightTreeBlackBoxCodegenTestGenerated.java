@@ -2762,6 +2762,30 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("pcaRootIsDelegatedConstructorCall.kt")
+        public void testPcaRootIsDelegatedConstructorCall() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/pcaRootIsDelegatedConstructorCall.kt");
+        }
+
+        @Test
+        @TestMetadata("pclaRootIsElvisSynthetic.kt")
+        public void testPclaRootIsElvisSynthetic() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/pclaRootIsElvisSynthetic.kt");
+        }
+
+        @Test
+        @TestMetadata("pclaRootIsIfWhenSyntheticCall.kt")
+        public void testPclaRootIsIfWhenSyntheticCall() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/pclaRootIsIfWhenSyntheticCall.kt");
+        }
+
+        @Test
+        @TestMetadata("pclaRootIsTrySyntheticCall.kt")
+        public void testPclaRootIsTrySyntheticCall() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/pclaRootIsTrySyntheticCall.kt");
+        }
+
+        @Test
         @TestMetadata("receiverUsesOuterTVButReturnTypeIsProper.kt")
         public void testReceiverUsesOuterTVButReturnTypeIsProper() throws Exception {
             runTest("compiler/testData/codegen/box/builderInference/receiverUsesOuterTVButReturnTypeIsProper.kt");

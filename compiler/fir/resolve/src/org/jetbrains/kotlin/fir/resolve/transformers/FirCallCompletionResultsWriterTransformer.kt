@@ -183,22 +183,26 @@ class FirCallCompletionResultsWriterTransformer(
             qualifiedAccessExpression.replaceTypeArguments(typeArguments)
         }
 
-        for (postponedCall in subCandidate.postponedPCLACalls) {
+        runPCLARelatedTasksForCandidate(subCandidate)
+
+        session.lookupTracker?.recordTypeResolveAsLookup(type, qualifiedAccessExpression.source, context.file.source)
+        return qualifiedAccessExpression
+    }
+
+    private fun runPCLARelatedTasksForCandidate(candidate: Candidate) {
+        for (postponedCall in candidate.postponedPCLACalls) {
             postponedCall.transformSingle(this, null)
         }
 
-        for (callback in subCandidate.onCompletionResultsWritingCallbacks) {
+        for (callback in candidate.onCompletionResultsWritingCallbacks) {
             callback(finalSubstitutor)
         }
 
         // TODO: Be aware of exponent
         val firStubTypeTransformer = FirTypeVariablesAfterPCLATransformer(finalSubstitutor)
-        for (lambda in subCandidate.lambdasAnalyzedWithPCLA) {
+        for (lambda in candidate.lambdasAnalyzedWithPCLA) {
             lambda.transformSingle(firStubTypeTransformer, null)
         }
-
-        session.lookupTracker?.recordTypeResolveAsLookup(type, qualifiedAccessExpression.source, context.file.source)
-        return qualifiedAccessExpression
     }
 
     /**
@@ -674,6 +678,8 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
 
+        runPCLARelatedTasksForCandidate(subCandidate)
+
         val argumentsMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
         delegatedConstructorCall.transformWithExpectedTypes(argumentsMapping)
 
@@ -913,6 +919,8 @@ class FirCallCompletionResultsWriterTransformer(
         val typeRef = typeCalculator.tryCalculateReturnType(declaration)
         syntheticCall.replaceTypeWithSubstituted(calleeReference, typeRef)
         transformSyntheticCallChildren(syntheticCall, data)
+
+        runPCLARelatedTasksForCandidate(calleeReference.candidate)
 
         return syntheticCall.apply {
             replaceCalleeReference(calleeReference.toResolvedReference())
