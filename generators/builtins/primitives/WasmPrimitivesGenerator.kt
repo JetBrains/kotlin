@@ -99,7 +99,7 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
                     }
                 }
                 "rem" -> when (thisKind) {
-                    in PrimitiveType.floatingPoint -> "this - (wasm_${thisKind.prefixLowercase}_truncate(this / $parameterName) * $parameterName)"
+                    in PrimitiveType.floatingPoint -> "wasm_${thisKind.prefixLowercase}_copysign(this - (wasm_${thisKind.prefixLowercase}_truncate(this / $parameterName) * $parameterName), this)"
                     else -> return implementAsIntrinsic(thisKind, methodName)
                 }
                 else -> return implementAsIntrinsic(thisKind, methodName)
