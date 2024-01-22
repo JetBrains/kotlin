@@ -27,13 +27,16 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
             primaryConstructor {
                 visibility = MethodVisibility.INTERNAL
                 parameter {
-                    name = "internal val low"
-                    type = PrimitiveType.INT.capitalized
+                    name = "value"
+                    type = "BigInt"
                 }
-                parameter {
-                    name = "internal val high"
-                    type = PrimitiveType.INT.capitalized
-                }
+            }
+            property {
+                name = "value"
+                visibility = MethodVisibility.INTERNAL
+                type = "dynamic"
+                value = "js(\"BigInt.asIntN(64, value)\")"
+                isConst = false
             }
         }
     }
@@ -98,9 +101,9 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
     override fun MethodBuilder.modifyGeneratedBitwiseOperators(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
             if (methodName == "inv") {
-                "Long(low.inv(), high.inv())".setAsExpressionBody()
+                "Long(inv(value))".setAsExpressionBody()
             } else {
-                "Long(this.low $methodName other.low, this.high $methodName other.high)".setAsExpressionBody()
+                "Long($methodName(value, other.value))".setAsExpressionBody()
             }
         }
     }
@@ -110,8 +113,8 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
             when (otherKind) {
                 PrimitiveType.CHAR,
                 PrimitiveType.BYTE,
-                PrimitiveType.SHORT -> "low.to${otherKind.capitalized}()"
-                PrimitiveType.INT -> "low"
+                PrimitiveType.SHORT -> "toNumber().unsafeCast<Int>().to${otherKind.capitalized}()"
+                PrimitiveType.INT -> "toNumber().unsafeCast<Int>()"
                 PrimitiveType.LONG -> "this"
                 PrimitiveType.FLOAT -> "toDouble().toFloat()"
                 PrimitiveType.DOUBLE -> "toNumber()"
@@ -128,7 +131,7 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
 
     override fun MethodBuilder.modifyGeneratedToString(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
-            "this.toStringImpl(radix = 10)".setAsExpressionBody()
+            "value.toString()".setAsExpressionBody()
         }
     }
 

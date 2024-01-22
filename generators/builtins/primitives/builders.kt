@@ -169,6 +169,12 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
         return methodBuilder
     }
 
+    fun property(init: PropertyBuilder.() -> Unit): PropertyBuilder {
+        val propertyBuilder = PropertyBuilder()
+        builders.add(propertyBuilder.apply(init))
+        return propertyBuilder
+    }
+
     override fun build(): String {
         return buildString {
             this.printDocumentationAndAnnotations()
@@ -370,6 +376,7 @@ internal class PropertyBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
     var name: String? = null
     var type: String? = null
     var value: String? = null
+    var isConst: Boolean = true
 
     override fun build(): String {
         throwIfWasNotInitialized(name, "name", "PropertyBuilder")
@@ -379,7 +386,7 @@ internal class PropertyBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
         return buildString {
             printDocumentationAndAnnotations(forceMultiLineDoc = true)
             visibility?.let { append("${it.name.lowercase()} ") }
-            append("const val $name: $type = $value")
+            append("${"const ".takeIf { isConst }.orEmpty()}val $name: $type = $value")
         }
     }
 }

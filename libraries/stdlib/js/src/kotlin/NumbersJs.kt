@@ -178,28 +178,46 @@ public actual fun Int.rotateRight(bitCount: Int): Int =
  * Counts the number of set bits in the binary representation of this [Long] number.
  */
 @SinceKotlin("1.4")
-public actual fun Long.countOneBits(): Int =
-    high.countOneBits() + low.countOneBits()
+public actual fun Long.countOneBits(): Int {
+    // Hacker's Delight 5-1 algorithm
+    var v = this
+    v -= (v shr 1) and 0x5555555555555555L
+    v = (v and 0x3333333333333333L) + ((v shr 2) and 0x5555555555555555L)
+    v = (v + (v shr 4) and 0x0f0f0f0f0f0f0f0fL)
+    v += v shr 8
+    v += v shr 16
+    v += v shr 32
+    v = ((v and 0x00000000ffffffffL) * 0x022fdd63cc95386dL) shr 58
+    return v.toInt()
+}
 
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Long] number.
  */
 @SinceKotlin("1.4")
-public actual fun Long.countLeadingZeroBits(): Int =
-    when (val high = this.high) {
-        0 -> Int.SIZE_BITS + low.countLeadingZeroBits()
-        else -> high.countLeadingZeroBits()
+public actual fun Long.countLeadingZeroBits(): Int {
+    for (i in 63 downTo 0) {
+        if ((this shr i) and 1L == 0L) {
+            return 63 - i
+        }
     }
+    return 64
+}
 
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Long] number.
  */
 @SinceKotlin("1.4")
-public actual fun Long.countTrailingZeroBits(): Int =
-    when (val low = this.low) {
-        0 -> Int.SIZE_BITS + high.countTrailingZeroBits()
-        else -> low.countTrailingZeroBits()
+public actual fun Long.countTrailingZeroBits(): Int {
+    if (this == 0L) return 64
+    var count = 0
+    var value = this
+    while ((value and 1L) == 0L) {
+        value = value shr 1
+        count++
     }
+    return count
+}
 
 /**
  * Returns a number having a single bit set in the position of the most significant set bit of this [Long] number,
@@ -207,10 +225,7 @@ public actual fun Long.countTrailingZeroBits(): Int =
  */
 @SinceKotlin("1.4")
 public actual fun Long.takeHighestOneBit(): Long =
-    when (val high = this.high) {
-        0 -> Long(low.takeHighestOneBit(), 0)
-        else -> Long(0, high.takeHighestOneBit())
-    }
+    if (this == 0L) 0 else 1L.shl(64 - 1 - countLeadingZeroBits())
 
 /**
  * Returns a number having a single bit set in the position of the least significant set bit of this [Long] number,
@@ -218,10 +233,7 @@ public actual fun Long.takeHighestOneBit(): Long =
  */
 @SinceKotlin("1.4")
 public actual fun Long.takeLowestOneBit(): Long =
-    when (val low = this.low) {
-        0 -> Long(0, high.takeLowestOneBit())
-        else -> Long(low.takeLowestOneBit(), 0)
-    }
+    this and -this
 
 /**
  * Rotates the binary representation of this [Long] number left by the specified [bitCount] number of bits.
@@ -235,17 +247,8 @@ public actual fun Long.takeLowestOneBit(): Long =
  */
 @SinceKotlin("1.6")
 @WasExperimental(ExperimentalStdlibApi::class)
-public actual fun Long.rotateLeft(bitCount: Int): Long {
-    if ((bitCount and 31) != 0) {
-        val low = this.low
-        val high = this.high
-        val newLow = low.shl(bitCount) or high.ushr(-bitCount)
-        val newHigh = high.shl(bitCount) or low.ushr(-bitCount)
-        return if ((bitCount and 32) == 0) Long(newLow, newHigh) else Long(newHigh, newLow)
-    } else {
-        return if ((bitCount and 32) == 0) this else Long(high, low)
-    }
-}
+public actual fun Long.rotateLeft(bitCount: Int): Long =
+    shl(bitCount) or ushr(64 - bitCount)
 
 
 /**

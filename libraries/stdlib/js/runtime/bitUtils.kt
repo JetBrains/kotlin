@@ -25,13 +25,13 @@ private val highIndex = 1 - lowIndex
 
 internal fun doubleToRawBits(value: Double): Long {
     bufFloat64[0] = value
-    return Long(bufInt32[lowIndex], bufInt32[highIndex])
+    return Long(BigInt(or(shiftLeft(BigInt(bufInt32[highIndex]), BigInt(32)), BigInt(bufInt32[lowIndex]))))
 }
 
 @PublishedApi
 internal fun doubleFromBits(value: Long): Double {
-    bufInt32[lowIndex] = value.low
-    bufInt32[highIndex] = value.high
+    bufInt32[lowIndex] = low(value)
+    bufInt32[highIndex] = high(value)
     return bufFloat64[0]
 }
 

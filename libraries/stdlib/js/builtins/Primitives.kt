@@ -1173,7 +1173,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
 
 /** Represents a 64-bit signed integer. */
 @Suppress("NOTHING_TO_INLINE")
-public class Long internal constructor(internal val low: Int, internal val high: Int) : Number(), Comparable<Long> {
+public class Long internal constructor(value: BigInt) : Number(), Comparable<Long> {
     public companion object {
         /**
          * A constant holding the minimum value an instance of Long can have.
@@ -1547,22 +1547,22 @@ public class Long internal constructor(internal val low: Int, internal val high:
     /** Performs a bitwise AND operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
     public infix fun and(other: Long): Long =
-        Long(this.low and other.low, this.high and other.high)
+        Long(and(value, other.value))
 
     /** Performs a bitwise OR operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
     public infix fun or(other: Long): Long =
-        Long(this.low or other.low, this.high or other.high)
+        Long(or(value, other.value))
 
     /** Performs a bitwise XOR operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
     public infix fun xor(other: Long): Long =
-        Long(this.low xor other.low, this.high xor other.high)
+        Long(xor(value, other.value))
 
     /** Inverts the bits in this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public fun inv(): Long =
-        Long(low.inv(), high.inv())
+        Long(inv(value))
 
     /**
      * Converts this [Long] value to [Byte].
@@ -1574,7 +1574,7 @@ public class Long internal constructor(internal val low: Int, internal val high:
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toByte(): Byte =
-        low.toByte()
+        toNumber().unsafeCast<Int>().toByte()
 
     /**
      * Converts this [Long] value to [Char].
@@ -1588,7 +1588,7 @@ public class Long internal constructor(internal val low: Int, internal val high:
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toChar(): Char =
-        low.toChar()
+        toNumber().unsafeCast<Int>().toChar()
 
     /**
      * Converts this [Long] value to [Short].
@@ -1600,7 +1600,7 @@ public class Long internal constructor(internal val low: Int, internal val high:
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toShort(): Short =
-        low.toShort()
+        toNumber().unsafeCast<Int>().toShort()
 
     /**
      * Converts this [Long] value to [Int].
@@ -1612,7 +1612,7 @@ public class Long internal constructor(internal val low: Int, internal val high:
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toInt(): Int =
-        low
+        toNumber().unsafeCast<Int>()
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1643,7 +1643,7 @@ public class Long internal constructor(internal val low: Int, internal val high:
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString(): String =
-        this.toStringImpl(radix = 10)
+        value.toString()
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
@@ -1661,6 +1661,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
     @JsName("valueOf")
     internal fun valueOf(): Double =
         toDouble()
+
+    internal val value: dynamic = js("BigInt.asIntN(64, value)")
 }
 
 /** Represents a single-precision 32-bit IEEE 754 floating point number. */
