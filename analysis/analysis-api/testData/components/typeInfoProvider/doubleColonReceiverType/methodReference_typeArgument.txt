@@ -1,0 +1,2 @@
+expression: MyInterface<String>::sam
+receiver:: type: test.pkg.MyInterface<kotlin.String>

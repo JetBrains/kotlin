@@ -1,0 +1,2 @@
+expression: MyInterface<*>::sam
+receiver:: type: test.pkg.MyInterface<*>
