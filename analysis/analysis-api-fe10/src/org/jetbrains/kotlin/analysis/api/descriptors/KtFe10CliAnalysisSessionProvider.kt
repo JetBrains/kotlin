@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.psi.KtElement
-
 
 internal class KtFe10AnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider(project) {
     override fun getAnalysisSession(useSiteKtElement: KtElement): KtAnalysisSession {
         val facade = Fe10AnalysisFacade.getInstance(project)
-        val token = tokenFactory.create(project)
+        val token = tokenFactory.create(project, project.createProjectWideOutOfBlockModificationTracker())
         val context = facade.getAnalysisContext(useSiteKtElement, token)
         val useSiteModule = ProjectStructureProvider.getModule(project, useSiteKtElement, contextualModule = null)
         return KtFe10AnalysisSession(context, useSiteModule, token)
@@ -24,7 +24,7 @@ internal class KtFe10AnalysisSessionProvider(project: Project) : KtAnalysisSessi
 
     override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KtAnalysisSession {
         val facade = Fe10AnalysisFacade.getInstance(project)
-        val token = tokenFactory.create(project)
+        val token = tokenFactory.create(project, project.createProjectWideOutOfBlockModificationTracker())
         val context = facade.getAnalysisContext(useSiteKtModule, token)
         return KtFe10AnalysisSession(context, useSiteKtModule, token)
     }

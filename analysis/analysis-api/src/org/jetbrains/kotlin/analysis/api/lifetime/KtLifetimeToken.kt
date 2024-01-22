@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.lifetime
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import kotlin.reflect.KClass
 
 public abstract class KtLifetimeToken {
@@ -20,7 +21,8 @@ public abstract class KtLifetimeToken {
 
 public abstract class KtLifetimeTokenFactory {
     public abstract val identifier: KClass<out KtLifetimeToken>
-    public abstract fun create(project: Project): KtLifetimeToken
+
+    public abstract fun create(project: Project, modificationTracker: ModificationTracker): KtLifetimeToken
 
     public open fun beforeEnteringAnalysisContext(token: KtLifetimeToken) {}
     public open fun afterLeavingAnalysisContext(token: KtLifetimeToken) {}

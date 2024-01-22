@@ -9,14 +9,13 @@ package org.jetbrains.kotlin.analysis.api.lifetime
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.analysis.api.*
-import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import kotlin.reflect.KClass
 
-public class KtReadActionConfinementLifetimeToken(project: Project) : KtLifetimeToken() {
-    private val modificationTracker = project.createProjectWideOutOfBlockModificationTracker()
+public class KtReadActionConfinementLifetimeToken(private val modificationTracker: ModificationTracker) : KtLifetimeToken() {
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
     override fun isValid(): Boolean {
@@ -69,7 +68,8 @@ public class KtReadActionConfinementLifetimeToken(project: Project) : KtLifetime
 public object KtReadActionConfinementLifetimeTokenFactory : KtLifetimeTokenFactory() {
     override val identifier: KClass<out KtLifetimeToken> = KtReadActionConfinementLifetimeToken::class
 
-    override fun create(project: Project): KtLifetimeToken = KtReadActionConfinementLifetimeToken(project)
+    override fun create(project: Project, modificationTracker: ModificationTracker): KtLifetimeToken =
+        KtReadActionConfinementLifetimeToken(modificationTracker)
 
     override fun beforeEnteringAnalysisContext(token: KtLifetimeToken) {
         lifetimeOwnersStack.set(lifetimeOwnersStack.get().add(token))

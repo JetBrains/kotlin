@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.lifetime
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import kotlin.reflect.KClass
 
@@ -36,6 +37,6 @@ public class KtAlwaysAccessibleLifetimeToken(project: Project) : KtLifetimeToken
 public object KtAlwaysAccessibleLifetimeTokenFactory : KtLifetimeTokenFactory() {
     override val identifier: KClass<out KtLifetimeToken> = KtAlwaysAccessibleLifetimeToken::class
 
-    override fun create(project: Project): KtLifetimeToken =
+    override fun create(project: Project, modificationTracker: ModificationTracker): KtLifetimeToken =
         KtAlwaysAccessibleLifetimeToken(project)
 }
