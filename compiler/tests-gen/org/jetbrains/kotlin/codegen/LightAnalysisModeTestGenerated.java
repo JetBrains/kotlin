@@ -16650,11 +16650,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/notFoundClasses.kt");
         }
 
-        @TestMetadata("primitiveDoubleJavaKotlinIntersection.kt")
-        public void testPrimitiveDoubleJavaKotlinIntersection() throws Exception {
-            runTest("compiler/testData/codegen/box/fir/primitiveDoubleJavaKotlinIntersection.kt");
-        }
-
         @TestMetadata("publicMethodCallViaPackagePrivateCommon.kt")
         public void testPublicMethodCallViaPackagePrivateCommon() throws Exception {
             runTest("compiler/testData/codegen/box/fir/publicMethodCallViaPackagePrivateCommon.kt");
@@ -16743,6 +16738,54 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("TypeParameterInNestedClass2.kt")
         public void testTypeParameterInNestedClass2() throws Exception {
             runTest("compiler/testData/codegen/box/fir/TypeParameterInNestedClass2.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/fir/primitivesInJava")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class PrimitivesInJava extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInPrimitivesInJava() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/primitivesInJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("primitiveDoubleJavaKotlinIntersection.kt")
+            public void testPrimitiveDoubleJavaKotlinIntersection() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/primitivesInJava/primitiveDoubleJavaKotlinIntersection.kt");
+            }
+
+            @TestMetadata("triangleWithFlexibleType.kt")
+            public void testTriangleWithFlexibleType() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/primitivesInJava/triangleWithFlexibleType.kt");
+            }
+
+            @TestMetadata("triangleWithFlexibleTypeAndSubstitution.kt")
+            public void testTriangleWithFlexibleTypeAndSubstitution() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/primitivesInJava/triangleWithFlexibleTypeAndSubstitution.kt");
+            }
+
+            @TestMetadata("triangleWithFlexibleTypeAndSubstitution2.kt")
+            public void testTriangleWithFlexibleTypeAndSubstitution2() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/primitivesInJava/triangleWithFlexibleTypeAndSubstitution2.kt");
+            }
+
+            @TestMetadata("triangleWithFlexibleTypeAndSubstitution3.kt")
+            public void testTriangleWithFlexibleTypeAndSubstitution3() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/primitivesInJava/triangleWithFlexibleTypeAndSubstitution3.kt");
+            }
+
+            @TestMetadata("triangleWithFlexibleTypeAndSubstitution5.kt")
+            public void testTriangleWithFlexibleTypeAndSubstitution5() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/primitivesInJava/triangleWithFlexibleTypeAndSubstitution5.kt");
+            }
+
+            @TestMetadata("triangleWithNullableType.kt")
+            public void testTriangleWithNullableType() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/primitivesInJava/triangleWithNullableType.kt");
+            }
         }
     }
 

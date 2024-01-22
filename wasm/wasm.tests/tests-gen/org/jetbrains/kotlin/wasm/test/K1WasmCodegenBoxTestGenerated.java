@@ -14802,6 +14802,16 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
         public void testToLong() throws Exception {
             runTest("compiler/testData/codegen/box/fir/toLong.kt");
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/fir/primitivesInJava")
+        @TestDataPath("$PROJECT_ROOT")
+        public class PrimitivesInJava {
+            @Test
+            public void testAllFilesPresentInPrimitivesInJava() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/primitivesInJava"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+        }
     }
 
     @Nested

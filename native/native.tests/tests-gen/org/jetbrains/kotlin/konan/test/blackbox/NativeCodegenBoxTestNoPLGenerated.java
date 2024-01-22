@@ -16689,6 +16689,19 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             public void testToLong() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/toLong.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/fir/primitivesInJava")
+            @TestDataPath("$PROJECT_ROOT")
+            @UseExtTestCaseGroupProvider()
+            @UsePartialLinkage(mode = Mode.DISABLED)
+            @Tag("no-partial-linkage-may-be-skipped")
+            public class PrimitivesInJava {
+                @Test
+                public void testAllFilesPresentInPrimitivesInJava() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/primitivesInJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+            }
         }
 
         @Nested
