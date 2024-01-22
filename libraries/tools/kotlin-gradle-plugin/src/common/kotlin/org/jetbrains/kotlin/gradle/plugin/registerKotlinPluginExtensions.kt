@@ -72,6 +72,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, KotlinRegisterCompilationArchiveTasksExtension)
             register(project, IdeMultiplatformImportActionSetupAction)
             register(project, KotlinLLDBScriptSetupAction)
+            register(project, ExcludeDefaultPlatformDependenciesFromKotlinNativeCompileTasks)
         }
     }
 

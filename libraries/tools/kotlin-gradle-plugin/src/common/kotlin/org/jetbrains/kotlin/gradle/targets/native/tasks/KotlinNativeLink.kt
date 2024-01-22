@@ -78,6 +78,11 @@ constructor(
         }
     )
 
+    @get:InputFiles
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal var excludeOriginalPlatformLibraries: FileCollection? = null
+
     @get:Input
     val outputKind: CompilerOutputKind by lazyConvention { binary.outputKind.compilerOutputKind }
 
@@ -239,7 +244,6 @@ constructor(
             args.produce = outputKind.name.toLowerCaseAsciiOnly()
             args.multiPlatform = true
             args.noendorsedlibs = true
-            args.nodefaultlibs = true
             args.nostdlib = true
             args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
             args.generateTestRunner = processTests
@@ -263,7 +267,9 @@ constructor(
         }
 
         dependencyClasspath { args ->
-            args.libraries = runSafe { libraries.files.filterKlibsPassedToCompiler() }?.toPathsArray()
+            args.libraries = runSafe {
+                libraries.exclude(excludeOriginalPlatformLibraries).files.filterKlibsPassedToCompiler()
+            }?.toPathsArray()
             args.exportedLibraries = runSafe { exportLibraries.files.filterKlibsPassedToCompiler() }?.toPathsArray()
             args.friendModules = runSafe { friendModule.files.toList().takeIf { it.isNotEmpty() } }
                 ?.joinToString(File.pathSeparator) { it.absolutePath }

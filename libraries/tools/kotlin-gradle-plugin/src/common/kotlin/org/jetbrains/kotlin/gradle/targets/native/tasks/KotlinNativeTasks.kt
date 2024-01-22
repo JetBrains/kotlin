@@ -157,7 +157,7 @@ abstract class AbstractKotlinNativeCompile<
     internal abstract val explicitApiMode: Property<ExplicitApiMode>
 
     @get:Internal
-    protected val konanTarget by project.provider {
+    internal val konanTarget by project.provider {
         when (val compilation = compilation) {
             is KotlinCompilationInfo.TCS -> (compilation.compilation as AbstractKotlinNativeCompilation).konanTarget
         }
@@ -425,6 +425,16 @@ internal constructor(
     )
     // endregion.
 
+    /**
+     * This is utility property that contains list of native platform dependencies that are present in [compileDependencyFiles]
+     * but should be excluded from actual classpath because they are included by default by Kotlin Native Compiler.
+     * this behaviour will be fixed as part of KT-65232
+     */
+    @get:InputFiles
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal var excludeOriginalPlatformLibraries: FileCollection? = null
+
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
     override fun setupCompilerArgs(args: K2NativeCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
@@ -452,7 +462,7 @@ internal constructor(
             args.target = konanTarget.name
             args.produce = outputKind.name.toLowerCaseAsciiOnly()
             args.metadataKlib = sharedCompilationData != null
-            args.nodefaultlibs = true
+            args.nodefaultlibs = sharedCompilationData != null
             args.nostdlib = true
             args.manifestFile = sharedCompilationData?.manifestFile?.absolutePath
             args.nopack = produceUnpackedKlib.get()
@@ -475,7 +485,9 @@ internal constructor(
         }
 
         dependencyClasspath { args ->
-            args.libraries = runSafe { libraries.files.filterKlibsPassedToCompiler().toPathsArray() }
+            args.libraries = runSafe {
+                libraries.exclude(excludeOriginalPlatformLibraries).files.filterKlibsPassedToCompiler().toPathsArray()
+            }
             args.friendModules = runSafe {
                 friendModule.files.takeIf { it.isNotEmpty() }?.map { it.absolutePath }?.joinToString(File.pathSeparator)
             }
@@ -496,8 +508,8 @@ internal constructor(
         }
     }
 
-
-    private val isMetadataCompilation: Boolean = when (compilation) {
+    @get:Internal
+    internal val isMetadataCompilation: Boolean = when (compilation) {
         is KotlinCompilationInfo.TCS -> compilation.compilation is KotlinMetadataCompilation<*>
     }
 

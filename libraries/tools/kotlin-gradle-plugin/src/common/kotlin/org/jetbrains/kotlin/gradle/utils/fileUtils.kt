@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.internal.CustomPropertiesFileValueSource
@@ -144,3 +145,8 @@ internal val Project.localProperties: Provider<Map<String, String>>
             )
         }
         .usedAtConfigurationTime(configurationTimePropertiesAccessor)
+
+/**
+ * Returns file collection [this] excluding files from [excludes] if not null
+ */
+internal fun FileCollection.exclude(excludes: FileCollection?): FileCollection = if (excludes != null) minus(excludes) else this
