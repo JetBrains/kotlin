@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFr
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
+import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
@@ -35,6 +37,10 @@ import org.jetbrains.kotlin.backend.konan.lower.UnboxInlineLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTransformer
 import org.jetbrains.kotlin.backend.konan.optimizations.NativeHeaderInfoBuilder
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -446,8 +452,24 @@ private val coroutinesPhase = createFileLoweringPhase(
         prerequisite = setOf(localFunctionsPhase, finallyBlocksPhase, kotlinNothingValueExceptionPhase)
 )
 
+private val coroutinesLivenessAnalysisPhase = createFileLoweringPhase(
+        lowering = { context: NativeGenerationState ->
+            object : BodyLoweringPass {
+                override fun lower(irBody: IrBody, container: IrDeclaration) {
+                    LivenessAnalysis.run(irBody) { it is IrSuspensionPoint }
+                            .forEach { (irElement, liveVariables) ->
+                                context.liveVariablesAtSuspensionPoints[irElement as IrSuspensionPoint] = liveVariables
+                            }
+                }
+            }
+        },
+        name = "CoroutinesLivenessAnalysis",
+        description = "Run liveness analysis for coroutines",
+        prerequisite = setOf(coroutinesPhase)
+)
+
 private val coroutinesVarSpillingPhase = createFileLoweringPhase(
-        ::CoroutinesVarSpillingLowering,
+        lowering = ::CoroutinesVarSpillingLowering,
         name = "CoroutinesVarSpilling",
         description = "Save/restore coroutines variables before/after suspension",
         prerequisite = setOf(coroutinesPhase)
@@ -634,6 +656,7 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         varargPhase,
         kotlinNothingValueExceptionPhase,
         coroutinesPhase,
+        coroutinesLivenessAnalysisPhase,
         coroutinesVarSpillingPhase,
         typeOperatorPhase,
         expressionBodyTransformPhase,

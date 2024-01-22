@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
@@ -73,6 +74,7 @@ internal class NativeGenerationState(
     val calledFromExportedInlineFunctions = mutableSetOf<IrFunction>()
     val constructedFromExportedInlineFunctions = mutableSetOf<IrClass>()
     val inlineFunctionOrigins = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
+    val liveVariablesAtSuspensionPoints = mutableMapOf<IrSuspensionPoint, List<IrVariable>>()
 
     private val localClassNames = mutableMapOf<IrAttributeContainer, String>()
     fun getLocalClassName(container: IrAttributeContainer): String? = localClassNames[container.attributeOwnerId]

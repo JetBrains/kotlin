@@ -8,28 +8,31 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
-import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.common.peek
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.builders.irSet
 import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.overrides
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 internal val DECLARATION_ORIGIN_COROUTINE_VAR_SPILLING = IrDeclarationOriginImpl("COROUTINE_VAR_SPILLING")
 
-internal class CoroutinesVarSpillingLowering(val context: Context) : BodyLoweringPass {
+internal class CoroutinesVarSpillingLowering(val generationState: NativeGenerationState) : BodyLoweringPass {
+    private val context = generationState.context
     private val irFactory = context.irFactory
     private val symbols = context.ir.symbols
     private val saveCoroutineState = symbols.saveCoroutineState
@@ -41,7 +44,8 @@ internal class CoroutinesVarSpillingLowering(val context: Context) : BodyLowerin
             return
 
         val coroutineClass = container.parentAsClass
-        val liveLocals = LivenessAnalysis.run(irBody) { it is IrSuspensionPoint }
+        val liveLocals = generationState.liveVariablesAtSuspensionPoints.takeIf { it.isNotEmpty() }
+                ?: computeVisibleVariablesAtSuspensionPoints(irBody)
 
         // TODO: optimize by using the same property for different locals.
         val localToPropertyMap = mutableMapOf<IrVariableSymbol, IrField>()
@@ -93,5 +97,47 @@ internal class CoroutinesVarSpillingLowering(val context: Context) : BodyLowerin
                 }
             }
         }, data = emptyList())
+    }
+
+    private fun computeVisibleVariablesAtSuspensionPoints(body: IrBody): Map<IrSuspensionPoint, List<IrVariable>> {
+        val result = mutableMapOf<IrSuspensionPoint, List<IrVariable>>()
+        body.acceptChildrenVoid(object : IrElementVisitorVoid {
+            val scopeStack = mutableListOf<MutableSet<IrVariable>>(mutableSetOf())
+
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitContainerExpression(expression: IrContainerExpression) {
+                if (!expression.isTransparentScope)
+                    scopeStack.push(mutableSetOf())
+                super.visitContainerExpression(expression)
+                if (!expression.isTransparentScope)
+                    scopeStack.pop()
+            }
+
+            override fun visitCatch(aCatch: IrCatch) {
+                scopeStack.push(mutableSetOf())
+                super.visitCatch(aCatch)
+                scopeStack.pop()
+            }
+
+            override fun visitVariable(declaration: IrVariable) {
+                super.visitVariable(declaration)
+                scopeStack.peek()!!.add(declaration)
+            }
+
+            override fun visitSuspensionPoint(expression: IrSuspensionPoint) {
+                // Skip suspensionPointIdParameter, because we don't want to save it.
+                expression.result.acceptChildrenVoid(this)
+                expression.resumeResult.acceptChildrenVoid(this)
+
+                val visibleVariables = mutableListOf<IrVariable>()
+                scopeStack.forEach { visibleVariables += it }
+                result[expression] = visibleVariables
+            }
+        })
+
+        return result
     }
 }
