@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 internal abstract class LLFirTargetResolver(
     protected val resolveTarget: LLFirResolveTarget,
@@ -166,25 +167,44 @@ internal abstract class LLFirTargetResolver(
         resolveDependencies(target)
 
         if (doResolveWithoutLock(target)) return
-        performCustomResolveUnderLock(target) {
-            doLazyResolveUnderLock(target)
+
+        if (isJumpingPhase) {
+            lockProvider.withJumpingLock(
+                target,
+                resolverPhase,
+                action = {
+                    doLazyResolveUnderLock(target)
+                    updatePhaseForDeclarationInternals(target)
+                }
+            )
+        } else {
+            performCustomResolveUnderLock(target) {
+                doLazyResolveUnderLock(target)
+            }
         }
     }
 
+    /**
+     * Execute [action] under the write lock in the context of [target].
+     *
+     * Allowed only for non-jumping phases.
+     *
+     * @see isJumpingPhase
+     */
     protected inline fun performCustomResolveUnderLock(target: FirElementWithResolveState, crossinline action: () -> Unit) {
         checkThatResolvedAtLeastToPreviousPhase(target)
-        withPossiblyJumpingLock(target) {
+        requireWithAttachment(!isJumpingPhase, { "This function cannot be called for jumping phase" }) {
+            withFirEntry("target", target)
+        }
+
+        lockProvider.withWriteLock(target, resolverPhase) {
             action()
-            LLFirLazyPhaseResolverByPhase.getByPhase(resolverPhase).updatePhaseForDeclarationInternals(target)
+            updatePhaseForDeclarationInternals(target)
         }
     }
 
-    private inline fun withPossiblyJumpingLock(target: FirElementWithResolveState, action: () -> Unit) {
-        if (isJumpingPhase) {
-            lockProvider.withJumpingLock(target, resolverPhase, action)
-        } else {
-            lockProvider.withWriteLock(target, resolverPhase, action)
-        }
+    private fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
+        LLFirLazyPhaseResolverByPhase.getByPhase(resolverPhase).updatePhaseForDeclarationInternals(target)
     }
 
     /**
