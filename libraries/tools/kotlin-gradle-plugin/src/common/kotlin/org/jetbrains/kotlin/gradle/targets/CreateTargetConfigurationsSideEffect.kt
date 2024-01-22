@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isSourcesPublishableFuture
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
+import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumableCompat
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.gradle.utils.setAttribute
 
@@ -62,7 +63,8 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         }
     }
 
-    configurations.maybeCreateConsumable(target.sourcesElementsConfigurationName).apply {
+    @Suppress("DEPRECATION")
+    configurations.maybeCreateConsumableCompat(target.sourcesElementsConfigurationName).apply {
         description = "Source files of main compilation of ${target.name}."
         isVisible = false
         configureSourcesPublicationAttributes(target)

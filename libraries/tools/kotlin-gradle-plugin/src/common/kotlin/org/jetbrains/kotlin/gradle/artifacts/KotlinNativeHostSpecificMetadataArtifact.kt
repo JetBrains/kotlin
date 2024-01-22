@@ -31,15 +31,15 @@ internal val KotlinNativeHostSpecificMetadataArtifact = KotlinTargetArtifact { t
     if (!target.project.isKotlinGranularMetadataEnabled) return@KotlinTargetArtifact
     val project = target.project
 
-    target.project.configurations.createConsumable(target.hostSpecificMetadataElementsConfigurationName).also { configuration ->
-        configuration.extendsFrom(*apiElements.extendsFrom.toTypedArray())
+    target.project.configurations.createConsumable(target.hostSpecificMetadataElementsConfigurationName) {
+        extendsFrom(*apiElements.extendsFrom.toTypedArray())
 
         target.project.launchInStage(AfterFinaliseDsl) {
             apiElements.copyAttributesTo(
                 target.project,
-                dest = configuration.attributes
+                dest = attributes
             )
-            configuration.setAttribute(
+            setAttribute(
                 Usage.USAGE_ATTRIBUTE,
                 target.project.usageByName(KotlinUsages.KOTLIN_METADATA)
             )

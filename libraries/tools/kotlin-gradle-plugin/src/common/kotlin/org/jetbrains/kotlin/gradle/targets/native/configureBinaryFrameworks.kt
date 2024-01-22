@@ -41,13 +41,12 @@ private val Framework.frameworkGroupDescription
     )
 
 internal fun Project.createFrameworkArtifact(binaryFramework: Framework, linkTask: TaskProvider<KotlinNativeLink>) {
-    val frameworkConfiguration = configurations.findConsumable(binaryFramework.binaryFrameworkConfigurationName)
-        ?: configurations.createConsumable(binaryFramework.binaryFrameworkConfigurationName).also {
-            it.applyBinaryFrameworkGroupAttributes(project, binaryFramework.frameworkGroupDescription, listOf(binaryFramework.target))
-            project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl) {
-                binaryFramework.copyAttributesTo(project, dest = it)
-            }
+    val frameworkConfiguration = configurations.maybeCreateConsumable(binaryFramework.binaryFrameworkConfigurationName) {
+        applyBinaryFrameworkGroupAttributes(project, binaryFramework.frameworkGroupDescription, listOf(binaryFramework.target))
+        project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl) {
+            binaryFramework.copyAttributesTo(project, dest = this@maybeCreateConsumable)
         }
+    }
 
     // Can't use flatMap here because of https://github.com/gradle/gradle/issues/25645
     val linkTaskOutputProvider = linkTask.map { it.outputFile.get() }

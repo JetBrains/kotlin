@@ -50,9 +50,18 @@ internal fun ConfigurationContainer.detachedResolvable(vararg dependencies: Depe
         isCanBeConsumed = false
     }
 
-internal fun ConfigurationContainer.createConsumable(name: String): Configuration = create(name).apply {
-    isCanBeResolved = false
-}
+internal fun ConfigurationContainer.createConsumable(
+    name: String,
+    configuration: Configuration.() -> Unit = {}
+): NamedDomainObjectProvider<out Configuration> =
+    if (GradleVersion.current() >= gradleVersionWithNewApi) {
+        consumable(name, configuration)
+    } else {
+        register(name) {
+            it.isCanBeResolved = false
+            configuration(it)
+        }
+    }
 
 internal fun ConfigurationContainer.findConsumable(name: String): Configuration? = findByName(name)?.apply {
     if (isCanBeResolved && isCanBeConsumed) {
@@ -62,8 +71,17 @@ internal fun ConfigurationContainer.findConsumable(name: String): Configuration?
     }
 }
 
-internal fun ConfigurationContainer.maybeCreateConsumable(name: String): Configuration =
-    findConsumable(name) ?: createConsumable(name)
+internal fun ConfigurationContainer.maybeCreateConsumable(
+    name: String,
+    configurationOnCreate: Configuration.() -> Unit = {}
+): Configuration = findConsumable(name) ?: createConsumable(name, configurationOnCreate).get()
+
+@Deprecated("A temporary workaround for configurations changing consumable role post-factum")
+internal fun ConfigurationContainer.maybeCreateConsumableCompat(
+    name: String,
+): Configuration = findConsumable(name) ?: create(name) {
+    it.isCanBeResolved = false
+}
 
 internal fun ConfigurationContainer.createDependencyScope(
     name: String,

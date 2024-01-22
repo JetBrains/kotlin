@@ -37,7 +37,7 @@ internal val KotlinLegacyCompatibilityMetadataArtifact = KotlinTargetArtifact { 
     }
 
     /* Create actual Gradle artifact */
-    target.project.configurations.createConsumable(COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME).apply {
+    target.project.configurations.createConsumable(COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME) {
         usesPlatformOf(target)
 
         attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))

@@ -159,17 +159,16 @@ class KotlinCompilationNpmResolver(
         return all
     }
 
-    private fun createPublicPackageJsonConfiguration(): Configuration {
-        val all = project.configurations.createConsumable(compilation.publicPackageJsonConfigurationName)
-
-        all.usesPlatformOf(target)
-        all.attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
-        all.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        all.attributes.setAttribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
-        all.isVisible = false
-
-        return all
-    }
+    private fun createPublicPackageJsonConfiguration(): Configuration =
+        project.configurations
+            .createConsumable(compilation.publicPackageJsonConfigurationName) {
+                usesPlatformOf(target)
+                attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
+                attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                attributes.setAttribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
+                isVisible = false
+            }
+            .get()
 
     inner class ConfigurationVisitor {
         private val internalDependencies = mutableSetOf<InternalDependency>()

@@ -76,7 +76,7 @@ internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: Kotl
     val configurationName = cInteropApiElementsConfigurationName(target)
     configurations.findConsumable(configurationName)?.let { return it }
 
-    return configurations.createConsumable(configurationName).apply {
+    return configurations.createConsumable(configurationName) {
         /* Deferring attributes to wait for target.attributes to be configured by user */
         launchInStage(AfterFinaliseDsl) {
             usesPlatformOf(target)
@@ -91,7 +91,7 @@ internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: Kotl
                 extendsFrom(compilation.internal.configurations.apiConfiguration)
             }
         }
-    }
+    }.get()
 }
 
 private fun cInteropApiElementsConfigurationName(target: KotlinTarget): String {

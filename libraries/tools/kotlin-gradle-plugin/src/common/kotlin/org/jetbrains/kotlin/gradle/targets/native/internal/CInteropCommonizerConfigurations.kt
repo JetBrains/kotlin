@@ -66,16 +66,16 @@ internal fun Project.locateOrCreateCommonizedCInteropApiElementsConfiguration(co
     val configurationName = commonizerTarget.identityString + "CInteropApiElements"
     configurations.findByName(configurationName)?.let { return it }
 
-    return configurations.createConsumable(configurationName).also { configuration ->
-        setupBasicCommonizedCInteropConfigurationAttributes(configuration, commonizerTarget)
+    return configurations.createConsumable(configurationName) {
+        setupBasicCommonizedCInteropConfigurationAttributes(this, commonizerTarget)
 
         launch {
             val metadataTarget = multiplatformExtension.metadataTarget
             metadataTarget.awaitMetadataCompilationsCreated()
                 .filter { compilation -> compilation.commonizerTarget.await() == commonizerTarget }
-                .forEach { compilation -> configuration.extendsFrom(compilation.internal.configurations.apiConfiguration) }
+                .forEach { compilation -> this@createConsumable.extendsFrom(compilation.internal.configurations.apiConfiguration) }
         }
-    }
+    }.get()
 }
 
 

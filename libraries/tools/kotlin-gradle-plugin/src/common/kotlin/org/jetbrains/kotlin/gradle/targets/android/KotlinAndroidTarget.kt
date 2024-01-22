@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.dsl.HasConfigurableCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.internal.attributesConfigurationHelper
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
@@ -296,13 +295,13 @@ abstract class KotlinAndroidTarget @Inject constructor(
 
         val apiElementsConfiguration = project.configurations.findConsumable(apiElementsConfigurationName)
             ?: error("Configuration $apiElementsConfigurationName was not found")
-        return project.configurations.createConsumable(sourcesElementsConfigurationName).apply {
+        return project.configurations.createConsumable(sourcesElementsConfigurationName) {
             description = "Source files of Android ${variantName}."
             isVisible = false
 
             apiElementsConfiguration.copyAttributesTo(project, dest = this)
             configureSourcesPublicationAttributes(this@KotlinAndroidTarget)
-        }
+        }.get()
     }
 
     /** We filter this variant out as it is never requested on the consumer side, while keeping it leads to ambiguity between Android and

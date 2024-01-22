@@ -33,14 +33,14 @@ class CInteropCommonizerArtifactTypeAttributeTest {
         )
 
         /* Create consumable elements configuration */
-        project.configurations.createConsumable("testElements").also { configuration ->
-            configuration.attributes.attributeProvider(
+        project.configurations.createConsumable("testElements") {
+            attributes.attributeProvider(
                 Usage.USAGE_ATTRIBUTE,
                 project.provider { project.objects.named("test") }
             )
 
             /* Add klibCollectionDir as artifact */
-            configuration.outgoing.artifact(klibCollectionDir) { artifact ->
+            outgoing.artifact(klibCollectionDir) { artifact ->
                 artifact.type = CInteropCommonizerArtifactTypeAttribute.KLIB_COLLECTION_DIR
                 artifact.extension = CInteropCommonizerArtifactTypeAttribute.KLIB_COLLECTION_DIR
             }
