@@ -463,7 +463,7 @@ object KotlinCompilerClient {
         val platformSpecificOptions = listOf(
             // hide daemon window
             "-Djava.awt.headless=true",
-            "-D$${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property}=$serverHostname"
+            "-D${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property}=$serverHostname"
         )
         val javaVersion = CompilerSystemProperties.JAVA_VERSION.value?.toIntOrNull()
         val javaIllegalAccessWorkaround =
