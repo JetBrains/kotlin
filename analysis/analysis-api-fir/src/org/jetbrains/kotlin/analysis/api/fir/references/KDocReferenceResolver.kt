@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import kotlin.reflect.KClass
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object KDocReferenceResolver {
 
@@ -84,7 +85,7 @@ internal object KDocReferenceResolver {
     context(KtAnalysisSession)
     private fun resolveKdocFqName(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> {
         getExtensionReceiverSymbolByThisQualifier(fqName, contextElement).ifNotEmpty { return this }
-        (getSymbolsFromScopes(fqName, contextElement) + listOfNotNull(getPackageSymbolIfPackageExists(fqName))).ifNotEmpty { return this }
+        getSymbolsFromExistingScopes(fqName, contextElement).ifNotEmpty { return this }
         getNonImportedSymbolsByFullyQualifiedName(fqName).ifNotEmpty { return this }
         AdditionalKDocResolutionProvider.resolveKdocFqName(fqName, contextElement).ifNotEmpty { return this }
         return emptyList()
@@ -101,6 +102,13 @@ internal object KDocReferenceResolver {
         }
         return emptyList()
     }
+
+    context(KtAnalysisSession)
+    private fun getSymbolsFromExistingScopes(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> =
+        buildList {
+            addAll(getSymbolsFromScopes(fqName, contextElement))
+            addIfNotNull(getPackageSymbolIfPackageExists(fqName))
+        }
 
     context(KtAnalysisSession)
     private fun getSymbolsFromScopes(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> {

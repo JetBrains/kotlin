@@ -1623,6 +1623,12 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
             public void testLongPackage() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/kDoc/packages/longPackage.kt");
             }
+
+            @Test
+            @TestMetadata("packageVsTopLevelDeclarations.kt")
+            public void testPackageVsTopLevelDeclarations() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/packages/packageVsTopLevelDeclarations.kt");
+            }
         }
 
         @Nested
