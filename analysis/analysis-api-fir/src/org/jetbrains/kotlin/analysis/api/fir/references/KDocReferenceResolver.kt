@@ -70,12 +70,14 @@ internal object KDocReferenceResolver {
      */
     context(KtAnalysisSession)
     private fun findParentSymbol(symbol: KtSymbol, goBackSteps: Int, selectedFqName: FqName): KtSymbol? {
-        if (symbol !is KtDeclarationSymbol) return null
-        var currentSymbol: KtDeclarationSymbol? = symbol
+        if (symbol !is KtDeclarationSymbol && symbol !is KtPackageSymbol) return null
+
+        var currentSymbol = symbol as? KtDeclarationSymbol
         repeat(goBackSteps) {
             currentSymbol = currentSymbol?.getContainingSymbol() as? KtClassOrObjectSymbol
         }
         currentSymbol?.let { return it }
+
         return getPackageSymbolIfPackageExists(selectedFqName)
     }
 
