@@ -252,10 +252,11 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         })
 
     private fun addParametersAndMasks(result: MutableList<Class<*>>, valueParameters: List<Class<*>>, isConstructor: Boolean) {
-        // Constructors containing value class contain an extra trailing DEFAULT_CONSTRUCTOR_MARKER
-        // and should be excluded when calculating mask size.
+        // Constructors that include parameters of inline class types contain an extra trailing DEFAULT_CONSTRUCTOR_MARKER parameter,
+        // which should be excluded when calculating mask size.
         val withoutMarker =
-            if (valueParameters.lastOrNull() == DEFAULT_CONSTRUCTOR_MARKER) valueParameters.dropLast(1) else valueParameters
+            if (valueParameters.lastOrNull() == DEFAULT_CONSTRUCTOR_MARKER) valueParameters.subList(0, valueParameters.size - 1)
+            else valueParameters
 
         result.addAll(withoutMarker)
         repeat((withoutMarker.size + Integer.SIZE - 1) / Integer.SIZE) {
