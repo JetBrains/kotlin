@@ -3684,6 +3684,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ACTUAL_PRIVATE_DECLARATION) { firDiagnostic ->
+        ActualPrivateDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXPECTED_EXTERNAL_DECLARATION) { firDiagnostic ->
         ExpectedExternalDeclarationImpl(
             firDiagnostic as KtPsiDiagnostic,

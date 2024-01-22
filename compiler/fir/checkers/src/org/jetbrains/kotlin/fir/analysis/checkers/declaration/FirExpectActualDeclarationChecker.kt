@@ -67,6 +67,9 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         ) {
             checkExpectActualPair(declaration, context, reporter, matchingCompatibilityToMembersMap)
         }
+        if (declaration.hasActualModifier() && isProhibitedPrivateExpectOrActualDeclaration(declaration)) {
+            reporter.reportOn(declaration.source, FirErrors.ACTUAL_PRIVATE_DECLARATION, context)
+        }
     }
 
     private fun containsExpectOrActualModifier(declaration: FirMemberDeclaration): Boolean {
