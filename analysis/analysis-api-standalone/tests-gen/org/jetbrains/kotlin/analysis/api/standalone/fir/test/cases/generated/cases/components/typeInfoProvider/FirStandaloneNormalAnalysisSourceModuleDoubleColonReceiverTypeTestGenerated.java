@@ -77,6 +77,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDoubleColonReceiverTypeTestG
     }
 
     @Test
+    @TestMetadata("methodReference_typeArgument.kt")
+    public void testMethodReference_typeArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_typeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("methodReference_typeArgument_startProjection.kt")
+    public void testMethodReference_typeArgument_startProjection() throws Exception {
+        runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_typeArgument_startProjection.kt");
+    }
+
+    @Test
     @TestMetadata("methodReference_variable.kt")
     public void testMethodReference_variable() throws Exception {
         runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_variable.kt");

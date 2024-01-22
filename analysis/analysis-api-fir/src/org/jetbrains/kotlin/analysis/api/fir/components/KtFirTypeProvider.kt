@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.components.KtBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.components.KtTypeProvider
-import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
@@ -197,7 +196,10 @@ internal class KtFirTypeProvider(
                         explicitReceiver.resolvedType.asKtType()
                     }
                     is FirResolvedQualifier -> {
-                        explicitReceiver.classId?.let { analysisSession.buildClassType(it) }
+                        explicitReceiver.symbol?.toLookupTag()?.constructType(
+                            explicitReceiver.typeArguments.map { it.toConeTypeProjection() }.toTypedArray(),
+                            isNullable = false
+                        )?.asKtType()
                             ?: fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
                     }
                     else -> {
