@@ -96,7 +96,9 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
     }
 
 
-    internal open fun <T> getDynamicProperty(token: BirElementDynamicPropertyToken<*, T>): T? {
+    internal open fun <T> getDynamicProperty(token: BirDynamicPropertyAccessToken<*, T>): T? {
+        token.requireValid()
+
         val arrayMap = dynamicProperties ?: return null
         val keyIndex = findDynamicPropertyIndex(arrayMap, token.key)
         if (keyIndex < 0) return null
@@ -104,7 +106,9 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         return arrayMap[keyIndex + 1] as T
     }
 
-    internal open fun <T> setDynamicProperty(token: BirElementDynamicPropertyToken<*, T>, value: T?): Boolean {
+    internal open fun <T> setDynamicProperty(token: BirDynamicPropertyAccessToken<*, T>, value: T?): Boolean {
+        token.requireValid()
+
         val arrayMap = dynamicProperties
         if (arrayMap == null) {
             if (value == null) {
@@ -117,42 +121,89 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         } else {
             val foundIndex = findDynamicPropertyIndex(arrayMap, token.key)
             if (foundIndex >= 0) {
-                val valueIndex = foundIndex + 1
-                val old = arrayMap[valueIndex]
-                if (old != value) {
-                    arrayMap[valueIndex] = value
+                if (value == null) {
+                    removeDynamicPropertyAtPruningSubsequent(arrayMap, foundIndex)
                     return true
                 } else {
-                    return false
+                    val valueIndex = foundIndex + 1
+                    val old = arrayMap[valueIndex]
+                    arrayMap[valueIndex] = value
+                    return old != value
                 }
             } else {
                 val entryIndex = -(foundIndex + 1)
-                arrayMap[entryIndex] = token.key
-                arrayMap[entryIndex + 1] = value
-                return value != null
+                return addDynamicProperty(arrayMap, entryIndex, token.key, value)
             }
         }
     }
 
-    protected fun <T> initializeDynamicProperties(token: BirElementDynamicPropertyToken<*, T>, value: T?) {
-        val size = token.manager.getInitialDynamicPropertyArraySize(elementClassId.toInt())
-        require(size != 0) { "This element is not supposed to store any dynamic properties" }
-
+    protected fun <T> initializeDynamicProperties(token: BirDynamicPropertyAccessToken<*, T>, value: T?) {
+        val size = 2
         val arrayMap = arrayOfNulls<Any?>(size * 2)
         arrayMap[0] = token.key
         arrayMap[1] = value
         this.dynamicProperties = arrayMap
     }
 
-    protected fun findDynamicPropertyIndex(arrayMap: Array<Any?>, propertyKey: BirElementDynamicPropertyKey<*, *>): Int {
+    protected fun <T> addDynamicProperty(arrayMap: Array<Any?>, index: Int, key: BirDynamicPropertyKey<*, T>, value: T?): Boolean {
+        if (value == null) {
+            return false
+        }
+
+        var arrayMap = arrayMap
+        if (arrayMap.size <= index) {
+            arrayMap = arrayMap.copyOf(arrayMap.size * 2)
+            this.dynamicProperties = arrayMap
+        }
+
+        arrayMap[index] = key
+        arrayMap[index + 1] = value
+        return true
+    }
+
+    protected fun findDynamicPropertyIndex(arrayMap: Array<Any?>, propertyKey: BirDynamicPropertyKey<*, *>): Int {
         var i = 0
+        var foundAnyOutdated = false
         while (i < arrayMap.size) {
             val key = arrayMap[i]
-            if (key == null) return -i - 1
+            if (key == null) {
+                return -i - 1
+            }
+
             if (key === propertyKey) return i
+            if (!foundAnyOutdated && (key is TemporaryBirDynamicProperty<*, *> && !key.isValid)) {
+                foundAnyOutdated = true
+                removeDynamicPropertyAtPruningSubsequent(arrayMap, i)
+            }
+
             i += 2
         }
         return -i - 1
+    }
+
+    private fun removeDynamicPropertyAtPruningSubsequent(arrayMap: Array<Any?>, keyIndex: Int) {
+        var i = keyIndex + 2
+        var j = keyIndex
+        while (true) {
+            val key = arrayMap.getOrNull(i)
+            arrayMap[j] = key
+            arrayMap[j + 1] = arrayMap.getOrNull(i + 1)
+
+            if (key == null) {
+                return
+            }
+
+            i += 2
+            if (!(key is TemporaryBirDynamicProperty<*, *> && !key.isValid)) {
+                j += 2
+            }
+        }
+    }
+
+    protected fun BirDynamicPropertyAccessToken<*, *>.requireValid() {
+        if (this is TemporaryBirDynamicProperty<*, *>) {
+            require(isValid) { "The property token can only be used within the phase $validInPhase" }
+        }
     }
 
 

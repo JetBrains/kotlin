@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.bir.backend.jvm
 
-import org.jetbrains.kotlin.bir.BirElementDynamicPropertyKey
+import org.jetbrains.kotlin.bir.BirDynamicPropertyKey
+import org.jetbrains.kotlin.bir.GlobalBirDynamicProperty
 import org.jetbrains.kotlin.bir.declarations.BirClass
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 object GlobalJvmBirDynamicProperties {
-    val ClassNameOverride = BirElementDynamicPropertyKey<_, JvmClassName>(BirClass)
+    val ClassNameOverride = GlobalBirDynamicProperty<_, JvmClassName>(BirClass)
 }

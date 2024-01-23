@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl.descriptor
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -441,10 +440,9 @@ fun BirStatement.isPartialLinkageRuntimeError(): Boolean {
 
 fun BirAttributeContainer.copyAttributes(
     other: BirAttributeContainer,
-    originalBeforeInlineToken: BirElementDynamicPropertyToken<BirAttributeContainer, BirAttributeContainer?>,
 ) {
     attributeOwnerId = other.attributeOwnerId
-    this[originalBeforeInlineToken] = other[originalBeforeInlineToken]
+    this[GlobalBirDynamicProperties.OriginalBeforeInline] = other[GlobalBirDynamicProperties.OriginalBeforeInline]
 }
 
 val BirFunction.allTypeParameters: Collection<BirTypeParameter>

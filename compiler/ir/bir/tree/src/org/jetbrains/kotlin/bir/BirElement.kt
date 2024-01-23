@@ -8,8 +8,6 @@
 
 package org.jetbrains.kotlin.bir
 
-import org.jetbrains.kotlin.builtins.StandardNames.FqNames.replaceWith
-
 
 sealed interface BirElementOrChildList {
     fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D)
@@ -60,15 +58,15 @@ sealed interface BirElementFacade : BirElementOrChildList {
     fun replaceWith(new: BirElement?)
 }
 
-operator fun <E : BirElement, T> E.get(token: BirElementDynamicPropertyToken<E, T>): T? {
+operator fun <E : BirElement, T> E.get(token: BirDynamicPropertyAccessToken<E, T>): T? {
     return (this as BirElementBase).getDynamicProperty(token)
 }
 
-operator fun <E : BirElement, T> E.set(token: BirElementDynamicPropertyToken<E, T>, value: T?) {
+operator fun <E : BirElement, T> E.set(token: BirDynamicPropertyAccessToken<E, T>, value: T?) {
     (this as BirImplElementBase).setDynamicProperty(token, value)
 }
 
-fun <E : BirElement, T> E.getOrPutDynamicProperty(token: BirElementDynamicPropertyToken<E, T>, compute: () -> T): T {
+fun <E : BirElement, T> E.getOrPutDynamicProperty(token: BirDynamicPropertyAccessToken<E, T>, compute: () -> T): T {
     return (this as BirImplElementBase).getOrPutDynamicProperty(token, compute)
 }
 

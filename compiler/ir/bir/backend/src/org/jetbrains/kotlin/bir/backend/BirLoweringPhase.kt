@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.bir.symbols.BirTypedSymbol
 import kotlin.reflect.KProperty1
 
 context(BirBackendContext)
-abstract class BirLoweringPhase {
+abstract class BirLoweringPhase : BirPhase {
     abstract fun lower(module: BirModuleFragment)
 
     protected fun <E : BirElement> registerIndexKey(
@@ -249,13 +249,8 @@ abstract class BirLoweringPhase {
     }
 
 
-    protected fun <E : BirElement, T> acquireProperty(property: BirElementDynamicPropertyKey<E, T>): BirElementDynamicPropertyToken<E, T> {
-        return dynamicPropertyManager.acquireProperty(property)
-    }
-
-    protected fun <E : BirElement, T> acquireTemporaryProperty(elementType: BirElementType<E>): BirElementDynamicPropertyToken<E, T> {
-        val property = BirElementDynamicPropertyKey<E, T>(elementType)
-        return acquireProperty(property)
+    protected fun <E : BirElement, T> acquireTemporaryProperty(elementType: BirElementType<E>): BirDynamicPropertyAccessToken<E, T> {
+        return TemporaryBirDynamicProperty<E, T>(elementType, dynamicPropertyManager, this)
     }
 
 

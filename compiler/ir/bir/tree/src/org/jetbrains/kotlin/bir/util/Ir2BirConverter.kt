@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 // todo: Could be adjusted for the change that all child fields are now nullable
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class Ir2BirConverter(
-    dynamicPropertyManager: BirElementDynamicPropertyManager,
+    dynamicPropertyManager: BirDynamicPropertiesManager,
     compressedSourceSpanManager: CompressedSourceSpanManager,
     expectedTreeSize: Int = 0,
 ) : Ir2BirConverterBase(compressedSourceSpanManager) {
@@ -47,13 +47,6 @@ class Ir2BirConverter(
     private val localDelegatedProperties = createElementMap<BirLocalDelegatedProperty, IrLocalDelegatedProperty>()
     private val typeAliases = createElementMap<BirTypeAlias, IrTypeAlias>()
     private val loops = createElementMap<BirLoop, IrLoop>()
-
-    private val Descriptor = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.Descriptor)
-    private val Metadata = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.Metadata)
-    private val ContainerSource = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.ContainerSource)
-    private val SealedSubclasses = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.SealedSubclasses)
-    private val OriginalBeforeInline = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.OriginalBeforeInline)
-    private val CapturedConstructor = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.CapturedConstructor)
 
     @Suppress("UNCHECKED_CAST")
     override fun <Bir : BirElement> copyElement(old: IrElement): Bir = when (old) {
@@ -1125,28 +1118,28 @@ class Ir2BirConverter(
         this as BirElementBase
 
         if (from is IrExternalPackageFragment) {
-            (this as BirExternalPackageFragment)[Descriptor] =
+            (this as BirExternalPackageFragment)[GlobalBirDynamicProperties.Descriptor] =
                 if (from.symbol is DescriptorlessExternalPackageFragmentSymbol) null
                 else mapDescriptor { from.packageFragmentDescriptor }
         } else if (from is IrDeclaration) {
-            (this as BirDeclaration)[Descriptor] = mapDescriptor { from.descriptor }
+            (this as BirDeclaration)[GlobalBirDynamicProperties.Descriptor] = mapDescriptor { from.descriptor }
         }
 
         if (from is IrMetadataSourceOwner) {
-            (this as BirMetadataSourceOwner)[Metadata] = from.metadata
+            (this as BirMetadataSourceOwner)[GlobalBirDynamicProperties.Metadata] = from.metadata
         }
 
         if (from is IrMemberWithContainerSource) {
-            (this as BirMemberWithContainerSource)[ContainerSource] = from.containerSource
+            (this as BirMemberWithContainerSource)[GlobalBirDynamicProperties.ContainerSource] = from.containerSource
         }
 
         if (from is IrAttributeContainer) {
-            (this as BirAttributeContainer)[OriginalBeforeInline] =
+            (this as BirAttributeContainer)[GlobalBirDynamicProperties.OriginalBeforeInline] =
                 from.originalBeforeInline?.let { remapElement(it) as BirAttributeContainer }
         }
 
         if (from is IrClass) {
-            (this as BirClass)[SealedSubclasses] = from.sealedSubclasses.memoryOptimizedMap { remapSymbol(it) }
+            (this as BirClass)[GlobalBirDynamicProperties.SealedSubclasses] = from.sealedSubclasses.memoryOptimizedMap { remapSymbol(it) }
         }
     }
 

@@ -36,10 +36,6 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
     private val memberAccesses = registerBackReferencesKeyWithUntypedSymbolProperty(BirMemberAccessExpression, BirMemberAccessExpression<*>::symbol)
     private val valueReads = registerBackReferencesKey(BirGetValue, BirGetValue::symbol)
 
-    private val fieldForObjectInstanceToken = acquireProperty(JvmCachedDeclarations.FieldForObjectInstance)
-    private val interfaceCompanionFieldDeclaration = acquireProperty(JvmCachedDeclarations.InterfaceCompanionFieldDeclaration)
-    private val fieldForObjectInstanceParentToken = acquireProperty(JvmCachedDeclarations.FieldForObjectInstanceParent)
-
     override fun lower(module: BirModuleFragment) {
         val effectivelyStaticDeclarations = buildSet {
             getAllElementsWithIndex(staticDeclarations).forEach { declaration ->
@@ -98,12 +94,7 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
         birClass: BirClass,
         oldThisReceiverParameter: BirValueParameter,
     ) {
-        val field = JvmCachedDeclarations.getPrivateFieldForObjectInstance(
-            birClass,
-            interfaceCompanionFieldDeclaration,
-            fieldForObjectInstanceToken,
-            fieldForObjectInstanceParentToken,
-        )
+        val field = JvmCachedDeclarations.getPrivateFieldForObjectInstance(birClass)
         oldThisReceiverParameter.getBackReferences(valueReads).forEach { getValue ->
             val new = BirGetFieldImpl(getValue.sourceSpan, birClass.defaultType, field, null, null, null)
             getValue.replaceWith(new)

@@ -6,19 +6,15 @@
 package org.jetbrains.kotlin.bir.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.bir.BirElementDynamicPropertyKey
-import org.jetbrains.kotlin.bir.BirElementDynamicPropertyToken
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.backend.BirBackendContext
 import org.jetbrains.kotlin.bir.backend.builders.build
 import org.jetbrains.kotlin.bir.declarations.BirClass
-import org.jetbrains.kotlin.bir.declarations.BirDeclaration
 import org.jetbrains.kotlin.bir.declarations.BirDeclarationParent
 import org.jetbrains.kotlin.bir.declarations.BirField
-import org.jetbrains.kotlin.bir.getOrPutDynamicProperty
 import org.jetbrains.kotlin.bir.util.classId
 import org.jetbrains.kotlin.bir.util.defaultType
 import org.jetbrains.kotlin.bir.util.parentAsClass
-import org.jetbrains.kotlin.bir.set
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObjectClassId
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -30,17 +26,13 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 
 object JvmCachedDeclarations {
-    val FieldForObjectInstance = BirElementDynamicPropertyKey<_, BirField>(BirClass)
-    val InterfaceCompanionFieldDeclaration = BirElementDynamicPropertyKey<_, BirField>(BirClass)
-    val FieldForObjectInstanceParent = BirElementDynamicPropertyKey<_, BirDeclarationParent>(BirField)
+    val FieldForObjectInstance = GlobalBirDynamicProperty<_, BirField>(BirClass)
+    val InterfaceCompanionFieldDeclaration = GlobalBirDynamicProperty<_, BirField>(BirClass)
+    val FieldForObjectInstanceParent = GlobalBirDynamicProperty<_, BirDeclarationParent>(BirField)
 
     context(BirBackendContext)
-    fun getFieldForObjectInstance(
-        singleton: BirClass,
-        fieldForObjectInstanceToken: BirElementDynamicPropertyToken<BirClass, BirField>,
-        fieldForObjectInstanceParentToken: BirElementDynamicPropertyToken<BirField, BirDeclarationParent>,
-    ): BirField {
-        return singleton.getOrPutDynamicProperty(fieldForObjectInstanceToken) {
+    fun getFieldForObjectInstance(singleton: BirClass): BirField {
+        return singleton.getOrPutDynamicProperty(FieldForObjectInstance) {
             val originalVisibility = singleton.visibility
             val isNotMappedCompanion = singleton.isCompanion && !singleton.isMappedIntrinsicCompanionObject()
             val useProperVisibilityForCompanion =
@@ -58,7 +50,7 @@ object JvmCachedDeclarations {
                     originalVisibility == DescriptorVisibilities.PROTECTED -> JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY
                     else -> originalVisibility
                 }
-                this[fieldForObjectInstanceParentToken] = if (isNotMappedCompanion) singleton.parent as BirDeclarationParent else singleton
+                this[FieldForObjectInstanceParent] = if (isNotMappedCompanion) singleton.parent as BirDeclarationParent else singleton
             }
         }
     }
@@ -67,14 +59,9 @@ object JvmCachedDeclarations {
         isCompanion && classId?.let { CompanionObjectMapping.isMappedIntrinsicCompanionObjectClassId(it) } == true
 
     context(BirBackendContext)
-    fun getPrivateFieldForObjectInstance(
-        singleton: BirClass,
-        interfaceCompanionFieldDeclarationToken: BirElementDynamicPropertyToken<BirClass, BirField>,
-        fieldForObjectInstanceToken: BirElementDynamicPropertyToken<BirClass, BirField>,
-        fieldForObjectInstanceParentToken: BirElementDynamicPropertyToken<BirField, BirDeclarationParent>,
-    ): BirField {
+    fun getPrivateFieldForObjectInstance(singleton: BirClass): BirField {
         return if (singleton.isCompanion && singleton.parentAsClass.isJvmInterface)
-            singleton.getOrPutDynamicProperty(interfaceCompanionFieldDeclarationToken) {
+            singleton.getOrPutDynamicProperty(InterfaceCompanionFieldDeclaration) {
                 BirField.build {
                     name = Name.identifier("\$\$INSTANCE")
                     type = singleton.defaultType
@@ -82,11 +69,11 @@ object JvmCachedDeclarations {
                     isFinal = true
                     isStatic = true
                     visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
-                    this[fieldForObjectInstanceParentToken] = singleton
+                    this[FieldForObjectInstanceParent] = singleton
                 }
             }
         else {
-            getFieldForObjectInstance(singleton, fieldForObjectInstanceToken, fieldForObjectInstanceParentToken)
+            getFieldForObjectInstance(singleton)
         }
     }
 }

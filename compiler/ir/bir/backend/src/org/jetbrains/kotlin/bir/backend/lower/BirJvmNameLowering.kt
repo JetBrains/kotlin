@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.bir.backend.lower
 
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.bir.BirElementDynamicPropertyKey
+import org.jetbrains.kotlin.bir.BirDynamicPropertyKey
+import org.jetbrains.kotlin.bir.GlobalBirDynamicProperty
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.declarations.BirFunction
@@ -25,7 +26,6 @@ context(JvmBirBackendContext)
 class BirJvmNameLowering : BirLoweringPhase() {
     private val JvmNameAnnotation by lz { birBuiltIns.findClass(DescriptorUtils.JVM_NAME) }
 
-    private val jvmNameKey = acquireProperty(JvmName)
     private val jvmNameAnnotations = registerIndexKey(BirConstructorCall, false) {
         it.constructedClass == JvmNameAnnotation
     }
@@ -44,11 +44,11 @@ class BirJvmNameLowering : BirLoweringPhase() {
                 else -> value
             }
 
-            function[jvmNameKey] = Name.identifier(name)
+            function[JvmName] = Name.identifier(name)
         }
     }
 
     companion object {
-        val JvmName = BirElementDynamicPropertyKey<_, Name>(BirFunction)
+        val JvmName = GlobalBirDynamicProperty<_, Name>(BirFunction)
     }
 }

@@ -5,24 +5,16 @@
 
 package org.jetbrains.kotlin.bir.backend.lower
 
-import org.jetbrains.kotlin.bir.BirElementDynamicPropertyKey
-import org.jetbrains.kotlin.bir.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.builders.*
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.declarations.impl.BirClassImpl
-import org.jetbrains.kotlin.bir.expressions.BirBlockBody
 import org.jetbrains.kotlin.bir.expressions.BirClassReference
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
-import org.jetbrains.kotlin.bir.expressions.impl.BirGetFieldImpl
-import org.jetbrains.kotlin.bir.expressions.impl.BirGetValueImpl
-import org.jetbrains.kotlin.bir.expressions.impl.BirReturnImpl
-import org.jetbrains.kotlin.bir.expressions.impl.BirVarargImpl
 import org.jetbrains.kotlin.bir.get
 import org.jetbrains.kotlin.bir.set
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
-import org.jetbrains.kotlin.bir.types.utils.defaultType
 import org.jetbrains.kotlin.bir.types.utils.typeWith
 import org.jetbrains.kotlin.bir.types.utils.typeWithParameters
 import org.jetbrains.kotlin.bir.util.*

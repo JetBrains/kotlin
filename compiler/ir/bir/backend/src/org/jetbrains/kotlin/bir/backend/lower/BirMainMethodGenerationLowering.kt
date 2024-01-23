@@ -37,8 +37,6 @@ import org.jetbrains.kotlin.types.Variance
 
 context(JvmBirBackendContext)
 class BirMainMethodGenerationLowering : BirLoweringPhase() {
-    private val jvmNameKey = acquireProperty(BirJvmNameLowering.JvmName)
-
     private val mainishFunctions = registerIndexKey(BirSimpleFunction, false) { function ->
         function.extensionReceiverParameter == null
                 && function.valueParameters.size <= 1
@@ -86,7 +84,7 @@ class BirMainMethodGenerationLowering : BirLoweringPhase() {
     }
 
     private fun BirSimpleFunction.getJvmName() =
-        this[jvmNameKey] ?: name
+        this[BirJvmNameLowering.JvmName] ?: name
 
     private fun BirSimpleFunction.isParameterizedMainMethod(): Boolean? {
         val parameter = valueParameters.singleOrNull()
