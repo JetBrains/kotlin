@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
@@ -69,19 +68,4 @@ class KlibMetadataIncrementalSerializer(
     // See monolithic serializer for details.
     override val TOP_LEVEL_DECLARATION_COUNT_PER_FILE = null
     override val TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE = null
-}
-
-fun makeSerializedKlibMetadata(
-    fragments: Map<String, List<ByteArray>>,
-    header: ByteArray
-): SerializedMetadata {
-    val fragmentNames = mutableListOf<String>()
-    val fragmentParts = mutableListOf<List<ByteArray>>()
-
-    for ((fqName, fragment) in fragments.entries.sortedBy { it.key }) {
-        fragmentNames += fqName
-        fragmentParts += fragment
-    }
-
-    return SerializedMetadata(header, fragmentParts, fragmentNames)
 }

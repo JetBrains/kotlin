@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
-import org.jetbrains.kotlin.backend.common.serialization.metadata.makeSerializedKlibMetadata
 import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibHeader
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -181,14 +180,18 @@ fun <Dependency : KotlinLibrary> serializeModuleIntoKlib(
 
     processKlibHeader(header)
 
-    val serializedMetadata = makeSerializedKlibMetadata(
-        fragments = compiledKotlinFiles
-            .groupBy { it.fqName }
-            .map { (fqn, data) ->
-                fqn to data.sortedBy { it.path }.map { it.metadata }
-            }
-            .toMap(),
-        header = header,
+    val (fragmentNames, fragmentParts) = compiledKotlinFiles
+        .groupBy { it.fqName }
+        .map { (fqn, data) ->
+            fqn to data.sortedBy { it.path }.map { it.metadata }
+        }
+        .sortedBy { it.first }
+        .unzip()
+
+    val serializedMetadata = SerializedMetadata(
+        module = header,
+        fragments = fragmentParts,
+        fragmentNames = fragmentNames
     )
 
     return SerializerOutput(
