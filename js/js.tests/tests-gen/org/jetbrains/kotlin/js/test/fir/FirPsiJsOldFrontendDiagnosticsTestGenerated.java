@@ -725,6 +725,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
         }
 
         @Test
+        @TestMetadata("genericInterfaceInheritance.kt")
+        public void testGenericInterfaceInheritance() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/genericInterfaceInheritance.kt");
+        }
+
+        @Test
         @TestMetadata("illegalName.kt")
         public void testIllegalName() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/illegalName.kt");
