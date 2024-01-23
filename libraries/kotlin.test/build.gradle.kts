@@ -403,7 +403,6 @@ configurations {
                 // there is no dependency anymore from kotlin-test to kotlin-test-common and -annotations-common,
                 // but use this constraint to align it if another library brings it transitively
                 jvmMainApi(artifactCoordinates)
-                metadataApiElements(artifactCoordinates)
                 nativeApiElements(artifactCoordinates)
             }
         }

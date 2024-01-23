@@ -589,7 +589,6 @@ dependencies {
         // but use this constraint to align it if another library brings it transitively
         jvmMainApi(project(":kotlin-stdlib-common"))
         commonMainMetadataElementsWithClassifier(project(":kotlin-stdlib-common"))
-        metadataApiElements(project(":kotlin-stdlib-common"))
         nativeApiElements(project(":kotlin-stdlib-common"))
         // to avoid split package and duplicate classes on classpath after moving them from these artifacts in 1.8.0
         jvmMainApi("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0")
