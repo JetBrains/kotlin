@@ -70,6 +70,18 @@ public class FirIdeNormalAnalysisSourceModuleMultiModuleCompilerFacilityTestGene
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/javaAnnotationWithVararg.kt");
     }
 
+    @Test
+    @TestMetadata("javaAnnotationWithVararg2.kt")
+    public void testJavaAnnotationWithVararg2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/javaAnnotationWithVararg2.kt");
+    }
+
+    @Test
+    @TestMetadata("javaAnnotationWithVararg3.kt")
+    public void testJavaAnnotationWithVararg3() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/javaAnnotationWithVararg3.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments")
     @TestDataPath("$PROJECT_ROOT")
