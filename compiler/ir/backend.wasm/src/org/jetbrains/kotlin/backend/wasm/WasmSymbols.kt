@@ -60,8 +60,6 @@ class WasmSymbols(
         override val createCovariantKTypeProjection = getInternalFunction("createCovariantKTypeProjection")
         override val createInvariantKTypeProjection = getInternalFunction("createInvariantKTypeProjection")
         override val createContravariantKTypeProjection = getInternalFunction("createContravariantKTypeProjection")
-
-        override val primitiveClassesObject = getInternalClass("PrimitiveClasses")
         override val kTypeClass: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KClass"))
 
         val getTypeInfoTypeDataByPtr: IrSimpleFunctionSymbol = getInternalFunction("getTypeInfoTypeDataByPtr")

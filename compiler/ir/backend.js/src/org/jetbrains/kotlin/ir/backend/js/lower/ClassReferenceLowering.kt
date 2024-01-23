@@ -27,47 +27,20 @@ import org.jetbrains.kotlin.types.*
 
 class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowering(context) {
     private val getClassData = context.intrinsics.jsClass
-
-    override fun callGetKClass(
-        returnType: IrType,
-        typeArgument: IrType
-    ): IrCall {
-        val primitiveKClass =
-            getFinalPrimitiveKClass(returnType, typeArgument) ?: getOpenPrimitiveKClass(returnType, typeArgument)
-
-        if (primitiveKClass != null)
-            return primitiveKClass
-
-        return JsIrBuilder.buildCall(reflectionSymbols.getKClass, returnType, listOf(typeArgument))
-            .apply {
-                putValueArgument(0, callGetClassByType(typeArgument))
-            }
-    }
-
-    private fun callGetClassByType(type: IrType) =
-        JsIrBuilder.buildCall(
-            getClassData,
-            typeArguments = listOf(type),
-            origin = JsStatementOrigins.CLASS_REFERENCE
-        )
-}
-
-abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
-
-    protected val reflectionSymbols get() = context.reflectionSymbols
+    private val primitiveClassesObject = context.intrinsics.primitiveClassesObject
 
     private val primitiveClassProperties by lazy(LazyThreadSafetyMode.NONE) {
-        reflectionSymbols.primitiveClassesObject.owner.declarations.filterIsInstance<IrProperty>()
+        primitiveClassesObject.owner.declarations.filterIsInstance<IrProperty>()
     }
 
     private val primitiveClassFunctionClass by lazy(LazyThreadSafetyMode.NONE) {
-        reflectionSymbols.primitiveClassesObject.owner.declarations
+        primitiveClassesObject.owner.declarations
             .findIsInstanceAnd<IrSimpleFunction> { it.name == Name.identifier("functionClass") }!!
     }
 
     private fun primitiveClassProperty(name: String) =
         primitiveClassProperties.singleOrNull { it.name == Name.identifier(name) }?.getter
-            ?: reflectionSymbols.primitiveClassesObject.owner.declarations
+            ?: primitiveClassesObject.owner.declarations
                 .filterIsInstance<IrSimpleFunction>()
                 .single { it.name == Name.special("<get-$name>") }
 
@@ -105,25 +78,15 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
         }
     }
 
-    private fun callGetKClassFromExpression(returnType: IrType, typeArgument: IrType, argument: IrExpression): IrExpression {
-        val primitiveKClass = getFinalPrimitiveKClass(returnType, typeArgument)
-        if (primitiveKClass != null)
-            return JsIrBuilder.buildBlock(returnType, listOf(argument, primitiveKClass))
-
-        return JsIrBuilder.buildCall(reflectionSymbols.getKClassFromExpression, returnType, listOf(typeArgument)).apply {
-            putValueArgument(0, argument)
-        }
-    }
-
     private fun getPrimitiveClass(target: IrSimpleFunction, returnType: IrType) =
         JsIrBuilder.buildCall(target.symbol, returnType).apply {
             dispatchReceiver = JsIrBuilder.buildGetObjectValue(
-                type = reflectionSymbols.primitiveClassesObject.defaultType,
-                classSymbol = reflectionSymbols.primitiveClassesObject
+                type = primitiveClassesObject.defaultType,
+                classSymbol = primitiveClassesObject
             )
         }
 
-    protected fun getFinalPrimitiveKClass(returnType: IrType, typeArgument: IrType): IrCall? {
+    override fun getFinalPrimitiveKClass(returnType: IrType, typeArgument: IrType): IrCall? {
         for ((typePredicate, v) in finalPrimitiveClasses) {
             if (typePredicate(typeArgument))
                 return getPrimitiveClass(v, returnType)
@@ -133,7 +96,7 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
     }
 
 
-    protected fun getOpenPrimitiveKClass(returnType: IrType, typeArgument: IrType): IrCall? {
+    override fun getOpenPrimitiveKClass(returnType: IrType, typeArgument: IrType): IrCall? {
         for ((typePredicate, v) in openPrimitiveClasses) {
             if (typePredicate(typeArgument))
                 return getPrimitiveClass(v, returnType)
@@ -148,6 +111,47 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
         }
 
         return null
+    }
+
+    override fun callGetKClass(
+        returnType: IrType,
+        typeArgument: IrType
+    ): IrCall {
+        val primitiveKClass =
+            getFinalPrimitiveKClass(returnType, typeArgument) ?: getOpenPrimitiveKClass(returnType, typeArgument)
+
+        if (primitiveKClass != null)
+            return primitiveKClass
+
+        return JsIrBuilder.buildCall(reflectionSymbols.getKClass, returnType, listOf(typeArgument))
+            .apply {
+                putValueArgument(0, callGetClassByType(typeArgument))
+            }
+    }
+
+    private fun callGetClassByType(type: IrType) =
+        JsIrBuilder.buildCall(
+            getClassData,
+            typeArguments = listOf(type),
+            origin = JsStatementOrigins.CLASS_REFERENCE
+        )
+}
+
+abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
+
+    protected val reflectionSymbols get() = context.reflectionSymbols
+
+    protected open fun getFinalPrimitiveKClass(returnType: IrType, typeArgument: IrType): IrCall? = null
+    protected open fun getOpenPrimitiveKClass(returnType: IrType, typeArgument: IrType): IrCall? = null
+
+    private fun callGetKClassFromExpression(returnType: IrType, typeArgument: IrType, argument: IrExpression): IrExpression {
+        val primitiveKClass = getFinalPrimitiveKClass(returnType, typeArgument)
+        if (primitiveKClass != null)
+            return JsIrBuilder.buildBlock(returnType, listOf(argument, primitiveKClass))
+
+        return JsIrBuilder.buildCall(reflectionSymbols.getKClassFromExpression, returnType, listOf(typeArgument)).apply {
+            putValueArgument(0, argument)
+        }
     }
 
     abstract fun callGetKClass(

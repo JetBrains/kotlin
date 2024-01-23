@@ -136,25 +136,14 @@ class WasmModuleCodegenContext(
     fun referenceGlobalClassITable(irClass: IrClassSymbol): WasmSymbol<WasmGlobal> =
         wasmFragment.globalClassITables.reference(irClass)
 
-    private fun referenceNonNothingType(
-        irClass: IrClassSymbol,
-        from: WasmCompiledModuleFragment.ReferencableAndDefinable<IrClassSymbol, WasmTypeDeclaration>
-    ): WasmSymbol<WasmTypeDeclaration> {
-        val type = irClass.defaultType
-        require(!type.isNothing()) {
-            "Can't reference Nothing type"
-        }
-        return from.reference(irClass)
-    }
-
     fun referenceGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
-        referenceNonNothingType(irClass, wasmFragment.gcTypes)
+        wasmFragment.gcTypes.reference(irClass)
 
     fun referenceVTableGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
-        referenceNonNothingType(irClass, wasmFragment.vTableGcTypes)
+        wasmFragment.vTableGcTypes.reference(irClass)
 
     fun referenceClassITableGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
-        referenceNonNothingType(irClass, wasmFragment.classITableGcType)
+        wasmFragment.classITableGcType.reference(irClass)
 
     fun defineClassITableGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration) {
         wasmFragment.classITableGcType.define(irClass, wasmType)

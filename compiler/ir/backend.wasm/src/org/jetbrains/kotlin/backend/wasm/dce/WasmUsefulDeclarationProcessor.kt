@@ -128,6 +128,7 @@ internal class WasmUsefulDeclarationProcessor(
         context.irBuiltIns.floatType,
         context.irBuiltIns.doubleType,
         context.irBuiltIns.nothingType,
+        context.irBuiltIns.nothingNType,
         context.wasmSymbols.voidType -> null
         else -> when {
             isBuiltInWasmRefType(this) -> null

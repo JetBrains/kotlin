@@ -18,28 +18,7 @@ internal fun <T : Any> getKClass(typeInfoData: TypeInfoData): KClass<T> =
 
 @Suppress("UNCHECKED_CAST")
 internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
-    when (e) {
-        is String -> PrimitiveClasses.stringClass
-        is Int -> PrimitiveClasses.intClass
-        is Byte -> PrimitiveClasses.byteClass
-        is Float -> PrimitiveClasses.floatClass
-        is Boolean -> PrimitiveClasses.booleanClass
-        is Double -> PrimitiveClasses.doubleClass
-        is Long -> PrimitiveClasses.longClass
-        is Number -> PrimitiveClasses.numberClass
-
-        is BooleanArray -> PrimitiveClasses.booleanArrayClass
-        is CharArray -> PrimitiveClasses.charArrayClass
-        is ByteArray -> PrimitiveClasses.byteArrayClass
-        is ShortArray -> PrimitiveClasses.shortArrayClass
-        is IntArray -> PrimitiveClasses.intArrayClass
-        is LongArray -> PrimitiveClasses.longArrayClass
-        is FloatArray -> PrimitiveClasses.floatArrayClass
-        is DoubleArray -> PrimitiveClasses.doubleArrayClass
-        is KClass<*> -> KClass::class
-        is Array<*> -> PrimitiveClasses.arrayClass
-        else -> getKClassForObject(e)
-    } as KClass<T>
+    getKClassForObject(e)
 
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
 internal inline fun <reified T : Any> wasmGetKClass(): KClass<T> =

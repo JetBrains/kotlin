@@ -6,26 +6,6 @@ package kotlin.wasm.internal
 
 import kotlin.reflect.KClass
 
-internal object NothingKClassImpl : KClass<Nothing> {
-    override val simpleName: String = "Nothing"
-    override val qualifiedName: String get() = "kotlin.Nothing"
-
-    override fun isInstance(value: Any?): Boolean = false
-
-    override fun equals(other: Any?): Boolean = super.equals(other) // KT-24971
-    override fun hashCode(): Int = super.hashCode() // KT-24971
-}
-
-internal object ErrorKClass : KClass<Nothing> {
-    override val simpleName: String get() = error("Unknown simpleName for ErrorKClass")
-    override val qualifiedName: String get() = error("Unknown qualifiedName for ErrorKClass")
-
-    override fun isInstance(value: Any?): Boolean = error("Can's check isInstance on ErrorKClass")
-
-    override fun equals(other: Any?): Boolean = super.equals(other) // KT-24971
-    override fun hashCode(): Int = super.hashCode() // KT-24971
-}
-
 internal class KClassImpl<T : Any> @WasmPrimitiveConstructor constructor(internal val typeData: TypeInfoData) : KClass<T> {
     override val simpleName: String get() = typeData.typeName
     override val qualifiedName: String
