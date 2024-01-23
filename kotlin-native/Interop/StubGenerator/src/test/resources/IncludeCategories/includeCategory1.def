@@ -1,5 +1,4 @@
 language = Objective-C
-objcClassesIncludingCategories = MyClass
 ---
 #include <header1.h>
 

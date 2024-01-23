@@ -1,4 +1,2 @@
 language = Objective-C
 headers = header1.h header2.h
-
-objcClassesIncludingCategories = MyClass
