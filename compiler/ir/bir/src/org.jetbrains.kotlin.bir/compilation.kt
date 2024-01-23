@@ -143,8 +143,9 @@ class BirCompilation() {
                     .map { it.second as AbstractNamedCompilerPhase<JvmBackendContext, IrFile, IrFile> }
                     .toMutableList()
 
-                val annotationPhasesRange = filePhases.subList(filePhases.indexOfFirst { it.name == "Annotation" },
-                                                               filePhases.indexOfFirst { it.name == "AnnotationImplementation" } + 1)
+                val annotationPhasesRange = filePhases.subList(
+                    filePhases.indexOfFirst { it.name == "Annotation" },
+                    filePhases.indexOfFirst { it.name == "AnnotationImplementation" } + 1)
                 val annotationPhases = annotationPhasesRange.toList()
                 annotationPhasesRange.clear()
                 filePhases.addAll(
@@ -234,7 +235,7 @@ class BirCompilation() {
     private inner class ConvertIrToBirPhase(name: String, description: String) :
         SimpleNamedCompilerPhase<JvmBackendContext, IrModuleFragment, BirCompilationBundle>(name, description) {
         override fun phaseBody(context: JvmBackendContext, input: IrModuleFragment): BirCompilationBundle {
-            val dynamicPropertyManager = BirElementDynamicPropertyManager()
+            val dynamicPropertyManager = BirDynamicPropertiesManager()
             val compressedSourceSpanManager = CompressedSourceSpanManager()
 
             val externalModulesBir = BirDatabase()
@@ -299,7 +300,7 @@ class BirCompilation() {
         val irModuleFragment: IrModuleFragment,
         val mappedIr2BirElements: Map<BirElement, IrElement>,
         val remappedIr2BirTypes: Map<BirType, IrType>,
-        val dynamicPropertyManager: BirElementDynamicPropertyManager?,
+        val dynamicPropertyManager: BirDynamicPropertiesManager?,
         val estimatedIrTreeSize: Int,
     )
 
@@ -335,7 +336,9 @@ class BirCompilation() {
             for (phase in input.backendContext.loweringPhases) {
                 val phaseName = phase.javaClass.simpleName
                 invokePhaseMeasuringTime("BIR", phaseName) {
+                    input.dynamicPropertyManager?.currentPhase = phase
                     phase.lower(input.birModule!!)
+                    input.dynamicPropertyManager?.currentPhase = null
                 }
 
                 dumpBirPhase(context, phaseConfig, input, phase, null)
@@ -360,28 +363,22 @@ class BirCompilation() {
             )
             bir2IrConverter.remappedIr2BirTypes = input.remappedIr2BirTypes
 
-            val localClassType = dynamicPropertyManager.acquireProperty(BirJvmInventNamesForLocalClassesLowering.LocalClassType)
-            val fieldForObjectInstanceToken = dynamicPropertyManager.acquireProperty(JvmCachedDeclarations.FieldForObjectInstance)
-            val interfaceCompanionFieldDeclaration =
-                dynamicPropertyManager.acquireProperty(JvmCachedDeclarations.InterfaceCompanionFieldDeclaration)
-            val fieldForObjectInstanceParentToken =
-                dynamicPropertyManager.acquireProperty(JvmCachedDeclarations.FieldForObjectInstanceParent)
             bir2IrConverter.elementConvertedCallback = { old, new ->
                 if (old is BirAttributeContainer) {
-                    old[localClassType]?.let {
+                    old[BirJvmInventNamesForLocalClassesLowering.LocalClassType]?.let {
                         context.putLocalClassType(new as IrAttributeContainer, it)
                     }
                 }
                 if (old is BirClass) {
                     new as IrClass
-                    old[fieldForObjectInstanceToken]?.let {
+                    old[JvmCachedDeclarations.FieldForObjectInstance]?.let {
                         val field = bir2IrConverter.remapElement<IrField>(it)
-                        field.parent = bir2IrConverter.remapElement(it[fieldForObjectInstanceParentToken]!!)
+                        field.parent = bir2IrConverter.remapElement(it[JvmCachedDeclarations.FieldForObjectInstanceParent]!!)
                         context.cachedDeclarations.fieldsForObjectInstances.singletonFieldDeclarations[new] = field
                     }
-                    old[interfaceCompanionFieldDeclaration]?.let {
+                    old[JvmCachedDeclarations.InterfaceCompanionFieldDeclaration]?.let {
                         val field = bir2IrConverter.remapElement<IrField>(it)
-                        field.parent = bir2IrConverter.remapElement(it[fieldForObjectInstanceParentToken]!!)
+                        field.parent = bir2IrConverter.remapElement(it[JvmCachedDeclarations.FieldForObjectInstanceParent]!!)
                         context.cachedDeclarations.fieldsForObjectInstances.interfaceCompanionFieldDeclarations[new] = field
                     }
                 }

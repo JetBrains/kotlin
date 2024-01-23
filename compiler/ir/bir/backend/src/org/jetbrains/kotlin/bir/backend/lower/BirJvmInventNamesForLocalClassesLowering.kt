@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.bir.backend.lower
 
-import org.jetbrains.kotlin.bir.BirElementDynamicPropertyKey
+import org.jetbrains.kotlin.bir.BirDynamicPropertyKey
+import org.jetbrains.kotlin.bir.GlobalBirDynamicProperty
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.backend.jvm.getFileClassInfo
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
@@ -20,8 +21,6 @@ import org.jetbrains.org.objectweb.asm.Type
 
 context(JvmBirBackendContext)
 class BirJvmInventNamesForLocalClassesLowering() : BirInventNamesForLocalClassesLowering(true, false) {
-    private val localClassTypeKey = acquireProperty(LocalClassType)
-
     override fun computeTopLevelClassName(clazz: BirClass): String {
         val file = clazz.parent as? BirFile
             ?: throw AssertionError("Top-level class expected: ${clazz.render()}")
@@ -41,10 +40,10 @@ class BirJvmInventNamesForLocalClassesLowering() : BirInventNamesForLocalClasses
     }
 
     override fun putLocalClassName(declaration: BirAttributeContainer, localClassName: String) {
-        declaration[localClassTypeKey] = Type.getObjectType(localClassName)
+        declaration[LocalClassType] = Type.getObjectType(localClassName)
     }
 
     companion object {
-        val LocalClassType = BirElementDynamicPropertyKey<_, Type>(BirAttributeContainer)
+        val LocalClassType = GlobalBirDynamicProperty<_, Type>(BirAttributeContainer)
     }
 }

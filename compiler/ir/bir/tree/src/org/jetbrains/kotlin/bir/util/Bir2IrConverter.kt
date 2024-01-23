@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class Bir2IrConverter(
-    dynamicPropertyManager: BirElementDynamicPropertyManager,
+    dynamicPropertyManager: BirDynamicPropertiesManager,
     compressedSourceSpanManager: CompressedSourceSpanManager,
     remappedIr2BirElements: Map<BirElement, IrElement>,
     private val irBuiltIns: IrBuiltIns,
@@ -51,12 +51,6 @@ class Bir2IrConverter(
     private val localDelegatedProperties = createElementMap<IrLocalDelegatedProperty, BirLocalDelegatedProperty>()
     private val typeAliases = createElementMap<IrTypeAlias, BirTypeAlias>()
     private val loops = createElementMap<IrLoop, BirLoop>()
-
-    private val Metadata = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.Metadata)
-    private val ContainerSource = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.ContainerSource)
-    private val SealedSubclasses = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.SealedSubclasses)
-    private val OriginalBeforeInline = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.OriginalBeforeInline)
-    private val CapturedConstructor = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.CapturedConstructor)
 
     @Suppress("UNCHECKED_CAST")
     override fun <Ir : IrElement> copyElement(old: BirElement): Ir = when (old) {
@@ -312,7 +306,7 @@ class Bir2IrConverter(
         IrErrorDeclarationImpl(
             startOffset = old.sourceSpan.start,
             endOffset = old.sourceSpan.end,
-            old[Descriptor],
+            old[GlobalBirDynamicProperties.Descriptor],
         )
     }) {
         origin = old.origin
@@ -1585,11 +1579,11 @@ class Bir2IrConverter(
         from: BirElement,
     ) {
         if (this is IrMetadataSourceOwner) {
-            metadata = (from as BirMetadataSourceOwner)[Metadata]
+            metadata = (from as BirMetadataSourceOwner)[GlobalBirDynamicProperties.Metadata]
         }
 
         if (this is IrMemberWithContainerSource) {
-            val containerSource = (from as BirMemberWithContainerSource)[ContainerSource]
+            val containerSource = (from as BirMemberWithContainerSource)[GlobalBirDynamicProperties.ContainerSource]
             when (this) {
                 is IrFunctionImpl -> this.containerSource = containerSource
                 is IrConstructorImpl -> this.containerSource = containerSource
@@ -1599,12 +1593,12 @@ class Bir2IrConverter(
         }
 
         if (this is IrAttributeContainer) {
-            originalBeforeInline = (from as BirAttributeContainer)[OriginalBeforeInline]
+            originalBeforeInline = (from as BirAttributeContainer)[GlobalBirDynamicProperties.OriginalBeforeInline]
                 ?.let { remapElement(it) as IrAttributeContainer }
         }
 
         if (this is IrClass) {
-            sealedSubclasses = (from as BirClass)[SealedSubclasses]
+            sealedSubclasses = (from as BirClass)[GlobalBirDynamicProperties.SealedSubclasses]
                 ?.memoryOptimizedMap { remapSymbol(it) } ?: emptyList()
         }
     }

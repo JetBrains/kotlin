@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.bir.backend.lower
 import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.GlobalBirElementDynamicProperties
+import org.jetbrains.kotlin.bir.GlobalBirDynamicProperties
 import org.jetbrains.kotlin.bir.backend.BirBackendContext
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.declarations.*
@@ -39,7 +39,6 @@ abstract class BirInventNamesForLocalClassesLowering(
     }
 
     private val localNameScopeKey = acquireTemporaryProperty<_, LocalNameScope>(BirElement)
-    private val originalBeforeInlineKey = acquireProperty(GlobalBirElementDynamicProperties.OriginalBeforeInline)
 
     private val anonymousClassesCount = mutableMapOf<String, Int>()
 
@@ -71,7 +70,7 @@ abstract class BirInventNamesForLocalClassesLowering(
 
         getAllElementsWithIndex(functionReferences).forEach { reference ->
             val localNameScope = getLocalNameScopeIfApplicable(reference) ?: return@forEach
-            if (localNameScope.processingInlinedFunction && reference[originalBeforeInlineKey] == null) {
+            if (localNameScope.processingInlinedFunction && reference[GlobalBirDynamicProperties.OriginalBeforeInline] == null) {
                 // skip BirFunctionReference from `singleArgumentInlineFunction`
                 return@forEach
             }

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.FqName
 abstract class BirBackendContext(
     val compiledBir: BirDatabase,
     val externalModulesBir: BirDatabase,
-    val dynamicPropertyManager: BirElementDynamicPropertyManager,
+    val dynamicPropertyManager: BirDynamicPropertiesManager,
     override val compressedSourceSpanManager: CompressedSourceSpanManager,
     val configuration: CompilerConfiguration
 ) : CompressedSourceSpanManagerScope {

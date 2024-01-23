@@ -116,12 +116,12 @@ abstract class BirImplElementBase(elementClass: BirElementClass<*>) : BirElement
     }
 
 
-    final override fun <T> getDynamicProperty(token: BirElementDynamicPropertyToken<*, T>): T? {
+    final override fun <T> getDynamicProperty(token: BirDynamicPropertyAccessToken<*, T>): T? {
         recordPropertyRead(DYNAMIC_PROPERTY_ID)
         return super.getDynamicProperty(token)
     }
 
-    final override fun <T> setDynamicProperty(token: BirElementDynamicPropertyToken<*, T>, value: T?): Boolean {
+    final override fun <T> setDynamicProperty(token: BirDynamicPropertyAccessToken<*, T>, value: T?): Boolean {
         val changed = super.setDynamicProperty(token, value)
         if (changed) {
             invalidate(DYNAMIC_PROPERTY_ID)
@@ -129,7 +129,9 @@ abstract class BirImplElementBase(elementClass: BirElementClass<*>) : BirElement
         return changed
     }
 
-    internal fun <T> getOrPutDynamicProperty(token: BirElementDynamicPropertyToken<*, T>, compute: () -> T): T {
+    internal fun <T> getOrPutDynamicProperty(token: BirDynamicPropertyAccessToken<*, T>, compute: () -> T): T {
+        token.requireValid()
+
         val arrayMap = dynamicProperties
         if (arrayMap == null) {
             val value = compute()
@@ -145,8 +147,7 @@ abstract class BirImplElementBase(elementClass: BirElementClass<*>) : BirElement
         } else {
             val value = compute()
             val entryIndex = -(foundIndex + 1)
-            arrayMap[entryIndex] = token.key
-            arrayMap[entryIndex + 1] = value
+            addDynamicProperty(arrayMap, entryIndex, token.key, value)
             invalidate(DYNAMIC_PROPERTY_ID)
             return value
         }
