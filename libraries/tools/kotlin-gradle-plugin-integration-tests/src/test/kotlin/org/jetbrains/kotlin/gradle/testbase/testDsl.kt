@@ -459,7 +459,7 @@ private fun commonBuildSetup(
             // Note that we pass "server=n", meaning that we'll need to let the debugger start listening at this port first *before* the
             // Kotlin daemon is launched. That is usually easier than trying to attach the debugger when the Kotlin daemon is launched
             // (currently if we don't attach fast enough, the Kotlin daemon will fail to launch).
-            "-Pkotlin.daemon.jvmargs=-agentlib:jdwp=transport=dt_socket,server=n,suspend=y,address=$it"
+            "-Pkotlin.daemon.jvmargs=-agentlib:jdwp=transport=dt_socket,server=n,suspend=n,address=$it"
         }
     )
 }

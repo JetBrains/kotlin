@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
+import java.io.File
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 abstract class FirAbstractSessionFactory {
@@ -142,7 +143,25 @@ abstract class FirAbstractSessionFactory {
 
             generatedSymbolsProvider?.let { register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it) }
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, FirCachingCompositeSymbolProvider(this, dependencyProviders))
-            register(DEPENDS_ON_SYMBOL_PROVIDER_QUALIFIED_KEY, FirCachingCompositeSymbolProvider(this, computeDependencyProviderList(moduleData.allDependsOnDependencies)))
+            val dependsOnProviders = computeDependencyProviderList(moduleData.allDependsOnDependencies)
+            for (p in dependsOnProviders) {
+                File("/home/bobko/log").appendText("""
+                    dependsOn provider $moduleData 
+                        $p 
+                """.trimIndent() + "\n")
+            }
+            File("/home/bobko/log").appendText("""
+factory $moduleData
+    friendDependencies:
+${moduleData.friendDependencies.joinToString { listOf(it.name, it.platform, it.unique).joinToString() }.prependIndent("        ")}
+    dependencies:
+${moduleData.dependencies.joinToString(separator = "\n") { listOf(it.name, it.platform, it.unique).joinToString() }.prependIndent("        ")}
+    dependsOnDependencies:
+${moduleData.dependsOnDependencies.joinToString { listOf(it.name, it.platform, it.unique).joinToString() }.prependIndent("        ")}
+    allDependsOnDependencies:
+${moduleData.allDependsOnDependencies.joinToString { listOf(it.name, it.platform, it.unique).joinToString() }.prependIndent("        ")}
+            """.trimIndent() + "\n")
+            register(DEPENDS_ON_SYMBOL_PROVIDER_QUALIFIED_KEY, FirCachingCompositeSymbolProvider(this, dependsOnProviders))
         }
     }
 

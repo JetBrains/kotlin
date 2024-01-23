@@ -165,6 +165,11 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             // It's an inconsistency in the language design, but it's the way it works right now
             !expectedSingleCandidate.isFakeOverride(expectContainingClass, expectActualMatchingContext)
         ) {
+            java.io.File("/home/bobko/log").appendText("""
+                ACTUAL_MISSING
+                    actual: ${symbol.moduleData}
+                    expect: ${expectedSingleCandidate.moduleData}
+            """.trimIndent() + "\n")
             reporter.reportOn(source, FirErrors.ACTUAL_MISSING, context)
             return
         }
@@ -178,6 +183,11 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                     expectedSingleCandidate != null &&
                     declaration.hasActualModifier() &&
                     expectedSingleCandidate.isFakeOverride(expectContainingClass, expectActualMatchingContext) -> {
+                java.io.File("/home/bobko/log").appendText("""
+                    ACTUAL_WITHOUT_EXPECT
+                        actual: ${symbol.moduleData}
+                        expect: ${expectedSingleCandidate?.moduleData}
+                """.trimIndent() + "\n")
                 reporter.reportOn(
                     source,
                     FirErrors.ACTUAL_WITHOUT_EXPECT,
