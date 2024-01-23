@@ -87,7 +87,7 @@ class HasErrorTypesTest(
             """
             class A {
               class B {
-                val e = error("error")
+                val e: Unresolved get() = error("stub")
               }
             }
         """.trimIndent()

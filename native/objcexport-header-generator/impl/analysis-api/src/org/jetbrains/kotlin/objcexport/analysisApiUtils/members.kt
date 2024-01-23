@@ -8,7 +8,6 @@ internal fun KtClassOrObjectSymbol.getAllMembers(): List<KtSymbol> {
     return getMemberScope()
         .getAllSymbols()
         .sortedBy { sortMembers(it) }
-        .filterIsInstance<KtCallableSymbol>()
         .filter { member -> member.isVisibleInObjC() }
         .toList()
 }
@@ -37,9 +36,8 @@ internal fun KtClassOrObjectSymbol.getDeclaredMembers(): List<KtSymbol> {
     return getDeclaredMemberScope()
         .getAllSymbols()
         .sortedBy { sortMembers(it) }
-        .filterIsInstance<KtCallableSymbol>()
         .filter { member ->
-            member.getAllOverriddenSymbols().isEmpty() && member.isVisibleInObjC()
+            member.isVisibleInObjC() && (member !is KtCallableSymbol || member.getAllOverriddenSymbols().isEmpty())
         }
         .toList()
 }

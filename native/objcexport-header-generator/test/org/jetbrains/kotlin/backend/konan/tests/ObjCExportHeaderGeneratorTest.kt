@@ -68,6 +68,11 @@ class ObjCExportHeaderGeneratorTest(val generator: HeaderGenerator) {
     }
 
     @Test
+    fun `test - nestedClass`() {
+        doTest(headersTestDataDir.resolve("nestedClass"))
+    }
+
+    @Test
     fun `test - samePropertyAndFunctionName`() {
         doTest(headersTestDataDir.resolve("samePropertyAndFunctionName"))
     }

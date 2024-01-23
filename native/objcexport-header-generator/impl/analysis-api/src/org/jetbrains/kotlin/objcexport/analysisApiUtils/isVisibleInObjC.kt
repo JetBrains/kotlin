@@ -21,6 +21,13 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 context(KtAnalysisSession)
+internal fun KtSymbol.isVisibleInObjC(): Boolean = when(this) {
+    is KtCallableSymbol -> this.isVisibleInObjC()
+    is KtClassOrObjectSymbol -> this.isVisibleInObjC()
+    else -> false
+}
+
+context(KtAnalysisSession)
 internal fun KtCallableSymbol.isVisibleInObjC(): Boolean {
     if (this is KtSymbolWithVisibility && !isPublicApi(this)) return false
     if (this is KtPossibleMultiplatformSymbol && isExpect) return false
