@@ -329,6 +329,7 @@ abstract class AbstractTypeApproximator(
              * And we cannot create new capture type, because meaning of new captured type is not clear.
              * So, we will just approximate such types
              *
+             * TODO remove workaround when we can create captured types with external identity KT-65228.
              * todo handle flexible types
              */
             if (approximatedSuperType == null && approximatedSubType == null) {
@@ -481,6 +482,7 @@ abstract class AbstractTypeApproximator(
             // In approximateCapturedType, we check if the super/subtypes of captured types need approximation even if captured types
             // themselves don't need approximation, and will land here.
             // To support this case, we also don't want to approximate captured types here if the configuration says so.
+            // TODO rework captured types approximation KT-65228
             if (capturedType != null &&
                 isK2 &&
                 !conf.capturedType(ctx, capturedType) &&
