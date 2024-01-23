@@ -1,6 +1,8 @@
 // MODULE: main
 // FILE: main.kt
 
+import kotlin.wasm.WasmExport
+
 var onExportedFunctionExitCounter = 0
 
 @WasmExport()

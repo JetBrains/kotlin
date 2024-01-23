@@ -60,19 +60,23 @@ fun main(args: Array<String>) {
         }
 
         testGroup("wasm/wasm.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
-            testClass<AbstractFirWasmCodegenBoxTest> {
+            testClass<AbstractFirWasmJsCodegenBoxTest> {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
             }
 
-            testClass<AbstractFirWasmCodegenBoxInlineTest> {
+            testClass<AbstractFirWasmJsCodegenBoxInlineTest> {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractFirWasmCodegenWasmJsInteropTest> {
+            testClass<AbstractFirWasmJsCodegenInteropTest> {
                 model("codegen/boxWasmJsInterop")
             }
 
-            testClass<AbstractFirWasmSteppingTest> {
+            testClass<AbstractFirWasmWasiCodegenBoxTest> {
+                model("codegen/boxWasmWasi")
+            }
+
+            testClass<AbstractFirWasmJsSteppingTest> {
                 model("debug/stepping")
             }
         }

@@ -18,15 +18,17 @@ import org.jetbrains.kotlin.test.frontend.fir.*
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.codegen.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorWasi
 import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibBackendFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
+import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
 
-
-open class AbstractFirWasmTest(
+abstract class AbstractFirWasmTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
 ) : AbstractWasmBlackBoxCodegenTestBase<FirOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
@@ -43,12 +45,6 @@ open class AbstractFirWasmTest(
 
     override val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Wasm>>
         get() = ::WasmBackendFacade
-
-    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
-        get() = ::WasmBoxRunner
-
-    override val wasmEnvironmentConfigurator: Constructor<EnvironmentConfigurator>
-        get() = ::WasmEnvironmentConfiguratorJs
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -71,7 +67,19 @@ open class AbstractFirWasmTest(
     }
 }
 
-open class AbstractFirWasmCodegenBoxTest : AbstractFirWasmTest(
+open class AbstractFirWasmJsTest(
+    pathToTestDir: String,
+    testGroupOutputDirPrefix: String,
+) : AbstractFirWasmTest(pathToTestDir, testGroupOutputDirPrefix) {
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::WasmBoxRunner
+
+    override val wasmEnvironmentConfigurator: Constructor<EnvironmentConfigurator>
+        get() = ::WasmEnvironmentConfiguratorJs
+}
+
+
+open class AbstractFirWasmJsCodegenBoxTest : AbstractFirWasmJsTest(
     pathToTestDir = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix = "codegen/firBox/"
 ) {
@@ -87,25 +95,25 @@ open class AbstractFirWasmCodegenBoxTest : AbstractFirWasmTest(
     }
 }
 
-open class AbstractFirWasmCodegenBoxInlineTest : AbstractFirWasmTest(
+open class AbstractFirWasmJsCodegenBoxInlineTest : AbstractFirWasmJsTest(
     "compiler/testData/codegen/boxInline/",
     "codegen/firBoxInline/"
 )
 
-open class AbstractFirWasmCodegenWasmJsInteropTest : AbstractFirWasmTest(
+open class AbstractFirWasmJsCodegenInteropTest : AbstractFirWasmJsTest(
     "compiler/testData/codegen/wasmJsInterop",
     "codegen/firWasmJsInterop"
 )
 
-open class AbstractFirWasmJsTranslatorTest : AbstractFirWasmTest(
+open class AbstractFirWasmJsTranslatorTest : AbstractFirWasmJsTest(
     "js/js.translator/testData/box/",
     "js.translator/firBox"
 )
-open class AbstractFirWasmSteppingTest : AbstractFirWasmTest(
+
+open class AbstractFirWasmJsSteppingTest : AbstractFirWasmJsTest(
     "compiler/testData/debug/stepping/",
     "debug/stepping/"
 ) {
-
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmDebugRunner
 
@@ -114,5 +122,35 @@ open class AbstractFirWasmSteppingTest : AbstractFirWasmTest(
         defaultDirectives {
             +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
         }
+    }
+}
+
+open class AbstractFirWasmWasiTest(
+    pathToTestDir: String,
+    testGroupOutputDirPrefix: String,
+) : AbstractFirWasmTest(pathToTestDir, testGroupOutputDirPrefix) {
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::WasiBoxRunner
+
+    override val wasmEnvironmentConfigurator: Constructor<EnvironmentConfigurator>
+        get() = ::WasmEnvironmentConfiguratorWasi
+
+    override val additionalSourceProvider: Constructor<AdditionalSourceProvider>?
+        get() = ::WasmWasiBoxTestHelperSourceProvider
+}
+
+open class AbstractFirWasmWasiCodegenBoxTest : AbstractFirWasmWasiTest(
+    pathToTestDir = "compiler/testData/codegen/box/",
+    testGroupOutputDirPrefix = "codegen/firWasiBox/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureFirHandlersStep {
+            commonFirHandlersForCodegenTest()
+        }
+
+        builder.useAfterAnalysisCheckers(
+            ::FirMetaInfoDiffSuppressor
+        )
     }
 }
