@@ -28,6 +28,9 @@
     <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory"/>
     <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache"/>
     <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService"/>
+    <projectService
+        serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationEventPublisher"
+    />
     <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents"/>
     <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService"/>
     <projectService

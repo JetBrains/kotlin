@@ -34,10 +34,10 @@ class LLFirSessionCache(private val project: Project) : Disposable {
 
     // Removal from the session storage invokes the `LLFirSession`'s cleaner, which marks the session as invalid and disposes any
     // disposables registered with the `LLFirSession`'s disposable.
-    private val sourceCache: SessionStorage = CleanableSoftValueCache(LLFirSession::createCleaner)
-    private val binaryCache: SessionStorage = CleanableSoftValueCache(LLFirSession::createCleaner)
-    private val danglingFileSessionCache: SessionStorage = CleanableSoftValueCache(LLFirSession::createCleaner)
-    private val unstableDanglingFileSessionCache: SessionStorage = CleanableSoftValueCache(LLFirSession::createCleaner)
+    private val sourceCache: SessionStorage = CleanableSoftValueCache(LLFirSession::createSessionCleaner)
+    private val binaryCache: SessionStorage = CleanableSoftValueCache(LLFirSession::createSessionCleaner)
+    private val danglingFileSessionCache: SessionStorage = CleanableSoftValueCache(LLFirSession::createSessionCleaner)
+    private val unstableDanglingFileSessionCache: SessionStorage = CleanableSoftValueCache(LLFirSession::createSessionCleaner)
 
     /**
      * Returns the existing session if found, or creates a new session and caches it.
@@ -239,6 +239,8 @@ class LLFirSessionCache(private val project: Project) : Disposable {
     override fun dispose() {
     }
 }
+
+private fun LLFirSession.createSessionCleaner(): LLFirSessionCleaner = LLFirSessionCleaner(requestedDisposableOrNull)
 
 internal fun LLFirSessionConfigurator.Companion.configure(session: LLFirSession) {
     val project = session.project

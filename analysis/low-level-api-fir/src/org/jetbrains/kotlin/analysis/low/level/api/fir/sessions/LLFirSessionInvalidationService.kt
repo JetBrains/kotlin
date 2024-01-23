@@ -10,12 +10,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.KotlinAnchorModuleProvider
+import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
 import org.jetbrains.kotlin.analysis.providers.topics.*
 
 /**
  * [LLFirSessionInvalidationService] listens to [modification events][KotlinTopics] and invalidates [LLFirSession]s which depend on the
- * modified [KtModule].
- * Its invalidation functions should always be invoked in a **write action** because invalidation affects multiple
+ * modified [KtModule]. Its invalidation functions should always be invoked in a **write action** because invalidation affects multiple
  * sessions in [LLFirSessionCache] and the cache has to be kept consistent.
  */
 internal class LLFirSessionInvalidationService(private val project: Project) {
@@ -67,6 +67,9 @@ internal class LLFirSessionInvalidationService(private val project: Project) {
         LLFirSessionCache.getInstance(project)
     }
 
+    private val sessionInvalidationEventPublisher: LLFirSessionInvalidationEventPublisher
+        get() = LLFirSessionInvalidationEventPublisher.getInstance(project)
+
     /**
      * Invalidates the session(s) associated with [module].
      *
@@ -75,28 +78,31 @@ internal class LLFirSessionInvalidationService(private val project: Project) {
     private fun invalidate(module: KtModule) {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
-        val didSessionExist = sessionCache.removeSession(module)
+        sessionInvalidationEventPublisher.collectSessionsAndPublishInvalidationEvent {
+            val didSessionExist = sessionCache.removeSession(module)
 
-        // We don't have to invalidate dependent sessions if the root session does not exist in the cache. It is true that sessions can be
-        // created without their dependency sessions being created, as session dependencies are lazy. So some of the root session's
-        // dependents might exist. But if the root session does not exist, its dependent sessions won't contain any elements resolved by the
-        // root session, so they effectively don't depend on the root session at that moment and don't need to be invalidated.
-        if (!didSessionExist) return
+            // We don't have to invalidate dependent sessions if the root session does not exist in the cache. It is true that sessions can
+            // be created without their dependency sessions being created, as session dependencies are lazy. So some of the root session's
+            // dependents might exist. But if the root session does not exist, its dependent sessions won't contain any elements resolved by
+            // the root session, so they effectively don't depend on the root session at that moment and don't need to be invalidated.
+            if (!didSessionExist) return@collectSessionsAndPublishInvalidationEvent
 
-        KotlinModuleDependentsProvider.getInstance(project).getTransitiveDependents(module).forEach(sessionCache::removeSession)
+            KotlinModuleDependentsProvider.getInstance(project).getTransitiveDependents(module).forEach(sessionCache::removeSession)
 
-        // Due to a missing IDE implementation for script dependents (see KTIJ-25620), script sessions need to be invalidated globally:
-        //  - A script may include other scripts, so a script modification may affect any other script.
-        //  - Script dependencies are also not linked via dependents yet, so any script dependency modification may affect any script.
-        //  - Scripts may depend on libraries, and the IDE module dependents provider doesn't provide script dependents for libraries yet.
-        if (module is KtScriptModule || module is KtScriptDependencyModule || module is KtLibraryModule) {
-            sessionCache.removeAllScriptSessions()
-        }
+            // Due to a missing IDE implementation for script dependents (see KTIJ-25620), script sessions need to be invalidated globally:
+            //  - A script may include other scripts, so a script modification may affect any other script.
+            //  - Script dependencies are also not linked via dependents yet, so any script dependency modification may affect any script.
+            //  - Scripts may depend on libraries, and the IDE module dependents provider doesn't provide script dependents for libraries
+            //    yet.
+            if (module is KtScriptModule || module is KtScriptDependencyModule || module is KtLibraryModule) {
+                sessionCache.removeAllScriptSessions()
+            }
 
-        if (module is KtDanglingFileModule) {
-            sessionCache.removeContextualDanglingFileSessions(module)
-        } else {
-            sessionCache.removeAllDanglingFileSessions()
+            if (module is KtDanglingFileModule) {
+                sessionCache.removeContextualDanglingFileSessions(module)
+            } else {
+                sessionCache.removeAllDanglingFileSessions()
+            }
         }
     }
 
@@ -115,17 +121,24 @@ internal class LLFirSessionInvalidationService(private val project: Project) {
         }
 
         sessionCache.removeAllSessions(includeLibraryModules)
+
+        // We could take `includeLibraryModules` into account here, but this will make the global session invalidation event more
+        // complicated to handle, and it isn't currently necessary for `KtFirAnalysisSession` invalidation to be more granular.
+        project.analysisMessageBus.syncPublisher(LLFirSessionInvalidationTopics.SESSION_INVALIDATION).afterGlobalInvalidation()
     }
 
     private fun invalidateContextualDanglingFileSessions(contextModule: KtModule) {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
-        sessionCache.removeContextualDanglingFileSessions(contextModule)
+        sessionInvalidationEventPublisher.collectSessionsAndPublishInvalidationEvent {
+            sessionCache.removeContextualDanglingFileSessions(contextModule)
+        }
     }
 
     private fun invalidateUnstableDanglingFileSessions() {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
+        // We don't need to publish any session invalidation events for unstable dangling file modules.
         sessionCache.removeUnstableDanglingFileSessions()
     }
 
