@@ -64,6 +64,12 @@ public class FirIdeNormalAnalysisSourceModuleMultiModuleCompilerFacilityTestGene
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/internalUsage.kt");
     }
 
+    @Test
+    @TestMetadata("javaAnnotationWithVararg.kt")
+    public void testJavaAnnotationWithVararg() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/javaAnnotationWithVararg.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments")
     @TestDataPath("$PROJECT_ROOT")
