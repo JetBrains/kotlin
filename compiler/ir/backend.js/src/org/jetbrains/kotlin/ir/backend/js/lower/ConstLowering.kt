@@ -46,9 +46,6 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
         }
     }
 
-    private fun createLong(expression: IrConst<*>, v: Long): IrExpression =
-        lowerConst(expression, context.intrinsics.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
-
     override fun visitConst(expression: IrConst<*>): IrExpression {
         with(context.intrinsics) {
             if (expression.type.isUnsigned() && expression.kind != IrConstKind.Null) {
@@ -77,7 +74,7 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
                     uLongClassSymbol -> lowerConst(
                         expression,
                         uLongClassSymbol,
-                        { _, _, _, v -> createLong(expression, v) },
+                        IrConstImpl.Companion::long,
                         IrConstKind.Long.valueOf(expression)
                     )
 
@@ -87,9 +84,6 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
             return when {
                 expression.kind is IrConstKind.Char ->
                     lowerConst(expression, charClassSymbol, IrConstImpl.Companion::int, IrConstKind.Char.valueOf(expression).code)
-
-                expression.kind is IrConstKind.Long ->
-                    createLong(expression, IrConstKind.Long.valueOf(expression))
 
                 else -> super.visitConst(expression)
             }
