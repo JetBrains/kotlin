@@ -245,12 +245,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
         val lambdaArguments = postponedArguments.filterIsInstance<ResolvedLambdaAtom>().takeIf { it.isNotEmpty() } ?: return false
 
-        fun ResolvedLambdaAtom.notFixedInputTypeVariables(): List<TypeVariableTypeConstructorMarker> =
-            inputTypes.flatMap { it.extractTypeVariables() }.filter { it !in fixedTypeVariables }
-
         var anyAnalyzed = false
         for (argument in lambdaArguments) {
-            val notFixedInputTypeVariables = argument.notFixedInputTypeVariables()
+            val notFixedInputTypeVariables = argument.inputTypes.flatMap { it.extractTypeVariables() }.filter { it !in fixedTypeVariables }
 
             if (notFixedInputTypeVariables.isEmpty()) continue
             analyze(argument)
