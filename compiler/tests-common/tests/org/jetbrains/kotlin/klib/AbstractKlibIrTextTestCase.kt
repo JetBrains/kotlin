@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.ir.AbstractIrGeneratorTestCase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
+import org.jetbrains.kotlin.ir.backend.js.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
