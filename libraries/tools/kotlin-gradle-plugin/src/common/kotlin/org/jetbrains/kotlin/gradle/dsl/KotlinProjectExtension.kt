@@ -10,12 +10,11 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
+import org.gradle.api.provider.Property
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
-import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart.Undispatched
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
@@ -139,18 +138,26 @@ abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTo
         }
     }
 
-    /**
-     * Allows to use a different version of the Kotlin Build Tools API implementation and effectively a different version of the compiler.
-     *
-     * By default, the Kotlin Build Tools API implementation of the same version as the KGP is used.
-     *
-     * Currently only has an effect if the `kotlin.compiler.runViaBuildToolsApi` Gradle property is set to `true`.
-     */
+    @Deprecated("This method is replaced by the `compilerVersion` property", ReplaceWith("compilerVersion"), DeprecationLevel.ERROR)
     @ExperimentalKotlinGradlePluginApi
     @ExperimentalBuildToolsApi
     fun useCompilerVersion(version: String) {
-        project.dependencies.add(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL:$version")
+        compilerVersion.set(version)
     }
+
+    /**
+     * The version of the Kotlin compiler.
+     *
+     * By default, the Kotlin Build Tools API implementation of the same version as the KGP is used.
+     *
+     * Be careful with reading the property's value as eager reading will finalize the value and prevent it from being configured.
+     *
+     * Note: Currently only has an effect if the `kotlin.compiler.runViaBuildToolsApi` Gradle property is set to `true`.
+     */
+    @ExperimentalKotlinGradlePluginApi
+    @ExperimentalBuildToolsApi
+    val compilerVersion: Property<String> =
+        project.objects.propertyWithConvention(project.getKotlinPluginVersion()).chainedFinalizeValueOnRead()
 }
 
 internal fun ExplicitApiMode.toCompilerValue() = when (this) {

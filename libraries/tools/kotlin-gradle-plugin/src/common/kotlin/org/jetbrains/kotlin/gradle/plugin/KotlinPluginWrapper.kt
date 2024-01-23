@@ -20,6 +20,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
@@ -102,10 +103,17 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         project
             .configurations
             .maybeCreateResolvable(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
-            .defaultDependencies {
-                it.add(
-                    project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL:${project.getKotlinPluginVersion()}")
-                )
+            .also {
+                project.dependencies.add(it.name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL")
+                it.withDependencies { dependencies ->
+                    dependencies
+                        .withType<ExternalDependency>()
+                        .configureEach { dependency ->
+                            dependency.version { versionConstraint ->
+                                versionConstraint.strictly(project.kotlinExtension.compilerVersion.get())
+                            }
+                        }
+                }
             }
         project
             .tasks

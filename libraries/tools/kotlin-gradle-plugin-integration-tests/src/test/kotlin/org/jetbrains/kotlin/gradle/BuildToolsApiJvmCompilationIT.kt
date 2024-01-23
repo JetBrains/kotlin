@@ -159,7 +159,7 @@ private fun TestProject.enableOtherVersionBuildToolsImpl() {
     buildGradle.append(
         """
         kotlin {
-            useCompilerVersion("$OTHER_KOTLIN_VERSION")
+            compilerVersion.set("$OTHER_KOTLIN_VERSION")
         }
         """.trimIndent()
     )
