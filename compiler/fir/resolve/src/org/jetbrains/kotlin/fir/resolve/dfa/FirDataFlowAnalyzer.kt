@@ -885,9 +885,8 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun enterCallArguments(call: FirStatement, arguments: List<FirExpression>) {
-        graphBuilder.enterCall()
-
         val lambdas = arguments.mapNotNull { it.unwrapAnonymousFunctionExpression() }
+        graphBuilder.enterCall(lambdas.mapTo(mutableSetOf()) { it.symbol })
         context.variableAssignmentAnalyzer.enterFunctionCall(lambdas)
         graphBuilder.enterCallArguments(call, lambdas)?.mergeIncomingFlow()
     }
