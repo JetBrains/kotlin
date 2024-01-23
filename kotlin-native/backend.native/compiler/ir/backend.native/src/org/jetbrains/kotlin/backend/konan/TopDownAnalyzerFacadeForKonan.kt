@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContext
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.cli.konan.klib.TopDownAnalyzerFacadeForNative
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 
-internal object TopDownAnalyzerFacadeForKonan {
+internal object TopDownAnalyzerFacadeForKonan : TopDownAnalyzerFacadeForNative {
 
     private val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
 
@@ -112,10 +113,16 @@ internal object TopDownAnalyzerFacadeForKonan {
         return result
     }
 
-    fun checkForErrors(files: Collection<KtFile>, bindingContext: BindingContext) {
-        AnalyzingUtils.throwExceptionOnErrors(bindingContext)
-        for (file in files) {
-            AnalyzingUtils.checkForSyntacticErrors(file)
+    override fun checkForErrors(allFiles: Collection<KtFile>, bindingContext: BindingContext): Boolean {
+        try {
+            AnalyzingUtils.throwExceptionOnErrors(bindingContext)
+            for (file in allFiles) {
+                AnalyzingUtils.checkForSyntacticErrors(file)
+            }
+        } catch (_: Exception) {
+            return true
         }
+
+        return false
     }
 }
