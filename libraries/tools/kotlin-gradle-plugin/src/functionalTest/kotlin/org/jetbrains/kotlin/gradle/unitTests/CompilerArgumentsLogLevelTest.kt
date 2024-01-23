@@ -82,7 +82,7 @@ class CompilerArgumentsLogLevelTest {
 
         project.evaluate()
 
-        val runnerSettings = KotlinNativeCompilerRunner.Settings.of(project.konanHome, project.konanDataDir, project)
+        val runnerSettings = KotlinNativeCompilerRunner.Settings.of(project.konanHome.absolutePath, project.konanDataDir, project)
         assertEquals(KotlinCompilerArgumentsLogLevel.WARNING, runnerSettings.parent.kotlinCompilerArgumentsLogLevel.get())
     }
 }
