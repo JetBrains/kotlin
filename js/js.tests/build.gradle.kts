@@ -120,9 +120,10 @@ val typescriptTestsDir = testDataDir.resolve("typescript-export")
 
 val installTsDependencies by task<NpmTask> {
     val packageLockFile = testDataDir.resolve("package-lock.json")
+    val nodeModules = testDataDir.resolve("node_modules")
     inputs.file(testDataDir.resolve("package.json"))
     outputs.file(packageLockFile)
-    outputs.upToDateWhen { testDataDir.resolve("node_modules").exists() }
+    outputs.upToDateWhen { nodeModules.exists() }
 
     workingDir.set(testDataDir)
     args.set(listOf("install"))
