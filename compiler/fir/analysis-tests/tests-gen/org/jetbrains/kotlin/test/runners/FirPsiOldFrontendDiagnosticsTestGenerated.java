@@ -21381,6 +21381,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("callingOuterGenericClassConstructorWithSelfTypes.kt")
+            public void testCallingOuterGenericClassConstructorWithSelfTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inner/callingOuterGenericClassConstructorWithSelfTypes.kt");
+            }
+
+            @Test
+            @TestMetadata("callingOuterGenericClassConstructorWithSelfTypesInitial.kt")
+            public void testCallingOuterGenericClassConstructorWithSelfTypesInitial() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inner/callingOuterGenericClassConstructorWithSelfTypesInitial.kt");
+            }
+
+            @Test
             @TestMetadata("classesInClassObjectHeader.kt")
             public void testClassesInClassObjectHeader() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inner/classesInClassObjectHeader.kt");
