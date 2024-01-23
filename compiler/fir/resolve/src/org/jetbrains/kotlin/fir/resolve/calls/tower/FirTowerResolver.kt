@@ -95,8 +95,9 @@ class FirTowerResolver(
         context: ResolutionContext
     ): CandidateCollector {
         val outerType = components.outerClassManager.outerType(constructedType)
-        val scope = constructedType.delegatingConstructorScope(components.session, components.scopeSession, derivedClassLookupTag)
-            ?: return collector
+        val scope =
+            constructedType.delegatingConstructorScope(components.session, components.scopeSession, derivedClassLookupTag, outerType)
+                ?: return collector
 
         val dispatchReceiver =
             if (outerType != null)

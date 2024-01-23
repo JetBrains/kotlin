@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeRawScopeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirScopeWithCallableCopyReturnTypeUpdater
@@ -57,9 +58,23 @@ fun FirSmartCastExpression.smartcastScope(
 fun ConeClassLikeType.delegatingConstructorScope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
-    derivedClassLookupTag: ConeClassLikeLookupTag
+    derivedClassLookupTag: ConeClassLikeLookupTag,
+    outerType: ConeClassLikeType?
 ): FirTypeScope? {
-    return classScope(useSiteSession, scopeSession, FirResolvePhase.DECLARATIONS, derivedClassLookupTag)
+    val fir = fullyExpandedType(useSiteSession).lookupTag.toSymbol(useSiteSession)?.fir as? FirClass ?: return null
+
+    val substitutor = when {
+        outerType != null -> {
+            val outerFir = outerType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass ?: return null
+            substitutorByMap(
+                createSubstitutionForScope(outerFir.typeParameters, outerType, useSiteSession),
+                useSiteSession,
+            )
+        }
+        else -> ConeSubstitutor.Empty
+    }
+
+    return fir.scopeForClass(substitutor, useSiteSession, scopeSession, derivedClassLookupTag, FirResolvePhase.DECLARATIONS)
 }
 
 fun ConeKotlinType.scope(

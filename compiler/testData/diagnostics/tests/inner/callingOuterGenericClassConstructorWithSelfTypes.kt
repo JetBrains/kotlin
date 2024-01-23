@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-64841
 
 open class A<X : A<X>>(a: Any?) {
