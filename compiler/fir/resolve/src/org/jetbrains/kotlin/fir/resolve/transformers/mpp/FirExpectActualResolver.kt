@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.ExpectForActualMatchingData
 import org.jetbrains.kotlin.fir.declarations.expectForActual
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.dependsOnSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
@@ -79,12 +80,24 @@ object FirExpectActualResolver {
                 is FirClassLikeSymbol<*> -> {
                     val expectClassSymbol = useSiteSession.dependsOnSymbolProvider
                         .getClassLikeSymbolByClassId(actualSymbol.classId) as? FirRegularClassSymbol ?: return emptyMap()
-                    if (expectClassSymbol.isExpect) {
-                        val compatibility = AbstractExpectActualMatcher.matchClassifiers(expectClassSymbol, actualSymbol, context)
-                        mapOf(compatibility to listOf(expectClassSymbol))
-                    } else {
-                        emptyMap()
+                    if (expectClassSymbol.classId.asString().contains("NativeMain")) {
+                        java.io.File("/home/bobko/log").appendText(
+                            """
+                            resolver
+                                actual:
+                                    source: ${actualSymbol.source}
+                                    module: ${actualSymbol.moduleData.let { listOf(it.name, it.platform, it.unique) }.joinToString(prefix = "{", postfix = "}")}
+                                expect:
+                                    source: ${expectClassSymbol.source}
+                                    module: ${expectClassSymbol.moduleData.let { listOf(it.name, it.platform, it.unique) }.joinToString(prefix = "{", postfix = "}")}
+                        """.trimIndent() + "\n")
                     }
+//                    if (expectClassSymbol.isExpect) {
+                    val compatibility = AbstractExpectActualMatcher.matchClassifiers(expectClassSymbol, actualSymbol, context)
+                    mapOf(compatibility to listOf(expectClassSymbol))
+//                    } else {
+//                        emptyMap()
+//                    }
                 }
                 else -> emptyMap()
             }
