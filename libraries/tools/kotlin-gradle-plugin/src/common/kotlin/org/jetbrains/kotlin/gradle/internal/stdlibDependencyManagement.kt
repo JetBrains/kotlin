@@ -102,7 +102,7 @@ private fun KotlinTarget.addStdlibDependency(
     isMppProject: Boolean,
 ) {
     compilations.configureEach { compilation ->
-        compilation.internal.kotlinSourceSets.forAll { kotlinSourceSet ->
+        compilation.internal.kotlinSourceSets.all { kotlinSourceSet ->
             val scope = if (compilation.isTest() ||
                 (this is KotlinAndroidTarget && kotlinSourceSet.isRelatedToAndroidTestSourceSet())
             ) {

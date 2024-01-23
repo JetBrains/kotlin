@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
@@ -18,8 +19,8 @@ import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 @InternalKotlinGradlePluginApi
 internal interface InternalKotlinCompilation<out T : KotlinCommonOptions> : KotlinCompilation<T>, HasMutableExtras {
-    override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
-    override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
+    override val kotlinSourceSets: NamedDomainObjectSet<KotlinSourceSet>
+    override val allKotlinSourceSets: NamedDomainObjectSet<KotlinSourceSet>
 
     override val associatedCompilations: ObservableSet<KotlinCompilation<*>>
     override val allAssociatedCompilations: ObservableSet<KotlinCompilation<*>>

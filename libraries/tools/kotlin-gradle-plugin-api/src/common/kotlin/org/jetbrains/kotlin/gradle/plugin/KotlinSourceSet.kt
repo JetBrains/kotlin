@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Action
+import org.gradle.api.Buildable
 import org.gradle.api.Named
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
-interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDependencies {
+interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDependencies, Buildable {
     val kotlin: SourceDirectorySet
 
     fun kotlin(configure: SourceDirectorySet.() -> Unit): SourceDirectorySet

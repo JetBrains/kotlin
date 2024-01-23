@@ -72,7 +72,7 @@ internal fun sourcesJarTaskNamed(
 }
 
 internal fun Jar.includeSources(compilation: KotlinCompilation<*>) {
-    compilation.internal.allKotlinSourceSets.forAll { sourceSet ->
+    compilation.internal.allKotlinSourceSets.all { sourceSet ->
         includeSources(sourceSet.name, sourceSet.kotlin)
     }
 }

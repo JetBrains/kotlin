@@ -62,7 +62,7 @@ internal class KotlinHierarchyDslImpl(
         if (hierarchy.children.isNotEmpty()) {
             childSourceSets.forEach { childSourceSet -> childSourceSet.dependsOn(sharedSourceSet) }
         } else {
-            compilation.internal.kotlinSourceSets.forAll { compilationSourceSet ->
+            compilation.internal.kotlinSourceSets.all { compilationSourceSet ->
                 compilationSourceSet.dependsOn(sharedSourceSet)
             }
         }

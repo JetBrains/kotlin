@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 internal object KotlinCompilationRegisterInSourceSetsConfigurator : KotlinCompilationImplFactory.PostConfigure {
     override fun configure(compilation: DecoratedKotlinCompilation<*>) {
         /* Ensure proper tracking of compilations in the source sets */
-        compilation.allKotlinSourceSets.forAll { sourceSet ->
+        compilation.allKotlinSourceSets.all { sourceSet ->
             sourceSet.internal.compilations.add(compilation)
         }
     }

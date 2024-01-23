@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Action
 import org.gradle.api.Named
+import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.file.FileCollection
@@ -33,9 +34,9 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
 
     val compilationName: String
 
-    val kotlinSourceSets: Set<KotlinSourceSet>
+    val kotlinSourceSets: NamedDomainObjectSet<KotlinSourceSet>
 
-    val allKotlinSourceSets: Set<KotlinSourceSet>
+    val allKotlinSourceSets: NamedDomainObjectSet<KotlinSourceSet>
 
     @Deprecated("Use defaultSourceSet.name instead", ReplaceWith("defaultSourceSet.name"))
     val defaultSourceSetName: String get() = defaultSourceSet.name

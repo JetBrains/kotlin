@@ -7,10 +7,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources
 
+import org.gradle.api.tasks.TaskDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.utils.AggregatedTaskDependencies
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSet
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
@@ -57,5 +59,7 @@ abstract class AbstractKotlinSourceSet : InternalKotlinSourceSet {
     }
 
     protected open fun afterDependsOnAdded(other: KotlinSourceSet) = Unit
+
+    override fun getBuildDependencies(): TaskDependency = AggregatedTaskDependencies(kotlin, resources)
 }
 

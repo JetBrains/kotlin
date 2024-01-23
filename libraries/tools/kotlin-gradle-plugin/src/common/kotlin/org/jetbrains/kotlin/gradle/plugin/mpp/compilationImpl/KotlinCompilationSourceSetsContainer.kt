@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
+import org.gradle.api.NamedDomainObjectSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.utils.MutableObservableSet
-import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
-import org.jetbrains.kotlin.gradle.utils.ObservableSet
+
 
 internal fun KotlinCompilationSourceSetsContainer(
     defaultSourceSet: KotlinSourceSet
@@ -19,24 +18,31 @@ internal fun KotlinCompilationSourceSetsContainer(
 
 internal interface KotlinCompilationSourceSetsContainer {
     val defaultSourceSet: KotlinSourceSet
-    val kotlinSourceSets: ObservableSet<KotlinSourceSet>
-    val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
+    val kotlinSourceSets: NamedDomainObjectSet<KotlinSourceSet>
+    val allKotlinSourceSets: NamedDomainObjectSet<KotlinSourceSet>
     fun source(sourceSet: KotlinSourceSet)
 }
 
 private class DefaultKotlinCompilationSourceSetsContainer(
     override val defaultSourceSet: KotlinSourceSet
 ) : KotlinCompilationSourceSetsContainer {
-    private val kotlinSourceSetsImpl: MutableObservableSet<KotlinSourceSet> = MutableObservableSetImpl(defaultSourceSet)
+    private val kotlinSourceSetsImpl: NamedDomainObjectSet<KotlinSourceSet> = defaultSourceSet
+        .project
+        .objects
+        .namedDomainObjectSet(KotlinSourceSet::class.java)
+        .also { set -> set.add(defaultSourceSet) }
 
-    private val allKotlinSourceSetsImpl: MutableObservableSet<KotlinSourceSet> = MutableObservableSetImpl<KotlinSourceSet>().also { set ->
-        defaultSourceSet.internal.withDependsOnClosure.forAll(set::add)
-    }
+    private val allKotlinSourceSetsImpl: NamedDomainObjectSet<KotlinSourceSet> = defaultSourceSet
+        .project
+        .objects
+        .namedDomainObjectSet(KotlinSourceSet::class.java).also { set ->
+            defaultSourceSet.internal.withDependsOnClosure.forAll(set::add)
+        }
 
-    override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
+    override val kotlinSourceSets: NamedDomainObjectSet<KotlinSourceSet>
         get() = kotlinSourceSetsImpl
 
-    override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
+    override val allKotlinSourceSets: NamedDomainObjectSet<KotlinSourceSet>
         get() = allKotlinSourceSetsImpl
 
     /**

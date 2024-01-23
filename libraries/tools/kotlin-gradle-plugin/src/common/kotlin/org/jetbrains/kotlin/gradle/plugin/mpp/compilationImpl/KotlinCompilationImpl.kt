@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
 import org.gradle.api.Action
 import org.gradle.api.GradleException
+import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
@@ -86,10 +87,10 @@ internal class KotlinCompilationImpl constructor(
     override val defaultSourceSet: KotlinSourceSet
         get() = sourceSets.defaultSourceSet
 
-    override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
+    override val allKotlinSourceSets: NamedDomainObjectSet<KotlinSourceSet>
         get() = sourceSets.allKotlinSourceSets
 
-    override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
+    override val kotlinSourceSets: NamedDomainObjectSet<KotlinSourceSet>
         get() = sourceSets.kotlinSourceSets
 
     @Deprecated("scheduled for removal with Kotlin 2.0")
@@ -206,7 +207,7 @@ internal class KotlinCompilationImpl constructor(
     //region final init
 
     init {
-        sourceSets.allKotlinSourceSets.forAll { sourceSet ->
+        sourceSets.allKotlinSourceSets.all { sourceSet ->
             params.compilationSourceSetInclusion.include(this, sourceSet)
         }
 
