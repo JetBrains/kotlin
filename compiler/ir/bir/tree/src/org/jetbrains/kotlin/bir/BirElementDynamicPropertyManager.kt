@@ -13,11 +13,8 @@ class BirElementDynamicPropertyManager {
         val classData = getElementClassData(key.elementType.id)
 
         refreshKeysFromAncestors(classData)
-        classData.keys += key
-        classData.keyCount = classData.keys.size
-        if (key.id == -1) {
-            key.id = classData.keyCount - 1
-        }
+        classData.allKeys += key
+        classData.allKeyCount = classData.allKeys.size
         totalTokenRegistrations++
 
         return BirElementDynamicPropertyToken(this, key)
@@ -67,8 +64,8 @@ class BirElementDynamicPropertyManager {
     private fun refreshKeysFromAncestors(element: ElementClassData) {
         if (element.lastSeenTotalTokenRegistrations < totalTokenRegistrations) {
             for (ancestor in element.ancestorElements!!) {
-                element.keys += ancestor.keys
-                element.keyCount = element.keys.size
+                element.allKeys += ancestor.allKeys
+                element.allKeyCount = element.allKeys.size
             }
             element.lastSeenTotalTokenRegistrations = totalTokenRegistrations
         }
@@ -77,15 +74,15 @@ class BirElementDynamicPropertyManager {
     internal fun getInitialDynamicPropertyArraySize(elementClassId: Int): Int {
         val data = getElementClassData(elementClassId)
         refreshKeysFromAncestors(data)
-        return data.keyCount
+        return data.allKeyCount
     }
 
     private class ElementClassData(
         val elementClass: BirElementClass<*>,
     ) {
         var ancestorElements: List<ElementClassData>? = null
-        val keys = mutableSetOf<BirElementDynamicPropertyKey<*, *>>()
-        var keyCount = 0
+        val allKeys = mutableSetOf<BirElementDynamicPropertyKey<*, *>>()
+        var allKeyCount = 0
         var lastSeenTotalTokenRegistrations = 0
 
         override fun toString() = elementClass.toString()
@@ -94,9 +91,7 @@ class BirElementDynamicPropertyManager {
 
 class BirElementDynamicPropertyKey<E : BirElement, T>(
     internal val elementType: BirElementClass<E>,
-) {
-    internal var id = -1
-}
+)
 
 class BirElementDynamicPropertyToken<E : BirElement, T> internal constructor(
     internal val manager: BirElementDynamicPropertyManager,
