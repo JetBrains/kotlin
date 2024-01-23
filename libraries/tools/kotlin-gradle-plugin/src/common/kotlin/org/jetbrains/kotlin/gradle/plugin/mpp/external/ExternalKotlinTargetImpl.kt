@@ -9,8 +9,10 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.component.SoftwareComponent
+import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -22,6 +24,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.HierarchyAttributeContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
+import java.io.File
+import java.nio.file.Path
 
 internal class ExternalKotlinTargetImpl internal constructor(
     override val project: Project,
@@ -49,8 +53,12 @@ internal class ExternalKotlinTargetImpl internal constructor(
     override val extras: MutableExtras = mutableExtrasOf()
 
     override val preset: Nothing? = null
-    override fun composeCopyResources(resourceDirectoryName: String, resourceIdentity: String) {
+    override fun composeCopyResources(resourceDirectoryName: Provider<Path>, resourceIdentity: Provider<Path>, targetName: String) {
         // FIXME: ???
+        TODO("Not yet implemented")
+    }
+
+    override fun composeResolveResources(): FileCollection {
         TODO("Not yet implemented")
     }
 
@@ -81,6 +89,9 @@ internal class ExternalKotlinTargetImpl internal constructor(
 
     override val sourcesElementsConfigurationName: String
         get() = sourcesElementsConfiguration.name
+
+    override val resourcesElementsConfigurationName: String
+        get() = TODO("Not yet implemented")
 
     @InternalKotlinGradlePluginApi
     override val kotlinComponents: Set<KotlinTargetComponent> = setOf(kotlinTargetComponent)

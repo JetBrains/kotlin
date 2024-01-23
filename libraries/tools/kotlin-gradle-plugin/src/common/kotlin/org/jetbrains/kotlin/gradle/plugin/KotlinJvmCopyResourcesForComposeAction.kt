@@ -24,12 +24,11 @@ internal val KotlinJvmCopyResourcesForComposeAction = KotlinProjectSetupAction {
                     it.outputs.dir(resourcesBaseCopyDirectory)
                 }
 
-                target.composeResourceDirectories.forEach { resources ->
-                    val copyTask = mainCompilation.registerCopyResourcesTask<Copy>(
-                        "ResourcesForJvmCompilation${taskIdentifier}",
-                        resources,
-                        resourcesBaseCopyDirectory
-                    )
+                mainCompilation.registerCopyResourcesTasks(
+                    "ResourcesForJvmCompilation${taskIdentifier}",
+                    target.composeResourceDirectories,
+                    resourcesBaseCopyDirectory
+                ).forEach { copyTask ->
                     copyResourcesTask.dependsOn(copyTask)
                 }
 

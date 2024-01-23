@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.tasks.Copy
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 
 
@@ -25,15 +26,12 @@ internal val KotlinAndroidCopyResourcesForComposeAction = KotlinProjectSetupActi
                     it.outputs.dir(androidResourcesDir)
                 }
 
-                target.composeResourceDirectories.forEach { resources ->
-                    val copyTask = compilation.registerCopyResourcesTask<Copy>(
-                        "ResourcesForAndroid${taskIdentifier}",
-                        resources,
-                        androidResourcesDir,
-                    )
-                    copyResourcesTask.configure {
-                        it.dependsOn(copyTask)
-                    }
+                compilation.registerCopyResourcesTasks(
+                    "ResourcesForAndroid${taskIdentifier}",
+                    target.composeResourceDirectories,
+                    androidResourcesDir
+                ).forEach { copyTask ->
+                    copyResourcesTask.dependsOn(copyTask)
                 }
 
                 project.androidExtension.sourceSets.getByName("main").resources.srcDir(copyResourcesTask)

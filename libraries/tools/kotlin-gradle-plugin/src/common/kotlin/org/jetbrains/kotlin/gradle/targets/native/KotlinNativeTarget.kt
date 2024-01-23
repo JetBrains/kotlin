@@ -48,6 +48,7 @@ abstract class KotlinNativeTarget @Inject constructor(
     internal val hostSpecificMetadataElementsConfigurationName get() = disambiguateName("MetadataElements")
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
+        // FIXME: Is this always enabled?
         if (!project.isKotlinGranularMetadataEnabled)
             return@lazy super.kotlinComponents
 
@@ -77,6 +78,12 @@ abstract class KotlinNativeTarget @Inject constructor(
                 mainCompilation,
                 targetName,
                 dashSeparatedName(targetName.toLowerCaseAsciiOnly())
+            )
+        )
+
+        mutableUsageContexts.add(
+            createResourcesSoftwareComponentVariant(
+                mainCompilation,
             )
         )
 

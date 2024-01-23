@@ -212,6 +212,20 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         description = "Kotlin compiler plugins for $compilation"
     }
 
+    val resourcesConfiguration = target.project.configurations.maybeCreate(
+        lowerCamelCaseName(
+            target.disambiguationClassifier, "ResourcesPath"
+        )
+    ).apply {
+        // FIXME: See usages of shouldResolveConsistentlyWith
+        extendsFrom(compileDependencyConfiguration)
+        usesPlatformOf(target)
+        isVisible = false
+        isCanBeConsumed = false
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_RESOURCES))
+        attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(KotlinUsages.KOTLIN_RESOURCES))
+    }
+
     return DefaultKotlinCompilationConfigurationsContainer(
         deprecatedCompileConfiguration = deprecatedCompileConfiguration,
         deprecatedRuntimeConfiguration = deprecatedRuntimeConfiguration,
@@ -222,6 +236,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         compileDependencyConfiguration = compileDependencyConfiguration,
         runtimeDependencyConfiguration = runtimeDependencyConfiguration,
         hostSpecificMetadataConfiguration = hostSpecificMetadataConfiguration,
-        pluginConfiguration = pluginConfiguration
+        pluginConfiguration = pluginConfiguration,
+        resourcesConfiguration = resourcesConfiguration,
     )
 }

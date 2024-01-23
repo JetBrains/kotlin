@@ -9,7 +9,10 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.Copy
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
@@ -19,11 +22,13 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.nio.file.Path
 
 internal const val PRIMARY_SINGLE_COMPONENT_NAME = "kotlin"
 
@@ -56,6 +61,9 @@ abstract class AbstractKotlinTarget(
     override val sourcesElementsConfigurationName: String
         get() = disambiguateName("sourcesElements")
 
+    override val resourcesElementsConfigurationName: String
+        get() = disambiguateName("resourcesElements")
+
     override val artifactsTaskName: String
         get() = disambiguateName("jar")
 
@@ -84,6 +92,13 @@ abstract class AbstractKotlinTarget(
                 producingCompilation = mainCompilation,
                 componentName = componentName,
                 artifactNameAppendix = dashSeparatedName(targetName.toLowerCaseAsciiOnly())
+            )
+        )
+
+        // FIXME: Is this needed here or only in the overrides?
+        usageContexts.add(
+            createResourcesSoftwareComponentVariant(
+                mainCompilation
             )
         )
 
@@ -169,6 +184,19 @@ abstract class AbstractKotlinTarget(
         )
     }
 
+    protected fun createResourcesSoftwareComponentVariant(
+        producingCompilation: KotlinCompilation<*>,
+    ): DefaultKotlinUsageContext {
+        return DefaultKotlinUsageContext(
+            compilation = producingCompilation,
+            dependencyConfigurationName = resourcesElementsConfigurationName,
+            // FIXME: ???
+            includeIntoProjectStructureMetadata = false,
+            // FIXME: Check that there are resources to publish?
+//            publishOnlyIf = { true }
+        )
+    }
+
     @Suppress("UNCHECKED_CAST")
     private val publicationConfigureActions: DomainObjectSet<Action<MavenPublication>> = project.objects
         .domainObjectSet(Action::class.java) as DomainObjectSet<Action<MavenPublication>>
@@ -192,14 +220,66 @@ abstract class AbstractKotlinTarget(
 
 
     internal val composeResourceDirectories: MutableList<ComposeResources> = mutableListOf()
-    override fun composeCopyResources(resourceDirectoryName: String, resourceIdentity: String) {
-        composeResourceDirectories.add(ComposeResources(resourceDirectoryName, resourceIdentity))
+    override fun composeCopyResources(resourceDirectoryName: Provider<Path>, resourceIdentity: Provider<Path>, taskName: String) {
+        composeResourceDirectories.add(ComposeResources(resourceDirectoryName, resourceIdentity, taskName))
+    }
+
+    override fun composeResolveResources(): FileCollection {
+        val outputDirectory = project.layout.buildDirectory.dir("resolvedResourcesFor${disambiguationClassifier}")
+        val resourcesConfiguration = project.configurations.getByName(
+            lowerCamelCaseName(
+                disambiguationClassifier, "ResourcesPath"
+            )
+        )
+
+        // Get resources from dependencies
+        val unzipAndCopyResourcesToBuildDirectoryTask = project.locateOrRegisterTask<Copy>("resolveResources${disambiguationClassifier}") {
+            with(it) {
+                // Depend on the resources configuration for multi-project builds
+                dependsOn(resourcesConfiguration)
+                destinationDir = outputDirectory.getFile()
+
+                from({
+                     resourcesConfiguration.incoming.artifactView { it.lenient(true) }
+                         .files
+                         .filter {
+                             // FIXME: Don't output an artifact if there are no resources?
+                             it.exists()
+                             // FIXME: Why does wasm pass in self classes directory in this configuration???
+                             && it.isFile
+                         }
+                         .map {
+                             // Copy the root of each zip to the build directory
+                             project.zipTree(it)
+                         }
+                })
+            }
+        }
+
+        val outputCollection = project.files()
+        outputCollection.builtBy(unzipAndCopyResourcesToBuildDirectoryTask)
+
+        // Copy resources for this target
+        // FIXME: Copypasta
+        // FIXME: Resources and outputDirectory are Providers, but this method doesn't await for any lifecycle event. This will break if called at a wrong time
+        compilations.getByName("main").registerCopyResourcesTasks(
+            "ResolveSelfResources${disambiguationClassifier}",
+            composeResourceDirectories,
+            outputDirectory
+        ).forEach { copyTask ->
+            outputCollection.builtBy(copyTask)
+        }
+
+        // FIXME: Listing files in this directory may result in trash such as .DS_Store to suddenly appear. Figure out how to get the root of a zipTree?
+        outputCollection.from(outputDirectory.map { it.asFile.listFiles() ?: emptyArray() })
+        return outputCollection
     }
 }
 
 internal data class ComposeResources(
-    val resourceDirectoryName: String,
-    val resourceIdentity: String,
+    val resourceDirectoryName: Provider<Path>,
+    val resourceIdentity: Provider<Path>,
+    val taskName: String,
 )
 
 internal fun KotlinTarget.disambiguateName(simpleName: String) =

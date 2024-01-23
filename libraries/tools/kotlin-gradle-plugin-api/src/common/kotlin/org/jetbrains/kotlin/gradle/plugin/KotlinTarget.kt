@@ -13,14 +13,15 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.component.SoftwareComponent
+import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
+import java.nio.file.Path
 
 interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     val targetName: String
@@ -43,6 +44,7 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     val apiElementsConfigurationName: String
     val runtimeElementsConfigurationName: String
     val sourcesElementsConfigurationName: String
+    val resourcesElementsConfigurationName: String
 
     val publishable: Boolean
 
@@ -66,7 +68,10 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     override fun getName(): String = targetName
 
     @InternalKotlinGradlePluginApi
-    fun composeCopyResources(resourceDirectoryName: String, resourceIdentity: String)
+    fun composeCopyResources(resourceDirectoryName: Provider<Path>, resourceIdentity: Provider<Path>, taskName: String)
+
+    @InternalKotlinGradlePluginApi
+    fun composeResolveResources(): FileCollection
 }
 
 interface KotlinTargetWithTests<E : KotlinExecution.ExecutionSource, T : KotlinTargetTestRun<E>> : KotlinTarget {

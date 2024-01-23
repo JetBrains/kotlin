@@ -91,6 +91,12 @@ constructor(
             )
         )
 
+        usageContexts.add(
+            createResourcesSoftwareComponentVariant(
+                mainCompilation,
+            )
+        )
+
         val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
 
         setOf(result)
