@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Logger
 import kotlin.time.*
+import kotlin.time.Duration.Companion.seconds
 
 fun Logger.debugKt65113(msg: String) {
     if (!HostManager.hostIsMingw)
@@ -189,9 +190,23 @@ class HostExecutor : Executor {
                 streams.drain()
                 ExecuteResponse(null, duration)
             } else {
-                logger.info("Finished executing $commandLine in $duration exit code ${process.exitValue()}")
-                streams.drain()
-                ExecuteResponse(process.exitValue(), duration)
+                var exitCode: Int? = process.exitValue()
+                logger.info("Finished executing $commandLine in $duration exit code $exitCode")
+                // Workaround for KT-65113
+                val waitStreamsDuration = if (HostManager.hostIsMingw) 10.seconds else Duration.INFINITE
+                try {
+                    withTimeout(waitStreamsDuration) {
+                        streams.drain()
+                    }
+                } catch (e: TimeoutCancellationException) {
+                    logger.warning("Failed to join the streams in $waitStreamsDuration.")
+                    // TODO(KT-65113): This is here to keep tests failing in the scenario for now.
+                    exitCode = null
+                    streams.cancel()
+                    process.destroyForcibly()
+                    streams.drain()
+                }
+                ExecuteResponse(exitCode, duration)
             }
         }
     }
