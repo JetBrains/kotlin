@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 
 object JvmCachedDeclarations {
-    val FieldForObjectInstance = BirElementDynamicPropertyKey<BirClass, BirField>()
-    val InterfaceCompanionFieldDeclaration = BirElementDynamicPropertyKey<BirClass, BirField>()
-    val FieldForObjectInstanceParent = BirElementDynamicPropertyKey<BirField, BirDeclarationParent>()
+    val FieldForObjectInstance = BirElementDynamicPropertyKey<_, BirField>(BirClass)
+    val InterfaceCompanionFieldDeclaration = BirElementDynamicPropertyKey<_, BirField>(BirClass)
+    val FieldForObjectInstanceParent = BirElementDynamicPropertyKey<_, BirDeclarationParent>(BirField)
 
     context(BirBackendContext)
     fun getFieldForObjectInstance(

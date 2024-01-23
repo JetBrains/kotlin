@@ -47,7 +47,7 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
         it.constructedClass == KotlinRepeatableAnnotation
     }
 
-    private val repeatedAnnotationSyntheticContainerToken = acquireTemporaryProperty<BirClass, BirClass>()
+    private val repeatedAnnotationSyntheticContainerToken = acquireTemporaryProperty<_, BirClass>(BirClass)
 
     override fun lower(module: BirModuleFragment) {
         if (generationState.classBuilderMode.generateBodies) {

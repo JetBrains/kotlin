@@ -45,6 +45,6 @@ class BirJvmInventNamesForLocalClassesLowering() : BirInventNamesForLocalClasses
     }
 
     companion object {
-        val LocalClassType = BirElementDynamicPropertyKey<BirAttributeContainer, Type>()
+        val LocalClassType = BirElementDynamicPropertyKey<_, Type>(BirAttributeContainer)
     }
 }

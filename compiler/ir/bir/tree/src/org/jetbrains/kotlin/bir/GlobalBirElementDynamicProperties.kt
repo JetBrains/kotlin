@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 object GlobalBirElementDynamicProperties {
-    val Descriptor = BirElementDynamicPropertyKey<BirSymbolOwner, DeclarationDescriptor>()
+    val Descriptor = BirElementDynamicPropertyKey<_, DeclarationDescriptor>(BirSymbolOwner)
 
-    val Metadata = BirElementDynamicPropertyKey<BirMetadataSourceOwner, MetadataSource?>() // probably rename e.g. to 'source'
+    val Metadata = BirElementDynamicPropertyKey<_, MetadataSource?>(BirMetadataSourceOwner) // probably rename e.g. to 'source'
 
-    val ContainerSource = BirElementDynamicPropertyKey<BirMemberWithContainerSource, DeserializedContainerSource?>()
+    val ContainerSource = BirElementDynamicPropertyKey<_, DeserializedContainerSource?>(BirMemberWithContainerSource)
 
     /*
     If this is a sealed class or interface, this list contains symbols of all its immediate subclasses.
@@ -25,7 +25,7 @@ object GlobalBirElementDynamicProperties {
     NOTE: If this was deserialized from a klib, this list will always be empty!
     See [KT-54028](https://youtrack.jetbrains.com/issue/KT-54028).
      */
-    val SealedSubclasses = BirElementDynamicPropertyKey<BirClass, List<BirClassSymbol>>() // Seems only used in JVM
+    val SealedSubclasses = BirElementDynamicPropertyKey<_, List<BirClassSymbol>>(BirClass) // Seems only used in JVM
 
     /*
     Original element before inlining. Useful only with IR inliner.
@@ -34,7 +34,7 @@ object GlobalBirElementDynamicProperties {
 
     null <=> this element wasn't inlined
      */
-    val OriginalBeforeInline = BirElementDynamicPropertyKey<BirAttributeContainer, BirAttributeContainer?>() // Seems only used inside lowering
+    val OriginalBeforeInline = BirElementDynamicPropertyKey<_, BirAttributeContainer?>(BirAttributeContainer) // Seems only used inside lowering
 
-    val CapturedConstructor = BirElementDynamicPropertyKey<BirConstructor, BirConstructor>()
+    val CapturedConstructor = BirElementDynamicPropertyKey<_, BirConstructor>(BirConstructor)
 }
