@@ -167,6 +167,11 @@ class ObjCExportHeaderGeneratorTest(val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("classWithUnresolvedSuperTypeGenerics"))
     }
 
+    @Test
+    fun `test - topLevelFunctionWithNumberReturn`() {
+        doTest(headersTestDataDir.resolve("topLevelFunctionWithNumberReturn"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()
