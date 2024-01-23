@@ -34,12 +34,21 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
 
     val compilationName: String
 
+    /**
+     * Returns live collection of source sets that directly included into this compilation.
+     * This is a read only collection. Attempt to add any element would throw a runtime exception.
+     */
     val kotlinSourceSets: NamedDomainObjectSet<KotlinSourceSet>
 
     /** This method is kept for binary compatibility */
     @Deprecated("Use `kotlinSourceSets` property instead", ReplaceWith("kotlinSourceSets"))
     fun getKotlinSourceSets(): Set<KotlinSourceSet> = kotlinSourceSets
 
+    /**
+     * Returns live collection of all source sets that directly and indirectly (i.e. through dependsOn relation)
+     * included into this compilation.
+     * This is a read only collection. Attempt to add any element would throw a runtime exception.
+     */
     val allKotlinSourceSets: NamedDomainObjectSet<KotlinSourceSet>
 
     /** This method is kept for binary compatibility */
