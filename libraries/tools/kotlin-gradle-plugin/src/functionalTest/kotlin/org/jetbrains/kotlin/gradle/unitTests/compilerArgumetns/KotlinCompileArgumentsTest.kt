@@ -50,7 +50,7 @@ class KotlinCompileArgumentsTest {
         val mainCompilationTask = mainCompilation.compileTaskProvider.get() as KotlinCompile
         val argumentsFromKotlinCompilerArgumentsAware = mainCompilationTask.createCompilerArguments(
             CreateCompilerArgumentsContext(
-                includeArgumentTypes = setOf(Primitive, DependencyClasspath, PluginClasspath),
+                includeArgumentTypes = setOf(Primitive, PluginClasspath),
                 isLenient = true
             )
         )

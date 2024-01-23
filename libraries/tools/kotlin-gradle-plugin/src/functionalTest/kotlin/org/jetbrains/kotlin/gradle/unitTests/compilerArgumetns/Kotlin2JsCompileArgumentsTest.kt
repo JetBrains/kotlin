@@ -35,7 +35,7 @@ class Kotlin2JsCompileArgumentsTest {
         val jsMainCompileTask = jsMainCompilation.compileTaskProvider.get()
         val argumentsFromCompilerArgumentsProducer = jsMainCompileTask.createCompilerArguments(
             CreateCompilerArgumentsContext(
-                includeArgumentTypes = setOf(Primitive, DependencyClasspath, PluginClasspath),
+                includeArgumentTypes = setOf(Primitive, PluginClasspath),
                 isLenient = true
             )
         )

@@ -13,6 +13,10 @@ import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.CreateCompilerArgumentsContext
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType.Primitive
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.default
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
@@ -52,7 +56,12 @@ class KotlinNativeCompileArgumentsTest {
 
 
     private fun `assert setupCompilerArgs and createCompilerArguments are equal`(compile: KotlinNativeCompile) {
-        val argumentsFromCompilerArgumentsProducer = compile.createCompilerArguments(lenient)
+        val argumentsFromCompilerArgumentsProducer = compile.createCompilerArguments(
+            CreateCompilerArgumentsContext(
+                includeArgumentTypes = setOf(Primitive, PluginClasspath),
+                isLenient = true
+            )
+        )
         val argumentsFromBuildCompilerArgs = K2NativeCompilerArguments().apply {
             @Suppress("DEPRECATION_ERROR")
             compile.setupCompilerArgs(this, false, true)
