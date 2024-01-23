@@ -42,6 +42,8 @@ abstract class AbstractKaptToolIntegrationTest {
 
     private fun doTestInTempDirectory(originalTestFile: File, testFile: File) {
         val sections = Section.parse(testFile)
+        val heapDumpsDir = File("build/test-heap-dumps/")
+        heapDumpsDir.mkdir()
 
         for (section in sections) {
             try {
@@ -49,7 +51,14 @@ abstract class AbstractKaptToolIntegrationTest {
                     "mkdir" -> section.args.forEach { File(tmpdir, it).mkdirs() }
                     "copy" -> copyFile(originalTestFile.parentFile, section.args)
                     "kotlinc" -> runKotlinDistBinary("kotlinc", section.args)
-                    "kapt" -> runKotlinDistBinary("kapt", section.args)
+                    "kapt" -> runKotlinDistBinary(
+                        "kapt",
+                        section.args,
+                        mapOf(
+                            "JAVA_OPTS" to "-Xmx256M -Xms128M -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/home/pavel/tmp/ " +
+                                    "-XX:HeapDumpPath=${File(heapDumpsDir, "${testFile.parentFile.nameWithoutExtension}.hprof").absolutePath}"
+                        )
+                    )
                     "javac" -> runJavac(section.args)
                     "java" -> runJava(section.args)
                     "output" -> {
@@ -63,7 +72,7 @@ abstract class AbstractKaptToolIntegrationTest {
                     else -> error("Unknown section name ${section.name}")
                 }
             } catch (e: GotResult) {
-                val actual = sections.replacingSection("after", e.actual).render()
+                val actual = sections.replacingSection("after", e.actual.replace("java.lang.OutOfMemoryError", "OOM")).render()
                 JUnit5Assertions.assertEqualsToFile(originalTestFile, actual)
                 return
             } catch (e: Throwable) {
@@ -79,10 +88,10 @@ abstract class AbstractKaptToolIntegrationTest {
         source.copyRecursively(target)
     }
 
-    private fun runKotlinDistBinary(name: String, args: List<String>) {
+    private fun runKotlinDistBinary(name: String, args: List<String>, env: Map<String, String> = emptyMap()) {
         val executableName = if (SystemInfo.isWindows) name + ".bat" else name
         val executablePath = File("dist/kotlinc/bin/" + executableName).absolutePath
-        runProcess(executablePath, args)
+        runProcess(executablePath, args, env = env)
     }
 
     private fun runJavac(args: List<String>) {
@@ -101,7 +110,12 @@ abstract class AbstractKaptToolIntegrationTest {
         throw GotResult(outputFile.takeIf { it.isFile }?.readText() ?: "")
     }
 
-    private fun runProcess(executablePath: String, args: List<String>, outputFile: File = File(tmpdir, "processOutput.txt")) {
+    private fun runProcess(
+        executablePath: String,
+        args: List<String>,
+        outputFile: File = File(tmpdir, "processOutput.txt"),
+        env: Map<String, String> = emptyMap()
+    ) {
         fun err(message: String): Nothing = error("$message: ${testInfo.displayName} (${args.joinToString(" ")})")
 
         outputFile.delete()
@@ -111,6 +125,9 @@ abstract class AbstractKaptToolIntegrationTest {
             .inheritIO()
             .redirectError(ProcessBuilder.Redirect.to(outputFile))
             .redirectOutput(ProcessBuilder.Redirect.to(outputFile))
+            .also {
+                it.environment().putAll(env)
+            }
             .start()
 
         if (!process.waitFor(2, TimeUnit.MINUTES)) err("Process is still alive")
