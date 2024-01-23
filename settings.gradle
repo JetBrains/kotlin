@@ -154,11 +154,6 @@ include ":kotlin-noarg-compiler-plugin",
         ":kotlin-noarg-compiler-plugin.backend",
         ":kotlin-noarg-compiler-plugin.cli"
 
-include ":kotlin-swift-export-compiler-plugin",
-        ":kotlin-swift-export-compiler-plugin.embeddable",
-        ":kotlin-swift-export-compiler-plugin.backend",
-        ":kotlin-swift-export-compiler-plugin.cli"
-
 include ":kotlin-sam-with-receiver-compiler-plugin",
         ":kotlin-sam-with-receiver-compiler-plugin.embeddable",
         ":kotlin-sam-with-receiver-compiler-plugin.common",
@@ -423,6 +418,7 @@ include ":native:swift:sir",
         ":native:swift:sir-printer",
         ":native:swift:sir-analysis-api",
         ":native:swift:sir-compiler-bridge",
+        ":native:swift:sir-runner",
         ":generators:sir-tests-generator"
 
 void intellij(String imlPath) {
@@ -737,11 +733,6 @@ project(':kotlin-noarg-compiler-plugin.k1').projectDir = "$rootDir/plugins/noarg
 project(':kotlin-noarg-compiler-plugin.k2').projectDir = "$rootDir/plugins/noarg/noarg.k2" as File
 project(':kotlin-noarg-compiler-plugin.backend').projectDir = "$rootDir/plugins/noarg/noarg.backend" as File
 project(':kotlin-noarg-compiler-plugin.cli').projectDir = "$rootDir/plugins/noarg/noarg.cli" as File
-
-project(':kotlin-swift-export-compiler-plugin').projectDir = "$rootDir/plugins/swift-export" as File
-project(':kotlin-swift-export-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/swift-export/swift-export.embeddable" as File
-project(':kotlin-swift-export-compiler-plugin.backend').projectDir = "$rootDir/plugins/swift-export/swift-export.backend" as File
-project(':kotlin-swift-export-compiler-plugin.cli').projectDir = "$rootDir/plugins/swift-export/swift-export.cli" as File
 
 project(':kotlin-sam-with-receiver-compiler-plugin').projectDir = "$rootDir/plugins/sam-with-receiver" as File
 project(':kotlin-sam-with-receiver-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver.embeddable" as File

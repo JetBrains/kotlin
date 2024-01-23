@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.generators.tests.native.swift.sir
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.sir.analysisapi.AbstractKotlinSirContextTest
 import org.jetbrains.kotlin.sir.bridge.AbstractKotlinSirBridgeTest
-import org.jetbrains.kotlin.swiftexport.AbstractSwiftExportContextTest
+import org.jetbrains.kotlin.sir.runner.AbstractSwiftRunnerTest
 
 
 fun main() {
@@ -35,13 +35,13 @@ fun main() {
             }
         }
         testGroup(
-            "plugins/swift-export/tests-gen",
-            "plugins/swift-export/testData"
+            "native/swift/sir-runner/tests-gen/",
+            "native/swift/sir-runner/testData"
         ) {
-            testClass<AbstractSwiftExportContextTest>(
-                suiteTestClassName = "SwiftExportCompilerPluginTest"
+            testClass<AbstractSwiftRunnerTest>(
+                suiteTestClassName = "SwiftExportRunnerTest"
             ) {
-                model("", excludedPattern = ".*\\.golden\\.kt$", recursive = false)
+                model("", extension = null, recursive = false)
             }
         }
     }
