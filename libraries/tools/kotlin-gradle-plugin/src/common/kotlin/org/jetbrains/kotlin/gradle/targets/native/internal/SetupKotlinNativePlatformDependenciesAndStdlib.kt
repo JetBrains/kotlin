@@ -30,10 +30,15 @@ internal val SetupKotlinNativePlatformDependenciesAndStdlib =
         // Commonizer target must not be null for AbstractKotlinNativeCompilation, but we are graceful here and just return
         val commonizerTarget = compilation.commonizerTarget.await() ?: return@KotlinCompilationSideEffectCoroutine
         val nativeDistributionDependencies = project.getNativeDistributionDependencies(commonizerTarget)
-        compilation.compileDependencyFiles += nativeDistributionDependencies
-
         val stdlib = project.files(project.konanDistribution.stdlib)
-        compilation.compileDependencyFiles += stdlib
+
+        val updatedCompileDependencyFiles = project.files().from(
+            stdlib,
+            nativeDistributionDependencies,
+            compilation.compileDependencyFiles
+        )
+
+        compilation.compileDependencyFiles = updatedCompileDependencyFiles
     }
 
 internal val ExcludeDefaultPlatformDependenciesFromKotlinNativeCompileTasks = KotlinProjectSetupAction {

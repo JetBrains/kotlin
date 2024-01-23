@@ -54,13 +54,9 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
                     bindSession(session)
                 }
                 val resolvedKotlinLibraries = resolvedLibraries.map { it.library }
-                // KT-61645: stdlib-native must appear before stdlib-common metadata in the dependency list
-                // TODO: Consider not reordering libraries after KT-61430 is fixed, and Gradle plugin determines full order of dependencies.
-                val (stdlib, otherDeps) = resolvedKotlinLibraries.partition { it.isNativeStdlib }
-                val kotlinLibraries = stdlib + otherDeps
                 listOfNotNull(
-                    KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, kotlinLibraries),
-                    NativeForwardDeclarationsSymbolProvider(session, forwardDeclarationsModuleData, kotlinScopeProvider, kotlinLibraries),
+                    KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedKotlinLibraries),
+                    NativeForwardDeclarationsSymbolProvider(session, forwardDeclarationsModuleData, kotlinScopeProvider, resolvedKotlinLibraries),
                     FirBuiltinSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),
                     syntheticFunctionInterfaceProvider,
                 )
