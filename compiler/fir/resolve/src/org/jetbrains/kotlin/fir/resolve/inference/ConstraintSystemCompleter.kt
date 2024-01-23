@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
@@ -33,7 +32,7 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 
-class ConstraintSystemCompleter(components: BodyResolveComponents, private val context: BodyResolveContext) {
+class ConstraintSystemCompleter(components: BodyResolveComponents) {
     private val inferenceComponents = components.session.inferenceComponents
     val variableFixationFinder = inferenceComponents.variableFixationFinder
     private val postponedArgumentsInputTypesResolver = inferenceComponents.postponedArgumentInputTypesResolver
