@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/box")
 @TestDataPath("$PROJECT_ROOT")
-public class FirWasmCodegenBoxTestGenerated extends AbstractFirWasmCodegenBoxTest {
+public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBoxTest {
     @Test
     public void testAllFilesPresentInBox() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "compileKotlinAgainstKotlin");

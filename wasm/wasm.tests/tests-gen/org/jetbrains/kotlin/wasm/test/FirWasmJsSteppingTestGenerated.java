@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/debug/stepping")
 @TestDataPath("$PROJECT_ROOT")
-public class FirWasmSteppingTestGenerated extends AbstractFirWasmSteppingTest {
+public class FirWasmJsSteppingTestGenerated extends AbstractFirWasmJsSteppingTest {
     @Test
     public void testAllFilesPresentInStepping() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/stepping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
