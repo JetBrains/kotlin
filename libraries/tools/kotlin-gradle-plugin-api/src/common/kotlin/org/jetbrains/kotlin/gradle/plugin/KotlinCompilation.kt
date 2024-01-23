@@ -36,7 +36,15 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
 
     val kotlinSourceSets: NamedDomainObjectSet<KotlinSourceSet>
 
+    /** This method is kept for binary compatibility */
+    @Deprecated("Use `kotlinSourceSets` property instead", ReplaceWith("kotlinSourceSets"))
+    fun getKotlinSourceSets(): Set<KotlinSourceSet> = kotlinSourceSets
+
     val allKotlinSourceSets: NamedDomainObjectSet<KotlinSourceSet>
+
+    /** This method is kept for binary compatibility */
+    @Deprecated("Use `allKotlinSourceSets` property instead", ReplaceWith("allKotlinSourceSets"))
+    fun getAllKotlinSourceSets(): Set<KotlinSourceSet> = allKotlinSourceSets
 
     @Deprecated("Use defaultSourceSet.name instead", ReplaceWith("defaultSourceSet.name"))
     val defaultSourceSetName: String get() = defaultSourceSet.name
