@@ -2,30 +2,43 @@
 package dependency {
 
     @ExternalObjCClass @ExperimentalForeignApi open class MyClass : ObjCObjectBase {
-        protected constructor()
+        @ObjCConstructor(designated = true, initSelector = "init") constructor()
+        var instanceProperty: Int
+            @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "instanceProperty") get
+            @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setInstanceProperty:") set
+        @Deprecated(level = DeprecationLevel.ERROR, message = "Use constructor instead", replaceWith = ReplaceWith(expression = "MyClass()", imports = {})) @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "init") @CCall.ConsumesReceiver @CCall.ReturnsRetained open external fun init(): MyClass?
+        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "instanceMethod") open external fun instanceMethod()
+        @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "instanceProperty") open external fun instanceProperty(): Int
+        @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setInstanceProperty:") open external fun setInstanceProperty(instanceProperty: Int)
         companion object : MyClassMeta, ObjCClassOf<MyClass>
     }
 
     @ExternalObjCClass @ExperimentalForeignApi open class MyClassMeta : ObjCObjectBaseMeta {
         protected constructor()
+        var classProperty: Any?
+            @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "classProperty") get
+            @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setClassProperty:") set
+        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "classMethod") open external fun classMethod()
+        @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "classProperty") open external fun classProperty(): Any?
+        @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setClassProperty:") open external fun setClassProperty(classProperty: Any?)
     }
 
 }
 
 package dependency {
-    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "classMethod") @ExperimentalForeignApi external fun MyClassMeta.classMethod()
-    @ExperimentalForeignApi var MyClassMeta.classProperty: Any?
-        @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "classProperty") get
-        @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setClassProperty:") set
-    @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "classProperty") @ExperimentalForeignApi external fun MyClassMeta.classProperty(): Any?
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "classMethod") @Deprecated(level = DeprecationLevel.WARNING, message = "Use class method instead", replaceWith = ReplaceWith(expression = "", imports = {})) @ExperimentalForeignApi external fun MyClassMeta.classMethod()
+    @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance property instead", replaceWith = ReplaceWith(expression = "", imports = {})) @ExperimentalForeignApi var MyClassMeta.classProperty: Any?
+        @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "classProperty") @Deprecated(level = DeprecationLevel.WARNING, message = "Use class method instead", replaceWith = ReplaceWith(expression = "", imports = {})) get
+        @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setClassProperty:") @Deprecated(level = DeprecationLevel.WARNING, message = "Use class method instead", replaceWith = ReplaceWith(expression = "", imports = {})) set
+    @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "classProperty") @Deprecated(level = DeprecationLevel.WARNING, message = "Use class method instead", replaceWith = ReplaceWith(expression = "", imports = {})) @ExperimentalForeignApi external fun MyClassMeta.classProperty(): Any?
     @ObjCFactory(encoding = "@16@0:8", isStret = false, selector = "init") @CCall.ConsumesReceiver @CCall.ReturnsRetained @ExperimentalForeignApi external fun <T : MyClass> ObjCClassOf<T>.create(): T?
     @Deprecated(level = DeprecationLevel.ERROR, message = "Use factory method instead", replaceWith = ReplaceWith(expression = "MyClass.create()", imports = {})) @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "init") @CCall.ConsumesReceiver @CCall.ReturnsRetained @ExperimentalForeignApi external fun MyClass.init(): MyClass?
-    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "instanceMethod") @ExperimentalForeignApi external fun MyClass.instanceMethod()
-    @ExperimentalForeignApi var MyClass.instanceProperty: Int
-        @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "instanceProperty") get
-        @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setInstanceProperty:") set
-    @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "instanceProperty") @ExperimentalForeignApi external fun MyClass.instanceProperty(): Int
-    @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setClassProperty:") @ExperimentalForeignApi external fun MyClassMeta.setClassProperty(classProperty: Any?)
-    @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setInstanceProperty:") @ExperimentalForeignApi external fun MyClass.setInstanceProperty(instanceProperty: Int)
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "instanceMethod") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(expression = "", imports = {})) @ExperimentalForeignApi external fun MyClass.instanceMethod()
+    @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance property instead", replaceWith = ReplaceWith(expression = "", imports = {})) @ExperimentalForeignApi var MyClass.instanceProperty: Int
+        @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "instanceProperty") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(expression = "", imports = {})) get
+        @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setInstanceProperty:") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(expression = "", imports = {})) set
+    @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "instanceProperty") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(expression = "", imports = {})) @ExperimentalForeignApi external fun MyClass.instanceProperty(): Int
+    @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setClassProperty:") @Deprecated(level = DeprecationLevel.WARNING, message = "Use class method instead", replaceWith = ReplaceWith(expression = "", imports = {})) @ExperimentalForeignApi external fun MyClassMeta.setClassProperty(classProperty: Any?)
+    @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setInstanceProperty:") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(expression = "", imports = {})) @ExperimentalForeignApi external fun MyClass.setInstanceProperty(instanceProperty: Int)
 }
 

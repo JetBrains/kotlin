@@ -380,13 +380,11 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     binaryName = getObjCBinaryName(cursor).takeIf { it != name })
         }) { objcClass ->
             addChildrenToObjCContainer(cursor, objcClass)
-            if (name in this.library.objCClassesIncludingCategories) {
-                // We don't include methods from categories to class during indexing
-                // because indexing does not care about how class is represented in Kotlin.
-                // Instead, it should be done during StubIR construction.
-                objcClass.includedCategories += objCCategoriesIndex.findCategoriesInTheSameFile(cursor, name)
-                        .mapNotNull { getObjCCategoryAt(it) }
-            }
+            // We don't include methods from categories to class during indexing
+            // because indexing does not care about how class is represented in Kotlin.
+            // Instead, it should be done during StubIR construction.
+            objcClass.includedCategories += objCCategoriesIndex.findCategoriesInTheSameFile(cursor, name)
+                    .mapNotNull { getObjCCategoryAt(it) }
         }
     }
 
