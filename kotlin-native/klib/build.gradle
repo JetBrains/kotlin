@@ -23,11 +23,4 @@ dependencies {
     implementation project(":kotlin-stdlib")
     implementation project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
     implementation project(":kotlin-native:utilities:basic-utils")
-    testImplementation libs.junit4
-    testImplementation RepoDependencies.kotlinTest(project, "junit")
-}
-
-test {
-    dependsOn 'cleanTest'
-    // Specify a path to the distribution that is used in the tests.
 }

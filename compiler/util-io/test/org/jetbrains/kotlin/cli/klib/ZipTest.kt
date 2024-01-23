@@ -1,15 +1,13 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.cli.klib.test
+package org.jetbrains.kotlin.cli.klib
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.unzipTo
 import org.jetbrains.kotlin.konan.file.use
-import org.jetbrains.kotlin.library.impl.javaFile
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -64,7 +62,7 @@ class ZipTest {
 }
 
 private fun createMaliciousArchive(file: File) {
-    ZipOutputStream(FileOutputStream(file.javaFile())).use {
+    ZipOutputStream(FileOutputStream(java.io.File(file.path))).use {
         it.putNextEntry(ZipEntry("../definitelySafe.txt"))
         it.closeEntry()
     }
