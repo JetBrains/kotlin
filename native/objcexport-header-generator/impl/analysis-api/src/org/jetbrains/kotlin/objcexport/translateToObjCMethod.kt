@@ -361,24 +361,20 @@ private fun KtType.mapType(typeBridge: TypeBridge): ObjCType {
     return when (typeBridge) {
         is ReferenceBridge -> this.translateToObjCReferenceType()
         is BlockPointerBridge -> this.translateToObjCFunctionType(typeBridge)
-        is ValueTypeBridge -> {
-            when {
-                isBoolean -> ObjCPrimitiveType.BOOL
-                isChar -> ObjCPrimitiveType.int8_t
-                isByte -> ObjCPrimitiveType.char
-                isShort -> ObjCPrimitiveType.int16_t
-                isInt -> ObjCPrimitiveType.int32_t
-                isLong -> ObjCPrimitiveType.long_long
-                isFloat -> ObjCPrimitiveType.float
-                isDouble -> ObjCPrimitiveType.double
-                isUByte -> ObjCPrimitiveType.unsigned_char
-                isUShort -> ObjCPrimitiveType.unsigned_short
-                isUInt -> ObjCPrimitiveType.unsigned_int
-                isULong -> ObjCPrimitiveType.unsigned_long_long
-
-
-                else -> TODO("Handle primitive KtType mapping to ObjCType: $this")
-            }
+        is ValueTypeBridge -> when (typeBridge.objCValueType) {
+            ObjCValueType.BOOL -> ObjCPrimitiveType.BOOL
+            ObjCValueType.UNICHAR -> ObjCPrimitiveType.unichar
+            ObjCValueType.CHAR -> ObjCPrimitiveType.int8_t
+            ObjCValueType.SHORT -> ObjCPrimitiveType.int16_t
+            ObjCValueType.INT -> ObjCPrimitiveType.int32_t
+            ObjCValueType.LONG_LONG -> ObjCPrimitiveType.int64_t
+            ObjCValueType.UNSIGNED_CHAR -> ObjCPrimitiveType.uint8_t
+            ObjCValueType.UNSIGNED_SHORT -> ObjCPrimitiveType.uint16_t
+            ObjCValueType.UNSIGNED_INT -> ObjCPrimitiveType.uint32_t
+            ObjCValueType.UNSIGNED_LONG_LONG -> ObjCPrimitiveType.uint64_t
+            ObjCValueType.FLOAT -> ObjCPrimitiveType.float
+            ObjCValueType.DOUBLE -> ObjCPrimitiveType.double
+            ObjCValueType.POINTER -> ObjCPointerType(ObjCVoidType, this.isMarkedNullable)
         }
     }
 }
