@@ -319,6 +319,9 @@ abstract class AbstractTypeApproximator(
         }
         val baseSubType = type.lowerType() ?: nothingType()
 
+        val approximatedSuperType by lazy(LazyThreadSafetyMode.NONE) { approximateToSuperType(baseSuperType, conf, depth) }
+        val approximatedSubType by lazy(LazyThreadSafetyMode.NONE) { approximateToSubType(baseSubType, conf, depth) }
+
         if (!conf.capturedType(ctx, type)) {
             /**
              * Here everything is ok if bounds for this captured type should not be approximated.
@@ -328,15 +331,11 @@ abstract class AbstractTypeApproximator(
              *
              * todo handle flexible types
              */
-            if (approximateToSuperType(baseSuperType, conf, depth) == null && approximateToSubType(baseSubType, conf, depth) == null) {
+            if (approximatedSuperType == null && approximatedSubType == null) {
                 return null
             }
         }
-        val baseResult = if (toSuper) approximateToSuperType(baseSuperType, conf, depth) ?: baseSuperType else approximateToSubType(
-            baseSubType,
-            conf,
-            depth
-        ) ?: baseSubType
+        val baseResult = if (toSuper) approximatedSuperType ?: baseSuperType else approximatedSubType ?: baseSubType
 
         // C = in Int, Int <: C => Int? <: C?
         // C = out Number, C <: Number => C? <: Number?
