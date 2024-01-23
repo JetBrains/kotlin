@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import java.util.concurrent.ThreadLocalRandom
 
 /**
  * [FirModuleData] is an abstraction over modules module inside FIR compiler.
@@ -54,6 +55,8 @@ abstract class FirModuleData : FirSessionComponent {
     abstract val friendDependencies: List<FirModuleData>
     abstract val platform: TargetPlatform
     abstract val isCommon: Boolean
+
+    val unique = ThreadLocalRandom.current().nextInt()
 
     // TODO: analyzerServices are needed only as default imports providers
     //   refactor them to make API clearer
