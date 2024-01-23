@@ -41,7 +41,7 @@ internal object KtDefaultSerializationErrorMessages : BaseDiagnosticRendererFact
 internal object SerializationDiagnosticRenderers {
     val CONFLICTING_KLIB_SIGNATURES_DATA =
         CommonRenderers.renderConflictingSignatureData<DeclarationDescriptor, ConflictingKlibSignaturesData>(
-            signatureKind = "KLIB",
+            signatureKind = "IR",
             sortUsing = MemberComparator.INSTANCE,
             declarationRenderer = Renderer {
                 DescriptorRenderer.WITHOUT_MODIFIERS.render(it)
