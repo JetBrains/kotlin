@@ -21,23 +21,27 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
             simpleSingleSourceTarget(
                 "a", """
                     import kotlinx.cinterop.*
-                    @ObjCMethod(0)
+                    @ObjCMethod("x", "xab", false)
                     fun x() {}
+                    @ObjCMethod("wrongSelector1", "", false)
+                    fun y() {}
                 """.trimIndent()
             )
 
             simpleSingleSourceTarget(
                 "b", """
                     import kotlinx.cinterop.*
-                    @ObjCMethod(1)
+                    @ObjCMethod("x", "xab", false)
                     fun x() {}
+                    @ObjCMethod("wrongSelector2", "", false)
+                    fun y() {}
                 """.trimIndent()
             )
 
             simpleSingleSourceTarget(
                 "c", """
                     import kotlinx.cinterop.*
-                    @ObjCMethod(2)
+                    @ObjCMethod("x", "xc", true)
                     fun x() {}
                 """.trimIndent()
             )
@@ -45,7 +49,7 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
             simpleSingleSourceTarget(
                 "d", """
                     import kotlinx.cinterop.*
-                    @ObjCMethod(2)
+                    @ObjCMethod("x", "xd")
                     fun x() {}
                 """.trimIndent()
             )
@@ -54,15 +58,19 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
         result.assertCommonized(
             "(a, b)", """
                 import kotlin.commonizer.*
-                @ObjCCallable
+                import kotlinx.cinterop.*
+                @ObjCCallable @ObjCMethod("x", "xab", false)
                 expect fun x()
+                @ObjCCallable
+                expect fun y()
             """.trimIndent()
         )
 
         result.assertCommonized(
             "(c, d)", """
                 import kotlin.commonizer.*
-                @ObjCCallable
+                import kotlinx.cinterop.*
+                @ObjCCallable @ObjCMethod("x", "")
                 expect fun x()
             """.trimIndent()
         )
@@ -70,7 +78,8 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
         result.assertCommonized(
             "(a, b, c, d)", """
                 import kotlin.commonizer.*
-                @ObjCCallable
+                import kotlinx.cinterop.*
+                @ObjCCallable @ObjCMethod("x", "")
                 expect fun x()
             """.trimIndent()
         )
@@ -119,7 +128,7 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
             simpleSingleSourceTarget(
                 "a", """
                     import kotlinx.cinterop.*
-                    @ObjCMethod(0)
+                    @ObjCMethod("x", "xa")
                     fun x() {}
                 """.trimIndent()
             )
@@ -127,7 +136,7 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
             simpleSingleSourceTarget(
                 "b", """
                     import kotlinx.cinterop.*
-                    @ObjCConstructor(1)
+                    @ObjCConstructor("x", false)
                     fun x() {}
                 """.trimIndent()
             )
@@ -135,7 +144,7 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
             simpleSingleSourceTarget(
                 "c", """
                     import kotlinx.cinterop.*
-                    @ObjCFactory(2)
+                    @ObjCFactory("x", "xa")
                     fun x() {}
                 """.trimIndent()
             )
@@ -183,7 +192,7 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
                 "a", """
                     import kotlinx.cinterop.*
                     
-                    @ObjCMethod(0)
+                    @ObjCMethod("x", "xa")
                     fun x() {}
                 """.trimIndent()
             )
@@ -231,9 +240,9 @@ private fun InlineSourceBuilder.ModuleBuilder.objCAnnotations() {
     source(
         """
         package kotlinx.cinterop
-        annotation class ObjCMethod(val x: Int)
-        annotation class ObjCConstructor(val x: Int)
-        annotation class ObjCFactory(val x: Int)
+        public annotation class ObjCMethod(val selector: String, val encoding: String, val isStret: Boolean = false)
+        public annotation class ObjCConstructor(val initSelector: String, val designated: Boolean)
+        public annotation class ObjCFactory(val selector: String, val encoding: String, val isStret: Boolean = false)
         """.trimIndent(),
         "kotlinx.kt"
     )

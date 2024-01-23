@@ -87,39 +87,40 @@ expect fun functionMismatchedParameterNames30(arg0: Int, vararg variadicArgument
 expect fun functionMismatchedParameterNames31(i: Int, s: String)
 
 @kotlin.commonizer.ObjCCallable
+@kotlinx.cinterop.ObjCMethod("fmpn34:s:", "", false)
 expect fun functionMismatchedParameterNames34(i: Int, s: String)
 
-@kotlin.commonizer.ObjCCallable
+@kotlin.commonizer.ObjCCallable @kotlinx.cinterop.ObjCMethod("fmpn37:arg1:", "", false)
 expect fun functionMismatchedParameterNames37(arg0: Int, arg1: String)
 
 // hasStableParameterNames=false
-@kotlin.commonizer.ObjCCallable
+@kotlin.commonizer.ObjCCallable @kotlinx.cinterop.ObjCMethod("fmpn38:s:", "", false)
 expect fun functionMismatchedParameterNames38(i: Int, s: String)
 
 // hasStableParameterNames=false
-@kotlin.commonizer.ObjCCallable
+@kotlin.commonizer.ObjCCallable @kotlinx.cinterop.ObjCMethod("fmpn39:s:", "", false)
 expect fun functionMismatchedParameterNames39(i: Int, s: String)
 
 // hasStableParameterNames=false
-@kotlin.commonizer.ObjCCallable
+@kotlin.commonizer.ObjCCallable @kotlinx.cinterop.ObjCMethod("fmpn40:s:", "", false)
 expect fun functionMismatchedParameterNames40(i: Int, s: String)
 
 // hasStableParameterNames=false
-@kotlin.commonizer.ObjCCallable
+@kotlin.commonizer.ObjCCallable @kotlinx.cinterop.ObjCMethod("fmpn41:arg1:", "", false)
 expect fun functionMismatchedParameterNames41(arg0: Int, arg1: String)
 
 // hasStableParameterNames=false
-@kotlin.commonizer.ObjCCallable
+@kotlin.commonizer.ObjCCallable @kotlinx.cinterop.ObjCMethod("fmpn42:arg1:", "", false)
 expect fun functionMismatchedParameterNames42(arg0: Int, arg1: String)
 
 // hasStableParameterNames=false
-@kotlin.commonizer.ObjCCallable
+@kotlin.commonizer.ObjCCallable @kotlinx.cinterop.ObjCMethod("fmpn43:arg1:", "", false)
 expect fun functionMismatchedParameterNames43(arg0: Int, arg1: String)
 
-@kotlin.commonizer.ObjCCallable
+@kotlin.commonizer.ObjCCallable @kotlinx.cinterop.ObjCMethod("ofpn:s", "", false)
 expect fun overloadedFunctionByParameterNames(i: Int, s: String)
 
-@kotlin.commonizer.ObjCCallable
+@kotlin.commonizer.ObjCCallable @kotlinx.cinterop.ObjCMethod("ofpn:xs", "", false)
 expect fun overloadedFunctionByParameterNames(xi: Int, xs: String)
 
 expect inline fun inlineFunction1(lazyMessage: () -> String)
