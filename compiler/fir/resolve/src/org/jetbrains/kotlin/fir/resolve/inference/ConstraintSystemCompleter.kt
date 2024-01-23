@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraint
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
-import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 
@@ -47,7 +46,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         candidateReturnType: ConeKotlinType,
         context: ResolutionContext,
         collectVariablesFromContext: Boolean = false,
-        analyze: (PostponedResolvedAtom) -> Unit,
+        analyze: (PostponedResolvedAtom, Boolean) -> Unit,
     ) = c.runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, collectVariablesFromContext, analyze)
 
     private fun ConstraintSystemCompletionContext.runCompletion(
@@ -56,7 +55,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         topLevelType: ConeKotlinType,
         context: ResolutionContext,
         collectVariablesFromContext: Boolean = false,
-        analyze: (PostponedResolvedAtom) -> Unit,
+        analyze: (PostponedResolvedAtom, Boolean) -> Unit,
     ) {
         val topLevelTypeVariables = topLevelType.extractTypeVariables()
 
@@ -75,8 +74,10 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             ) return
 
             // Stage 1: analyze postponed arguments with fixed parameter types
-            if (analyzeArgumentWithFixedParameterTypes(languageVersionSettings, postponedArguments, analyze))
-                continue
+            if (analyzeArgumentWithFixedParameterTypes(languageVersionSettings, postponedArguments) {
+                    analyze(it, /* withPCLASession = */ false)
+                }
+            ) continue
 
             val isThereAnyReadyForFixationVariable = findFirstVariableForFixation(
                 collectVariablesFromContext,
@@ -141,8 +142,10 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             }
 
             // Stage 5: analyze the next ready postponed argument
-            if (analyzeNextReadyPostponedArgument(languageVersionSettings, postponedArguments, completionMode, analyze))
-                continue
+            if (analyzeNextReadyPostponedArgument(languageVersionSettings, postponedArguments, completionMode) {
+                    analyze(it, /* withPCLASession = */ false)
+                }
+            ) continue
 
             // Stage 6: fix next ready type variable with proper constraints
             if (fixNextReadyVariable(completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext, postponedArguments))
@@ -159,8 +162,10 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             if (completionMode == ConstraintSystemCompletionMode.PCLA_POSTPONED_CALL) {
                 // Complete all lambdas, maybe with fixing type variables used as top-level input types.
                 // It's necessary because we need to process all data-flow info before going to the next statement.
-                if (analyzeRemainingNotAnalyzedPostponedArgument(postponedArguments, analyze))
-                    continue
+                if (analyzeRemainingNotAnalyzedPostponedArgument(postponedArguments) {
+                        analyze(it, /* withPCLASession = */ false)
+                    }
+                ) continue
             }
 
             // Stage 8: report "not enough information" for uninferred type variables
@@ -176,8 +181,10 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
             // Stage 9: force analysis of remaining not analyzed postponed arguments and rerun stages if there are
             if (completionMode.allLambdasShouldBeAnalyzed) {
-                if (analyzeRemainingNotAnalyzedPostponedArgument(postponedArguments, analyze))
-                    continue
+                if (analyzeRemainingNotAnalyzedPostponedArgument(postponedArguments) {
+                        analyze(it, /* withPCLASession = */ false)
+                    }
+                ) continue
             }
 
             break
@@ -236,7 +243,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
     private fun ConstraintSystemCompletionContext.tryToCompleteWithPCLA(
         completionMode: ConstraintSystemCompletionMode,
         postponedArguments: List<PostponedResolvedAtom>,
-        analyze: (PostponedResolvedAtom) -> Unit,
+        analyze: (PostponedResolvedAtom, Boolean) -> Unit,
     ): Boolean {
         if (!completionMode.allLambdasShouldBeAnalyzed) return false
 
@@ -250,7 +257,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             val notFixedInputTypeVariables = argument.inputTypes.flatMap { it.extractTypeVariables() }.filter { it !in fixedTypeVariables }
 
             if (notFixedInputTypeVariables.isEmpty()) continue
-            analyze(argument)
+            analyze(argument, /* withPCLASession = */ true)
 
             anyAnalyzed = true
         }

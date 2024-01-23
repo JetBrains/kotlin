@@ -118,6 +118,7 @@ class FirOverloadByLambdaReturnTypeResolver(
                 firstAtom,
                 firstCandidate,
                 forOverloadByLambdaReturnType = true,
+                withPCLASession = false,
             )
             while (iterator.hasNext()) {
                 val (candidate, atom) = iterator.next()

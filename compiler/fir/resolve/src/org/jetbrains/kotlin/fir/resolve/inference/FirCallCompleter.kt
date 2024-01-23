@@ -182,8 +182,8 @@ class FirCallCompleter(
             listOf(call),
             initialType,
             transformer.resolutionContext
-        ) {
-            analyzer.analyze(candidate.system, it, candidate)
+        ) { atom, withPCLASession ->
+            analyzer.analyze(candidate.system, atom, candidate, withPCLASession)
         }
     }
 
