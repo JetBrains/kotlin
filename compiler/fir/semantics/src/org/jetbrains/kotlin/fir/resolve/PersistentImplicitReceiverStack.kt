@@ -71,9 +71,9 @@ class PersistentImplicitReceiverStack private constructor(
         )
     }
 
-    override operator fun get(name: String?): ImplicitReceiverValue<*>? {
-        if (name == null) return stack.lastOrNull()
-        return receiversPerLabel[Name.identifier(name)].lastOrNull()
+    override operator fun get(name: String?): Set<ImplicitReceiverValue<*>> {
+        if (name == null) return stack.lastOrNull()?.let(::setOf).orEmpty()
+        return receiversPerLabel[Name.identifier(name)]
     }
 
     override fun lastDispatchReceiver(): ImplicitDispatchReceiverValue? {

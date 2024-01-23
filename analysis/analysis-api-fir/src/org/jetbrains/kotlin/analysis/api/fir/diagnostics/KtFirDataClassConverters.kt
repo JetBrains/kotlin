@@ -317,6 +317,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.AMBIGUOUS_LABEL) { firDiagnostic ->
+        AmbiguousLabelImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.DESERIALIZATION_ERROR) { firDiagnostic ->
         DeserializationErrorImpl(
             firDiagnostic as KtPsiDiagnostic,

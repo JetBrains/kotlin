@@ -923,8 +923,8 @@ class BodyResolveContext(
                     }
                 } ?: f()
             } else {
-                addInaccessibleImplicitReceiverValue(owningClass, holder)
                 withTowerDataCleanup {
+                    addInaccessibleImplicitReceiverValue(owningClass, holder)
                     addLocalScope(buildSecondaryConstructorParametersScope(constructor, holder.session))
                     constructor.valueParameters.forEach { storeVariable(it, holder.session) }
                     f()

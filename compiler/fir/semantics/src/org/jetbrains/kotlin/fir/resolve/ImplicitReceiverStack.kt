@@ -9,9 +9,16 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 
 abstract class ImplicitReceiverStack : Iterable<ImplicitReceiverValue<*>> {
-    abstract operator fun get(name: String?): ImplicitReceiverValue<*>?
+    abstract operator fun get(name: String?): Set<ImplicitReceiverValue<*>>
 
     abstract fun lastDispatchReceiver(): ImplicitDispatchReceiverValue?
     abstract fun lastDispatchReceiver(lookupCondition: (ImplicitReceiverValue<*>) -> Boolean): ImplicitDispatchReceiverValue?
     abstract fun receiversAsReversed(): List<ImplicitReceiverValue<*>>
+}
+
+inline fun Set<ImplicitReceiverValue<*>>.ifMoreThanOne(
+    block: () -> Set<ImplicitReceiverValue<*>>,
+) = when {
+    size > 1 -> block()
+    else -> this
 }

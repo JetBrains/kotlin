@@ -179,6 +179,7 @@ object FirErrors {
     val INVISIBLE_REFERENCE: KtDiagnosticFactory3<FirBasedSymbol<*>, Visibility, ClassId?> = KtDiagnosticFactory3("INVISIBLE_REFERENCE", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class)
     val UNRESOLVED_REFERENCE: KtDiagnosticFactory2<String, String?> = KtDiagnosticFactory2("UNRESOLVED_REFERENCE", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class)
     val UNRESOLVED_LABEL: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNRESOLVED_LABEL", ERROR, SourceElementPositioningStrategies.LABEL, PsiElement::class)
+    val AMBIGUOUS_LABEL: KtDiagnosticFactory0 = KtDiagnosticFactory0("AMBIGUOUS_LABEL", ERROR, SourceElementPositioningStrategies.LABEL, PsiElement::class)
     val DESERIALIZATION_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("DESERIALIZATION_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val ERROR_FROM_JAVA_RESOLUTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("ERROR_FROM_JAVA_RESOLUTION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val MISSING_STDLIB_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("MISSING_STDLIB_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)

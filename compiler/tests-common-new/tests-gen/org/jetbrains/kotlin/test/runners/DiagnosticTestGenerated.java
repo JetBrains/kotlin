@@ -82,6 +82,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Test
+    @TestMetadata("ambiguousLabelInExtensionFunctionWithOuterClass.kt")
+    public void testAmbiguousLabelInExtensionFunctionWithOuterClass() {
+      runTest("compiler/testData/diagnostics/tests/ambiguousLabelInExtensionFunctionWithOuterClass.kt");
+    }
+
+    @Test
     @TestMetadata("ambiguousLabelInSuper.kt")
     public void testAmbiguousLabelInSuper() {
       runTest("compiler/testData/diagnostics/tests/ambiguousLabelInSuper.kt");
