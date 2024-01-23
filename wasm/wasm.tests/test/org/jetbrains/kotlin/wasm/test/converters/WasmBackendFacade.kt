@@ -102,7 +102,7 @@ class WasmBackendFacade(
             propertyLazyInitialization = true,
             generateTypeScriptFragment = generateDts
         )
-        val generateWat = debugMode >= DebugMode.DEBUG
+        val generateWat = debugMode >= DebugMode.DEBUG || configuration.getBoolean(JSConfigurationKeys.WASM_GENERATE_WAT)
         val baseFileName = "index"
 
         val compilerResult = compileWasm(
