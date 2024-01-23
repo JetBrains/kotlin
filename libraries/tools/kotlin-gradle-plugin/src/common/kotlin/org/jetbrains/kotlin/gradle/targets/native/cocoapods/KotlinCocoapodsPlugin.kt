@@ -404,7 +404,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project.registerTask<DummyFrameworkTask>(DUMMY_FRAMEWORK_TASK_NAME) { task ->
             task.frameworkName.convention(cocoapodsExtension.podFrameworkName)
             task.useStaticFramework.convention(cocoapodsExtension.podFrameworkIsStatic)
-            task.outputFramework.convention(project.layout.cocoapodsBuildDirs.framework.map { it.dir(task.frameworkName.get() + ".framework") })
         }
     }
 
