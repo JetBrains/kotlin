@@ -242,14 +242,14 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
                 println("------------------")
                 println()
                 for (okModule in okModules) {
-                    println("${okModule.data.estimatedPathInProject}: ${okModule.targetInfo}")
+                    println("${okModule.data.estimatedNameInProject}: ${okModule.targetInfo}")
                 }
                 println()
                 println("COMPILATION ERRORS")
                 println("------------------")
                 println()
                 for (errorModule in errorModules.filter { it.jvmInternalError == null }) {
-                    println("${errorModule.data.estimatedPathInProject}: ${errorModule.targetInfo}")
+                    println("${errorModule.data.estimatedNameInProject}: ${errorModule.targetInfo}")
                     println("        1st error: ${errorModule.compilationError}")
                 }
                 println()
@@ -257,7 +257,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
                 println("------------------")
                 println()
                 for (errorModule in errorModules.filter { it.jvmInternalError != null }) {
-                    println("${errorModule.data.estimatedPathInProject}: ${errorModule.targetInfo}")
+                    println("${errorModule.data.estimatedNameInProject}: ${errorModule.targetInfo}")
                     println("        1st error: ${errorModule.jvmInternalError?.shorten()}")
                 }
                 val crashedModuleGroups = crashedModules.groupBy { it.exceptionMessage.take(60) }
@@ -267,7 +267,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
                     println("--------------------------------------------------------")
                     println()
                     for (module in modules) {
-                        println("${module.data.estimatedPathInProject}: ${module.targetInfo}")
+                        println("${module.data.estimatedNameInProject}: ${module.targetInfo}")
                         println("        ${module.exceptionMessage}")
                     }
                 }
