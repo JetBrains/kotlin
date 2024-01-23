@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.isKtFile;
+
 public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunctionStub>
         implements KtFunction, KtDeclarationWithInitializer {
     public KtNamedFunction(@NotNull ASTNode node) {
@@ -246,7 +248,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Override
     public boolean isLocal() {
         PsiElement parent = getParent();
-        return !(parent instanceof KtFile || parent instanceof KtClassBody || parent.getParent() instanceof KtScript);
+        return !(isKtFile(parent) || parent instanceof KtClassBody || parent.getParent() instanceof KtScript);
     }
 
     public boolean isAnonymous() {
@@ -259,7 +261,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
             return stub.isTopLevel();
         }
 
-        return getParent() instanceof KtFile;
+        return isKtFile(getParent());
     }
 
     @SuppressWarnings({"unused", "MethodMayBeStatic"}) //keep for compatibility with potential plugins
