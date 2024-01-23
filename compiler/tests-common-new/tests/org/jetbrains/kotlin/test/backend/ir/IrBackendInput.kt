@@ -119,9 +119,11 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
             get() = state.diagnosticReporter as BaseDiagnosticsCollector
     }
 
-    // Actually, class won't be used as a real input for the Native backend during blackbox testing, since such testing is done via a different engine.
-    // In irText tests, this class is used only to hold Native-specific FIR2IR output (module fragments) to render and dump IR.
-    // So, other fields are actually not needed: source files, icData, error flag, serialization lambda, etc...
+    /**
+     * Note: For the classic frontend both [firMangler] and [metadataSerializer] are null.
+     * The latter is because the Native backend uses
+     * [org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer] which serializes a whole module.
+     */
     class NativeBackendInput(
         override val irModuleFragment: IrModuleFragment,
         override val irPluginContext: IrPluginContext,
@@ -129,5 +131,6 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
+        val metadataSerializer: KlibSingleFileMetadataSerializer<*>?,
     ) : IrBackendInput()
 }
