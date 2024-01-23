@@ -89,7 +89,8 @@ class ErrorNodeDiagnosticCollectorComponent(
             is ConeUnresolvedNameError, is ConeInstanceAccessBeforeSuperCall, is ConeAmbiguousSuper -> true
             is ConeSimpleDiagnostic -> diagnostic.kind == DiagnosticKind.NotASupertype ||
                     diagnostic.kind == DiagnosticKind.SuperNotAvailable ||
-                    diagnostic.kind == DiagnosticKind.UnresolvedLabel
+                    diagnostic.kind == DiagnosticKind.UnresolvedLabel ||
+                    diagnostic.kind == DiagnosticKind.AmbiguousLabel
             else -> false
         }
     }

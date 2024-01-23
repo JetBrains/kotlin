@@ -1,0 +1,5 @@
+/labelClashesWithContextReceivers.fir.kt:(191,196): error: Ambiguous label.
+
+/labelClashesWithContextReceivers.fir.kt:(281,286): error: Ambiguous label.
+
+/labelClashesWithContextReceivers.fir.kt:(387,397): error: Ambiguous label.

@@ -429,22 +429,33 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
         }
         is FirThisReference -> {
             val labelName = calleeReference.labelName
-            val implicitReceiver = implicitReceiverStack[labelName]
+            val possibleImplicitReceivers = implicitReceiverStack[labelName]
             buildResolvedTypeRef {
                 source = null
-                type = implicitReceiver?.type ?: ConeErrorType(
-                    ConeSimpleDiagnostic(
-                        "Unresolved this@$labelName",
-                        DiagnosticKind.UnresolvedLabel
+                type = when {
+                    possibleImplicitReceivers.size >= 2 -> ConeErrorType(
+                        ConeSimpleDiagnostic("Ambiguous this@$labelName", DiagnosticKind.AmbiguousLabel)
                     )
-                )
+                    possibleImplicitReceivers.isEmpty() -> ConeErrorType(
+                        ConeSimpleDiagnostic("Unresolved this@$labelName", DiagnosticKind.UnresolvedLabel)
+                    )
+                    else -> possibleImplicitReceivers.single().type
+                }
             }
         }
         is FirSuperReference -> {
             val labelName = calleeReference.labelName
             val implicitReceiver =
-                if (labelName != null) implicitReceiverStack[labelName] as? ImplicitDispatchReceiverValue
-                else implicitReceiverStack.lastDispatchReceiver()
+                if (labelName != null) {
+                    implicitReceiverStack[labelName].ifMoreThanOne {
+                        return buildErrorTypeRef {
+                            source = calleeReference.source
+                            diagnostic = ConeSimpleDiagnostic("Ambiguous this@$labelName", DiagnosticKind.AmbiguousLabel)
+                        }
+                    }.singleOrNull() as? ImplicitDispatchReceiverValue
+                } else {
+                    implicitReceiverStack.lastDispatchReceiver()
+                }
             val resolvedTypeRef =
                 calleeReference.superTypeRef as? FirResolvedTypeRef
                     ?: implicitReceiver?.boundSymbol?.fir?.superTypeRefs?.singleOrNull() as? FirResolvedTypeRef

@@ -7,20 +7,20 @@ class Some {
     context(Some, String)
     fun foo() {
         //this@foo
-        this@Some
+        this<!AMBIGUOUS_LABEL!>@Some<!>
         this@String
     }
 
     context(Some)
     val self: Some
-        get() = this@Some
+        get() = this<!AMBIGUOUS_LABEL!>@Some<!>
 }
 
 private typealias Extension = TypedThis
 
 class TypedThis {
     fun TypedThis.baz() {
-        this@TypedThis
+        this<!AMBIGUOUS_LABEL!>@TypedThis<!>
     }
 
     fun Extension.bar() {
