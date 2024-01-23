@@ -558,7 +558,7 @@ object Generators : TemplateGroupBase() {
 
         doc {
             """
-            Splits the original ${f.collection} into pair of lists,
+            Splits the original ${f.collection} into a pair of lists,
             where *first* list contains elements for which [predicate] yielded `true`,
             while *second* list contains elements for which [predicate] yielded `false`.
             """
@@ -589,7 +589,7 @@ object Generators : TemplateGroupBase() {
         specialFor(CharSequences, Strings) {
             doc {
                 """
-                Splits the original ${f.collection} into pair of ${f.collection}s,
+                Splits the original ${f.collection} into a pair of ${f.collection}s,
                 where *first* ${f.collection} contains characters for which [predicate] yielded `true`,
                 while *second* ${f.collection} contains characters for which [predicate] yielded `false`.
                 """

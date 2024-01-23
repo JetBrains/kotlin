@@ -57,7 +57,7 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
     private val Int.bitOffset: Int
         get() = this % ELEMENT_SIZE
 
-    // Transforms a bit index in the set into pair of a `bits` element index and a bit index in the element.
+    // Transforms a bit index in the set into a pair of a `bits` element index and a bit index in the element.
     private val Int.asBitCoordinates: Pair<Int, Int>
         get() = Pair(elementIndex, bitOffset)
 
