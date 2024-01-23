@@ -10,12 +10,19 @@ class BirElementDynamicPropertyManager {
     private var totalTokenRegistrations = 0
 
     fun <E : BirElement, T> acquireProperty(key: BirElementDynamicPropertyKey<E, T>): BirElementDynamicPropertyToken<E, T> {
-        val classData = getElementClassData(key.elementType.id)
+        val possibleClasses = when (val type = key.elementType) {
+            is BirElementClass<*> -> setOf(type)
+            is BirElementUnionType<*> -> type.possibleClasses
+        }
 
-        refreshKeysFromAncestors(classData)
-        classData.allKeys += key
-        classData.allKeyCount = classData.allKeys.size
-        totalTokenRegistrations++
+        for (elementClass in possibleClasses) {
+            val classData = getElementClassData(elementClass.id)
+
+            refreshKeysFromAncestors(classData)
+            classData.allKeys += key
+            classData.allKeyCount = classData.allKeys.size
+            totalTokenRegistrations++
+        }
 
         return BirElementDynamicPropertyToken(this, key)
     }
@@ -90,7 +97,7 @@ class BirElementDynamicPropertyManager {
 }
 
 class BirElementDynamicPropertyKey<E : BirElement, T>(
-    internal val elementType: BirElementClass<E>,
+    internal val elementType: BirElementType<E>,
 )
 
 class BirElementDynamicPropertyToken<E : BirElement, T> internal constructor(
