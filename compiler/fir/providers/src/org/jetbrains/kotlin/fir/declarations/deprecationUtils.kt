@@ -248,7 +248,7 @@ private fun FirAnnotation.getDeprecationLevel(): DeprecationLevelValue? {
 
     val targetName = argument.extractEnumValueArgumentInfo()?.enumEntryName?.asString() ?: return null
 
-    return DeprecationLevelValue.values().find { it.name == targetName }
+    return DeprecationLevelValue.entries.find { it.name == targetName }
 }
 
 private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
