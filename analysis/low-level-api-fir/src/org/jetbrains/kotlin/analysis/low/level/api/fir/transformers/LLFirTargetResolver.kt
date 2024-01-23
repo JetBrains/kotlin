@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
@@ -172,9 +173,12 @@ internal abstract class LLFirTargetResolver(
             lockProvider.withJumpingLock(
                 target,
                 resolverPhase,
-                action = {
+                actionUnderLock = {
                     doLazyResolveUnderLock(target)
                     updatePhaseForDeclarationInternals(target)
+                },
+                actionOnCycle = {
+                    handleCycleInResolution(target)
                 }
             )
         } else {
@@ -182,6 +186,19 @@ internal abstract class LLFirTargetResolver(
                 doLazyResolveUnderLock(target)
             }
         }
+    }
+
+    /**
+     * Will be executed in the case of detected cycle between elements during jumping resolve.
+     *
+     * **There is no guaranties that [target] is guarded by the lock of the current thread**
+     *
+     * @param target an element with detected cycle
+     *
+     * @see LLFirLockProvider.withJumpingLock
+     */
+    protected open fun handleCycleInResolution(target: FirElementWithResolveState) {
+        errorWithFirSpecificEntries("Resolution cycle is detected", fir = target)
     }
 
     /**

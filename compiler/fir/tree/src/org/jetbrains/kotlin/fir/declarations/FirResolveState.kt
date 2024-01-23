@@ -1,14 +1,14 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations
 
-import java.util.concurrent.CountDownLatch
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
+import java.util.concurrent.CountDownLatch
 
 /**
  * The current lazy resolve state of some [org.jetbrains.kotlin.fir.FirElementWithResolveState].
@@ -99,10 +99,9 @@ class FirInProcessOfResolvingToPhaseStateWithoutBarrier private constructor(
  *
  * @see FirResolveState
  */
-class FirInProcessOfResolvingToPhaseStateWithBarrier(
-    override val resolvingTo: FirResolvePhase,
-    val barrier: CountDownLatch,
-) : FirInProcessOfResolvingToPhaseState() {
+class FirInProcessOfResolvingToPhaseStateWithBarrier(override val resolvingTo: FirResolvePhase) : FirInProcessOfResolvingToPhaseState() {
+    val barrier: CountDownLatch = CountDownLatch(1)
+
     init {
         require(resolvingTo != FirResolvePhase.RAW_FIR) {
             "Cannot resolve to ${FirResolvePhase.RAW_FIR} as it's a first phase"
@@ -110,4 +109,26 @@ class FirInProcessOfResolvingToPhaseStateWithBarrier(
     }
 
     override fun toString(): String = "ResolvingToWithBarrier($resolvingTo)"
+}
+
+/**
+ * The class representing the lazy resolve state of some [FirElementWithResolveState] in a case
+ * when some thread is resolving it from [resolvePhase] to [resolvingTo] and potentially can have a cycle
+ * between threads.
+ *
+ * Some other threads can wait on a [latch].
+ *
+ * [waitingFor] shows that the current state is waining for the result of another [FirElementWithResolveState] element.
+ * This another element can be in the process of resolution as from the same thread and also from another thread.
+ * In the second case the current thread will wait on the corresponding [latch].
+ *
+ * @see FirResolveState
+ */
+class FirInProcessOfResolvingToJumpingPhaseState(override val resolvingTo: FirResolvePhase) : FirInProcessOfResolvingToPhaseState() {
+    val latch = CountDownLatch(1)
+
+    @Volatile
+    var waitingFor: FirInProcessOfResolvingToJumpingPhaseState? = null
+
+    override fun toString(): String = "ResolvingJumpingTo($resolvingTo)"
 }
