@@ -107,7 +107,7 @@ object FirJsNameClashClassMembersChecker : FirClassChecker() {
                         )
                         addAllSymbolsFrom(nonSubsumedOverriddenSymbols, sessionHolder)
                         for (intersectedSymbol in nonSubsumedOverriddenSymbols) {
-                            overrideIntersections.getOrPut(intersectedSymbol) { hashSetOf() }.addAll(symbol.intersections)
+                            overrideIntersections.getOrPut(intersectedSymbol) { hashSetOf() }.addAll(nonSubsumedOverriddenSymbols)
                         }
                     }
                     else -> allSymbols.add(symbol)
