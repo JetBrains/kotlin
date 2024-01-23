@@ -365,7 +365,7 @@ public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
      * the one with zero at least significant bit of mantissa is selected.
      */
     @kotlin.internal.InlineOnly
-    public inline fun toFloat(): Float = this.toDouble().toFloat()
+    public inline fun toFloat(): Float = ulongToFloat(data)
     /**
      * Converts this [ULong] value to [Double].
      *
@@ -437,7 +437,7 @@ public inline fun Long.toULong(): ULong = ULong(this)
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
-public inline fun Float.toULong(): ULong = doubleToULong(this.toDouble())
+public inline fun Float.toULong(): ULong = floatToULong(this)
 /**
  * Converts this [Double] value to [ULong].
  *

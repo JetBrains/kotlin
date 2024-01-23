@@ -320,7 +320,7 @@ public value class UInt @kotlin.internal.IntrinsicConstEvaluation @PublishedApi 
      * whereas the most significant 32 bits are filled with zeros.
      */
     @kotlin.internal.InlineOnly
-    public inline fun toLong(): Long = data.toLong() and 0xFFFF_FFFF
+    public inline fun toLong(): Long = uintToLong(data)
 
     /**
      * Converts this [UInt] value to [UByte].
@@ -354,7 +354,7 @@ public value class UInt @kotlin.internal.IntrinsicConstEvaluation @PublishedApi 
      * whereas the most significant 32 bits are filled with zeros.
      */
     @kotlin.internal.InlineOnly
-    public inline fun toULong(): ULong = ULong(data.toLong() and 0xFFFF_FFFF)
+    public inline fun toULong(): ULong = uintToULong(data)
 
     /**
      * Converts this [UInt] value to [Float].
@@ -364,7 +364,7 @@ public value class UInt @kotlin.internal.IntrinsicConstEvaluation @PublishedApi 
      * the one with zero at least significant bit of mantissa is selected.
      */
     @kotlin.internal.InlineOnly
-    public inline fun toFloat(): Float = this.toDouble().toFloat()
+    public inline fun toFloat(): Float = uintToFloat(data)
     /**
      * Converts this [UInt] value to [Double].
      *
@@ -373,7 +373,7 @@ public value class UInt @kotlin.internal.IntrinsicConstEvaluation @PublishedApi 
     @kotlin.internal.InlineOnly
     public inline fun toDouble(): Double = uintToDouble(data)
 
-    public override fun toString(): String = toLong().toString()
+    public override fun toString(): String = uintToString(data)
 
 }
 
@@ -434,7 +434,7 @@ public inline fun Long.toUInt(): UInt = UInt(this.toInt())
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
-public inline fun Float.toUInt(): UInt = doubleToUInt(this.toDouble())
+public inline fun Float.toUInt(): UInt = floatToUInt(this)
 /**
  * Converts this [Double] value to [UInt].
  *

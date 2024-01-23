@@ -36,7 +36,7 @@ public /*inline*/ fun UShort.toString(radix: Int): String = this.toInt().toStrin
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalUnsignedTypes::class)
 //@kotlin.internal.InlineOnly
-public /*inline*/ fun UInt.toString(radix: Int): String = this.toLong().toString(radix)
+public /*inline*/ fun UInt.toString(radix: Int): String = uintToString(this.toInt(), checkRadix(radix))
 
 /**
  * Returns a string representation of this [Long] value in the specified [radix].

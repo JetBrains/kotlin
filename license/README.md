@@ -65,7 +65,15 @@ the Kotlin IntelliJ IDEA plugin:
       - License: Apache 2 ([license/third_party/gwt_license.txt][gwt])
       - Origin: Derived from GWT, (C) 2007-08 Google Inc.
 
- - Path: libraries/stdlib/unsigned/src/kotlin/UnsignedUtils.kt
+ - Path: libraries/stdlib/js/src/kotlin/UnsignedJs.kt
+      - License: Apache 2 ([license/third_party/guava_license.txt][guava])
+      - Origin: Derived from Guava's UnsignedLongs, (C) 2011 The Guava Authors
+
+ - Path: libraries/stdlib/jvm/src/kotlin/util/UnsignedJVM.kt
+      - License: Apache 2 ([license/third_party/guava_license.txt][guava])
+      - Origin: Derived from Guava's UnsignedLongs, (C) 2011 The Guava Authors
+
+ - Path: kotlin-native/runtime/src/main/kotlin/kotlin/Unsigned.kt
       - License: Apache 2 ([license/third_party/guava_license.txt][guava])
       - Origin: Derived from Guava's UnsignedLongs, (C) 2011 The Guava Authors
 
