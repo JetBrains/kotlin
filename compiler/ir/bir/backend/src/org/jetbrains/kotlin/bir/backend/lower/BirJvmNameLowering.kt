@@ -49,6 +49,6 @@ class BirJvmNameLowering : BirLoweringPhase() {
     }
 
     companion object {
-        val JvmName = BirElementDynamicPropertyKey<BirFunction, Name>()
+        val JvmName = BirElementDynamicPropertyKey<_, Name>(BirFunction)
     }
 }

@@ -38,7 +38,7 @@ abstract class BirInventNamesForLocalClassesLowering(
         function.isSuspend && function.correspondingPropertySymbol == null && function.body != null && function.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
     }
 
-    private val localNameScopeKey = acquireTemporaryProperty<BirElement, LocalNameScope>()
+    private val localNameScopeKey = acquireTemporaryProperty<_, LocalNameScope>(BirElement)
     private val originalBeforeInlineKey = acquireProperty(GlobalBirElementDynamicProperties.OriginalBeforeInline)
 
     private val anonymousClassesCount = mutableMapOf<String, Int>()
