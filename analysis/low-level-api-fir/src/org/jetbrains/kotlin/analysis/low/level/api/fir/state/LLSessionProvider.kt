@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
@@ -16,13 +14,12 @@ class LLSessionProvider(
     val useSiteModule: KtModule,
     private val useSiteSessionFactory: (KtModule) -> LLFirSession
 ) {
-    private val useSiteSessionCached = CachedValuesManager.getManager(useSiteModule.project).createCachedValue {
-        val session = useSiteSessionFactory(useSiteModule)
-        CachedValueProvider.Result.create(session, session.createValidityTracker())
-    }
-
-    val useSiteSession: LLFirSession
-        get() = useSiteSessionCached.value
+    /**
+     * The [LLFirSession] must be strongly reachable from the resolvable session and ultimately the `KtFirAnalysisSession` so that soft
+     * reference garbage collection doesn't collect the [LLFirSession] without collecting its dependent `KtFirAnalysisSession`. See
+     * [LLFirSession] for more details.
+     */
+    val useSiteSession: LLFirSession by lazy(LazyThreadSafetyMode.PUBLICATION) { useSiteSessionFactory(useSiteModule) }
 
     /**
      * Returns a [FirSession] for the [module].
