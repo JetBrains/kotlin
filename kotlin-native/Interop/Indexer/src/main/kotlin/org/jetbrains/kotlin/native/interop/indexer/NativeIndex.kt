@@ -101,9 +101,6 @@ data class CompilationWithPCH(
 }
 
 /**
- *
- *  @param objCClassesIncludingCategories Objective-C classes that should be merged with categories from the same file.
- *
  * TODO: Compilation hierarchy seems to require some refactoring.
  */
 data class NativeLibrary(
@@ -115,7 +112,6 @@ data class NativeLibrary(
         val excludeSystemLibs: Boolean, // TODO: drop?
         val headerExclusionPolicy: HeaderExclusionPolicy,
         val headerFilter: NativeLibraryHeaderFilter,
-        val objCClassesIncludingCategories: Set<String>,
 ) : Compilation
 
 data class IndexerResult(val index: NativeIndex, val compilation: CompilationWithPCH)

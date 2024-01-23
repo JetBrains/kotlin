@@ -509,8 +509,6 @@ internal fun prepareTool(target: String?, flavor: KotlinPlatform, runFromDaemon:
             if (!runFromDaemon) it.prepare() // Daemon prepares the tool himself. (See KonanToolRunner.kt)
         }
 
-internal val predefinedObjCClassesIncludingCategories: Set<String> by lazy { setOf("NSView", "UIView") }
-
 internal fun buildNativeLibrary(
         tool: ToolConfig,
         def: DefFile,
@@ -575,7 +573,6 @@ internal fun buildNativeLibrary(
 
     val headerExclusionPolicy = HeaderExclusionPolicyImpl(imports)
 
-    val objCClassesIncludingCategories = def.config.objcClassesIncludingCategories.toSet() + predefinedObjCClassesIncludingCategories
     return NativeLibrary(
             includes = includes,
             additionalPreambleLines = compilation.additionalPreambleLines,
@@ -585,7 +582,6 @@ internal fun buildNativeLibrary(
             excludeSystemLibs = excludeSystemLibs,
             headerExclusionPolicy = headerExclusionPolicy,
             headerFilter = headerFilter,
-            objCClassesIncludingCategories = objCClassesIncludingCategories
     )
 }
 
