@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.jvm.compiler.AbstractWriteSignatureTest.Companion.matchExact
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import java.io.File
@@ -23,6 +24,7 @@ data class ModuleData(
     val timestamp: Long,
     val rawOutputDir: String,
     val qualifier: String,
+    val estimatedPathInProject: String,
     val rawClasspath: List<String>,
     val rawSources: List<String>,
     val rawJavaSourceRoots: List<JavaSourceRootData<String>>,
@@ -89,6 +91,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val outputDir = moduleElement.getAttribute("outputDir").value
         val moduleName = moduleElement.getAttribute("name").value
         val moduleNameQualifier = outputDir.substringAfterLast("/")
+        val estimatedPathInProject = ModulePathInProjectRegex.matchEntire(outputDir)?.groups?.get("path")?.value ?: outputDir
         val javaSourceRoots = mutableListOf<JavaSourceRootData<String>>()
         val classpath = mutableListOf<String>()
         val sources = mutableListOf<String>()
@@ -130,6 +133,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             timestamp,
             outputDir,
             moduleNameQualifier,
+            estimatedPathInProject,
             classpath,
             sources,
             javaSourceRoots,
@@ -180,13 +184,17 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             .filter { !it.isCommon }
 
 
-        for (module in modules.progress(step = 0.0) { "Analyzing ${it.qualifiedName}" }) {
+        for (module in modules.progress(step = 0.0) { "Analyzing ${it.estimatedPathInProject}" }) {
             if (processModule(module).stop()) {
                 break
             }
         }
 
         afterPass(pass)
+    }
+
+    companion object {
+        private val ModulePathInProjectRegex = Regex("(/testProject)?/?(?<path>.*?)((/target/classes)|(/build/classes/(kotlin)?(/\\w+)?))")
     }
 }
 
