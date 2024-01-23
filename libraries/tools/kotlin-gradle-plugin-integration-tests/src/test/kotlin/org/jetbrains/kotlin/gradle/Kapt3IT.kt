@@ -1331,4 +1331,16 @@ open class Kapt3IT : Kapt3BaseIT() {
             }
         }
     }
+
+    @DisplayName("KT-65006 Kapt works with the serialization plugin")
+    @GradleTest
+    fun testSerializationPlugin(gradleVersion: GradleVersion) {
+        project("serialization".withPrefix, gradleVersion) {
+            build(":kaptGenerateStubsKotlin") {
+                assertFileInProjectContains("build/tmp/kapt3/stubs/main/foo/Data.java",
+                    "public static final class Companion",
+                    "public static final class \$serializer implements kotlinx.serialization.internal.GeneratedSerializer<foo.Data>")
+            }
+        }
+    }
 }

@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-
 plugins {
     id "java"
     id "org.jetbrains.kotlin.jvm"
@@ -16,8 +14,4 @@ dependencies {
     implementation "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     testImplementation 'junit:junit:4.13.2'
-}
-
-tasks.named("compileKotlin", KotlinJvmCompile) {
-    compilerOptions.allWarningsAsErrors = false // compilation with LV=2.0 prints warning about kapt fallback
 }
