@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.containsErrorCode
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
 import org.jetbrains.kotlin.library.impl.IrArrayMemoryReader
 import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
@@ -337,7 +338,15 @@ internal class KonanIrLinker(
                         else -> CacheDeserializationStrategy.WholeModule
                     }
                     KonanPartialModuleDeserializer(
-                            this, moduleDescriptor, klib, stubGenerator, cachedLibraries, inlineFunctionFiles, strategyResolver, deserializationStrategy
+                            konanIrLinker = this,
+                            moduleDescriptor,
+                            klib,
+                            stubGenerator,
+                            cachedLibraries,
+                            inlineFunctionFiles,
+                            strategyResolver,
+                            cacheDeserializationStrategy = deserializationStrategy,
+                            containsErrorCode = klib.containsErrorCode
                     ).also {
                         moduleDeserializers[moduleDescriptor] = it
                         klibToModuleDeserializerMap[klib] = it

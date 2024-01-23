@@ -44,7 +44,7 @@ internal class KonanPartialModuleDeserializer(
         private val inlineFunctionFiles: MutableMap<IrExternalPackageFragment, IrFile>,
         strategyResolver: (String) -> DeserializationStrategy,
         private val cacheDeserializationStrategy: CacheDeserializationStrategy,
-        containsErrorCode: Boolean = false
+        containsErrorCode: Boolean
 ) : BasicIrModuleDeserializer(konanIrLinker, moduleDescriptor, klib,
         { fileName ->
             if (cacheDeserializationStrategy.contains(fileName))
