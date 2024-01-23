@@ -8,6 +8,7 @@
 import objclib.*
 
 import platform.Foundation.*
+import platform.Foundation.NSNumber
 import kotlin.test.*
 import kotlinx.cinterop.*
 import kotlin.concurrent.Volatile

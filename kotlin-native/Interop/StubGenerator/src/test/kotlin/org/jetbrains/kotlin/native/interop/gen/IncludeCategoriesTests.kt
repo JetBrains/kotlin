@@ -36,13 +36,6 @@ class IncludeCategoriesTests : InteropTestsBase() {
     }
 
     @Test
-    fun `only specific classes include categories`() {
-        val index = buildNativeIndex("IncludeCategories", "includeCategory0.def")
-        val skipClass = index.getObjCClass("SkipClass")
-        assertTrue(skipClass.includedCategories.isEmpty())
-    }
-
-    @Test
     fun `category from another header is not included`() {
         val index = buildNativeIndex("IncludeCategories", "includeCategory0.def")
         val myClass = index.getObjCClass("MyClass")

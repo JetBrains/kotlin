@@ -381,9 +381,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     binaryName = getObjCBinaryName(cursor).takeIf { it != name })
         }) { objcClass ->
             addChildrenToObjCContainer(cursor, objcClass)
-            if (name in this.library.objCClassesIncludingCategories) {
-                objCClassCursorsToIncludeCategories += cursor
-            }
+            objCClassCursorsToIncludeCategories += cursor
         }
     }
 
