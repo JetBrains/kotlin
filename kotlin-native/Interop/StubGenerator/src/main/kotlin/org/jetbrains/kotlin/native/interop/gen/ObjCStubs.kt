@@ -210,7 +210,7 @@ private class ObjCMethodStubBuilder(
                             method.encoding,
                             isStret
                     )
-                    val annotations = buildObjCMethodAnnotations(factoryAnnotation)
+                    val annotations = buildObjCMethodAnnotations(factoryAnnotation).toMutableList()
 
                     val originalReturnType = method.getReturnType(container.clazz)
                     val typeParameter = TypeParameterStub("T", clazz.toStubIrType())
@@ -223,6 +223,15 @@ private class ObjCMethodStubBuilder(
                     val typeArgument = TypeArgumentStub(typeParameter.getStubType(false))
                     val receiverType = ClassifierStubType(KotlinTypes.objCClassOf, listOf(typeArgument))
                     val receiver = ReceiverParameterStub(receiverType)
+
+                    if (isDeprecatedCategoryMethod && annotations.filterIsInstance<AnnotationStub.Deprecated>().isEmpty()) {
+                        annotations += AnnotationStub.Deprecated(
+                                message = "Use class constructor instead",
+                                replaceWith = "",
+                                level = DeprecationLevel.WARNING
+                        )
+                    }
+
                     val createMethod = FunctionStub(
                             "create",
                             returnType,
@@ -231,7 +240,7 @@ private class ObjCMethodStubBuilder(
                             typeParameters = listOf(typeParameter),
                             external = true,
                             origin = StubOrigin.ObjCCategoryInitMethod(method),
-                            annotations = annotations.toMutableList(),
+                            annotations = annotations,
                             modality = MemberStubModality.FINAL
                     )
                     // TODO: Should we deprecate it as well?
