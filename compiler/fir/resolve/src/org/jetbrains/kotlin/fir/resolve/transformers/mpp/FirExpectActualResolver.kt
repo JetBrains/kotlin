@@ -84,6 +84,7 @@ object FirExpectActualResolver {
                         java.io.File("/home/bobko/log").appendText(
                             """
                             resolver
+                                classId: ${actualSymbol.classId}
                                 actual:
                                     source: ${actualSymbol.source}
                                     module: ${actualSymbol.moduleData.let { listOf(it.name, it.platform, it.unique) }.joinToString(prefix = "{", postfix = "}")}
