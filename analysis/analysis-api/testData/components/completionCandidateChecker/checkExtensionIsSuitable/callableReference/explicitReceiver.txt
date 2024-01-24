@@ -16,5 +16,11 @@ substitutor: {T=A<kotlin/Int>}
 extensionWithTypeParameter2: ApplicableAsExtensionCallable
 substitutor: {T=kotlin/Int}
 
+extensionVariableApplicable: ApplicableAsExtensionCallable
+substitutor: empty
+
+extensionVariableWithTypeParameter: ApplicableAsExtensionCallable
+substitutor: {T=A<kotlin/Int>}
+
 localExtensionApplicable: ApplicableAsExtensionCallable
 substitutor: empty

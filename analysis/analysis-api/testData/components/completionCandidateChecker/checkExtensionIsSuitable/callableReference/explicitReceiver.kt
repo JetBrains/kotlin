@@ -12,6 +12,10 @@ fun <T> T.extensionWithTypeParameter1(): T = TODO()
 
 fun <T> A<T>.extensionWithTypeParameter2(p: A<T>): T = TODO()
 
+val Any.extensionVariableApplicable: Int get() = 1
+
+val <T> T.extensionVariableWithTypeParameter: T get() = TODO()
+
 fun test(a: A<Int>) {
     fun Any.localExtensionApplicable() {}
 
