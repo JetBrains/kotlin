@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.test.fail
@@ -35,12 +36,27 @@ fun KtFile.getFunctionOrFail(name: String): KtFunctionSymbol {
 }
 
 context(KtAnalysisSession)
+fun KtFile.getPropertyOrFail(name: String): KtPropertySymbol {
+    return getFileSymbol().getFileScope().getPropertyOrFail(name)
+}
+
+context(KtAnalysisSession)
 fun KtScope.getFunctionOrFail(name: String): KtFunctionSymbol {
     val allSymbols = getCallableSymbols(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing function '$name'")
     if (allSymbols.size > 1) fail("Found multiple functions with name '$name'")
     val symbol = allSymbols.single()
     if (symbol !is KtFunctionSymbol) fail("$symbol is not a function")
+    return symbol
+}
+
+context(KtAnalysisSession)
+fun KtScope.getPropertyOrFail(name: String): KtPropertySymbol {
+    val allSymbols = getCallableSymbols(Name.identifier(name)).toList()
+    if (allSymbols.isEmpty()) fail("Missing property '$name'")
+    if (allSymbols.size > 1) fail("Found multiple callables with name '$name'")
+    val symbol = allSymbols.single()
+    if (symbol !is KtPropertySymbol) fail("$symbol is not a property")
     return symbol
 }
 

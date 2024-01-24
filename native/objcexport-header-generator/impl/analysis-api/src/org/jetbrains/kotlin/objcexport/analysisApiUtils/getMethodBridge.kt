@@ -67,7 +67,6 @@ context(KtAnalysisSession)
 private fun bridgeType(
     type: KtType,
 ): TypeBridge {
-
     val primitiveObjCValueType = when {
         type.isBoolean -> ObjCValueType.BOOL
         type.isChar -> ObjCValueType.UNICHAR
@@ -87,6 +86,11 @@ private fun bridgeType(
 
     if (primitiveObjCValueType != null) {
         return ValueTypeBridge(primitiveObjCValueType)
+    }
+
+    /* If type is inlined, then build the bridge for the inlined target type */
+    type.getInlineTargetTypeOrNull()?.let { inlinedTargetType ->
+        return bridgeType(inlinedTargetType)
     }
 
     if (type.isFunctionType) {

@@ -1,12 +1,14 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getInlineTargetTypeOrNull
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isError
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.objCErrorType
 
@@ -23,50 +25,67 @@ internal fun KtType.translateToObjCReferenceType(): ObjCReferenceType {
  */
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenceType {
+    val fullyExpandedType = fullyExpandedType
+    val classId = (fullyExpandedType as? KtNonErrorClassType)?.classId
 
-    val classId = this.expandedClassSymbol?.classIdIfNonLocal
-    val isInlined = false //TODO: replace when KT-65176 is implemented
-    val isHidden = classId in hiddenTypes
-
-    return if (isError) {
-        objCErrorType
-    } else if (isAny || isHidden || isInlined) {
-        ObjCIdType
-    } else {
-        /**
-         * Simplified version of [org.jetbrains.kotlin.backend.konan.objcexport.CustomTypeMapper]
-         */
-        val typesMap = mutableMapOf<ClassId, String>().apply {
-            this[ClassId.topLevel(StandardNames.FqNames.list)] = "NSArray"
-            this[ClassId.topLevel(StandardNames.FqNames.mutableList)] = "NSMutableArray"
-            this[ClassId.topLevel(StandardNames.FqNames.set)] = "NSSet"
-            this[ClassId.topLevel(StandardNames.FqNames.mutableSet)] = "MutableSet".getObjCKotlinStdlibClassOrProtocolName().objCName
-            this[ClassId.topLevel(StandardNames.FqNames.map)] = "NSDictionary"
-            this[ClassId.topLevel(StandardNames.FqNames.mutableMap)] = "MutableDictionary".getObjCKotlinStdlibClassOrProtocolName().objCName
-            this[ClassId.topLevel(StandardNames.FqNames.string.toSafe())] = "NSString"
-        }
-
-        NSNumberKind.entries.forEach { number ->
-            val numberClassId = number.mappedKotlinClassId
-            if (numberClassId != null) {
-                typesMap[numberClassId] = numberClassId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
-            }
-        }
-
-        val typeName = typesMap[classId]
-            ?: classId!!.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
-
-        val typeArguments = run {
-            if (this !is KtNonErrorClassType) {
-                return@run listOf<ObjCNonNullReferenceType>()
-            }
-
-            ownTypeArguments.mapNotNull { typeArgument -> typeArgument.type }
-                .map { typeArgumentType -> typeArgumentType.mapToReferenceTypeIgnoringNullability() }
-        }
-
-        ObjCClassType(typeName, typeArguments)
+    if (isError) {
+        return objCErrorType
     }
+
+    if (isAny) {
+        return ObjCIdType
+    }
+
+    if (classId in hiddenTypes) {
+        return ObjCIdType
+    }
+
+    /* Check if inline type represents 'regular' inline class */
+    run check@{
+        if (classId == null) return@check
+        val classSymbol = getClassOrObjectSymbolByClassId(classId) ?: return@check
+        if (classSymbol !is KtNamedClassOrObjectSymbol) return@check
+        if (classSymbol.isInline) return ObjCIdType
+    }
+
+    /* 'Irregular' inline class: Not marked as inline, but special K/N type that still gets inlined  */
+    fullyExpandedType.getInlineTargetTypeOrNull()?.let { inlineTargetType ->
+        return inlineTargetType.mapToReferenceTypeIgnoringNullability()
+    }
+
+    /**
+     * Simplified version of [org.jetbrains.kotlin.backend.konan.objcexport.CustomTypeMapper]
+     */
+    val typesMap = mutableMapOf<ClassId, String>().apply {
+        this[ClassId.topLevel(StandardNames.FqNames.list)] = "NSArray"
+        this[ClassId.topLevel(StandardNames.FqNames.mutableList)] = "NSMutableArray"
+        this[ClassId.topLevel(StandardNames.FqNames.set)] = "NSSet"
+        this[ClassId.topLevel(StandardNames.FqNames.mutableSet)] = "MutableSet".getObjCKotlinStdlibClassOrProtocolName().objCName
+        this[ClassId.topLevel(StandardNames.FqNames.map)] = "NSDictionary"
+        this[ClassId.topLevel(StandardNames.FqNames.mutableMap)] = "MutableDictionary".getObjCKotlinStdlibClassOrProtocolName().objCName
+        this[ClassId.topLevel(StandardNames.FqNames.string.toSafe())] = "NSString"
+    }
+
+    NSNumberKind.entries.forEach { number ->
+        val numberClassId = number.mappedKotlinClassId
+        if (numberClassId != null) {
+            typesMap[numberClassId] = numberClassId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
+        }
+    }
+
+    val typeName = typesMap[classId]
+        ?: classId!!.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
+
+    val typeArguments = run {
+        if (this !is KtNonErrorClassType) {
+            return@run listOf<ObjCNonNullReferenceType>()
+        }
+
+        ownTypeArguments.mapNotNull { typeArgument -> typeArgument.type }
+            .map { typeArgumentType -> typeArgumentType.mapToReferenceTypeIgnoringNullability() }
+    }
+
+    return ObjCClassType(typeName, typeArguments)
 }
 
 private fun ObjCNonNullReferenceType.withNullabilityOf(kotlinType: KtType): ObjCReferenceType {

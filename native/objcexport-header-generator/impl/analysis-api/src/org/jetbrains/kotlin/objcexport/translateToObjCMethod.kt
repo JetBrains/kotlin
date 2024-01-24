@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSelectors
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFunctionMethodBridge
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getInlineTargetTypeOrNull
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -284,7 +285,7 @@ private fun String.mangleIfSpecialFamily(prefix: String): String {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.startsWithWords]
  */
 private fun String.startsWithWords(words: String) = this.startsWith(words) &&
-        (this.length == words.length || !this[words.length].isLowerCase())
+    (this.length == words.length || !this[words.length].isLowerCase())
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.MethodBrideExtensionsKt.valueParametersAssociated]
@@ -334,7 +335,7 @@ fun KtFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): 
             if (!returnBridge.successMayBeZero) {
                 check(
                     successReturnType is ObjCNonNullReferenceType
-                            || (successReturnType is ObjCPointerType && !successReturnType.nullable)
+                        || (successReturnType is ObjCPointerType && !successReturnType.nullable)
                 ) {
                     "Unexpected return type: $successReturnType in $this"
                 }
@@ -374,7 +375,18 @@ private fun KtType.mapType(typeBridge: TypeBridge): ObjCType {
             ObjCValueType.UNSIGNED_LONG_LONG -> ObjCPrimitiveType.uint64_t
             ObjCValueType.FLOAT -> ObjCPrimitiveType.float
             ObjCValueType.DOUBLE -> ObjCPrimitiveType.double
-            ObjCValueType.POINTER -> ObjCPointerType(ObjCVoidType, this.isMarkedNullable)
+            ObjCValueType.POINTER -> ObjCPointerType(ObjCVoidType, isBinaryRepresentationNullable())
         }
     }
+}
+
+context(KtAnalysisSession)
+private fun KtType.isBinaryRepresentationNullable(): Boolean {
+    if (fullyExpandedType.isMarkedNullable) return true
+
+    getInlineTargetTypeOrNull()?.let { inlineTargetType ->
+        if (inlineTargetType.isMarkedNullable) return true
+    }
+
+    return false
 }
