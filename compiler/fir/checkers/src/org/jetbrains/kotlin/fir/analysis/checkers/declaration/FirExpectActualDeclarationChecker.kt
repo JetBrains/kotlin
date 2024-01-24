@@ -174,7 +174,10 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 reportClassScopesIncompatibility(symbol, expectedSingleCandidate, declaration, checkingCompatibility, reporter, source, context)
             }
 
-            ExpectActualMatchingCompatibility.MatchedSuccessfully !in matchingCompatibilityToMembersMap -> {
+            ExpectActualMatchingCompatibility.MatchedSuccessfully !in matchingCompatibilityToMembersMap ||
+                    expectedSingleCandidate != null &&
+                    declaration.hasActualModifier() &&
+                    expectedSingleCandidate.isFakeOverride(expectContainingClass, expectActualMatchingContext) -> {
                 reporter.reportOn(
                     source,
                     FirErrors.ACTUAL_WITHOUT_EXPECT,
