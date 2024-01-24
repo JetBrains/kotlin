@@ -1,5 +1,4 @@
-// IGNORE_BACKEND_K2: JVM_IR
-// FIR status: KT-57268 K2: extra methods `remove` and/or `getOrDefault` are generated for Map subclasses with JDK 1.6 in dependencies
+// JVM_ABI_K1_K2_DIFF: KT-65323
 
 class DGenericIterator<T>(d: Iterator<T>) : Iterator<T> by d
 

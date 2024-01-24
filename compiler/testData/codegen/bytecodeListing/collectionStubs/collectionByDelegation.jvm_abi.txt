@@ -1,5 +1,5 @@
 MODULE main
-	CLASS C.class
+	CLASS DGenericCollection.class
 		CLASS METADATA
 			K1
 				getSize()I
@@ -9,7 +9,7 @@ MODULE main
 				---
 			K2
 				size
-	CLASS MC.class
+	CLASS DGenericSet.class
 		CLASS METADATA
 			K1
 				getSize()I
@@ -19,7 +19,7 @@ MODULE main
 				---
 			K2
 				size
-	CLASS L.class
+	CLASS DGenericList.class
 		CLASS METADATA
 			K1
 				getSize()I
@@ -29,37 +29,7 @@ MODULE main
 				---
 			K2
 				size
-	CLASS ML.class
-		CLASS METADATA
-			K1
-				getSize()I
-			K2
-				---
-			K1
-				---
-			K2
-				size
-	CLASS S.class
-		CLASS METADATA
-			K1
-				getSize()I
-			K2
-				---
-			K1
-				---
-			K2
-				size
-	CLASS MS.class
-		CLASS METADATA
-			K1
-				getSize()I
-			K2
-				---
-			K1
-				---
-			K2
-				size
-	CLASS M.class
+	CLASS DGenericMap.class
 		CLASS METADATA
 			K1
 				---
@@ -93,37 +63,41 @@ MODULE main
 				---
 			K2
 				values
-	CLASS MM.class
+	CLASS DGenericMapEntry.class
 		CLASS METADATA
 			K1
-				---
-			K2
-				entries
-			K1
-				getEntries()Ljava/util/Set;
+				getKey()Ljava/lang/Object;
 			K2
 				---
 			K1
-				getKeys()Ljava/util/Set;
+				getValue()Ljava/lang/Object;
 			K2
 				---
+			K1
+				---
+			K2
+				key
+			K1
+				---
+			K2
+				value
+	CLASS DGenericCollectionBySet.class
+		CLASS METADATA
 			K1
 				getSize()I
 			K2
 				---
 			K1
-				getValues()Ljava/util/Collection;
-			K2
 				---
+			K2
+				size
+	CLASS DGenericCollectionByList.class
+		CLASS METADATA
 			K1
-				---
+				getSize()I
 			K2
-				keys
+				---
 			K1
 				---
 			K2
 				size
-			K1
-				---
-			K2
-				values

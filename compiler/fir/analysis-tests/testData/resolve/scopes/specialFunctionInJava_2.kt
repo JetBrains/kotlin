@@ -1,3 +1,4 @@
+// FULL_JDK
 // SCOPE_DUMP: SomeMap:containsKey;containsValue;get;remove, MyMap:containsKey;containsValue;get
 
 // FILE: MyBaseMap.java

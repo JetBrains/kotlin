@@ -1,0 +1,9 @@
+MODULE main
+	CLASS MyMap.class
+		CLASS METADATA
+			PROPERTY getValues()Ljava/util/ArrayList;
+				Property: class.metadata.property.returnType
+					K1
+						java/util/ArrayList<T#1> /* = kotlin/collections/ArrayList^<T#1> */
+					K2
+						java/util/ArrayList<T#1>

@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// JVM_ABI_K1_K2_DIFF: KT-57268, KT-63955, KT-63828
+// JVM_ABI_K1_K2_DIFF: KT-63955, KT-63828
 
 class Itr : Iterator<String> by ArrayList<String>().iterator()
 class MItr : MutableIterator<String> by ArrayList<String>().iterator()

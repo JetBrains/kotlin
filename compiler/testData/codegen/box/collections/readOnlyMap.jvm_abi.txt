@@ -1,6 +1,0 @@
-MODULE main
-	CLASS KMap.class
-		K1
-			---
-		K2
-			remove(Ljava/lang/Object;Ljava/lang/Object;)Z [public]

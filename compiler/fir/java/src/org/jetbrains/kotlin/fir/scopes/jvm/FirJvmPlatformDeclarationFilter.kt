@@ -7,34 +7,28 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.scopes.platformClassMapper
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.name.Name
 
 internal object FirJvmPlatformDeclarationFilter {
-    fun isFunctionAvailable(function: FirSimpleFunction, session: FirSession): Boolean {
+    fun isFunctionAvailable(function: FirSimpleFunction, javaClassScope: FirTypeScope, session: FirSession): Boolean {
         // Optimization: only run the below logic for functions named "getOrDefault" and "remove", since only two functions with these names
         // in kotlin.collections.Map are currently annotated with @PlatformDependent.
-        if (function.name.asString() != "getOrDefault" && function.name.asString() != "remove") return true
-
-        val javaAnalogueClassId =
-            session.platformClassMapper.getCorrespondingPlatformClass(function.containingClassLookupTag()?.classId) ?: return true
+        if (function.name !in namesToCheck) return true
 
         if (!function.hasAnnotation(StandardNames.FqNames.platformDependentClassId, session)) return true
 
-        val javaAnalogue = session.symbolProvider.getClassLikeSymbolByClassId(javaAnalogueClassId) as? FirClassSymbol<*> ?: return true
-        val scope = javaAnalogue.unsubstitutedScope(session, ScopeSession(), withForcedTypeCalculator = false, null)
         var isFunctionPresentInJavaAnalogue = false
-        scope.processFunctionsByName(function.name) {
-            if (it.fir.computeJvmDescriptor() == function.computeJvmDescriptor()) {
+        val jvmDescriptorOfKotlinFunction = function.computeJvmDescriptor()
+        javaClassScope.processFunctionsByName(function.name) { javaAnalogueFunctionSymbol ->
+            if (javaAnalogueFunctionSymbol.fir.computeJvmDescriptor() == jvmDescriptorOfKotlinFunction) {
                 isFunctionPresentInJavaAnalogue = true
             }
         }
         return isFunctionPresentInJavaAnalogue
     }
+
+    private val namesToCheck = listOf("getOrDefault", "remove").map(Name::identifier)
 }

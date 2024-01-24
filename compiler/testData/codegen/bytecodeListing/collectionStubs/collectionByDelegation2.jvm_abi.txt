@@ -1,5 +1,5 @@
 MODULE main
-	CLASS C.class
+	CLASS DStringCollection.class
 		CLASS METADATA
 			K1
 				getSize()I
@@ -9,7 +9,7 @@ MODULE main
 				---
 			K2
 				size
-	CLASS MC.class
+	CLASS DStringSet.class
 		CLASS METADATA
 			K1
 				getSize()I
@@ -19,7 +19,7 @@ MODULE main
 				---
 			K2
 				size
-	CLASS L.class
+	CLASS DStringList.class
 		CLASS METADATA
 			K1
 				getSize()I
@@ -29,37 +29,7 @@ MODULE main
 				---
 			K2
 				size
-	CLASS ML.class
-		CLASS METADATA
-			K1
-				getSize()I
-			K2
-				---
-			K1
-				---
-			K2
-				size
-	CLASS S.class
-		CLASS METADATA
-			K1
-				getSize()I
-			K2
-				---
-			K1
-				---
-			K2
-				size
-	CLASS MS.class
-		CLASS METADATA
-			K1
-				getSize()I
-			K2
-				---
-			K1
-				---
-			K2
-				size
-	CLASS M.class
+	CLASS DStringMap.class
 		CLASS METADATA
 			K1
 				---
@@ -93,37 +63,41 @@ MODULE main
 				---
 			K2
 				values
-	CLASS MM.class
+	CLASS DStringMapEntry.class
 		CLASS METADATA
 			K1
-				---
-			K2
-				entries
-			K1
-				getEntries()Ljava/util/Set;
+				getKey()Ljava/lang/String;
 			K2
 				---
 			K1
-				getKeys()Ljava/util/Set;
+				getValue()Ljava/lang/Number;
 			K2
 				---
+			K1
+				---
+			K2
+				key
+			K1
+				---
+			K2
+				value
+	CLASS DStringCollectionBySet.class
+		CLASS METADATA
 			K1
 				getSize()I
 			K2
 				---
 			K1
-				getValues()Ljava/util/Collection;
-			K2
 				---
+			K2
+				size
+	CLASS DStringCollectionByList.class
+		CLASS METADATA
 			K1
-				---
+				getSize()I
 			K2
-				keys
+				---
 			K1
 				---
 			K2
 				size
-			K1
-				---
-			K2
-				values

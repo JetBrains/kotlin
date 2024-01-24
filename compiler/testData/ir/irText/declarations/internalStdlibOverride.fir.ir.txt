@@ -85,12 +85,3 @@ FILE fqName:<root> fileName:/internalStdlibOverride.kt
         overridden:
           public open fun <get-values> (): kotlin.collections.Collection<V of kotlin.collections.AbstractMap> declared in kotlin.collections.AbstractMap
         $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractMap<kotlin.Int, kotlin.Int>
-    FUN FAKE_OVERRIDE name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<kotlin.Int, kotlin.Int>, key:kotlin.Int, defaultValue:kotlin.Int) returnType:kotlin.Int [fake_override]
-      annotations:
-        SinceKotlin(version = "1.1")
-        PlatformDependent
-      overridden:
-        public open fun getOrDefault (key: K of kotlin.collections.AbstractMap, defaultValue: V of kotlin.collections.AbstractMap): V of kotlin.collections.AbstractMap declared in kotlin.collections.AbstractMap
-      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Map<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER name:key index:0 type:kotlin.Int
-      VALUE_PARAMETER name:defaultValue index:1 type:kotlin.Int
