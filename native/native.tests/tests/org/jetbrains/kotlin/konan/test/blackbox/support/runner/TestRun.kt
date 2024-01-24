@@ -86,6 +86,17 @@ internal sealed interface TestRunParameter {
         override fun testMatches(testName: TestName) = this.testName == testName
     }
 
+    class WithRegexFilter(val pattern: String, val positive: Boolean) : WithFilter() {
+        override fun applyTo(programArgs: MutableList<String>) {
+            programArgs += if (positive)
+                "--ktest_regex_filter=$pattern"
+            else
+                "--ktest_negative_regex_filter=$pattern"
+        }
+
+        override fun testMatches(testName: TestName) = Regex(pattern).matches(testName.toString()) == positive
+    }
+
     object WithTCTestLogger : TestRunParameter {
         override fun applyTo(programArgs: MutableList<String>) {
             programArgs += "--ktest_logger=TEAMCITY"
