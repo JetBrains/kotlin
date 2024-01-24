@@ -46,20 +46,11 @@ internal class KotlinNativeProvider(project: Project, konanTarget: KonanTarget) 
     @get:Input
     internal val kotlinNativeBundleVersion: Provider<String> = bundleDirectory.zip(reinstallBundle) { bundleDir, reinstallFlag ->
         val kotlinNativeVersion = NativeCompilerDownloader.getDependencyNameWithOsAndVersion(project)
-        if (project.kotlinNativeToolchainEnabled && (reinstallFlag || !bundleDir.asFile.exists())) {
-            val kotlinNativeCompilerExtractedFolder =
-                kotlinNativeCompilerConfiguration
-                    .singleOrNull()
-                    ?.resolve(kotlinNativeVersion)
-                    ?: error(
-                        "Kotlin Native dependency has not been properly resolved. " +
-                                "Please, make sure that you've declared the repository, which contains $kotlinNativeVersion."
-                    )
-
+        if (project.kotlinNativeToolchainEnabled) {
             project.prepareKotlinNativeBundle(
+                kotlinNativeVersion,
                 bundleDir.asFile,
                 reinstallFlag,
-                kotlinNativeCompilerExtractedFolder,
                 konanTarget
             )
         }
@@ -78,17 +69,26 @@ internal class KotlinNativeProvider(project: Project, konanTarget: KonanTarget) 
     }
 
     private fun Project.prepareKotlinNativeBundle(
+        kotlinNativeVersion: String,
         bundleDir: File,
         reinstallFlag: Boolean,
-        gradleCachesKotlinNativeDir: File,
         konanTarget: KonanTarget,
     ) {
 
         if (reinstallFlag) {
-            NativeCompilerDownloader.getCompilerDirectory(project).deleteRecursively()
+            bundleDir.deleteRecursively()
         }
 
-        if (!bundleDir.exists()) {
+        if (!bundleDir.resolve("bin").exists()) {
+            val gradleCachesKotlinNativeDir =
+                kotlinNativeCompilerConfiguration
+                    .singleOrNull()
+                    ?.resolve(kotlinNativeVersion)
+                    ?: error(
+                        "Kotlin Native dependency has not been properly resolved. " +
+                                "Please, make sure that you've declared the repository, which contains $kotlinNativeVersion."
+                    )
+
             logger.info("Moving Kotlin/Native bundle from tmp directory $gradleCachesKotlinNativeDir to ${bundleDir.absolutePath}")
             copy {
                 it.from(gradleCachesKotlinNativeDir)

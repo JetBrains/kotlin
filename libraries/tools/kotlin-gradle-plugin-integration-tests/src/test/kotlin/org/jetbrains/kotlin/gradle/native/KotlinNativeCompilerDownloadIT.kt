@@ -79,6 +79,28 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-65222: Kotlin Native must be downloaded during even if klib dir exists")
+    @GradleTest
+    fun shouldDownloadKotlinNativeWithExistingKlibDir(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
+        nativeProject(
+            "native-simple-project",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                konanDataDir = konanTemp,
+            ),
+        ) {
+            build(":commonizeNativeDistribution") {
+                assertDirectoryExists(konanTemp.resolve(STABLE_VERSION_DIR_NAME).resolve("klib"))
+                assertDirectoryDoesNotExist(konanTemp.resolve(STABLE_VERSION_DIR_NAME).resolve("bin"))
+            }
+            build("assemble") {
+                assertOutputDoesNotContain(DOWNLOAD_KONAN_FINISHED_LOG)
+                assertOutputContains(UNPUCK_KONAN_FINISHED_LOG)
+                assertOutputDoesNotContain("Please wait while Kotlin/Native")
+            }
+        }
+    }
+
     @DisplayName("KT-58303: Downloading Kotlin Native on configuration phase(deprecated version)")
     @GradleTest
     fun shouldDownloadKotlinNativeOnConfigurationPhaseWithToolchainDisabled(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
