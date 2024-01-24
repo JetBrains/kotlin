@@ -28,6 +28,7 @@ public class Parent {
     }
 }
 // MODULE: main(lib, lib2)
+// MODULE_KIND: Source
 // FILE: main.kt
 import p2.Parent
 
