@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions
 
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
-import com.intellij.openapi.Disposable
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtension
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionFile
@@ -17,13 +16,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.directives.ModificationEventDirectives
 import org.jetbrains.kotlin.analysis.test.framework.directives.publishModificationEventByDirective
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -46,7 +43,7 @@ abstract class AbstractResolveExtensionDisposalAfterModificationEventTest : Abst
             "The resolve extension should not be disposed before the modification event is published."
         }
 
-        mainModule.publishModificationEventByDirective(project, module)
+        mainModule.publishModificationEventByDirective(testServices)
 
         testServices.assertions.assertTrue(resolveExtension.isDisposed) {
             "The resolve extension should be disposed after the modification event has been published."
@@ -74,12 +71,6 @@ class KtResolveExtensionWithDisposalTrackerProvider() : KtResolveExtensionProvid
 }
 
 object ResolveExtensionDisposalTestConfigurator : AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
-    override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
-        super.configureTest(builder, disposable)
-
-        builder.useDirectives(ModificationEventDirectives)
-    }
-
     override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
         get() = buildList {
             addAll(super.serviceRegistrars)
