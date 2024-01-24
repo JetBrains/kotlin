@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_ARGUMENTS
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_DEFAULT_ARGUMENTS
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_REFERENCE
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -870,10 +873,6 @@ class FunctionInlining(
             IrGetValueImpl(startOffset, endOffset, type, symbol, origin)
     }
 }
-
-val INLINED_FUNCTION_REFERENCE by IrStatementOriginImpl
-val INLINED_FUNCTION_ARGUMENTS by IrStatementOriginImpl
-val INLINED_FUNCTION_DEFAULT_ARGUMENTS by IrStatementOriginImpl
 
 enum class NonReifiedTypeParameterRemappingMode {
     LEAVE_AS_IS, SUBSTITUTE, ERASE
