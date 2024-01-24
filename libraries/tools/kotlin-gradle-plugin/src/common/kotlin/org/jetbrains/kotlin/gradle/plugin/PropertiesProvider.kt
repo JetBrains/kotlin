@@ -71,8 +71,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val singleBuildMetricsFile: File?
         get() = property("kotlin.internal.single.build.metrics.file").orNull?.let { File(it) }
 
-    val buildReportSingleFile: File?
-        get() = property(PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE).orNull?.let { File(it) }
+    val buildReportSingleFile: String?
+        get() = property(PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE).orNull
 
     val buildReportOutputs: List<String>
         get() = property("kotlin.build.report.output").orNull?.split(",") ?: emptyList()
@@ -80,8 +80,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val buildReportLabel: String?
         get() = property("kotlin.build.report.label").orNull
 
-    val buildReportFileOutputDir: File?
-        get() = property("kotlin.build.report.file.output_dir").orNull?.let { File(it) }
+    val buildReportFileOutputDir: String?
+        get() = property(PropertyNames.KOTLIN_BUILD_REPORT_FILE_DIR).orNull
 
     val buildReportHttpUrl: String?
         get() = property(PropertyNames.KOTLIN_BUILD_REPORT_HTTP_URL).orNull
@@ -110,8 +110,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val buildReportMetrics: Boolean
         get() = booleanProperty("kotlin.build.report.metrics") ?: false
 
-    val buildReportJsonDir: File?
-        get() = property(PropertyNames.KOTLIN_BUILD_REPORT_JSON_DIR).orNull?.let { File(it) }
+    val buildReportJsonDir: String?
+        get() = property(PropertyNames.KOTLIN_BUILD_REPORT_JSON_DIR).orNull
 
     val buildReportVerbose: Boolean
         get() = booleanProperty("kotlin.build.report.verbose") ?: false
@@ -627,6 +627,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_BUILD_REPORT_SINGLE_FILE = property("kotlin.build.report.single_file")
         val KOTLIN_BUILD_REPORT_HTTP_URL = property("kotlin.build.report.http.url")
         val KOTLIN_BUILD_REPORT_JSON_DIR = property("kotlin.build.report.json.directory")
+        val KOTLIN_BUILD_REPORT_FILE_DIR = property("kotlin.build.report.file.output_dir")
         val KOTLIN_OPTIONS_SUPPRESS_FREEARGS_MODIFICATION_WARNING = property("kotlin.options.suppressFreeCompilerArgsModificationWarning")
         val KOTLIN_NATIVE_USE_XCODE_MESSAGE_STYLE = property("kotlin.native.useXcodeMessageStyle")
         val KOTLIN_COMPILER_USE_PRECISE_COMPILATION_RESULTS_BACKUP = property("kotlin.compiler.preciseCompilationResultsBackup")
