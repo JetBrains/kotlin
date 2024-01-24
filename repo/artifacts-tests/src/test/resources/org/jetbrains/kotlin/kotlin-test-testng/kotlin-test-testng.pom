@@ -41,7 +41,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.13.1</version>
+      <version>7.5.1</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
