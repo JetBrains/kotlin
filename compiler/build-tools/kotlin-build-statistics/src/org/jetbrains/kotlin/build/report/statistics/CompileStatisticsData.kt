@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 //Sensitive data. This object is used directly for statistic via http
-private val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").also { it.timeZone = TimeZone.getTimeZone("UTC") }
+internal val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").also { it.timeZone = TimeZone.getTimeZone("UTC") }
 
 interface CompileStatisticsData<B : BuildTime, P : BuildPerformanceMetric> {
     fun getVersion(): Int = 4

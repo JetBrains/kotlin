@@ -9,11 +9,8 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logging
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.jetbrains.kotlin.build.report.metrics.ValueType
-import org.jetbrains.kotlin.build.report.statistics.HttpReportService
-import org.jetbrains.kotlin.build.report.statistics.formatSize
-import org.jetbrains.kotlin.build.report.statistics.BuildFinishStatisticsData
-import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
-import org.jetbrains.kotlin.build.report.statistics.StatTag
+import org.jetbrains.kotlin.build.report.statistics.*
+import org.jetbrains.kotlin.build.report.statistics.file.ReadableFileReportData
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.statistics.GradleFileReportService
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
@@ -69,11 +66,13 @@ class BuildReportsService {
                 it.buildReportDir,
                 parameters.projectName,
                 it.includeMetricsInReport,
-                loggerAdapter
             ).process(
-                transformOperationRecordsToCompileStatisticsData(buildOperationRecords, parameters, onlyKotlinTask = false),
-                parameters.startParameters,
-                failureMessages.filter { it.isNotEmpty() },
+                ReadableFileReportData(
+                    transformOperationRecordsToCompileStatisticsData(buildOperationRecords, parameters, onlyKotlinTask = false),
+                    parameters.startParameters,
+                    failureMessages.filter { it.isNotEmpty() },
+                ),
+                loggerAdapter
             )
         }
 
@@ -83,6 +82,10 @@ class BuildReportsService {
 
         if (reportingSettings.experimentalTryNextConsoleOutput) {
             reportTryNextToConsole(buildData)
+        }
+
+        reportingSettings.jsonOutputDir?.also {
+            JsonReportService(it, parameters.projectName).process(buildData, loggerAdapter)
         }
 
         //It's expected that bad internet connection can cause a significant delay for big project
