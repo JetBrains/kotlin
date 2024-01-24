@@ -28,11 +28,13 @@ class JvmAbiOutputExtension(
     private val messageCollector: MessageCollector,
     private val removeDebugInfo: Boolean,
     private val removeDataClassCopyIfConstructorIsPrivate: Boolean,
+    private val preserveDeclarationOrder: Boolean,
 ) : ClassFileFactoryFinalizerExtension {
     override fun finalizeClassFactory(factory: ClassFileFactory) {
         // We need to wait until the end to produce any output in order to strip classes
         // from the InnerClasses attributes.
-        val outputFiles = AbiOutputFiles(abiClassInfos, factory, removeDebugInfo, removeDataClassCopyIfConstructorIsPrivate)
+        val outputFiles =
+            AbiOutputFiles(abiClassInfos, factory, removeDebugInfo, removeDataClassCopyIfConstructorIsPrivate, preserveDeclarationOrder)
         if (outputPath.extension == "jar") {
             // We don't include the runtime or main class in interface jars and always reset time stamps.
             CompileEnvironmentUtil.writeToJar(
@@ -56,6 +58,7 @@ class JvmAbiOutputExtension(
         val outputFiles: OutputFileCollection,
         val removeDebugInfo: Boolean,
         val removeCopyAlongWithConstructor: Boolean,
+        val preserveDeclarationOrder: Boolean,
     ) : OutputFileCollection {
         override fun get(relativePath: String): OutputFile? {
             error("AbiOutputFiles does not implement `get`.")
@@ -155,14 +158,19 @@ class JvmAbiOutputExtension(
                                 if (descriptor != JvmAnnotationNames.METADATA_DESC)
                                     return delegate
                                 // Strip private declarations from the Kotlin Metadata annotation.
-                                return abiMetadataProcessor(delegate, removeCopyAlongWithConstructor)
+                                return abiMetadataProcessor(delegate, removeCopyAlongWithConstructor, preserveDeclarationOrder)
                             }
 
                             override fun visitEnd() {
                                 // Output class members in sorted order so that changes in original ordering don't affect the ABI JAR.
 
-                                keptFields.sortedWith(compareBy(FieldNode::name, FieldNode::desc)).forEach { it.accept(cv) }
-                                keptMethods.sortedWith(compareBy(MethodNode::name, MethodNode::desc)).forEach { it.accept(cv) }
+                                keptFields
+                                    .apply { if (!preserveDeclarationOrder) sortWith(compareBy(FieldNode::name, FieldNode::desc)) }
+                                    .forEach { it.accept(cv) }
+
+                                keptMethods
+                                    .apply { if (!preserveDeclarationOrder) sortWith(compareBy(MethodNode::name, MethodNode::desc)) }
+                                    .forEach { it.accept(cv) }
 
                                 innerClassesToKeep.addInnerClasses(innerClassInfos, internalName)
                                 innerClassesToKeep.addOuterClasses(innerClassInfos)

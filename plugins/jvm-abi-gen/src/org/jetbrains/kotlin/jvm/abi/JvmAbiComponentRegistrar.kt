@@ -26,6 +26,7 @@ class JvmAbiComponentRegistrar : CompilerPluginRegistrar() {
             File(outputPath), builderExtension.abiClassInfo, messageCollector,
             configuration.getBoolean(JvmAbiConfigurationKeys.REMOVE_DEBUG_INFO),
             removeDataClassCopy,
+            configuration.getBoolean(JvmAbiConfigurationKeys.PRESERVE_DECLARATION_ORDER),
         )
 
         ClassGeneratorExtension.registerExtension(builderExtension)

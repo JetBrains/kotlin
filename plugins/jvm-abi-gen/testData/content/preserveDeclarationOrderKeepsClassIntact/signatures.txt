@@ -1,0 +1,9 @@
+@kotlin.Metadata
+public final class test/Chaos {
+    // source: 'preserveDeclarationOrder.kt'
+    public final @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field b: kotlin.Unit
+    public final @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field a: kotlin.Unit
+    public method <init>(): void
+    public final method b(): void
+    public final method a(): void
+}
