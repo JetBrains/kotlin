@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.deleteIfExists
@@ -96,6 +97,10 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
 
     @DisplayName("for project with buildSrc")
     @GradleTest
+    @OsCondition(
+        supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
+        enabledOnCI = [OS.LINUX, OS.MAC], //Fails on windows KT-65227
+    )
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0]
     )
