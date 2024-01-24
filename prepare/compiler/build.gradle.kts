@@ -238,8 +238,6 @@ dependencies {
     fatJarContentsStripServices(commonDependency("com.fasterxml:aalto-xml")) { isTransitive = false }
     fatJarContents(commonDependency("org.codehaus.woodstox:stax2-api")) { isTransitive = false }
 
-    fatJarContentsStripServices(jpsModel()) { isTransitive = false }
-    fatJarContentsStripServices(jpsModelImpl()) { isTransitive = false }
     fatJarContentsStripMetadata(commonDependency("oro:oro")) { isTransitive = false }
     fatJarContentsStripMetadata(intellijJDom()) { isTransitive = false }
     fatJarContentsStripMetadata(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
