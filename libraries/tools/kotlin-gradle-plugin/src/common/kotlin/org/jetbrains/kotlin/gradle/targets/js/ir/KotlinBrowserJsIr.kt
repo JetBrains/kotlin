@@ -9,7 +9,6 @@ import org.gradle.api.Action
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.Task
 import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
@@ -30,12 +29,10 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
-import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import java.io.File
 import javax.inject.Inject
 
 abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
@@ -234,12 +231,11 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
                     if (binary.compilation.platformType == KotlinPlatformType.wasm) {
                         copy.from(
-                            binary.linkSyncTask.flatMap { linkSyncTask ->
-                                linkSyncTask.destinationDirectory.map { destDir ->
-                                    binary.linkTask.map { linkTask ->
-                                        linkTask.compilerOptions.moduleName.map {
-                                            destDir.resolve("$it.wasm")
-                                        }
+                            binary.linkSyncTask.zip(binary.linkTask) { linkSyncTask, linkTask ->
+                                val moduleNameProvider = linkTask.compilerOptions.moduleName
+                                linkSyncTask.destinationDirectory.zip(moduleNameProvider) { destDir, moduleName ->
+                                    moduleName.map {
+                                        destDir.resolve("$it.wasm")
                                     }
                                 }
                             }

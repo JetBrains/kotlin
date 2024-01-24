@@ -51,4 +51,17 @@ class WasmConfigurationCacheIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Browser case works correctly with configuration cache")
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
+    fun testBrowser(gradleVersion: GradleVersion) {
+        project("wasm-browser-simple-project", gradleVersion) {
+            assertSimpleConfigurationCacheScenarioWorks(
+                "assemble",
+                buildOptions = defaultBuildOptions,
+                executedTaskNames = listOf(":compileKotlinWasmJs", ":wasmJsBrowserDistribution")
+            )
+        }
+    }
 }
