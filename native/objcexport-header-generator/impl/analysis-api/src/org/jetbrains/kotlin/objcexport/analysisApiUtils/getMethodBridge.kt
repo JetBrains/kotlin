@@ -111,7 +111,7 @@ private fun bridgeFunctionType(type: KtType): TypeBridge {
 
     if (type is KtFunctionalType) {
         numberOfParameters = type.parameterTypes.size
-        returnType = type.parameterTypes.last()
+        returnType = type.returnType
     } else {
         numberOfParameters = 0
         returnType = type

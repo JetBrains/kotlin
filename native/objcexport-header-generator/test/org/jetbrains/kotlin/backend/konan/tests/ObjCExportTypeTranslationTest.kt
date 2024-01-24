@@ -70,6 +70,29 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    fun `test - Unit as return type`() {
+        val header = header(
+            """
+            fun foo() = Unit
+            """.trimIndent()
+        )
+
+        assertEquals(" -> void", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - Unit as parameter type`() {
+        val header = header(
+            """
+            fun foo(unit: Unit) = Unit
+            """.trimIndent()
+        )
+
+        assertEquals("Unit * -> void", header.renderTypesOfSymbol("foo"))
+    }
+
+
+    @Test
     fun `test - hiddenTypes - Any - are exposed as id`() {
         val header = header("""fun foo(): Any""")
         assertEquals(" -> id", header.renderTypesOfSymbol("foo"))
