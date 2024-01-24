@@ -12,7 +12,11 @@ import org.intellij.lang.annotations.Language
 
 public val API_DIR: String = ApiValidationExtension().apiDumpDirectory
 
-internal fun BaseKotlinGradleTest.test(fn: BaseKotlinScope.() -> Unit): GradleRunner {
+internal fun BaseKotlinGradleTest.test(
+    gradleVersion: String = "7.4.2",
+    injectPluginClasspath: Boolean = true,
+    fn: BaseKotlinScope.() -> Unit
+): GradleRunner {
     val baseKotlinScope = BaseKotlinScope()
     fn(baseKotlinScope)
 
@@ -29,12 +33,17 @@ internal fun BaseKotlinGradleTest.test(fn: BaseKotlinScope.() -> Unit): GradleRu
         }
     }
 
-    return GradleRunner.create() //
+    val runner = GradleRunner.create()
         .withProjectDir(rootProjectDir)
         .withPluginClasspath()
         .withArguments(baseKotlinScope.runner.arguments)
-        .withGradleVersion("7.4.2")
-        .addPluginTestRuntimeClasspath()
+        .withGradleVersion(gradleVersion)
+    if (injectPluginClasspath) {
+        // The hack dating back to https://docs.gradle.org/6.0/userguide/test_kit.html#sub:test-kit-classpath-injection
+        // Currently, some tests won't work without it because some classes are missing on the classpath.
+        runner.addPluginTestRuntimeClasspath()
+    }
+    return runner
     // disabled because of: https://github.com/gradle/gradle/issues/6862
     // .withDebug(baseKotlinScope.runner.debug)
 }
