@@ -405,6 +405,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
         }
 
         @Test
+        @TestMetadata("KT-65044.kt")
+        public void testKT_65044() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/KT-65044.kt");
+        }
+
+        @Test
         @TestMetadata("kt41984.kt")
         public void testKt41984() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/kt41984.kt");
