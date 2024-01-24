@@ -6,16 +6,16 @@ import withPosix.getMyStructPointer
 import withPosix.getStructFromPosix
 import withPosix.getStructPointerFromPosix
 
-//object NativeMain {
-//    val structFromPosix = getStructFromPosix()
-//    val structPointerFromPosix = getStructPointerFromPosix()
-//    object MyStruct {
-//        val struct = getMyStructPointer()?.pointed ?: error("Missing my struct")
-//        val posixProperty: stat = struct.posixProperty
-//        val longProperty: Long = struct.longProperty
-//        val doubleProperty: Double = struct.doubleProperty
-//    }
-//}
+object NativeMain {
+    val structFromPosix = getStructFromPosix()
+    val structPointerFromPosix = getStructPointerFromPosix()
+    object MyStruct {
+        val struct = getMyStructPointer()?.pointed ?: error("Missing my struct")
+        val posixProperty: stat = struct.posixProperty
+        val longProperty: Long = struct.longProperty
+        val doubleProperty: Double = struct.doubleProperty
+    }
+}
 
-@Suppress("NO_ACTUAL_FOR_EXPECT")
-expect object NativeMain
+//@Suppress("NO_ACTUAL_FOR_EXPECT")
+//expect object NativeMain
