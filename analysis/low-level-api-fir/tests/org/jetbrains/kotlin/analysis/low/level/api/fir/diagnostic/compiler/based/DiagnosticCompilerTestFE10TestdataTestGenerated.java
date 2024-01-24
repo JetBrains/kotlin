@@ -11610,6 +11610,22 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/destructuring")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Destructuring {
+            @Test
+            public void testAllFilesPresentInDestructuring() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/destructuring"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("delegationInDestructuring.kt")
+            public void testDelegationInDestructuring() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/destructuring/delegationInDestructuring.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature")
         @TestDataPath("$PROJECT_ROOT")
         public class DuplicateJvmSignature {
