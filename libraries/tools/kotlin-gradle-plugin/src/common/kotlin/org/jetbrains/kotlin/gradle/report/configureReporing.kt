@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.build.report.HttpReportSettings
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_FILE_DIR
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_HTTP_URL
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_JSON_DIR
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
+import java.io.File
 
 private val availableMetrics = GradleBuildTime.values().map { it.name } + GradleBuildPerformanceMetric.values().map { it.name }
 
@@ -36,7 +38,10 @@ internal fun reportingSettings(project: Project): ReportingSettings {
             else -> BuildReportMode.VERBOSE
         }
     val fileReportSettings = if (buildReportOutputTypes.contains(BuildReportType.FILE)) {
-        val buildReportDir = properties.buildReportFileOutputDir ?: (if (project.isProjectIsolationEnabled) {
+        val buildReportDir = properties.buildReportFileOutputDir?.let {
+            validateFileName(it, KOTLIN_BUILD_REPORT_FILE_DIR)
+            File(it)
+        } ?: (if (project.isProjectIsolationEnabled) {
             // TODO: it's a workaround for KT-52963, should be reworked – KT-55763
             project.rootDir.resolve("build")
         } else {
@@ -75,13 +80,17 @@ internal fun reportingSettings(project: Project): ReportingSettings {
     }
 
     val singleOutputFile = if (buildReportOutputTypes.contains(BuildReportType.SINGLE_FILE)) {
-        properties.buildReportSingleFile
-            ?: throw IllegalStateException("Can't configure single file report: '$KOTLIN_BUILD_REPORT_SINGLE_FILE' property is mandatory")
+        properties.buildReportSingleFile?.let {
+            validateFileName(it, KOTLIN_BUILD_REPORT_SINGLE_FILE)
+            File(it)
+        } ?: throw IllegalStateException("Can't configure single file report: '$KOTLIN_BUILD_REPORT_SINGLE_FILE' property is mandatory")
     } else null
 
     val jsonReportDir = if (buildReportOutputTypes.contains(BuildReportType.JSON)) {
-        properties.buildReportJsonDir
-            ?: throw IllegalStateException("Can't configure json report: '$KOTLIN_BUILD_REPORT_JSON_DIR' property is mandatory")
+        properties.buildReportJsonDir?.let {
+            validateFileName(it, KOTLIN_BUILD_REPORT_JSON_DIR)
+            File(it)
+        } ?: throw IllegalStateException("Can't configure json report: '$KOTLIN_BUILD_REPORT_JSON_DIR' property is mandatory")
     } else null
 
     return ReportingSettings(
@@ -97,5 +106,12 @@ internal fun reportingSettings(project: Project): ReportingSettings {
         experimentalTryNextConsoleOutput = experimentalTryNextEnabled
     )
 }
+
+private fun validateFileName(fileName: String, propertyName: String) {
+    if (fileName.isBlank()) {
+        throw IllegalStateException("The property '$propertyName' must not be empty. Please provide a valid value.")
+    }
+}
+
 
 
