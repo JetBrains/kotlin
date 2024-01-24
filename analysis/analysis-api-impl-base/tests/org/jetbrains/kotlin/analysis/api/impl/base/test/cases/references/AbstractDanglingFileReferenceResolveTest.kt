@@ -48,7 +48,7 @@ abstract class AbstractDanglingFileReferenceResolveTest : AbstractReferenceResol
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
-        val caretPositions = testServices.expressionMarkerProvider.getAllCaretsPositions(mainFile)
+        val caretPositions = testServices.expressionMarkerProvider.getAllCarets(mainFile)
 
         val ktPsiFactory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = true)
         val fakeKtFile = ktPsiFactory.createFile("fake.kt", mainFile.text)

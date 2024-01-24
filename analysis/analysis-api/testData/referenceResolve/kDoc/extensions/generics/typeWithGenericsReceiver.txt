@@ -1,5 +1,5 @@
-Caret 1 resolved to:
+<caret_1> resolved to:
 0: (in test) fun test.WithGenerics<kotlin.Int>.intExt()
 
-Caret 2 resolved to:
+<caret_2> resolved to:
 0: (in test) fun test.WithGenerics<kotlin.String>.stringExt()

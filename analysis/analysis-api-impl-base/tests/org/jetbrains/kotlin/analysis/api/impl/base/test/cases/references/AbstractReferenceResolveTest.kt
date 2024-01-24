@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callabl
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.services.CaretMarker
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -46,19 +47,19 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
-        val caretPositions = testServices.expressionMarkerProvider.getAllCaretsPositions(mainFile)
+        val caretPositions = testServices.expressionMarkerProvider.getAllCarets(mainFile)
         doTestByFileStructure(mainFile, caretPositions, mainModule, testServices)
     }
 
-    protected fun doTestByFileStructure(ktFile: KtFile, caretPositions: List<Int>, mainModule: TestModule, testServices: TestServices) {
-        if (caretPositions.isEmpty()) {
+    protected fun doTestByFileStructure(ktFile: KtFile, carets: List<CaretMarker>, mainModule: TestModule, testServices: TestServices) {
+        if (carets.isEmpty()) {
             testServices.assertions.fail { "No carets were specified for resolve test" }
         }
 
-        fun getRenderedReferencesForCaretPosition(caretPosition: Int): String {
-            val ktReferences = findReferencesAtCaret(ktFile, caretPosition)
+        fun getRenderedReferencesForCaretPosition(caret: CaretMarker): String {
+            val ktReferences = findReferencesAtCaret(ktFile, caret.offset)
             if (ktReferences.isEmpty()) {
-                testServices.assertions.fail { "No references at caret position $caretPosition found" }
+                testServices.assertions.fail { "No references at caret $caret found" }
             }
 
             val resolvedTo = analyzeReferenceElement(ktReferences.first().element, mainModule) {
@@ -70,18 +71,16 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
             return resolvedTo
         }
 
-        val resolutionAtPositions = caretPositions.map { getRenderedReferencesForCaretPosition(it) }
+        val resolutionAtPositions = carets.map { it to getRenderedReferencesForCaretPosition(it) }
 
         val actual = if (resolutionAtPositions.size == 1) {
-            val singleResolutionResult = resolutionAtPositions.single()
+            val (_, singleResolutionResult) = resolutionAtPositions.single()
 
             "Resolved to:\n$singleResolutionResult"
         } else {
-            resolutionAtPositions
-                .withIndex()
-                .joinToString(separator = "\n\n") { (idx, resolutionResult) ->
-                    "Caret ${idx + 1} resolved to:\n$resolutionResult"
-                }
+            resolutionAtPositions.joinToString(separator = "\n\n") { (caret, resolutionResult) ->
+                "${caret.fullTag} resolved to:\n$resolutionResult"
+            }
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
