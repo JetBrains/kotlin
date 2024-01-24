@@ -5,11 +5,17 @@ package foo {
     @kotlin.js.JsExport public var x2: foo.C
     @kotlin.js.JsExport public fun bar(): foo.C
     @kotlin.js.JsExport public fun foo(/*0*/ x: foo.C): kotlin.Unit
+    @kotlin.js.JsExport public fun foo10(/*0*/ x: kotlin.collections.MutableSet<kotlin.Int>): kotlin.Unit
+    @kotlin.js.JsExport public fun foo11(/*0*/ x: kotlin.collections.Map<kotlin.String, kotlin.Int>): kotlin.Unit
+    @kotlin.js.JsExport public fun foo12(/*0*/ x: kotlin.collections.MutableMap<kotlin.String, kotlin.Int>): kotlin.Unit
     @kotlin.js.JsExport public fun foo2(): kotlin.Unit
     @kotlin.js.JsExport public fun foo3(/*0*/ x: kotlin.Unit): kotlin.Unit
     @kotlin.js.JsExport public fun foo4(/*0*/ x: () -> kotlin.Unit): kotlin.Unit
     @kotlin.js.JsExport public fun foo5(/*0*/ x: (kotlin.Unit) -> kotlin.Unit): kotlin.Unit
     @kotlin.js.JsExport public fun foo6(/*0*/ x: (foo.A) -> foo.A): kotlin.Unit
+    @kotlin.js.JsExport public fun foo7(/*0*/ x: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+    @kotlin.js.JsExport public fun foo8(/*0*/ x: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit
+    @kotlin.js.JsExport public fun foo9(/*0*/ x: kotlin.collections.Set<kotlin.Int>): kotlin.Unit
 
     @kotlin.js.JsExport public final class A {
         public constructor A(/*0*/ x: foo.C, /*1*/ y: foo.C)

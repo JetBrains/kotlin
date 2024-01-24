@@ -131,3 +131,18 @@ public expect annotation class JsExport() {
 @MustBeDocumented
 @SinceKotlin("1.9")
 public annotation class ExperimentalJsReflectionCreateInstance
+
+/**
+ * This annotation marks the experimental JS-collections API that allows to manipulate with native JS-collections
+ * The API can be removed completely in any further release.
+ *
+ * Any usage of a declaration annotated with `@ExperimentalJsCollectionsApi` should be accepted either by
+ * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalJsCollectionsApi::class)`,
+ * or by using the compiler argument `-opt-in=kotlin.js.ExperimentalJsCollectionsApi`.
+ */
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+@MustBeDocumented
+@SinceKotlin("1.9")
+public annotation class ExperimentalJsCollectionsApi

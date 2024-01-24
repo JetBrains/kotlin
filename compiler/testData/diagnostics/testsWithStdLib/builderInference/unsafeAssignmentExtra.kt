@@ -1,3 +1,4 @@
+// MUTE_LL_FIR: KT-65218
 // WITH_REFLECT
 // FIR_DUMP
 import kotlin.reflect.*

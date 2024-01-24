@@ -3384,6 +3384,9 @@ public final class kotlin/jdk7/AutoCloseableKt {
 	public static final fun closeFinally (Ljava/lang/AutoCloseable;Ljava/lang/Throwable;)V
 }
 
+public abstract interface annotation class kotlin/js/ExperimentalJsCollectionsApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/js/ExperimentalJsExport : java/lang/annotation/Annotation {
 }
 

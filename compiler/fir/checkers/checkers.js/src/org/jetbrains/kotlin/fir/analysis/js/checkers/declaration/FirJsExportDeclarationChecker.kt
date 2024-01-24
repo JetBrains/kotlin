@@ -224,6 +224,12 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                 || isNothingOrNullableNothing
                 || isPrimitiveArray
                 || isNonPrimitiveArray
+                || isList
+                || isMutableList
+                || isSet
+                || isMutableSet
+                || isMap
+                || isMutableMap
 
     private fun validateDeclarationOnConsumableName(
         declaration: FirMemberDeclaration,

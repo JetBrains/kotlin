@@ -28,6 +28,8 @@
 
 package kotlin.collections
 
+import kotlin.js.collections.*
+
 /**
  * Classes that inherit from this interface can be represented as a sequence of elements that can
  * be iterated over.
@@ -146,8 +148,11 @@ public interface List<out E> : Collection<E> {
     // Query Operations
 
     override val size: Int
+
     override fun isEmpty(): Boolean
+
     override fun contains(element: @UnsafeVariance E): Boolean
+
     override fun iterator(): Iterator<E>
 
     // Bulk Operations
@@ -191,6 +196,15 @@ public interface List<out E> : Collection<E> {
      * Structural changes in the base list make the behavior of the view undefined.
      */
     public fun subList(fromIndex: Int, toIndex: Int): List<E>
+
+    /**
+     * Returns a view with the [JsReadonlyArray] methods to consume it in JavaScript as a regular readonly array.
+     * Structural changes in the base list are synchronized with the view.
+     */
+    @ExperimentalJsExport
+    @ExperimentalJsCollectionsApi
+    @SinceKotlin("1.9")
+    public fun asJsReadonlyArrayView(): JsReadonlyArray<E> = createJsReadonlyArrayViewFrom(this)
 }
 
 /**
@@ -226,7 +240,9 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
     public fun addAll(index: Int, elements: Collection<E>): Boolean
 
     override fun removeAll(elements: Collection<E>): Boolean
+
     override fun retainAll(elements: Collection<E>): Boolean
+
     override fun clear(): Unit
 
     // Positional Access Operations
@@ -256,6 +272,15 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
 
     // View
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
+
+    /**
+     * Returns a view with the [JsArray] methods to consume it in JavaScript as a regular array.
+     * Structural changes in the base list are synchronized with the view, and vice verse.
+     */
+    @ExperimentalJsExport
+    @ExperimentalJsCollectionsApi
+    @SinceKotlin("1.9")
+    public fun asJsArrayView(): JsArray<E> = createJsArrayViewFrom(this)
 }
 
 /**
@@ -268,12 +293,24 @@ public interface Set<out E> : Collection<E> {
     // Query Operations
 
     override val size: Int
+
     override fun isEmpty(): Boolean
+
     override fun contains(element: @UnsafeVariance E): Boolean
+
     override fun iterator(): Iterator<E>
 
     // Bulk Operations
     override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
+
+    /**
+     * Returns a view with the [JsReadonlySet] methods to consume it in JavaScript as a regular readonly Set.
+     * Structural changes in the base set are synchronized with the view.
+     */
+    @ExperimentalJsExport
+    @ExperimentalJsCollectionsApi
+    @SinceKotlin("1.9")
+    public fun asJsReadonlySetView(): JsReadonlySet<E> = createJsReadonlySetViewFrom(this)
 }
 
 /**
@@ -299,9 +336,21 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
     // Bulk Modification Operations
 
     override fun addAll(elements: Collection<E>): Boolean
+
     override fun removeAll(elements: Collection<E>): Boolean
+
     override fun retainAll(elements: Collection<E>): Boolean
+
     override fun clear(): Unit
+
+    /**
+     * Returns a view with the [JsSet] methods to consume it in JavaScript as a regular Set.
+     * Structural changes in the base set are synchronized with the view, and vice verse.
+     */
+    @ExperimentalJsExport
+    @ExperimentalJsCollectionsApi
+    @SinceKotlin("1.9")
+    public fun asJsSetView(): JsSet<E> = createJsSetViewFrom(this)
 }
 
 /**
@@ -370,6 +419,15 @@ public interface Map<K, out V> {
          */
         public val value: V
     }
+
+    /**
+     * Returns a view with the [JsReadonlyMap] methods to consume it in JavaScript as a regular readonly Map.
+     * Structural changes in the base map are synchronized with the view.
+     */
+    @ExperimentalJsExport
+    @ExperimentalJsCollectionsApi
+    @SinceKotlin("1.9")
+    public fun asJsReadonlyMapView(): JsReadonlyMap<K, V> = createJsReadonlyMapViewFrom(this)
 }
 
 /**
@@ -432,4 +490,13 @@ public interface MutableMap<K, V> : Map<K, V> {
          */
         public fun setValue(newValue: V): V
     }
+
+    /**
+     * Returns a view with the [JsMap] methods to consume it in JavaScript as a regular Map.
+     * Structural changes in the base map are synchronized with the view, and vice verse.
+     */
+    @ExperimentalJsExport
+    @ExperimentalJsCollectionsApi
+    @SinceKotlin("1.9")
+    public fun asJsMapView(): JsMap<K, V> = createJsMapViewFrom(this)
 }

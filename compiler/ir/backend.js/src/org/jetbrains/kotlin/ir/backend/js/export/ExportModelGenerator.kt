@@ -34,7 +34,10 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
         val namespaceFqName = file.packageFqName
-        val exports = file.declarations.memoryOptimizedFlatMap { declaration -> listOfNotNull(exportDeclaration(declaration)) }
+        val exports = file.declarations.memoryOptimizedMapNotNull { declaration ->
+            declaration.takeIf { it.couldBeConvertedToExplicitExport() != true }?.let(::exportDeclaration)
+        }
+
         return when {
             exports.isEmpty() -> emptyList()
             !generateNamespacesForPackages || namespaceFqName.isRoot -> exports
@@ -306,6 +309,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             val candidate = getExportCandidate(declaration) ?: continue
             if (isImplicitlyExportedClass && candidate !is IrClass) continue
             if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(candidate, context)) continue
+            if (candidate.isFakeOverride && klass.isInterface) continue
 
             val processingResult = specialProcessing(candidate)
             if (processingResult != null) {
@@ -734,14 +738,14 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
     if (declaration is IrClass && declaration.kind == ClassKind.ENUM_ENTRY)
         return false
 
+    if (declaration.isJsExportIgnore())
+        return false
+
     if (context.additionalExportedDeclarationNames.contains(declaration.fqNameWhenAvailable))
         return true
 
     if (context.additionalExportedDeclarations.contains(declaration))
         return true
-
-    if (declaration.isJsExportIgnore())
-        return false
 
     if (declaration is IrOverridableDeclaration<*>) {
         val overriddenNonEmpty = declaration
@@ -770,7 +774,7 @@ fun IrOverridableDeclaration<*>.isAllowedFakeOverriddenDeclaration(context: JsIr
         resolveFakeOverrideMaybeAbstract { it === this || it.parentClassOrNull?.isExported(context) != true }
     }
 
-    if (firstExportedRealOverride?.parentClassOrNull.isExportedInterface(context)) {
+    if (firstExportedRealOverride?.parentClassOrNull.isExportedInterface(context) && firstExportedRealOverride?.isJsExportIgnore() != true) {
         return true
     }
 

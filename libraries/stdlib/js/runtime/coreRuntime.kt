@@ -208,7 +208,7 @@ internal fun protoOf(constructor: Any) =
     js("constructor.prototype")
 
 @Suppress("UNUSED_PARAMETER")
-internal fun <T> objectCreate(proto: T?) =
+internal fun <T> objectCreate(proto: T? = null): T =
     js("Object.create(proto)")
 
 @Suppress("UNUSED_PARAMETER")

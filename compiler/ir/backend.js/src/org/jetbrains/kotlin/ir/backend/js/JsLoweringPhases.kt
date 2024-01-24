@@ -46,6 +46,12 @@ private val collectClassDefaultConstructorsPhase = makeIrModulePhase(
     description = "Collect classes default constructors to add it to metadata on code generating phase"
 )
 
+private val prepareCollectionsToExportLowering = makeIrModulePhase(
+    ::PrepareCollectionsToExportLowering,
+    name = "PrepareCollectionsToExportLowering",
+    description = "Add @JsImplicitExport to exportable collections all the declarations which we don't want to export such as `Enum.entries` or `DataClass::componentN`",
+)
+
 private val preventExportOfSyntheticDeclarationsLowering = makeIrModulePhase(
     ::ExcludeSyntheticDeclarationsFromExportLowering,
     name = "ExcludeSyntheticDeclarationsFromExportLowering",
@@ -746,7 +752,7 @@ private val escapedIdentifiersLowering = makeIrModulePhase(
 private val implicitlyExportedDeclarationsMarkingLowering = makeIrModulePhase(
     ::ImplicitlyExportedDeclarationsMarkingLowering,
     name = "ImplicitlyExportedDeclarationsMarkingLowering",
-    description = "Add @JsImplicitExport annotation to declarations which are not exported but are used inside other exported declarations as a type"
+    description = "Add @JsImplicitExport annotation to declarations which are not exported but are used inside other exported declarations as a type",
 )
 
 private val cleanupLoweringPhase = makeIrModulePhase<JsIrBackendContext>(
@@ -782,6 +788,7 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
 val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>(
     scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
+    prepareCollectionsToExportLowering,
     preventExportOfSyntheticDeclarationsLowering,
     inventNamesForLocalClassesPhase,
     collectClassIdentifiersLowering,

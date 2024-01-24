@@ -10111,6 +10111,11 @@ public open class ArrayList<E> : kotlin.collections.AbstractMutableList<E>, kotl
 
     public open override fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "1.9")
+    public open override fun asJsArrayView(): kotlin.js.collections.JsArray<E>
+
     public open override fun clear(): kotlin.Unit
 
     public final fun ensureCapacity(minCapacity: kotlin.Int): kotlin.Unit
@@ -10310,6 +10315,11 @@ public open class LinkedHashSet<E> : kotlin.collections.HashSet<E>, kotlin.colle
 public interface List<out E> : kotlin.collections.Collection<E> {
     public abstract override val size: kotlin.Int { get; }
 
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "1.9")
+    public open fun asJsReadonlyArrayView(): kotlin.js.collections.JsReadonlyArray<E>
+
     public abstract override operator fun contains(element: E): kotlin.Boolean
 
     public abstract override fun containsAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
@@ -10362,6 +10372,11 @@ public interface Map<K, out V> {
 
     public abstract val values: kotlin.collections.Collection<V> { get; }
 
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "1.9")
+    public open fun asJsReadonlyMapView(): kotlin.js.collections.JsReadonlyMap<K, V>
+
     public abstract fun containsKey(key: K): kotlin.Boolean
 
     public abstract fun containsValue(value: V): kotlin.Boolean
@@ -10410,6 +10425,11 @@ public interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections
 
     public abstract override fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "1.9")
+    public open fun asJsArrayView(): kotlin.js.collections.JsArray<E>
+
     public abstract override fun clear(): kotlin.Unit
 
     public abstract override fun listIterator(): kotlin.collections.MutableListIterator<E>
@@ -10448,6 +10468,11 @@ public interface MutableMap<K, V> : kotlin.collections.Map<K, V> {
 
     public abstract override val values: kotlin.collections.MutableCollection<V> { get; }
 
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "1.9")
+    public open fun asJsMapView(): kotlin.js.collections.JsMap<K, V>
+
     public abstract fun clear(): kotlin.Unit
 
     public abstract fun put(key: K, value: V): V?
@@ -10466,6 +10491,11 @@ public interface MutableSet<E> : kotlin.collections.Set<E>, kotlin.collections.M
 
     public abstract override fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "1.9")
+    public open fun asJsSetView(): kotlin.js.collections.JsSet<E>
+
     public abstract override fun clear(): kotlin.Unit
 
     public abstract override operator fun iterator(): kotlin.collections.MutableIterator<E>
@@ -10482,6 +10512,11 @@ public interface RandomAccess {
 
 public interface Set<out E> : kotlin.collections.Collection<E> {
     public abstract override val size: kotlin.Int { get; }
+
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "1.9")
+    public open fun asJsReadonlySetView(): kotlin.js.collections.JsReadonlySet<E>
 
     public abstract override operator fun contains(element: E): kotlin.Boolean
 

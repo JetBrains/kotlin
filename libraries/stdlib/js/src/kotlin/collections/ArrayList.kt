@@ -7,6 +7,8 @@
 
 package kotlin.collections
 
+import kotlin.js.collections.JsArray
+
 /**
  * Provides a [MutableList] implementation, which uses a resizable array as its backing storage.
  *
@@ -178,6 +180,10 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         return js("[]").slice.call(array)
     }
 
+    @ExperimentalJsExport
+    @ExperimentalJsCollectionsApi
+    @SinceKotlin("1.9")
+    override fun asJsArrayView(): JsArray<E> = array.unsafeCast<JsArray<E>>()
 
     internal override fun checkIsMutable() {
         if (isReadOnly) throw UnsupportedOperationException()
