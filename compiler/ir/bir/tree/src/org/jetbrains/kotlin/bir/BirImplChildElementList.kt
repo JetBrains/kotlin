@@ -5,12 +5,29 @@
 
 package org.jetbrains.kotlin.bir
 
+/**
+ * A regular, mutable implementation of [BirChildElementList].
+ * It generally mimics the [java.util.ArrayList] class, except
+ * for additional logic required for handling structural changes
+ * inside BIR tree, mainly tracking the parent <-> child relationship.
+ *
+ * ### Concurrent modification
+ * This class follows the same principles as [java.util.ArrayList] -
+ * it is not synchronized, and it must not be structurally changed
+ * during iteration, except when using the methods on the iterator
+ * itself. (A structural modification is any operation that adds or
+ * deletes one or more elements, or explicitly resizes the backing
+ * array; merely setting the value of an element is not a structural
+ * modification.)
+ *
+ * Violations of these rules are detected on a fail-fast, best-effort
+ * basis.
+ */
 class BirImplChildElementList<E : BirElement?>(
     override val parent: BirImplElementBase,
     id: Int,
     isNullable: Boolean,
 ) : BirChildElementList<E>(id, isNullable) {
-
     override val size: Int
         get() {
             recordRead()
@@ -66,6 +83,7 @@ class BirImplChildElementList<E : BirElement?>(
     }
 
     override fun add(element: E): Boolean {
+        modCount++
         checkNewElement(element)
         element as BirElementBase?
 
@@ -105,6 +123,7 @@ class BirImplChildElementList<E : BirElement?>(
     }
 
     override fun add(index: Int, element: E) {
+        modCount++
         val currentSize = _size
         val newSize = currentSize + 1
         checkElementIndex(index, newSize)
@@ -150,6 +169,7 @@ class BirImplChildElementList<E : BirElement?>(
     override fun addAll(elements: Collection<E>): Boolean = addAll(_size, elements)
 
     override fun addAll(index: Int, elements: Collection<E>): Boolean {
+        modCount++
         if (elements.isEmpty()) {
             return false
         }
@@ -209,6 +229,7 @@ class BirImplChildElementList<E : BirElement?>(
         assert(isNullable) { "Cannot reset not-nullable list with nulls" }
 
         clear()
+        modCount++
 
         if (count <= 1) {
             elementArray = null
@@ -219,6 +240,7 @@ class BirImplChildElementList<E : BirElement?>(
                 elementArray as Array<BirElementBase?>
                 elementArray.fill(null)
             } else {
+
                 // Nullable arrays are expected to be rarely resized,
                 // so allocate at the exact size.
                 this.elementArray = arrayOfNulls<BirElementBase?>(count)
@@ -230,6 +252,7 @@ class BirImplChildElementList<E : BirElement?>(
     }
 
     override fun removeAt(index: Int): E {
+        modCount++
         val element = removeAtInternal(index)
         parent.childReplaced(element, null)
         invalidate()
@@ -268,6 +291,7 @@ class BirImplChildElementList<E : BirElement?>(
     }
 
     override fun remove(element: E): Boolean {
+        modCount++
         val index = indexOf(element)
         if (index != -1) {
             removeAt(index)
@@ -287,6 +311,7 @@ class BirImplChildElementList<E : BirElement?>(
     }
 
     fun replace(old: E, new: E): Boolean {
+        modCount++
         if (new === old) {
             return true
         }
@@ -312,6 +337,7 @@ class BirImplChildElementList<E : BirElement?>(
     }
 
     override fun clear() {
+        modCount++
         if (_size == 0) {
             return
         }
@@ -340,6 +366,7 @@ class BirImplChildElementList<E : BirElement?>(
     fun ensureCapacity(capacity: Int) {
         val elementArray = elementArray
         if (capacity > 1 && capacity > getCurrentCapacity()) {
+            modCount++
             val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(capacity))
             if (elementArray is Array<*>) {
                 (elementArray as Array<BirElementBase?>).copyInto(newArray, endIndex = _size)
@@ -352,11 +379,11 @@ class BirImplChildElementList<E : BirElement?>(
 
 
     private fun recordRead() {
-        parent.recordPropertyRead(id)
+        parent.recordPropertyRead(id.toInt())
     }
 
     private fun invalidate() {
-        parent.invalidate(id)
+        parent.invalidate(id.toInt())
     }
 
 
@@ -406,6 +433,10 @@ class BirImplChildElementList<E : BirElement?>(
     private class IteratorImpl<E : BirElement?>(
         private val list: BirImplChildElementList<E>,
     ) : MutableIterator<E> {
+        private var expectedModCount = list.modCount
+
+        @Suppress("UNCHECKED_CAST")
+        private val elementArray = (list.elementArray as? Array<BirElementBase?>)
         private var index: Int = 0
 
         override fun hasNext(): Boolean {
@@ -413,19 +444,31 @@ class BirImplChildElementList<E : BirElement?>(
         }
 
         override fun next(): E {
+            checkForComodification()
             val i = index
 
-            @Suppress("UNCHECKED_CAST")
-            val next = when (val elementArray = list.elementArray) {
-                is Array<*> -> elementArray[i] as E
-                else -> elementArray as E
+            val elementArray = elementArray
+            val next = if (elementArray != null) {
+                elementArray[i]
+            } else {
+                list.elementArray as BirElementBase?
             }
+
             index = i + 1
-            return next
+            @Suppress("UNCHECKED_CAST")
+            return next as E
         }
 
         override fun remove() {
+            checkForComodification()
             list.removeAt(--index)
+            expectedModCount = list.modCount
+        }
+
+        private fun checkForComodification() {
+            if (list.modCount != expectedModCount) {
+                throw ConcurrentModificationException()
+            }
         }
     }
 }
