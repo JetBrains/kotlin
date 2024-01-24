@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getInlineTargetTypeOrNull
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isError
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCObjectType
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.objCErrorType
 
 
@@ -23,9 +24,6 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.objCErrorType
  */
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtType.translateToObjCType(typeBridge: TypeBridge): ObjCType {
-
-    //if (!this.isObjCObjectType()) return null //TODO implement isObjCObjectType
-
     return when (typeBridge) {
         is ReferenceBridge -> this.translateToObjCReferenceType()
         is BlockPointerBridge -> this.translateToObjCFunctionType(typeBridge)
@@ -84,6 +82,10 @@ private fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReference
     }
 
     if (classId in hiddenClassIds) {
+        return ObjCIdType
+    }
+
+    if (isObjCObjectType()) {
         return ObjCIdType
     }
 

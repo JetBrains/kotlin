@@ -458,6 +458,20 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    fun `test - ObjCObject types`() {
+        val header = header(
+            """
+                class A: kotlinx.cinterop.ObjCObject
+                val foo : A get() = A
+                val bar: kotlinx.cinterop.ObjCObject
+            """.trimIndent()
+        )
+
+        assertEquals("id", header.renderTypesOfSymbol("foo"))
+        assertEquals("id", header.renderTypesOfSymbol("bar"))
+    }
+
+    @Test
     fun `test - unresolved error type`() {
         val header = header(
             """
