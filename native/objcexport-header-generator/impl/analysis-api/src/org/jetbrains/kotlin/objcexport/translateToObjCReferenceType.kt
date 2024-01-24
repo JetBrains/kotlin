@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -53,10 +54,18 @@ private fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReference
         }
 
         val typeName = typesMap[classId]
-            ?: classId!!.shortClassName.asString()
-                .getObjCKotlinStdlibClassOrProtocolName().objCName //throw IllegalStateException("Unsupported mapping type for $this")
+            ?: classId!!.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
 
-        ObjCClassType(typeName)
+        val typeArguments = run {
+            if (this !is KtNonErrorClassType) {
+                return@run listOf<ObjCNonNullReferenceType>()
+            }
+
+            ownTypeArguments.mapNotNull { typeArgument -> typeArgument.type }
+                .map { typeArgumentType -> typeArgumentType.mapToReferenceTypeIgnoringNullability() }
+        }
+
+        ObjCClassType(typeName, typeArguments)
     }
 }
 
