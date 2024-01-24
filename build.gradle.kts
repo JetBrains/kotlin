@@ -47,6 +47,7 @@ plugins {
     if (kotlinBuildProperties.isKotlinNativeEnabled) {
         id("kotlin.native.build-tools-conventions") apply false
     }
+    `jvm-toolchains`
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
@@ -987,6 +988,9 @@ tasks {
         group = "publishing"
         workingDir = rootProject.projectDir.resolve("libraries")
         commandLine = getMvnwCmd() + listOf("clean", "install", "-DskipTests")
+        doFirst {
+            environment("JDK_1_8", getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8).get())
+        }
     }
     register<Exec>("mvnPublish") {
         group = "publishing"
@@ -997,6 +1001,9 @@ tasks {
             "-Ddeploy-snapshot-repo=local",
             "-Ddeploy-snapshot-url=file://${rootProject.projectDir.resolve("build/repo")}"
         )
+        doFirst {
+            environment("JDK_1_8", getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8).get())
+        }
     }
 }
 
