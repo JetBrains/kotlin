@@ -133,25 +133,31 @@ internal class KtFirCompletionCandidateChecker(
             return null
         }
 
-        val psiWholeCall = this.getQualifiedExpressionForReceiver()
-        if (psiWholeCall !is KtSafeQualifiedExpression) {
-            val explicitReceiverExpression = this.getOrBuildFirOfType<FirExpression>(firResolveSession)
-
-            (parent as? KtCallableReferenceExpression)?.let { callableReferenceExpression ->
-                val callableReferenceAccess = callableReferenceExpression.getOrBuildFirOfType<FirCallableReferenceAccess>(firResolveSession)
-                val lhs = resolver.resolveDoubleColonLHS(callableReferenceAccess)
-                if (lhs is DoubleColonLHS.Type) {
-                    return buildExpressionStub {
-                        source = explicitReceiverExpression.source
-                        coneTypeOrNull = lhs.type
-                    }
-                }
-            }
-
-            return explicitReceiverExpression
+        val parent = parent
+        if (parent is KtCallableReferenceExpression) {
+            return getMatchingFirExpressionForCallableReferenceReceiver(parent, resolver)
         }
+
+        val psiWholeCall = this.getQualifiedExpressionForReceiver()
+        if (psiWholeCall !is KtSafeQualifiedExpression) return this.getOrBuildFirOfType<FirExpression>(firResolveSession)
 
         val firSafeCall = psiWholeCall.getOrBuildFirOfType<FirSafeCallExpression>(firResolveSession)
         return firSafeCall.checkedSubjectRef.value
+    }
+
+    private fun KtExpression.getMatchingFirExpressionForCallableReferenceReceiver(
+        callableReferenceExpression: KtCallableReferenceExpression,
+        resolver: SingleCandidateResolver,
+    ): FirExpression? {
+        val explicitReceiverExpression = this.getOrBuildFirOfType<FirExpression>(firResolveSession)
+        val callableReferenceAccess = callableReferenceExpression.getOrBuildFirOfType<FirCallableReferenceAccess>(firResolveSession)
+        val lhs = resolver.resolveDoubleColonLHS(callableReferenceAccess)
+        if (lhs is DoubleColonLHS.Type) {
+            return buildExpressionStub {
+                source = explicitReceiverExpression.source
+                coneTypeOrNull = lhs.type
+            }
+        }
+        return explicitReceiverExpression
     }
 }

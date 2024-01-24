@@ -3,8 +3,7 @@ fun Any.extensionApplicable() {}
 fun String.extensionWrongReceiver() {}
 
 class A {
-    companion object {
-    }
+    companion object
 }
 
 fun test() {
