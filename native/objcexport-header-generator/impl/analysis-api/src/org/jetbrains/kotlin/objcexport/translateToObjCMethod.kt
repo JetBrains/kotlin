@@ -6,7 +6,6 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.annotationInfos
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.objcexport.*
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSelectors
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFunctionMethodBridge
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getInlineTargetTypeOrNull
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -327,7 +325,7 @@ fun KtFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): 
         MethodBridge.ReturnValue.Void,
         -> ObjCVoidType
         MethodBridge.ReturnValue.HashCode -> ObjCPrimitiveType.NSUInteger
-        is MethodBridge.ReturnValue.Mapped -> returnType.mapType(returnBridge.bridge)
+        is MethodBridge.ReturnValue.Mapped -> returnType.translateToObjCType(returnBridge.bridge)
         MethodBridge.ReturnValue.WithError.Success -> ObjCPrimitiveType.BOOL
         is MethodBridge.ReturnValue.WithError.ZeroForError -> {
             val successReturnType = mapReturnType(returnBridge.successBridge)
@@ -348,45 +346,4 @@ fun KtFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): 
         MethodBridge.ReturnValue.Instance.FactoryResult,
         -> ObjCInstanceType
     }
-}
-
-
-/**
- * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapType]
- */
-context(KtAnalysisSession, KtObjCExportSession)
-private fun KtType.mapType(typeBridge: TypeBridge): ObjCType {
-
-    //if (!this.isObjCObjectType()) return null //TODO implement isObjCObjectType
-
-    return when (typeBridge) {
-        is ReferenceBridge -> this.translateToObjCReferenceType()
-        is BlockPointerBridge -> this.translateToObjCFunctionType(typeBridge)
-        is ValueTypeBridge -> when (typeBridge.objCValueType) {
-            ObjCValueType.BOOL -> ObjCPrimitiveType.BOOL
-            ObjCValueType.UNICHAR -> ObjCPrimitiveType.unichar
-            ObjCValueType.CHAR -> ObjCPrimitiveType.int8_t
-            ObjCValueType.SHORT -> ObjCPrimitiveType.int16_t
-            ObjCValueType.INT -> ObjCPrimitiveType.int32_t
-            ObjCValueType.LONG_LONG -> ObjCPrimitiveType.int64_t
-            ObjCValueType.UNSIGNED_CHAR -> ObjCPrimitiveType.uint8_t
-            ObjCValueType.UNSIGNED_SHORT -> ObjCPrimitiveType.uint16_t
-            ObjCValueType.UNSIGNED_INT -> ObjCPrimitiveType.uint32_t
-            ObjCValueType.UNSIGNED_LONG_LONG -> ObjCPrimitiveType.uint64_t
-            ObjCValueType.FLOAT -> ObjCPrimitiveType.float
-            ObjCValueType.DOUBLE -> ObjCPrimitiveType.double
-            ObjCValueType.POINTER -> ObjCPointerType(ObjCVoidType, isBinaryRepresentationNullable())
-        }
-    }
-}
-
-context(KtAnalysisSession)
-private fun KtType.isBinaryRepresentationNullable(): Boolean {
-    if (fullyExpandedType.isMarkedNullable) return true
-
-    getInlineTargetTypeOrNull()?.let { inlineTargetType ->
-        if (inlineTargetType.isMarkedNullable) return true
-    }
-
-    return false
 }

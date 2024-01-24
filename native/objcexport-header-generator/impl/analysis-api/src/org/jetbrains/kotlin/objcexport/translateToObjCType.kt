@@ -8,9 +8,52 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getInlineTargetTypeOrNull
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isError
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.objCErrorType
+
+
+/**
+ * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapType]
+ */
+context(KtAnalysisSession, KtObjCExportSession)
+internal fun KtType.translateToObjCType(typeBridge: TypeBridge): ObjCType {
+
+    //if (!this.isObjCObjectType()) return null //TODO implement isObjCObjectType
+
+    return when (typeBridge) {
+        is ReferenceBridge -> this.translateToObjCReferenceType()
+        is BlockPointerBridge -> this.translateToObjCFunctionType(typeBridge)
+        is ValueTypeBridge -> when (typeBridge.objCValueType) {
+            ObjCValueType.BOOL -> ObjCPrimitiveType.BOOL
+            ObjCValueType.UNICHAR -> ObjCPrimitiveType.unichar
+            ObjCValueType.CHAR -> ObjCPrimitiveType.int8_t
+            ObjCValueType.SHORT -> ObjCPrimitiveType.int16_t
+            ObjCValueType.INT -> ObjCPrimitiveType.int32_t
+            ObjCValueType.LONG_LONG -> ObjCPrimitiveType.int64_t
+            ObjCValueType.UNSIGNED_CHAR -> ObjCPrimitiveType.uint8_t
+            ObjCValueType.UNSIGNED_SHORT -> ObjCPrimitiveType.uint16_t
+            ObjCValueType.UNSIGNED_INT -> ObjCPrimitiveType.uint32_t
+            ObjCValueType.UNSIGNED_LONG_LONG -> ObjCPrimitiveType.uint64_t
+            ObjCValueType.FLOAT -> ObjCPrimitiveType.float
+            ObjCValueType.DOUBLE -> ObjCPrimitiveType.double
+            ObjCValueType.POINTER -> ObjCPointerType(ObjCVoidType, isBinaryRepresentationNullable())
+        }
+    }
+}
+
+context(KtAnalysisSession)
+private fun KtType.isBinaryRepresentationNullable(): Boolean {
+    if (fullyExpandedType.isMarkedNullable) return true
+
+    getInlineTargetTypeOrNull()?.let { inlineTargetType ->
+        if (inlineTargetType.isMarkedNullable) return true
+    }
+
+    return false
+}
+
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceType]
@@ -36,7 +79,7 @@ private fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReference
         return ObjCIdType
     }
 
-    if (classId in hiddenTypes) {
+    if (classId in hiddenClassIds) {
         return ObjCIdType
     }
 
@@ -76,16 +119,28 @@ private fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReference
     val typeName = typesMap[classId]
         ?: classId!!.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
 
-    val typeArguments = run {
-        if (this !is KtNonErrorClassType) {
-            return@run listOf<ObjCNonNullReferenceType>()
-        }
-
-        ownTypeArguments.mapNotNull { typeArgument -> typeArgument.type }
-            .map { typeArgumentType -> typeArgumentType.mapToReferenceTypeIgnoringNullability() }
-    }
+    val typeArguments = translateToObjCTypeArguments()
 
     return ObjCClassType(typeName, typeArguments)
+}
+
+
+context(KtAnalysisSession, KtObjCExportSession)
+private fun KtType.translateToObjCTypeArguments(): List<ObjCNonNullReferenceType> {
+    if (this !is KtNonErrorClassType) return emptyList()
+
+    /* See special casing below */
+    val isKnownCollectionType = classId in collectionClassIds
+
+    return ownTypeArguments.mapNotNull { typeArgument -> typeArgument.type }
+        .map { typeArgumentType ->
+
+            /*
+             Kotlin `null` keys and values are represented as `NSNull` singleton in collections
+             */
+            if (isKnownCollectionType && typeArgumentType.isMarkedNullable) return@map ObjCIdType
+            typeArgumentType.mapToReferenceTypeIgnoringNullability()
+        }
 }
 
 private fun ObjCNonNullReferenceType.withNullabilityOf(kotlinType: KtType): ObjCReferenceType {
@@ -102,7 +157,7 @@ private fun ObjCNonNullReferenceType.withNullabilityOf(kotlinType: KtType): ObjC
  * Currently contains super types of classes handled by custom type mappers.
  * Note: can be generated programmatically, but requires stdlib in this case.
  */
-private val hiddenTypes: Set<ClassId> = listOf(
+private val hiddenClassIds: Set<ClassId> = listOf(
     "kotlin.Any",
     "kotlin.CharSequence",
     "kotlin.Comparable",
@@ -113,3 +168,9 @@ private val hiddenTypes: Set<ClassId> = listOf(
     "kotlin.collections.MutableCollection",
     "kotlin.collections.MutableIterable"
 ).map { ClassId.topLevel(FqName(it)) }.toSet()
+
+private val collectionClassIds = setOf(
+    StandardClassIds.List, StandardClassIds.MutableList,
+    StandardClassIds.Set, StandardClassIds.MutableSet,
+    StandardClassIds.Map, StandardClassIds.MutableMap
+)
