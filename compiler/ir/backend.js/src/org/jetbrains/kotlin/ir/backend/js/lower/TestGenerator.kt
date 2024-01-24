@@ -14,19 +14,26 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrDynamicOperator
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicMemberExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicOperatorExpressionImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.asSimpleType
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -65,7 +72,7 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
     private fun IrSimpleFunctionSymbol.createInvocation(
         name: String,
         parentFunction: IrSimpleFunction,
-        ignored: Boolean = false
+        ignored: Boolean = false,
     ): IrSimpleFunction {
         val body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
 
@@ -134,7 +141,7 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
         beforeFuns: List<IrSimpleFunction>,
         afterFuns: List<IrSimpleFunction>,
         irClass: IrClass,
-        parentFunction: IrSimpleFunction
+        parentFunction: IrSimpleFunction,
     ) {
         val fn = context.testFun!!.createInvocation(testFun.name.asString(), parentFunction, testFun.isIgnored)
         val body = fn.body as IrBlockBody
@@ -179,10 +186,8 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
             return
         }
 
-        if (context is JsIrBackendContext && (testFun.returnType as? IrSimpleType)?.classifier == context.intrinsics.promiseClassSymbol) {
-            val finally = context.intrinsics.promiseClassSymbol.owner.declarations
-                .findIsInstanceAnd<IrSimpleFunction> { it.name.asString() == "finally" }!!
 
+        if (context is JsIrBackendContext && (testFun.returnType as? IrSimpleType)?.isPromise == true) {
             val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0), false, emptyList(), emptyList())
 
             val afterFunction = context.irFactory.buildFun {
@@ -204,12 +209,14 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
 
             val finallyLambda = JsIrBuilder.buildFunctionExpression(refType, afterFunction)
 
-            val returnValue = JsIrBuilder.buildCall(
-                finally.symbol
-            ).apply {
-                this.dispatchReceiver = returnStatement.value
-                putValueArgument(0, finallyLambda)
-            }
+            val finally =
+                IrDynamicMemberExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.dynamicType, "finally", returnStatement.value)
+
+            val returnValue =
+                IrDynamicOperatorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.dynamicType, IrDynamicOperator.INVOKE).also {
+                    it.receiver = finally
+                    it.arguments.add(finallyLambda)
+                }
 
             body.statements += JsIrBuilder.buildReturn(
                 fn.symbol,
@@ -261,4 +268,10 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
 
     private fun IrAnnotationContainer.hasAnnotation(fqName: String) =
         annotations.any { it.symbol.owner.fqNameWhenAvailable?.parent()?.asString() == fqName }
+
+    private val IrSimpleType.isPromise: Boolean
+        get() {
+            val klass = classifier.owner as? IrClass ?: return false
+            return klass.isExternal && klass.getJsModule() == null && klass.getJsNameOrKotlinName().asString() == "Promise"
+        }
 }
