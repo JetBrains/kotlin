@@ -156,6 +156,39 @@ private fun <T> ProcessBuilder.scoped(logger: Logger, block: suspend CoroutineSc
     }
 }
 
+private class SleeperWithBackoff {
+    // Start with exponential backoff, then try 150ms for a while, and finally settle on a second.
+    private val backoffMilliseconds = longArrayOf(10, 20, 40, 80, 150, 150, 150, 150, 150)
+    private val maxBackoffMilliseconds = 1000L
+    private var nextIndex = 0
+
+    private val nextBackoffMilliseconds: Long
+        get() = backoffMilliseconds.getOrNull(nextIndex++) ?: maxBackoffMilliseconds
+
+    fun sleep() {
+        Thread.sleep(nextBackoffMilliseconds)
+    }
+}
+
+private fun Process.waitFor(timeout: Duration): Boolean {
+    if (!HostManager.hostIsMingw)
+        return waitFor(timeout.inWholeMilliseconds, TimeUnit.MILLISECONDS)
+    // KT-65113: Looks like there's a race in waitFor implementation for Windows. It can wait for the entire `timeout` but the process'
+    // exitValue would be 0.
+    if (!isAlive)
+        return true
+    if (!timeout.isPositive())
+        return false
+    val deadline = TimeSource.Monotonic.markNow() + timeout
+    val sleeper = SleeperWithBackoff()
+    do {
+        sleeper.sleep()
+        if (!isAlive)
+            break
+    } while (deadline.hasNotPassedNow())
+    return !isAlive
+}
+
 /**
  * [Executor] that runs the process on the host system.
  */
@@ -181,7 +214,7 @@ class HostExecutor : Executor {
         }.scoped(logger) { process ->
             val streams = pumpStreams(logger, process, request.stdin, request.stdout, request.stderr)
             val (isTimeout, duration) = measureTimedValue {
-                !process.waitFor(request.timeout.inWholeMilliseconds, TimeUnit.MILLISECONDS)
+                !process.waitFor(request.timeout)
             }
             if (isTimeout) {
                 logger.warning("Timeout running $commandLine in $duration")
