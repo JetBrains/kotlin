@@ -67,10 +67,12 @@ class SirComparator(val options: Set<Options> = emptySet()) : SirVisitor<Boolean
 }
 
 private fun SirComparator.areEqual(lhs: List<SirElement>, rhs: List<SirElement>): Boolean {
-    return options.contains(SirComparator.Options.POSITIONAL) &&
-            lhs.size == rhs.size &&
-            lhs.zip(rhs).all { areEqual(it.first, it.second) } ||
-            areEqualNonPositionally(lhs, rhs)
+    return if (options.contains(SirComparator.Options.POSITIONAL)) {
+        lhs.size == rhs.size &&
+                lhs.zip(rhs).all { areEqual(it.first, it.second) }
+    } else {
+        areEqualNonPositionally(lhs, rhs)
+    }
 }
 
 private fun SirComparator.areEqual(lhs: SirOrigin, rhs: SirOrigin): Boolean {

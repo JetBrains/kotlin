@@ -1,7 +1,5 @@
-enum namespace2 {
-    public static func bar() -> Swift.Int32 {
-        return namespace2_bar()
-    }
+public func foo() -> Swift.Int32 {
+    return __root___foo()
 }
 
 enum namespace1 {
@@ -17,6 +15,8 @@ enum namespace1 {
     }
 }
 
-public func foo() -> Swift.Int32 {
-    return __root___foo()
+enum namespace2 {
+    public static func bar() -> Swift.Int32 {
+        return namespace2_bar()
+    }
 }

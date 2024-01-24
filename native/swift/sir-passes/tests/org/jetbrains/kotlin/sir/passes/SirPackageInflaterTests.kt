@@ -50,11 +50,48 @@ class SirPackageInflaterTests {
 
             declarations += buildEnum {
                 name = "com"
-                origin = SirOrigin.Namespace(path =  listOf("com"))
+                origin = SirOrigin.Namespace(path = listOf("com"))
                 declarations += listOf(
                     makeFunction("com.foo"),
                     makeFunction("com.bar"),
                     makeFunction("com.baz"),
+                )
+            }
+        }
+
+        val pass = SirInflatePackagesPass()
+        val actual = pass.run(original)
+
+        assertEqual(expected, actual)
+    }
+
+    @Test
+    fun `should sort namespaces by alphabet`() {
+        val original = buildModule {
+            name = "Root"
+
+            declarations += listOf(
+                makeFunction("b.foo"),
+                makeFunction("a.foo"),
+            )
+        }
+
+        val expected = buildModule {
+            name = "Root"
+
+            declarations += buildEnum {
+                name = "a"
+                origin = SirOrigin.Namespace(path = listOf("a"))
+                declarations += listOf(
+                    makeFunction("a.foo"),
+                )
+            }
+
+            declarations += buildEnum {
+                name = "b"
+                origin = SirOrigin.Namespace(path = listOf("b"))
+                declarations += listOf(
+                    makeFunction("b.foo"),
                 )
             }
         }
@@ -117,7 +154,7 @@ class SirPackageInflaterTests {
 
             declarations += buildEnum {
                 name = "com"
-                origin = SirOrigin.Namespace(path =  listOf("com"))
+                origin = SirOrigin.Namespace(path = listOf("com"))
                 declarations += listOf(
                     makeFunction("com.foo"),
                     makeFunction("com.baz"),
@@ -162,7 +199,7 @@ class SirPackageInflaterTests {
                 makeFunction("orphan"),
                 buildEnum {
                     name = "com"
-                    origin = SirOrigin.Namespace(path =  listOf("com"))
+                    origin = SirOrigin.Namespace(path = listOf("com"))
                     declarations += listOf(
                         makeFunction("com.foo"),
                         makeFunction("com.baz"),
@@ -170,25 +207,25 @@ class SirPackageInflaterTests {
                 },
                 buildEnum {
                     name = "org"
-                    origin = SirOrigin.Namespace(path =  listOf("org"))
+                    origin = SirOrigin.Namespace(path = listOf("org"))
                     declarations += listOf(
-                        makeFunction("org.bar"),
                         buildEnum {
                             name = "jetbrains"
-                            origin = SirOrigin.Namespace(path =  listOf("org", "jetbrains"))
+                            origin = SirOrigin.Namespace(path = listOf("org", "jetbrains"))
                             declarations += listOf(
-                                makeFunction("org.jetbrains.baz"),
                                 buildEnum {
                                     name = "mascots"
-                                    origin = SirOrigin.Namespace(path =  listOf("org", "jetbrains", "mascots"))
+                                    origin = SirOrigin.Namespace(path = listOf("org", "jetbrains", "mascots"))
                                     declarations += buildEnum {
                                         name = "kotlin"
-                                        origin = SirOrigin.Namespace(path =  listOf("org", "jetbrains", "mascots", "kotlin"))
+                                        origin = SirOrigin.Namespace(path = listOf("org", "jetbrains", "mascots", "kotlin"))
                                         declarations += makeFunction("org.jetbrains.mascots.kotlin.kodee")
                                     }
-                                }
+                                },
+                                makeFunction("org.jetbrains.baz")
                             )
-                        }
+                        },
+                        makeFunction("org.bar")
                     )
                 }
             )
@@ -208,7 +245,17 @@ private fun makeFunction(fqName: String) = buildForeignFunction {
 }
 
 private fun assertEqual(expected: SirModule, actual: SirModule) {
-    assert(SirComparator(options = setOf(SirComparator.Options.COMPARE_ORIGINS)).areEqual(expected, actual)) {
+    assert(
+        SirComparator(
+            options = setOf(
+                SirComparator.Options.COMPARE_ORIGINS,
+                SirComparator.Options.POSITIONAL
+            )
+        ).areEqual(
+            expected,
+            actual
+        )
+    ) {
         "\nExpected:\n\n${SirPrinter.toString(expected)}\n\nActual:\n\n${SirPrinter.toString(actual)}"
     }
 }

@@ -76,7 +76,12 @@ public class SirInflatePackagesPass : SirModulePass {
             }
 
             declarations += additions.declarations
-        }.also(SirDeclarationContainer::fixParents)
+
+            declarations.sortWith(
+                compareBy { (it as? SirNamedDeclaration)?.name }
+            )
+        }
+            .also(SirDeclarationContainer::fixParents)
     }
 
     public override fun run(element: SirModule, data: Nothing?): SirModule = element.transform(Transformer, Context())

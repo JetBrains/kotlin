@@ -1,8 +1,8 @@
 import kotlin.native.internal.ExportedBridge
 
-@ExportedBridge("namespace2_bar")
-public fun namespace2_bar(): Int {
-    val result = namespace2.bar()
+@ExportedBridge("__root___foo")
+public fun __root___foo(): Int {
+    val result = foo()
     return result
 }
 
@@ -18,8 +18,8 @@ public fun namespace1_foo(): Int {
     return result
 }
 
-@ExportedBridge("__root___foo")
-public fun __root___foo(): Int {
-    val result = foo()
+@ExportedBridge("namespace2_bar")
+public fun namespace2_bar(): Int {
+    val result = namespace2.bar()
     return result
 }
