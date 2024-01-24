@@ -52,6 +52,8 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
         type to iteratorClass
     }
 
+    val indexedValue = getClass(Name.identifier("IndexedValue"), "kotlin", "collections")
+
     val asserts = irBuiltIns.findFunctions(Name.identifier("assert"), "kotlin")
 
     private fun progression(name: String) = getClass(Name.identifier(name), "kotlin", "ranges")

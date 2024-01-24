@@ -32,24 +32,25 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
-/**
- * Boxes and unboxes values of value types when necessary.
- */
-internal class Autoboxing(val context: Context) : FileLoweringPass {
+///**
+// * Boxes and unboxes values of value types when necessary.
+// */
+//internal class Autoboxing(val context: Context) : FileLoweringPass {
+//
+//    private val transformer = AutoboxingTransformer(context)
+//
+//    override fun lower(irFile: IrFile) {
+//        irFile.transformChildrenVoid(transformer)
+//        // TODO: Split.
+//        irFile.transform(InlineClassTransformer(context), data = null)
+//    }
+//}
 
-    private val transformer = AutoboxingTransformer(context)
-
+internal class AutoboxingTransformer(val context: Context)
+    : AbstractValueUsageTransformer(context.ir.symbols, context.irBuiltIns), FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(transformer)
-        irFile.transform(InlineClassTransformer(context), data = null)
+        irFile.transformChildrenVoid(this)
     }
-
-}
-
-private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTransformer(
-        context.ir.symbols,
-        context.irBuiltIns
-) {
 
     // TODO: should we handle the cases when expression type
     // is not equal to e.g. called function return type?
@@ -132,7 +133,9 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         return this.useAsArgument(expression.target.valueParameters[parameter.index])
     }
 
-    private fun IrExpression.adaptIfNecessary(actualType: IrType, expectedType: IrType): IrExpression {
+    fun IrExpression.adaptIfNecessary(actualType: IrType, expectedType: IrType): IrExpression {
+//        println("ZZZ: ${actualType.render()} ${expectedType.render()}")
+//        println("    ${this.dump()}")
         val conversion = context.getTypeConversion(actualType, expectedType)
         return if (conversion == null) {
             this
@@ -193,7 +196,10 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
 
 }
 
-private class InlineClassTransformer(private val context: Context) : IrBuildingTransformer(context) {
+internal class InlineClassTransformer(private val context: Context) : IrBuildingTransformer(context), FileLoweringPass {
+    override fun lower(irFile: IrFile) {
+        irFile.transform(this, null)
+    }
 
     private val symbols = context.ir.symbols
     private val irBuiltIns = context.irBuiltIns

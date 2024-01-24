@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -43,7 +44,13 @@ internal class IterableLoopHeader(
                 }
             // The call could be wrapped in an IMPLICIT_NOTNULL type-cast (see comment in ForLoopsLowering.gatherLoopVariableInfo()).
             // Find and replace the call to preserve any type-casts.
-            loopVariable?.initializer = loopVariable?.initializer?.transform(InitializerCallReplacer(next), null)
+            //loopVariable?.initializer = loopVariable?.initializer?.transform(InitializerCallReplacer(next), null)
+            loopVariable?.initializer = loopVariable?.initializer?.let { initializer ->
+                val transformer = InitializerCallReplacer(backendContext, next)
+                initializer.transform(transformer, null).also {
+                    require(transformer.initializerCall != null) { "BUGBUGBUG: No replacement found for ${initializer.dump()}" }
+                }
+            }
             // Even if there is no loop variable, we always want to call `next()` for iterables and sequences.
             listOf(loopVariable ?: next.coerceToUnitIfNeeded(next.type, context.irBuiltIns, backendContext.typeSystem))
         }

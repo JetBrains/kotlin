@@ -2475,12 +2475,22 @@ internal class CodeGeneratorVisitor(
         require(!function.isSuspend) { "Suspend functions should be lowered out at this point"}
 
         return when {
-            function.isTypedIntrinsic -> intrinsicGenerator.evaluateCall(callee, args, resultSlot)
+            function.isTypedIntrinsic -> try {
+                intrinsicGenerator.evaluateCall(callee, args, resultSlot)
+            } catch (t: Throwable) {
+                println("BUGBUGBUG: ${functionGenerationContext.irFunction?.file?.name} ${functionGenerationContext.irFunction?.render()} ${callee.dump()}\n${functionGenerationContext.irFunction?.dump()}")
+                throw t
+            }
             function.isBuiltInOperator -> evaluateOperatorCall(callee, args)
             function.origin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER -> evaluateFileGlobalInitializerCall(function)
             function.origin == DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER -> evaluateFileThreadLocalInitializerCall(function)
             function.origin == DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER -> evaluateFileStandaloneThreadLocalInitializerCall(function)
-            else -> evaluateSimpleFunctionCall(function, args, resultLifetime, callee.superQualifierSymbol?.owner, resultSlot)
+            else -> try {
+                evaluateSimpleFunctionCall(function, args, resultLifetime, callee.superQualifierSymbol?.owner, resultSlot)
+            } catch (t: Throwable) {
+                println("BUGBUGBUG: ${functionGenerationContext.irFunction?.file?.name} ${functionGenerationContext.irFunction?.render()} ${callee.dump()}")
+                throw t
+            }
         }
     }
 

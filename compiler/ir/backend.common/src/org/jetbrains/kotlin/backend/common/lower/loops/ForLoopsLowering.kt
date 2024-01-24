@@ -130,13 +130,14 @@ class ForLoopsLowering(
     }
 }
 
+val LOWERED_FOR_LOOP by IrStatementOriginImpl
+
 /**
  * Abstract class for additional for-loop bodies transformations.
  */
 abstract class ForLoopBodyTransformer : IrElementTransformerVoid() {
 
     abstract fun transform(
-        context: CommonBackendContext,
         loopBody: IrExpression,
         loopVariable: IrVariable,
         forLoopHeader: ForLoopHeader,
@@ -206,6 +207,7 @@ private class RangeLoopTransformer(
 
         statements[0] = loweredHeader
         statements[1] = loopReplacementExpression
+        expression.origin = LOWERED_FOR_LOOP
 
         return super.visitBlock(expression)
     }
@@ -301,7 +303,7 @@ private class RangeLoopTransformer(
             }
         }
         if (newBody != null && loopBodyTransformer != null) {
-            loopBodyTransformer.transform(context, newBody, mainLoopVariable, loopHeader, loopVariableComponents)
+            loopBodyTransformer.transform(newBody, mainLoopVariable, loopHeader, loopVariableComponents)
         }
 
         return loopHeader.buildLoop(context.createIrBuilder(getScopeOwnerSymbol(), loop.startOffset, loop.endOffset), loop, newBody)

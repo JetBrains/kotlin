@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.util.dump
 
 class IndexedGetLoopHeader(
     headerInfo: IndexedGetHeaderInfo,
@@ -48,7 +49,13 @@ class IndexedGetLoopHeader(
             }
             // The call could be wrapped in an IMPLICIT_NOTNULL type-cast (see comment in ForLoopsLowering.gatherLoopVariableInfo()).
             // Find and replace the call to preserve any type-casts.
-            loopVariable?.initializer = loopVariable?.initializer?.transform(InitializerCallReplacer(get), null)
+            //loopVariable?.initializer = loopVariable?.initializer?.transform(InitializerCallReplacer(get), null)
+            loopVariable?.initializer = loopVariable?.initializer?.let { initializer ->
+                val transformer = InitializerCallReplacer(backendContext, get)
+                initializer.transform(transformer, null).also {
+                    require(transformer.initializerCall != null) { "BUGBUGBUG: No replacement found for ${initializer.dump()}" }
+                }
+            }
             // Even if there is no loop variable, we always want to call `get()` as it may have side effects.
             // The un-lowered loop always calls `get()` on each iteration.
             listOf(loopVariable ?: get) + incrementInductionVariable(this)

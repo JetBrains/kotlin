@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.backend.konan.lower.InlineClassPropertyAccessorsLowe
 import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
 import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
 import org.jetbrains.kotlin.backend.konan.lower.UnboxInlineLowering
+import org.jetbrains.kotlin.backend.konan.optimizations.HeaderInfoForListsBuilder
 import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTransformer
-import org.jetbrains.kotlin.backend.konan.optimizations.NativeHeaderInfoBuilder
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -314,10 +314,7 @@ private val rangeContainsLoweringPhase = createFileLoweringPhase(
 
 private val forLoopsPhase = createFileLoweringPhase(
         { context, irFile ->
-            ForLoopsLowering(
-                    context,
-                    { scopeOwnerSymbol: () -> IrSymbol -> NativeHeaderInfoBuilder(context, scopeOwnerSymbol) },
-                    KonanBCEForLoopBodyTransformer()).lower(irFile)
+            ForLoopsLowering(context, loopBodyTransformer = KonanBCEForLoopBodyTransformer(context)).lower(irFile)
         },
         name = "ForLoops",
         description = "For loops lowering",
@@ -452,7 +449,16 @@ private val coroutinesPhase = createFileLoweringPhase(
         prerequisite = setOf(localFunctionsPhase, finallyBlocksPhase, kotlinNothingValueExceptionPhase)
 )
 
-private val coroutinesLivenessAnalysisPhase = createFileLoweringPhase(
+internal val coroutinesLivenessAnalysisFallbackPhase = createFileLoweringPhase(
+        lowering = { context: NativeGenerationState ->
+            CoroutinesLivenessAnalysisFallback(context.context.ir.symbols, context.liveVariablesAtSuspensionPoints)
+        },
+        name = "CoroutinesLivenessAnalysisFallback",
+        description = "Compute visible variables at suspension points",
+        prerequisite = setOf(coroutinesPhase)
+)
+
+internal val coroutinesLivenessAnalysisPhase = createFileLoweringPhase(
         lowering = { context: NativeGenerationState ->
             object : BodyLoweringPass {
                 override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -468,7 +474,7 @@ private val coroutinesLivenessAnalysisPhase = createFileLoweringPhase(
         prerequisite = setOf(coroutinesPhase)
 )
 
-private val coroutinesVarSpillingPhase = createFileLoweringPhase(
+internal val coroutinesVarSpillingPhase = createFileLoweringPhase(
         lowering = ::CoroutinesVarSpillingLowering,
         name = "CoroutinesVarSpilling",
         description = "Save/restore coroutines variables before/after suspension",
@@ -510,10 +516,17 @@ private val bridgesPhase = createFileLoweringPhase(
 )
 
 private val autoboxPhase = createFileLoweringPhase(
-        ::Autoboxing,
+        ::AutoboxingTransformer,
         name = "Autobox",
         description = "Autoboxing of primitive types",
         prerequisite = setOf(bridgesPhase, coroutinesPhase)
+)
+
+internal val inlineClassesTransformationPhase = createFileLoweringPhase(
+        ::InlineClassTransformer,
+        name = "InlineClassesTransformation",
+        description = "Inline classes transformation",
+        prerequisite = setOf(autoboxPhase)
 )
 
 private val expressionBodyTransformPhase = createFileLoweringPhase(
@@ -656,8 +669,10 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         varargPhase,
         kotlinNothingValueExceptionPhase,
         coroutinesPhase,
-        coroutinesLivenessAnalysisPhase,
-        coroutinesVarSpillingPhase,
+        // Either of these could be turned off without losing correctness.
+        coroutinesLivenessAnalysisFallbackPhase, // This is simple
+        coroutinesLivenessAnalysisPhase, // While this is more optimal
+//        coroutinesVarSpillingPhase,
         typeOperatorPhase,
         expressionBodyTransformPhase,
         objectClassesPhase,
@@ -669,6 +684,7 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         exportInternalAbiPhase.takeIf { context.config.produce.isCache },
         useInternalAbiPhase,
         autoboxPhase,
+        inlineClassesTransformationPhase,
 )
 
 private fun createFileLoweringPhase(

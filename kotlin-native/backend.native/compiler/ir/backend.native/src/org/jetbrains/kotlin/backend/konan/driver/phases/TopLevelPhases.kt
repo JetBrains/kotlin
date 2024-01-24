@@ -355,13 +355,22 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
         runPhase(ReturnsInsertionPhase, it)
     }
     val moduleDFG = runPhase(BuildDFGPhase, module, disable = !optimize)
-    val devirtualizationAnalysisResults = runPhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !optimize)
-    val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
-    runPhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, devirtualizationAnalysisResults, module), disable = !optimize)
-    runPhase(DevirtualizationPhase, DevirtualizationInput(module, devirtualizationAnalysisResults), disable = !optimize)
+    val devirtualizationAnalysisResult = runPhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !optimize)
+    val devirtualizedCallSites = devirtualizationAnalysisResult.devirtualizedCallSites
+            .asSequence()
+            .filter { it.key.irCallSite != null }
+            .associate { it.key.irCallSite!! to it.value }
+            .toMutableMap()
+    runPhase(ForLoopsOverStdlibListsPhase, ForLoopsOverStdlibListsInput(module, moduleDFG, devirtualizedCallSites), disable = !optimize)
+    val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG, devirtualizationAnalysisResult), disable = !optimize)
+    runPhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, devirtualizationAnalysisResult, module), disable = !optimize)
+    runPhase(DevirtualizationPhase, DevirtualizationInput(module, devirtualizedCallSites), disable = !optimize)
     // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
     // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
     module.files.forEach {
+        //runPhase(inlineClassesTransformationPhase, it)
+        //runPhase(coroutinesLivenessAnalysisPhase, it)
+        runPhase(coroutinesVarSpillingPhase, it)
         runPhase(PropertyAccessorInlinePhase, it, disable = !optimize)
         runPhase(InlineClassPropertyAccessorsPhase, it, disable = !optimize)
         runPhase(RedundantCoercionsCleaningPhase, it)
@@ -372,7 +381,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     runPhase(CreateLLVMDeclarationsPhase, module)
     runPhase(GHAPhase, module, disable = !optimize)
     runPhase(RTTIPhase, RTTIInput(module, dceResult))
-    val lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
+    val lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG, devirtualizationAnalysisResult), disable = !optimize)
     runPhase(CodegenPhase, CodegenInput(module, lifetimes))
 }
 

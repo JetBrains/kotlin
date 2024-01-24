@@ -52,6 +52,9 @@ internal fun dce(
         }
     }
 
+//    context.ir.symbols.boxCachePredicates.values.forEach { referencedFunctions.add(it.owner) }
+//    context.ir.symbols.boxCacheGetters.values.forEach { referencedFunctions.add(it.owner) }
+
     irModule.acceptChildrenVoid(object: IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)

@@ -151,17 +151,8 @@ private class ExpressionValuesExtractor(val context: Context,
     }
 }
 
-internal class ModuleDFG(val functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
-                         val symbolTable: DataFlowIR.SymbolTable)
-
-internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFragment) {
-
-    private val TAKE_NAMES = true // Take fqNames for all functions and types (for debug purposes).
-
-    private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
-
-    private val module = DataFlowIR.Module()
-    private val symbolTable = DataFlowIR.SymbolTable(context, module)
+internal class FunctionDFGBuilder(private val generationState: NativeGenerationState, private val symbolTable: DataFlowIR.SymbolTable) {
+    private val context = generationState.context
 
     // Possible values of a returnable block.
     private val returnableBlockValues = mutableMapOf<IrReturnableBlock, MutableList<IrExpression>>()
@@ -171,111 +162,43 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
     private val expressionValuesExtractor = ExpressionValuesExtractor(context, returnableBlockValues, suspendableExpressionValues)
 
-    fun build(): ModuleDFG {
-        symbolTable.populateWith(irModule)
-
-        val functions = mutableMapOf<DataFlowIR.FunctionSymbol, DataFlowIR.Function>()
-        irModule.accept(object : IrElementVisitorVoid {
-
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitConstructor(declaration: IrConstructor) {
-                val body = declaration.body
-                assert (body != null) {
-                    "Class constructor has empty body"
-                }
-                context.logMultiple {
-                    +"Analysing function ${declaration.render()}"
-                    +"IR: ${ir2stringWhole(declaration)}"
-                }
-                analyze(declaration, body)
-            }
-
-            override fun visitFunction(declaration: IrFunction) {
-                val body = declaration.body
-                if (body == null) {
-                    // External function or intrinsic.
-                    symbolTable.mapFunction(declaration)
-                } else {
-                    context.logMultiple {
-                        +"Analysing function ${declaration.render()}"
-                        +"IR: ${ir2stringWhole(declaration)}"
-                    }
-                    analyze(declaration, body)
-                }
-            }
-
-            override fun visitField(declaration: IrField) {
-                if (declaration.isStatic)
-                    declaration.initializer?.let {
-                        context.logMultiple {
-                            +"Analysing global field ${declaration.render()}"
-                            +"IR: ${ir2stringWhole(declaration)}"
-                        }
-                        analyze(declaration, IrSetFieldImpl(it.startOffset, it.endOffset, declaration.symbol, null,
-                                it.expression, context.irBuiltIns.unitType))
-                    }
-            }
-
-            private fun analyze(declaration: IrDeclaration, body: IrElement?) {
-                // Find all interesting expressions, variables and functions.
-                val visitor = ElementFinderVisitor()
-                body?.acceptVoid(visitor)
-
-                context.logMultiple {
-                    +"FIRST PHASE"
-                    visitor.variableValues.elementData.forEach { (t, u) ->
-                        +"VAR $t [LOOP ${u.loop}]:"
-                        u.values.forEach { +"    ${ir2stringWhole(it)}" }
-                    }
-                    visitor.expressions.forEach { t ->
-                        +"EXP [LOOP ${t.value}] ${ir2stringWhole(t.key)}"
-                    }
-                }
-
-                // Compute transitive closure of possible values for variables.
-                visitor.variableValues.computeClosure()
-
-                context.logMultiple {
-                    +"SECOND PHASE"
-                    visitor.variableValues.elementData.forEach { (t, u) ->
-                        +"VAR $t [LOOP ${u.loop}]:"
-                        u.values.forEach { +"    ${ir2stringWhole(it)}" }
-                    }
-                }
-
-                val function = FunctionDFGBuilder(expressionValuesExtractor, visitor.variableValues,
-                        declaration, visitor.expressions, visitor.parentLoops, visitor.returnValues,
-                        visitor.thrownValues, visitor.catchParameters).build()
-
-                context.logMultiple {
-                    +function.debugString()
-                    +""
-                }
-
-                functions[function.symbol] = function
-            }
-        }, data = null)
+    fun build(declaration: IrDeclaration, body: IrElement?): DataFlowIR.Function {
+        // Find all interesting expressions, variables and functions.
+        val visitor = ElementFinderVisitor()
+        body?.acceptVoid(visitor)
 
         context.logMultiple {
-            +"SYMBOL TABLE:"
-            symbolTable.classMap.forEach { (irClass, type) ->
-                +"    IR CLASS: ${irClass.render()}"
-                +"    TYPE: $type"
-                if (type !is DataFlowIR.Type.Declared)
-                    return@forEach
-                +"        SUPER TYPES:"
-                type.superTypes.forEach { +"            $it" }
-                +"        VTABLE:"
-                type.vtable.forEach { +"            $it" }
-                +"        ITABLE:"
-                type.itable.forEach { +"            ${it.key} -> ${it.value}" }
+            +"FIRST PHASE"
+            visitor.variableValues.elementData.forEach { (t, u) ->
+                +"VAR $t [LOOP ${u.loop}]:"
+                u.values.forEach { +"    ${ir2stringWhole(it)}" }
+            }
+            visitor.expressions.forEach { t ->
+                +"EXP [LOOP ${t.value}] ${ir2stringWhole(t.key)}"
             }
         }
 
-        return ModuleDFG(functions, symbolTable)
+        // Compute transitive closure of possible values for variables.
+        visitor.variableValues.computeClosure()
+
+        context.logMultiple {
+            +"SECOND PHASE"
+            visitor.variableValues.elementData.forEach { (t, u) ->
+                +"VAR $t [LOOP ${u.loop}]:"
+                u.values.forEach { +"    ${ir2stringWhole(it)}" }
+            }
+        }
+
+        val function = FunctionDFGBuilder(expressionValuesExtractor, visitor.variableValues,
+                declaration, visitor.expressions, visitor.parentLoops, visitor.returnValues,
+                visitor.thrownValues, visitor.catchParameters, visitor.liveVariables).build()
+
+        context.logMultiple {
+            +function.debugString()
+            +""
+        }
+
+        return function
     }
 
     private inner class ElementFinderVisitor : IrElementVisitorVoid {
@@ -285,9 +208,11 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
         val returnValues = mutableListOf<IrExpression>()
         val thrownValues = mutableListOf<IrExpression>()
         val catchParameters = mutableSetOf<IrVariable>()
+        val liveVariables = mutableMapOf<IrCall, List<IrVariable>>()
 
         private val suspendableExpressionStack = mutableListOf<IrSuspendableExpression>()
         private val loopStack = mutableListOf<IrLoop>()
+        private val liveVariablesStack = mutableListOf<List<IrVariable>>()
         private val currentLoop get() = loopStack.peek()
 
         override fun visitElement(element: IrElement) {
@@ -345,6 +270,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
                     expressions += jobInvocation to currentLoop
                 }
+                if (expression.symbol == saveCoroutineState)
+                    liveVariables[expression] = liveVariablesStack.peek()!!
+
                 val intrinsicType = tryGetIntrinsicType(expression)
                 if (intrinsicType == IntrinsicType.COMPARE_AND_SET || intrinsicType == IntrinsicType.COMPARE_AND_EXCHANGE) {
                     expressions += IrSetFieldImpl(
@@ -365,8 +293,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                     ) to currentLoop
                 }
             }
-
-
 
             // TODO: A little bit hacky but it is the simplest solution.
             // See ObjC instanceOf code generation for details.
@@ -390,8 +316,10 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 suspendableExpressionStack.push(expression)
                 suspendableExpressionValues.put(expression, mutableListOf())
             }
-            if (expression is IrSuspensionPoint)
+            if (expression is IrSuspensionPoint) {
                 suspendableExpressionValues[suspendableExpressionStack.peek()!!]!!.add(expression)
+                liveVariablesStack.push(generationState.liveVariablesAtSuspensionPoints[expression]!!)
+            }
             if (expression is IrLoop) {
                 parentLoops[expression] = currentLoop
                 loopStack.push(expression)
@@ -403,6 +331,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 loopStack.pop()
             if (expression is IrSuspendableExpression)
                 suspendableExpressionStack.pop()
+            if (expression is IrSuspensionPoint)
+                liveVariablesStack.pop()
         }
 
         override fun visitSetField(expression: IrSetField) {
@@ -474,11 +404,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
     }
 
     private val symbols = context.ir.symbols
-
-    private val invokeSuspendFunctionSymbol =
-            symbols.baseContinuationImpl.owner.declarations
-                    .filterIsInstance<IrSimpleFunction>().single { it.name.asString() == "invokeSuspend" }.symbol
-
     private val arrayGetSymbols = symbols.arrayGet.values
     private val arraySetSymbols = symbols.arraySet.values
     private val createUninitializedInstanceSymbol = symbols.createUninitializedInstance
@@ -488,28 +413,22 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
     private val executeImplProducerInvoke = executeImplProducerClass.simpleFunctions()
             .single { it.name == OperatorNameConventions.INVOKE }
     private val reinterpret = symbols.reinterpret
+    private val saveCoroutineState = symbols.saveCoroutineState
     private val objCObjectRawValueGetter = symbols.interopObjCObjectRawValueGetter
-
-    private val fields = mutableMapOf<IrField, DataFlowIR.Field>()
-    private fun IrField.toDataFlowIRField() = fields.getOrPut(this) {
-        val name = name.asString()
-        DataFlowIR.Field(
-                symbolTable.mapType(type),
-                1 + fields.size,
-                takeName { name }
-        )
-    }
 
     private class Scoped<out T : Any>(val value: T, val scope: DataFlowIR.Node.Scope)
 
-    private inner class FunctionDFGBuilder(val expressionValuesExtractor: ExpressionValuesExtractor,
-                                           val variableValues: VariableValues,
-                                           val declaration: IrDeclaration,
-                                           val expressions: Map<IrExpression, IrLoop?>,
-                                           val parentLoops: Map<IrLoop, IrLoop?>,
-                                           val returnValues: List<IrExpression>,
-                                           val thrownValues: List<IrExpression>,
-                                           val catchParameters: Set<IrVariable>) {
+    private inner class FunctionDFGBuilder(
+            val expressionValuesExtractor: ExpressionValuesExtractor,
+            val variableValues: VariableValues,
+            val declaration: IrDeclaration,
+            val expressions: Map<IrExpression, IrLoop?>,
+            val parentLoops: Map<IrLoop, IrLoop?>,
+            val returnValues: List<IrExpression>,
+            val thrownValues: List<IrExpression>,
+            val catchParameters: Set<IrVariable>,
+            val liveVariables: Map<IrCall, List<IrVariable>>,
+    ) {
 
         private val rootScope = DataFlowIR.Node.Scope(0, emptyList())
         private val allParameters = (declaration as? IrFunction)?.allParameters ?: emptyList()
@@ -548,8 +467,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 val scope = if (loop == null) rootScope else scopes[loop]!!
                 val node = DataFlowIR.Node.Variable(
                         values = mutableListOf(),
-                        type   = symbolTable.mapType(irVariable.type),
-                        kind   = if (catchParameters.contains(irVariable))
+                        type = symbolTable.mapType(irVariable.type),
+                        kind = if (catchParameters.contains(irVariable))
                             DataFlowIR.VariableKind.CatchParameter
                         else DataFlowIR.VariableKind.Ordinary
                 )
@@ -567,13 +486,13 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
             val returnsNode = DataFlowIR.Node.Variable(
                     values = returnValues.map { expressionToEdge(it) },
-                    type   = symbolTable.mapType(returnNodeType),
-                    kind   = DataFlowIR.VariableKind.Temporary
+                    type = symbolTable.mapType(returnNodeType),
+                    kind = DataFlowIR.VariableKind.Temporary
             )
             val throwsNode = DataFlowIR.Node.Variable(
                     values = thrownValues.map { expressionToEdge(it) },
-                    type   = symbolTable.mapClassReferenceType(symbols.throwable.owner),
-                    kind   = DataFlowIR.VariableKind.Temporary
+                    type = symbolTable.mapClassReferenceType(symbols.throwable.owner),
+                    kind = DataFlowIR.VariableKind.Temporary
             )
             variables.forEach { (irVariable, node) ->
                 val values = variableValues.elementData[irVariable]!!.values
@@ -586,7 +505,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
             return DataFlowIR.Function(
                     symbol = symbolTable.mapFunction(declaration),
-                    body   = DataFlowIR.FunctionBody(
+                    body = DataFlowIR.FunctionBody(
                             rootScope, listOf(rootScope) + scopes.values, returnsNode, throwsNode)
             )
         }
@@ -624,7 +543,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
         private fun mapReturnType(actualType: IrType, returnType: IrType) = mapWrappedType(actualType, returnType)
 
-
         private fun getNode(expression: IrExpression): Scoped<DataFlowIR.Node> {
             if (expression is IrGetValue) {
                 val valueDeclaration = expression.symbol.owner
@@ -658,8 +576,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 val node = if (values.size != 1) {
                     DataFlowIR.Node.Variable(
                             values = edges,
-                            type   = symbolTable.mapType(expression.type),
-                            kind   = DataFlowIR.VariableKind.Temporary
+                            type = symbolTable.mapType(expression.type),
+                            kind = DataFlowIR.VariableKind.Temporary
                     )
                 } else {
                     val value = values[0]
@@ -670,8 +588,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                         else
                             DataFlowIR.Node.Variable(
                                     values = listOf(edge),
-                                    type   = symbolTable.mapType(expression.type),
-                                    kind   = DataFlowIR.VariableKind.Temporary
+                                    type = symbolTable.mapType(expression.type),
+                                    kind = DataFlowIR.VariableKind.Temporary
                             )
                     } else {
                         when (value) {
@@ -769,6 +687,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                     )
                                 }
 
+                                saveCoroutineState -> DataFlowIR.Node.SaveCoroutineState(liveVariables[value]!!.map { variables[it]!!.value })
+
                                 else -> {
                                     /*
                                      * Resolve owner of the call with special handling of Any methods:
@@ -854,7 +774,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                 val receiver = value.receiver?.let { expressionToEdge(it) }
                                 DataFlowIR.Node.FieldRead(
                                         receiver,
-                                        value.symbol.owner.toDataFlowIRField(),
+                                        symbolTable.mapField(value.symbol.owner),
                                         mapReturnType(value.type, value.symbol.owner.type),
                                         value
                                 )
@@ -864,7 +784,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                 val receiver = value.receiver?.let { expressionToEdge(it) }
                                 DataFlowIR.Node.FieldWrite(
                                         receiver,
-                                        value.symbol.owner.toDataFlowIRField(),
+                                        symbolTable.mapField(value.symbol.owner),
                                         expressionToEdge(value.value)
                                 )
                             }
@@ -893,5 +813,86 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 Scoped(node, highestScope!!)
             }
         }
+    }
+}
+
+internal class ModuleDFG(val functions: MutableMap<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
+                         val symbolTable: DataFlowIR.SymbolTable)
+
+internal class ModuleDFGBuilder(val generationState: NativeGenerationState, val irModule: IrModuleFragment) {
+    private val context = generationState.context
+    private val module = DataFlowIR.Module()
+    private val symbolTable = DataFlowIR.SymbolTable(context, module)
+
+    fun build(): ModuleDFG {
+        symbolTable.populateWith(irModule)
+
+        val functions = mutableMapOf<DataFlowIR.FunctionSymbol, DataFlowIR.Function>()
+        irModule.accept(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitConstructor(declaration: IrConstructor) {
+                val body = declaration.body
+                assert (body != null) {
+                    "Class constructor has empty body"
+                }
+                context.logMultiple {
+                    +"Analysing function ${declaration.render()}"
+                    +"IR: ${ir2stringWhole(declaration)}"
+                }
+                analyze(declaration, body)
+            }
+
+            override fun visitFunction(declaration: IrFunction) {
+                val body = declaration.body
+                if (body == null) {
+                    // External function or intrinsic.
+                    symbolTable.mapFunction(declaration)
+                } else {
+                    context.logMultiple {
+                        +"Analysing function ${declaration.render()}"
+                        +"IR: ${ir2stringWhole(declaration)}"
+                    }
+                    analyze(declaration, body)
+                }
+            }
+
+            override fun visitField(declaration: IrField) {
+                if (declaration.isStatic)
+                    declaration.initializer?.let {
+                        context.logMultiple {
+                            +"Analysing global field ${declaration.render()}"
+                            +"IR: ${ir2stringWhole(declaration)}"
+                        }
+                        analyze(declaration, IrSetFieldImpl(it.startOffset, it.endOffset, declaration.symbol, null,
+                                it.expression, context.irBuiltIns.unitType))
+                    }
+            }
+
+            private fun analyze(declaration: IrDeclaration, body: IrElement?) {
+                val function = FunctionDFGBuilder(generationState, symbolTable).build(declaration, body)
+                functions[function.symbol] = function
+            }
+        }, data = null)
+
+        context.logMultiple {
+            +"SYMBOL TABLE:"
+            symbolTable.classMap.forEach { (irClass, type) ->
+                +"    IR CLASS: ${irClass.render()}"
+                +"    TYPE: $type"
+                if (type !is DataFlowIR.Type.Declared)
+                    return@forEach
+                +"        SUPER TYPES:"
+                type.superTypes.forEach { +"            $it" }
+                +"        VTABLE:"
+                type.vtable.forEach { +"            $it" }
+                +"        ITABLE:"
+                type.itable.forEach { +"            ${it.key} -> ${it.value}" }
+            }
+        }
+
+        return ModuleDFG(functions, symbolTable)
     }
 }

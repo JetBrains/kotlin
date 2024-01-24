@@ -186,7 +186,13 @@ internal class ListAccessorsWithoutBoundsCheckLowering(val context: Context) : C
     }
 
     override fun lower(irClass: IrClass) = with(functionsWithoutBoundsCheckSupport) {
+//        if (irClass.name.asString() == "EmptyList") {
+//            println("BEFORE: ${System.identityHashCode(irClass)} ${irClass.dump()}")
+//        }
         if (irClass.needGetWithoutBoundsCheck()) {
+//            if (irClass.name.asString() == "EmptyList") {
+//                println("YEAH, BABY!")
+//            }
             val get = irClass.getGet()
             val getWithoutBoundsCheck = irClass.getGetWithoutBoundsCheck()
             buildFunctionWithoutBoundsCheckBody(irClass, get, getWithoutBoundsCheck)
@@ -196,6 +202,9 @@ internal class ListAccessorsWithoutBoundsCheckLowering(val context: Context) : C
             val setWithoutBoundsCheck = irClass.getSetWithoutBoundsCheck()
             buildFunctionWithoutBoundsCheckBody(irClass, set, setWithoutBoundsCheck)
         }
+//        if (irClass.name.asString() == "EmptyList") {
+//            println("AFTER: ${System.identityHashCode(irClass)} ${irClass.dump()}")
+//        }
     }
 
     private fun buildFunctionWithoutBoundsCheckBody(

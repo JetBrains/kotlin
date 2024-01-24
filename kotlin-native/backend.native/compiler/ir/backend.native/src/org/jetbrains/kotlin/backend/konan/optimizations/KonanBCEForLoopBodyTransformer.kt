@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.backend.common.lower.loops.handlers.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
+import org.jetbrains.kotlin.backend.konan.ir.isVirtualCall
+import org.jetbrains.kotlin.backend.konan.lower.AutoboxingTransformer
+import org.jetbrains.kotlin.backend.konan.lower.erasedUpperBound
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -24,16 +27,51 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 // TODO: handle ConcurrentModificationException.
-/** Builds a [HeaderInfo] for arrays. */
-internal class ArrayListIterationHandler(context: Context) : IndexedGetIterationHandler(context, canCacheLast = true) {
+/** Builds a [HeaderInfo] for stdlib lists. */
+internal class StdlibListIterationHandler(
+        context: Context,
+        val devirtualizedCallSites: Map<IrCall, DevirtualizationAnalysis.DevirtualizedCallSite>,
+        val debugOutput: Boolean,
+) : IndexedGetIterationHandler(context, canCacheLast = true) {
     private val list = context.ir.symbols.list.owner
     private val functionsWithoutBoundsCheckSupport = context.functionsWithoutBoundsCheckSupport
 
-    override fun matchIterable(expression: IrExpression) =
-            expression.type.classOrNull?.owner?.let {
-                list in it.getAllSuperclasses()
-                        && it.packageFqName?.asString()?.startsWith("kotlin.") == true
-            } == true
+    private fun IrClass.isListOrInheritsList() = this == list || list in getAllSuperclasses()
+
+    // TODO: A better way?
+    private fun IrClass.fromStdlib() = packageFqName?.asString()?.startsWith("kotlin.") == true
+
+    override fun matchIteratorCall(call: IrCall): Boolean {
+//        if (debugOutput)
+//            println("ZZZ: ${call.dump()}")
+        val erasedReceiverClass = call.dispatchReceiver?.type?.erasedUpperBound
+//        if (debugOutput)
+//            println("    erasedReceiverClass = ${erasedReceiverClass?.render()}")
+        if (erasedReceiverClass?.isListOrInheritsList() != true)
+            return false
+
+        if (!call.isVirtualCall)
+            return (call.superQualifierSymbol?.owner ?: call.symbol.owner.parentAsClass).fromStdlib()
+
+//        if (debugOutput) {
+//            println("    possibleCallees:")
+//            devirtualizedCallSites[call]?.possibleCallees?.forEach {
+//                println("        ${it.callee.irFunction?.render()}")
+//            }
+//        }
+        return devirtualizedCallSites[call]?.possibleCallees?.all {
+            it.callee.irFunction?.parentAsClass?.fromStdlib() == true
+        } == true
+    }
+
+    override fun matchIterable(expression: IrExpression) = true
+            //expression.type.classOrNull?.owner?.let { list in it.getAllSuperclasses() } == true
+
+//    override fun matchIterable(expression: IrExpression) =
+//            expression.type.classOrNull?.owner?.let {
+//                list in it.getAllSuperclasses()
+//                        && it.packageFqName?.asString()?.startsWith("kotlin.") == true
+//            } == true
 
     override val IrType.sizePropertyGetter
         get() = getClass()!!.getPropertyGetter("size")!!.owner
@@ -42,9 +80,13 @@ internal class ArrayListIterationHandler(context: Context) : IndexedGetIteration
         get() = with(functionsWithoutBoundsCheckSupport) { getClass()!!.getGetWithoutBoundsCheck() }
 }
 
-internal class NativeHeaderInfoBuilder(context: Context, scopeOwnerSymbol: () -> IrSymbol)
-    : DefaultHeaderInfoBuilder(context, scopeOwnerSymbol) {
-    override val expressionHandlers = super.expressionHandlers + listOf(ArrayListIterationHandler(context))
+internal class HeaderInfoForListsBuilder(
+        context: Context,
+        devirtualizedCallSites: Map<IrCall, DevirtualizationAnalysis.DevirtualizedCallSite>,
+        scopeOwnerSymbol: () -> IrSymbol,
+        debugOutput: Boolean,
+) : DefaultHeaderInfoBuilder(context, scopeOwnerSymbol) {
+    override val expressionHandlers = listOf(StdlibListIterationHandler(context, devirtualizedCallSites, debugOutput))
 }
 
 // Base class describing value of expression.
@@ -65,17 +107,15 @@ internal class BoundsCheckAnalysisResult(val boundsAreSafe: Boolean, val arrayIn
 /**
  * Transformer for loops bodies replacing get/set operators on analogs without bounds check where it's possible.
  */
-class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
+internal class KonanBCEForLoopBodyTransformer(val context: Context) : ForLoopBodyTransformer() {
     lateinit var mainLoopVariable: IrVariable
     lateinit var loopHeader: ForLoopHeader
     lateinit var loopVariableComponents: Map<Int, IrVariable>
-    lateinit var context: CommonBackendContext
 
     private var analysisResult: BoundsCheckAnalysisResult = BoundsCheckAnalysisResult(false, null)
 
-    override fun transform(context: CommonBackendContext, loopBody: IrExpression, loopVariable: IrVariable,
+    override fun transform(loopBody: IrExpression, loopVariable: IrVariable,
                            forLoopHeader: ForLoopHeader, loopComponents: Map<Int, IrVariable>) {
-        this.context = context
         mainLoopVariable = loopVariable
         loopHeader = forLoopHeader
         loopVariableComponents = loopComponents

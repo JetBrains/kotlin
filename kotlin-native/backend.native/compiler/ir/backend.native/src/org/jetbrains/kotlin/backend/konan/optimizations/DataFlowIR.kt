@@ -270,6 +270,8 @@ internal object DataFlowIR {
 
         class ArrayWrite(val callee: FunctionSymbol, val array: Edge, val index: Edge, val value: Edge, val type: Type) : Node()
 
+        class SaveCoroutineState(val liveVariables: List<Variable>) : Node()
+
         class Variable(values: List<Edge>, val type: Type, val kind: VariableKind) : Node() {
             val values = mutableListOf<Edge>().also { it += values }
         }
@@ -402,6 +404,13 @@ internal object DataFlowIR {
                     appendCastTo(node.value.castToType)
                 }
 
+                is Node.SaveCoroutineState -> buildString {
+                    appendLine("        SAVE COROUTINE STATE")
+                    appendList(node.liveVariables) {
+                        append("            VAL #${ids[it]!!}")
+                    }
+                }
+
                 is Node.Variable -> buildString {
                     append("       ${node.kind}")
                     appendList(node.values) {
@@ -444,6 +453,7 @@ internal object DataFlowIR {
         val classMap = mutableMapOf<IrClass, Type>()
         val primitiveMap = mutableMapOf<PrimitiveBinaryType, Type>()
         val functionMap = mutableMapOf<IrDeclaration, FunctionSymbol>()
+        val fieldMap = mutableMapOf<IrField, DataFlowIR.Field>()
 
         private val NAME_ESCAPES = Name.identifier("Escapes")
         private val NAME_POINTS_TO = Name.identifier("PointsTo")
@@ -482,6 +492,15 @@ internal object DataFlowIR {
                     mapClassReferenceType(declaration)
                 }
             }, data = null)
+        }
+
+        fun mapField(field: IrField): Field = fieldMap.getOrPut(field) {
+            val name = field.name.asString()
+            Field(
+                    mapType(field.type),
+                    1 + fieldMap.size,
+                    takeName { name }
+            )
         }
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)

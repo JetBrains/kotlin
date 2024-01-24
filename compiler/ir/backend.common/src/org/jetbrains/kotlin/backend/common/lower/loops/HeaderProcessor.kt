@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
@@ -60,17 +61,29 @@ fun IrStatement.isInductionVariable(context: CommonBackendContext) =
             origin == context.inductionVariableOrigin &&
             name.asString() == inductionVariableName
 
-internal class InitializerCallReplacer(private val replacement: IrExpression) : IrElementTransformerVoid() {
+internal class InitializerCallReplacer(
+    backendContext: CommonBackendContext,
+    private val replacement: IrExpression
+) : IrElementTransformerVoid() {
+    private val symbols = backendContext.ir.symbols
+    private val iteratorsNext = (listOf(symbols.iterator) + symbols.primitiveIteratorsByType.values + listOf(symbols.mutableIterator))
+        .map { it.getSimpleFunction("next")!! }.toSet()
+    private val indexedValueComponent2 = symbols.indexedValue.getSimpleFunction("component2")!!
+
     var initializerCall: IrCall? = null
 
     override fun visitCall(expression: IrCall): IrExpression {
-        if (initializerCall != null) {
-            throw IllegalStateException(
-                "Multiple initializer calls found. First: ${initializerCall!!.render()}\nSecond: ${expression.render()}"
-            )
+        if (expression.symbol == indexedValueComponent2 || expression.symbol in iteratorsNext) {
+            if (initializerCall != null) {
+                throw IllegalStateException(
+                    "Multiple initializer calls found. First: ${initializerCall!!.render()}\nSecond: ${expression.render()}"
+                )
+            }
+            initializerCall = expression
+            return replacement
         }
-        initializerCall = expression
-        return replacement
+        expression.transformChildrenVoid()
+        return expression
     }
 }
 

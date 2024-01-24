@@ -185,6 +185,9 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             val classLlvmDeclarations = createClassDeclarations(declaration)
             declaration.metadata = KonanMetadata.Class(declaration, classLlvmDeclarations, context.getLayoutBuilder(declaration))
         }
+//        if (declaration.name.asString() == "EmptyList") {
+//            println("QZZ: ${System.identityHashCode(declaration)} ${declaration.dump()}")
+//        }
         super.visitClass(declaration)
     }
 
@@ -416,6 +419,14 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
     override fun visitFunction(declaration: IrFunction) {
         super.visitFunction(declaration)
+
+//        if (declaration.parentClassOrNull?.name?.asString() == "EmptyList") {
+//            println("ZZZ 1: ${declaration.render()}")
+//        }
+//
+//        if (declaration.parentClassOrNull?.name?.asString() == "EmptyList" && declaration.name.asString() == "<getWithoutBoundCheck>") {
+//            println("ZZZ 2: ${declaration.render()}")
+//        }
 
         if (!declaration.isReal) return
 

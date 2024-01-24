@@ -197,6 +197,13 @@ internal object EscapeAnalysis {
             return callGraph.nodes.filter { functions[it.symbol] != null }.associateBy({ it.symbol }) { callGraphNode ->
                 val function = functions[callGraphNode.symbol]!!
                 val body = function.body
+
+                val dummyParameter = DataFlowIR.Node.Parameter(-1)
+                val parameters = Array(function.symbol.parameters.size) { dummyParameter } // Put dummy in order to not bother with nullability.
+                // Parameters are declared in the root scope
+                for (node in body.rootScope.nodes)
+                    (node as? DataFlowIR.Node.Parameter)?.let { parameters[it.index] = it }
+
                 val nodesRoles = mutableMapOf<DataFlowIR.Node, NodeInfo>()
 
                 fun computeDepths(node: DataFlowIR.Node, depth: Int) {
@@ -245,6 +252,12 @@ internal object EscapeAnalysis {
 
                         is DataFlowIR.Node.ArrayRead -> {
                             assignRole(node.array.node, Role.READ_FIELD, RoleInfoEntry(node, intestinesField))
+                        }
+
+                        is DataFlowIR.Node.SaveCoroutineState -> {
+                            node.liveVariables.forEach {
+                                assignRole(parameters[0], Role.WRITE_FIELD, RoleInfoEntry(it, intestinesField))
+                            }
                         }
 
                         is DataFlowIR.Node.Variable -> {
