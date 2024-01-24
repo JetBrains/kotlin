@@ -282,10 +282,11 @@ class FirPCLAInferenceSession(
         }
 
     private fun FirExpression.isReceiverPostponed(): Boolean {
-        if (resolvedType.containsNotFixedTypeVariables()) return true
-        if ((this as? FirResolvable)?.candidate()?.usedOuterCs == true) return true
-
-        return false
+        return when {
+            resolvedType.containsNotFixedTypeVariables() -> true
+            (this as? FirResolvable)?.candidate()?.usedOuterCs == true -> true
+            else -> false
+        }
     }
 
     private fun ConeKotlinType.containsNotFixedTypeVariables(): Boolean =
