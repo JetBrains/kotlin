@@ -1371,6 +1371,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
             }
 
             @Test
+            @TestMetadata("receiverTypesWithSameName_nestedScopes.kt")
+            public void testReceiverTypesWithSameName_nestedScopes() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/receiverTypesWithSameName_nestedScopes.kt");
+            }
+
+            @Test
+            @TestMetadata("receiverTypesWithSameName_starImports.kt")
+            public void testReceiverTypesWithSameName_starImports() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/receiverTypesWithSameName_starImports.kt");
+            }
+
+            @Test
             @TestMetadata("topLevelFunction.kt")
             public void testTopLevelFunction() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/topLevelFunction.kt");
@@ -1436,6 +1448,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
             @Test
             public void testAllFilesPresentInImports() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/imports"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
+            }
+
+            @Test
+            @TestMetadata("SameNameClassesFromStarImports.kt")
+            public void testSameNameClassesFromStarImports() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/imports/SameNameClassesFromStarImports.kt");
             }
 
             @Test

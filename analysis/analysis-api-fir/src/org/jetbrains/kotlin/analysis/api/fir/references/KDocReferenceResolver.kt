@@ -60,7 +60,7 @@ internal object KDocReferenceResolver {
     context(KtAnalysisSession)
     internal fun resolveKdocFqName(selectedFqName: FqName, fullFqName: FqName, contextElement: KtElement): Collection<KtSymbol> {
         val fullSymbolsResolved = resolveKdocFqName(fullFqName, contextElement)
-        if (selectedFqName == fullFqName) return fullSymbolsResolved.map { it.symbol }
+        if (selectedFqName == fullFqName) return fullSymbolsResolved.mapTo(mutableSetOf()) { it.symbol }
         if (fullSymbolsResolved.isEmpty()) {
             val parent = fullFqName.parent()
             return resolveKdocFqName(selectedFqName = selectedFqName, fullFqName = parent, contextElement = contextElement)
@@ -290,13 +290,12 @@ internal object KDocReferenceResolver {
 
         val possibleReceivers = getReceiverTypeCandidates(receiverTypeName, contextElement)
 
-        // we abandon resolve if there are multiple different classifiers in scope
-        val receiverClassSymbol = possibleReceivers.singleOrNull() ?: return emptyList()
-        val receiverType = buildClassType(receiverClassSymbol)
+        return possibleReceivers.flatMap { receiverClassSymbol ->
+            val receiverType = buildClassType(receiverClassSymbol)
+            val applicableExtensions = possibleExtensions.filter { it.canBeReferencedAsExtensionOn(receiverType) }
 
-        return possibleExtensions
-            .filter { it.canBeReferencedAsExtensionOn(receiverType) }
-            .map { it.toResolveResult(receiverClassReference = receiverClassSymbol) }
+            applicableExtensions.map { it.toResolveResult(receiverClassReference = receiverClassSymbol) }
+        }
     }
 
     context(KtAnalysisSession)

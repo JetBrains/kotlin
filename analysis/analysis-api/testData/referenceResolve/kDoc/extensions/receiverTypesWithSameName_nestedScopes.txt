@@ -1,0 +1,26 @@
+<caret_1> resolved to:
+0: (in test.Outer) class Foo
+
+<caret_2> resolved to:
+0: (in test.Outer) class Foo
+
+<caret_3> resolved to:
+0: (in test.Outer) class Foo
+
+<caret_4> resolved to:
+0: (in test) class Foo
+
+<caret_nested_1> resolved to:
+0: (in test.Outer.Nested) class Foo
+
+<caret_nested_2> resolved to:
+0: (in test.Outer.Nested) class Foo
+
+<caret_nested_3> resolved to:
+0: (in test.Outer.Nested) class Foo
+
+<caret_nested_4> resolved to:
+0: (in test.Outer.Nested) class Foo
+
+<caret_nested_5> resolved to:
+0: (in test) class Foo
