@@ -22,5 +22,8 @@ substitutor: empty
 extensionVariableWithTypeParameter: ApplicableAsExtensionCallable
 substitutor: {T=A<kotlin/Int>}
 
+functionalVariableNonApplicable: NonApplicable
+substitutor: null
+
 localExtensionApplicable: ApplicableAsExtensionCallable
 substitutor: empty

@@ -63,6 +63,11 @@ internal class KtFirCompletionCandidateChecker(
         nameExpression: KtSimpleNameExpression,
         possibleExplicitReceiver: KtExpression?,
     ): KtExtensionApplicabilityResult {
+        val asFunctionalVariableCall = checkCandidateAsFunctionalVariableCall(candidateSymbol)
+        if (nameExpression.parent is KtCallableReferenceExpression && asFunctionalVariableCall) {
+            return KtExtensionApplicabilityResult.NonApplicable(token)
+        }
+
         val file = originalFile.getOrBuildFirFile(firResolveSession)
         val resolver = SingleCandidateResolver(firResolveSession.useSiteFirSession, file)
         val explicitReceiverExpression = possibleExplicitReceiver?.getMatchingFirExpressionForCallReceiver(resolver)
@@ -81,7 +86,7 @@ internal class KtFirCompletionCandidateChecker(
                 val receiverCastRequired = call.calleeReference is FirErrorReferenceWithCandidate
 
                 return when {
-                    candidateSymbol is FirVariable && candidateSymbol.symbol.resolvedReturnType.receiverType(rootModuleSession) != null -> {
+                    asFunctionalVariableCall -> {
                         KtExtensionApplicabilityResult.ApplicableAsFunctionalVariableCall(substitutor, receiverCastRequired, token)
                     }
                     else -> {
@@ -160,4 +165,10 @@ internal class KtFirCompletionCandidateChecker(
         }
         return explicitReceiverExpression
     }
+
+    private fun checkCandidateAsFunctionalVariableCall(
+        candidateSymbol: FirCallableDeclaration,
+    ): Boolean = candidateSymbol is FirVariable &&
+            candidateSymbol.symbol.receiverParameter == null &&
+            candidateSymbol.symbol.resolvedReturnType.receiverType(rootModuleSession) != null
 }

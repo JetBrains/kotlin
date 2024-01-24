@@ -16,6 +16,8 @@ val Any.extensionVariableApplicable: Int get() = 1
 
 val <T> T.extensionVariableWithTypeParameter: T get() = TODO()
 
+val functionalVariableNonApplicable: Any.() -> Unit = {}
+
 fun test(a: A<Int>) {
     fun Any.localExtensionApplicable() {}
 

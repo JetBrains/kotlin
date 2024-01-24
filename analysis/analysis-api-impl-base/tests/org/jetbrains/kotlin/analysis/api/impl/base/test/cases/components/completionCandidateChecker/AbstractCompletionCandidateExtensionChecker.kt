@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerPro
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFunctionType
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
@@ -30,7 +32,9 @@ abstract class AbstractCompletionCandidateExtensionChecker : AbstractAnalysisApi
             else -> selectedExpression.getReceiverExpression()
         }
 
-        val extensionsToCheck = mainFile.collectDescendantsOfType<KtCallableDeclaration> { it.isExtensionDeclaration() }
+        val extensionsToCheck = mainFile.collectDescendantsOfType<KtCallableDeclaration> { declaration ->
+            declaration.isExtensionDeclaration() || declaration.isVariableOfFunctionTypeWithReceiver()
+        }
 
         val actual = analyseForTest(mainFile) {
             val extensionSymbolsToCheck = extensionsToCheck.map { it.getSymbolOfType<KtCallableSymbol>() }
@@ -44,6 +48,9 @@ abstract class AbstractCompletionCandidateExtensionChecker : AbstractAnalysisApi
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
+
+    private fun KtCallableDeclaration.isVariableOfFunctionTypeWithReceiver(): Boolean =
+        this is KtValVarKeywordOwner && (typeReference?.typeElement as? KtFunctionType)?.receiver != null
 
     private fun renderSubstitutor(substitutor: KtSubstitutor?): String = when (substitutor) {
         is KtSubstitutor.Empty -> "empty"

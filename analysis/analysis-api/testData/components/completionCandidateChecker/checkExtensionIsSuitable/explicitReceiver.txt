@@ -19,8 +19,17 @@ substitutor: {T=kotlin/Int}
 extensionVariableApplicable: ApplicableAsExtensionCallable
 substitutor: empty
 
+extensionFunctionalVariableApplicable: ApplicableAsExtensionCallable
+substitutor: empty
+
+extensionFunctionalVariableWrongReceiver: NonApplicable
+substitutor: null
+
 extensionVariableWithTypeParameter: ApplicableAsExtensionCallable
 substitutor: {T=A<kotlin/Int>}
+
+functionalVariableApplicable: ApplicableAsFunctionalVariableCall
+substitutor: empty
 
 localExtensionApplicable: ApplicableAsExtensionCallable
 substitutor: empty

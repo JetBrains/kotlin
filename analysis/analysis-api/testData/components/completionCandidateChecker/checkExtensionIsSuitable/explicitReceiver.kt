@@ -14,9 +14,13 @@ fun <T> A<T>.extensionWithTypeParameter2(p: A<T>): T = TODO()
 
 val Any.extensionVariableApplicable: Int get() = 1
 
+val Any.extensionFunctionalVariableApplicable: Any.() -> Unit get() = {}
+
+val Int.extensionFunctionalVariableWrongReceiver: Any.() -> Unit get() = {}
+
 val <T> T.extensionVariableWithTypeParameter: T get() = TODO()
 
-fun test(a: A<Int>) {
+fun test(a: A<Int>, functionalVariableApplicable: Any.() -> Unit) {
     fun Any.localExtensionApplicable() {}
 
     a.<caret><caret_onAirContext>extension
