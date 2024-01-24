@@ -57,6 +57,8 @@ fun TestServices.allKtFiles(): List<KtFile> = moduleStructure.modules.flatMap(kt
 
 val TestServices.ktModuleProvider: AnalysisApiKtModuleProvider by TestServices.testServiceAccessor()
 
+fun TestModule.getKtModule(testServices: TestServices): KtModule = testServices.ktModuleProvider.getModule(name)
+
 fun List<KtTestModule>.associateByName(): Map<String, KtTestModule> {
     return associateBy { ktTestModule ->
         when (val ktModule = ktTestModule.ktModule) {
