@@ -65,6 +65,11 @@ public class JvmAbiContentTestGenerated extends AbstractJvmAbiContentTest {
         runTest("plugins/jvm-abi-gen/testData/content/kt50005/");
     }
 
+    @TestMetadata("preserveDeclarationOrderKeepsClassIntact")
+    public void testPreserveDeclarationOrderKeepsClassIntact() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/content/preserveDeclarationOrderKeepsClassIntact/");
+    }
+
     @TestMetadata("whenMapping")
     public void testWhenMapping() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/content/whenMapping/");

@@ -14,4 +14,6 @@ object JvmAbiConfigurationKeys {
         CompilerConfigurationKey.create(JvmAbiCommandLineProcessor.REMOVE_DEBUG_INFO_OPTION.description)
     val REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE: CompilerConfigurationKey<Boolean> =
         CompilerConfigurationKey.create(JvmAbiCommandLineProcessor.REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE_OPTION.description)
+    val PRESERVE_DECLARATION_ORDER: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create(JvmAbiCommandLineProcessor.PRESERVE_DECLARATION_ORDER_OPTION.description)
 }

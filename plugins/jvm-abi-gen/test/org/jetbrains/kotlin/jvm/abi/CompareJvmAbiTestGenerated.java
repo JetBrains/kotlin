@@ -145,6 +145,11 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/parameterName/");
     }
 
+    @TestMetadata("preserveDeclarationOrder")
+    public void testPreserveDeclarationOrder() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/preserveDeclarationOrder/");
+    }
+
     @TestMetadata("privateTypealias")
     public void testPrivateTypealias() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/privateTypealias/");
