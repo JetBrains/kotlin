@@ -1,9 +1,13 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KtStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KtTypeParameterType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
@@ -45,10 +49,10 @@ internal fun KtType.translateToObjCType(typeBridge: TypeBridge): ObjCType {
 
 context(KtAnalysisSession)
 private fun KtType.isBinaryRepresentationNullable(): Boolean {
-    if (fullyExpandedType.isMarkedNullable) return true
+    if (fullyExpandedType.canBeNull) return true
 
     getInlineTargetTypeOrNull()?.let { inlineTargetType ->
-        if (inlineTargetType.isMarkedNullable) return true
+        if (inlineTargetType.canBeNull) return true
     }
 
     return false
@@ -116,12 +120,26 @@ private fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReference
         }
     }
 
-    val typeName = typesMap[classId]
-        ?: classId!!.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
+    if (fullyExpandedType is KtNonErrorClassType) {
+        val typeName = typesMap[classId]
+            ?: fullyExpandedType.classId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
 
-    val typeArguments = translateToObjCTypeArguments()
+        val typeArguments = translateToObjCTypeArguments()
+        return ObjCClassType(typeName, typeArguments)
+    }
 
-    return ObjCClassType(typeName, typeArguments)
+    if (fullyExpandedType is KtTypeParameterType) {
+        if (fullyExpandedType.symbol.getContainingSymbol() is KtCallableSymbol) {
+            return ObjCIdType
+        }
+        /*
+        Todo: K1 has some name mangling logic here?
+        */
+        return ObjCGenericTypeParameterUsage(fullyExpandedType.name.asString().toValidObjCSwiftIdentifier())
+    }
+
+    /* We cannot translate this, lets try to be lenient and emit the error type? */
+    return objCErrorType
 }
 
 
@@ -132,19 +150,23 @@ private fun KtType.translateToObjCTypeArguments(): List<ObjCNonNullReferenceType
     /* See special casing below */
     val isKnownCollectionType = classId in collectionClassIds
 
-    return ownTypeArguments.mapNotNull { typeArgument -> typeArgument.type }
-        .map { typeArgumentType ->
-
-            /*
-             Kotlin `null` keys and values are represented as `NSNull` singleton in collections
-             */
-            if (isKnownCollectionType && typeArgumentType.isMarkedNullable) return@map ObjCIdType
-            typeArgumentType.mapToReferenceTypeIgnoringNullability()
+    return ownTypeArguments.map { typeArgument ->
+        when (typeArgument) {
+            is KtStarTypeProjection -> ObjCIdType
+            is KtTypeArgumentWithVariance -> {
+                /*
+                Kotlin `null` keys and values are represented as `NSNull` singleton in collections
+                */
+                if (isKnownCollectionType && typeArgument.type.isMarkedNullable) return@map ObjCIdType
+                typeArgument.type.mapToReferenceTypeIgnoringNullability()
+            }
         }
+    }
 }
 
+context(KtAnalysisSession)
 private fun ObjCNonNullReferenceType.withNullabilityOf(kotlinType: KtType): ObjCReferenceType {
-    return if (kotlinType.nullability.isNullable) {
+    return if (kotlinType.isBinaryRepresentationNullable()) {
         ObjCNullableReferenceType(this)
     } else {
         this

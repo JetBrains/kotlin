@@ -293,23 +293,27 @@ fun MethodBridge.valueParametersAssociated(
     function: KtFunctionLikeSymbol,
 ): List<Pair<MethodBridgeValueParameter, KtValueParameterSymbol?>> {
 
-    val allParameters = function.valueParameters.iterator()
-    if (!allParameters.hasNext()) return emptyList()
-
     val skipFirstKotlinParameter = when (this.receiver) {
         MethodBridgeReceiver.Static -> false
-        MethodBridgeReceiver.Factory, MethodBridgeReceiver.Instance -> true
-    }
-    if (skipFirstKotlinParameter && allParameters.hasNext()) {
-        allParameters.next()
+        MethodBridgeReceiver.Instance -> false
+        MethodBridgeReceiver.Factory -> true
     }
 
-    return this.valueParameters.map {
-        when (it) {
-            is MethodBridgeValueParameter.Mapped -> it to allParameters.next()
+    val allParameters = function.valueParameters.let { valueParameters ->
+        if (skipFirstKotlinParameter) valueParameters.drop(1)
+        else valueParameters
+    }
+
+    if (allParameters.isEmpty()) return emptyList()
+
+
+    return this.valueParameters.mapIndexed { index, valueParameterBridge ->
+        when (valueParameterBridge) {
+            is MethodBridgeValueParameter.Mapped -> valueParameterBridge to allParameters[index]
+
             is MethodBridgeValueParameter.SuspendCompletion,
             is MethodBridgeValueParameter.ErrorOutParameter,
-            -> it to null
+            -> valueParameterBridge to null
         }
     }
 }

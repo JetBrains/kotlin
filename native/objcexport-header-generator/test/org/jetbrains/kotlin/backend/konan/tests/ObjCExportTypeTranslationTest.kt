@@ -404,6 +404,19 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    fun `test - class with generic function`() {
+        val header = header(
+            """
+            class A {
+               fun <T: Any> foo(value: T) = Unit
+            }
+            """.trimIndent()
+        )
+
+        assertEquals("id -> void", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
     fun `test - generic class with bounds with function`() {
         val header = header(
             """
@@ -414,6 +427,34 @@ class ObjCExportTypeTranslationTest(
             """.trimIndent()
         )
         assertEquals("T -> void", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - nested classes with same type parameter`() {
+        val header = header(
+            """
+            class A<T: Any> {
+                class B<T: Any> {
+                    fun foo(value: T) = Unit
+                }
+            }
+            """.trimIndent()
+        )
+
+        assertEquals("T -> void", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - classes with same type parameter as function`() {
+        val header = header(
+            """
+            class A<T: Any> {
+                fun <T: Any> foo(value: T) = Unit
+            }
+            """.trimIndent()
+        )
+
+        assertEquals("id -> void", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
