@@ -72,7 +72,10 @@ import java.io.File
 
 internal class PropertiesProvider private constructor(private val project: Project) {
     val buildReportSingleFile: File?
-        get() = property(PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE).orNull?.let { File(it) }
+        get() = property(PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE).orNull?.let {
+            validateFileName(it, PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE)
+            File(it)
+        }
 
     val buildReportOutputs: List<String>
         get() = property("kotlin.build.report.output").orNull?.split(",") ?: emptyList()
@@ -81,7 +84,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property("kotlin.build.report.label").orNull
 
     val buildReportFileOutputDir: File?
-        get() = property("kotlin.build.report.file.output_dir").orNull?.let { File(it) }
+        get() = property("kotlin.build.report.file.output_dir").orNull?.let {
+            validateFileName(it, "kotlin.build.report.file.output_dir")
+            File(it)
+        }
 
     val buildReportHttpUrl: String?
         get() = property(PropertyNames.KOTLIN_BUILD_REPORT_HTTP_URL).orNull
@@ -111,7 +117,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.build.report.metrics") ?: false
 
     val buildReportJsonDir: File?
-        get() = property(PropertyNames.KOTLIN_BUILD_REPORT_JSON_DIR).orNull?.let { File(it) }
+        get() = property(PropertyNames.KOTLIN_BUILD_REPORT_JSON_DIR).orNull?.let {
+            validateFileName(it, PropertyNames.KOTLIN_BUILD_REPORT_JSON_DIR)
+            File(it)
+        }
 
     val buildReportVerbose: Boolean
         get() = booleanProperty("kotlin.build.report.verbose") ?: false
@@ -729,5 +738,11 @@ internal class PropertiesProvider private constructor(private val project: Proje
             }
 
         internal val Project.kotlinPropertiesProvider get() = invoke(this)
+
+        private fun validateFileName(fileName: String, propertyName: String) {
+            if (fileName.isBlank()) {
+                throw IllegalStateException("The property '$propertyName' must not be empty. Please provide a valid value.")
+            }
+        }
     }
 }
