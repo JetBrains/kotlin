@@ -103,7 +103,7 @@ abstract class BirImplElementBase(elementClass: BirElementClass<*>) : BirElement
                     containingList.parent.throwChildForReplacementNotFound(this)
                 }
 
-                return containingList.id
+                return containingList.id.toInt()
             } else {
                 return parent.replaceChildProperty(this, new)
             }

@@ -7,23 +7,15 @@ package org.jetbrains.kotlin.bir
 
 abstract class BirChildElementList<E : BirElement?>(
     id: Int,
-    isNullable: Boolean,
+    internal val isNullable: Boolean,
 ) : AbstractList<E>(), MutableList<E>, BirElementOrChildList {
+    protected var elementArray: Any? = null // Array<BirElementBase?> = EMPTY_ELEMENT_ARRAY
+    protected var _size: Int = 0
+
     internal abstract val parent: BirElementBase
-    protected var elementArray: Any? = null// Array<BirElementBase?> = EMPTY_ELEMENT_ARRAY
-    private var compressedData: Int = (if (isNullable) 1 shl SIZE_BITS else 0) or (id shl (SIZE_BITS + FLAG_BITS))
+    internal val id: Byte = id.toByte()
 
-    protected var _size: Int
-        get() = compressedData and SIZE_MASK
-        set(value) {
-            compressedData = value or (compressedData and SIZE_MASK.inv())
-        }
-
-    internal val id: Int
-        get() = compressedData shr (SIZE_BITS + FLAG_BITS)
-
-    internal val isNullable
-        get() = compressedData and (1 shl SIZE_BITS) != 0
+    protected var modCount = 0
 
 
     override fun get(index: Int): E {
@@ -36,7 +28,7 @@ abstract class BirChildElementList<E : BirElement?>(
     }
 
     override fun contains(element: E): Boolean {
-        return element != null && element.parent === parent && (element as BirElementBase).containingListId == id
+        return element != null && element.parent === parent && (element as BirElementBase).containingListId == id.toInt()
     }
 
     override fun indexOf(element: E): Int {
@@ -102,7 +94,7 @@ abstract class BirChildElementList<E : BirElement?>(
     }
 
     protected fun BirElementBase.setContainingList() {
-        containingListId = id
+        containingListId = id.toInt()
     }
 
     protected fun BirElementBase.resetContainingList() {
