@@ -26,6 +26,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractScriptWho
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceLazyDeclarationResolveScopeBasedTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceWholeFileResolvePhaseTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.AbstractResolveExtensionDisposalAfterModificationEventTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractGlobalModuleStateModificationSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractGlobalSourceModuleStateModificationSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractGlobalSourceOutOfBlockModificationSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractModuleOutOfBlockModificationSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractModuleStateModificationSessionInvalidationTest
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
@@ -285,6 +290,26 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
 
         testClass<AbstractResolveExtensionDisposalAfterModificationEventTest> {
             model("resolveExtensionDisposal")
+        }
+
+        testClass<AbstractModuleStateModificationSessionInvalidationTest> {
+            model("sessionInvalidation")
+        }
+
+        testClass<AbstractModuleOutOfBlockModificationSessionInvalidationTest> {
+            model("sessionInvalidation")
+        }
+
+        testClass<AbstractGlobalModuleStateModificationSessionInvalidationTest> {
+            model("sessionInvalidation")
+        }
+
+        testClass<AbstractGlobalSourceModuleStateModificationSessionInvalidationTest> {
+            model("sessionInvalidation")
+        }
+
+        testClass<AbstractGlobalSourceOutOfBlockModificationSessionInvalidationTest> {
+            model("sessionInvalidation")
         }
     }
 
