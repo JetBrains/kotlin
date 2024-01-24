@@ -37,7 +37,7 @@ class ProcessStreams(
     private val ignoreIOErrors = AtomicBoolean(false)
     private val stdin = jobLauncher {
         stdin.apply {
-            copyStreams(this, process.outputStream)
+            copyStreams(null, this, process.outputStream)
             close()
         }
         process.outputStream.close()
@@ -45,7 +45,7 @@ class ProcessStreams(
     private val stdout = jobLauncher {
         stdout.apply {
             logger.debugKt65113("Will copy from process.inputStream to stdout")
-            copyStreams(process.inputStream, this)
+            copyStreams(logger, process.inputStream, this)
             logger.debugKt65113("Will close stdout")
             close()
         }
@@ -55,19 +55,30 @@ class ProcessStreams(
     }
     private val stderr = jobLauncher {
         stderr.apply {
-            logger.debugKt65113("Will copy from process.errorStream to stderr")
-            copyStreams(process.errorStream, this)
-            logger.debugKt65113("Will close stderr")
+            copyStreams(null, process.errorStream, this)
             close()
         }
-        logger.debugKt65113("Will close process.errorStream")
         process.errorStream.close()
-        logger.debugKt65113("Finished stderr job")
     }
 
-    private fun copyStreams(from: InputStream, to: OutputStream) {
+    private fun copyStreams(logger: Logger?, from: InputStream, to: OutputStream) {
         try {
-            from.copyTo(to)
+            if (logger == null || !HostManager.hostIsMingw) {
+                from.copyTo(to)
+                return
+            }
+            // TODO(KT-65113): Debug where does the hang happen: infinite loop in copyTo, or inside read()
+            val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+            logger.debugKt65113("Will do initial read()")
+            var bytes = from.read(buffer)
+            logger.debugKt65113("Read $bytes of ${buffer.size} during initial read()")
+            while (bytes >= 0) {
+                logger.debugKt65113("Will write to output stream")
+                to.write(buffer, 0, bytes)
+                logger.debugKt65113("Will do next read()")
+                bytes = from.read(buffer)
+                logger.debugKt65113("Read $bytes")
+            }
         } catch(e: IOException) {
             if (ignoreIOErrors.get())
                 return
@@ -77,14 +88,12 @@ class ProcessStreams(
 
     suspend fun drain() {
         // First finish passing input into the process.
-        logger.debugKt65113("Will join stdin")
         stdin.join()
         // Now receive all the output in whatever order.
         logger.debugKt65113("Will join stdout")
         stdout.join()
-        logger.debugKt65113("Will join stderr")
+        logger.debugKt65113("Did join stdout")
         stderr.join()
-        logger.debugKt65113("Drained the streams")
     }
 
     fun cancel() {
@@ -142,17 +151,13 @@ private fun <T> ProcessBuilder.scoped(logger: Logger, block: suspend CoroutineSc
         val result = runBlocking(Dispatchers.IO) {
             block(process)
         }
-        logger.debugKt65113("Successfully finished executing the process")
         result
     } finally {
-        logger.debugKt65113("Will destroy the process")
         // Make sure the process is killed even if the current thread was interrupted.
         // e.g. gradle task execution was cancelled by the user pressing ^C
         process.destroyForcibly()
-        logger.debugKt65113("Will deregister the process")
         // The process is dead, no need to ensure its destruction during the shutdown.
         ProcessKiller.deregister(process)
-        logger.debugKt65113("Finished executing altogether")
     }
 }
 
