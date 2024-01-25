@@ -30,7 +30,6 @@ data class TCServiceMessagesClientSettings(
     val stackTraceParser: (String) -> ParsedStackTrace? = { null },
     val ignoreOutOfRootNodes: Boolean = false,
     val ignoreLineEndingAfterMessage: Boolean = true,
-    val escapeTCMessagesInLog: Boolean = false
 )
 
 internal open class TCServiceMessagesClient(
@@ -61,14 +60,11 @@ internal open class TCServiceMessagesClient(
 
     override fun serviceMessage(message: ServiceMessage) {
 
-        // If a user uses TeamCity, this log may be treated by TC as an actual service message.
-        // So, escape logged messages if the corresponding setting is specified.
         log.kotlinDebug {
-            val messageString = if (settings.escapeTCMessagesInLog) {
-                message.toString().replaceFirst("^##teamcity\\[".toRegex(), "##TC[")
-            } else {
-                message.toString()
-            }
+            // If a user uses TeamCity, TC may treat this log as an actual service message.
+            // This message should be considered implementation detail and shouldn't be exposed "as is".
+            // At this stage it's already parsed correctly, and it's safe to escape it.
+            val messageString = message.toString().replaceFirst("^##teamcity\\[".toRegex(), "##TC[")
             "TCSM: $messageString"
         }
 

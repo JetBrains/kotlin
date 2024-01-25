@@ -72,8 +72,6 @@ class KotlinKarma(
     private var configDirectory: File by property {
         defaultConfigDirectory
     }
-    private val isTeamCity = project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
-
     private val npmProjectDir by project.provider { npmProject.dir }
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
@@ -396,7 +394,6 @@ class KotlinKarma(
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = isTeamCity.isPresent
         )
 
         config.basePath = npmProjectDir.getFile().absolutePath

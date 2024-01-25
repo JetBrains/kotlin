@@ -28,7 +28,6 @@ internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJs
     override val settingsState: String = "KotlinWasmNode"
     @Transient
     override val compilation: KotlinJsIrCompilation = kotlinJsTest.compilation
-    private val isTeamCity = compilation.target.project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
 
     @Transient
     private val target: KotlinJsIrTarget = compilation.target as KotlinJsIrTarget
@@ -63,7 +62,6 @@ internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJs
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = isTeamCity.isPresent
         )
 
         val cliArgs = KotlinTestRunnerCliArgs(

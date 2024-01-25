@@ -31,7 +31,6 @@ class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, pr
     private val project: Project = compilation.target.project
     private val npmProject = compilation.npmProject
     private val versions = project.rootProject.kotlinNodeJsExtension.versions
-    private val isTeamCity = project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
     private val npmProjectDir by project.provider { npmProject.dir }
 
     override val workingDir: Provider<Directory>
@@ -65,7 +64,6 @@ class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, pr
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = isTeamCity.isPresent
         )
 
         val cliArgs = KotlinTestRunnerCliArgs(
