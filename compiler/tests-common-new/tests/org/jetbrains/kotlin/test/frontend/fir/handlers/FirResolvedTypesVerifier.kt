@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeAmbiguousSuper
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeFunctionExpectedError
 import org.jetbrains.kotlin.fir.types.*
@@ -76,6 +78,12 @@ class FirResolvedTypesVerifier(testServices: TestServices) : FirAnalysisHandler(
             if (element is FirDiagnosticHolder) {
                 for (coneType in element.diagnostic.coneTypes()) {
                     checkElementWithConeType(element, coneType)
+                }
+            }
+            if (element is FirExpression) {
+                @OptIn(UnresolvedExpressionTypeAccess::class)
+                element.coneTypeOrNull?.let {
+                    checkElementWithConeType(element, it)
                 }
             }
             element.acceptChildren(this, element)
