@@ -85,7 +85,12 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 builtinTypes,
                 scope
             ),
-            LLFirDependenciesSymbolProvider(session) { listOf(builtinSymbolProvider) },
+            LLFirDependenciesSymbolProvider(session) {
+                buildList {
+                    addAll(collectDependencySymbolProviders(moduleData.ktModule))
+                    add(builtinSymbolProvider)
+                }
+            },
         )
     }
 
