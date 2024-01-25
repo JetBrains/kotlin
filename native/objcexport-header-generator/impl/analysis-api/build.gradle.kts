@@ -27,7 +27,4 @@ sourceSets {
 
 testsJar()
 
-nativeTest("test", tag = null, requirePlatformLibs = true) {
-    useJUnitPlatform()
-    enableJunit5ExtensionsAutodetection()
-}
+objCExportHeaderGeneratorTest("test")

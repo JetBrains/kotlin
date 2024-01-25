@@ -59,3 +59,31 @@ both implementations.
 ```
 
 Note: Since the Analysis Api implementation is WIP yet, this test can be used for debugging, but is not fully implemented yet.
+
+### CI setup and 'TodoAnalysisApi'
+As explained previously, tests in :native:objcexport-header-generator will be able to run against K1 and the AA implementation. 
+The CI will now run both cases. However, some tests are not yet expected to pass for the newer AA based implementation. 
+In this case the test can be marked as 'todo' using the `@TodoAnalysisApi` annotation. 
+
+Example 
+```kotlin
+@Test
+@TodoAnalysisApi
+fun myTest() {
+    
+}
+```
+
+This annotation will
+- Ignore test the test failure for the AA based implementation on the CI
+- Mark the displayName of the test with 'TODO' (e.g. `[AA] myTest // TODO`)
+
+Note: 
+- The test will still fail locally (developer setup, not marked as CI).
+- If the annotation is still present, but the test is successful on CI, then an error is emitted that reminds you about removing the annotation
+
+The behaviour of the CI can be replicated by passing a Gradle property like
+```text
+./gradlew :native:objcexport-header-generator:check -Pci
+                                                  //  ^
+```

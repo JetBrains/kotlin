@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.tests
 
 import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator
 import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator.Configuration
+import org.jetbrains.kotlin.backend.konan.testUtils.TodoAnalysisApi
 import org.jetbrains.kotlin.backend.konan.testUtils.headersTestDataDir
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.Test
@@ -30,7 +31,7 @@ import kotlin.test.fail
  * 3) Create a test function and call ` doTest(headersTestDataDir.resolve("myTest"))`
  * 4) The first invocation will fail the test, but generates the header that can be checked in (if sufficient)
  */
-class ObjCExportHeaderGeneratorTest(val generator: HeaderGenerator) {
+class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
 
     @Test
     fun `test - simpleClass`() {
@@ -43,6 +44,7 @@ class ObjCExportHeaderGeneratorTest(val generator: HeaderGenerator) {
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - simpleEnumClass`() {
         doTest(headersTestDataDir.resolve("simpleEnumClass"))
     }
@@ -63,16 +65,19 @@ class ObjCExportHeaderGeneratorTest(val generator: HeaderGenerator) {
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - sameClassNameInDifferentPackage`() {
         doTest(headersTestDataDir.resolve("sameClassNameInDifferentPackage"))
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - nestedClass`() {
         doTest(headersTestDataDir.resolve("nestedClass"))
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - samePropertyAndFunctionName`() {
         doTest(headersTestDataDir.resolve("samePropertyAndFunctionName"))
     }
@@ -88,11 +93,13 @@ class ObjCExportHeaderGeneratorTest(val generator: HeaderGenerator) {
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - classWithObjCNameAnnotation`() {
         doTest(headersTestDataDir.resolve("classWithObjCNameAnnotation"))
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - functionWithObjCNameAnnotation`() {
         doTest(headersTestDataDir.resolve("functionWithObjCNameAnnotation"))
     }
@@ -108,6 +115,7 @@ class ObjCExportHeaderGeneratorTest(val generator: HeaderGenerator) {
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - functionWithThrowsAnnotation`() {
         doTest(headersTestDataDir.resolve("functionWithThrowsAnnotation"))
     }
@@ -118,11 +126,13 @@ class ObjCExportHeaderGeneratorTest(val generator: HeaderGenerator) {
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - functionWithErrorTypeAndFrameworkName`() {
         doTest(headersTestDataDir.resolve("functionWithErrorTypeAndFrameworkName"), Configuration(frameworkName = "shared"))
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - kdocWithBlockTags`() {
         doTest(headersTestDataDir.resolve("kdocWithBlockTags"))
     }
@@ -143,16 +153,19 @@ class ObjCExportHeaderGeneratorTest(val generator: HeaderGenerator) {
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - parameterWithMustBeDocumentedAnnotation`() {
         doTest(headersTestDataDir.resolve("parameterWithMustBeDocumentedAnnotation"))
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - receiverWithMustBeDocumentedAnnotation`() {
         doTest(headersTestDataDir.resolve("receiverWithMustBeDocumentedAnnotation"))
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - dispatchAndExtensionReceiverWithMustBeDocumentedAnnotation`() {
         doTest(headersTestDataDir.resolve("dispatchAndExtensionReceiverWithMustBeDocumentedAnnotation"))
     }
@@ -168,6 +181,7 @@ class ObjCExportHeaderGeneratorTest(val generator: HeaderGenerator) {
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - topLevelFunctionWithNumberReturn`() {
         doTest(headersTestDataDir.resolve("topLevelFunctionWithNumberReturn"))
     }

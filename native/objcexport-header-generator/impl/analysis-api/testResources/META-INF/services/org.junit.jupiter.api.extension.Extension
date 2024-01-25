@@ -5,3 +5,4 @@
 org.jetbrains.kotlin.objcexport.testUtils.AnalysisApiHeaderGeneratorExtension
 org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysisExtension
 org.jetbrains.kotlin.objcexport.testUtils.AnalysisApiBaseDeclarationsGeneratorExtension
+org.jetbrains.kotlin.objcexport.testUtils.TodoAnalysisApiTestExecutionExceptionHandler
