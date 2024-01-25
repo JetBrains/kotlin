@@ -56,22 +56,9 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
             testServices.assertions.fail { "No carets were specified for resolve test" }
         }
 
-        fun getRenderedReferencesForCaretPosition(caret: CaretMarker): String {
-            val ktReferences = findReferencesAtCaret(ktFile, caret.offset)
-            if (ktReferences.isEmpty()) {
-                testServices.assertions.fail { "No references at caret $caret found" }
-            }
-
-            val resolvedTo = analyzeReferenceElement(ktReferences.first().element, mainModule) {
-                val symbols = ktReferences.flatMap { it.resolveToSymbols() }
-                val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in mainModule.directives
-                renderResolvedTo(symbols, renderPsiClassName, renderingOptions) { getAdditionalSymbolInfo(it) }
-            }
-
-            return resolvedTo
+        val resolutionAtPositions = carets.map { caret ->
+            caret to renderResolvedReferencesForCaretPosition(ktFile, caret, mainModule, testServices)
         }
-
-        val resolutionAtPositions = carets.map { it to getRenderedReferencesForCaretPosition(it) }
 
         val actual = if (resolutionAtPositions.size == 1) {
             val (_, singleResolutionResult) = resolutionAtPositions.single()
@@ -84,6 +71,26 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+    }
+
+    private fun renderResolvedReferencesForCaretPosition(
+        ktFile: KtFile,
+        caret: CaretMarker,
+        mainModule: TestModule,
+        testServices: TestServices,
+    ): String {
+        val ktReferences = findReferencesAtCaret(ktFile, caret.offset)
+        if (ktReferences.isEmpty()) {
+            testServices.assertions.fail { "No references at caret $caret found" }
+        }
+
+        val resolvedTo = analyzeReferenceElement(ktReferences.first().element, mainModule) {
+            val symbols = ktReferences.flatMap { it.resolveToSymbols() }
+            val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in mainModule.directives
+            renderResolvedTo(symbols, renderPsiClassName, renderingOptions) { getAdditionalSymbolInfo(it) }
+        }
+
+        return resolvedTo
     }
 
     protected open fun <R> analyzeReferenceElement(element: KtElement, mainModule: TestModule, action: KtAnalysisSession.() -> R): R {
