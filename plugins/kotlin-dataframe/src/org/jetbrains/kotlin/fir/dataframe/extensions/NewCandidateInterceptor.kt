@@ -358,17 +358,7 @@ class NewCandidateInterceptor(
 
         val newCall1 = buildFunctionCall {
             source = call.source
-            this.coneTypeOrNull = ConeClassLikeTypeImpl(
-                ConeClassLikeLookupTagImpl(call.resolvedType.classId!!),
-                arrayOf(
-                    ConeClassLikeTypeImpl(
-                        ConeClassLookupTagWithFixedSymbol(tokenFir.symbol.classId, tokenFir.symbol),
-                        emptyArray(),
-                        isNullable = false
-                    )
-                ),
-                isNullable = false
-            )
+            this.coneTypeOrNull = returnType
             typeArguments += buildTypeProjectionWithVariance {
                 typeRef = buildResolvedTypeRef {
                     type = receiverType

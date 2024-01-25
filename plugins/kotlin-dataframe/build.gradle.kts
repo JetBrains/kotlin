@@ -2,9 +2,10 @@ import org.gradle.api.tasks.bundling.Jar
 
 plugins {
     id("java")
-    kotlin("jvm") version "2.0.255-SNAPSHOT"
+    kotlin("jvm")
     kotlin("libs.publisher") version "0.0.60-dev-30"
     id("com.github.johnrengelman.shadow") version "7.1.2"
+    kotlin("plugin.serialization")
 }
 
 group = "org.jetbrains.kotlinx.dataframe"
@@ -44,9 +45,8 @@ dependencies {
         testImplementation(kotlin("compiler-embeddable", version = "1.8.0-dev-2843"))
         runtimeOnly(kotlin("compiler-embeddable", version = "1.8.0-dev-2843"))
     }
-
-    implementation("org.jetbrains.kotlinx:dataframe:0.10.0-dev")
-    //implementation("org.jetbrains.kotlinx.dataframe:bridge-generator:0.9.0-dev")
+    implementation(project(":core"))
+    api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0-RC")
 
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-compiler-internal-test-framework:$kotlinVersion")
@@ -74,6 +74,7 @@ tasks.test {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     kotlinOptions {
+        freeCompilerArgs += listOf("-Xfriend-paths=${project(":core").projectDir}")
         freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi"
     }
 }
@@ -85,12 +86,14 @@ tasks.withType<JavaCompile> {
 
 tasks.compileKotlin {
     kotlinOptions {
+        languageVersion = "2.0"
         jvmTarget = "1.8"
     }
 }
 
 tasks.compileTestKotlin {
     kotlinOptions {
+        languageVersion = "2.0"
         jvmTarget = "1.8"
     }
 }

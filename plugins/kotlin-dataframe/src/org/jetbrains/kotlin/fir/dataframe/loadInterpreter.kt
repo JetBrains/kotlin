@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.Names.INTERPRETABLE_FQNAME
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -20,7 +21,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.annotations.Interpreter
+import org.jetbrains.kotlinx.dataframe.annotations.*
+import org.jetbrains.kotlinx.dataframe.plugin.*
 
 internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*>? {
     val symbol =
@@ -29,7 +31,8 @@ internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*
     return symbol.annotations
         .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
         ?.let { annotation ->
-            (annotation.findArgumentByName(argName) as FirGetClassCall).classId.load<Interpreter<*>>()
+            val name = (annotation.findArgumentByName(argName) as FirConstExpression<*>).value as String
+            name.load<Interpreter<*>>()
         }
 }
 
@@ -51,4 +54,36 @@ internal inline fun <reified T> ClassId.load(): T {
         ?: error("Interpreter $this must have an empty constructor")
 
     return constructor.newInstance() as T
+}
+
+internal inline fun <reified T> String.load(): T {
+    return when (this) {
+        "Add" -> Add()
+        "From" -> From()
+        "Into" -> Into()
+        "AddWithDsl" -> AddWithDsl()
+        "And10" -> And10()
+        "Convert0" -> Convert0()
+        "Convert2" -> Convert2()
+        "Convert6" -> Convert6()
+        "To0" -> To0()
+        "With0" -> With0()
+        "Explode0" -> Explode0()
+        "Read0" -> Read0()
+        "Insert0" -> Insert0()
+        "Insert1" -> Insert1()
+        "Insert2" -> Insert2()
+        "Insert3" -> Insert3()
+        "Under0" -> Under0()
+        "Under1" -> Under1()
+        "Under2" -> Under2()
+        "Under3" -> Under3()
+        "Under4" -> Under4()
+        "Join0" -> Join0()
+        "Match0" -> Match0()
+        "ReadJson0" -> ReadJson0()
+        "ReadCSV0" -> ReadCSV0()
+        "Rename" -> Rename()
+        else -> error("$this")
+    } as T
 }
