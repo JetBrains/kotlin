@@ -9,33 +9,14 @@
   </testsuite>
   <testsuite name="com.example.lib.TestCommonCode" tests="2" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
     <properties />
-    <testcase name="testId" classname="com.example.lib.TestCommonCode" time="..." />
-    <testcase name="testExpectedFun" classname="com.example.lib.TestCommonCode" time="..." />
-    <system-out><![CDATA[1]]></system-out>
-    <system-err />
-  </testsuite>
-  <testsuite name="com.example.lib.TestCommonCode" tests="2" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
-    <properties />
     <testcase name="testId[<target>]" classname="com.example.lib.TestCommonCode" time="..." />
     <testcase name="testExpectedFun[<target>]" classname="com.example.lib.TestCommonCode" time="..." />
-    <system-out />
-    <system-err />
-  </testsuite>
-  <testsuite name="com.example.lib.TestJava" tests="1" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
-    <properties />
-    <testcase name="testJava" classname="com.example.lib.TestJava" time="..." />
     <system-out />
     <system-err />
   </testsuite>
   <testsuite name="com.example.lib.TestJs" tests="1" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
     <properties />
     <testcase name="testJsSpecificCode[js, node]" classname="com.example.lib.TestJs" time="..." />
-    <system-out />
-    <system-err />
-  </testsuite>
-  <testsuite name="com.example.lib.TestWithJava" tests="1" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
-    <properties />
-    <testcase name="testJavaClass" classname="com.example.lib.TestWithJava" time="..." />
     <system-out />
     <system-err />
   </testsuite>
