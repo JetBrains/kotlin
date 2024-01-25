@@ -26,6 +26,12 @@ abstract class AbstractFirDiagnosticTestSpecBase(parser: FirParser) : AbstractFi
 }
 
 abstract class AbstractFirPsiDiagnosticTestSpec : AbstractFirDiagnosticTestSpecBase(FirParser.Psi)
+abstract class AbstractFirLightTreeDiagnosticTestSpec : AbstractFirDiagnosticTestSpecBase(FirParser.LightTree) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.useAdditionalService { LightTreeSyntaxDiagnosticsReporterHolder() }
+    }
+}
 
 fun TestConfigurationBuilder.baseFirSpecDiagnosticTestConfiguration(baseDir: String = ".") {
     defaultDirectives {

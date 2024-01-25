@@ -45,7 +45,7 @@ abstract class Base {
     abstract fun foo(): CharSequence
 }
 
-class Case2(override val a: String, override var b: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String<!>) : Base() {
+class Case2(override val a: String, <!VAR_TYPE_MISMATCH_ON_OVERRIDE{LT}!>override var b: <!VAR_TYPE_MISMATCH_ON_OVERRIDE{PSI}!>String<!><!>) : Base() {
     override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>CharSequence?<!> {
         return ""
     }
