@@ -281,17 +281,45 @@ Let `CS` be the constraint system currently being completed.
     3. For such a call candidate, use the `OCS` constraint system as the base constraint system.
 8. If the call uses `OCS`, override `FULL` completion mode with the `PCLA_POSTPONED_CALL`
 9. Complete call
-    1. TODO: PCLA_POSTPONED_CALL
-    2. TODO: Analysis of nested lambdas
-10. If the call is used in the receiver position and returns type variable on the top-level
-    - TODO: Semi-fix
-11. If the call uses `OCS`, replace `OCS` content with CS of the candidate
-12. If the call was completed in the `PCLA_POSTPONED_CALL` store it in `postponedPCLACalls`
-13. Once lambda body is analyzed.
-14. Replace `CS` content with `OCS`.
+    1. When we complete the call in PCLA_POSTPONED_CALL mode:
+        - Try to fix variables with enough type information that doesn't have a relation with outer type variables.
+        - Analyze ready lambdas
+        - Try to start nested PCLA analysis
+        - Force analysis of remaining lambdas if there is still not enough type info without fixing its input types.
+          - Q!: What about the ordering change
+          - Q!: Why we treat such input types as not outer type variables
+    2. When we analyze lambdas that aren't subject to nested PCLA, we use the constraint system of the lambda-containing call tree as the `OCS`
+    3. When we analyze a lambda that needs nested PCLA, what will happen?
+10. If the call expression is used in the receiver position, and its type is a type variable type on the top-level, perform semi-fixing:
+    - Compute a result type for that type variable, treating outer type variables as proper types
+    - Add equality constraint Tv <:> RT
+    - Substitute Tv with RT in the expression type
+11. Substitute all fixed type variables in the return type of candidate
+12. If the call uses `OCS`, replace `OCS` content with CS of the candidate
+13. If the call was completed in the `PCLA_POSTPONED_CALL` store it in `postponedPCLACalls`
+14. Once lambda body is analyzed:
+15. Replace `CS` content with `OCS`.
     - Note that this operation doesn't update the `outer` marking of type variables.
-15. Repeat for all lambdas that conform to the initial condition
-16. Continue the outer call completion.
+16. Repeat for all lambdas that conform to the initial condition
+17. Continue the outer call completion.
+18. During the completion writing we perform additional traversal of `postponedPCLACalls` with completion results writer.
+19. Apply final substitutor of `CS` to all lambda bodies that were analyzed with PCLA to get rid of references to type variables everywhere.
+
+``` 
+...
+if there are no new type info sources left while some lambdas are not analyzed yet:
+    for lambda in postponed:
+        if any of the input types contains non-fixed type variable in its type arguments:
+            apply pcla to lambda: 
+                let OCS = copy(CS)
+                OCS.outerVariables = CS.allTypeVariables
+                before call resolution:
+                    // Base system for candidate factory
+                    let B = empty CS + systems of arguments that doesn't reference OCS
+                for each candidate: 
+                    if call can somehow reference type variable from OCS:
+                        candidate.system = OCS + B
+```
 
 
 # Notes
@@ -309,6 +337,8 @@ Q!: Interaction with PostponedAtomWithRevisedExpectedType
 
 - Construction of the base system happens multiple times per call site that should be resolved.
 
+- interaction with overload resolution by lambda return type
+
 - getOrderedAllTypeVariables seems strange
 
 - Why we use ConeFixVariableConstraintPosition -- it has a non-trivial consequences
@@ -318,3 +348,6 @@ replaceContentWith is strange; it's not what it named as
 - Combines initial constraints
 - Duplicates error list
 - Duplicates fork point constraints
+
+
+Idea: Consolidate system handling
