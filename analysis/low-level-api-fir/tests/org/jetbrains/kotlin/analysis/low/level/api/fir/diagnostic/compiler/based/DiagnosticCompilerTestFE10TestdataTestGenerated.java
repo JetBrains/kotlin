@@ -36892,6 +36892,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("propertyFromDependsOnModule.kt")
+                public void testPropertyFromDependsOnModule() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/propertyFromDependsOnModule.kt");
+                }
+
+                @Test
                 @TestMetadata("propertyNotNeeded.kt")
                 public void testPropertyNotNeeded() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/variables/propertyNotNeeded.kt");
