@@ -77,8 +77,7 @@ class WasmSymbols(
         getProperty(FqName.fromSegments(listOf("kotlin", "wasm", "internal", "isNotFirstWasmExportCall")))
     )
 
-    internal val initAssociatedObjects = getInternalFunction("initAssociatedObjects")
-    internal val addAssociatedObject = getInternalFunction("addAssociatedObject")
+    internal val tryGetAssociatedObject = getInternalFunction("tryGetAssociatedObject")
 
     override val throwNullPointerException = getInternalFunction("THROW_NPE")
     override val throwISE = getInternalFunction("THROW_ISE")

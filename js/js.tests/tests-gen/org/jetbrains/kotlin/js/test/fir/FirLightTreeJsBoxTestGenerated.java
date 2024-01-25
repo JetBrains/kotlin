@@ -10209,6 +10209,12 @@ public class FirLightTreeJsBoxTestGenerated extends AbstractFirLightTreeJsBoxTes
         }
 
         @Test
+        @TestMetadata("findAssociatedObjectLazyness.kt")
+        public void testFindAssociatedObjectLazyness() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/findAssociatedObjectLazyness.kt");
+        }
+
+        @Test
         @TestMetadata("findAssociatedObject_oldBE.kt")
         public void testFindAssociatedObject_oldBE() throws Exception {
             runTest("js/js.translator/testData/box/reflection/findAssociatedObject_oldBE.kt");
