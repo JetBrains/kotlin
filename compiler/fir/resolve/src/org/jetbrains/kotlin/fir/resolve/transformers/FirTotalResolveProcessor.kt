@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.PCLALog
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.*
@@ -24,6 +25,10 @@ class FirTotalResolveProcessor(private val session: FirSession) {
         session,
         scopeSession
     )
+
+    init {
+        PCLALog.log("======== Compilation started ========")
+    }
 
     fun process(files: List<FirFile>) {
         for (processor in processors) {

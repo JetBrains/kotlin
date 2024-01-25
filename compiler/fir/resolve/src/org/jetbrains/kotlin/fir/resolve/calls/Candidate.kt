@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.PCLALog
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
@@ -79,7 +80,11 @@ class Candidate(
         // TODO: Doesn't belong here VVVV, should be in the candidate factory.
         // TODO: baseSystem.usesOuterCs should be always false.
         val baseCSFromInferenceSession =
-            runUnless(baseSystem.usesOuterCs) { inferenceSession.baseConstraintStorageForCandidate(this) }
+            runUnless(baseSystem.usesOuterCs) {
+                inferenceSession.baseConstraintStorageForCandidate(this)?.also {
+                    PCLALog.logStorage(it)
+                }
+            }
         if (baseCSFromInferenceSession != null) {
             system.setBaseSystem(baseCSFromInferenceSession)
             system.addOtherSystem(baseSystem)

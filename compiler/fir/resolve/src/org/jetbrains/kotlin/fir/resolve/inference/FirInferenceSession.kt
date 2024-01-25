@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.PCLALog
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -34,6 +35,8 @@ abstract class FirInferenceSession {
         ): NewConstraintSystemImpl {
             return components.createConstraintSystem().apply {
                 addOuterSystem(outerSystem.currentStorage())
+                PCLALog.log("Create shared system: $this")
+                PCLALog.logStorage(this.currentStorage())
             }
         }
     }

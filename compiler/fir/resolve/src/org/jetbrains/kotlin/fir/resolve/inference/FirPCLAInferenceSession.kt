@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.PCLALog
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.CallKind
@@ -38,7 +39,9 @@ class FirPCLAInferenceSession(
         private set
 
     override fun baseConstraintStorageForCandidate(candidate: Candidate): ConstraintStorage? {
-        if (candidate.needsToBePostponed()) return currentCommonSystem.currentStorage()
+        val needsToBePostponed = candidate.needsToBePostponed()
+        PCLALog.log("> base system for: `${candidate.callInfo}`, needsToBePostponed = $needsToBePostponed")
+        if (needsToBePostponed) return currentCommonSystem.currentStorage()
         return null
     }
 
@@ -54,6 +57,7 @@ class FirPCLAInferenceSession(
         resolutionMode: ResolutionMode,
         completionMode: ConstraintSystemCompletionMode,
     ) where T : FirResolvable, T : FirStatement {
+        PCLALog.log("$completionMode for call: $call")
         if (call is FirExpression) {
             call.updateReturnTypeWithCurrentSubstitutor(resolutionMode)
         }
@@ -64,7 +68,8 @@ class FirPCLAInferenceSession(
         // Integrating back would happen at FirDelegatedPropertyInferenceSession.completeSessionOrPostponeIfNonRoot
         // after all other delegation-related calls are being analyzed
         if (resolutionMode == ResolutionMode.ContextDependent.Delegate) return
-
+        PCLALog.log("Replacing currentCommonStorage with content of ${candidate.system}")
+        PCLALog.logStorage(candidate.system.currentStorage())
         currentCommonSystem.replaceContentWith(candidate.system.currentStorage())
 
         if (completionMode == ConstraintSystemCompletionMode.PCLA_POSTPONED_CALL) {

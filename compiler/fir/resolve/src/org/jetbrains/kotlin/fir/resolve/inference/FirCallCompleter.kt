@@ -353,7 +353,7 @@ class FirCallCompleter(
                 val pclaInferenceSession =
                     runIf(withPCLASession) {
                         candidate.lambdasAnalyzedWithPCLA += lambdaArgument
-
+                        PCLALog.log("> Starting PCLA for ${candidate.callInfo}, previous session = $inferenceSession, atom = $lambdaAtom")
                         FirPCLAInferenceSession(candidate, session.inferenceComponents, transformer.context.returnTypeCalculator)
                     }
 
