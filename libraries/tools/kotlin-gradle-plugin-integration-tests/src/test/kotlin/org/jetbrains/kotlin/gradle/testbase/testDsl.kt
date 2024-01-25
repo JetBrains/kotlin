@@ -488,7 +488,9 @@ val konanDir
     get() =
         System.getProperty("konanDataDirForIntegrationTests")?.let {
             Paths.get(it)
-        } ?: fail("Test.applyKotlinNativeFromCurrentBranchIfNeeded should set \'konanDataDirForIntegrationTests\' system property")
+        } ?: Paths.get(".")
+            .resolve("../../../.kotlin")
+            .resolve("konan-for-gradle-tests")
 
 /**
  * On changing test kit dir location update related location in 'cleanTestKitCache' task.
