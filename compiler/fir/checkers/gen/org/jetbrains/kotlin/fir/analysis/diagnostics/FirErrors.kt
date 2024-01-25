@@ -872,6 +872,7 @@ object FirErrors {
 
     // label
     val REDUNDANT_LABEL_WARNING: KtDiagnosticFactory0 by warning0<KtLabelReferenceExpression>(SourceElementPositioningStrategies.LABEL)
+    val MULTIPLE_LABELS_ARE_FORBIDDEN: KtDiagnosticFactory0 by error0<KtLabelReferenceExpression>(SourceElementPositioningStrategies.LABEL)
 
     // Enum.entries resolve deprecations
     val DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY: KtDiagnosticFactory0 by warning0<PsiElement>()

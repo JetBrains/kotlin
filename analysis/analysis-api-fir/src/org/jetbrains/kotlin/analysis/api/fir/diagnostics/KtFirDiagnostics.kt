@@ -3450,6 +3450,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RedundantLabelWarning::class
     }
 
+    interface MultipleLabelsAreForbidden : KtFirDiagnostic<KtLabelReferenceExpression> {
+        override val diagnosticClass get() = MultipleLabelsAreForbidden::class
+    }
+
     interface DeprecatedAccessToEnumEntryCompanionProperty : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = DeprecatedAccessToEnumEntryCompanionProperty::class
     }

@@ -51,7 +51,10 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.*
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -3135,20 +3138,24 @@ open class PsiRawFirBuilder(
 
         override fun visitLabeledExpression(expression: KtLabeledExpression, data: FirElement?): FirElement {
             val label = expression.getTargetLabel()
-            var errorLabelSource: KtSourceElement? = null
+            var labelSource: KtSourceElement? = null
+            var forbiddenLabelKind: ForbiddenLabelKind? = null
+
+            val isRepetitiveLabel = expression.baseExpression is KtLabeledExpression
 
             val result = if (label != null) {
-                val rawName = label.getReferencedNameElement().node!!.text
-                val labelAndErrorSource = buildLabelAndErrorSource(rawName, label.toKtPsiSourceElement())
-                errorLabelSource = labelAndErrorSource.second
-                context.withNewLabel(labelAndErrorSource.first, expression.baseExpression) {
+                val name = label.getReferencedNameElement().node!!.text
+                forbiddenLabelKind = getForbiddenLabelKind(name, isRepetitiveLabel)
+                labelSource = label.toKtPsiSourceElement()
+                val firLabel = buildLabel(name, labelSource)
+                context.withNewLabel(firLabel, expression.baseExpression) {
                     expression.baseExpression?.accept(this, data)
                 }
             } else {
                 expression.baseExpression?.accept(this, data)
             }
 
-            return buildExpressionWithErrorLabel(result, errorLabelSource, expression.toFirSourceElement())
+            return buildExpressionHandlingErrors(result, expression.toFirSourceElement(), forbiddenLabelKind, labelSource)
         }
 
         override fun visitAnnotatedExpression(expression: KtAnnotatedExpression, data: FirElement?): FirElement {

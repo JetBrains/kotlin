@@ -23,5 +23,5 @@ inline fun inlineFunWithInvoke2(s: (p: Int) -> Unit) {
 
 inline fun propagation(s: (p: Int) -> Unit) {
     inlineFunWithInvoke((label@ s))
-    inlineFunWithInvoke((label2@ label@ s))
+    inlineFunWithInvoke((<!MULTIPLE_LABELS_ARE_FORBIDDEN!>label2@<!> label@ s))
 }

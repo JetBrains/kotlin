@@ -4957,6 +4957,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.MULTIPLE_LABELS_ARE_FORBIDDEN) { firDiagnostic ->
+        MultipleLabelsAreForbiddenImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY) { firDiagnostic ->
         DeprecatedAccessToEnumEntryCompanionPropertyImpl(
             firDiagnostic as KtPsiDiagnostic,

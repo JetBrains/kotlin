@@ -4161,6 +4161,11 @@ internal class RedundantLabelWarningImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtLabelReferenceExpression>(firDiagnostic, token), KtFirDiagnostic.RedundantLabelWarning
 
+internal class MultipleLabelsAreForbiddenImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtLabelReferenceExpression>(firDiagnostic, token), KtFirDiagnostic.MultipleLabelsAreForbidden
+
 internal class DeprecatedAccessToEnumEntryCompanionPropertyImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
