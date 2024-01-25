@@ -3863,6 +3863,34 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/builderInference/additional")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Additional {
+                @Test
+                public void testAllFilesPresentInAdditional() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/additional"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+                }
+
+                @Test
+                @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInClassifiers.kt")
+                public void testBuildeeSupertypeAsTypeVariableSourceInClassifiers() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/builderInference/additional/BuildeeSupertypeAsTypeVariableSourceInClassifiers.kt");
+                }
+
+                @Test
+                @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInFunctions.kt")
+                public void testBuildeeSupertypeAsTypeVariableSourceInFunctions() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/builderInference/additional/BuildeeSupertypeAsTypeVariableSourceInFunctions.kt");
+                }
+
+                @Test
+                @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInProperties.kt")
+                public void testBuildeeSupertypeAsTypeVariableSourceInProperties() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/builderInference/additional/BuildeeSupertypeAsTypeVariableSourceInProperties.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/builderInference/issues")
             @TestDataPath("$PROJECT_ROOT")
             public class Issues {
