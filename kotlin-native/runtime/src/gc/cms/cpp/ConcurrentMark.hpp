@@ -103,8 +103,8 @@ public:
     private:
         void ensureFlushActionExecuted() noexcept;
 
-        ManuallyScoped<MutatorQueue> markQueue_{};
-        ManuallyScoped<OnceExecutable> flushAction_{};
+        ManuallyScoped<MutatorQueue, true> markQueue_{};
+        ManuallyScoped<OnceExecutable, true> flushAction_{};
     };
 
     void beginMarkingEpoch(GCHandle gcHandle);
@@ -139,7 +139,7 @@ private:
 
     GCHandle gcHandle_ = GCHandle::invalid();
     std::optional<mm::ThreadRegistry::Iterable> lockedMutatorsList_;
-    ManuallyScoped<ParallelProcessor> parallelProcessor_{};
+    ManuallyScoped<ParallelProcessor, true> parallelProcessor_{};
 
     RWSpinLock<MutexThreadStateHandling::kIgnore> markTerminationMutex_;
 };
