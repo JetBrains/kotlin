@@ -18,15 +18,6 @@ private fun defaultDeviceId(target: KonanTarget) = when (target.family) {
     else -> error("Unexpected simulation target: $target")
 }
 
-private fun Executor.run(executableAbsolutePath: String, vararg args: String) = ByteArrayOutputStream().let {
-    this.execute(ExecuteRequest(executableAbsolutePath).apply {
-        this.args.addAll(args)
-        stdout = it
-        workingDirectory = File("").absoluteFile
-    }).assertSuccess()
-    it
-}
-
 /**
  * [Executor] that runs the process in an Xcode simulator.
  *
@@ -67,8 +58,7 @@ class XcodeSimulatorExecutor(
     }.toTypedArray()
 
     private fun simctl(vararg args: String): String {
-        val out = hostExecutor.run("/usr/bin/xcrun", *arrayOf("simctl", *args))
-        return out.toString("UTF-8").trim()
+        return hostExecutor.runProcess("/usr/bin/xcrun", "simctl", *args).stdout
     }
 
     private var deviceChecked: SimulatorDeviceDescriptor? = null
@@ -148,10 +138,10 @@ class XcodeSimulatorExecutor(
         }
         if (version.minor >= 1) {
             // Option -downloadPlatform NAME available only since 14.1
-            hostExecutor.run("/usr/bin/xcrun", "xcodebuild", "-downloadPlatform", osName)
+            hostExecutor.runProcess("/usr/bin/xcrun", "xcodebuild", "-downloadPlatform", osName)
         } else {
             // Have to download all platforms :(
-            hostExecutor.run("/usr/bin/xcrun", "xcodebuild", "-downloadAllPlatforms")
+            hostExecutor.runProcess("/usr/bin/xcrun", "xcodebuild", "-downloadAllPlatforms")
         }
     }
 
