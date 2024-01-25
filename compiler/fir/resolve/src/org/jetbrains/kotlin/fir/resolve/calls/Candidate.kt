@@ -74,6 +74,10 @@ class Candidate(
     val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
         val system = constraintSystemFactory.createConstraintSystem()
 
+        // Why we even do that OwO?
+
+        // TODO: Doesn't belong here VVVV, should be in the candidate factory.
+        // TODO: baseSystem.usesOuterCs should be always false.
         val baseCSFromInferenceSession =
             runUnless(baseSystem.usesOuterCs) { inferenceSession.baseConstraintStorageForCandidate(this) }
         if (baseCSFromInferenceSession != null) {
