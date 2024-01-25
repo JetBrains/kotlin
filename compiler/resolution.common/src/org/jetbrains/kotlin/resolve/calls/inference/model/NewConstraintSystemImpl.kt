@@ -568,6 +568,13 @@ class NewConstraintSystemImpl(
         resultType: KotlinTypeMarker,
         position: FixVariableConstraintPosition<*>,
     ) = with(utilContext) {
+
+        if (outerSystemVariablesPrefixSize != 0) {
+            require(variable.freshTypeConstructor() !in outerTypeVariables!!) {
+                "Attempt to fix outer type variable: $variable"
+            }
+        }
+
         checkState(State.BUILDING, State.COMPLETION)
 
         checkInferredEmptyIntersection(variable, resultType)
