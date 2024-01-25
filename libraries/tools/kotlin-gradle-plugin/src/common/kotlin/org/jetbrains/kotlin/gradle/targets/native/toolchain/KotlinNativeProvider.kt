@@ -22,8 +22,11 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGene
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.gradle.utils.toHexString
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import java.nio.file.Files
+import java.security.MessageDigest
 
 /**
  * This is a nested provider for all native tasks
@@ -79,25 +82,53 @@ internal class KotlinNativeProvider(project: Project, konanTarget: KonanTarget) 
             bundleDir.deleteRecursively()
         }
 
+        //snapshot version can be updated so checksum is required
+        if (kotlinNativeVersion.endsWith("SNAPSHOT")) {
+            val snapshotCheckSum = getCheckSum(getGradleCachesKotlinNativeDir(kotlinNativeVersion))
+            val checkSumFile = bundleDir.resolve("checksum")
+            val currentCheckSum = if (checkSumFile.exists()) checkSumFile.readText() else null
+            if (snapshotCheckSum != currentCheckSum) {
+                logger.info("Delete existed Kotlin/Native ($currentCheckSum) because snapshot version was updated to $snapshotCheckSum")
+                bundleDir.deleteRecursively()
+            }
+        }
+
         if (!bundleDir.resolve("bin").exists()) {
-            val gradleCachesKotlinNativeDir =
-                kotlinNativeCompilerConfiguration
-                    .singleOrNull()
-                    ?.resolve(kotlinNativeVersion)
-                    ?: error(
-                        "Kotlin Native dependency has not been properly resolved. " +
-                                "Please, make sure that you've declared the repository, which contains $kotlinNativeVersion."
-                    )
+            val gradleCachesKotlinNativeDir = getGradleCachesKotlinNativeDir(kotlinNativeVersion)
 
             logger.info("Moving Kotlin/Native bundle from tmp directory $gradleCachesKotlinNativeDir to ${bundleDir.absolutePath}")
             copy {
                 it.from(gradleCachesKotlinNativeDir)
                 it.into(bundleDir)
             }
+
+            if (kotlinNativeVersion.endsWith("SNAPSHOT")) {
+                val checksumFile = bundleDir.resolve("checksum")
+                getCheckSum(gradleCachesKotlinNativeDir)?.also {
+                    checksumFile.writeText(it)
+                }
+            }
+
             logger.info("Moved Kotlin/Native bundle from $gradleCachesKotlinNativeDir to ${bundleDir.absolutePath}")
         }
 
         setupKotlinNativeDependencies(konanTarget)
+    }
+
+    private fun getGradleCachesKotlinNativeDir(kotlinNativeVersion: String) = kotlinNativeCompilerConfiguration
+        .singleOrNull()
+        ?.resolve(kotlinNativeVersion)
+        ?: error(
+            "Kotlin Native dependency has not been properly resolved. " +
+                    "Please, make sure that you've declared the repository, which contains $kotlinNativeVersion."
+        )
+
+    private fun getCheckSum(gradleCachesKotlinNativeDir: File): String? {
+        val sha256 = MessageDigest.getInstance("SHA-256")
+        Files.walk(gradleCachesKotlinNativeDir.resolve("bin").toPath()).filter { it.toFile().isFile }.forEach {
+            sha256.update(Files.readAllBytes(it))
+        }
+        return sha256.digest()?.toHexString()
     }
 
     private fun Project.setupKotlinNativeDependencies(konanTarget: KonanTarget) {

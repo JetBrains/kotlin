@@ -136,6 +136,15 @@ tasks.register<Delete>("cleanUserHomeKonanDir") {
         logger.info("Default .konan directory user's home has been deleted: $userHomeKonanDir")
     }
 }
+tasks.register<Task>("prepareNativeBundleForGradleIT") {
+
+    description = "This task adds dependency on :kotlin-native:bundle"
+
+    if (project.kotlinBuildProperties.isKotlinNativeEnabled) {
+        // 1. Build full Kotlin Native bundle
+        dependsOn(":kotlin-native:bundle")
+    }
+}
 
 fun Test.includeMppAndAndroid(include: Boolean) = includeTestsWithPattern(include) {
     addAll(listOf("*Multiplatform*", "*Mpp*", "*Android*"))
@@ -147,6 +156,11 @@ fun Test.includeNative(include: Boolean) = includeTestsWithPattern(include) {
 
 fun Test.applyKotlinNativeFromCurrentBranchIfNeeded() {
     val kotlinNativeFromMasterEnabled = project.kotlinBuildProperties.isKotlinNativeEnabled && project.kotlinBuildProperties.useKotlinNativeLocalDistributionForTests
+
+    //add native bundle dependencies for local test run
+    if (kotlinNativeFromMasterEnabled && !project.kotlinBuildProperties.isTeamcityBuild) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:prepareNativeBundleForGradleIT")
+    }
 
     // Providing necessary properties for running tests with k/n built from master on the local environment
     val defaultSnapshotVersion = project.kotlinBuildProperties.defaultSnapshotVersion
