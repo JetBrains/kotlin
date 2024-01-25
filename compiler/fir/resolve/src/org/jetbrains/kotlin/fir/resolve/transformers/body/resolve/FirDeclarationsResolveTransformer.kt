@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -144,7 +145,7 @@ open class FirDeclarationsResolveTransformer(
 
         val returnTypeRefBeforeResolve = property.returnTypeRef
         val cannotHaveDeepImplicitTypeRefs = property.backingField?.returnTypeRef !is FirImplicitTypeRef
-        if (implicitTypeOnly && returnTypeRefBeforeResolve !is FirImplicitTypeRef && cannotHaveDeepImplicitTypeRefs) {
+        if (!property.isConst && implicitTypeOnly && returnTypeRefBeforeResolve !is FirImplicitTypeRef && cannotHaveDeepImplicitTypeRefs) {
             return property
         }
 

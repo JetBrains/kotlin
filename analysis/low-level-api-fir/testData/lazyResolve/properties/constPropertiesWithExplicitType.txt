@@ -54,19 +54,19 @@ FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
-    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var simple: R|kotlin/Int| = IntegerLiteral(24)
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var simple: R|kotlin/Int| = Int(24)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
-    public final const [ResolvedTo(CONSTANT_EVALUATION)] var simple: R|kotlin/Int| = IntegerLiteral(24)
+    public final const [ResolvedTo(CONSTANT_EVALUATION)] var simple: R|kotlin/Int| = Int(24)
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int|
         public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|kotlin/Int|): R|kotlin/Unit|
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
-    public final const [ResolvedTo(ANNOTATION_ARGUMENTS)] var simple: R|kotlin/Int| = IntegerLiteral(24)
+    public final const [ResolvedTo(ANNOTATION_ARGUMENTS)] var simple: R|kotlin/Int| = Int(24)
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int|): R|kotlin/Unit|
 

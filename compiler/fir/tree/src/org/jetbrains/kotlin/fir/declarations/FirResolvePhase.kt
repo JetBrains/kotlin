@@ -172,6 +172,8 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
      * val baz get() = foo() // implicit type is Int
      * ```
      *
+     * Also resolve initializers of const properties.
+     *
      * This is a [*jumping phase*][FirResolvePhase].
      *
      * @see TYPES
@@ -180,6 +182,12 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
 
     /**
      * The compiler evaluates expressions that are used as initializers for const properties and defaults of annotation's constructor.
+     *
+     * This phase has two reasons to exist as a separate phase:
+     * 1. It is a synchronization point.
+     * Compiler visits this phase only when all const properties are resolved.
+     * This is especially useful when evaluating const properties from the Java world.
+     * 2. The Analysis API can get results of constant evaluation before [BODY_RESOLVE] phase.
      */
     CONSTANT_EVALUATION,
 
