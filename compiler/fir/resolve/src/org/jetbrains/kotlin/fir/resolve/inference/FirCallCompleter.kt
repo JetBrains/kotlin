@@ -242,6 +242,7 @@ class FirCallCompleter(
             val lambdaArgument: FirAnonymousFunction = lambdaAtom.atom
             val needItParam = lambdaArgument.valueParameters.isEmpty() && parameters.size == 1
 
+            // TODO v BUG: Candidate is wrong here, may come from outer call: foo(bar {}) when doing full completion.
             val matchedParameter = candidate.argumentMapping?.firstNotNullOfOrNull { (currentArgument, currentValueParameter) ->
                 val currentLambdaArgument =
                     ((currentArgument as? FirLambdaArgumentExpression)?.expression as? FirAnonymousFunctionExpression)?.anonymousFunction
@@ -253,6 +254,7 @@ class FirCallCompleter(
             }
 
             lambdaArgument.matchingParameterFunctionType = matchedParameter?.returnTypeRef?.coneType
+            // TODO ^ BUG: Candidate is wrong here, may come from outer call: foo(bar {}) when doing full completion.
 
             val itParam = when {
                 needItParam -> {
