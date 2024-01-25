@@ -15,6 +15,7 @@ import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.ContentDRILink
 import org.jetbrains.dokka.pages.MemberPageNode
+import utils.OnlyDescriptors
 import utils.OnlySymbols
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -423,6 +424,479 @@ class LinkTest : BaseAbstractTest() {
                     )
                 )
                 assertEquals(expected, functionDocs.children.first())
+            }
+        }
+    }
+
+    @Test
+    fun `link should lead to List class rather than function`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |
+            |/**
+            | * ref to [List] or [Set]
+            | */
+            |fun x(){}
+            |
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val functionDocs = module.packages.flatMap { it.functions }.first().documentation.values.first()
+                val expected = Description(
+                    root = CustomDocTag(
+                        children = listOf(
+                            P(
+                                children = listOf(
+                                    Text("ref to "),
+                                    DocumentationLink(
+                                        dri = DRI(
+                                            packageName = "kotlin.collections",
+                                            classNames = "List",
+                                            target = PointingToDeclaration
+                                        ),
+                                        children = listOf(
+                                            Text("List")
+                                        ),
+                                        params = mapOf("href" to "[List]")
+                                    ),
+                                    Text(" or "),
+                                    DocumentationLink(
+                                        dri = DRI(
+                                            packageName = "kotlin.collections",
+                                            classNames = "Set",
+                                            target = PointingToDeclaration
+                                        ),
+                                        children = listOf(
+                                            Text("Set")
+                                        ),
+                                        params = mapOf("href" to "[Set]")
+                                    ),
+                                )
+                            )
+                        ),
+                        name = "MARKDOWN_FILE"
+                    )
+                )
+                assertEquals(expected, functionDocs.children.first())
+            }
+        }
+    }
+
+    @Test
+    fun `link should lead to function rather than property`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |
+            |fun x(p: Int){}
+            |val x = 0
+            |/**
+            | * ref to fun [x]
+            | */
+            |val x2 = 0
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val propDocs =
+                    module.packages.flatMap { it.properties }.first { it.name == "x2" }.documentation.values.first()
+                val expected = Description(
+                    root = CustomDocTag(
+                        children = listOf(
+                            P(
+                                children = listOf(
+                                    Text("ref to fun "),
+                                    DocumentationLink(
+                                        dri = DRI(
+                                            packageName = "example",
+                                            classNames = null,
+                                            target = PointingToDeclaration,
+                                            callable = Callable(
+                                                "x",
+                                                params = listOf(TypeConstructor("kotlin.Int", emptyList()))
+                                            )
+                                        ),
+                                        children = listOf(
+                                            Text("x")
+                                        ),
+                                        params = mapOf("href" to "[x]")
+                                    )
+                                )
+                            )
+                        ),
+                        name = "MARKDOWN_FILE"
+                    )
+                )
+                assertEquals(expected, propDocs.children.first())
+            }
+        }
+    }
+
+    @Test
+    @OnlySymbols("#3455 - KDoc links to a package are unresolved ")
+    fun `fully qualified link should lead to package`() {
+        // for the test case, there is the only one link candidate in K1 and K2
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |
+            |/**
+            | * refs to the package [example.fn] and the property [example.x]
+            | */
+            |val x = 0
+            |
+            |/**
+            | * refs to the package [example.fn] and the property [example.x]
+            | */
+            |fun fn(p: Int){}
+            |
+            |/src/main/kotlin/Testing2.kt
+            |package example.fn
+            |
+            |fun fn(p: Int){}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val propDocs =
+                    module.packages.flatMap { it.properties }.first { it.name == "x" }.documentation.values.first()
+
+                val fnDocs =
+                    module.packages.first { it.name == "example" }.functions.first { it.name == "fn" }.documentation.values.first()
+
+                val expected = Description(
+                    root = CustomDocTag(
+                        children = listOf(
+                            P(
+                                children = listOf(
+                                    Text("refs to the package "),
+                                    DocumentationLink(
+                                        dri = DRI(
+                                            packageName = "example.fn",
+                                            classNames = null,
+                                            target = PointingToDeclaration,
+                                        ),
+                                        children = listOf(
+                                            Text("example.fn")
+                                        ),
+                                        params = mapOf("href" to "[example.fn]")
+                                    ),
+                                    Text(" and the property "),
+                                    DocumentationLink(
+                                        dri = DRI(
+                                            packageName = "example",
+                                            classNames = null,
+                                            target = PointingToDeclaration,
+                                            callable = Callable(
+                                                "x",
+                                                params = emptyList()
+                                            )
+                                        ),
+                                        children = listOf(
+                                            Text("example.x")
+                                        ),
+                                        params = mapOf("href" to "[example.x]")
+                                    )
+                                )
+                            )
+                        ),
+                        name = "MARKDOWN_FILE"
+                    )
+                )
+                assertEquals(expected, propDocs.children.first())
+                assertEquals(expected, fnDocs.children.first())
+            }
+        }
+    }
+
+    @Test
+    fun `short link should lead to class rather than package`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |
+            |/**
+            | * refs to the class [example]
+            | */
+            |val x = 0
+            |
+            |class example
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val propDocs =
+                    module.packages.flatMap { it.properties }.first { it.name == "x" }.documentation.values.first()
+
+
+                val expected = Description(
+                    root = CustomDocTag(
+                        children = listOf(
+                            P(
+                                children = listOf(
+                                    Text("refs to the class "),
+                                    DocumentationLink(
+                                        dri = DRI(
+                                            packageName = "example",
+                                            classNames = "example",
+                                            target = PointingToDeclaration,
+                                        ),
+                                        children = listOf(
+                                            Text("example")
+                                        ),
+                                        params = mapOf("href" to "[example]")
+                                    ),
+                                )
+                            )
+                        ),
+                        name = "MARKDOWN_FILE"
+                    )
+                )
+                assertEquals(expected, propDocs.children.first())
+            }
+        }
+    }
+
+    @Test
+    @OnlySymbols("#3455 - KDoc links to a package are unresolved ")
+    fun `short link should lead to package rather than function`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |
+            |/**
+            | * refs to the package [example]
+            | */
+            |val x = 0
+            |
+            |fun example() {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val propDocs =
+                    module.packages.flatMap { it.properties }.first { it.name == "x" }.documentation.values.first()
+
+
+                val expected = Description(
+                    root = CustomDocTag(
+                        children = listOf(
+                            P(
+                                children = listOf(
+                                    Text("refs to the package "),
+                                    DocumentationLink(
+                                        dri = DRI(
+                                            packageName = "example",
+                                            classNames = null,
+                                            target = PointingToDeclaration,
+                                        ),
+                                        children = listOf(
+                                            Text("example")
+                                        ),
+                                        params = mapOf("href" to "[example]")
+                                    ),
+                                )
+                            )
+                        ),
+                        name = "MARKDOWN_FILE"
+                    )
+                )
+                assertEquals(expected, propDocs.children.first())
+            }
+        }
+    }
+
+    @Test
+    fun `link should be stable for overloads`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |
+            |/**
+            | * refs to the overload [f] and [f2]
+            | */
+            |val x = 0
+            |
+            |fun f(i: Int) {}
+            |fun f(s: String) {}
+            |
+            |fun f2(i: String) {}
+            |fun f2(s: Int) {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val propDocs =
+                    module.packages.flatMap { it.properties }.first { it.name == "x" }.documentation.values.first()
+
+
+                val expected = Description(
+                    root = CustomDocTag(
+                        children = listOf(
+                            P(
+                                children = listOf(
+                                    Text("refs to the overload "),
+                                    DocumentationLink(
+                                        dri = DRI(
+                                            packageName = "example",
+                                            classNames = null,
+                                            target = PointingToDeclaration,
+                                            callable = Callable(
+                                                "f",
+                                                params = listOf(TypeConstructor("kotlin.Int", emptyList()))
+                                            )
+                                        ),
+                                        children = listOf(
+                                            Text("f")
+                                        ),
+                                        params = mapOf("href" to "[f]")
+                                    ),
+
+                                    Text(" and "),
+                                    DocumentationLink(
+                                        dri = DRI(
+                                            packageName = "example",
+                                            classNames = null,
+                                            target = PointingToDeclaration,
+                                            callable = Callable(
+                                                "f2",
+                                                params = listOf(TypeConstructor("kotlin.String", emptyList()))
+                                            )
+                                        ),
+                                        children = listOf(
+                                            Text("f2")
+                                        ),
+                                        params = mapOf("href" to "[f2]")
+                                    ),
+                                )
+                            )
+                        ),
+                        name = "MARKDOWN_FILE"
+                    )
+                )
+                assertEquals(expected, propDocs.children.first())
+            }
+        }
+    }
+    @Test
+    @OnlyDescriptors("due to #3250 a result DRI is unstable")
+    fun `K1 - link should be stable for overloads in different files`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |
+            |/**
+            | * refs to the overload [f]
+            | */
+            |val x = 0
+            |
+            |fun f(i: String) {}
+            |
+            |/src/main/kotlin/Testing2.kt
+            |package example
+            |
+            |fun f(s: Int) {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val propDocs =
+                    module.packages.flatMap { it.properties }.first { it.name == "x" }.documentation.values.first()
+
+
+                val expected = Description(
+                    root = CustomDocTag(
+                        children = listOf(
+                            P(
+                                children = listOf(
+                                    Text("refs to the overload "),
+                                    DocumentationLink(
+                                        dri = DRI(
+                                            packageName = "example",
+                                            classNames = null,
+                                            target = PointingToDeclaration,
+                                            callable = Callable(
+                                                "f",
+                                                params = listOf(TypeConstructor("kotlin.String", emptyList()))
+                                            )
+                                        ),
+                                        children = listOf(
+                                            Text("f")
+                                        ),
+                                        params = mapOf("href" to "[f]")
+                                    ),
+                                )
+                            )
+                        ),
+                        name = "MARKDOWN_FILE"
+                    )
+                )
+                assertEquals(expected, propDocs.children.first())
             }
         }
     }
