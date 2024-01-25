@@ -161,7 +161,16 @@ fun GradleProject.addPropertyToGradleProperties(
 internal fun TestProject.addArchivesBaseNameCompat(
     archivesBaseName: String
 ) {
-    if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_7_1)) {
+    if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_5)) {
+        buildGradle.appendText(
+            """
+            |
+            |base {
+            |    archivesName = '$archivesBaseName'
+            |}
+            """.trimMargin()
+        )
+    } else if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_7_1)) {
         buildGradle.appendText(
             """
             |

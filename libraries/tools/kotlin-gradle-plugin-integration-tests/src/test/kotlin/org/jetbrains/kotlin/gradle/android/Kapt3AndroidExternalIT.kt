@@ -69,8 +69,11 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
                 assertFileInProjectExists("app/build/generated/source/kapt/debug/com/example/dagger/kotlin/DaggerApplicationComponent.java")
                 assertFileInProjectExists("app/build/generated/source/kapt/debug/com/example/dagger/kotlin/ui/HomeActivity_MembersInjector.java")
 
-                val daggerJavaClassesDir =
+                val daggerJavaClassesDir = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
                     "app/build/intermediates/javac/debug/classes/com/example/dagger/kotlin/"
+                } else {
+                    "app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/example/dagger/kotlin/"
+                }
 
                 assertFileInProjectExists(daggerJavaClassesDir + "DaggerApplicationComponent.class")
 

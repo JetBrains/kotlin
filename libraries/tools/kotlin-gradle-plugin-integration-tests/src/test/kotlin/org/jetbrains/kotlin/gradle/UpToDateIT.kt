@@ -233,7 +233,11 @@ class UpToDateIT : KGPBaseTest() {
 
         override fun mutateProject(project: TestProject) {
             project.buildGradle.modify {
-                it.replace("archivesBaseName = '$oldName'", "archivesBaseName = '$newName'")
+                if (project.gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
+                    it.replace("archivesBaseName = '$oldName'", "archivesBaseName = '$newName'")
+                } else {
+                    it.replace("archivesName = '$oldName'", "archivesName = '$newName'")
+                }
             }
         }
 

@@ -794,8 +794,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             }
         }
 
-        val checkedConsumerAGPVersions = TestVersions.AgpCompatibilityMatrix
-            .values()
+        val checkedConsumerAGPVersions = TestVersions.AgpCompatibilityMatrix.entries
             .filter { agp -> AGPVersion.fromString(agp.version) < AGPVersion.fromString(TestVersions.AGP.MAX_SUPPORTED) }
 
         checkedConsumerAGPVersions.forEach { consumerAgpVersion ->

@@ -39,9 +39,15 @@ class WasmConfigurationCacheIT : KGPBaseTest() {
         ) {
             build("wasmJsD8Run", buildOptions = buildOptions) {
                 assertTasksExecuted(":wasmJsD8Run")
-                assertOutputContains(
-                    "Calculating task graph as no configuration cache is available for tasks: wasmJsD8Run"
-                )
+                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
+                    assertOutputContains(
+                        "Calculating task graph as no configuration cache is available for tasks: wasmJsD8Run"
+                    )
+                } else {
+                    assertOutputContains(
+                        "Calculating task graph as no cached configuration is available for tasks: wasmJsD8Run"
+                    )
+                }
 
                 assertConfigurationCacheStored()
             }

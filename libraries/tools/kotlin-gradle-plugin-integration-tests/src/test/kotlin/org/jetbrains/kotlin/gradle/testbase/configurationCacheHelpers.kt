@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 
 /**
@@ -23,9 +24,15 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
 
     build(*buildArguments, buildOptions = buildOptions) {
         assertTasksExecuted(*executedTask.toTypedArray())
-        assertOutputContains(
-            "Calculating task graph as no configuration cache is available for tasks: ${buildArguments.joinToString(separator = " ")}"
-        )
+        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
+            assertOutputContains(
+                "Calculating task graph as no configuration cache is available for tasks: ${buildArguments.joinToString(separator = " ")}"
+            )
+        } else {
+            assertOutputContains(
+                "Calculating task graph as no cached configuration is available for tasks: ${buildArguments.joinToString(separator = " ")}"
+            )
+        }
 
         assertConfigurationCacheStored()
     }
