@@ -292,7 +292,7 @@ open class FirDeclarationsResolveTransformer(
         if (property.returnTypeRef is FirResolvedTypeRef) {
             val typeArguments = (type.type as ConeClassLikeType).typeArguments
             val extensionType = property.receiverParameter?.typeRef?.coneType
-            val dispatchType = context.containingClass?.let { containingClass ->
+            val dispatchType = context.containingRegularClass?.let { containingClass ->
                 containingClass.symbol.constructStarProjectedType(containingClass.typeParameters.size)
             }
             propertyReferenceAccess.replaceConeTypeOrNull(
@@ -789,21 +789,23 @@ open class FirDeclarationsResolveTransformer(
         anonymousObject: FirAnonymousObject,
         data: ResolutionMode
     ): FirAnonymousObject = whileAnalysing(session, anonymousObject) {
-        if (anonymousObject !in context.targetedLocalClasses) {
-            return anonymousObject.runAllPhasesForLocalClass(components, data, transformer.firResolveContextCollector)
-        }
+        context.withContainingClass(anonymousObject) {
+            if (anonymousObject !in context.targetedLocalClasses) {
+                return anonymousObject.runAllPhasesForLocalClass(components, data, transformer.firResolveContextCollector)
+            }
 
-        require(anonymousObject.controlFlowGraphReference == null)
-        val buildGraph = !implicitTypeOnly
-        dataFlowAnalyzer.enterClass(anonymousObject, buildGraph)
-        val result = context.withAnonymousObject(anonymousObject, components) {
-            transformDeclarationContent(anonymousObject, data) as FirAnonymousObject
+            require(anonymousObject.controlFlowGraphReference == null)
+            val buildGraph = !implicitTypeOnly
+            dataFlowAnalyzer.enterClass(anonymousObject, buildGraph)
+            val result = context.withAnonymousObject(anonymousObject, components) {
+                transformDeclarationContent(anonymousObject, data) as FirAnonymousObject
+            }
+            val graph = dataFlowAnalyzer.exitClass()
+            if (graph != null) {
+                result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(graph))
+            }
+            result
         }
-        val graph = dataFlowAnalyzer.exitClass()
-        if (graph != null) {
-            result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(graph))
-        }
-        return result
     }
 
     override fun transformSimpleFunction(

@@ -79,7 +79,7 @@ class BodyResolveContext(
     val whenSubjectImportingScopes: ArrayDeque<FirWhenSubjectImportingScope?> = ArrayDeque()
 
     @set:PrivateForInline
-    var containingClass: FirRegularClass? = null
+    var containingRegularClass: FirRegularClass? = null
 
     val containerIfAny: FirDeclaration?
         get() = containers.lastOrNull()
@@ -107,7 +107,7 @@ class BodyResolveContext(
 
     val anonymousFunctionsAnalyzedInDependentContext: MutableSet<FirFunctionSymbol<*>> = mutableSetOf()
 
-    var containingClassDeclarations: ArrayDeque<FirRegularClass> = ArrayDeque()
+    var containingClassDeclarations: ArrayDeque<FirClass> = ArrayDeque()
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withTowerDataContexts(newContexts: FirRegularTowerDataContexts, f: () -> T): T {
@@ -140,19 +140,19 @@ class BodyResolveContext(
     }
 
     @PrivateForInline
-    private inline fun <T> withContainerClass(declaration: FirRegularClass, f: () -> T): T {
-        val oldContainingClass = containingClass
+    private inline fun <T> withContainerRegularClass(declaration: FirRegularClass, f: () -> T): T {
+        val oldContainingClass = containingRegularClass
         containers.add(declaration)
-        containingClass = declaration
+        containingRegularClass = declaration
         return try {
             f()
         } finally {
             containers.removeLast()
-            containingClass = oldContainingClass
+            containingRegularClass = oldContainingClass
         }
     }
 
-    inline fun <T> withContainingClass(declaration: FirRegularClass, f: () -> T): T {
+    inline fun <T> withContainingClass(declaration: FirClass, f: () -> T): T {
         containingClassDeclarations.add(declaration)
         return try {
             f()
@@ -368,7 +368,7 @@ class BodyResolveContext(
             specialTowerDataContexts.putAll(this@BodyResolveContext.specialTowerDataContexts)
             containers = this@BodyResolveContext.containers
             containingClassDeclarations = ArrayDeque(this@BodyResolveContext.containingClassDeclarations)
-            containingClass = this@BodyResolveContext.containingClass
+            containingRegularClass = this@BodyResolveContext.containingRegularClass
             replaceTowerDataContext(this@BodyResolveContext.towerDataContext)
             anonymousFunctionsAnalyzedInDependentContext.addAll(this@BodyResolveContext.anonymousFunctionsAnalyzedInDependentContext)
             // Looks like we should copy this session only for builder inference to be able
@@ -417,7 +417,7 @@ class BodyResolveContext(
             }
 
             withScopesForClass(regularClass, holder) {
-                withContainerClass(regularClass, f)
+                withContainerRegularClass(regularClass, f)
             }
         }
     }
