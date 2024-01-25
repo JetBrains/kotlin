@@ -166,6 +166,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("callingProtectedFromInline.kt")
+        public void testCallingProtectedFromInline() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/callingProtectedFromInline.kt");
+        }
+
+        @Test
         @TestMetadata("capturedTypesSubtyping.kt")
         public void testCapturedTypesSubtyping() throws Exception {
             runTest("compiler/testData/diagnostics/tests/capturedTypesSubtyping.kt");
