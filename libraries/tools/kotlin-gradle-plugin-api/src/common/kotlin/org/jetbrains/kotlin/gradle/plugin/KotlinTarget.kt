@@ -16,6 +16,7 @@ import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -71,7 +72,7 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     fun composeCopyResources(resourceDirectoryName: Provider<Path>, resourceIdentity: Provider<Path>, taskName: String)
 
     @InternalKotlinGradlePluginApi
-    fun composeResolveResources(): FileCollection
+    fun composeResolveResources(): TaskProvider<*>
 }
 
 interface KotlinTargetWithTests<E : KotlinExecution.ExecutionSource, T : KotlinTargetTestRun<E>> : KotlinTarget {

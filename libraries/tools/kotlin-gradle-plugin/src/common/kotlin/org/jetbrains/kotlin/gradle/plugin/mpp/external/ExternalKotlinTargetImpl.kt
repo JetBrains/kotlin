@@ -58,7 +58,7 @@ internal class ExternalKotlinTargetImpl internal constructor(
         TODO("Not yet implemented")
     }
 
-    override fun composeResolveResources(): FileCollection {
+    override fun composeResolveResources(): TaskProvider<*> {
         TODO("Not yet implemented")
     }
 

@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Action
+import org.gradle.api.DefaultTask
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
@@ -13,6 +14,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
@@ -22,7 +24,9 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
@@ -94,13 +98,13 @@ abstract class AbstractKotlinTarget(
                 artifactNameAppendix = dashSeparatedName(targetName.toLowerCaseAsciiOnly())
             )
         )
-
-        // FIXME: Is this needed here or only in the overrides?
-        usageContexts.add(
-            createResourcesSoftwareComponentVariant(
-                mainCompilation
-            )
-        )
+//
+//        // FIXME: Is this needed here or only in the overrides?
+//        usageContexts.add(
+//            createResourcesSoftwareComponentVariant(
+//                mainCompilation
+//            )
+//        )
 
         val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
 
@@ -224,7 +228,7 @@ abstract class AbstractKotlinTarget(
         composeResourceDirectories.add(ComposeResources(resourceDirectoryName, resourceIdentity, taskName))
     }
 
-    override fun composeResolveResources(): FileCollection {
+    override fun composeResolveResources(): TaskProvider<*> {
         val outputDirectory = project.layout.buildDirectory.dir("resolvedResourcesFor${disambiguationClassifier}")
         val resourcesConfiguration = project.configurations.getByName(
             lowerCamelCaseName(
@@ -256,23 +260,30 @@ abstract class AbstractKotlinTarget(
             }
         }
 
-        val outputCollection = project.files()
-        outputCollection.builtBy(unzipAndCopyResourcesToBuildDirectoryTask)
+        val result = project.registerTask<DefaultTask>("aggregateResources${disambiguationClassifier}") {
+            it.outputs.dir(outputDirectory)
+        }
+//        val outputCollection = project.files()
+        result.dependsOn(unzipAndCopyResourcesToBuildDirectoryTask)
 
         // Copy resources for this target
         // FIXME: Copypasta
         // FIXME: Resources and outputDirectory are Providers, but this method doesn't await for any lifecycle event. This will break if called at a wrong time
-        compilations.getByName("main").registerCopyResourcesTasks(
-            "ResolveSelfResources${disambiguationClassifier}",
-            composeResourceDirectories,
-            outputDirectory
-        ).forEach { copyTask ->
-            outputCollection.builtBy(copyTask)
+        project.launch {
+            this.await(KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges)
+            compilations.getByName("main").registerCopyResourcesTasks(
+                "ResolveSelfResources${disambiguationClassifier}",
+                composeResourceDirectories,
+                outputDirectory
+            ).forEach { copyTask ->
+                result.dependsOn(copyTask)
+            }
         }
 
+
         // FIXME: Listing files in this directory may result in trash such as .DS_Store to suddenly appear. Figure out how to get the root of a zipTree?
-        outputCollection.from(outputDirectory.map { it.asFile.listFiles() ?: emptyArray() })
-        return outputCollection
+//        outputCollection.from(outputDirectory.map { it.asFile.listFiles() ?: emptyArray() })
+        return result
     }
 }
 

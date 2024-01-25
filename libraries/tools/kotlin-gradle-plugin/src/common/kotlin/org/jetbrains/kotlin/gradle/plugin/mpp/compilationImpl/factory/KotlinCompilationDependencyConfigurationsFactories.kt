@@ -218,7 +218,9 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         )
     ).apply {
         // FIXME: See usages of shouldResolveConsistentlyWith
-        extendsFrom(compileDependencyConfiguration)
+//        dependencies.addAllLater(target.project.provider { compileDependencyConfiguration.allDependencies })
+//        extendsFrom(compileDependencyConfiguration)
+        extendsFrom(implementationConfiguration)
         usesPlatformOf(target)
         isVisible = false
         isCanBeConsumed = false
