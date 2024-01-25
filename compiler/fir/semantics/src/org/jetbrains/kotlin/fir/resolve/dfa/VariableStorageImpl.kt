@@ -7,14 +7,11 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -215,7 +212,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         return when (propertyModuleData) {
             currentModuleData,
             in currentModuleData.friendDependencies,
-            in currentModuleData.dependsOnDependencies,
+            in currentModuleData.allDependsOnDependencies,
             -> PropertyStability.STABLE_VALUE
             else -> PropertyStability.ALIEN_PUBLIC_PROPERTY
         }

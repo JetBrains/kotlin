@@ -20,7 +20,7 @@ fun isCast(d: Direct, t: Transitive) {
     }
 
     if (t.finalProperty is String) {
-        <!SMARTCAST_IMPOSSIBLE!>t.finalProperty<!>.length
+        t.finalProperty.length
     }
 }
 
@@ -29,5 +29,5 @@ fun asCast(d: Direct, t: Transitive) {
     d.finalProperty.length
 
     t.finalProperty as String
-    <!SMARTCAST_IMPOSSIBLE!>t.finalProperty<!>.length
+    t.finalProperty.length
 }
