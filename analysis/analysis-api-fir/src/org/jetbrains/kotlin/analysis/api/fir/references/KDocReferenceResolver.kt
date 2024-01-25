@@ -100,13 +100,25 @@ internal object KDocReferenceResolver {
     private fun findParentSymbol(symbol: KtSymbol, goBackSteps: Int, selectedFqName: FqName): KtSymbol? {
         if (symbol !is KtDeclarationSymbol && symbol !is KtPackageSymbol) return null
 
-        var currentSymbol = symbol as? KtDeclarationSymbol
-        repeat(goBackSteps) {
-            currentSymbol = currentSymbol?.getContainingSymbol() as? KtClassOrObjectSymbol
+        if (symbol is KtDeclarationSymbol) {
+            symbol.goToNthParent(goBackSteps)?.let { return it }
         }
-        currentSymbol?.let { return it }
 
         return getPackageSymbolIfPackageExists(selectedFqName)
+    }
+
+    /**
+     * N.B. Works only for [KtClassOrObjectSymbol] parents chain.
+     */
+    context(KtAnalysisSession)
+    private fun KtDeclarationSymbol.goToNthParent(steps: Int): KtDeclarationSymbol? {
+        var currentSymbol = this
+
+        repeat(steps) {
+            currentSymbol = currentSymbol.getContainingSymbol() as? KtClassOrObjectSymbol ?: return null
+        }
+
+        return currentSymbol
     }
 
     context(KtAnalysisSession)
