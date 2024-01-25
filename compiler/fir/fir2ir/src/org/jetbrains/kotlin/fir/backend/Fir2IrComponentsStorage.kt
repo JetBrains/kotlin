@@ -45,7 +45,9 @@ class Fir2IrComponentsStorage(
     override val classifierStorage: Fir2IrClassifierStorage = Fir2IrClassifierStorage(this, commonMemberStorage)
     override val declarationStorage: Fir2IrDeclarationStorage = Fir2IrDeclarationStorage(this, moduleDescriptor, commonMemberStorage)
 
-    override val callablesGenerator: Fir2IrCallableDeclarationsGenerator = Fir2IrCallableDeclarationsGenerator(this)
+    private val conversionScope = Fir2IrConversionScope(configuration)
+
+    override val callablesGenerator: Fir2IrCallableDeclarationsGenerator = Fir2IrCallableDeclarationsGenerator(this, conversionScope)
     override val classifiersGenerator: Fir2IrClassifiersGenerator = Fir2IrClassifiersGenerator(this)
     override val lazyDeclarationsGenerator: Fir2IrLazyDeclarationsGenerator = Fir2IrLazyDeclarationsGenerator(this)
 
@@ -58,8 +60,7 @@ class Fir2IrComponentsStorage(
 
     override val irProviders: List<IrProvider> = listOf(FirIrProvider(this))
 
-    override val typeConverter: Fir2IrTypeConverter = Fir2IrTypeConverter(this)
-    private val conversionScope = Fir2IrConversionScope(configuration)
+    override val typeConverter: Fir2IrTypeConverter = Fir2IrTypeConverter(this, conversionScope)
 
     val fir2IrVisitor: Fir2IrVisitor = Fir2IrVisitor(this, conversionScope)
 

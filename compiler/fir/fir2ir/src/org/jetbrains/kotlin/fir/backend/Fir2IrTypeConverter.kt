@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 
 class Fir2IrTypeConverter(
-    private val components: Fir2IrComponents
+    private val components: Fir2IrComponents,
+    private val conversionScope: Fir2IrConversionScope,
 ) : Fir2IrComponents by components {
 
     internal val classIdToSymbolMap by lazy {

@@ -153,6 +153,19 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
+    internal var backingFieldCounter = 0
+
+    inline fun <R> withBackingField(fieldSymbol: IrFieldSymbol, f: IrFieldSymbol.() -> R): R {
+        backingFieldCounter++
+        try {
+            return fieldSymbol.f()
+        } finally {
+            backingFieldCounter--
+        }
+    }
+
+    @PublishedApi
+    @PrivateForInline
     internal val classStack = mutableListOf<IrClass>()
 
     inline fun <R> withClass(klass: IrClass, f: IrClass.() -> R): R {
@@ -238,4 +251,5 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     fun lastWhenSubject(): IrVariable = whenSubjectVariableStack.last()
     fun lastSafeCallSubject(): IrVariable = safeCallSubjectVariableStack.last()
+    fun isInsideBackingField(): Boolean = backingFieldCounter > 0
 }

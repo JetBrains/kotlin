@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
+class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents, val conversionScope: Fir2IrConversionScope) : Fir2IrComponents by components {
     // ------------------------------------ package fragments ------------------------------------
 
     internal fun createExternalPackageFragment(fqName: FqName, moduleDescriptor: FirModuleDescriptor): IrExternalPackageFragment {
@@ -492,24 +492,26 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         firInitializerExpression: FirExpression?,
         type: IrType? = null
     ): IrField = convertCatching(firProperty) {
-        val inferredType = type ?: firInitializerExpression!!.resolvedType.toIrType()
-        return (firProperty.delegate ?: firProperty.backingField ?: firProperty).convertWithOffsets { startOffset: Int, endOffset: Int ->
-            irFactory.createField(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = name,
-                visibility = visibility,
-                symbol = symbol,
-                type = inferredType,
-                isFinal = isFinal,
-                isStatic = firProperty.isStatic || !(irProperty.parent is IrClass || irProperty.parent is IrScript),
-                isExternal = firProperty.isExternal,
-            ).also {
-                it.correspondingPropertySymbol = irProperty.symbol
-            }.apply {
-                metadata = FirMetadataSource.Property(firProperty)
-                convertAnnotationsForNonDeclaredMembers(firProperty, origin)
+        conversionScope.withBackingField<IrField>(symbol) {
+            val inferredType = type ?: firInitializerExpression!!.resolvedType.toIrType()
+            return (firProperty.delegate ?: firProperty.backingField ?: firProperty).convertWithOffsets { startOffset: Int, endOffset: Int ->
+                irFactory.createField(
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = name,
+                    visibility = visibility,
+                    symbol = symbol,
+                    type = inferredType,
+                    isFinal = isFinal,
+                    isStatic = firProperty.isStatic || !(irProperty.parent is IrClass || irProperty.parent is IrScript),
+                    isExternal = firProperty.isExternal,
+                ).also {
+                    it.correspondingPropertySymbol = irProperty.symbol
+                }.apply {
+                    metadata = FirMetadataSource.Property(firProperty)
+                    convertAnnotationsForNonDeclaredMembers(firProperty, origin)
+                }
             }
         }
     }
