@@ -32,7 +32,6 @@ internal class KotlinWasmD8(private val kotlinJsTest: KotlinJsTest) : KotlinJsTe
 
     private val d8 = D8RootPlugin.apply(project.rootProject)
     private val d8Executable by project.provider { d8.requireConfigured().executablePath }
-    private val isTeamCity = project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
     private val npmProjectDir by project.provider { compilation.npmProject.dir }
 
     override val workingDir: Provider<Directory>
@@ -55,7 +54,6 @@ internal class KotlinWasmD8(private val kotlinJsTest: KotlinJsTest) : KotlinJsTe
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = isTeamCity.isPresent
         )
 
         val cliArgs = KotlinTestRunnerCliArgs(
