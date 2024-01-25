@@ -9,7 +9,7 @@ import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getDRIFromSymbol
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
@@ -78,5 +78,20 @@ internal fun KtAnalysisSession.resolveKDocLinkToDRI(link: KDocLink): DRI? {
 
 private fun KtAnalysisSession.resolveToSymbol(kDocLink: KDocLink): KtSymbol? {
     val lastNameSegment = kDocLink.children.filterIsInstance<KDocName>().lastOrNull()
-    return lastNameSegment?.mainReference?.resolveToSymbols()?.firstOrNull()
+    return lastNameSegment?.mainReference?.resolveToSymbols()?.sortedWith(linkCandidatesComparator)?.firstOrNull()
+}
+
+/**
+ * The order is like in [K1](https://github.com/JetBrains/intellij-community/blob/84f54ed97da66d6e24e6572345869bf1071945b6/plugins/kotlin/base/fe10/kdoc/src/org/jetbrains/kotlin/idea/kdoc/resolveKDocLink.kt#L104)
+ *
+ * TODO KT-64190
+ */
+private var linkCandidatesComparator: Comparator<KtSymbol> = compareBy{
+    when(it) {
+        is KtClassifierSymbol -> 1
+        is KtPackageSymbol -> 2
+        is KtFunctionSymbol -> 3
+        is KtVariableSymbol-> 4
+        else -> 5
+    }
 }
