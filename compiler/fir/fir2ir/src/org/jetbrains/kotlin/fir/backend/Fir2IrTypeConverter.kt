@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 
 class Fir2IrTypeConverter(
-    private val components: Fir2IrComponents
+    private val components: Fir2IrComponents,
+    private val conversionScope: Fir2IrConversionScope,
 ) : Fir2IrComponents by components {
 
     internal val classIdToSymbolMap by lazy {
@@ -157,6 +158,14 @@ class Fir2IrTypeConverter(
                 }
                 val expandedType = fullyExpandedType(session)
                 val approximatedType = approximateType(expandedType)
+
+                if (approximatedType is ConeTypeParameterType && conversionScope.shouldEraseType(approximatedType)) {
+                    // This hack is about type parameter leak in case of generic delegated property
+                    // It probably will be prohibited after 2.0
+                    // For more details see KT-24643
+                    return approximateUpperBounds(approximatedType.lookupTag.typeParameterSymbol.resolvedBounds)
+                }
+
                 IrSimpleTypeImpl(
                     irSymbol,
                     hasQuestionMark = approximatedType.isMarkedNullable,
@@ -245,6 +254,14 @@ class Fir2IrTypeConverter(
             upperBound is ConeClassLikeType && upperBound.lookupTag.classId == StandardClassIds.Array &&
                     upperBound.typeArguments.single().kind == ProjectionKind.OUT
         }
+
+    private fun approximateUpperBounds(resolvedBounds: List<FirResolvedTypeRef>): IrType {
+        val commonSupertype = session.typeContext.commonSuperTypeOrNull(resolvedBounds.map { it.type })!!
+        val resultType = (commonSupertype as? ConeClassLikeType)?.replaceArgumentsWithStarProjections()
+            ?: commonSupertype
+        val approximatedType = (commonSupertype as? ConeSimpleKotlinType)?.let { approximateType(it) } ?: resultType
+        return approximatedType.toIrType()
+    }
 
     private fun ConeFlexibleType.isMutabilityFlexible(): Boolean {
         val lowerFqName = lowerBound.classId?.asSingleFqName() ?: return false

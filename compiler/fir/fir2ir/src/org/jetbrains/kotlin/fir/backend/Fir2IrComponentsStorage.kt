@@ -60,7 +60,7 @@ class Fir2IrComponentsStorage(
 
     override val irProviders: List<IrProvider> = listOf(FirIrProvider(this))
 
-    override val typeConverter: Fir2IrTypeConverter = Fir2IrTypeConverter(this)
+    override val typeConverter: Fir2IrTypeConverter = Fir2IrTypeConverter(this, conversionScope)
 
     val fir2IrVisitor: Fir2IrVisitor = Fir2IrVisitor(this, conversionScope)
 
