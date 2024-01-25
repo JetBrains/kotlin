@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.analysis.api.descriptors
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.psi.KtElement
@@ -28,12 +29,9 @@ interface Fe10AnalysisFacade {
         }
     }
 
-    fun getResolveSession(element: KtElement): ResolveSession
-    fun getDeprecationResolver(element: KtElement): DeprecationResolver
-    fun getCallResolver(element: KtElement): CallResolver
-    fun getKotlinToResolvedCallTransformer(element: KtElement): KotlinToResolvedCallTransformer
-    fun getOverloadingConflictResolver(element: KtElement): OverloadingConflictResolver<ResolvedCall<*>>
-    fun getKotlinTypeRefiner(element: KtElement): KotlinTypeRefiner
+    fun getAnalysisContext(element: KtElement, token: KtLifetimeToken): Fe10AnalysisContext
+
+    fun getAnalysisContext(ktModule: KtModule, token: KtLifetimeToken): Fe10AnalysisContext
 
     fun analyze(elements: List<KtElement>, mode: AnalysisMode = AnalysisMode.FULL): BindingContext
 
@@ -53,16 +51,14 @@ interface Fe10AnalysisFacade {
 
 class Fe10AnalysisContext(
     facade: Fe10AnalysisFacade,
-    val contextElement: KtElement,
-    val token: KtLifetimeToken
+    val resolveSession: ResolveSession,
+    val deprecationResolver: DeprecationResolver,
+    val callResolver: CallResolver,
+    val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
+    val overloadingConflictResolver: OverloadingConflictResolver<ResolvedCall<*>>,
+    val kotlinTypeRefiner: KotlinTypeRefiner,
+    val token: KtLifetimeToken,
 ) : Fe10AnalysisFacade by facade {
-    val resolveSession: ResolveSession = getResolveSession(contextElement)
-    val deprecationResolver: DeprecationResolver = getDeprecationResolver(contextElement)
-    val callResolver: CallResolver = getCallResolver(contextElement)
-    val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer = getKotlinToResolvedCallTransformer(contextElement)
-    val overloadingConflictResolver: OverloadingConflictResolver<ResolvedCall<*>> = getOverloadingConflictResolver(contextElement)
-    val kotlinTypeRefiner: KotlinTypeRefiner = getKotlinTypeRefiner(contextElement)
-
     val builtIns: KotlinBuiltIns
         get() = resolveSession.moduleDescriptor.builtIns
 

@@ -10,19 +10,25 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.psi.KtElement
-import java.lang.UnsupportedOperationException
 
 
 @OptIn(KtAnalysisApiInternals::class)
 class KtFe10AnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider(project) {
     override fun getAnalysisSession(useSiteKtElement: KtElement): KtAnalysisSession {
-        return KtFe10AnalysisSession(project, useSiteKtElement, tokenFactory.create(project))
+        val facade = Fe10AnalysisFacade.getInstance(project)
+        val token = tokenFactory.create(project)
+        val context = facade.getAnalysisContext(useSiteKtElement, token)
+        val useSiteModule = ProjectStructureProvider.getModule(project, useSiteKtElement, contextualModule = null)
+        return KtFe10AnalysisSession(context, useSiteModule, token)
     }
 
     override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KtAnalysisSession {
-        throw UnsupportedOperationException("getAnalysisSessionByModule() should not be used on KtFe10AnalysisSession")
+        val facade = Fe10AnalysisFacade.getInstance(project)
+        val token = tokenFactory.create(project)
+        val context = facade.getAnalysisContext(useSiteKtModule, token)
+        return KtFe10AnalysisSession(context, useSiteKtModule, token)
     }
 
     override fun clearCaches() {}
