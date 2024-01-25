@@ -54,6 +54,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
     }
 
     @Suppress("MemberVisibilityCanBePrivate", "unused")
+    @OptIn(ExperimentalContracts::class)
     sealed interface PathElement {
         val name: String
 
@@ -109,35 +110,54 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             override val name get() = entryA.name
         }
 
+        class Contract(val contractA: KmContract, val contractB: KmContract) : PathElement {
+            override val name get() = "contract"
+        }
+
+        class Effect(val effectA: KmEffect, val effectB: KmEffect, val index: Int) : PathElement {
+            override val name get() = index.toString()
+        }
+
+        class EffectExpression(val effectExpressionA: KmEffectExpression, val effectExpressionB: KmEffectExpression, val index: Int) : PathElement {
+            override val name get() = index.toString()
+        }
+
         companion object {
-            internal fun <E : Any> guess(entityA: E, entityB: E, entityKind: EntityKind, entityKey: String?): PathElement {
-                return when {
-                    entityA is KmClass && entityB is KmClass -> Class(entityA, entityB)
-                    entityA is KmTypeAlias && entityB is KmTypeAlias -> TypeAlias(entityA, entityB)
-                    entityA is KmProperty && entityB is KmProperty -> Property(entityA, entityB)
-                    entityA is KmFunction && entityB is KmFunction -> Function(entityA, entityB)
-                    entityA is KmConstructor && entityB is KmConstructor -> Constructor(entityA, entityB)
-                    entityA is KmValueParameter && entityB is KmValueParameter -> {
-                        // there is single value parameter for property setter that does not have index, use 0 as fallback value
-                        val index = entityKey?.toInt() ?: 0
-                        ValueParameter(entityA, entityB, index)
-                    }
-                    entityA is KmTypeParameter && entityB is KmTypeParameter -> {
-                        val index = entityKey!!.toInt()
-                        TypeParameter(entityA, entityB, index)
-                    }
-                    entityA is KmType && entityB is KmType -> {
-                        val optionalIndex = entityKey?.toInt()
-                        val typeKind = entityKind as TypeKind
-                        Type(entityA, entityB, typeKind, optionalIndex)
-                    }
-                    entityA is KmTypeProjection && entityB is KmTypeProjection -> {
-                        val index = entityKey!!.toInt()
-                        TypeArgument(entityA, entityB, index)
-                    }
-                    entityA is KlibEnumEntry && entityB is KlibEnumEntry -> EnumEntry(entityA, entityB)
-                    else -> error("Unknown combination of entities: ${entityA::class.java}, ${entityB::class.java}")
+            internal fun <E : Any> guess(entityA: E, entityB: E, entityKind: EntityKind, entityKey: String?): PathElement = when {
+                entityA is KmClass && entityB is KmClass -> Class(entityA, entityB)
+                entityA is KmTypeAlias && entityB is KmTypeAlias -> TypeAlias(entityA, entityB)
+                entityA is KmProperty && entityB is KmProperty -> Property(entityA, entityB)
+                entityA is KmFunction && entityB is KmFunction -> Function(entityA, entityB)
+                entityA is KmConstructor && entityB is KmConstructor -> Constructor(entityA, entityB)
+                entityA is KmValueParameter && entityB is KmValueParameter -> {
+                    // there is single value parameter for property setter that does not have index, use 0 as fallback value
+                    val index = entityKey?.toInt() ?: 0
+                    ValueParameter(entityA, entityB, index)
                 }
+                entityA is KmTypeParameter && entityB is KmTypeParameter -> {
+                    val index = entityKey!!.toInt()
+                    TypeParameter(entityA, entityB, index)
+                }
+                entityA is KmType && entityB is KmType -> {
+                    val optionalIndex = entityKey?.toInt()
+                    val typeKind = entityKind as TypeKind
+                    Type(entityA, entityB, typeKind, optionalIndex)
+                }
+                entityA is KmTypeProjection && entityB is KmTypeProjection -> {
+                    val index = entityKey!!.toInt()
+                    TypeArgument(entityA, entityB, index)
+                }
+                entityA is KmContract && entityB is KmContract -> Contract(entityA, entityB)
+                entityA is KmEffect && entityB is KmEffect -> {
+                    val index = entityKey!!.toInt()
+                    Effect(entityA, entityB, index)
+                }
+                entityA is KmEffectExpression && entityB is KmEffectExpression -> {
+                    val index = entityKey!!.toInt()
+                    EffectExpression(entityA, entityB, index)
+                }
+                entityA is KlibEnumEntry && entityB is KlibEnumEntry -> EnumEntry(entityA, entityB)
+                else -> error("Unknown combination of entities: ${entityA::class.java}, ${entityB::class.java}")
             }
         }
     }
