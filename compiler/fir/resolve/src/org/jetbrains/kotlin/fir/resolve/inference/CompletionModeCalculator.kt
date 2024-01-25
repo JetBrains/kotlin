@@ -21,13 +21,14 @@ import java.util.*
 fun Candidate.computeCompletionMode(
     components: InferenceComponents,
     resolutionMode: ResolutionMode,
-    currentReturnType: ConeKotlinType?
+    currentReturnType: ConeKotlinType? // TODO <--- Not nullable
 ): ConstraintSystemCompletionMode {
     return when {
         // Expected type is present or call is being resolved in independent context
         resolutionMode.forceFullCompletion -> ConstraintSystemCompletionMode.FULL
 
         // This is questionable as null return type can be only for error call
+        // TODO: Dead-code
         currentReturnType == null -> ConstraintSystemCompletionMode.PARTIAL
 
         // Full if return type for call has no type variables
