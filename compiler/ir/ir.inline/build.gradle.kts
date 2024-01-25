@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     compileOnly(project(":compiler:ir.tree"))
+    compileOnly(project(":compiler:ir.backend.common"))
 }
 
 optInToUnsafeDuringIrConstructionAPI()

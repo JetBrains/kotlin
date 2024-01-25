@@ -164,6 +164,7 @@ dependencies {
     compilerApi project(":core:compiler.common.native")
     compilerApi project(":compiler:ir.tree")
     compilerApi project(":compiler:ir.backend.common")
+    compilerApi project(":compiler:ir.inline")
     compilerApi project(":compiler:ir.objcinterop")
     compilerApi project(":compiler:util")
     compilerApi project(":native:frontend.native")
