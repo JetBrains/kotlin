@@ -37,6 +37,7 @@ class FirResolvedTypesVerifier(testServices: TestServices) : FirAnalysisHandler(
         try {
             assertions.assertAll(
                 { visitor.detectedImplicitTypesParents.check("implicit") },
+                { visitor.detectedNullTypesParents.check("expression.coneTypeOrNull = null") },
                 { visitor.detectedTypeVariableTypesParents.check("type variable") },
                 { visitor.detectedStubTypesParents.check("stub") },
             )
@@ -71,6 +72,7 @@ class FirResolvedTypesVerifier(testServices: TestServices) : FirAnalysisHandler(
 
     private inner class Visitor : FirDefaultVisitor<Unit, FirElement>() {
         val detectedImplicitTypesParents = mutableSetOf<FirElement>()
+        val detectedNullTypesParents = mutableSetOf<FirElement>()
         val detectedTypeVariableTypesParents = mutableSetOf<FirElement>()
         val detectedStubTypesParents = mutableSetOf<FirElement>()
 
@@ -82,8 +84,12 @@ class FirResolvedTypesVerifier(testServices: TestServices) : FirAnalysisHandler(
             }
             if (element is FirExpression) {
                 @OptIn(UnresolvedExpressionTypeAccess::class)
-                element.coneTypeOrNull?.let {
-                    checkElementWithConeType(element, it)
+                val expressionType = element.coneTypeOrNull
+
+                if (expressionType != null) {
+                    checkElementWithConeType(element, expressionType)
+                } else {
+                    detectedNullTypesParents += element
                 }
             }
             element.acceptChildren(this, element)
