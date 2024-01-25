@@ -16072,6 +16072,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("typeParameterInDelegatedProperty.kt")
+        public void testTypeParameterInDelegatedProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/typeParameterInDelegatedProperty.kt");
+        }
+
+        @Test
         @TestMetadata("useKPropertyLater.kt")
         public void testUseKPropertyLater() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/useKPropertyLater.kt");
