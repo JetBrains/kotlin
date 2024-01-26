@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-65058
 
 open class A {
