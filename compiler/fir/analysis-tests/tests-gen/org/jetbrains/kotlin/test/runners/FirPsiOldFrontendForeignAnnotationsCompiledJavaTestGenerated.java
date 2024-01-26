@@ -839,6 +839,12 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
                 }
 
                 @Test
+                @TestMetadata("kt65318.kt")
+                public void testKt65318() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/kt65318.kt");
+                }
+
+                @Test
                 @TestMetadata("NonPlatformTypeParameter.kt")
                 public void testNonPlatformTypeParameter() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NonPlatformTypeParameter.kt");
