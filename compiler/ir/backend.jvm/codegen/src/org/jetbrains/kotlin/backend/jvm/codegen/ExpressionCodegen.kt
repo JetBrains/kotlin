@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.getNonDefaultAdditionalStatementsF
 import org.jetbrains.kotlin.backend.common.ir.getOriginalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
+import org.jetbrains.kotlin.backend.common.lower.inline.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
@@ -686,9 +687,7 @@ class ExpressionCodegen(
                 SuspensionPointKind.NEVER
             // Copy-pasted bytecode blocks are not suspension points.
             symbol.owner.isInline ->
-                if (symbol.owner.name.asString() == "suspendCoroutineUninterceptedOrReturn" &&
-                    symbol.owner.getPackageFragment().packageFqName == FqName("kotlin.coroutines.intrinsics")
-                )
+                if (symbol.owner.isBuiltInSuspendCoroutineUninterceptedOrReturn())
                     SuspensionPointKind.ALWAYS
                 else
                     SuspensionPointKind.NEVER

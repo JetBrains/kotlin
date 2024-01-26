@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm.ir
 
+import org.jetbrains.kotlin.backend.common.lower.inline.isBuiltInSuspendCoroutineUninterceptedOrReturn
+import org.jetbrains.kotlin.backend.common.lower.inline.isBuiltInSuspendCoroutine
 import org.jetbrains.kotlin.ir.util.inlineDeclaration
 import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -76,8 +78,7 @@ class IrInlineScopeResolver(context: JvmBackendContext) : IrInlineReferenceLocat
         get() = isInline && DescriptorVisibilities.isPrivate(visibility)
 
     private fun IrFunction.isCoroutineIntrinsic(): Boolean =
-        (name.asString() == "suspendCoroutine" && getPackageFragment().packageFqName == FqName("kotlin.coroutines")) ||
-                (name.asString() == "suspendCoroutineUninterceptedOrReturn" && getPackageFragment().packageFqName == FqName("kotlin.coroutines.intrinsics"))
+        isBuiltInSuspendCoroutine() || isBuiltInSuspendCoroutineUninterceptedOrReturn()
 
     fun findContainer(scope: IrElement): IrDeclarationContainer? =
         findContainer(scope, approximateToPackage = false)
