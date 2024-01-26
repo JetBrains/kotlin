@@ -33,53 +33,53 @@ class BirThrowImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _value: BirExpression? = value
     override var value: BirExpression?
         get() {
-            recordPropertyRead(1)
+            recordPropertyRead()
             return _value
         }
         set(value) {
             if (_value !== value) {
                 childReplaced(_value, value)
                 _value = value
-                invalidate(1)
+                invalidate()
             }
         }
 
@@ -92,11 +92,10 @@ class BirThrowImpl(
         _value?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._value === old -> {
                 this._value = new as BirExpression?
-                1
             }
             else -> throwChildForReplacementNotFound(old)
         }

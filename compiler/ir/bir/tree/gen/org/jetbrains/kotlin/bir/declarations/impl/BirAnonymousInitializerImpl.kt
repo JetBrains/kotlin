@@ -36,66 +36,66 @@ class BirAnonymousInitializerImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _signature: IdSignature? = signature
     override var signature: IdSignature?
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate(6)
+                invalidate()
             }
         }
 
     private var _origin: IrDeclarationOrigin = origin
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _isStatic: Boolean = isStatic
     override var isStatic: Boolean
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _isStatic
         }
         set(value) {
             if (_isStatic != value) {
                 _isStatic = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _body: BirBlockBody? = body
     override var body: BirBlockBody?
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _body
         }
         set(value) {
             if (_body !== value) {
                 childReplaced(_body, value)
                 _body = value
-                invalidate(2)
+                invalidate()
             }
         }
 
@@ -110,11 +110,10 @@ class BirAnonymousInitializerImpl(
         _body?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._body === old -> {
                 this._body = new as BirBlockBody?
-                2
             }
             else -> throwChildForReplacementNotFound(old)
         }

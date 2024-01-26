@@ -33,53 +33,53 @@ class BirGetClassImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _argument: BirExpression? = argument
     override var argument: BirExpression?
         get() {
-            recordPropertyRead(1)
+            recordPropertyRead()
             return _argument
         }
         set(value) {
             if (_argument !== value) {
                 childReplaced(_argument, value)
                 _argument = value
-                invalidate(1)
+                invalidate()
             }
         }
 
@@ -92,11 +92,10 @@ class BirGetClassImpl(
         _argument?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._argument === old -> {
                 this._argument = new as BirExpression?
-                1
             }
             else -> throwChildForReplacementNotFound(old)
         }

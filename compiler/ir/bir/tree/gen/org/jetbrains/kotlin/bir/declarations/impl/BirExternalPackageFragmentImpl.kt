@@ -35,39 +35,39 @@ class BirExternalPackageFragmentImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _signature: IdSignature? = signature
     override var signature: IdSignature?
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _packageFqName: FqName = packageFqName
     override var packageFqName: FqName
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _packageFqName
         }
         set(value) {
             if (_packageFqName != value) {
                 _packageFqName = value
-                invalidate(2)
+                invalidate()
             }
         }
 
@@ -82,7 +82,7 @@ class BirExternalPackageFragmentImpl(
         declarations.acceptChildrenLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             else -> throwChildForReplacementNotFound(old)
         }

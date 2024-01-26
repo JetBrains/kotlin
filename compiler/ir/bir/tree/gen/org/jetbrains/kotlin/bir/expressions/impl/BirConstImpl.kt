@@ -31,65 +31,65 @@ class BirConstImpl<T>(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead(1)
+            recordPropertyRead()
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
-                invalidate(1)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _kind: IrConstKind<T> = kind
     override var kind: IrConstKind<T>
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _kind
         }
         set(value) {
             if (_kind != value) {
                 _kind = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _value: T = value
     override var value: T
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _value
         }
         set(value) {
             if (_value != value) {
                 _value = value
-                invalidate(4)
+                invalidate()
             }
         }
 

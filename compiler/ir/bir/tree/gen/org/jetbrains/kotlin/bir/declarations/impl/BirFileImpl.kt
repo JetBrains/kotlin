@@ -36,52 +36,52 @@ class BirFileImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _signature: IdSignature? = signature
     override var signature: IdSignature?
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate(6)
+                invalidate()
             }
         }
 
     private var _packageFqName: FqName = packageFqName
     override var packageFqName: FqName
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _packageFqName
         }
         set(value) {
             if (_packageFqName != value) {
                 _packageFqName = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _fileEntry: IrFileEntry = fileEntry
     override var fileEntry: IrFileEntry
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _fileEntry
         }
         set(value) {
             if (_fileEntry != value) {
                 _fileEntry = value
-                invalidate(4)
+                invalidate()
             }
         }
 
@@ -96,7 +96,7 @@ class BirFileImpl(
         annotations.acceptChildrenLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             else -> throwChildForReplacementNotFound(old)
         }

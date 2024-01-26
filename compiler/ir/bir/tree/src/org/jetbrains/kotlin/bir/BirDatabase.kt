@@ -89,9 +89,9 @@ class BirDatabase : BirElementParent() {
         val oldParent = element._parent
         if (oldParent != null) {
             element as BirImplElementBase
-            val propertyId = element.replacedWithInternal(null)
+            element.replacedWithInternal(null)
             element.setParentWithInvalidation(this)
-            (oldParent as? BirImplElementBase)?.invalidate(propertyId)
+            (oldParent as? BirImplElementBase)?.invalidate()
 
             elementMoved(element, oldParent)
         } else {

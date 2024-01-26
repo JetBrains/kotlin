@@ -34,66 +34,66 @@ class BirDynamicMemberExpressionImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _memberName: String = memberName
     override var memberName: String
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _memberName
         }
         set(value) {
             if (_memberName != value) {
                 _memberName = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _receiver: BirExpression? = receiver
     override var receiver: BirExpression?
         get() {
-            recordPropertyRead(1)
+            recordPropertyRead()
             return _receiver
         }
         set(value) {
             if (_receiver !== value) {
                 childReplaced(_receiver, value)
                 _receiver = value
-                invalidate(1)
+                invalidate()
             }
         }
 
@@ -106,11 +106,10 @@ class BirDynamicMemberExpressionImpl(
         _receiver?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._receiver === old -> {
                 this._receiver = new as BirExpression?
-                1
             }
             else -> throwChildForReplacementNotFound(old)
         }

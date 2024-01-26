@@ -31,66 +31,66 @@ class BirErrorCallExpressionImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(6)
+                invalidate()
             }
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _description: String = description
     override var description: String
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _description
         }
         set(value) {
             if (_description != value) {
                 _description = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _explicitReceiver: BirExpression? = explicitReceiver
     override var explicitReceiver: BirExpression?
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _explicitReceiver
         }
         set(value) {
             if (_explicitReceiver !== value) {
                 childReplaced(_explicitReceiver, value)
                 _explicitReceiver = value
-                invalidate(2)
+                invalidate()
             }
         }
 
@@ -105,11 +105,10 @@ class BirErrorCallExpressionImpl(
         arguments.acceptChildrenLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._explicitReceiver === old -> {
                 this._explicitReceiver = new as BirExpression?
-                2
             }
             else -> throwChildForReplacementNotFound(old)
         }

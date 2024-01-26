@@ -80,12 +80,11 @@ private fun SmartPrinter.printElementImpl(element: Element) {
                 if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
                     print(" = ${childElementListImpl.render()}(this, ${childrenLists.indexOf(field) + 1}, ${(field.baseType as TypeRefWithNullability).nullable})")
                 } else if (field.isReadWriteTrackedProperty) {
-                    val fieldImpl = element.fieldFakeOverrides.getValue(field)
                     println()
                     withIndent {
                         print("get()")
                         printBlock {
-                            println("recordPropertyRead(${fieldImpl.propertyId})")
+                            println("recordPropertyRead()")
                             print("return ${field.backingFieldName}")
                             if (field.isChild && !field.nullable) {
                                 print(" ?: throwChildElementRemoved(\"${field.name}\")")
@@ -100,7 +99,7 @@ private fun SmartPrinter.printElementImpl(element: Element) {
                                     println("childReplaced(${field.backingFieldName}, value)")
                                 }
                                 println("${field.backingFieldName} = value")
-                                println("invalidate(${fieldImpl.propertyId})")
+                                println("invalidate()")
                             }
                         }
                     }
@@ -161,18 +160,16 @@ private fun SmartPrinter.printElementImpl(element: Element) {
                         FunctionParameter("old", rootElement),
                         FunctionParameter("new", rootElement.copy(nullable = true))
                     ),
-                    returnType = StandardTypes.int,
+                    returnType = StandardTypes.unit,
                     override = true,
                 ) {
                     print("return when")
                     printBlock {
                         for (field in element.walkableChildren) {
-                            val fieldImpl = element.fieldFakeOverrides.getValue(field)
                             if (field is SingleField) {
                                 print("this.${field.backingFieldName} === old ->")
                                 printBlock {
                                     println("this.${field.backingFieldName} = new as ${field.typeRef.copy(nullable = true).render()}")
-                                    println(fieldImpl.propertyId)
                                 }
                             }
                         }

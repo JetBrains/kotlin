@@ -41,104 +41,104 @@ class BirTypeParameterImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(8)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(8)
+                invalidate()
             }
         }
 
     private var _signature: IdSignature? = signature
     override var signature: IdSignature?
         get() {
-            recordPropertyRead(9)
+            recordPropertyRead()
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate(9)
+                invalidate()
             }
         }
 
     private var _origin: IrDeclarationOrigin = origin
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _name: Name = name
     override var name: Name
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _variance: Variance = variance
     override var variance: Variance
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _variance
         }
         set(value) {
             if (_variance != value) {
                 _variance = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _index: Int = index
     override var index: Int
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _index
         }
         set(value) {
             if (_index != value) {
                 _index = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _isReified: Boolean = isReified
     override var isReified: Boolean
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _isReified
         }
         set(value) {
             if (_isReified != value) {
                 _isReified = value
-                invalidate(6)
+                invalidate()
             }
         }
 
     private var _superTypes: List<BirType> = superTypes
     override var superTypes: List<BirType>
         get() {
-            recordPropertyRead(7)
+            recordPropertyRead()
             return _superTypes
         }
         set(value) {
             if (_superTypes != value) {
                 _superTypes = value
-                invalidate(7)
+                invalidate()
             }
         }
 
@@ -151,7 +151,7 @@ class BirTypeParameterImpl(
         annotations.acceptChildrenLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             else -> throwChildForReplacementNotFound(old)
         }

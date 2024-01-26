@@ -379,11 +379,11 @@ class BirImplChildElementList<E : BirElement?>(
 
 
     private fun recordRead() {
-        parent.recordPropertyRead(id.toInt())
+        parent.recordPropertyRead()
     }
 
     private fun invalidate() {
-        parent.invalidate(id.toInt())
+        parent.invalidate()
     }
 
 

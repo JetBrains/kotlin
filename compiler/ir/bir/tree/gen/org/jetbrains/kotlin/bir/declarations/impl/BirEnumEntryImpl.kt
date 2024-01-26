@@ -39,80 +39,80 @@ class BirEnumEntryImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(6)
+                invalidate()
             }
         }
 
     private var _signature: IdSignature? = signature
     override var signature: IdSignature?
         get() {
-            recordPropertyRead(7)
+            recordPropertyRead()
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate(7)
+                invalidate()
             }
         }
 
     private var _origin: IrDeclarationOrigin = origin
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _name: Name = name
     override var name: Name
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _initializerExpression: BirExpressionBody? = initializerExpression
     override var initializerExpression: BirExpressionBody?
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _initializerExpression
         }
         set(value) {
             if (_initializerExpression !== value) {
                 childReplaced(_initializerExpression, value)
                 _initializerExpression = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _correspondingClass: BirClass? = correspondingClass
     override var correspondingClass: BirClass?
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _correspondingClass
         }
         set(value) {
             if (_correspondingClass !== value) {
                 childReplaced(_correspondingClass, value)
                 _correspondingClass = value
-                invalidate(3)
+                invalidate()
             }
         }
 
@@ -129,15 +129,13 @@ class BirEnumEntryImpl(
         _correspondingClass?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._initializerExpression === old -> {
                 this._initializerExpression = new as BirExpressionBody?
-                2
             }
             this._correspondingClass === old -> {
                 this._correspondingClass = new as BirClass?
-                3
             }
             else -> throwChildForReplacementNotFound(old)
         }

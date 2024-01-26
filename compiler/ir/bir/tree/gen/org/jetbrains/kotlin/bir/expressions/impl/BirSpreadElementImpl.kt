@@ -30,27 +30,27 @@ class BirSpreadElementImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _expression: BirExpression? = expression
     override var expression: BirExpression?
         get() {
-            recordPropertyRead(1)
+            recordPropertyRead()
             return _expression
         }
         set(value) {
             if (_expression !== value) {
                 childReplaced(_expression, value)
                 _expression = value
-                invalidate(1)
+                invalidate()
             }
         }
 
@@ -63,11 +63,10 @@ class BirSpreadElementImpl(
         _expression?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._expression === old -> {
                 this._expression = new as BirExpression?
-                1
             }
             else -> throwChildForReplacementNotFound(old)
         }

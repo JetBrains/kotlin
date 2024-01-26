@@ -36,81 +36,81 @@ class BirSuspensionPointImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(6)
+                invalidate()
             }
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _suspensionPointIdParameter: BirVariable? = suspensionPointIdParameter
     override var suspensionPointIdParameter: BirVariable?
         get() {
-            recordPropertyRead(1)
+            recordPropertyRead()
             return _suspensionPointIdParameter
         }
         set(value) {
             if (_suspensionPointIdParameter !== value) {
                 childReplaced(_suspensionPointIdParameter, value)
                 _suspensionPointIdParameter = value
-                invalidate(1)
+                invalidate()
             }
         }
 
     private var _result: BirExpression? = result
     override var result: BirExpression?
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _result
         }
         set(value) {
             if (_result !== value) {
                 childReplaced(_result, value)
                 _result = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _resumeResult: BirExpression? = resumeResult
     override var resumeResult: BirExpression?
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _resumeResult
         }
         set(value) {
             if (_resumeResult !== value) {
                 childReplaced(_resumeResult, value)
                 _resumeResult = value
-                invalidate(3)
+                invalidate()
             }
         }
 
@@ -127,19 +127,16 @@ class BirSuspensionPointImpl(
         _resumeResult?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._suspensionPointIdParameter === old -> {
                 this._suspensionPointIdParameter = new as BirVariable?
-                1
             }
             this._result === old -> {
                 this._result = new as BirExpression?
-                2
             }
             this._resumeResult === old -> {
                 this._resumeResult = new as BirExpression?
-                3
             }
             else -> throwChildForReplacementNotFound(old)
         }

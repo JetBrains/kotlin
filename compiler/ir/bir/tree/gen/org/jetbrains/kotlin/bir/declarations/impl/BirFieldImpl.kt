@@ -46,144 +46,144 @@ class BirFieldImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(11)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(11)
+                invalidate()
             }
         }
 
     private var _signature: IdSignature? = signature
     override var signature: IdSignature?
         get() {
-            recordPropertyRead(12)
+            recordPropertyRead()
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate(12)
+                invalidate()
             }
         }
 
     private var _origin: IrDeclarationOrigin = origin
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _name: Name = name
     override var name: Name
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _isExternal: Boolean = isExternal
     override var isExternal: Boolean
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _isExternal
         }
         set(value) {
             if (_isExternal != value) {
                 _isExternal = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _visibility: DescriptorVisibility = visibility
     override var visibility: DescriptorVisibility
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _visibility
         }
         set(value) {
             if (_visibility != value) {
                 _visibility = value
-                invalidate(6)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(7)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(7)
+                invalidate()
             }
         }
 
     private var _isFinal: Boolean = isFinal
     override var isFinal: Boolean
         get() {
-            recordPropertyRead(8)
+            recordPropertyRead()
             return _isFinal
         }
         set(value) {
             if (_isFinal != value) {
                 _isFinal = value
-                invalidate(8)
+                invalidate()
             }
         }
 
     private var _isStatic: Boolean = isStatic
     override var isStatic: Boolean
         get() {
-            recordPropertyRead(9)
+            recordPropertyRead()
             return _isStatic
         }
         set(value) {
             if (_isStatic != value) {
                 _isStatic = value
-                invalidate(9)
+                invalidate()
             }
         }
 
     private var _initializer: BirExpressionBody? = initializer
     override var initializer: BirExpressionBody?
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _initializer
         }
         set(value) {
             if (_initializer !== value) {
                 childReplaced(_initializer, value)
                 _initializer = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _correspondingPropertySymbol: BirPropertySymbol? = correspondingPropertySymbol
     override var correspondingPropertySymbol: BirPropertySymbol?
         get() {
-            recordPropertyRead(10)
+            recordPropertyRead()
             return _correspondingPropertySymbol
         }
         set(value) {
             if (_correspondingPropertySymbol != value) {
                 _correspondingPropertySymbol = value
-                invalidate(10)
+                invalidate()
             }
         }
 
@@ -198,11 +198,10 @@ class BirFieldImpl(
         _initializer?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._initializer === old -> {
                 this._initializer = new as BirExpressionBody?
-                2
             }
             else -> throwChildForReplacementNotFound(old)
         }

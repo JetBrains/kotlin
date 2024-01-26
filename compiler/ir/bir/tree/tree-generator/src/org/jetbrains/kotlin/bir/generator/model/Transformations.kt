@@ -19,7 +19,6 @@ fun transformModel(model: Model) {
     setClassIds(model)
     processFieldOverrides(model.elements)
     computeFieldProperties(model.elements)
-    computeFieldFakeOverrides(model.elements)
     addWalkableChildren(model.elements)
 }
 
@@ -109,33 +108,6 @@ private fun computeFieldProperties(elements: List<Element>) {
             field.passViaConstructorParameter = !(field is ListField && field.isChild) && !field.initializeToThis
             field.isReadWriteTrackedProperty = field.isMutable && !(field is ListField && field.isChild)
         }
-    }
-}
-
-private fun computeFieldFakeOverrides(elements: List<Element>) {
-    for (element in elements.filter { it.isLeaf }) {
-        val allFields = element.allFieldsRecursively()
-        element.fieldFakeOverrides += allFields.associateWith { FieldFakeOverride(it) }
-
-        var nextPropertyId = element.fieldFakeOverrides.count { it.key is ListField && it.key.isChild } + 1
-        element.fieldFakeOverrides
-            .filterKeys { it.isReadWriteTrackedProperty }
-            .entries
-            .sortedBy {
-                val field = it.key
-                // order by the most likely to change
-                when {
-                    field.isChild -> 1
-                    field.typeRef is GenericElementRef<*> -> 2
-                    field is ListField && field.baseType is GenericElementRef<*> -> 3
-                    field.name == "sourceSpan" -> 11
-                    field.name == "signature" -> 12
-                    else -> 10
-                }
-            }
-            .forEach {
-                it.value.propertyId = (nextPropertyId++).coerceAtMost(14) // see [BirImplElementBase] for this maximum value
-            }
     }
 }
 

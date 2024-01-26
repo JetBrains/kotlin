@@ -51,7 +51,6 @@ class Element(
     override val params = mutableListOf<TypeVariable>()
 
     override val fields = mutableSetOf<Field>()
-    val fieldFakeOverrides = mutableMapOf<Field, FieldFakeOverride>()
 
     override val allFields: List<Field>
         get() = fields.toList()
@@ -229,10 +228,4 @@ class ListField(
         List,
         Array
     }
-}
-
-class FieldFakeOverride(
-    val field: Field
-) {
-    var propertyId = -1
 }

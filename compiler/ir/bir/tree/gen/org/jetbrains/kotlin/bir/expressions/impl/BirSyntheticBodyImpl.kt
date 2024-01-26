@@ -27,26 +27,26 @@ class BirSyntheticBodyImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _kind: IrSyntheticBodyKind = kind
     override var kind: IrSyntheticBodyKind
         get() {
-            recordPropertyRead(1)
+            recordPropertyRead()
             return _kind
         }
         set(value) {
             if (_kind != value) {
                 _kind = value
-                invalidate(1)
+                invalidate()
             }
         }
 

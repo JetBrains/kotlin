@@ -37,93 +37,93 @@ class BirDoWhileLoopImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(7)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(7)
+                invalidate()
             }
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _origin: IrStatementOrigin? = origin
     override var origin: IrStatementOrigin?
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _body: BirExpression? = body
     override var body: BirExpression?
         get() {
-            recordPropertyRead(1)
+            recordPropertyRead()
             return _body
         }
         set(value) {
             if (_body !== value) {
                 childReplaced(_body, value)
                 _body = value
-                invalidate(1)
+                invalidate()
             }
         }
 
     private var _condition: BirExpression? = condition
     override var condition: BirExpression?
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _condition
         }
         set(value) {
             if (_condition !== value) {
                 childReplaced(_condition, value)
                 _condition = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _label: String? = label
     override var label: String?
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _label
         }
         set(value) {
             if (_label != value) {
                 _label = value
-                invalidate(6)
+                invalidate()
             }
         }
 
@@ -138,15 +138,13 @@ class BirDoWhileLoopImpl(
         _condition?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._body === old -> {
                 this._body = new as BirExpression?
-                1
             }
             this._condition === old -> {
                 this._condition = new as BirExpression?
-                2
             }
             else -> throwChildForReplacementNotFound(old)
         }

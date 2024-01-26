@@ -35,66 +35,66 @@ class BirFunctionExpressionImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _origin: IrStatementOrigin = origin
     override var origin: IrStatementOrigin
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _function: BirSimpleFunction? = function
     override var function: BirSimpleFunction?
         get() {
-            recordPropertyRead(1)
+            recordPropertyRead()
             return _function
         }
         set(value) {
             if (_function !== value) {
                 childReplaced(_function, value)
                 _function = value
-                invalidate(1)
+                invalidate()
             }
         }
 
@@ -107,11 +107,10 @@ class BirFunctionExpressionImpl(
         _function?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._function === old -> {
                 this._function = new as BirSimpleFunction?
-                1
             }
             else -> throwChildForReplacementNotFound(old)
         }
