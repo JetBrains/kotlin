@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.objcexport
 
 interface KtObjCExportSession {
     val configuration: KtObjCExportConfiguration
+    val dependencies: KtObjCDependencies
 }
 
 inline fun <T> KtObjCExportSession(
@@ -15,5 +16,6 @@ inline fun <T> KtObjCExportSession(
 ): T {
     return object : KtObjCExportSession {
         override val configuration: KtObjCExportConfiguration = configuration
+        override val dependencies: KtObjCDependencies = KtObjCDependencies()
     }.block()
 }

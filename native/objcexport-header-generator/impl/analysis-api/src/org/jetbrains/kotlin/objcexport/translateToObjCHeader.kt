@@ -23,11 +23,21 @@ fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
         .toMutableList()
 
     val classForwardDeclarations = getClassForwardDeclarations(declarations).toMutableSet()
-    val protocolForwardDeclarations = getProtocolForwardDeclarations(declarations)
+    val protocolForwardDeclarations = getProtocolForwardDeclarations(declarations).toMutableSet()
 
     if (declarations.hasErrorTypes()) {
         declarations.add(errorInterface)
         classForwardDeclarations.add(errorForwardClass)
+    }
+
+    dependencies.protocols.forEach { stub ->
+        declarations.add(stub)
+        protocolForwardDeclarations.add(stub.name)
+    }
+
+    dependencies.classes.forEach { stub ->
+        declarations.add(stub)
+        classForwardDeclarations.add(ObjCClassForwardDeclaration(stub.name))
     }
 
     return ObjCHeader(
@@ -77,7 +87,6 @@ fun KtFileSymbol.translateToObjCExportStubs(): List<ObjCExportStub> {
         .sortedWith(StableClassifierOrder)
         .flatMap { classifierSymbol -> classifierSymbol.translateToObjCExportStubs() }
 }
-
 
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtSymbol.translateToObjCExportStubs(): List<ObjCExportStub> {
