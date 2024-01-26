@@ -18,8 +18,8 @@ fun foo(a: A, ka: KA) {
     "" in a
     <!ARGUMENT_TYPE_MISMATCH!>1<!> in a
 
-    ka.<!UNRESOLVED_REFERENCE!>contains<!>("")
-    ka.<!UNRESOLVED_REFERENCE!>contains<!>(1)
-    "" <!UNRESOLVED_REFERENCE!>in<!> ka
-    1 <!UNRESOLVED_REFERENCE!>in<!> ka
+    ka.contains("")
+    ka.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
+    "" in ka
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in ka
 }

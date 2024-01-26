@@ -22,5 +22,5 @@ abstract class KA : A() {
 
 fun foo(a: A, ka: KA) {
     a.get(0)
-    ka.<!UNRESOLVED_REFERENCE!>get<!>(0)
+    ka.get(0)
 }
