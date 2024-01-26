@@ -206,6 +206,12 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeBlackBoxTest {
         public void testDelegatedPropertiesTest() throws Exception {
             runTest("plugins/atomicfu/atomicfu-compiler/testData/nativeBox/delegated/DelegatedPropertiesTest.kt");
         }
+
+        @Test
+        @TestMetadata("MinimizedTopLevelFieldTest.kt")
+        public void testMinimizedTopLevelFieldTest() throws Exception {
+            runTest("plugins/atomicfu/atomicfu-compiler/testData/nativeBox/delegated/MinimizedTopLevelFieldTest.kt");
+        }
     }
 
     @Nested

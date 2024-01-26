@@ -239,7 +239,11 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
                      */
                     with(atomicSymbols.createBuilder(atomicProperty.symbol)) {
                         buildVolatileBackingField(atomicProperty, this@transformDelegatedAtomic, false).also {
+//                            atomicProperty.backingField = it
+//                            it.correspondingPropertySymbol = atomicProperty.symbol
                             declarations.add(it)
+                            // remove the generated kotlinx.atomicfu.Atomic* backingField
+                            atomicProperty.backingField = null
                         }
                     }
                 }
@@ -257,6 +261,8 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
                     check(delegate.parent == atomicProperty.parent) {
                         "The delegated property [${atomicProperty.render()}] declared in [${atomicProperty.parent.render()}] should be declared in the same scope " +
                                 "as the corresponding atomic property [${delegate.render()}] declared in [${delegate.parent.render()}]" + CONSTRAINTS_MESSAGE}
+                    // remove the generated kotlinx.atomicfu.Atomic* backingField
+                    atomicProperty.backingField = null
                     val volatileProperty = atomicfuPropertyToVolatile[delegate]
                         ?: error("No generated volatile property was found for the delegate atomic property ${delegate.render()}")
                     volatileProperty.backingField
@@ -266,7 +272,6 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
             }
             atomicProperty.getter?.transformAccessor(delegateVolatileField)
             atomicProperty.setter?.transformAccessor(delegateVolatileField)
-            atomicProperty.backingField = null
         }
 
         private fun IrSimpleFunction.transformAccessor(delegateVolatileField: IrField) {
