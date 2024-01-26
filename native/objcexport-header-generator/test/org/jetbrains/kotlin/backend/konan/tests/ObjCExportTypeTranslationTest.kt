@@ -177,6 +177,12 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    fun `test - char`() {
+        val header = header("""val foo: Char get() = error("stub")""")
+        assertEquals("unichar", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
     fun `test - string`() {
         val header = header("""val foo: String get() = error("stub")""")
         assertEquals("NSString *", header.renderTypesOfSymbol("foo"))
@@ -328,6 +334,16 @@ class ObjCExportTypeTranslationTest(
         assertEquals("C *(^)(A *, B *) -> void", header.renderTypesOfSymbol("foo"))
     }
 
+    @Test
+    fun `test - function type returning char`() {
+        val header = header(
+            """
+            val foo: () -> Char
+        """.trimIndent()
+        )
+
+        assertEquals("id (^)(void)", header.renderTypesOfSymbol("foo"))
+    }
 
     @Test
     fun `test - function type - receiver`() {
