@@ -493,13 +493,13 @@ class JavaClassUseSiteMemberScope(
             return false
         }
 
-        val hasAccidentalOverrideWithDeclaredFunction = explicitlyDeclaredFunctionsWithNaturalName.any {
+        val accidentalOverrideWithDeclaredFunction = explicitlyDeclaredFunctionsWithNaturalName.find {
             overrideChecker.isOverriddenFunction(
                 renamedDeclaredFunction,
                 it
             )
         }
-        if (!hasAccidentalOverrideWithDeclaredFunction) {
+        if (accidentalOverrideWithDeclaredFunction == null) {
             destination += renamedDeclaredFunction
             directOverriddenFunctions[renamedDeclaredFunction] = listOf(resultOfIntersectionWithNaturalName)
             for (overriddenMember in overriddenMembers) {
@@ -509,8 +509,28 @@ class JavaClassUseSiteMemberScope(
                 destination += explicitlyDeclaredFunctionWithNaturalName
             }
             return true
+        } else {
+            val newSymbol = FirNamedFunctionSymbol(accidentalOverrideWithDeclaredFunction.callableId)
+            val original = accidentalOverrideWithDeclaredFunction.fir
+            val hiddenFunction = buildSimpleFunctionCopy(original) {
+                name = naturalName
+                symbol = newSymbol
+                dispatchReceiverType = klass.defaultType()
+            }.apply {
+                initialSignatureAttr = original
+                isHiddenToOvercomeSignatureClash = true
+            }
+            destination += hiddenFunction.symbol
+            directOverriddenFunctions[hiddenFunction.symbol] = listOf(resultOfIntersectionWithNaturalName)
+            for (overriddenMember in overriddenMembers) {
+                overrideByBase[overriddenMember.member] = hiddenFunction.symbol
+            }
+            if (explicitlyDeclaredFunctionWithNaturalName != null) {
+                destination += explicitlyDeclaredFunctionWithNaturalName
+            }
+
+            return true
         }
-        return false
     }
 
     private fun FirNamedFunctionSymbol.hasSameJvmDescriptor(
