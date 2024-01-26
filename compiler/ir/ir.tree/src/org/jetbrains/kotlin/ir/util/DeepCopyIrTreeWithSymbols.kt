@@ -163,6 +163,7 @@ open class DeepCopyIrTreeWithSymbols(
             isExpect = declaration.isExpect,
             isFun = declaration.isFun,
             hasEnumEntries = declaration.hasEnumEntries,
+            source = declaration.source,
         ).apply {
             transformAnnotations(declaration)
             copyTypeParametersFrom(declaration)
