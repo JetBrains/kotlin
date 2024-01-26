@@ -554,7 +554,7 @@ internal object CheckArguments : CheckerStage() {
 
 private val Candidate.isInvokeFromExtensionFunctionType: Boolean
     get() = explicitReceiverKind == DISPATCH_RECEIVER
-            && dispatchReceiver?.resolvedType?.isExtensionFunctionType == true
+            && dispatchReceiver?.resolvedType?.fullyExpandedType(this.callInfo.session)?.isExtensionFunctionType == true
             && (symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
 
 internal fun Candidate.shouldHaveLowPriorityDueToSAM(bodyResolveComponents: BodyResolveComponents): Boolean {
