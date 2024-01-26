@@ -1456,7 +1456,9 @@ class LightTreeRawFirDeclarationBuilder(
 
                 contextReceivers.addAll(convertContextReceivers(property))
             }.also {
-                fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
+                if (!isLocal) {
+                    fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
+                }
             }
         }
     }
