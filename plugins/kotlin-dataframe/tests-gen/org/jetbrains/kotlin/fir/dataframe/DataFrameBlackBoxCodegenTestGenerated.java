@@ -40,12 +40,6 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     }
 
     @Test
-    @TestMetadata("explodeDataFrame.kt")
-    public void testExplodeDataFrame() throws Exception {
-        runTest("testData/box/explodeDataFrame.kt");
-    }
-
-    @Test
     @TestMetadata("extractPluginSchemaWithUnfold.kt")
     public void testExtractPluginSchemaWithUnfold() throws Exception {
         runTest("testData/box/extractPluginSchemaWithUnfold.kt");
@@ -73,12 +67,6 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     @TestMetadata("lowerGeneratedImplicitReceiver.kt")
     public void testLowerGeneratedImplicitReceiver() throws Exception {
         runTest("testData/box/lowerGeneratedImplicitReceiver.kt");
-    }
-
-    @Test
-    @TestMetadata("main.kt")
-    public void testMain() throws Exception {
-        runTest("testData/box/main.kt");
     }
 
     @Test

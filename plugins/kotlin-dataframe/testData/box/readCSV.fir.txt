@@ -2,20 +2,10 @@ FILE: readCSV.kt
     package org.jetbrains.kotlinx.dataframe
 
     public final fun box(): R|kotlin/String| {
-        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadCSVDefault_1639480572>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadCSVDefault_1639480572>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadCSVDefault_1639480572>| <inline=Inline, kind=EXACTLY_ONCE>  {
-            local abstract class DataFrameType1 : R|kotlin/Any| {
-                public constructor(): R|<local>/DataFrameType1| {
-                    super<R|kotlin/Any|>()
-                }
-
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadCSVDefault_1639480572>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadCSVDefault_1639480572>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadCSVDefault_1639480572>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class TokenReadCSVDefault_1639480572I : R|kotlin/Any| {
                 public abstract val full_name: R|kotlin/String|
                     public get(): R|kotlin/String|
-
-                public abstract val html_url: R|java/net/URL|
-                    public get(): R|java/net/URL|
-
-                public abstract val stargazers_count: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
 
                 public abstract val topics: R|kotlin/String|
                     public get(): R|kotlin/String|
@@ -23,78 +13,62 @@ FILE: readCSV.kt
                 public abstract val watchers: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
+                public abstract val stargazers_count: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public abstract val html_url: R|java/net/URL|
+                    public get(): R|java/net/URL|
+
+                public constructor(): R|<local>/TokenReadCSVDefault_1639480572I|
+
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public constructor(): R|<local>/Scope0| {
-                    super<R|kotlin/Any|>()
-                }
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadCSVDefault_1639480572I>|.full_name: R|kotlin/String|
+                    public get(): R|kotlin/String|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.full_name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_full_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/full_name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(full_name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadCSVDefault_1639480572I>|.full_name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.full_name: R|kotlin/String|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_full_name)) public get(): R|kotlin/String| {
-                        ^ (this@R|<local>/full_name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(full_name)) as R|kotlin/String|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadCSVDefault_1639480572I>|.topics: R|kotlin/String|
+                    public get(): R|kotlin/String|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.html_url: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_html_url)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>| {
-                        ^ (this@R|<local>/html_url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(html_url)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadCSVDefault_1639480572I>|.topics: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.html_url: R|java/net/URL|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_html_url)) public get(): R|java/net/URL| {
-                        ^ (this@R|<local>/html_url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(html_url)) as R|java/net/URL|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadCSVDefault_1639480572I>|.watchers: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.stargazers_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_stargazers_count)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/stargazers_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(stargazers_count)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadCSVDefault_1639480572I>|.watchers: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.stargazers_count: R|kotlin/Int|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_stargazers_count)) public get(): R|kotlin/Int| {
-                        ^ (this@R|<local>/stargazers_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(stargazers_count)) as R|kotlin/Int|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadCSVDefault_1639480572I>|.stargazers_count: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.topics: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_topics)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/topics|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(topics)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadCSVDefault_1639480572I>|.stargazers_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.topics: R|kotlin/String|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_topics)) public get(): R|kotlin/String| {
-                        ^ (this@R|<local>/topics|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(topics)) as R|kotlin/String|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadCSVDefault_1639480572I>|.html_url: R|java/net/URL|
+                    public get(): R|java/net/URL|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.watchers: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_watchers)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/watchers|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(watchers)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadCSVDefault_1639480572I>|.html_url: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.watchers: R|kotlin/Int|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_watchers)) public get(): R|kotlin/Int| {
-                        ^ (this@R|<local>/watchers|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(watchers)) as R|kotlin/Int|)
-                    }
+                public constructor(): R|<local>/Scope0|
 
             }
 
-            local abstract class TokenReadCSVDefault_1639480572 : R|<local>/DataFrameType1| {
-                public constructor(): R|<local>/TokenReadCSVDefault_1639480572| {
-                    super<R|<local>/DataFrameType1|>()
-                }
-
+            local abstract class TokenReadCSVDefault_1639480572 : R|<local>/TokenReadCSVDefault_1639480572I| {
                 public abstract val scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
 
+                public constructor(): R|<local>/TokenReadCSVDefault_1639480572|
+
             }
 
-            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/readCSVDefault|(String(https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv)) as R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadCSVDefault_1639480572>|)
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/readCSVDefault|(String(https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv))
         }
         )
-        (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|).R|<local>/full_name|
+        (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|).R|<local>/Scope0.full_name|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/String|>()
         ^box String(OK)
     }
