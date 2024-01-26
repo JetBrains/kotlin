@@ -28,16 +28,47 @@ class JsSetupConfigurationCacheIT : KGPBaseTest() {
     @DisplayName("Check Node.JS setup on different platforms")
     @GradleTest
     fun checkNodeJsSetup(gradleVersion: GradleVersion) {
-        project("kotlin-js-browser-project", gradleVersion) {
-            build("kotlinUpgradeYarnLock") {
-                assertTasksExecuted(":kotlinUpgradeYarnLock")
-                assertConfigurationCacheStored()
-            }
+        project(
+            "kotlin-js-browser-project",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                jsOptions = defaultBuildOptions.jsOptions?.copy(
+                    yarn = false
+                )
+            )
+        ) {
+            checkNodeJsSetup("kotlinUpgradePackageLock")
+        }
+    }
 
-            build("kotlinUpgradeYarnLock") {
-                assertTasksUpToDate(":kotlinUpgradeYarnLock")
-                assertConfigurationCacheReused()
-            }
+    // hack to be run on Mac m*
+    @DisplayName("Check Node.JS setup on different platforms with Yarn")
+    @GradleTest
+    fun checkNodeJsSetupYarn(gradleVersion: GradleVersion) {
+        project(
+            "kotlin-js-browser-project",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                jsOptions = defaultBuildOptions.jsOptions?.copy(
+                    yarn = true
+                )
+            )
+        ) {
+            checkNodeJsSetup("kotlinUpgradeYarnLock")
+        }
+    }
+
+    private fun TestProject.checkNodeJsSetup(
+        upgradeTask: String
+    ) {
+        build(upgradeTask) {
+            assertTasksExecuted(":$upgradeTask")
+            assertConfigurationCacheStored()
+        }
+
+        build(upgradeTask) {
+            assertTasksUpToDate(":$upgradeTask")
+            assertConfigurationCacheReused()
         }
     }
 }

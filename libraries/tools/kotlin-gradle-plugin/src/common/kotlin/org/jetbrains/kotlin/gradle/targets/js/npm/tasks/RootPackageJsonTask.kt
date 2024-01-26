@@ -16,10 +16,8 @@ import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
-import org.jetbrains.kotlin.gradle.targets.js.npm.asNpmEnvironment
-import org.jetbrains.kotlin.gradle.targets.js.npm.asYarnEnvironment
+import org.jetbrains.kotlin.gradle.targets.js.npm.asNodeJsEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
-import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 
@@ -37,9 +35,6 @@ abstract class RootPackageJsonTask :
     private val nodeJs
         get() = project.rootProject.kotlinNodeJsExtension
 
-    private val yarn
-        get() = project.rootProject.yarn
-
     private val rootResolver: KotlinRootNpmResolver
         get() = nodeJs.resolver
 
@@ -48,12 +43,12 @@ abstract class RootPackageJsonTask :
 
     // -----
 
-    private val npmEnvironment by lazy {
-        nodeJs.requireConfigured().asNpmEnvironment
+    private val nodeJsEnvironment by lazy {
+        nodeJs.requireConfigured().asNodeJsEnvironment
     }
 
-    private val yarnEnv by lazy {
-        yarn.requireConfigured().asYarnEnvironment
+    private val packageManagerEnv by lazy {
+        nodeJs.packageManagerExtension.get().environment
     }
 
     @get:OutputFile
@@ -87,7 +82,7 @@ abstract class RootPackageJsonTask :
 
     @TaskAction
     fun resolve() {
-        npmResolutionManager.get().prepare(logger, npmEnvironment, yarnEnv)
+        npmResolutionManager.get().prepare(logger, nodeJsEnvironment, packageManagerEnv)
     }
 
     companion object {

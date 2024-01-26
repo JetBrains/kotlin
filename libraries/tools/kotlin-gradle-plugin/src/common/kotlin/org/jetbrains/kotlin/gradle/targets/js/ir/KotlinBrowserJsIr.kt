@@ -52,9 +52,9 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override fun configureTestDependencies(test: KotlinJsTest) {
         test.dependsOn(
             nodeJs.npmInstallTaskProvider,
-            nodeJs.storeYarnLockTaskProvider,
             nodeJs.nodeJsSetupTaskProvider
         )
+        test.dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {
@@ -267,9 +267,10 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     ) {
         dependsOn(
             nodeJs.npmInstallTaskProvider,
-            nodeJs.storeYarnLockTaskProvider,
             target.project.tasks.named(compilation.processResourcesTaskName)
         )
+
+        dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
 
         configureOptimization(mode)
 

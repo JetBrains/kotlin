@@ -1,0 +1,4 @@
+rootProject.name = "kotlin-js-npm-overrides"
+
+include("base")
+include("lib")

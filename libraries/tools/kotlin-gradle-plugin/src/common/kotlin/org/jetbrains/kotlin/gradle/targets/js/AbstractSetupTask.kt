@@ -138,9 +138,10 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Settings : AbstractSettings<
             if (file.exists()) {
                 file.useLines { seq ->
                     val list = seq.first().split(" ")
-                    list.size == 2 &&
-                            list[0] == fileHasher.calculateDirHash(destination) &&
-                            list[1] == fileHasher.hash(dist).toByteArray().toHex().also { distHash = it }
+                    list.size == 3 &&
+                            list[0] == CACHE_VERSION &&
+                            list[1] == fileHasher.calculateDirHash(destination) &&
+                            list[2] == fileHasher.hash(dist).toByteArray().toHex().also { distHash = it }
                 }
             } else false
         }
@@ -156,11 +157,17 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Settings : AbstractSettings<
         extract(dist, destination.parentFile)
 
         destinationHashFile.writeText(
-            fileHasher.calculateDirHash(destination)!! +
+            CACHE_VERSION +
+                    " " +
+                    fileHasher.calculateDirHash(destination)!! +
                     " " +
                     (distHash ?: fileHasher.hash(dist).toByteArray().toHex())
         )
     }
 
     abstract fun extract(archive: File, destination: File)
+
+    companion object {
+        const val CACHE_VERSION = "2"
+    }
 }

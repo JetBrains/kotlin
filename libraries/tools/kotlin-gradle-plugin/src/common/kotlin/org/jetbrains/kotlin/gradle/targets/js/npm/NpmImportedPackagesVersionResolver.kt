@@ -1,17 +1,14 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.targets.js.yarn
+package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import org.gradle.api.logging.Logger
-import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModule
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import java.io.File
 
-class YarnImportedPackagesVersionResolver(
-    private val logger: Logger,
+class NpmImportedPackagesVersionResolver(
     npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
     private val nodeJsWorldDir: File
 ) {

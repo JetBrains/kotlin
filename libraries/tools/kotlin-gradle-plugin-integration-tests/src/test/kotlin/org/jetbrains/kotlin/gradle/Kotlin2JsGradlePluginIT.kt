@@ -12,12 +12,15 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.PACKAGE_LOCK_MISMATCH_MESSAGE
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.RESTORE_PACKAGE_LOCK_NAME
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.STORE_PACKAGE_LOCK_NAME
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.STORE_YARN_LOCK_NAME
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.UPGRADE_YARN_LOCK
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.YARN_LOCK_MISMATCH_MESSAGE
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_6
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -33,6 +36,7 @@ import kotlin.test.assertTrue
 
 @JsGradlePluginTests
 class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
+
 
     @DisplayName("TS type declarations are generated")
     @GradleTest
@@ -167,37 +171,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
                 val appNodeFetchVersion = moduleVersion("build/js/node_modules/js-composite-build", "node-fetch")
                 assertEquals("3.2.8", appNodeFetchVersion)
-            }
-        }
-    }
-
-    @DisplayName("js composite build works with yarn.lock persistence")
-    @GradleTest
-    @GradleTestVersions(minVersion = G_7_6)
-    fun testJsCompositeBuildWithUpgradeYarnLock(gradleVersion: GradleVersion) {
-        project("js-composite-build", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-
-            subProject("lib").apply {
-                buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-            }
-
-            subProject("base").apply {
-                buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-            }
-
-            build("kotlinUpgradeYarnLock") {
-                assertTasksExecuted(":base:publicPackageJson")
-                assertTasksExecuted(":lib:lib-2:publicPackageJson")
-                assertTasksExecuted(":kotlinNpmInstall")
-                assertTasksExecuted(":kotlinUpgradeYarnLock")
-            }
-
-            build(":nodeTest") {
-                assertTasksUpToDate(":base:publicPackageJson")
-                assertTasksUpToDate(":lib:lib-2:publicPackageJson")
-                assertTasksUpToDate(":kotlinNpmInstall")
-                assertTasksExecuted(":kotlinStoreYarnLock")
             }
         }
     }
@@ -1029,7 +1002,15 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @DisplayName("public NPM dependencies are included into package.json")
     @GradleTest
     fun testPackageJsonWithPublicNpmDependencies(gradleVersion: GradleVersion) {
-        project("npm-dependencies", gradleVersion) {
+        project(
+            "npm-dependencies",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                jsOptions = defaultBuildOptions.jsOptions?.copy(
+                    yarn = false
+                )
+            )
+        ) {
             build("jsJar") {
                 val archive = projectPath
                     .resolve("build/libs")
@@ -1097,8 +1078,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     }
             }
 
-            build(UPGRADE_YARN_LOCK) {
-                assertTasksExecuted(":$UPGRADE_YARN_LOCK")
+            build(UPGRADE_PACKAGE_LOCK) {
+                assertTasksExecuted(":$UPGRADE_PACKAGE_LOCK")
             }
 
             build("jsJar") {
@@ -1216,10 +1197,18 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("yarn resolutions works")
+    @DisplayName("npm overrides works")
     @GradleTest
-    fun testYarnResolution(gradleVersion: GradleVersion) {
-        project("kotlin-js-yarn-resolutions", gradleVersion) {
+    fun testNpmOverrides(gradleVersion: GradleVersion) {
+        project(
+            "kotlin-js-npm-overrides",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                jsOptions = defaultBuildOptions.jsOptions?.copy(
+                    yarn = false
+                )
+            )
+        ) {
             build("packageJson", "rootPackageJson", "kotlinNpmInstall") {
                 fun getPackageJson() =
                     projectPath.resolve("build/js")
@@ -1229,16 +1218,16 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                         }
 
                 val name = "lodash"
-                val version = getPackageJson().resolutions?.get(name)
+                val version = getPackageJson().overrides?.get(name)
                 val requiredVersion = ">=1.0.0 <1.2.1 || >1.4.0 <2.0.0"
-                assertTrue("Root package.json must have resolution $name with version $requiredVersion, but $version found") {
+                assertTrue("Root package.json must override $name with version $requiredVersion, but $version found") {
                     version == requiredVersion
                 }
 
                 val react = "react"
-                val reactVersion = getPackageJson().resolutions?.get(react)
+                val reactVersion = getPackageJson().overrides?.get(react)
                 val requiredReactVersion = "16.0.0"
-                assertTrue("Root package.json must have resolution $react with version $requiredReactVersion, but $reactVersion found") {
+                assertTrue("Root package.json must override $react with version $requiredReactVersion, but $reactVersion found") {
                     reactVersion == requiredReactVersion
                 }
             }
@@ -1374,176 +1363,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Failing with yarn.lock update")
-    @GradleTest
-    fun testFailingWithYarnLockUpdate(gradleVersion: GradleVersion) {
-        project("kotlin-js-yarn-lock-project", gradleVersion) {
-            build(STORE_YARN_LOCK_NAME) {
-                assertTasksExecuted(":$STORE_YARN_LOCK_NAME")
-            }
-
-            projectPath.resolve("kotlin-js-store").deleteRecursively()
-
-            buildGradleKts.modify {
-                it + "\n" +
-                        """
-                        rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().reportNewYarnLock = true
-                        }
-                        """.trimIndent()
-            }
-
-            buildAndFail(STORE_YARN_LOCK_NAME) {
-                assertTasksFailed(":$STORE_YARN_LOCK_NAME")
-            }
-
-            buildGradleKts.modify {
-                it + "\n" +
-                        """
-                        dependencies {
-                            implementation(npm("decamelize", "6.0.0"))
-                        }
-                            
-                        rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().yarnLockMismatchReport = 
-                                org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport.FAIL
-                        }
-                        """.trimIndent()
-            }
-
-            buildAndFail(STORE_YARN_LOCK_NAME) {
-                assertTasksFailed(":$STORE_YARN_LOCK_NAME")
-            }
-
-            // yarn.lock was not updated
-            buildAndFail(STORE_YARN_LOCK_NAME) {
-                assertTasksFailed(":$STORE_YARN_LOCK_NAME")
-            }
-
-            build(UPGRADE_YARN_LOCK) {
-                assertTasksExecuted(":$UPGRADE_YARN_LOCK")
-            }
-
-            buildGradleKts.modify {
-                val replaced = it.replace("implementation(npm(\"decamelize\", \"6.0.0\"))", "")
-                replaced + "\n" +
-                        """
-                        rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().yarnLockMismatchReport =
-                                org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport.WARNING
-                        }
-                        """.trimIndent()
-            }
-
-            build(STORE_YARN_LOCK_NAME) {
-                assertTasksExecuted(":$STORE_YARN_LOCK_NAME")
-
-                assertOutputContains(YARN_LOCK_MISMATCH_MESSAGE)
-            }
-
-            build(UPGRADE_YARN_LOCK) {
-                assertTasksExecuted(":$UPGRADE_YARN_LOCK")
-            }
-
-            buildGradleKts.modify {
-                it + "\n" +
-                        """
-                        dependencies {
-                            implementation(npm("decamelize", "6.0.0"))
-                        }
-                            
-                        rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().yarnLockMismatchReport =
-                                org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport.NONE
-                        }
-                        """.trimIndent()
-            }
-
-            build(STORE_YARN_LOCK_NAME) {
-                assertTasksExecuted(":$STORE_YARN_LOCK_NAME")
-
-                assertOutputDoesNotContain(YARN_LOCK_MISMATCH_MESSAGE)
-            }
-
-            build(UPGRADE_YARN_LOCK) {
-                assertTasksExecuted(":$UPGRADE_YARN_LOCK")
-            }
-
-            buildGradleKts.modify {
-                it.replace("implementation(npm(\"decamelize\", \"6.0.0\"))", "")
-            }
-
-            projectPath.resolve("kotlin-js-store").deleteRecursively()
-
-            buildGradleKts.modify {
-                it + "\n" +
-                        """
-                        rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().yarnLockMismatchReport =
-                                org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport.NONE
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().reportNewYarnLock =
-                                true
-                        }
-                        """.trimIndent()
-            }
-
-            build(STORE_YARN_LOCK_NAME) {
-                assertTasksExecuted(":$STORE_YARN_LOCK_NAME")
-
-                assertOutputDoesNotContain(YARN_LOCK_MISMATCH_MESSAGE)
-            }
-
-            buildGradleKts.modify {
-                it + "\n" +
-                        """
-                        dependencies {
-                            implementation(npm("decamelize", "6.0.0"))
-                        }
-                            
-                        rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().yarnLockMismatchReport =
-                                org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport.FAIL
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().yarnLockAutoReplace = 
-                                true
-                        }
-                        """.trimIndent()
-            }
-
-            buildAndFail(STORE_YARN_LOCK_NAME) {
-                assertTasksFailed(":$STORE_YARN_LOCK_NAME")
-            }
-
-            //yarn.lock was updated
-            build(STORE_YARN_LOCK_NAME) {
-                assertTasksExecuted(":$STORE_YARN_LOCK_NAME")
-            }
-
-            buildGradleKts.modify {
-                it.replace("implementation(npm(\"decamelize\", \"6.0.0\"))", "")
-            }
-
-            // check if everything ok without build/js/yarn.lock
-            build("clean") {
-                assertTasksExecuted(":clean")
-            }
-
-            build("clean") {
-                assertTasksUpToDate(":clean")
-            }
-
-            buildAndFail(STORE_YARN_LOCK_NAME) {
-                assertTasksFailed(":$STORE_YARN_LOCK_NAME")
-            }
-
-            projectPath.resolve("kotlin-js-store").deleteRecursively()
-
-            //check if independent tasks can be executed
-            build("help") {
-                assertTasksExecuted(":help")
-            }
-        }
-    }
-
     @DisplayName("webpack configuration is valid")
     @GradleTest
     fun testWebpackConfig(gradleVersion: GradleVersion) {
@@ -1622,7 +1441,15 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @DisplayName("Disable download should not download Node.JS and Yarn")
     @GradleTest
     fun testNodeJsAndYarnNotDownloaded(gradleVersion: GradleVersion) {
-        project("nodeJsDownload", gradleVersion) {
+        project(
+            "nodeJsDownload",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                jsOptions = defaultBuildOptions.jsOptions?.copy(
+                    yarn = true
+                )
+            )
+        ) {
             buildGradleKts.modify {
                 it + "\n" +
                         """
@@ -1637,71 +1464,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                         """
             }
             build("kotlinNodeJsSetup", "kotlinYarnSetup")
-        }
-    }
-
-    @DisplayName("Yarn.lock persistence")
-    @GradleTest
-    fun testYarnLockStore(gradleVersion: GradleVersion) {
-        project("nodeJsDownload", gradleVersion) {
-            build("assemble", "kotlinStoreYarnLock") {
-                assertFileExists(projectPath.resolve("kotlin-js-store").resolve("yarn.lock"))
-                assert(
-                    projectPath
-                        .resolve("kotlin-js-store")
-                        .resolve("yarn.lock")
-                        .readText() == projectPath.resolve("build/js/yarn.lock").readText()
-                )
-            }
-        }
-    }
-
-    @DisplayName("Yarn ignore scripts")
-    @GradleTest
-    fun testYarnIgnoreScripts(gradleVersion: GradleVersion) {
-        project("nodeJsDownload", gradleVersion) {
-            buildGradleKts.modify {
-                it + "\n" +
-                        """
-                        dependencies {
-                            implementation(npm("puppeteer", "11.0.0"))
-                        }
-                        """.trimIndent()
-            }
-            build("assemble", "kotlinNpmInstall") {
-                assert(
-                    projectPath
-                        .resolve("build")
-                        .resolve("js")
-                        .resolve("node_modules")
-                        .resolve("puppeteer")
-                        .resolve(".local-chromium")
-                        .notExists()
-                ) {
-                    "Chromium should not be installed with --ignore-scripts"
-                }
-            }
-            buildGradleKts.modify {
-                it + "\n" +
-                        """
-                        rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin> {
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().ignoreScripts = false
-                        }
-                        """.trimIndent()
-            }
-
-            build("clean")
-
-            build("assemble", "kotlinNpmInstall") {
-                assertDirectoryExists(
-                    projectPath
-                        .resolve("build")
-                        .resolve("js")
-                        .resolve("node_modules")
-                        .resolve("puppeteer")
-                        .resolve(".local-chromium")
-                )
-            }
         }
     }
 
@@ -1754,7 +1516,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("test package.jsom skipped with main package.json was up-to-date")
+    @DisplayName("test package.json skipped with main package.json was up-to-date")
     @GradleTest
     fun testPackageJsonSkippedWithUpToDatePackageJsons(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-library-project", gradleVersion) {

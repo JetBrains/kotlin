@@ -16,10 +16,12 @@ data class YarnEnv(
     override val dir: File,
     val executable: String,
     override val ivyDependency: String,
-    val standalone: Boolean,
     val ignoreScripts: Boolean,
     val yarnLockMismatchReport: YarnLockMismatchReport,
     val reportNewYarnLock: Boolean,
     val yarnLockAutoReplace: Boolean,
     val yarnResolutions: List<YarnResolution>
-) : AbstractEnv
+) : AbstractEnv {
+    val standalone: Boolean
+        get() = !download
+}

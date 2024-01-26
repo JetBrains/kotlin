@@ -5,20 +5,27 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
 import org.gradle.internal.service.ServiceRegistry
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.Installation
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinProjectNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
+import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 internal interface UsesKotlinNpmResolutionManager : Task {
     @get:Internal
@@ -78,16 +85,16 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
 
     internal fun prepare(
         logger: Logger,
-        npmEnvironment: NpmEnvironment,
-        yarnEnvironment: YarnEnvironment,
-    ) = prepareIfNeeded(logger = logger, npmEnvironment, yarnEnvironment)
+        nodeJsEnvironment: NodeJsEnvironment,
+        environment: PackageManagerEnvironment,
+    ) = prepareIfNeeded(logger = logger, nodeJsEnvironment, environment)
 
     internal fun installIfNeeded(
         args: List<String> = emptyList(),
         services: ServiceRegistry,
         logger: Logger,
-        npmEnvironment: NpmEnvironment,
-        yarnEnvironment: YarnEnvironment,
+        nodeJsEnvironment: NodeJsEnvironment,
+        packageManagerEnvironment: PackageManagerEnvironment,
     ): Unit? {
         synchronized(this) {
             if (state is ResolutionState.Installed) {
@@ -99,8 +106,8 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
             }
 
             return try {
-                val installation: Installation = prepareIfNeeded(logger = logger, npmEnvironment, yarnEnvironment)
-                installation.install(args, services, logger, npmEnvironment, yarnEnvironment)
+                val installation: Installation = prepareIfNeeded(logger = logger, nodeJsEnvironment, packageManagerEnvironment)
+                installation.install(args, services, logger, nodeJsEnvironment, packageManagerEnvironment)
                 state = ResolutionState.Installed()
             } catch (e: Exception) {
                 state = ResolutionState.Error(e)
@@ -111,8 +118,8 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
 
     private fun prepareIfNeeded(
         logger: Logger,
-        npmEnvironment: NpmEnvironment,
-        yarnEnvironment: YarnEnvironment,
+        nodeJsEnvironment: NodeJsEnvironment,
+        packageManagerEnvironment: PackageManagerEnvironment,
     ): Installation {
         val state0 = this.state
         return when (state0) {
@@ -128,8 +135,8 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
                         is ResolutionState.Configuring -> {
                             state1.resolution.prepareInstallation(
                                 logger,
-                                npmEnvironment,
-                                yarnEnvironment,
+                                nodeJsEnvironment,
+                                packageManagerEnvironment,
                                 this
                             ).also {
                                 this.state = ResolutionState.Prepared(it)
@@ -144,6 +151,54 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
 
             is ResolutionState.Installed -> error("Project already installed")
             is ResolutionState.Error -> throw state0.wrappedException
+        }
+    }
+
+    companion object {
+        private val serviceClass = KotlinNpmResolutionManager::class.java
+        private val serviceName = serviceClass.name
+
+        private fun registerIfAbsentImpl(
+            project: Project,
+            resolution: Provider<KotlinRootNpmResolution>?,
+            gradleNodeModulesProvider: Provider<GradleNodeModulesCache>?,
+            packagesDir: Provider<Directory>
+        ): Provider<KotlinNpmResolutionManager> {
+            project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
+                @Suppress("UNCHECKED_CAST")
+                return it.service as Provider<KotlinNpmResolutionManager>
+            }
+
+            val message = {
+                "Build service KotlinNpmResolutionManager should be already registered"
+            }
+
+            requireNotNull(resolution, message)
+            requireNotNull(gradleNodeModulesProvider, message)
+
+            return project.gradle.sharedServices.registerIfAbsent(serviceName, serviceClass) {
+                it.parameters.resolution.set(
+                    resolution
+                )
+                it.parameters.gradleNodeModulesProvider.set(gradleNodeModulesProvider)
+                it.parameters.packagesDir.set(packagesDir)
+            }
+        }
+
+        fun registerIfAbsent(
+            project: Project,
+            resolution: Provider<KotlinRootNpmResolution>?,
+            gradleNodeModulesProvider: Provider<GradleNodeModulesCache>?,
+            packagesDir: Provider<Directory>
+        ) = registerIfAbsentImpl(project, resolution, gradleNodeModulesProvider, packagesDir).also { serviceProvider ->
+            SingleActionPerProject.run(project, UsesKotlinNpmResolutionManager::class.java.name) {
+                project.tasks.withType<UsesKotlinNpmResolutionManager>().configureEach { task ->
+                    task.usesService(serviceProvider)
+                    if (gradleNodeModulesProvider != null) {
+                        task.usesService(gradleNodeModulesProvider)
+                    }
+                }
+            }
         }
     }
 }

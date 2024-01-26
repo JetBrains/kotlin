@@ -62,8 +62,8 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
             test.dependsOn(
                 nodeJsTaskProviders.npmInstallTaskProvider,
-                nodeJsTaskProviders.storeYarnLockTaskProvider,
             )
+            test.dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
         }
     }
 

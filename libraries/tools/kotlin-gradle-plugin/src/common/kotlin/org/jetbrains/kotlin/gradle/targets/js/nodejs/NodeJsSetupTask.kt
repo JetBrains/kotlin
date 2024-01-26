@@ -43,7 +43,7 @@ abstract class NodeJsSetupTask : AbstractSetupTask<NodeJsEnv, NodeJsRootExtensio
             it.into(destination)
         }
 
-        fixBrokenSymlinks(destination, env.isWindows, fixBrokenSymLinks)
+        fixBrokenSymlinks(this.destination, env.isWindows, fixBrokenSymLinks)
 
         if (!env.isWindows) {
             File(env.nodeExecutable).setExecutable(true)

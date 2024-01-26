@@ -1,18 +1,19 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.targets.js.yarn
+package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.logging.Logger
 import org.gradle.internal.service.ServiceRegistry
-import org.jetbrains.kotlin.gradle.targets.js.npm.*
+import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 
-class YarnWorkspaces : YarnBasics() {
+class Npm : NpmApiExecution<NpmEnvironment> {
+
     override fun preparedFiles(nodeJs: NodeJsEnvironment): Collection<File> {
         return listOf(
             nodeJs
@@ -23,7 +24,7 @@ class YarnWorkspaces : YarnBasics() {
 
     override fun prepareRootProject(
         nodeJs: NodeJsEnvironment,
-        yarn: YarnEnvironment,
+        packageManagerEnvironment: NpmEnvironment,
         rootProjectName: String,
         rootProjectVersion: String,
         subProjects: Collection<PreparedKotlinCompilationNpmResolution>,
@@ -33,7 +34,7 @@ class YarnWorkspaces : YarnBasics() {
             rootProjectName,
             rootProjectVersion,
             subProjects,
-            yarn.yarnResolutions
+            packageManagerEnvironment.overrides
                 .associate { it.path to it.toVersionString() },
         )
     }
@@ -43,7 +44,7 @@ class YarnWorkspaces : YarnBasics() {
         rootProjectName: String,
         rootProjectVersion: String,
         npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
-        resolutions: Map<String, String>
+        overrides: Map<String, String>,
     ) {
         val rootPackageJsonFile = preparedFiles(nodeJs).single()
 
@@ -51,7 +52,7 @@ class YarnWorkspaces : YarnBasics() {
             rootProjectName,
             rootProjectVersion,
             npmProjects,
-            resolutions,
+            overrides,
             rootPackageJsonFile
         )
     }
@@ -60,29 +61,66 @@ class YarnWorkspaces : YarnBasics() {
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsEnvironment,
-        yarn: YarnEnvironment,
+        packageManagerEnvironment: NpmEnvironment,
         npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
-        cliArgs: List<String>
+        cliArgs: List<String>,
     ) {
         val nodeJsWorldDir = nodeJs.rootPackageDir
 
-        yarnExec(
+        npmExec(
             services,
             logger,
             nodeJs,
-            yarn,
+            packageManagerEnvironment,
             nodeJsWorldDir,
-            NpmApiExecution.resolveOperationDescription("yarn"),
+            NpmApiExecution.resolveOperationDescription("npm"),
             cliArgs
         )
+    }
+
+    fun npmExec(
+        services: ServiceRegistry,
+        logger: Logger,
+        nodeJs: NodeJsEnvironment,
+        environment: NpmEnvironment,
+        dir: File,
+        description: String,
+        args: List<String>,
+    ) {
+        services.execWithProgress(description) { exec ->
+            val arguments = listOf("install") + args
+                .plus(
+                    if (logger.isDebugEnabled) "--verbose" else ""
+                )
+                .plus(
+                    if (environment.ignoreScripts) "--ignore-scripts" else ""
+                ).filter { it.isNotEmpty() }
+
+            if (!environment.standalone) {
+                val nodeExecutable = nodeJs.nodeExecutable
+                val nodePath = File(nodeExecutable).parent
+                exec.environment(
+                    "PATH",
+                    "$nodePath${File.pathSeparator}${System.getenv("PATH")}"
+                )
+            }
+
+            val command = environment.executable
+
+            exec.executable = command
+            exec.args = arguments
+
+            exec.workingDir = dir
+        }
+
     }
 
     private fun saveRootProjectWorkspacesPackageJson(
         rootProjectName: String,
         rootProjectVersion: String,
         npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
-        resolutions: Map<String, String>,
-        rootPackageJsonFile: File
+        overrides: Map<String, String>,
+        rootPackageJsonFile: File,
     ) {
         val nodeJsWorldDir = rootPackageJsonFile.parentFile
         val rootPackageJson = PackageJson(rootProjectName, rootProjectVersion)
@@ -93,7 +131,7 @@ class YarnWorkspaces : YarnBasics() {
             NpmImportedPackagesVersionResolver(npmProjects, nodeJsWorldDir).resolveAndUpdatePackages()
 
         rootPackageJson.workspaces = npmProjectWorkspaces + importedProjectWorkspaces
-        rootPackageJson.customField("resolutions", resolutions)
+        rootPackageJson.overrides = overrides
         rootPackageJson.saveTo(
             rootPackageJsonFile
         )

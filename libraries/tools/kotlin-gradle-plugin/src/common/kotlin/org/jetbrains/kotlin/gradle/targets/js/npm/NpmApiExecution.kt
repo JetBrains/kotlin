@@ -8,32 +8,30 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.logging.Logger
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution
 import java.io.File
 import java.io.Serializable
 
 /**
  * NodeJS package manager API
  */
-interface NpmApi : Serializable {
-    fun preparedFiles(nodeJs: NpmEnvironment): Collection<File>
+interface NpmApiExecution<out T : PackageManagerEnvironment> : Serializable {
+    fun preparedFiles(nodeJs: NodeJsEnvironment): Collection<File>
 
     fun prepareRootProject(
-        nodeJs: NpmEnvironment,
+        nodeJs: NodeJsEnvironment,
+        packageManagerEnvironment: @UnsafeVariance T,
         rootProjectName: String,
         rootProjectVersion: String,
-        logger: Logger,
         subProjects: Collection<PreparedKotlinCompilationNpmResolution>,
-        resolutions: Map<String, String>,
     )
 
     fun resolveRootProject(
         services: ServiceRegistry,
         logger: Logger,
-        nodeJs: NpmEnvironment,
-        yarn: YarnEnvironment,
+        nodeJs: NodeJsEnvironment,
+        packageManagerEnvironment: @UnsafeVariance T,
         npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
         cliArgs: List<String>
     )
@@ -44,32 +42,15 @@ interface NpmApi : Serializable {
     }
 }
 
-data class NpmEnvironment(
+data class NodeJsEnvironment(
     val rootPackageDir: File,
     val nodeExecutable: String,
-    val isWindows: Boolean,
-    val packageManager: NpmApi
+    val packageManager: NpmApiExecution<PackageManagerEnvironment>
 ) : Serializable
 
-internal val NodeJsEnv.asNpmEnvironment
-    get() = NpmEnvironment(
+internal val NodeJsEnv.asNodeJsEnvironment
+    get() = NodeJsEnvironment(
         rootPackageDir,
         nodeExecutable,
-        isWindows,
         packageManager
-    )
-
-data class YarnEnvironment(
-    val executable: String,
-    val standalone: Boolean,
-    val ignoreScripts: Boolean,
-    val yarnResolutions: List<YarnResolution>
-) : Serializable
-
-internal val YarnEnv.asYarnEnvironment
-    get() = YarnEnvironment(
-        executable,
-        standalone,
-        ignoreScripts,
-        yarnResolutions
     )
