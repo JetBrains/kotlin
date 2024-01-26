@@ -20633,6 +20633,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("labelsAndNonInlineUsage.kt")
+            public void testLabelsAndNonInlineUsage() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/labelsAndNonInlineUsage.kt");
+            }
+
+            @Test
             @TestMetadata("lambdaCast.kt")
             public void testLambdaCast() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/lambdaCast.kt");

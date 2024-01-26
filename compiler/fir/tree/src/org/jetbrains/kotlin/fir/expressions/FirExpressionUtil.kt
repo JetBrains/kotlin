@@ -101,6 +101,9 @@ fun <T : FirStatement> FirBlock.replaceFirstStatement(factory: (T) -> FirStateme
     return existing
 }
 
+fun FirExpression.unwrapErrorExpression(): FirExpression? =
+    if (this is FirErrorExpression) expression?.run { unwrapErrorExpression() } else this
+
 fun FirExpression.unwrapArgument(): FirExpression = (this as? FirWrappedArgumentExpression)?.expression ?: this
 
 fun FirExpression.unwrapAndFlattenArgument(flattenArrays: Boolean): List<FirExpression> = buildList { unwrapAndFlattenArgumentTo(this, flattenArrays) }

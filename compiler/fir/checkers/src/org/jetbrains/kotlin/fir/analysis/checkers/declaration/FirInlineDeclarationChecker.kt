@@ -132,7 +132,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             val calledFunctionSymbol = targetSymbol as? FirFunctionSymbol ?: return
             val argumentMapping = functionCall.resolvedArgumentMapping ?: return
             for ((wrappedArgument, valueParameter) in argumentMapping) {
-                val argument = wrappedArgument.unwrapArgument()
+                val argument = wrappedArgument.unwrapErrorExpression()?.unwrapArgument() ?: continue
                 val resolvedArgumentSymbol = argument.toResolvedCallableSymbol(session) as? FirVariableSymbol<*> ?: continue
 
                 val valueParameterOfOriginalInlineFunction = inlinableParameters.firstOrNull { it == resolvedArgumentSymbol }
@@ -163,7 +163,8 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             reporter: DiagnosticReporter,
         ) {
             if (receiverExpression == null) return
-            val receiverSymbol = receiverExpression.toResolvedCallableSymbol(session) as? FirValueParameterSymbol ?: return
+            val receiverSymbol =
+                receiverExpression.unwrapErrorExpression()?.toResolvedCallableSymbol(session) as? FirValueParameterSymbol ?: return
             if (receiverSymbol in inlinableParameters) {
                 if (!isInvokeOrInlineExtension(targetSymbol)) {
                     reporter.reportOn(
@@ -217,9 +218,9 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             val containingQualifiedAccess = context.callsOrAssignments.getOrNull(
                 context.callsOrAssignments.size - 2
             ) ?: return false
-            if (this == (containingQualifiedAccess as? FirQualifiedAccessExpression)?.explicitReceiver) return true
+            if (this == (containingQualifiedAccess as? FirQualifiedAccessExpression)?.explicitReceiver?.unwrapErrorExpression()) return true
             val call = containingQualifiedAccess as? FirCall ?: return false
-            return call.arguments.any { it.unwrapArgument() == this }
+            return call.arguments.any { it.unwrapErrorExpression()?.unwrapArgument() == this }
         }
 
         private fun checkVisibilityAndAccess(
