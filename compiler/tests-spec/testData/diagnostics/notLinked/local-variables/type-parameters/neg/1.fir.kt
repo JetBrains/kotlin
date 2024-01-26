@@ -1,6 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // SKIP_TXT
-// COMPARE_WITH_LIGHT_TREE
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
@@ -47,8 +46,8 @@ fun case_5() {
  * UNEXPECTED BEHAVIOUR
  */
 fun case_6() {
-    val <!LOCAL_VARIABLE_WITH_TYPE_PARAMETERS{LT}!><T : __UNRESOLVED__><!> (x1, y1) = Pair(1, 2)
-    var <!LOCAL_VARIABLE_WITH_TYPE_PARAMETERS{LT}!><T : __UNRESOLVED__><!> (x2, y2) = Pair(1, 2)
+    val <T : __UNRESOLVED__> (x1, y1) = Pair(1, 2)
+    var <T : __UNRESOLVED__> (x2, y2) = Pair(1, 2)
 }
 
 /*
@@ -56,8 +55,8 @@ fun case_6() {
  * UNEXPECTED BEHAVIOUR
  */
 fun case_7() {
-    val <!LOCAL_VARIABLE_WITH_TYPE_PARAMETERS{LT}!><T : __UNRESOLVED__><!> (x1, y1) where __UNRESOLVED__: __UNRESOLVED__ = Pair(1, 2)
-    var <!LOCAL_VARIABLE_WITH_TYPE_PARAMETERS{LT}!><T : __UNRESOLVED__><!> (x2, y2) where __UNRESOLVED__: __UNRESOLVED__ = Pair(1, 2)
+    val <T : __UNRESOLVED__> (x1, y1) where __UNRESOLVED__: __UNRESOLVED__ = Pair(1, 2)
+    var <T : __UNRESOLVED__> (x2, y2) where __UNRESOLVED__: __UNRESOLVED__ = Pair(1, 2)
 }
 
 // TESTCASE NUMBER: 8
