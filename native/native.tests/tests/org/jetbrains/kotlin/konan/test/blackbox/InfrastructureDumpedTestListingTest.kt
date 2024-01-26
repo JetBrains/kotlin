@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Success
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.DumpedTestListing
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.GTestListing
+import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -79,7 +81,12 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
 
         // parse test listing obtained from executable file with the help of --ktest_list_tests flag:
         val testExecutable = TestExecutable.fromCompilationResult(executableTestCase, executableCompilationSuccess)
-        val extractedTestListing = TestRunners.extractTestNames(testExecutable, testRunSettings).toSet()
+        val extractedTestListing = with (testRunSettings) {
+            val listing = runProcess(testExecutable.executable.executableFile.absolutePath, "--ktest_list_tests") {
+                timeout = get<Timeouts>().executionTimeout
+            }.stdout
+            GTestListing.parse(listing).toSet()
+        }
 
         assertEquals(extractedTestListing, dumpedTestListing)
 
