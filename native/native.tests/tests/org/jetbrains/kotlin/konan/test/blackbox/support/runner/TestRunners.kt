@@ -17,26 +17,23 @@ internal object TestRunners {
         if (get<ForcedNoopTestRunner>().value) {
             NoopTestRunner
         } else with(get<KotlinNativeTargets>()) {
-            val configurables = configurables
-
-            val executor = cached(
+            val executor = executorCache.computeIfAbsent(testTarget) {
+                val configurables = configurables
                 when {
-                    testTarget == hostTarget -> HostExecutor()
+                    configurables.target == hostTarget -> HostExecutor()
                     configurables is ConfigurablesWithEmulator -> EmulatorExecutor(configurables)
                     configurables is AppleConfigurables && configurables.targetTriple.isSimulator ->
                         XcodeSimulatorExecutor(configurables)
                     configurables is AppleConfigurables && RosettaExecutor.availableFor(configurables) -> RosettaExecutor(configurables)
                     else -> runningOnUnsupportedTarget()
                 }
-            )
+            }
+
             RunnerWithExecutor(executor, testRun)
         }
     }
 
-    private val runnersCache: ConcurrentHashMap<String, Executor> = ConcurrentHashMap()
-
-    private inline fun <reified T : Executor> cached(executor: T): Executor =
-        runnersCache.computeIfAbsent(T::class.java.simpleName) { executor }
+    private val executorCache: ConcurrentHashMap<KonanTarget, Executor> = ConcurrentHashMap()
 
     // Currently, only local test name extractor is supported.
     fun extractTestNames(executable: TestExecutable, settings: Settings): Collection<TestName> = with(settings) {
