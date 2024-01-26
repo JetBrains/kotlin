@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COMPONENT_PREFIX
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.builder.buildFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
@@ -59,16 +61,24 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.getChildren
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
+
+private val FUNCTION_DECL_TOKENS = TokenSet.create(KtTokens.FUN_KEYWORD)
+private val ACCESSOR_DECL_TOKENS = TokenSet.create(KtTokens.GET_KEYWORD, KtTokens.SET_KEYWORD)
+private val PROPERTY_DECL_TOKENS = TokenSet.create(KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD)
+private val CLASS_DECL_TOKENS = TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD)
+private val CONSTRUCTOR_DECL_TOKENS = TokenSet.create(KtTokens.CONSTRUCTOR_KEYWORD)
 
 fun AbstractKtSourceElement?.startOffsetSkippingComments(): Int? {
     return when (this) {
@@ -78,18 +88,50 @@ fun AbstractKtSourceElement?.startOffsetSkippingComments(): Int? {
     }
 }
 
-internal inline fun <T : IrElement> FirElement.convertWithOffsets(defaultOffset: Int, f: (startOffset: Int, endOffset: Int) -> T): T {
-    return source.convertWithOffsets(defaultOffset, f)
+internal fun AbstractKtSourceElement?.getChildTokenStartOffsetOrNull(tokenSet: TokenSet): Pair<Int, Int>? {
+    return when (this) {
+        is KtPsiSourceElement -> psi.node?.findChildByType(tokenSet)?.run { startOffset to endOffset }
+        is KtLightSourceElement -> lighterASTNode
+            .getChildren(treeStructure)
+            .firstOrNull { it.tokenType in tokenSet }
+            ?.run { startOffset to endOffset }
+        else -> null
+    }
 }
 
-internal inline fun <T : IrElement> FirElement.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
-    return source.convertWithOffsets(f)
+internal fun FirElement.getStartOffsetOfFunctionDeclarationKeywordOrNull(): Pair<Int, Int>? =
+    when (this) {
+        is FirSimpleFunction -> source.getChildTokenStartOffsetOrNull(FUNCTION_DECL_TOKENS)
+        is FirPropertyAccessor -> source.getChildTokenStartOffsetOrNull(ACCESSOR_DECL_TOKENS)
+        is FirProperty, is FirValueParameter -> source.getChildTokenStartOffsetOrNull(PROPERTY_DECL_TOKENS)
+        is FirClass -> source.getChildTokenStartOffsetOrNull(CLASS_DECL_TOKENS)
+        is FirConstructor -> source.getChildTokenStartOffsetOrNull(CONSTRUCTOR_DECL_TOKENS)
+        else -> null
+    }
+
+internal inline fun <T : IrElement> FirElement.convertWithOffsets(defaultOffset: Int, f: (startOffset: Int, endOffset: Int) -> T): T {
+    val startOffset: Int
+    val endOffset: Int
+
+    if (isCompiledElement(source.psi) || source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers) {
+        startOffset = defaultOffset
+        endOffset = defaultOffset
+    } else {
+        val declarationsSpecificOffsets = getStartOffsetOfFunctionDeclarationKeywordOrNull()
+        startOffset = declarationsSpecificOffsets?.first ?: source?.startOffsetSkippingComments() ?: source?.startOffset ?: defaultOffset
+        endOffset = declarationsSpecificOffsets?.second ?: source?.endOffset ?: defaultOffset
+    }
+
+    return f(startOffset, endOffset)
 }
+
+internal inline fun <T : IrElement> FirElement.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T =
+    convertWithOffsets(UNDEFINED_OFFSET, f)
 
 internal fun <T : IrElement> FirPropertyAccessor?.convertWithOffsets(
     defaultStartOffset: Int, defaultEndOffset: Int, f: (startOffset: Int, endOffset: Int) -> T
 ): T {
-    return if (this == null) return f(defaultStartOffset, defaultEndOffset) else source.convertWithOffsets(f)
+    return if (this == null || this is FirDefaultPropertyAccessor) return f(defaultStartOffset, defaultEndOffset) else convertWithOffsets(f)
 }
 
 internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
