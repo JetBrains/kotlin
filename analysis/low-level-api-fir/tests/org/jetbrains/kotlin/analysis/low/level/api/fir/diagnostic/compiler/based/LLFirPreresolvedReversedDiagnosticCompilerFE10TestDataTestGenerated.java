@@ -37532,6 +37532,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("classDelegation.kt")
+        public void testClassDelegation() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/varnotnull/classDelegation.kt");
+        }
+
+        @Test
         @TestMetadata("doWhileWithBreak.kt")
         public void testDoWhileWithBreak() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/varnotnull/doWhileWithBreak.kt");

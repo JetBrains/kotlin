@@ -37532,6 +37532,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("classDelegation.kt")
+        public void testClassDelegation() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/varnotnull/classDelegation.kt");
+        }
+
+        @Test
         @TestMetadata("doWhileWithBreak.kt")
         public void testDoWhileWithBreak() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/varnotnull/doWhileWithBreak.kt");

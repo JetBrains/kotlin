@@ -183,7 +183,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         }
 
         return when {
-            property.delegate != null -> PropertyStability.DELEGATED_PROPERTY
+            property.delegate != null || property.isDelegated -> PropertyStability.DELEGATED_PROPERTY
             property.isLocal -> if (property.isVal) PropertyStability.STABLE_VALUE else PropertyStability.LOCAL_VAR
             property.isVar -> PropertyStability.MUTABLE_PROPERTY
             property.receiverParameter != null -> PropertyStability.PROPERTY_WITH_GETTER
