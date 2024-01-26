@@ -34636,6 +34636,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("classDelegation.kt")
+                public void testClassDelegation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/varnotnull/classDelegation.kt");
+                }
+
+                @Test
                 @TestMetadata("doWhileWithBreak.kt")
                 public void testDoWhileWithBreak() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/varnotnull/doWhileWithBreak.kt");

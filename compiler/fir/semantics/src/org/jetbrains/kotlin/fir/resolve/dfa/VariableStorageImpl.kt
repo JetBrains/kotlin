@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -18,8 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -173,7 +170,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         val property = this.fir as? FirProperty ?: return PropertyStability.STABLE_VALUE
 
         return when {
-            property.delegate != null -> PropertyStability.DELEGATED_PROPERTY
+            property.delegate != null || property.isDelegated -> PropertyStability.DELEGATED_PROPERTY
             property.isLocal -> if (property.isVal) PropertyStability.STABLE_VALUE else PropertyStability.LOCAL_VAR
             property.isVar -> PropertyStability.MUTABLE_PROPERTY
             property.receiverParameter != null -> PropertyStability.PROPERTY_WITH_GETTER
