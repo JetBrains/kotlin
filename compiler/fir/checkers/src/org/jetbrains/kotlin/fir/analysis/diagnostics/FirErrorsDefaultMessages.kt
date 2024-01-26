@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.REQU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS_ON_NEWLINE_WITH_INDENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_CONTAINING_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.VARIABLE_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.WHEN_MISSING_CASES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABBREVIATED_NOTHING_PROPERTY_TYPE
@@ -1743,58 +1744,58 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             RETURN_TYPE_MISMATCH_ON_INHERITANCE,
-            "''{0}'' clashes with ''{1}'': return types are incompatible.",
-            DECLARATION_NAME,
-            DECLARATION_NAME
+            "{0} clashes with {1}: return types are incompatible.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL_WITH_CONTAINING_DECLARATION
         )
 
         map.put(
             PROPERTY_TYPE_MISMATCH_ON_INHERITANCE,
-            "''{0}'' clashes with ''{1}'': property types are incompatible.",
-            DECLARATION_NAME,
-            DECLARATION_NAME
+            "{0} clashes with {1}: property types are incompatible.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL_WITH_CONTAINING_DECLARATION
         )
 
         map.put(
             VAR_TYPE_MISMATCH_ON_INHERITANCE,
-            "''{0}'' clashes with ''{1}'': property types do not match.",
-            DECLARATION_NAME,
-            DECLARATION_NAME
+            "{0} clashes with {1}: property types do not match.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL_WITH_CONTAINING_DECLARATION
         )
 
         map.put(
             RETURN_TYPE_MISMATCH_BY_DELEGATION,
-            "''{0}'' clashes with ''{1}'' from delegation: return types are incompatible.",
-            DECLARATION_NAME,
-            DECLARATION_NAME
+            "{0} clashes with {1} from delegation: return types are incompatible.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL_WITH_CONTAINING_DECLARATION
         )
 
         map.put(
             PROPERTY_TYPE_MISMATCH_BY_DELEGATION,
-            "''{0}'' clashes with ''{1}'' from delegation: property types are incompatible.",
-            DECLARATION_NAME,
-            DECLARATION_NAME
+            "{0} clashes with {1} from delegation: property types are incompatible.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL_WITH_CONTAINING_DECLARATION
         )
 
         map.put(
             OVERRIDING_FINAL_MEMBER_BY_DELEGATION,
-            "''{0}'' implicitly overrides a final member ''{1}'' by delegation.",
-            DECLARATION_NAME,
-            DECLARATION_NAME
+            "{0} implicitly overrides a final member {1} by delegation.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL_WITH_CONTAINING_DECLARATION
         )
 
         map.put(
             VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION,
-            "''val'' property ''{0}'' implicitly overrides a ''var'' property ''{1}'' by delegation.",
-            DECLARATION_NAME,
-            DECLARATION_NAME
+            "''val'' property {0} implicitly overrides a ''var'' property {1} by delegation.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL_WITH_CONTAINING_DECLARATION
         )
 
         map.put(
             CONFLICTING_INHERITED_MEMBERS,
             "''{0}'' inherits conflicting members: {1}.",
             DECLARATION_NAME,
-            commaSeparated(DECLARATION_NAME)
+            commaSeparated(SYMBOL_WITH_CONTAINING_DECLARATION)
         )
 
         // Redeclarations

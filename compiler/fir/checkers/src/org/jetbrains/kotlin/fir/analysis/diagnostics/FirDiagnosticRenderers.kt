@@ -211,4 +211,8 @@ object FirDiagnosticRenderers {
     val FOR_OPTIONAL_OPERATOR = Renderer { it: String? ->
         if (!it.isNullOrBlank()) " for operator '$it'" else ""
     }
+
+    val SYMBOL_WITH_CONTAINING_DECLARATION = Renderer { symbol: FirCallableSymbol<*> ->
+        "'${SYMBOL.render(symbol)}' defined in ${NAME_OF_CONTAINING_DECLARATION_OR_FILE.render(symbol.callableId)}"
+    }
 }
