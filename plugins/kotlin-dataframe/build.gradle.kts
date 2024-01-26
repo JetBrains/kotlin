@@ -1,5 +1,3 @@
-import org.gradle.api.tasks.bundling.Jar
-
 plugins {
     id("java")
     kotlin("jvm")
@@ -40,17 +38,11 @@ dependencies {
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-script-runtime:$kotlinVersion")
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-annotations-jvm:$kotlinVersion")
 
-    constraints {
-        implementation(kotlin("compiler-embeddable", version = "1.8.0-dev-2843"))
-        testImplementation(kotlin("compiler-embeddable", version = "1.8.0-dev-2843"))
-        runtimeOnly(kotlin("compiler-embeddable", version = "1.8.0-dev-2843"))
-    }
     implementation(project(":core"))
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0-RC")
 
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-compiler-internal-test-framework:$kotlinVersion")
-    //testImplementation("junit:junit:4.12")
 
     testImplementation(platform("org.junit:junit-bom:5.8.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -101,7 +93,6 @@ tasks.compileTestKotlin {
 
 tasks.create<JavaExec>("generateTests") {
     classpath = sourceSets.test.get().runtimeClasspath
-//    mainClass.set("org.jetbrains.kotlinx.dataframe.GenerateTestsKt")
     mainClass.set("org.jetbrains.kotlin.fir.dataframe.GenerateTestsKt")
 }
 
