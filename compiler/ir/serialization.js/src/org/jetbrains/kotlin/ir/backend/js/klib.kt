@@ -370,7 +370,8 @@ private fun preparePsi2Ir(
     return psi2Ir.createGeneratorContext(
         analysisResult.moduleDescriptor,
         analysisResult.bindingContext,
-        symbolTable
+        symbolTable,
+        JsGeneratorExtensions()
     )
 }
 

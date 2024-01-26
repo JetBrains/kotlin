@@ -58,7 +58,6 @@ fun testExpressionBody(nullable: String?) =
 // test.kt:11 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:7 $box (9, 9, 9, 9, 4, 4)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8, 19, 26, 34, 8)
@@ -80,5 +79,5 @@ fun testExpressionBody(nullable: String?) =
 // String.kt:143 $kotlin.stringLiteral (15, 8)
 // test.kt:20 $testExpressionBody (4, 4)
 // test.kt:22 $testExpressionBody (12, 21, 31, 12, 32, 32)
-// test.kt:10 $box (23, 4, 4)
+// test.kt:10 $box (23, 4)
 // test.kt:11 $box

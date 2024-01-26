@@ -73,7 +73,7 @@ class WasmIrExpressionBuilder(
         val lastOperator = lastInstruction.operator
 
         // droppable instructions + drop/unreachable -> nothing
-        if ((op == WasmOp.DROP || op == WasmOp.UNREACHABLE) && lastOperator.pureStacklessInstruction()) {
+        if ((op == WasmOp.DROP || op == WasmOp.UNREACHABLE) && lastOperator.pureStacklessInstruction() && lastInstruction.location !is SourceLocation.Location) {
             trimInstructionsUntil(lastInstructionIndex)
             return
         }

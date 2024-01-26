@@ -63,7 +63,7 @@ class BodyGenerator(
     private fun generateAsStatement(statement: IrExpression) {
         generateExpression(statement)
         if (statement.type != wasmSymbols.voidType) {
-            body.buildDrop(statement.getSourceLocation())
+            body.buildDrop(SourceLocation.NoLocation("DROP"))
         }
     }
 

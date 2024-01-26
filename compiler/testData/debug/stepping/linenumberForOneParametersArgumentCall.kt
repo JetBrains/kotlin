@@ -29,7 +29,6 @@ inline fun lookAtMe(f: (String) -> Unit) {
 // test.kt:9 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:6 $box
 // test.kt:12 $box (12, 12, 12, 12, 4)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17)

@@ -43,7 +43,6 @@ fun box() {
 // test.kt:16 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:14 $box (8, 4)
 // test.kt:6 $foo (12, 12, 31, 31, 25)
 // test.kt:10 $foo (4, 4, 4, 4, 4, 4, 4, 4)
@@ -62,8 +61,8 @@ fun box() {
 // String.kt:149 $kotlin.stringLiteral (11, 4)
 // test.kt:11 $foo (1, 1)
 // test.kt:15 $box (8, 4)
-// Exceptions.kt:16 $kotlin.Exception.<init> (34, 34, 4, 4, 41)
-// Throwable.kt:23 $kotlin.Throwable.<init> (32, 38, 27, 27, 43)
+// Exceptions.kt:16 $kotlin.Exception.<init> (34, 4, 41)
+// Throwable.kt:23 $kotlin.Throwable.<init> (32, 38, 27, 43)
 // Throwable.kt:18 $kotlin.Throwable.<init> (28, 62)
 // Throwable.kt:25 $kotlin.Throwable.<init>
 // ExternalWrapper.kt:226 $kotlin.wasm.internal.jsCheckIsNullOrUndefinedAdapter (18, 8, 32, 33)

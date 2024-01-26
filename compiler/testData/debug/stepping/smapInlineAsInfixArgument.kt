@@ -48,7 +48,6 @@ fun fail() : String {
 // test.kt:12 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:7 $box (4, 4, 4)
 // test.kt:15 $box (11, 11, 11, 11, 4, 11, 11, 11, 11, 4)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17)
@@ -73,7 +72,7 @@ fun fail() : String {
 // String.kt:29 $kotlin.String.plus (15, 15, 15, 15, 22, 28, 33, 42, 48, 28, 62, 56, 15, 8, 15, 15, 15, 15, 22, 28, 33, 42, 48, 28, 62, 56, 15, 8)
 // String.kt:63 $kotlin.String.plus (12, 12)
 // String.kt:66 $kotlin.String.plus (15, 8, 15, 8)
-// test.kt:10 $box (4, 4, 4)
+// test.kt:10 $box (4, 4)
 // String.kt:143 $kotlin.stringLiteral (15, 8, 15, 8)
 // test.kt:11 $box
 // test.kt:12 $box

@@ -195,7 +195,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             classifierStorage.preCacheTypeParameters(constructor, symbol)
             irFactory.createConstructor(
                 startOffset = startOffset,
-                endOffset = endOffset,
+                endOffset = if (isPrimary) irParent.endOffset else endOffset,
                 origin = origin,
                 name = SpecialNames.INIT,
                 visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),

@@ -24,8 +24,12 @@ enum class LocationType {
     abstract fun getLineAndColumnNumberFor(irElement: IrElement, fileEntry: IrFileEntry): LineAndColumn
 }
 
+private val IrElement.hasSyntheticOrUndefinedLocation: Boolean
+    get() = startOffset < 0 && endOffset < 0
+
 fun IrElement.getSourceLocation(fileEntry: IrFileEntry?, type: LocationType = LocationType.START): SourceLocation {
     if (fileEntry == null) return SourceLocation.NoLocation("fileEntry is null")
+    if (hasSyntheticOrUndefinedLocation) return SourceLocation.NoLocation("Synthetic declaration")
 
     val path = fileEntry.name
     val (line, column) = type.getLineAndColumnNumberFor(this, fileEntry)

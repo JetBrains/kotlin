@@ -105,7 +105,6 @@ fun box() {
 // test.kt:30 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:27 $box (17, 17, 17, 17, 4)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8)
@@ -128,8 +127,7 @@ fun box() {
 // String.kt:63 $kotlin.String.hashCode (12, 12, 12)
 // String.kt:66 $kotlin.String.hashCode (15, 8, 15, 8, 15, 8)
 // String.kt:127 $kotlin.String.hashCode (19, 8, 19, 8, 19, 8)
-// String.kt:128 $kotlin.String.hashCode (8, 8, 8, 8, 8, 8)
-// Standard.kt:136 $kotlin.String.hashCode (18, 52, 61, 52, 66, 51, 51, 44, 18, 52, 61, 52, 66, 51, 51, 44, 52, 61, 52, 66, 51, 51, 44, 18, 52, 61, 52, 66, 51, 51, 44, 52, 61, 52, 66, 51, 51, 44, 52, 61, 52, 66, 51, 51, 44, 52, 61, 52, 66, 51, 51, 44)
+// String.kt:128 $kotlin.String.hashCode (8, 8, 8)
 // Standard.kt:152 $kotlin.String.hashCode (4, 4, 4)
 // Standard.kt:154 $kotlin.String.hashCode (18, 4, 26, 4, 18, 9, 18, 4, 26, 4, 4, 18, 4, 26, 4, 18, 9, 18, 4, 26, 4, 4, 18, 9, 18, 4, 26, 4, 4, 18, 4, 26, 4, 18, 9, 18, 4, 26, 4, 4, 18, 9, 18, 4, 26, 4, 4, 18, 9, 18, 4, 26, 4, 4, 18, 9, 18, 4, 26, 4, 4)
 // Standard.kt:155 $kotlin.String.hashCode (8, 15, 8, 15, 8, 15, 8, 15, 8, 15, 8, 15, 8, 15)
@@ -141,7 +139,6 @@ fun box() {
 // String.kt:143 $kotlin.stringLiteral (15, 8, 15, 8, 15, 8, 15, 8, 15, 8, 15, 8)
 // String.kt:98 $kotlin.String.equals (12, 12, 12, 12, 12, 12)
 // String.kt:99 $kotlin.String.equals (12, 35, 28, 12, 35, 28, 12, 35, 28, 12, 35, 28, 12, 35, 28, 12, 35, 28)
-// test.kt:1 $stringSwitch (0, 0, 0, 0, 0, 0)
 // test.kt:5 $stringSwitch (4, 4, 4)
 // test.kt:11 $stringSwitch (19, 4, 19, 4, 19, 4)
 // test.kt:12 $stringSwitch (8, 15, 8, 8)

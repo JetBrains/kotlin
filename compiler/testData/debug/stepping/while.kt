@@ -39,7 +39,6 @@ fun box() {
 // test.kt:14 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:5 $box (12, 4)
 // test.kt:6 $box (13, 11, 13, 17, 11, 11, 11, 13, 11, 13, 17, 11, 11, 11)
 // Primitives.kt:1159 $kotlin.Int__dec-impl (15, 8, 16, 15, 8, 16, 15, 8, 16, 15, 8, 16)

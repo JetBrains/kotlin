@@ -85,7 +85,6 @@ fun box() {
 // test.kt:34 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:31 $box (17, 17)
 // test.kt:18 $MyInterfaceImplWithBreakpoints.<init>
 // test.kt:21 $MyInterfaceImplWithBreakpoints.<init>

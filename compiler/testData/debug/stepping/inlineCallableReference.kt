@@ -43,9 +43,8 @@ inline fun f(block: () -> Unit) {
 // test.kt:13 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:4 $box (12, 4)
-// test.kt:5 $box (4, 4)
+// test.kt:5 $box
 // test.kt:16 $box (4, 4)
 // test.kt:6 $box (12, 8)
 // test.kt:9 $box

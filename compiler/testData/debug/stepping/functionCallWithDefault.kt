@@ -29,7 +29,6 @@ inline fun bar(i: Int = 1) {
 // test.kt:7 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:5 $box (4, 4, 4, 4)
 // test.kt:9 $foo$default (0, 17, 17, 17, 17, 0)
 // test.kt:10 $foo
