@@ -22520,6 +22520,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("charAtAndOverloadWithoutExplicitOverride.kt")
+                public void testCharAtAndOverloadWithoutExplicitOverride() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/charAtAndOverloadWithoutExplicitOverride.kt");
+                }
+
+                @Test
                 @TestMetadata("charBuffer.kt")
                 public void testCharBuffer() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/charBuffer.kt");
@@ -22553,6 +22559,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 @TestMetadata("containsAndOverload.kt")
                 public void testContainsAndOverload() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/containsAndOverload.kt");
+                }
+
+                @Test
+                @TestMetadata("containsAndOverloadWithoutExplicitOverride.kt")
+                public void testContainsAndOverloadWithoutExplicitOverride() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/containsAndOverloadWithoutExplicitOverride.kt");
                 }
 
                 @Test
