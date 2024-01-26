@@ -8,6 +8,6 @@ import org.jetbrains.kotlinx.dataframe.io.*
 
 fun box(): String {
     val df = DataFrame.readJsonDefault("https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains.json")
-    df.name
+    df.name.print()
     return "OK"
 }

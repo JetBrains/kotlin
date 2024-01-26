@@ -62,6 +62,7 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    jvmArgs("-Xmx2G")
     doFirst {
         setLibraryProperty("org.jetbrains.kotlin.test.kotlin-stdlib", "kotlin-stdlib")
         setLibraryProperty("org.jetbrains.kotlin.test.kotlin-stdlib-jdk8", "kotlin-stdlib-jdk8")
