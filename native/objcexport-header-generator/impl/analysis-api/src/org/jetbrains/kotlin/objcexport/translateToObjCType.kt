@@ -4,6 +4,8 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
@@ -79,9 +81,9 @@ private fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReference
     }
 
     /* Check if inline type represents 'regular' inline class */
+    val classSymbol: KtClassOrObjectSymbol? = if (classId != null) getClassOrObjectSymbolByClassId(classId) else null
     run check@{
         if (classId == null) return@check
-        val classSymbol = getClassOrObjectSymbolByClassId(classId) ?: return@check
         if (classSymbol !is KtNamedClassOrObjectSymbol) return@check
         if (classSymbol.isInline) return ObjCIdType
     }
@@ -112,15 +114,30 @@ private fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReference
     }
 
     if (fullyExpandedType is KtNonErrorClassType) {
-        val typeName = typesMap[classId]
-            ?: fullyExpandedType.classId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
+        typesMap[classId]?.let { typeName ->
+            val typeArguments = translateToObjCTypeArguments()
+            return ObjCClassType(typeName, typeArguments, classId = null) // todo: not clear for reader why null is important here!
+        }
 
+        val typeName = fullyExpandedType.classId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
         val typeArguments = translateToObjCTypeArguments()
-        return ObjCClassType(typeName, typeArguments)
+
+        // TODO NOW: create type translation test
+        if (classSymbol?.classKind == KtClassKind.INTERFACE) {
+            return ObjCProtocolType(typeName, classId)
+        }
+
+        return ObjCClassType(typeName, typeArguments, classId)
     }
 
     if (fullyExpandedType is KtTypeParameterType) {
-        if (fullyExpandedType.symbol.getContainingSymbol() is KtCallableSymbol) {
+        val definingSymbol = fullyExpandedType.symbol.getContainingSymbol()
+
+        if (definingSymbol is KtCallableSymbol) {
+            return ObjCIdType
+        }
+
+        if (definingSymbol is KtClassOrObjectSymbol && definingSymbol.classKind == KtClassKind.INTERFACE) {
             return ObjCIdType
         }
         /*

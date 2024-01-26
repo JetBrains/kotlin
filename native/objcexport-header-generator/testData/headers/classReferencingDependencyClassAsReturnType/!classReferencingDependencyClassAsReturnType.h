@@ -6,6 +6,10 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
+@class IntIterator;
+
+@protocol Iterator;
+
 NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-warning-option"
@@ -19,37 +23,23 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 __attribute__((objc_subclassing_restricted))
-@interface A : Base
+@interface Foo : Base
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (IntIterator *)foo __attribute__((swift_name("foo()")));
 @end
 
-__attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("A.A1")))
-@interface AA1 : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
-+ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@protocol Iterator
+@required
+- (BOOL)hasNext __attribute__((swift_name("hasNext()")));
+- (id _Nullable)next __attribute__((swift_name("next()")));
 @end
 
-__attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("A.A1B1")))
-@interface AA1B1 : Base
+@interface IntIterator : Base <Iterator>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-@end
-
-__attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("A.A2")))
-@interface AA2 : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
-+ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-@end
-
-__attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("A.A2B2")))
-@interface AA2B2 : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
-+ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (Int *)next __attribute__((swift_name("next()")));
+- (int32_t)nextInt __attribute__((swift_name("nextInt()")));
 @end
 
 #pragma pop_macro("_Nullable_result")

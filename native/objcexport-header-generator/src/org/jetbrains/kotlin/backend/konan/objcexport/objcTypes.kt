@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
 sealed class ObjCType {
@@ -25,7 +26,10 @@ data class ObjCRawType(
     override fun render(attrsAndName: String): String = rawText.withAttrsAndName(attrsAndName)
 }
 
-sealed class ObjCReferenceType : ObjCType()
+sealed class ObjCReferenceType : ObjCType() {
+    @InternalKotlinNativeApi
+    open val classId: ClassId? = null
+}
 
 sealed class ObjCNonNullReferenceType : ObjCReferenceType()
 
@@ -33,6 +37,9 @@ data class ObjCNullableReferenceType(
     val nonNullType: ObjCNonNullReferenceType,
     val isNullableResult: Boolean = false,
 ) : ObjCReferenceType() {
+
+    override val classId: ClassId? get() = nonNullType.classId
+
     override fun render(attrsAndName: String): String {
         val attribute = if (isNullableResult) objcNullableResultAttribute else objcNullableAttribute
         return nonNullType.render(" $attribute".withAttrsAndName(attrsAndName))
@@ -42,7 +49,9 @@ data class ObjCNullableReferenceType(
 data class ObjCClassType(
     val className: String,
     val typeArguments: List<ObjCNonNullReferenceType> = emptyList(),
+    override val classId: ClassId? = null,
 ) : ObjCNonNullReferenceType() {
+
 
     override fun render(attrsAndName: String) = buildString {
         append(className)
@@ -66,11 +75,12 @@ sealed class ObjCGenericTypeUsage : ObjCNonNullReferenceType() {
 data class ObjCGenericTypeRawUsage(override val typeName: String) : ObjCGenericTypeUsage()
 
 data class ObjCGenericTypeParameterUsage(
-    override val typeName: String
+    override val typeName: String,
 ) : ObjCGenericTypeUsage()
 
 data class ObjCProtocolType(
     val protocolName: String,
+    override val classId: ClassId? = null,
 ) : ObjCNonNullReferenceType() {
     override fun render(attrsAndName: String) = "id<$protocolName>".withAttrsAndName(attrsAndName)
 }
@@ -87,7 +97,6 @@ data class ObjCBlockPointerType(
     val returnType: ObjCType,
     val parameterTypes: List<ObjCReferenceType>,
 ) : ObjCNonNullReferenceType() {
-
     override fun render(attrsAndName: String) = returnType.render(buildString {
         append("(^")
         append(attrsAndName)
@@ -199,7 +208,7 @@ data class ObjCGenericTypeRawDeclaration(
 
 data class ObjCGenericTypeParameterDeclaration(
     override val typeName: String,
-    override val variance: ObjCVariance
+    override val variance: ObjCVariance,
 ) : ObjCGenericTypeDeclaration()
 
 @InternalKotlinNativeApi

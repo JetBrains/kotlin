@@ -1,94 +1,136 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind.*
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.*
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.errorForwardClass
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.errorInterface
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.hasErrorTypes
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
 import org.jetbrains.kotlin.psi.KtFile
-
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
-    val declarations = files
-        .sortedWith(StableFileOrder)
-        .flatMap { file -> file.getFileSymbol().translateToObjCExportStubs() }
-        .toMutableList()
+    val stubs = mutableListOf<ObjCExportStub>()
+    val protocolForwardDeclarations = mutableSetOf<String>()
+    val classForwardDeclarations = mutableSetOf<ObjCClassForwardDeclaration>()
 
-    val classForwardDeclarations = getClassForwardDeclarations(declarations).toMutableSet()
-    val protocolForwardDeclarations = getProtocolForwardDeclarations(declarations)
+    val symbolTranslationQueue = mutableListOf<KtSymbol>()
+    val translatedClassifiers = mutableMapOf<ClassId, ObjCClass>()
 
-    if (declarations.hasErrorTypes()) {
-        declarations.add(errorInterface)
+    fun process(
+        symbol: KtSymbol,
+        forwardProtocolsAndClasses: Boolean = false,
+    ): List<ObjCExportStub> {
+        val result = mutableListOf<ObjCExportStub>()
+        when (symbol) {
+            /* In this case: Go and translate all classes/objects/interfaces inside the file as well */
+            is KtFileSymbol -> {
+                val translatedTopLevelFileFacade = symbol.translateToObjCTopLevelInterfaceFileFacade()
+                result.addIfNotNull(translatedTopLevelFileFacade)
+
+                symbolTranslationQueue.addAll(
+                    symbol.getAllClassOrObjectSymbols().sortedWith(StableClassifierOrder)
+                )
+            }
+
+            /* Translate the Class/Interface, but ensure that all supertypes will be translated also */
+            is KtClassOrObjectSymbol -> {
+                val classId = symbol.classIdIfNonLocal ?: return result
+
+                /* Add the classId to already processed classIds and do not redo if already processed */
+                val stub = translatedClassifiers.getOrPut(classId) {
+
+                    val translatedObjCClassOrProtocol = when (symbol.classKind) {
+                        KtClassKind.INTERFACE -> symbol.translateToObjCProtocol()
+                        KtClassKind.CLASS -> symbol.translateToObjCClass()
+                        KtClassKind.OBJECT -> symbol.translateToObjCObject()
+                        else -> return result
+                    } ?: return result
+
+                    symbol.getDeclaredSuperInterfaceSymbols().forEach { superInterfaceSymbol ->
+                        result.addAll(process(superInterfaceSymbol))
+                    }
+
+                    result.add(translatedObjCClassOrProtocol)
+                    translatedObjCClassOrProtocol
+                }
+
+                if (forwardProtocolsAndClasses) {
+                    when (stub) {
+                        is ObjCInterface -> classForwardDeclarations.add(ObjCClassForwardDeclaration(stub.name, stub.generics))
+                        is ObjCProtocol -> protocolForwardDeclarations.add(stub.name)
+                    }
+                }
+            }
+        }
+        return result
+    }
+
+    fun processDeclaredSymbols(symbols: List<KtSymbol>): List<ObjCExportStub> {
+        val result = mutableListOf<ObjCExportStub>()
+        symbolTranslationQueue.addAll(symbols)
+        while (true) {
+            val next = symbolTranslationQueue.removeFirstOrNull() ?: break
+            result.addAll(process(next))
+        }
+        return result
+    }
+
+    fun processDependencySymbols(stubs: List<ObjCExportStub>): List<ObjCExportStub> {
+        val dependencyClassSymbols = stubs.closureSequence()
+            .mapNotNull { stub ->
+                when (stub) {
+                    is ObjCMethod -> stub.returnType
+                    is ObjCParameter -> stub.type
+                    is ObjCProperty -> stub.type
+                    is ObjCTopLevel -> null
+                }
+            }
+            .flatMap { type ->
+                if (type is ObjCClassType) type.typeArguments + type
+                else listOf(type)
+            }
+            .mapNotNull { if (it is ObjCReferenceType) it.classId else null }
+            .mapNotNull { classId -> getClassOrObjectSymbolByClassId(classId) }
+            .toList()
+
+        symbolTranslationQueue.addAll(dependencyClassSymbols)
+
+        val result = dependencyClassSymbols.flatMap { symbol ->
+            process(symbol, forwardProtocolsAndClasses = true)
+        }
+
+        return if (result.isNotEmpty()) result + processDependencySymbols(result)
+        else result
+    }
+
+    val fileSymbols = files.sortedWith(StableFileOrder).map { it.getFileSymbol() }
+    val declaredStubs = processDeclaredSymbols(fileSymbols)
+    val dependencyStubs = processDependencySymbols(declaredStubs)
+
+    stubs.addAll(declaredStubs + dependencyStubs)
+
+    if (stubs.hasErrorTypes()) {
+        stubs.add(errorInterface)
         classForwardDeclarations.add(errorForwardClass)
     }
 
+    protocolForwardDeclarations += stubs
+        .filterIsInstance<ObjCClass>()
+        .flatMap { it.superProtocols }
+
     return ObjCHeader(
-        stubs = declarations,
+        stubs = stubs,
         classForwardDeclarations = classForwardDeclarations,
         protocolForwardDeclarations = protocolForwardDeclarations,
-        additionalImports = emptyList(),
+        additionalImports = emptyList()
     )
-}
-
-/**
- * Class which have static property must have forward declaration
- *
- * ```
- * @class Foo;
- *
- * @interface Foo
- * @property (class) Foo
- * @end
- * ```
- */
-private fun getClassForwardDeclarations(declarations: List<ObjCExportStub>): Set<ObjCClassForwardDeclaration> {
-    return declarations
-        .filterIsInstance<ObjCClass>()
-        .filter { clazz ->
-            clazz.members
-                .filterIsInstance<ObjCProperty>()
-                .any { property ->
-                    val className = (property.type as? ObjCClassType)?.className == clazz.name
-                    val static = property.propertyAttributes.contains("class")
-                    className && static
-                }
-        }.map { clazz ->
-            ObjCClassForwardDeclaration(clazz.name)
-        }.toSet()
-}
-
-private fun getProtocolForwardDeclarations(declarations: List<ObjCExportStub>) = declarations
-    .filterIsInstance<ObjCClass>()
-    .flatMap { it.superProtocols }
-    .toSet()
-
-
-context(KtAnalysisSession, KtObjCExportSession)
-fun KtFileSymbol.translateToObjCExportStubs(): List<ObjCExportStub> {
-    return listOfNotNull(translateToObjCTopLevelInterfaceFileFacade()) + getFileScope().getClassifierSymbols()
-        .sortedWith(StableClassifierOrder)
-        .flatMap { classifierSymbol -> classifierSymbol.translateToObjCExportStubs() }
-}
-
-
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtSymbol.translateToObjCExportStubs(): List<ObjCExportStub> {
-    return when {
-        this is KtFileSymbol -> translateToObjCExportStubs()
-        this is KtClassOrObjectSymbol && classKind == INTERFACE -> listOfNotNull(translateToObjCProtocol())
-        this is KtClassOrObjectSymbol && classKind == CLASS -> listOfNotNull(translateToObjCClass())
-        this is KtClassOrObjectSymbol && classKind == OBJECT -> listOfNotNull(translateToObjCObject())
-        this is KtConstructorSymbol -> translateToObjCConstructors()
-        this is KtPropertySymbol -> listOfNotNull(translateToObjCProperty())
-        this is KtFunctionSymbol -> listOfNotNull(translateToObjCMethod())
-        else -> emptyList()
-    }
 }

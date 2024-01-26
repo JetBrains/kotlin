@@ -70,6 +70,9 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("sameClassNameInDifferentPackage"))
     }
 
+    /**
+     * Naming of nested classes: KT-65633
+     */
     @Test
     @TodoAnalysisApi
     fun `test - nestedClass`() {
@@ -83,7 +86,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi // Early translate of forward declarations
     fun `test - classImplementingInterface`() {
         doTest(headersTestDataDir.resolve("classImplementingInterface"))
     }
@@ -178,7 +180,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi // Early translate of forward declarations
     fun `test - classWithUnresolvedSuperTypeGenerics`() {
         doTest(headersTestDataDir.resolve("classWithUnresolvedSuperTypeGenerics"))
     }
@@ -196,6 +197,40 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @Test
     fun `test - manyClassesAndInterfaces`() {
         doTest(headersTestDataDir.resolve("manyClassesAndInterfaces"))
+    }
+
+    @Test
+    fun `test - classReferencingOtherClassAsReturnType`() {
+        doTest(headersTestDataDir.resolve("classReferencingOtherClassAsReturnType"))
+    }
+
+    /**
+     * - IntIterator has unwanted 'hasNext' exposed
+     * - IntIterator's next method returns int32_t instead of expected Int *
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - classReferencingDependencyClassAsReturnType`() {
+        doTest(headersTestDataDir.resolve("classReferencingDependencyClassAsReturnType"))
+    }
+
+    @Test
+    fun `test - interfaceReferencingOtherInterfaceAsReturnType`() {
+        doTest(headersTestDataDir.resolve("interfaceReferencingOtherInterfaceAsReturnType"))
+    }
+
+    @Test
+    fun `test - interfaceImplementingInterfaceOrder`() {
+        doTest(headersTestDataDir.resolve("interfaceImplementingInterfaceOrder"))
+    }
+
+    /**
+     * Extension functions aren't supported KT-65630
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - extensionFunctions`() {
+        doTest(headersTestDataDir.resolve("extensionFunctions"))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
