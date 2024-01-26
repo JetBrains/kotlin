@@ -35,16 +35,6 @@ internal object TestRunners {
 
     private val executorCache: ConcurrentHashMap<KonanTarget, Executor> = ConcurrentHashMap()
 
-    // Currently, only local test name extractor is supported.
-    fun extractTestNames(executable: TestExecutable, settings: Settings): Collection<TestName> = with(settings) {
-        with(get<KotlinNativeTargets>()) {
-            if (testTarget == hostTarget)
-                LocalTestNameExtractor(executable, TestRunChecks.Default(get<Timeouts>().executionTimeout)).run()
-            else
-                runningOnUnsupportedTarget()
-        }
-    }
-
     private fun KotlinNativeTargets.runningOnUnsupportedTarget(): Nothing = fail {
         "Running tests for $testTarget on $hostTarget is not supported yet."
     }
