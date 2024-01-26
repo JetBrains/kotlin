@@ -57,8 +57,11 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
         val builder = context.createIrBuilder(newIrFunction.symbol)
         log { "$originalDeclaration -> $newIrFunction" }
 
+        val startOffset= originalDeclaration.valueParameters.first().startOffset
+        val endOffset = originalDeclaration.valueParameters.last().endOffset
+
         return context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-            statements += builder.irBlockBody(newIrFunction) {
+            statements += builder.irBlockBody(startOffset, endOffset) {
                 val params = mutableListOf<IrValueDeclaration>()
                 val variables = mutableMapOf<IrValueSymbol, IrValueSymbol>()
 

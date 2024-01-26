@@ -26,6 +26,12 @@ public class FirPsiSteppingTestGenerated extends AbstractFirPsiSteppingTest {
     }
 
     @Test
+    @TestMetadata("annotationOnDefaultArgumentsFunction.kt")
+    public void testAnnotationOnDefaultArgumentsFunction() throws Exception {
+        runTest("compiler/testData/debug/stepping/annotationOnDefaultArgumentsFunction.kt");
+    }
+
+    @Test
     @TestMetadata("anonymousFunction.kt")
     public void testAnonymousFunction() throws Exception {
         runTest("compiler/testData/debug/stepping/anonymousFunction.kt");
