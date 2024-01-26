@@ -39,7 +39,9 @@ private class SealedClassInheritorsProviderForTests(
             else -> ktModule
         }
 
-        val inheritorsForModuleMap = inheritorsByModule.getValue(relevantModule)
+        // the module might be absent in the map if it doesn't have any .kt-files whatsoever, in which case
+        // there's definitely no sealed inheritors
+        val inheritorsForModuleMap = inheritorsByModule[relevantModule] ?: return emptyList()
         return inheritorsForModuleMap[firClass.classId] ?: firClass.sealedInheritorsAttr?.value ?: emptyList()
     }
 }
