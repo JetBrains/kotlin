@@ -184,6 +184,8 @@ void gc::ParallelMarkConcurrentSweep::PerformFullGC(int64_t epoch) noexcept {
     allocator_.prepareForGC();
 
 #ifndef CUSTOM_ALLOCATOR
+    allocator_.impl().dumpHeap();
+
     // Taking the locks before the pause is completed. So that any destroying thread
     // would not publish into the global state at an unexpected time.
     std::optional objectFactoryIterable = allocator_.impl().objectFactory().LockForIter();

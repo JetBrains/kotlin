@@ -16,6 +16,8 @@
 #include "ObjectFactorySweep.hpp"
 #include "Logging.hpp"
 
+#include "HeapDumper.hpp"
+
 namespace kotlin::alloc {
 
 struct ObjectFactoryTraits {
@@ -43,6 +45,8 @@ public:
 
     ObjectFactoryImpl& objectFactory() noexcept { return objectFactory_; }
     ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
+
+    void dumpHeap() noexcept;
 
 private:
     ObjectFactoryImpl objectFactory_;

@@ -6,6 +6,7 @@
 #include "AllocatorImpl.hpp"
 
 #include "ThreadData.hpp"
+#include "ObjectTraversal.hpp"
 
 using namespace kotlin;
 
@@ -72,3 +73,19 @@ void alloc::destroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     threadData->allocator().impl().extraObjectDataFactoryThreadQueue().DestroyExtraObjectData(extraObject);
 }
+
+void alloc::Allocator::Impl::dumpHeap() noexcept {
+    graphviz::LogPrinter<kTagGC, logging::Level::kDebug> printer;
+    HeapDump heapDump(printer);
+
+    for (auto node : objectFactory_.LockForIter()) {
+        auto obj = node.GetObjHeader();
+
+        heapDump.object(obj);
+
+        traverseReferredObjects(obj, [&] (ObjHeader* referred){
+            heapDump.reference(obj, referred);
+        });
+    }
+}
+
