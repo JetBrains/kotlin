@@ -76,6 +76,7 @@ dependencies {
     }
     commonCompileOnly(project(":kotlin-tooling-metadata"))
     commonCompileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
+    commonCompileOnly(project(":native:swift:sir-runner"))
     commonCompileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all")) { isTransitive = false }
 
     commonImplementation(project(":kotlin-gradle-plugin-idea"))
@@ -91,6 +92,7 @@ dependencies {
     }
     commonRuntimeOnly(project(":kotlin-util-klib"))
     commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
+    commonRuntimeOnly(project(":native:swift:sir-runner-embeddable"))
 
     embedded(project(":kotlin-gradle-build-metrics"))
     embedded(project(":kotlin-gradle-statistics"))
