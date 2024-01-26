@@ -758,8 +758,8 @@ private val jsClassUsageInReflectionPhase = makeBodyLoweringPhase(
 )
 
 private val classReferenceLoweringPhase = makeBodyLoweringPhase(
-    ::ClassReferenceLowering,
-    name = "ClassReferenceLowering",
+    ::JsClassReferenceLowering,
+    name = "JsClassReferenceLowering",
     description = "Handle class references",
     prerequisite = setOf(jsClassUsageInReflectionPhase)
 )

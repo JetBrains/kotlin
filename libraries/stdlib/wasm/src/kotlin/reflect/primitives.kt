@@ -7,7 +7,6 @@ package kotlin.wasm.internal
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.wasm.internal.*
 
 internal object PrimitiveClasses {
 

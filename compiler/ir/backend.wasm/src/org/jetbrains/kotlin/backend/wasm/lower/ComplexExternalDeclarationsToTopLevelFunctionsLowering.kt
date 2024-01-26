@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
-import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCallConstructor
@@ -28,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -96,8 +94,10 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         if (klass.kind == ClassKind.OBJECT)
             generateExternalObjectInstanceGetter(klass)
 
-        if (klass.kind != ClassKind.INTERFACE)
+        if (klass.kind != ClassKind.INTERFACE) {
             generateInstanceCheckForExternalClass(klass)
+            generateGetClassForExternalClass(klass)
+        }
     }
 
     fun processExternalProperty(property: IrProperty) {
@@ -372,6 +372,18 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         ).also {
             it.addValueParameter("x", context.irBuiltIns.anyType)
         }
+    }
+
+    fun generateGetClassForExternalClass(klass: IrClass) {
+        context.mapping.wasmGetJsClass[klass] = createExternalJsFunction(
+            klass.name,
+            "_\$external_class_get",
+            resultType = context.wasmSymbols.jsRelatedSymbols.jsAnyType.makeNullable(),
+            jsCode = buildString {
+                append("() => ")
+                appendExternalClassReference(klass)
+            }
+        )
     }
 
     private fun createExternalJsFunction(

@@ -60,6 +60,7 @@ class AssociatedObjectsLowering(val context: WasmBackendContext) : FileLoweringP
             for (klassAnnotation in declaration.annotations) {
                 val annotationClass = klassAnnotation.symbol.owner.parentClassOrNull ?: continue
                 if (klassAnnotation.valueArgumentsCount != 1) continue
+                if (declaration.isEffectivelyExternal()) continue
                 val associatedObject = klassAnnotation.associatedObject() ?: continue
 
                 val builder = cachedBuilder ?: context.createIrBuilder(context.wasmSymbols.initAssociatedObjects)
@@ -104,7 +105,7 @@ private fun IrBuilderWithScope.createAssociatedObjectAdd(
         )
         addCall.putValueArgument(
             3,
-            irGetObjectValue(irBuiltIns.anyType, associatedObject)
+            irGetObjectValue(associatedObject.defaultType, associatedObject)
         )
     }
 }

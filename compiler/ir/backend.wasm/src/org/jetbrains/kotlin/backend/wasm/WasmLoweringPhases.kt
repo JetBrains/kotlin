@@ -489,8 +489,8 @@ private val staticMembersLoweringPhase = makeWasmModulePhase(
 )
 
 private val classReferenceLoweringPhase = makeWasmModulePhase(
-    ::ClassReferenceLowering,
-    name = "ClassReferenceLowering",
+    ::WasmClassReferenceLowering,
+    name = "WasmClassReferenceLowering",
     description = "Handle class references"
 )
 
@@ -681,6 +681,8 @@ val wasmPhases = SameTypeNamedCompilerPhase(
 
             wasmStringSwitchOptimizerLowering then
 
+            associatedObjectsLowering then
+
             complexExternalDeclarationsToTopLevelFunctionsLowering then
             complexExternalDeclarationsUsagesLowering then
 
@@ -726,8 +728,6 @@ val wasmPhases = SameTypeNamedCompilerPhase(
             expressionBodyTransformer then
             eraseVirtualDispatchReceiverParametersTypes then
             bridgesConstructionPhase then
-
-            associatedObjectsLowering then
 
             objectDeclarationLoweringPhase then
             genericReturnTypeLowering then

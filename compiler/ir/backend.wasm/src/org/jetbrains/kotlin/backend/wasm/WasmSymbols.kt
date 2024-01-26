@@ -52,10 +52,9 @@ class WasmSymbols(
 
     internal inner class WasmReflectionSymbols : ReflectionSymbols {
         override val createKType: IrSimpleFunctionSymbol = getInternalFunction("createKType")
-        override val getClassData: IrSimpleFunctionSymbol = getInternalFunction("wasmGetTypeInfoData")
         override val getKClass: IrSimpleFunctionSymbol = getInternalFunction("getKClass")
         override val getKClassFromExpression: IrSimpleFunctionSymbol = getInternalFunction("getKClassFromExpression")
-        override val createDynamicKType: IrSimpleFunctionSymbol get() = error("Dynamic type is not supported by WASM")
+        override val createDynamicKType: IrSimpleFunctionSymbol get() = error("Dynamic type is not supported by Wasm")
         override val createKTypeParameter: IrSimpleFunctionSymbol = getInternalFunction("createKTypeParameter")
         override val getStarKTypeProjection = getInternalFunction("getStarKTypeProjection")
         override val createCovariantKTypeProjection = getInternalFunction("createCovariantKTypeProjection")
@@ -67,6 +66,7 @@ class WasmSymbols(
 
         val getTypeInfoTypeDataByPtr: IrSimpleFunctionSymbol = getInternalFunction("getTypeInfoTypeDataByPtr")
         val wasmTypeInfoData: IrClassSymbol = getInternalClass("TypeInfoData")
+        val kClassImpl: IrClassSymbol = getInternalClass("KClassImpl")
     }
 
     internal val reflectionSymbols: WasmReflectionSymbols = WasmReflectionSymbols()
@@ -359,6 +359,8 @@ class WasmSymbols(
 
         internal val throwAsJsException: IrSimpleFunctionSymbol =
             getInternalFunction("throwAsJsException")
+
+        val kExternalClassImpl: IrClassSymbol = getInternalClass("KExternalClassImpl")
     }
 
     private val wasmExportClass = getIrClass(FqName("kotlin.wasm.WasmExport"))
