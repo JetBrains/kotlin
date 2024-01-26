@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.diagnostics.hasVar
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.analysis.checkers.canBeEvaluatedAtCompileTime
+import org.jetbrains.kotlin.fir.resolve.diagnostics.canBeEvaluatedAtCompileTime
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.getTargetAnnotation

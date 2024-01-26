@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.checkers
+package org.jetbrains.kotlin.fir.resolve.diagnostics
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -39,7 +39,7 @@ fun canBeEvaluatedAtCompileTime(expression: FirExpression?, session: FirSession)
     return checkConstantArguments(expression, session) == ConstantArgumentKind.VALID_CONST
 }
 
-internal fun checkConstantArguments(
+fun checkConstantArguments(
     expression: FirExpression?,
     session: FirSession,
 ): ConstantArgumentKind {
@@ -47,7 +47,7 @@ internal fun checkConstantArguments(
     return expression.accept(FirConstCheckVisitor(session), null)
 }
 
-internal enum class ConstantArgumentKind {
+enum class ConstantArgumentKind {
     VALID_CONST,
     NOT_CONST,
     ENUM_NOT_CONST,
@@ -272,7 +272,7 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
 
         for (exp in functionCall.arguments.plus(functionCall.dispatchReceiver).plus(functionCall.extensionReceiver)) {
             if (exp == null) continue
-            val expClassId = exp.getExpandedType().lowerBoundIfFlexible().fullyExpandedClassId(session)
+            val expClassId = exp.getExpandedType().lowerBoundIfFlexible().fullyExpandedType(session).classId
             // TODO, KT-59823: add annotation for allowed constant types
             if (expClassId !in StandardClassIds.constantAllowedTypes) {
                 return ConstantArgumentKind.NOT_CONST
@@ -350,7 +350,7 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
 
     private fun FirPropertySymbol.isCompileTimeBuiltinProperty(): Boolean {
         val receiverType = dispatchReceiverType ?: receiverParameter?.typeRef?.coneTypeSafe<ConeKotlinType>() ?: return false
-        val receiverClassId = receiverType.fullyExpandedClassId(session) ?: return false
+        val receiverClassId = receiverType.fullyExpandedType(session).classId ?: return false
         return when (name.asString()) {
             "length" -> receiverClassId == StandardClassIds.String
             "code" -> receiverClassId == StandardClassIds.Char
