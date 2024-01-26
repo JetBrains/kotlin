@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisAp
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCaclulatorPreAnalysisHandler
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCalculatorPreAnalysisHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibrarySourceModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
@@ -37,8 +37,8 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
         builder.apply {
             useAdditionalService<KtModuleFactory> { KtLibrarySourceModuleFactory }
             useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
-            useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
-            usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
+            useDirectives(SealedClassesInheritorsCalculatorPreAnalysisHandler.Directives)
+            usePreAnalysisHandlers(::SealedClassesInheritorsCalculatorPreAnalysisHandler)
             useConfigurators(
                 ::AnalysisApiJvmEnvironmentConfigurator,
                 ::JsEnvironmentConfigurator,

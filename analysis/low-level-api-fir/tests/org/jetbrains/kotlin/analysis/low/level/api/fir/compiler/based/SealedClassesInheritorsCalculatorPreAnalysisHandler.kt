@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 
-class SealedClassesInheritorsCaclulatorPreAnalysisHandler(
+class SealedClassesInheritorsCalculatorPreAnalysisHandler(
     testServices: TestServices,
 ) : PreAnalysisHandler(testServices) {
 

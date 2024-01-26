@@ -51,8 +51,8 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
         configureTest()
         defaultConfiguration(this)
         registerAnalysisApiBaseTestServices(disposable, FirLowLevelCompilerBasedTestConfigurator)
-        useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
-        usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
+        useDirectives(SealedClassesInheritorsCalculatorPreAnalysisHandler.Directives)
+        usePreAnalysisHandlers(::SealedClassesInheritorsCalculatorPreAnalysisHandler)
         useAdditionalServices(service<FirDiagnosticCollectorService>(::AnalysisApiFirDiagnosticCollectorService))
 
         firHandlersStep {
