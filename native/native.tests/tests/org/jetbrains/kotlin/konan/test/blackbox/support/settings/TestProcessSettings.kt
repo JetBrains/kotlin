@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.MutedOption
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.LocalTestRunner
+import org.jetbrains.kotlin.konan.test.blackbox.support.runner.RunnerWithExecutor
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.NoopTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.Runner
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -106,7 +106,7 @@ internal value class CustomKlibs(val klibs: Set<File>) {
 /**
  * Whether tests should be compiled only (true) or compiled and executed (false, the default).
  *
- * TODO: need to reconsider this setting when other [Runner]s than [LocalTestRunner] and [NoopTestRunner] are supported
+ * TODO: need to reconsider this setting when other [Runner]s than [RunnerWithExecutor] and [NoopTestRunner] are supported
  */
 @JvmInline
 internal value class ForcedNoopTestRunner(val value: Boolean)

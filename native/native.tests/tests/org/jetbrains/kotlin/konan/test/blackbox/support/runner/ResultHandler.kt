@@ -7,51 +7,8 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestReport
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.junit.jupiter.api.Assumptions.assumeFalse
-
-internal class LocalTestRunner(private val testRun: TestRun) : AbstractLocalProcessRunner<Unit>(testRun.checks) {
-    override val visibleProcessName get() = "Tested process"
-    override val executable get() = testRun.executable
-
-    override val programArgs = buildList {
-        add(executable.executable.executableFile.path)
-        testRun.runParameters.forEach { it.applyTo(this) }
-    }
-
-    override val outputFilter: TestOutputFilter
-        get() = if (testRun.runParameters.has<TestRunParameter.WithTCTestLogger>()) TCTestOutputFilter else TestOutputFilter.NO_FILTERING
-
-    override fun getLoggedParameters() = LoggedData.TestRunParameters(
-        compilationToolCall = executable.loggedCompilationToolCall,
-        testCaseId = testRun.testCaseId,
-        runArgs = programArgs,
-        runParameters = testRun.runParameters
-    )
-
-    override fun customizeProcess(process: Process) {
-        testRun.runParameters.get<TestRunParameter.WithInputData> {
-            process.outputStream.write(inputDataFile.readBytes())
-            process.outputStream.close()
-        }
-    }
-
-    override fun buildResultHandler(runResult: RunResult) = ResultHandler(
-        runResult = runResult,
-        visibleProcessName = visibleProcessName,
-        checks = testRun.checks,
-        testRun = testRun,
-        loggedParameters = getLoggedParameters()
-    )
-
-    override fun handleUnexpectedFailure(t: Throwable) = fail {
-        LoggedData.TestRunUnexpectedFailure(getLoggedParameters(), t)
-            .withErrorMessage("Test execution failed with unexpected exception.")
-    }
-}
 
 internal class ResultHandler(
     runResult: RunResult,
