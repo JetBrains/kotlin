@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocolImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.toNameAttributes
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDeclaredMembers
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.isCloneable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 context(KtAnalysisSession, KtObjCExportSession)
@@ -50,6 +51,10 @@ internal fun KtClassOrObjectSymbol.superProtocols(): List<String> {
         .mapNotNull { qualifier -> qualifier as? KtClassTypeQualifier.KtResolvedClassTypeQualifier }
         .mapNotNull { it.symbol as? KtClassOrObjectSymbol }
         .filter { superInterface -> superInterface.classKind == KtClassKind.INTERFACE }
-        .map { superInterface -> superInterface.getObjCClassOrProtocolName().objCName }
+        .filter { superInterface -> !superInterface.isCloneable }
+        .map { superInterface ->
+            dependencies.collect(superInterface)
+            superInterface.getObjCClassOrProtocolName().objCName
+        }
         .toList()
 }

@@ -19,11 +19,21 @@ context(KtAnalysisSession, KtObjCExportSession)
 fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
     val declarations = files.flatMap { ktFile -> ktFile.translateToObjCExportStubs() }.toMutableList()
     val classForwardDeclarations = getClassForwardDeclarations(declarations).toMutableSet()
-    val protocolForwardDeclarations = getProtocolForwardDeclarations(declarations)
+    val protocolForwardDeclarations = getProtocolForwardDeclarations(declarations).toMutableSet()
 
     if (declarations.hasErrorTypes()) {
         declarations.add(errorInterface)
         classForwardDeclarations.add(errorForwardClass)
+    }
+
+    dependencies.protocols.forEach { stub ->
+        declarations.add(stub)
+        protocolForwardDeclarations.add(stub.name)
+    }
+
+    dependencies.classes.forEach { stub ->
+        declarations.add(stub)
+        classForwardDeclarations.add(ObjCClassForwardDeclaration(stub.name))
     }
 
     return ObjCHeader(
@@ -76,7 +86,6 @@ fun KtFileSymbol.translateToObjCExportStubs(): List<ObjCExportStub> {
     return listOfNotNull(translateToObjCTopLevelInterfaceFileFacade()) + getFileScope().getClassifierSymbols()
         .flatMap { classifierSymbol -> classifierSymbol.translateToObjCExportStubs() }
 }
-
 
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtSymbol.translateToObjCExportStubs(): List<ObjCExportStub> {

@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getAllMembers
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrProtocolName
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getSuperClassSymbolNotAny
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
@@ -18,7 +18,7 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
 
     val superClass = getSuperClassSymbolNotAny()
     val kotlinAnyName = getDefaultSuperClassOrProtocolName()
-    val superName = if (superClass == null) kotlinAnyName else throw RuntimeException("Super class translation isn't implemented yet")
+    val superName = if (superClass == null) kotlinAnyName else getSuperClassName()
     val enumKind = this.classKind == KtClassKind.ENUM_CLASS
     val final = if (this is KtSymbolWithModality) this.modality == Modality.FINAL else false
     val attributes = if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()
@@ -53,6 +53,13 @@ private fun abbreviate(name: String): String {
 
     val uppers = normalizedName.filterIndexed { index, character -> index == 0 || character.isUpperCase() }
     if (uppers.length >= 3) return uppers
-
     return normalizedName
+}
+
+/**
+ * See issue KT-65384
+ * And K1 implementation [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.translateClass]
+ */
+private fun KtClassOrObjectSymbol.getSuperClassName(): ObjCExportClassOrProtocolName {
+    return ObjCExportClassOrProtocolName("UnimplementedSwiftName", "UnimplementedObjCName")
 }

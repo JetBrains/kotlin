@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
@@ -112,11 +113,31 @@ private fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReference
     }
 
     if (fullyExpandedType is KtNonErrorClassType) {
-        val typeName = typesMap[classId]
-            ?: fullyExpandedType.classId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
-
+        val typeName = getTypeName(fullyExpandedType, typesMap, classId)
+        val classSymbol = if (classId != null) getClassOrObjectSymbolByClassId(classId) else null
+        val isInterface = classSymbol?.classKind == KtClassKind.INTERFACE
         val typeArguments = translateToObjCTypeArguments()
-        return ObjCClassType(typeName, typeArguments)
+
+        return if (typesMap[classId] == null && classSymbol != null && !classSymbol.isDeclaredInModule) {
+            /**
+             * Dependencies must have proper type. For example [StringBuilder] is class and [Iterator] is protocol
+             */
+            if (isInterface) {
+                ObjCProtocolType(typeName)
+            } else {
+                ObjCClassType(typeName, typeArguments)
+            }.apply {
+                dependencies.collect(classSymbol)
+            }
+        } else {
+            /**
+             * All mapped stdlib types (like NSArray,  NSMutableArray, NSSet, etc) must be [ObjCClassType]
+             * Even though:
+             * - These symbols are interfaces: classSymbol?.classKind == KtClassKind.INTERFACE //true
+             * - They are dependencies: classSymbol.isDeclaredInModule //true
+             */
+            ObjCClassType(typeName, typeArguments)
+        }
     }
 
     if (fullyExpandedType is KtTypeParameterType) {
@@ -131,6 +152,12 @@ private fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReference
 
     /* We cannot translate this, lets try to be lenient and emit the error type? */
     return objCErrorType
+}
+
+context(KtAnalysisSession, KtObjCExportSession)
+private fun KtType.getTypeName(fullyExpandedType: KtNonErrorClassType, typesMap: Map<ClassId, String>, classId: ClassId?): String {
+    return typesMap[classId]
+        ?: fullyExpandedType.classId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
 }
 
 
