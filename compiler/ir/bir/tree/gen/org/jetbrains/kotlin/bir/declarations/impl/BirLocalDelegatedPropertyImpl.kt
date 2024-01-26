@@ -43,120 +43,120 @@ class BirLocalDelegatedPropertyImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(9)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(9)
+                invalidate()
             }
         }
 
     private var _signature: IdSignature? = signature
     override var signature: IdSignature?
         get() {
-            recordPropertyRead(10)
+            recordPropertyRead()
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate(10)
+                invalidate()
             }
         }
 
     private var _origin: IrDeclarationOrigin = origin
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _name: Name = name
     override var name: Name
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate(6)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(7)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(7)
+                invalidate()
             }
         }
 
     private var _isVar: Boolean = isVar
     override var isVar: Boolean
         get() {
-            recordPropertyRead(8)
+            recordPropertyRead()
             return _isVar
         }
         set(value) {
             if (_isVar != value) {
                 _isVar = value
-                invalidate(8)
+                invalidate()
             }
         }
 
     private var _delegate: BirVariable? = delegate
     override var delegate: BirVariable?
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _delegate
         }
         set(value) {
             if (_delegate !== value) {
                 childReplaced(_delegate, value)
                 _delegate = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _getter: BirSimpleFunction? = getter
     override var getter: BirSimpleFunction?
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _getter
         }
         set(value) {
             if (_getter !== value) {
                 childReplaced(_getter, value)
                 _getter = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _setter: BirSimpleFunction? = setter
     override var setter: BirSimpleFunction?
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _setter
         }
         set(value) {
             if (_setter !== value) {
                 childReplaced(_setter, value)
                 _setter = value
-                invalidate(4)
+                invalidate()
             }
         }
 
@@ -175,19 +175,16 @@ class BirLocalDelegatedPropertyImpl(
         _setter?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._delegate === old -> {
                 this._delegate = new as BirVariable?
-                2
             }
             this._getter === old -> {
                 this._getter = new as BirSimpleFunction?
-                3
             }
             this._setter === old -> {
                 this._setter = new as BirSimpleFunction?
-                4
             }
             else -> throwChildForReplacementNotFound(old)
         }

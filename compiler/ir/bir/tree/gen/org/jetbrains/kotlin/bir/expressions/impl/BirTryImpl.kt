@@ -32,67 +32,67 @@ class BirTryImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(6)
+                invalidate()
             }
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _tryResult: BirExpression? = tryResult
     override var tryResult: BirExpression?
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _tryResult
         }
         set(value) {
             if (_tryResult !== value) {
                 childReplaced(_tryResult, value)
                 _tryResult = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _finallyExpression: BirExpression? = finallyExpression
     override var finallyExpression: BirExpression?
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _finallyExpression
         }
         set(value) {
             if (_finallyExpression !== value) {
                 childReplaced(_finallyExpression, value)
                 _finallyExpression = value
-                invalidate(3)
+                invalidate()
             }
         }
 
@@ -109,15 +109,13 @@ class BirTryImpl(
         _finallyExpression?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._tryResult === old -> {
                 this._tryResult = new as BirExpression?
-                2
             }
             this._finallyExpression === old -> {
                 this._finallyExpression = new as BirExpression?
-                3
             }
             else -> throwChildForReplacementNotFound(old)
         }

@@ -31,13 +31,13 @@ class BirModuleFragmentImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(2)
+                invalidate()
             }
         }
 
@@ -55,7 +55,7 @@ class BirModuleFragmentImpl(
         files.acceptChildrenLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             else -> throwChildForReplacementNotFound(old)
         }

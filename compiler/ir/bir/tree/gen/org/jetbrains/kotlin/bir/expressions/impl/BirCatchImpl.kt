@@ -32,41 +32,41 @@ class BirCatchImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _catchParameter: BirVariable? = catchParameter
     override var catchParameter: BirVariable?
         get() {
-            recordPropertyRead(1)
+            recordPropertyRead()
             return _catchParameter
         }
         set(value) {
             if (_catchParameter !== value) {
                 childReplaced(_catchParameter, value)
                 _catchParameter = value
-                invalidate(1)
+                invalidate()
             }
         }
 
     private var _result: BirExpression? = result
     override var result: BirExpression?
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _result
         }
         set(value) {
             if (_result !== value) {
                 childReplaced(_result, value)
                 _result = value
-                invalidate(2)
+                invalidate()
             }
         }
 
@@ -81,15 +81,13 @@ class BirCatchImpl(
         _result?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._catchParameter === old -> {
                 this._catchParameter = new as BirVariable?
-                1
             }
             this._result === old -> {
                 this._result = new as BirExpression?
-                2
             }
             else -> throwChildForReplacementNotFound(old)
         }

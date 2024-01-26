@@ -45,130 +45,130 @@ class BirValueParameterImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(12)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(12)
+                invalidate()
             }
         }
 
     private var _signature: IdSignature? = signature
     override var signature: IdSignature?
         get() {
-            recordPropertyRead(13)
+            recordPropertyRead()
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate(13)
+                invalidate()
             }
         }
 
     private var _origin: IrDeclarationOrigin = origin
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _name: Name = name
     override var name: Name
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _isAssignable: Boolean = isAssignable
     override var isAssignable: Boolean
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _isAssignable
         }
         set(value) {
             if (_isAssignable != value) {
                 _isAssignable = value
-                invalidate(6)
+                invalidate()
             }
         }
 
     private var _index: Int = index
     override var index: Int
         get() {
-            recordPropertyRead(7)
+            recordPropertyRead()
             return _index
         }
         set(value) {
             if (_index != value) {
                 _index = value
-                invalidate(7)
+                invalidate()
             }
         }
 
     private var _varargElementType: BirType? = varargElementType
     override var varargElementType: BirType?
         get() {
-            recordPropertyRead(8)
+            recordPropertyRead()
             return _varargElementType
         }
         set(value) {
             if (_varargElementType != value) {
                 _varargElementType = value
-                invalidate(8)
+                invalidate()
             }
         }
 
     private var _isCrossinline: Boolean = isCrossinline
     override var isCrossinline: Boolean
         get() {
-            recordPropertyRead(9)
+            recordPropertyRead()
             return _isCrossinline
         }
         set(value) {
             if (_isCrossinline != value) {
                 _isCrossinline = value
-                invalidate(9)
+                invalidate()
             }
         }
 
     private var _isNoinline: Boolean = isNoinline
     override var isNoinline: Boolean
         get() {
-            recordPropertyRead(10)
+            recordPropertyRead()
             return _isNoinline
         }
         set(value) {
             if (_isNoinline != value) {
                 _isNoinline = value
-                invalidate(10)
+                invalidate()
             }
         }
 
@@ -202,27 +202,27 @@ class BirValueParameterImpl(
      */
     override var isHidden: Boolean
         get() {
-            recordPropertyRead(11)
+            recordPropertyRead()
             return _isHidden
         }
         set(value) {
             if (_isHidden != value) {
                 _isHidden = value
-                invalidate(11)
+                invalidate()
             }
         }
 
     private var _defaultValue: BirExpressionBody? = defaultValue
     override var defaultValue: BirExpressionBody?
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _defaultValue
         }
         set(value) {
             if (_defaultValue !== value) {
                 childReplaced(_defaultValue, value)
                 _defaultValue = value
-                invalidate(2)
+                invalidate()
             }
         }
 
@@ -237,11 +237,10 @@ class BirValueParameterImpl(
         _defaultValue?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._defaultValue === old -> {
                 this._defaultValue = new as BirExpressionBody?
-                2
             }
             else -> throwChildForReplacementNotFound(old)
         }

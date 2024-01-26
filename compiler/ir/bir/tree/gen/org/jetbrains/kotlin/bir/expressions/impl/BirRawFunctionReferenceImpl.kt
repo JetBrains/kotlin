@@ -30,52 +30,52 @@ class BirRawFunctionReferenceImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead(1)
+            recordPropertyRead()
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
-                invalidate(1)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _symbol: BirFunctionSymbol = symbol
     override var symbol: BirFunctionSymbol
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _symbol
         }
         set(value) {
             if (_symbol != value) {
                 _symbol = value
-                invalidate(3)
+                invalidate()
             }
         }
 

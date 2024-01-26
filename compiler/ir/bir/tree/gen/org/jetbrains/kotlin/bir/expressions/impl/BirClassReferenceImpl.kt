@@ -31,65 +31,65 @@ class BirClassReferenceImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead(1)
+            recordPropertyRead()
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
-                invalidate(1)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _symbol: BirClassifierSymbol = symbol
     override var symbol: BirClassifierSymbol
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _symbol
         }
         set(value) {
             if (_symbol != value) {
                 _symbol = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _classType: BirType = classType
     override var classType: BirType
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _classType
         }
         set(value) {
             if (_classType != value) {
                 _classType = value
-                invalidate(4)
+                invalidate()
             }
         }
 

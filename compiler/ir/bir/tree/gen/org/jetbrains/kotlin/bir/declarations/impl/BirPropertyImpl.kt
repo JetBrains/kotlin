@@ -54,237 +54,237 @@ class BirPropertyImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(14)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(14)
+                invalidate()
             }
         }
 
     private var _signature: IdSignature? = signature
     override var signature: IdSignature?
         get() {
-            recordPropertyRead(14)
+            recordPropertyRead()
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate(14)
+                invalidate()
             }
         }
 
     private var _origin: IrDeclarationOrigin = origin
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate(6)
+                invalidate()
             }
         }
 
     private var _name: Name = name
     override var name: Name
         get() {
-            recordPropertyRead(7)
+            recordPropertyRead()
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate(7)
+                invalidate()
             }
         }
 
     private var _isExternal: Boolean = isExternal
     override var isExternal: Boolean
         get() {
-            recordPropertyRead(8)
+            recordPropertyRead()
             return _isExternal
         }
         set(value) {
             if (_isExternal != value) {
                 _isExternal = value
-                invalidate(8)
+                invalidate()
             }
         }
 
     private var _visibility: DescriptorVisibility = visibility
     override var visibility: DescriptorVisibility
         get() {
-            recordPropertyRead(9)
+            recordPropertyRead()
             return _visibility
         }
         set(value) {
             if (_visibility != value) {
                 _visibility = value
-                invalidate(9)
+                invalidate()
             }
         }
 
     private var _modality: Modality = modality
     override var modality: Modality
         get() {
-            recordPropertyRead(10)
+            recordPropertyRead()
             return _modality
         }
         set(value) {
             if (_modality != value) {
                 _modality = value
-                invalidate(10)
+                invalidate()
             }
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _isVar: Boolean = isVar
     override var isVar: Boolean
         get() {
-            recordPropertyRead(11)
+            recordPropertyRead()
             return _isVar
         }
         set(value) {
             if (_isVar != value) {
                 _isVar = value
-                invalidate(11)
+                invalidate()
             }
         }
 
     private var _isConst: Boolean = isConst
     override var isConst: Boolean
         get() {
-            recordPropertyRead(12)
+            recordPropertyRead()
             return _isConst
         }
         set(value) {
             if (_isConst != value) {
                 _isConst = value
-                invalidate(12)
+                invalidate()
             }
         }
 
     private var _isLateinit: Boolean = isLateinit
     override var isLateinit: Boolean
         get() {
-            recordPropertyRead(13)
+            recordPropertyRead()
             return _isLateinit
         }
         set(value) {
             if (_isLateinit != value) {
                 _isLateinit = value
-                invalidate(13)
+                invalidate()
             }
         }
 
     private var _isDelegated: Boolean = isDelegated
     override var isDelegated: Boolean
         get() {
-            recordPropertyRead(14)
+            recordPropertyRead()
             return _isDelegated
         }
         set(value) {
             if (_isDelegated != value) {
                 _isDelegated = value
-                invalidate(14)
+                invalidate()
             }
         }
 
     private var _isExpect: Boolean = isExpect
     override var isExpect: Boolean
         get() {
-            recordPropertyRead(14)
+            recordPropertyRead()
             return _isExpect
         }
         set(value) {
             if (_isExpect != value) {
                 _isExpect = value
-                invalidate(14)
+                invalidate()
             }
         }
 
     private var _isFakeOverride: Boolean = isFakeOverride
     override var isFakeOverride: Boolean
         get() {
-            recordPropertyRead(14)
+            recordPropertyRead()
             return _isFakeOverride
         }
         set(value) {
             if (_isFakeOverride != value) {
                 _isFakeOverride = value
-                invalidate(14)
+                invalidate()
             }
         }
 
     private var _backingField: BirField? = backingField
     override var backingField: BirField?
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _backingField
         }
         set(value) {
             if (_backingField !== value) {
                 childReplaced(_backingField, value)
                 _backingField = value
-                invalidate(2)
+                invalidate()
             }
         }
 
     private var _getter: BirSimpleFunction? = getter
     override var getter: BirSimpleFunction?
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _getter
         }
         set(value) {
             if (_getter !== value) {
                 childReplaced(_getter, value)
                 _getter = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _setter: BirSimpleFunction? = setter
     override var setter: BirSimpleFunction?
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _setter
         }
         set(value) {
             if (_setter !== value) {
                 childReplaced(_setter, value)
                 _setter = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _overriddenSymbols: List<BirPropertySymbol> = overriddenSymbols
     override var overriddenSymbols: List<BirPropertySymbol>
         get() {
-            recordPropertyRead(14)
+            recordPropertyRead()
             return _overriddenSymbols
         }
         set(value) {
             if (_overriddenSymbols != value) {
                 _overriddenSymbols = value
-                invalidate(14)
+                invalidate()
             }
         }
 
@@ -303,19 +303,16 @@ class BirPropertyImpl(
         _setter?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._backingField === old -> {
                 this._backingField = new as BirField?
-                2
             }
             this._getter === old -> {
                 this._getter = new as BirSimpleFunction?
-                3
             }
             this._setter === old -> {
                 this._setter = new as BirSimpleFunction?
-                4
             }
             else -> throwChildForReplacementNotFound(old)
         }

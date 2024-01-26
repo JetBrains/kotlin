@@ -43,131 +43,131 @@ class BirVariableImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(10)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(10)
+                invalidate()
             }
         }
 
     private var _signature: IdSignature? = signature
     override var signature: IdSignature?
         get() {
-            recordPropertyRead(11)
+            recordPropertyRead()
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate(11)
+                invalidate()
             }
         }
 
     private var _origin: IrDeclarationOrigin = origin
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _name: Name = name
     override var name: Name
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _isAssignable: Boolean = isAssignable
     override var isAssignable: Boolean
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _isAssignable
         }
         set(value) {
             if (_isAssignable != value) {
                 _isAssignable = value
-                invalidate(6)
+                invalidate()
             }
         }
 
     private var _isVar: Boolean = isVar
     override var isVar: Boolean
         get() {
-            recordPropertyRead(7)
+            recordPropertyRead()
             return _isVar
         }
         set(value) {
             if (_isVar != value) {
                 _isVar = value
-                invalidate(7)
+                invalidate()
             }
         }
 
     private var _isConst: Boolean = isConst
     override var isConst: Boolean
         get() {
-            recordPropertyRead(8)
+            recordPropertyRead()
             return _isConst
         }
         set(value) {
             if (_isConst != value) {
                 _isConst = value
-                invalidate(8)
+                invalidate()
             }
         }
 
     private var _isLateinit: Boolean = isLateinit
     override var isLateinit: Boolean
         get() {
-            recordPropertyRead(9)
+            recordPropertyRead()
             return _isLateinit
         }
         set(value) {
             if (_isLateinit != value) {
                 _isLateinit = value
-                invalidate(9)
+                invalidate()
             }
         }
 
     private var _initializer: BirExpression? = initializer
     override var initializer: BirExpression?
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _initializer
         }
         set(value) {
             if (_initializer !== value) {
                 childReplaced(_initializer, value)
                 _initializer = value
-                invalidate(2)
+                invalidate()
             }
         }
 
@@ -182,11 +182,10 @@ class BirVariableImpl(
         _initializer?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._initializer === old -> {
                 this._initializer = new as BirExpression?
-                2
             }
             else -> throwChildForReplacementNotFound(old)
         }

@@ -40,106 +40,106 @@ class BirSetFieldImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(8)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(8)
+                invalidate()
             }
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _symbol: BirFieldSymbol = symbol
     override var symbol: BirFieldSymbol
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _symbol
         }
         set(value) {
             if (_symbol != value) {
                 _symbol = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _superQualifierSymbol: BirClassSymbol? = superQualifierSymbol
     override var superQualifierSymbol: BirClassSymbol?
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _superQualifierSymbol
         }
         set(value) {
             if (_superQualifierSymbol != value) {
                 _superQualifierSymbol = value
-                invalidate(6)
+                invalidate()
             }
         }
 
     private var _receiver: BirExpression? = receiver
     override var receiver: BirExpression?
         get() {
-            recordPropertyRead(1)
+            recordPropertyRead()
             return _receiver
         }
         set(value) {
             if (_receiver !== value) {
                 childReplaced(_receiver, value)
                 _receiver = value
-                invalidate(1)
+                invalidate()
             }
         }
 
     private var _origin: IrStatementOrigin? = origin
     override var origin: IrStatementOrigin?
         get() {
-            recordPropertyRead(7)
+            recordPropertyRead()
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate(7)
+                invalidate()
             }
         }
 
     private var _value: BirExpression? = value
     override var value: BirExpression?
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _value
         }
         set(value) {
             if (_value !== value) {
                 childReplaced(_value, value)
                 _value = value
-                invalidate(2)
+                invalidate()
             }
         }
 
@@ -154,15 +154,13 @@ class BirSetFieldImpl(
         _value?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._receiver === old -> {
                 this._receiver = new as BirExpression?
-                1
             }
             this._value === old -> {
                 this._value = new as BirExpression?
-                2
             }
             else -> throwChildForReplacementNotFound(old)
         }

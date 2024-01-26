@@ -41,91 +41,91 @@ class BirTypeAliasImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(8)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(8)
+                invalidate()
             }
         }
 
     private var _signature: IdSignature? = signature
     override var signature: IdSignature?
         get() {
-            recordPropertyRead(9)
+            recordPropertyRead()
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate(9)
+                invalidate()
             }
         }
 
     private var _origin: IrDeclarationOrigin = origin
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _name: Name = name
     override var name: Name
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _visibility: DescriptorVisibility = visibility
     override var visibility: DescriptorVisibility
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _visibility
         }
         set(value) {
             if (_visibility != value) {
                 _visibility = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _isActual: Boolean = isActual
     override var isActual: Boolean
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _isActual
         }
         set(value) {
             if (_isActual != value) {
                 _isActual = value
-                invalidate(6)
+                invalidate()
             }
         }
 
     private var _expandedType: BirType = expandedType
     override var expandedType: BirType
         get() {
-            recordPropertyRead(7)
+            recordPropertyRead()
             return _expandedType
         }
         set(value) {
             if (_expandedType != value) {
                 _expandedType = value
-                invalidate(7)
+                invalidate()
             }
         }
 
@@ -140,7 +140,7 @@ class BirTypeAliasImpl(
         typeParameters.acceptChildrenLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             else -> throwChildForReplacementNotFound(old)
         }

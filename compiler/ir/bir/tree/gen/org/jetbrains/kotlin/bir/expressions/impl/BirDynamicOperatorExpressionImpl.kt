@@ -32,66 +32,66 @@ class BirDynamicOperatorExpressionImpl(
      */
     override var sourceSpan: CompressedSourceSpan
         get() {
-            recordPropertyRead(6)
+            recordPropertyRead()
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate(6)
+                invalidate()
             }
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead(3)
+            recordPropertyRead()
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
-                invalidate(3)
+                invalidate()
             }
         }
 
     private var _type: BirType = type
     override var type: BirType
         get() {
-            recordPropertyRead(4)
+            recordPropertyRead()
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate(4)
+                invalidate()
             }
         }
 
     private var _operator: IrDynamicOperator = operator
     override var operator: IrDynamicOperator
         get() {
-            recordPropertyRead(5)
+            recordPropertyRead()
             return _operator
         }
         set(value) {
             if (_operator != value) {
                 _operator = value
-                invalidate(5)
+                invalidate()
             }
         }
 
     private var _receiver: BirExpression? = receiver
     override var receiver: BirExpression?
         get() {
-            recordPropertyRead(2)
+            recordPropertyRead()
             return _receiver
         }
         set(value) {
             if (_receiver !== value) {
                 childReplaced(_receiver, value)
                 _receiver = value
-                invalidate(2)
+                invalidate()
             }
         }
 
@@ -106,11 +106,10 @@ class BirDynamicOperatorExpressionImpl(
         arguments.acceptChildrenLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         return when {
             this._receiver === old -> {
                 this._receiver = new as BirExpression?
-                2
             }
             else -> throwChildForReplacementNotFound(old)
         }
