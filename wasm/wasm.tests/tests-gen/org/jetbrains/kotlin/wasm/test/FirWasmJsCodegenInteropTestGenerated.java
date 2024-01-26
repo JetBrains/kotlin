@@ -25,6 +25,12 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   }
 
   @Test
+  @TestMetadata("associatedExternalObject.kt")
+  public void testAssociatedExternalObject() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/associatedExternalObject.kt");
+  }
+
+  @Test
   @TestMetadata("callingWasmDirectly.kt")
   public void testCallingWasmDirectly() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/callingWasmDirectly.kt");
@@ -160,6 +166,12 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   @TestMetadata("nullableExternRefs.kt")
   public void testNullableExternRefs() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/nullableExternRefs.kt");
+  }
+
+  @Test
+  @TestMetadata("reflectionOnExternals.kt")
+  public void testReflectionOnExternals() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/reflectionOnExternals.kt");
   }
 
   @Test

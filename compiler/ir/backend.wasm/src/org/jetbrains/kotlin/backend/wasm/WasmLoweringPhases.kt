@@ -470,8 +470,8 @@ private val staticMembersLoweringPhase = makeIrModulePhase(
 )
 
 private val classReferenceLoweringPhase = makeIrModulePhase(
-    ::ClassReferenceLowering,
-    name = "ClassReferenceLowering",
+    ::WasmClassReferenceLowering,
+    name = "WasmClassReferenceLowering",
     description = "Handle class references"
 )
 
