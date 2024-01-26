@@ -35,7 +35,9 @@ class IrFakeOverrideBuilder(
 ) {
     private val overrideChecker = IrOverrideChecker(typeSystem, externalOverridabilityConditions)
 
-    internal data class FakeOverride(val override: IrOverridableMember, val original: IrOverridableMember)
+    internal data class FakeOverride(val override: IrOverridableMember, val original: IrOverridableMember) {
+        override fun toString(): String = override.render()
+    }
 
     private var IrOverridableMember.overriddenSymbols: List<IrSymbol>
         get() = when (this) {

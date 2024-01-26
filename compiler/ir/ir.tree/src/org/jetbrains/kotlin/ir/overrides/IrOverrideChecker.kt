@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition.Resul
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextWithAdditionalAxioms
 import org.jetbrains.kotlin.ir.types.createIrTypeCheckerState
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -25,6 +26,8 @@ class MemberWithOriginal(val member: IrOverridableMember, original: IrOverridabl
     internal constructor(fakeOverride: IrFakeOverrideBuilder.FakeOverride) : this(fakeOverride.override, fakeOverride.original)
 
     val original: IrOverridableMember = original ?: member
+
+    override fun toString(): String = member.render()
 }
 
 class IrOverrideChecker(
