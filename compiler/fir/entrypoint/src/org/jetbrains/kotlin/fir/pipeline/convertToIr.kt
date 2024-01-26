@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbolsResolver
@@ -21,11 +21,18 @@ import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProv
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.overrides.buildForAll
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
+import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 data class FirResult(val outputs: List<ModuleCompilerAnalyzedOutput>)
@@ -123,6 +130,44 @@ fun FirResult.convertToIrAndActualize(
     val actualizationResult = irActualizer?.runChecksAndFinalize(expectActualMap)
     pluginContext.applyIrGenerationExtensions(irModuleFragment, irGeneratorExtensions)
     return Fir2IrActualizedResult(irModuleFragment, components, pluginContext, actualizationResult)
+}
+
+private fun IrFakeOverrideBuilder.buildForAll(modules: List<IrModuleFragment>) {
+    val builtFakeOverridesClasses = mutableSetOf<IrClass>()
+    fun buildFakeOverrides(clazz: IrClass) {
+        if (clazz is IrLazyDeclarationBase) return
+        if (!builtFakeOverridesClasses.add(clazz)) return
+        for (c in clazz.superTypes) {
+            c.getClass()?.let { buildFakeOverrides(it) }
+        }
+        buildFakeOverridesForClass(clazz, false)
+    }
+
+    class ClassVisitor : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitClass(declaration: IrClass) {
+            buildFakeOverrides(declaration)
+            declaration.acceptChildrenVoid(this)
+        }
+    }
+
+    for (module in modules) {
+        for (file in module.files) {
+            try {
+                file.acceptVoid(ClassVisitor())
+            } catch (e: Throwable) {
+                CodegenUtil.reportBackendException(e, "IR fake override builder", file.fileEntry.name) { offset ->
+                    file.fileEntry.takeIf { it.supportsDebugInfo }?.let {
+                        val (line, column) = it.getLineAndColumnNumbers(offset)
+                        line to column
+                    }
+                }
+            }
+        }
+    }
 }
 
 private fun convertToIr(
