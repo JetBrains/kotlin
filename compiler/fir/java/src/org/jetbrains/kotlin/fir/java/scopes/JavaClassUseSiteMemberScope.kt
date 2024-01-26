@@ -49,6 +49,26 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+/**
+ * It's a kind of use-site scope specialized for a Java owner class. Provides access to symbols by names, both for
+ * declared inside Java-class and inherited from its base classes (as usual for use-site scopes).
+ *
+ * * all functions that are explicitly declared in a Java class, are visible by default.
+ * Exceptions: functions that have corresponding properties; functions that override renamed builtins (e.g. charAt);
+ * functions that are overrides with erased type parameters (e.g. contains(Object)).
+ * See [isVisibleInCurrentClass]. E.g. contains(String) or get(int) are visible as explicitly declared functions.
+ *
+ * * also, this scope as a use-site member scope shows us some functions from supertypes. Here we have two choices (see [collectFunctions]):
+ *     * in the fast path, which is used when supertypes do not include any suspend functions AND the name is "standard"
+ *     (we don't suspect possible builtin renaming or type parameter erasing), we use a standard procedure:
+ *     class sees all supertype functions except those overridden by explicitly declared functions in the class
+ *     * otherwise, [processSpecialFunctions] comes into play.
+ *     It attempts to find a specific override for this "erased type parameter" and "renamed built-in" case.
+ *     In case of success, it always creates a synthetic function and shows it as a scope part:
+ *         * in case we have an "accidental normal override", like contains(String) or get(int),
+ *         its "hidden" version is created as the synthetic function
+ *         * in case we don't have it, we create an implicit function with such a signature (contains(String), get(int)) as the synthetic function
+ */
 class JavaClassUseSiteMemberScope(
     private val klass: FirJavaClass,
     session: FirSession,
