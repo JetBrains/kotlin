@@ -85,4 +85,20 @@ class CompilerArgumentsLogLevelTest {
         val runnerSettings = KotlinNativeCompilerRunner.Settings.of(project.konanHome.absolutePath, project.konanDataDir, project)
         assertEquals(KotlinCompilerArgumentsLogLevel.WARNING, runnerSettings.parent.kotlinCompilerArgumentsLogLevel.get())
     }
+
+    @Test
+    fun `kotlin native compiler runner has default log level INFO`() {
+        // Given no kotlin.internal.compiler.arguments.log.level set for project
+        val project = buildProjectWithMPP {
+            kotlin {
+                linuxX64()
+                linuxArm64()
+            }
+        }
+
+        project.evaluate()
+
+        val runnerSettings = KotlinNativeCompilerRunner.Settings.of(project.konanHome.absolutePath, project.konanDataDir, project)
+        assertEquals(KotlinCompilerArgumentsLogLevel.INFO, runnerSettings.parent.kotlinCompilerArgumentsLogLevel.get())
+    }
 }

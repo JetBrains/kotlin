@@ -104,7 +104,9 @@ internal abstract class KotlinNativeToolRunner(
                 jvmArgs = project.jvmArgs,
                 classpath = project.files(project.kotlinNativeCompilerJar, "${konanHome}/konan/lib/trove4j.jar"),
                 konanDataDir = konanDataDir,
-                kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel
+                kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider
+                    .kotlinCompilerArgumentsLogLevel
+                    .orElse(KotlinCompilerArgumentsLogLevel.INFO)
             )
         }
     }

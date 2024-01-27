@@ -13,7 +13,6 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -71,7 +70,9 @@ internal abstract class NativeDistributionCommonizerTask
         .listProperty<String>()
         .chainedFinalizeValueOnRead()
 
-    private val kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel
+    private val kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider
+        .kotlinCompilerArgumentsLogLevel
+        .orElse(KotlinCompilerArgumentsLogLevel.INFO)
 
     private val logLevel = project.commonizerLogLevel
 

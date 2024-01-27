@@ -553,10 +553,20 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val kotlinProjectPersistentDirGradleDisableWrite: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_PROJECT_PERSISTENT_DIR_GRADLE_DISABLE_WRITE) ?: false
 
+    /**
+     * Returns compiler args log level provider that is configured from
+     * related [PropertyNames.KOTLIN_COMPILER_ARGUMENTS_LOG_LEVEL] property.
+     */
     val kotlinCompilerArgumentsLogLevel: Provider<KotlinCompilerArgumentsLogLevel>
         get() = getProvider(PropertyNames.KOTLIN_COMPILER_ARGUMENTS_LOG_LEVEL)
             .map { KotlinCompilerArgumentsLogLevel.fromPropertyValue(it) }
-            .orElse(KotlinCompilerArgumentsLogLevel.DEFAULT)
+
+    /**
+     * Same as [kotlinCompilerArgumentsLogLevel] but returns [KotlinCompilerArgumentsLogLevel.DEFAULT]
+     * if log level wasn't configured via gradle property.
+     */
+    val kotlinCompilerArgumentsLogLevelOrDefault: Provider<KotlinCompilerArgumentsLogLevel>
+        get() = kotlinCompilerArgumentsLogLevel.orElse(KotlinCompilerArgumentsLogLevel.DEFAULT)
 
     /**
      * Without unsafe optimization: in k2, if common source is dirty, module will be rebuilt.

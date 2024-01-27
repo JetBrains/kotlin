@@ -105,7 +105,9 @@ internal abstract class CInteropCommonizerTask
         .listProperty<String>()
         .chainedFinalizeValueOnRead()
 
-    private val kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel
+    private val kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider
+        .kotlinCompilerArgumentsLogLevel
+        .orElse(KotlinCompilerArgumentsLogLevel.INFO)
 
     private val konanHome = project.file(project.konanHome)
     private val commonizerLogLevel = project.commonizerLogLevel
