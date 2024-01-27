@@ -784,7 +784,7 @@ class FirElementSerializer private constructor(
         parameter: FirValueParameter,
         index: Int,
         function: FirFunction,
-        additionalAnnotations: List<FirAnnotation> = emptyList()
+        additionalAnnotations: List<FirAnnotation> = emptyList(),
     ): ProtoBuf.ValueParameter.Builder = whileAnalysing(session, parameter) {
         val builder = ProtoBuf.ValueParameter.newBuilder()
 
@@ -812,6 +812,7 @@ class FirElementSerializer private constructor(
 
         if (parameter.isVararg) {
             val varargElementType = parameter.returnTypeRef.coneType.varargElementType()
+                .withAttributes(parameter.returnTypeRef.annotations.computeTypeAttributes(session, shouldExpandTypeAliases = false))
             if (useTypeTable()) {
                 builder.varargElementTypeId = typeId(varargElementType)
             } else {
