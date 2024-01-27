@@ -42,12 +42,12 @@ import java.lang.AutoCloseable
 class BirDatabase : BirElementParent() {
     private val possiblyRootElements = mutableListOf<BirElementBase>()
 
-    private val elementIndexSlots = arrayOfNulls<ElementsIndexSlot>(256)
+    private val elementIndexSlots = arrayOfNulls<ElementIndexSlot>(256)
     private var elementIndexSlotCount = 0
     private val registeredIndexers = mutableListOf<BirElementGeneralIndexerKey>()
     private val indexerIndexes = mutableMapOf<BirElementGeneralIndexerKey, Int>()
     private var elementClassifier: BirElementIndexClassifier? = null
-    private var currentElementsIndexSlotIterator: ElementsIndexSlotIterator<*>? = null
+    private var currentElementIndexIterator: ElementIndexIteratorImpl<*>? = null
     private var currentIndexSlot = 0
     internal var mutableElementCurrentlyBeingClassified: BirImplElementBase? = null
         private set
@@ -358,7 +358,7 @@ class BirDatabase : BirElementParent() {
                 when (indexerKey) {
                     is BirElementsIndexKey<*> -> {
                         indexerIndexes[indexerKey] = index
-                        val slot = ElementsIndexSlot(index, indexerKey.condition)
+                        val slot = ElementIndexSlot(index, indexerKey.condition)
                         elementIndexSlots[index] = slot
                         BirElementIndexClassifierFunctionGenerator.Indexer(
                             BirElementGeneralIndexer.Kind.IndexMatcher,
@@ -416,13 +416,13 @@ class BirDatabase : BirElementParent() {
      * The index keys have to be provided to this function in the same order they were registered.
      * This function cannot be called twice with the same key.
      */
-    fun <E : BirElement> getElementsWithIndex(key: BirElementsIndexKey<E>): Sequence<E> {
+    fun <E : BirElement> getElementsWithIndex(key: BirElementsIndexKey<E>): ElementIndexIterator<E> {
         val cacheSlotIndex = indexerIndexes.getValue(key)
         require(cacheSlotIndex > currentIndexSlot)
 
         flushInvalidatedElementBuffer()
 
-        currentElementsIndexSlotIterator?.let { iterator ->
+        currentElementIndexIterator?.let { iterator ->
             cancelElementsIndexSlotIterator(iterator)
         }
 
@@ -431,7 +431,7 @@ class BirDatabase : BirElementParent() {
             if (slot != null) {
                 // Execute empty iteration of all previous slots to ensure
                 //  the indices are updated for all elements contained in them.
-                ElementsIndexSlotIterator<BirElementBase>(slot).close()
+                ElementIndexIteratorImpl<BirElementBase>(slot).close()
             }
         }
         currentIndexSlot = cacheSlotIndex
@@ -442,18 +442,18 @@ class BirDatabase : BirElementParent() {
         }
 
         val slot = elementIndexSlots[cacheSlotIndex]!!
-        val iter = ElementsIndexSlotIterator<E>(slot)
-        currentElementsIndexSlotIterator = iter
+        val iter = ElementIndexIteratorImpl<E>(slot)
+        currentElementIndexIterator = iter
         return iter
     }
 
-    private fun cancelElementsIndexSlotIterator(iterator: ElementsIndexSlotIterator<*>) {
+    private fun cancelElementsIndexSlotIterator(iterator: ElementIndexIteratorImpl<*>) {
         iterator.close()
-        currentElementsIndexSlotIterator = null
+        currentElementIndexIterator = null
     }
 
 
-    private inner class ElementsIndexSlot(
+    private inner class ElementIndexSlot(
         val index: Int,
         val condition: BirElementIndexMatcher?,
     ) {
@@ -493,10 +493,20 @@ class BirDatabase : BirElementParent() {
         }
     }
 
-    private inner class ElementsIndexSlotIterator<E : BirElement>(
-        private val slot: ElementsIndexSlot,
-    ) : Iterator<E>, Sequence<E>, AutoCloseable {
-        private var canceled = false
+    abstract class ElementIndexIterator<E : BirElement> : Sequence<E>, Iterator<E> {
+        protected var canceled = false
+
+        abstract override fun next(): E
+
+        override fun iterator(): ElementIndexIterator<E> {
+            require(!canceled) { "Iterator was cancelled" }
+            return this
+        }
+    }
+
+    private inner class ElementIndexIteratorImpl<E : BirElement>(
+        private val slot: ElementIndexSlot,
+    ) : ElementIndexIterator<E>(), AutoCloseable {
         var mainListIdx = 0
             private set
         private val slotIndex = slot.index.toUByte()
@@ -585,11 +595,6 @@ class BirDatabase : BirElementParent() {
             slot.size = 0
             next = null
             canceled = true
-        }
-
-        override fun iterator(): Iterator<E> {
-            require(!canceled) { "Iterator was cancelled" }
-            return this
         }
     }
 }
