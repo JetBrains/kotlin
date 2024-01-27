@@ -27,9 +27,10 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 internal class KtFirReceiverParameterSymbol(
-    override val firSymbol: FirCallableSymbol<*>,
-    override val analysisSession: KtFirAnalysisSession,
-) : KtReceiverParameterSymbol(), KtFirSymbol<FirCallableSymbol<*>> {
+    val firSymbol: FirCallableSymbol<*>,
+    val analysisSession: KtFirAnalysisSession,
+) : KtReceiverParameterSymbol(), KtLifetimeOwner {
+    override val token: KtLifetimeToken get() = analysisSession.token
     override val psi: PsiElement? = withValidityAssertion{ firSymbol.fir.receiverParameter?.typeRef?.psi }
 
     init {
@@ -39,13 +40,15 @@ internal class KtFirReceiverParameterSymbol(
     }
 
     override val type: KtType by cached {
-        firSymbol.receiverType(builder)
+        firSymbol.receiverType(analysisSession.firSymbolBuilder)
             ?: errorWithAttachment("${firSymbol::class} doesn't have an extension receiver") {
                 withFirEntry("callable", firSymbol.fir)
             }
     }
 
-    override val owningCallableSymbol: KtCallableSymbol by cached { builder.callableBuilder.buildCallableSymbol(firSymbol) }
+    override val owningCallableSymbol: KtCallableSymbol by cached { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(firSymbol) }
+
+    override val origin: KtSymbolOrigin = withValidityAssertion { firSymbol.fir.ktSymbolOrigin() }
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtReceiverParameterSymbol> = withValidityAssertion {
@@ -53,9 +56,6 @@ internal class KtFirReceiverParameterSymbol(
     }
 
     override val annotationsList: KtAnnotationsList by cached {
-        KtFirAnnotationListForReceiverParameter.create(firSymbol, builder)
+        KtFirAnnotationListForReceiverParameter.create(firSymbol, builder = analysisSession.firSymbolBuilder)
     }
-
-    override fun equals(other: Any?): Boolean = symbolEquals(other)
-    override fun hashCode(): Int = symbolHashCode()
 }
