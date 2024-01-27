@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.bir
 
 sealed class BirElementType<out T : BirElement> {
+    abstract val possibleClasses: Set<BirElementClass<out T>>
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is BirElementType<*>) return false

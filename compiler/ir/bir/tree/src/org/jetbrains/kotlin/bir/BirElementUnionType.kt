@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.bir
 
 class BirElementUnionType<out T : BirElement>(
-    options: Set<BirElementType<T>>
+    options: Set<BirElementType<T>>,
 ) : BirElementType<T>() {
-    val possibleClasses: Set<BirElementClass<out T>>
+    override val possibleClasses: Set<BirElementClass<out T>>
     val options: Set<BirElementType<T>>
         get() = possibleClasses
 
