@@ -241,8 +241,9 @@ abstract class BirLoweringPhase : BirPhase {
      * @see BirDatabase.getElementsWithIndex
      */
     protected fun <E : BirElement> getAllElementsWithIndex(key: BirElementsIndexKey<E>): Sequence<E> {
-        var elements = compiledBir.getElementsWithIndex(key)
+        var elements: Sequence<E> = compiledBir.getElementsWithIndex(key)
         if (externalModulesBir.hasIndex(key)) {
+
             elements += externalModulesBir.getElementsWithIndex(key)
         }
         return elements
