@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.bir
 
 import org.jetbrains.kotlin.bir.util.ForwardReferenceRecorder
-import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -316,28 +315,12 @@ internal object BirElementIndexClassifierFunctionGenerator {
     private fun buildClassMatchingStructure(indexers: List<Indexer>): List<ElementSwitchNode> {
         val elementClassNodes = BirMetadata.allElements.associateWith { ElementClassInfo(it) }
 
-        elementClassNodes.values.forEach { element ->
-            val clazz = element.elementClass.javaClass
-            val superElementClasses = (listOf(clazz.superclass) + clazz.interfaces)
-                .mapNotNull { BirMetadata.allElementsByJavaClass[it] }
-                .mapNotNull { elementClassNodes[it] }
-            element.superClasses = superElementClasses.toSet()
-            superElementClasses.forEach {
-                it.subClasses += element
-            }
-        }
-
         for (indexer in indexers) {
-            val possibleClasses = when (val type = indexer.elementType) {
-                is BirElementClass<*> -> setOf(type)
-                is BirElementUnionType<*> -> type.possibleClasses
-            }
-
-            for (elementClass in possibleClasses) {
-                val node = elementClassNodes.getValue(elementClass)
-                node.descendantClasses().forEach { descendantNode ->
-                    if (descendantNode.elementClass.hasImplementation) {
-                        descendantNode.indexers += indexer
+            for (topLevelClass in indexer.elementType.possibleClasses) {
+                topLevelClass.descendantClassesAndSelf.forEach { elementClass ->
+                    val node = elementClassNodes.getValue(elementClass)
+                    if (node.elementClass.hasImplementation) {
+                        node.indexers += indexer
                     }
                 }
             }
@@ -376,11 +359,7 @@ internal object BirElementIndexClassifierFunctionGenerator {
     private class ElementClassInfo(
         val elementClass: BirElementClass<*>,
     ) {
-        var superClasses: Set<ElementClassInfo> = emptySet()
-        val subClasses = mutableSetOf<ElementClassInfo>()
         val indexers = mutableListOf<Indexer>()
-
-        fun descendantClasses(): List<ElementClassInfo> = DFS.topologicalOrder(listOf(this)) { it.subClasses }
     }
 
     private class ElementSwitchNode(
