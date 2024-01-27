@@ -55,6 +55,9 @@ object FirWasmErrors {
     val WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION: KtDiagnosticFactory0 by error0<KtElement>()
     val WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT: KtDiagnosticFactory0 by error0<KtElement>()
 
+    // Associated object
+    val ASSOCIATED_OBJECT_INVALID_BINDING: KtDiagnosticFactory0 by error0<KtElement>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(FirWasmErrorsDefaultMessages)
     }

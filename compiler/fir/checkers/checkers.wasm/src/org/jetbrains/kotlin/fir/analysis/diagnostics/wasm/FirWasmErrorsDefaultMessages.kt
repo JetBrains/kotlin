@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.ASSOCIATED_OBJECT_INVALID_BINDING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JSCODE_INVALID_PARAMETER_NAME
@@ -42,6 +43,7 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NESTED_JS_MODULE_PROHIBITED,
             "'@JsModule' cannot appear here since the file is already marked by either '@JsModule'."
         )
+
         map.put(
             NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE,
             "Non-external type extends external type ''{0}''",
@@ -100,5 +102,7 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION, "Only top-level functions can be external.")
         map.put(WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT, "External functions should be annotated with '@WasmImport'.")
+
+        map.put(ASSOCIATED_OBJECT_INVALID_BINDING, "Invalid associated object binding.")
     }
 }

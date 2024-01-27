@@ -70,4 +70,8 @@ object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
         val WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION by error<KtElement>()
         val WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT by error<KtElement>()
     }
+
+    val ASSOCIATED_OBJECTS by object : DiagnosticGroup("Associated object") {
+        val ASSOCIATED_OBJECT_INVALID_BINDING by error<KtElement>()
+    }
 }
