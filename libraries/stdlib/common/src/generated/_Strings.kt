@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -2295,6 +2295,50 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
     val second = StringBuilder()
     for (element in this) {
         if (predicate(element)) {
+            first.append(element)
+        } else {
+            second.append(element)
+        }
+    }
+    return Pair(first.toString(), second.toString())
+}
+
+/**
+ * Splits the original char sequence into pair of char sequences,
+ * where *first* char sequence contains characters for which [predicate] yielded `true`,
+ * while *second* char sequence contains characters for which [predicate] yielded `false`.
+ * @param [predicate] function that takes the index of a character and the character itself
+ * and returns the result of predicate evaluation on the character.
+ * 
+ * @sample samples.text.Strings.partitionIndexed
+ */
+public inline fun CharSequence.partitionIndexed(predicate: (index: Int, Char) -> Boolean): Pair<CharSequence, CharSequence> {
+    val first = StringBuilder()
+    val second = StringBuilder()
+    for ((idx, element) in this.withIndex()) {
+        if (predicate(idx, element)) {
+            first.append(element)
+        } else {
+            second.append(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Splits the original string into pair of strings,
+ * where *first* string contains characters for which [predicate] yielded `true`,
+ * while *second* string contains characters for which [predicate] yielded `false`.
+ * @param [predicate] function that takes the index of a character and the character itself
+ * and returns the result of predicate evaluation on the character.
+ * 
+ * @sample samples.text.Strings.partitionIndexed
+ */
+public inline fun String.partitionIndexed(predicate: (index: Int, Char) -> Boolean): Pair<String, String> {
+    val first = StringBuilder()
+    val second = StringBuilder()
+    for ((idx, element) in this.withIndex()) {
+        if (predicate(idx, element)) {
             first.append(element)
         } else {
             second.append(element)

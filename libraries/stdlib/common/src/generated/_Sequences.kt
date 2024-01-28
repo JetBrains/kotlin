@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -2704,6 +2704,30 @@ public inline fun <T> Sequence<T>.partition(predicate: (T) -> Boolean): Pair<Lis
     val second = ArrayList<T>()
     for (element in this) {
         if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Splits the original sequence into pair of lists,
+ * where *first* list contains elements for which [predicate] yielded `true`,
+ * while *second* list contains elements for which [predicate] yielded `false`.
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ *
+ * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Sequences.Transformations.partitionIndexed
+ */
+public inline fun <T> Sequence<T>.partitionIndexed(predicate: (index: Int, T) -> Boolean): Pair<List<T>, List<T>> {
+    val first = ArrayList<T>()
+    val second = ArrayList<T>()
+    for ((idx, element) in this.withIndex()) {
+        if (predicate(idx, element)) {
             first.add(element)
         } else {
             second.add(element)

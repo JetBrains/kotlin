@@ -84,5 +84,20 @@ class Iterables {
             val result = list.partition { it.age < 30 }
             assertPrints(result, "([Tom - 18, Sarah - 22], [Andy - 32])")
         }
+
+        @Sample
+        fun partitionIndexed() {
+            data class Person(val name: String, val age: Int) {
+                override fun toString(): String {
+                    return "$name - $age"
+                }
+            }
+
+            val peopleUnderHundred =
+                listOf(Person("Julia", 16), Person("Tom", 18), Person("Andy", 32), Person("Sarah", 22), Person("Ada", 42))
+            val (peopleWithIndexAsAgeFirstDigit, theOthers) = peopleUnderHundred.partitionIndexed { idx, elm -> (elm.age % 100) / 10 == idx }
+            assertPrints(peopleWithIndexAsAgeFirstDigit, "[Tom - 18, Ada - 42]")
+            assertPrints(theOthers, "[Julia - 16, Andy - 32, Sarah - 22]")
+        }
     }
 }
