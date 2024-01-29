@@ -1,0 +1,45 @@
+// CHECK:
+//   Mangled name: Controller
+//   Public signature: /Controller|null[0]
+class Controller<K : Any?> {
+  // CHECK:
+  //   Mangled name: Controller#<init>(){}
+  //   Public signature: /Controller.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Controller#yield(1:0){}
+  //   Public signature: /Controller.yield|3567278141085588417[0]
+  //   Public signature debug description: yield(1:0){}
+  fun yield(k: K): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #bar(kotlin.String){}
+//   Public signature: /bar|5132770888056479978[0]
+//   Public signature debug description: bar(kotlin.String){}
+fun bar(s: String): Unit
+
+// CHECK:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
+//   Public signature debug description: foo(){}
+fun foo(): Unit
+
+// CHECK:
+//   Mangled name: #generate(kotlin.Function1<Controller<0:0>,kotlin.Unit>){0§<kotlin.Any?>}
+//   Public signature: /generate|2751630141511127019[0]
+//   Public signature debug description: generate(kotlin.Function1<Controller<0:0>,kotlin.Unit>){0§<kotlin.Any?>}
+fun <T : Any?> generate(lambda: @ExtensionFunctionType Function1<Controller<T>, Unit>): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #id(0:0){0§<kotlin.Any?>}0:0
+//   Public signature: /id|-6791396263062521506[0]
+//   Public signature debug description: id(0:0){0§<kotlin.Any?>}0:0
+// CHECK JS_IR NATIVE:
+//   Mangled name: #id(0:0){0§<kotlin.Any?>}
+//   Public signature: /id|9187295668833355463[0]
+//   Public signature debug description: id(0:0){0§<kotlin.Any?>}
+fun <E : Any?> id(e: E): E
