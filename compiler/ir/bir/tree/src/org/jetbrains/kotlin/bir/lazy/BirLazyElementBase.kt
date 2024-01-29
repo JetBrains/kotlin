@@ -21,35 +21,17 @@ abstract class BirLazyElementBase(
 ) : BirElementBase(elementClass), BirDeclaration {
     internal abstract val originalIrElement: IrDeclaration
 
-    // This is the actual element parent of this element, in case
-    // it has one. It may differ from the _parent property in case
-    // when we know the parent, but the parent has not (yet)
-    // accepted us as one of their children. Then we may still be
-    // structurally not bound, or bound directly to a database.
-    private var parentElement: BirElementBase? = null
-
-    final override val parent: BirElementBase
-        get() {
-            synchronized(this) {
-                return parentElement ?: converter.remapElement<BirElementBase>(originalIrElement.parent)
-                    .also { parentElement = it }
-            }
-        }
-
-    final override fun setParentWithInvalidation(new: BirElementParent?) {
-        assert(_parent !is BirElementBase)
-        _parent = new!!
-        if (new is BirElementBase) {
-            parentElement = new
-        }
+    internal fun initParent(parent: BirElementParent?) {
+        assert(_parent == null) { "Parent of lazy IR element changed" }
+        _parent = parent!!
     }
 
     internal fun initChild(new: BirElementBase?) {
-        if (new != null) {
-            new._parent = this
-            (new as? BirLazyElementBase)?.parentElement = this
-            _containingDatabase?.elementAttached(new)
-        }
+        // Do not set the child's parent to this element, like it is usually done.
+        // Instead, Ir2BirConverter should setup this child element upon its creation,
+        // including seting its parent and containingDatabase.
+        // In particular, it will set the parent element to the same as the
+        // original lazy IR element, even though it may be (indefinitely!) incorrect.
     }
 
     protected fun <Bir : BirElement> convertChild(originalChild: IrElement): Bir {
@@ -103,5 +85,9 @@ abstract class BirLazyElementBase(
     companion object {
         fun mutationNotSupported(): Nothing =
             error("Mutation of lazy BIR elements is not possible")
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+
     }
 }

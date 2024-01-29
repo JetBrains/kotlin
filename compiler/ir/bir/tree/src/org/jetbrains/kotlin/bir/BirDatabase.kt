@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.bir
 
+import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
 import org.jetbrains.kotlin.bir.util.ForwardReferenceRecorder
 import java.lang.AutoCloseable
 
@@ -52,6 +53,9 @@ class BirDatabase : BirElementParent() {
     internal var mutableElementCurrentlyBeingClassified: BirImplElementBase? = null
         private set
 
+    var includeEntireSubtreeWhenAttachingElement = true
+    var attachExternalReferencedElementTreeToOtherDatabase: ((BirElementBase) -> BirDatabase?)? = null
+
     private val invalidatedElementsBuffer = arrayOfNulls<BirElementBase>(64)
     private var invalidatedElementsBufferSize = 0
 
@@ -65,7 +69,12 @@ class BirDatabase : BirElementParent() {
                     // The element is likely new, and therefore likely to
                     // stay attached. Realize the attachment operation eagerly.
                     attachElement(it)
-                    it.walkIntoChildren()
+
+                    // todo: Probably the easier solution would be to always attach a subtree,
+                    //  but index only a single element.
+                    if (includeEntireSubtreeWhenAttachingElement) {
+                        it.walkIntoChildren()
+                    }
                 }
                 this@BirDatabase -> addToMovedElementsBuffer(it)
                 else -> handleElementFromOtherDatabase()
@@ -86,19 +95,7 @@ class BirDatabase : BirElementParent() {
      * @param element The root of an element tree to attach.
      */
     fun attachRootElement(element: BirElementBase) {
-        val oldParent = element._parent
-        if (oldParent != null) {
-            element as BirImplElementBase
-            element.replacedWithInternal(null)
-            element.setParentWithInvalidation(this)
-            (oldParent as? BirImplElementBase)?.invalidate()
-
-            elementMoved(element, oldParent)
-        } else {
-            element.setParentWithInvalidation(this)
-            elementAttached(element)
-        }
-
+        element.moveElementToNewParent(this, this)
         possiblyRootElements += element
     }
 
@@ -180,6 +177,8 @@ class BirDatabase : BirElementParent() {
                     if (parent is BirDatabase) {
                         // The element was a root element in this database.
                         if (parent === this) {
+                            // Only impl elements are allowed to be roots
+                            element as BirImplElementBase
                             element.setParentWithInvalidation(null)
                         } else {
                             handleElementFromOtherDatabase()
@@ -276,10 +275,62 @@ class BirDatabase : BirElementParent() {
             removeElementFromIndex(element)
         }
 
-        val recordedRef = forwardReferenceRecorder?.recordedRef
-        recordedRef?.registerBackReference(element)
+        val forwardReference = forwardReferenceRecorder?.recordedRef
+        if (forwardReference != null) {
+            val referenceDatabase = forwardReference._containingDatabase
+            if (referenceDatabase !== this) {
+                maybeAttachReferencedElementToOtherDatabase(forwardReference)
+            }
+
+            forwardReference.registerBackReference(element)
+        }
 
         element.setFlag(BirElementBase.FLAG_INVALIDATED, false)
+    }
+
+    private fun maybeAttachReferencedElementToOtherDatabase(element: BirElementBase) {
+        var externalDatabase: BirDatabase? = null
+        var rootElement: BirElementBase? = element
+        run {
+            var ancestor = element._parent
+            while (ancestor != null) {
+                when (ancestor) {
+                    is BirElementBase -> {
+                        val db = ancestor._containingDatabase
+                        if (db === this) {
+                            return
+                        } else if (db != null) {
+                            externalDatabase = db
+                            rootElement = null
+                            break
+                        }
+
+                        rootElement = ancestor
+                        ancestor = ancestor._parent
+                    }
+                    is BirDatabase -> {
+                        externalDatabase = ancestor
+                    }
+                }
+            }
+        }
+
+        if (externalDatabase == null && rootElement != null) {
+            externalDatabase = attachExternalReferencedElementTreeToOtherDatabase?.invoke(rootElement)
+            require(externalDatabase !== this) { "Cannot add referenced element to the same database." }
+        }
+
+        if (externalDatabase != null) {
+            var ancestor: BirElementParent? = element
+            while (ancestor is BirElementBase && ancestor._containingDatabase == null) {
+                if (ancestor === rootElement) {
+                    externalDatabase.attachRootElement(ancestor)
+                } else {
+                    externalDatabase.elementAttached(ancestor)
+                }
+                ancestor = ancestor._parent
+            }
+        }
     }
 
     internal fun indexElementAndDependent(element: BirElementBase) {

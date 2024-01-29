@@ -9,7 +9,7 @@ abstract class BirImplElementBase(elementClass: BirElementClass<*>) : BirElement
     final override val parent: BirElementBase?
         get() {
             recordPropertyRead()
-            return _parent as? BirElementBase
+            return super.parent
         }
 
     internal fun getParentRecordingRead(): BirElementParent? {
@@ -17,7 +17,7 @@ abstract class BirImplElementBase(elementClass: BirElementClass<*>) : BirElement
         return _parent
     }
 
-    final override fun setParentWithInvalidation(new: BirElementParent?) {
+    internal fun setParentWithInvalidation(new: BirElementParent?) {
         if (_parent !== new) {
             _parent = new
             invalidate()
@@ -39,20 +39,7 @@ abstract class BirImplElementBase(elementClass: BirElementClass<*>) : BirElement
 
         if (new != null) {
             new as BirElementBase
-
-            val oldParent = (new as? BirImplElementBase)?._parent
-            if (oldParent != null) {
-                new.replacedWithInternal(null)
-                new.setParentWithInvalidation(this)
-                if (oldParent is BirImplElementBase) {
-                    oldParent.invalidate()
-                }
-
-                _containingDatabase?.elementMoved(new, oldParent)
-            } else {
-                new.setParentWithInvalidation(this)
-                _containingDatabase?.elementAttached(new)
-            }
+            new.moveElementToNewParent(this, _containingDatabase)
         }
     }
 

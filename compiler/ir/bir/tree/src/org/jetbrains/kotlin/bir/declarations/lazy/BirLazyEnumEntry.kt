@@ -42,10 +42,4 @@ class BirLazyEnumEntry(
         convertChild<BirExpressionBody?>(originalIrElement.initializerExpression)
     }
     override var initializerExpression: BirExpressionBody? by _initializerExpression
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        annotations.acceptChildrenLite(visitor)
-        _initializerExpression.acceptLiteIfPresent(visitor)
-        _correspondingClass.acceptLiteIfPresent(visitor)
-    }
 }

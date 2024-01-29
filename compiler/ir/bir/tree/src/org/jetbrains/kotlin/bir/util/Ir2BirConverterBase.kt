@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.expressions.BirMemberAccessExpression
+import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
 import org.jetbrains.kotlin.bir.symbols.LateBoundBirSymbol
 import org.jetbrains.kotlin.bir.types.*
@@ -31,9 +32,9 @@ import kotlin.collections.set
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class Ir2BirConverterBase(
-    override val compressedSourceSpanManager: CompressedSourceSpanManager
+    override val compressedSourceSpanManager: CompressedSourceSpanManager,
 ) : CompressedSourceSpanManagerScope {
-    var appendElementAsDatabaseRoot: (IrElement, BirElement) -> BirDatabase? = { _, _ -> null }
+    var elementConverted: (IrElement, BirElement) -> Unit = { _, _ -> }
     var convertAncestorsForOrphanedElements = false
     var instantiateDescriptors = false
     var recordConvertedTypes = false
@@ -66,7 +67,7 @@ abstract class Ir2BirConverterBase(
 
     protected fun <Ir : IrElement, Bir : BirElement> copyNotReferencedElement(old: Ir, copy: () -> Bir): Bir {
         val new = doCopyElement(old, copy)
-        appendElementAsDatabaseRoot(old, new)?.attachRootElement(new as BirElementBase)
+        elementConverted(old, new)
         return new
     }
 
@@ -84,7 +85,13 @@ abstract class Ir2BirConverterBase(
         if (old is IrDeclaration && (convertImplElementsIntoLazyWhenPossible || !convertLazyElementsIntoImpl && old is IrLazyDeclarationBase)) {
             copyLazyElement<SE>(old)?.let { new ->
                 map[old] = new
-                appendElementAsDatabaseRoot(old, new)?.attachRootElement(new as BirElementBase)
+
+                val irParent = old.parent
+                val birParent = remapElement<BirDeclarationParent>(irParent)
+                fixExternalPackegeBeingElementsParent(new, irParent, birParent)
+                (new as BirLazyElementBase).initParent(birParent as BirElementBase)
+
+                elementConverted(old, new)
                 return new
             }
         }
@@ -97,7 +104,7 @@ abstract class Ir2BirConverterBase(
             val new = copy()
             map[old] = new
 
-            appendElementAsDatabaseRoot(old, new)?.attachRootElement(new as BirElementBase)
+            elementConverted(old, new)
 
             if (old is IrSymbolOwner) {
                 val symbol = symbolOwnersCurrentlyBeingConverted.remove(old)
@@ -155,16 +162,22 @@ abstract class Ir2BirConverterBase(
                     val birParent = remapElement<BirElement>(irParent)
 
                     if (bir.parent == null) {
-                        // IrExternalPackageFragment may not always contain its children
-                        if (irParent is IrExternalPackageFragment) {
-                            birParent as BirExternalPackageFragment
-                            birParent.declarations += bir as BirDeclaration
-                        }
+                        fixExternalPackegeBeingElementsParent(bir, irParent, birParent)
                     }
                 } else if (ir is IrFile) {
                     remapElement<BirModuleFragment>(ir.module)
                 }
             }
+        }
+    }
+
+    private fun fixExternalPackegeBeingElementsParent(element: BirElement, irParent: IrDeclarationParent, birParent: BirElement) {
+        // Just creating the BIR element for the parent should automatically
+        // add register this element as its child.
+        // However, IrExternalPackageFragments do not always contain their children.
+        if (irParent is IrExternalPackageFragment) {
+            birParent as BirExternalPackageFragment
+            birParent.declarations += element as BirDeclaration
         }
     }
 

@@ -406,7 +406,7 @@ class BirImplChildElementList<E : BirElement?>(
         }
     }
 
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+    internal fun acceptChildrenLite(visitor: BirElementVisitorLite) {
         val size = _size
         if (size == 0) return
 

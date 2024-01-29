@@ -54,9 +54,4 @@ class BirLazyField(
         converter.remapSymbol(originalIrElement.correspondingPropertySymbol)
     }
     override val annotations = lazyChildElementList<BirLazyField, BirConstructorCall>(1) { originalIrElement.annotations }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        annotations.acceptChildrenLite(visitor)
-        _initializer.acceptLiteIfPresent(visitor)
-    }
 }
