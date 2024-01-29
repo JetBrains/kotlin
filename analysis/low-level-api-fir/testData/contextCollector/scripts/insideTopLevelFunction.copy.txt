@@ -16,10 +16,10 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final? class After_OtherClass : R|kotlin/Any|
                 FirRegularClassSymbol public final? class Before_OtherClass : R|kotlin/Any|
-                FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
             Functions
                 FirNamedFunctionSymbol public? final? fun after_Fun(): R|kotlin/Unit|
                 FirNamedFunctionSymbol public? final? fun before_Fun(): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun usage(foo: R|kotlin/Int|): R|kotlin/Unit|
             Properties:
                 FirPropertySymbol public final val after_Val: R|kotlin/Int|
                     public get(): R|kotlin/Int|
@@ -27,14 +27,14 @@ Tower Data Context:
                     public get(): R|kotlin/Int|
     Element 7
         Scope: FirLocalScope
-            Classifiers:
-                FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun usage(foo: R|kotlin/Int|): R|kotlin/Unit|
             Properties:
                 FirPropertySymbol lval args: R|kotlin/Array<kotlin/String>|
     Element 8
         Context receivers:
             FirScriptSymbol context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-            SCRIPT: <script-insideClassMember.kts>
+            SCRIPT: <script-insideTopLevelFunction.kts>
                 lval args: R|kotlin/Array<kotlin/String>|
 
                 public? final? fun before_Fun(): R|kotlin/Unit|
@@ -42,7 +42,7 @@ Tower Data Context:
                     public get(): R|kotlin/Int|
 
                 public final? class Before_OtherClass : R|kotlin/Any|
-                public final class MyClass : R|kotlin/Any|
+                public final fun usage(foo: R|kotlin/Int|): R|kotlin/Unit|
                 public? final? fun after_Fun(): R|kotlin/Unit|
                 public final val after_Val: R|kotlin/Int|
                     public get(): R|kotlin/Int|
@@ -51,17 +51,15 @@ Tower Data Context:
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
                 Label: <script>
     Element 9
-        Implicit receiver:
-            FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
-                Type: MyClass
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol foo: R|kotlin/Int|
     Element 10
         Scope: FirLocalScope
-    Element 11
-        Scope: FirLocalScope
 
-FILE: [ResolvedTo(IMPORTS)] insideClassMember.kts
+FILE: [ResolvedTo(IMPORTS)] insideTopLevelFunction.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideClassMember.kts>
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideTopLevelFunction.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun before_Fun(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -76,18 +74,8 @@ FILE: [ResolvedTo(IMPORTS)] insideClassMember.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] constructor(): R|MyClass| {
-                LAZY_super<R|kotlin/Any|>
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] val foo: <implicit> = LAZY_EXPRESSION
-                public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-
-            public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
-                this@R|/MyClass|.R|/MyClass.foo|
-            }
-
+        public final [ResolvedTo(BODY_RESOLVE)] fun usage([ResolvedTo(BODY_RESOLVE)] foo: R|kotlin/Int|): R|kotlin/Unit| {
+            R|<local>/foo|
         }
 
         public? final? [ResolvedTo(RAW_FIR)] fun after_Fun(): R|kotlin/Unit| { LAZY_BLOCK }

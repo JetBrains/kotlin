@@ -123,12 +123,7 @@ object ContextCollector {
         if (contextKtDeclaration != null) {
             val designationPath = FirElementFinder.collectDesignationPath(file, contextKtDeclaration)
             if (designationPath != null) {
-                val script = file.declarations.singleOrNull() as? FirScript
-                return if (script == null || script === designationPath.target) {
-                    FirDesignation(designationPath.path, designationPath.target)
-                } else {
-                    FirDesignation(listOf(script) + designationPath.path, designationPath.target)
-                }
+                return designationPath
             }
         }
 
@@ -163,7 +158,7 @@ object ContextCollector {
         holder: SessionHolder,
         designation: FirDesignation?,
         shouldCollectBodyContext: Boolean,
-        filter: (PsiElement) -> FilterResponse
+        filter: (PsiElement) -> FilterResponse,
     ): ContextProvider {
         val interceptor = designation?.let(::DesignationInterceptor) ?: { null }
         val visitor = ContextCollectorVisitor(holder, shouldCollectBodyContext, filter, interceptor)
@@ -192,7 +187,7 @@ private class ContextCollectorVisitor(
     private val holder: SessionHolder,
     private val shouldCollectBodyContext: Boolean,
     private val filter: (PsiElement) -> FilterResponse,
-    private val designationPathInterceptor: () -> FirElement?
+    private val designationPathInterceptor: () -> FirElement?,
 ) : FirDefaultVisitorVoid() {
     private data class ContextKey(val element: PsiElement, val kind: ContextKind)
 
