@@ -87,6 +87,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +listField("parameters", parameterType)
         +field("returnType", typeType)
         +field("body", functionBodyType, nullable = true, mutable = true)
+
+        +field(name = "documentation", string, nullable = true, mutable = true)
     }
 
     val foreignFunction by element {

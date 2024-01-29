@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.sir.passes
 
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.sir.SirFunction
-import org.jetbrains.kotlin.sir.SirNominalType
-import org.jetbrains.kotlin.sir.SirParameter
-import org.jetbrains.kotlin.sir.SirVisibility
-import org.jetbrains.kotlin.sir.builder.buildEnum
-import org.jetbrains.kotlin.sir.builder.buildForeignFunction
-import org.jetbrains.kotlin.sir.builder.buildModule
+import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.constants.*
+import org.jetbrains.kotlin.sir.mock.MockDocumentation
 import org.jetbrains.kotlin.sir.mock.MockFunction
 import org.jetbrains.kotlin.sir.mock.MockKotlinType
 import org.jetbrains.kotlin.sir.mock.MockParameter
@@ -146,6 +142,53 @@ class SirPassTests {
             returnType = SirNominalType(SirSwiftModule.int8),
             parent = module,
             isStatic = false,
+        )
+        assertSirFunctionsEquals(actual = result, expected = exp)
+    }
+
+    @Test
+    fun `foreign toplevel function with kdoc should be translated`() {
+        val module = buildModule {
+            name = "demo"
+        }
+        val mySirElement = buildForeignFunction {
+            origin = MockFunction(
+                fqName = FqName.fromSegments(listOf("foo")),
+                parameters = emptyList(),
+                returnType = MockKotlinType(BOOLEAN),
+                documentation = MockDocumentation(
+                    """
+                    /**
+                     * Function foo description
+                     *
+                     * @param p first Integer to consume
+                     * @param p2 second Double to consume
+                     * @return empty String
+                     */
+                     """.trimIndent()
+                )
+            )
+            visibility = SirVisibility.PUBLIC
+        }
+        mySirElement.parent = module
+        val myPass = ForeignIntoSwiftFunctionTranslationPass()
+        val result = myPass.runWithAsserts(mySirElement, null) as? SirFunction
+        assertNotNull(result, "SirFunction should be produced")
+        val exp = MockSirFunction(
+            name = "foo",
+            parameters = emptyList(),
+            returnType = SirNominalType(SirSwiftModule.bool),
+            parent = module,
+            isStatic = false,
+            documentation = """
+                    /**
+                     * Function foo description
+                     *
+                     * @param p first Integer to consume
+                     * @param p2 second Double to consume
+                     * @return empty String
+                     */
+                     """.trimIndent()
         )
         assertSirFunctionsEquals(actual = result, expected = exp)
     }

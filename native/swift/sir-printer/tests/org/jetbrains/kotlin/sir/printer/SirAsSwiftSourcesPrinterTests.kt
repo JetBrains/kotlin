@@ -255,6 +255,40 @@ class SirAsSwiftSourcesPrinterTests {
         )
     }
 
+    @Test
+    fun `should print DocC comment`() {
+
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildFunction {
+                    origin = SirOrigin.Unknown
+                    isStatic = false
+                    visibility = SirVisibility.PUBLIC
+                    name = "foo"
+                    parameters.add(
+                        SirParameter(
+                            argumentName = "p",
+                            type = SirNominalType(SirSwiftModule.int64)
+                        )
+                    )
+                    returnType = SirNominalType(SirSwiftModule.bool)
+                    documentation = """
+                            /// Function foo description.
+                            /// - Parameters:
+                            ///   - p: first Integer to consume
+                            /// - Returns: Bool
+                        """.trimIndent()
+                }
+            )
+        }
+
+        runTest(
+            module,
+            "testData/commented_function"
+        )
+    }
+
     private fun runTest(module: SirModule, goldenDataFile: String) {
         val expectedSwiftSrc = File(KtTestUtil.getHomeDirectory()).resolve("$goldenDataFile.golden.swift")
 

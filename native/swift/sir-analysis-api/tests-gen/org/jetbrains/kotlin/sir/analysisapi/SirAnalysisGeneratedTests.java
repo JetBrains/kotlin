@@ -25,6 +25,12 @@ public class SirAnalysisGeneratedTests extends AbstractKotlinSirContextTest {
     }
 
     @Test
+    @TestMetadata("function_with_comment.kt")
+    public void testFunction_with_comment() throws Exception {
+        runTest("native/swift/sir-analysis-api/testData/function_with_comment.kt");
+    }
+
+    @Test
     @TestMetadata("functions_overload.kt")
     public void testFunctions_overload() throws Exception {
         runTest("native/swift/sir-analysis-api/testData/functions_overload.kt");

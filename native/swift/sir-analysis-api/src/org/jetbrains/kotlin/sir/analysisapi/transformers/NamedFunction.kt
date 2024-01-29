@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.sir.analysisapi.transformers
 
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.sir.*
@@ -39,6 +40,9 @@ private class AAFunction(
             AAKotlinType(name = function.returnType.toString())
         }
 
+    override val documentation: SirKotlinOrigin.Documentation?
+        get() = originalFunction.docComment?.let { AADocumentation(it) }
+
 }
 private data class AAParameter(
     override val name: String,
@@ -48,3 +52,10 @@ private data class AAParameter(
 private data class AAKotlinType(
     override val name: String
 ) : SirKotlinOrigin.Type
+
+private data class AADocumentation(
+    private val kdoc: KDoc
+) : SirKotlinOrigin.Documentation {
+    override val content: String
+        get() = kdoc.text
+}

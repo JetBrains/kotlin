@@ -18,6 +18,7 @@ class MockSirFunction(
     override val name: String,
     override val parameters: List<SirParameter>,
     override val returnType: SirType,
+    override var documentation: String? = null,
 ) : SirFunction() {
     override fun <R, D> acceptChildren(visitor: SirVisitor<R, D>, data: D) = Unit
     override fun <D> transformChildren(transformer: SirTransformer<D>, data: D) = Unit

@@ -41,6 +41,8 @@ public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Nothi
                 kotlinOrigin.parameters.mapTo(parameters) { it.toSir() }
 
                 returnType = kotlinOrigin.returnType.toSir()
+
+                documentation = kotlinOrigin.documentation?.content
             }.apply {
                 parent = function.parent
             }

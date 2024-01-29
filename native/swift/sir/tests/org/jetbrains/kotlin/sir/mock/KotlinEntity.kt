@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.sir.mock
 
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirKotlinOrigin
+import org.jetbrains.kotlin.sir.SirOrigin
 
 data class MockFunction(
     override val fqName: FqName,
     override val parameters: List<SirKotlinOrigin.Parameter>,
     override val returnType: SirKotlinOrigin.Type,
+    override val documentation: SirKotlinOrigin.Documentation? = null,
 ) : SirKotlinOrigin.Function
 
 data class MockParameter(
@@ -22,3 +24,5 @@ data class MockParameter(
 data class MockKotlinType(
     override val name: String
 ) : SirKotlinOrigin.Type
+
+data class MockDocumentation(override val content: String) : SirKotlinOrigin.Documentation

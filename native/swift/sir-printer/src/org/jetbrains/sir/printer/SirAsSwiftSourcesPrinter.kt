@@ -29,6 +29,7 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
     }
 
     override fun visitFunction(function: SirFunction): Unit = with(printer) {
+        function.documentation?.let { println(it) }
         print(
             function.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: "",
             if (function.isStatic) { "static " } else { "" },

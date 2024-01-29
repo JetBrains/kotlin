@@ -14,6 +14,7 @@ sealed interface SirKotlinOrigin : SirOrigin.Foreign {
         get() = fqName.pathSegments().map { it.asString() }
 
     interface Function : SirKotlinOrigin {
+        val documentation: Documentation?
         val parameters: List<Parameter>
         val returnType: Type
     }
@@ -25,5 +26,9 @@ sealed interface SirKotlinOrigin : SirOrigin.Foreign {
 
     interface Type {
         val name: String
+    }
+
+    interface Documentation {
+        val content: String
     }
 }
