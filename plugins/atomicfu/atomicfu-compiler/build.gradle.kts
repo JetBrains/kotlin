@@ -175,12 +175,6 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     dependsOn(atomicfuJsIrRuntimeForTests)
 
-    // Depend on the test task that launches Native tests so that it will also run together with tests
-    // for all other targets if K/N is enabled
-    if (kotlinBuildProperties.isKotlinNativeEnabled) {
-        dependsOn(nativeTest)
-    }
-
     val localAtomicfuJsIrRuntimeForTests: FileCollection = atomicfuJsIrRuntimeForTests
     val localAtomicfuJsClasspath: FileCollection = atomicfuJsClasspath
     val localAtomicfuJvmClasspath: FileCollection = atomicfuJvmClasspath
@@ -203,3 +197,11 @@ val nativeTest = nativeTest(
     customTestDependencies = listOf(atomicfuNativeKlib),
     compilerPluginDependencies = listOf(atomicfuCompilerPluginForTests)
 )
+
+tasks.named("check") {
+    // Depend on the test task that launches Native tests so that it will also run together with tests
+    // for all other targets if K/N is enabled
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        dependsOn(nativeTest)
+    }
+}
