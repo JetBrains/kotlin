@@ -67,6 +67,7 @@ public final class kotlinx/validation/api/ClassBinarySignature {
 public final class kotlinx/validation/api/KotlinSignaturesLoadingKt {
 	public static final fun dump (Ljava/util/List;)Ljava/io/PrintStream;
 	public static final fun dump (Ljava/util/List;Ljava/lang/Appendable;)Ljava/lang/Appendable;
+	public static final fun extractAnnotatedPackages (Ljava/util/List;Ljava/util/Set;)Ljava/util/List;
 	public static final fun filterOutAnnotated (Ljava/util/List;Ljava/util/Set;)Ljava/util/List;
 	public static final fun filterOutNonPublic (Ljava/util/List;Ljava/util/Collection;Ljava/util/Collection;)Ljava/util/List;
 	public static synthetic fun filterOutNonPublic$default (Ljava/util/List;Ljava/util/Collection;Ljava/util/Collection;ILjava/lang/Object;)Ljava/util/List;

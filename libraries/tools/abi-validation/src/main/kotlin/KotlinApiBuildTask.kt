@@ -95,10 +95,13 @@ public open class KotlinApiBuildTask @Inject constructor(
                 throw GradleException("KotlinApiBuildTask should have either inputClassesDirs, or inputJar property set")
         }
 
+        val publicPackagesNames = signatures.extractAnnotatedPackages(publicMarkers.map(::replaceDots).toSet())
+        val ignoredPackagesNames = signatures.extractAnnotatedPackages(nonPublicMarkers.map(::replaceDots).toSet())
 
         val filteredSignatures = signatures
-            .retainExplicitlyIncludedIfDeclared(publicPackages, publicClasses, publicMarkers)
-            .filterOutNonPublic(ignoredPackages, ignoredClasses)
+            .retainExplicitlyIncludedIfDeclared(publicPackages + publicPackagesNames,
+                publicClasses, publicMarkers)
+            .filterOutNonPublic(ignoredPackages + ignoredPackagesNames, ignoredClasses)
             .filterOutAnnotated(nonPublicMarkers.map(::replaceDots).toSet())
 
         outputApiDir.resolve("$projectName.api").bufferedWriter().use { writer ->

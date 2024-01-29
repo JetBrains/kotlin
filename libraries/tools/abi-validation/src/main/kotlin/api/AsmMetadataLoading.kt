@@ -26,6 +26,8 @@ internal fun isProtected(access: Int) = access and Opcodes.ACC_PROTECTED != 0
 internal fun isStatic(access: Int) = access and Opcodes.ACC_STATIC != 0
 internal fun isFinal(access: Int) = access and Opcodes.ACC_FINAL != 0
 internal fun isSynthetic(access: Int) = access and Opcodes.ACC_SYNTHETIC != 0
+internal fun isAbstract(access: Int) = access and Opcodes.ACC_ABSTRACT != 0
+internal fun isInterface(access: Int) = access and Opcodes.ACC_INTERFACE != 0
 
 internal fun ClassNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
     isPublic(access)
