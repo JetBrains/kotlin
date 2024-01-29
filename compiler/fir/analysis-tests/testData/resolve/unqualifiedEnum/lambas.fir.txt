@@ -1,0 +1,32 @@
+FILE: lambas.kt
+    package test
+
+    public final enum class Sample : R|kotlin/Enum<test/Sample>| {
+        private constructor(): R|test/Sample| {
+            super<R|kotlin/Enum<test/Sample>|>()
+        }
+
+        public final static enum entry FIRST: R|test/Sample|
+        public final static enum entry SECOND: R|test/Sample|
+        public final static enum entry THIRD: R|test/Sample|
+        public final static fun values(): R|kotlin/Array<test/Sample>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|test/Sample| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<test/Sample>|
+            public get(): R|kotlin/enums/EnumEntries<test/Sample>|
+
+    }
+    public final val foo: R|() -> test/Sample| = fun <anonymous>(): R|test/Sample| <inline=Unknown>  {
+        ^ R|test/Sample.FIRST|
+    }
+
+        public get(): R|() -> test/Sample|
+    public final fun bar(n: R|kotlin/Int|): R|test/Sample| {
+        ^bar R|<local>/n|.R|kotlin/let<Inapplicable(INAPPLICABLE): kotlin/let>#|<R|kotlin/Int|, R|test/Sample|>(<L> = let@fun <anonymous>(it: R|kotlin/Int|): R|test/Sample| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ <Unresolved name: FIRST>#
+        }
+        )
+    }

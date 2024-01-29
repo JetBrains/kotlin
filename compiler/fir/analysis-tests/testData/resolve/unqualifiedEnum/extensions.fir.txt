@@ -1,0 +1,33 @@
+FILE: extensions.kt
+    public final data class Duration : R|kotlin/Any| {
+        public constructor(milliseconds: R|kotlin/Int|): R|Duration| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val milliseconds: R|kotlin/Int| = R|<local>/milliseconds|
+            public get(): R|kotlin/Int|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Duration.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val R|kotlin/Int|.seconds: R|Duration|
+                public get(): R|Duration| {
+                    ^ R|/Duration.Duration|(this@R|/Duration.Companion.seconds|.R|kotlin/Int.times|(Int(1000)))
+                }
+
+            public final val R|kotlin/Int|.minutes: R|Duration|
+                public get(): R|Duration| {
+                    ^ (this@R|/Duration.Companion|, this@R|/Duration.Companion.minutes|.R|kotlin/Int.times|(Int(60))).R|/Duration.Companion.seconds|
+                }
+
+        }
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(milliseconds: R|kotlin/Int| = this@R|/Duration|.R|/Duration.milliseconds|): R|Duration|
+
+    }
+    public final val d: R|Duration| = (this@R|/Duration.Companion|, Int(1)).R|/Duration.Companion.seconds|
+        public get(): R|Duration|

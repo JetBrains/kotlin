@@ -1,0 +1,60 @@
+FILE: enum.kt
+    public final enum class Problem : R|kotlin/Enum<Problem>| {
+        private constructor(): R|Problem| {
+            super<R|kotlin/Enum<Problem>|>()
+        }
+
+        public final static enum entry CONNECTION: R|Problem|
+        public final static enum entry AUTHENTICATION: R|Problem|
+        public final static enum entry DATABASE: R|Problem|
+        public final static fun values(): R|kotlin/Array<Problem>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Problem| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Problem>|
+            public get(): R|kotlin/enums/EnumEntries<Problem>|
+
+    }
+    public final fun message(problem: R|Problem|): R|kotlin/String| {
+        ^message when (R|<local>/problem|) {
+            ==($subj$, R|/Problem.CONNECTION|) ->  {
+                String(connection)
+            }
+            ==($subj$, R|/Problem.AUTHENTICATION|) ->  {
+                String(authentication)
+            }
+            ==($subj$, R|/Problem.DATABASE|) ->  {
+                String(database)
+            }
+        }
+
+    }
+    public final data class Bee : R|kotlin/Any| {
+        public constructor(p: R|Problem| = R|/Problem.CONNECTION|): R|Bee| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val p: R|Problem| = R|<local>/p|
+            public get(): R|Problem|
+
+        public final operator fun component1(): R|Problem|
+
+        public final fun copy(p: R|Problem| = this@R|/Bee|.R|/Bee.p|): R|Bee|
+
+    }
+    public final fun problematic(x: R|kotlin/String|): R|Problem| {
+        ^problematic when (R|<local>/x|) {
+            ==($subj$, String(connection)) ->  {
+                R|/Problem.CONNECTION|
+            }
+            ==($subj$, String(authentication)) ->  {
+                R|/Problem.AUTHENTICATION|
+            }
+            else ->  {
+                R|/Problem.DATABASE|
+            }
+        }
+
+    }

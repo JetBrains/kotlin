@@ -5,9 +5,14 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.staticScope
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
@@ -23,7 +28,7 @@ sealed class ResolutionMode(
         companion object : ReceiverResolution(forCallableReference = false)
     }
 
-    class WithExpectedType(
+    open class WithExpectedType(
         val expectedTypeRef: FirResolvedTypeRef,
         val mayBeCoercionToUnitApplied: Boolean = false,
         val expectedTypeMismatchIsReportedInChecker: Boolean = false,
@@ -76,6 +81,16 @@ sealed class ResolutionMode(
         }
     }
 
+    /**
+     * This resolution mode is used for resolving the RHS of equality operators.
+     *
+     * It carries an expected type, as [WithExpectedType], but also additional contextual information about the LHS.
+     */
+    class WithContextTypeForEquality(
+        expectedTypeRef: FirResolvedTypeRef,
+        val contextTypeRef: FirResolvedTypeRef?,
+    ) : WithExpectedType(expectedTypeRef)
+
     class WithStatus(val status: FirDeclarationStatus) : ResolutionMode(forceFullCompletion = false) {
         override fun toString(): String {
             return "WithStatus: ${status.render()}"
@@ -118,6 +133,19 @@ fun ResolutionMode.expectedType(components: BodyResolveComponents): FirTypeRef? 
     is ResolutionMode.AssignmentLValue,
     is ResolutionMode.ReceiverResolution -> components.noExpectedType
     else -> null
+}
+
+fun ResolutionMode.contextType(components: BodyResolveComponents): FirTypeRef? = when (this) {
+    is ResolutionMode.WithContextTypeForEquality -> contextTypeRef?.takeIf { !this.fromCast }
+    else -> expectedType(components)
+}
+
+fun ResolutionMode.fullyExpandedClassFromContext(components: BodyResolveComponents, session: FirSession): FirRegularClass? =
+    contextType(components)?.coneTypeOrNull?.simplifyIntersection(session)?.toRegularClassSymbol(session)?.fir
+
+fun ConeKotlinType.simplifyIntersection(session: FirSession): ConeKotlinType? = when (this) {
+    is ConeIntersectionType -> ConeTypeIntersector.intersectTypes(session.typeContext, intersectedTypes)
+    else -> this
 }
 
 fun withExpectedType(expectedTypeRef: FirTypeRef, expectedTypeMismatchIsReportedInChecker: Boolean = false): ResolutionMode = when {
