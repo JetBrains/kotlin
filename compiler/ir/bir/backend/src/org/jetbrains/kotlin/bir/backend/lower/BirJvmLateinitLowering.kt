@@ -24,10 +24,11 @@ class BirJvmLateinitLowering : BirLoweringPhase() {
     private val lateinitVariables = registerIndexKey(BirVariable, false) {
         it.isLateinit
     }
-    private val lateinitInitializerCalls = registerIndexKey(BirCall, false) {
-        birBuiltIns.lateinitIsInitialized != null && it.symbol == birBuiltIns.lateinitIsInitialized
+    private val lateinitIsInitializedFunctionKey = registerIndexKey(BirSimpleFunction, true) {
+        it == birBuiltIns.lateinitIsInitialized
     }
     private val variableReads = registerBackReferencesKey(BirGetValue, BirGetValue::symbol)
+    private val functionCalls = registerBackReferencesKey(BirCall, BirCall::symbol)
 
     override fun lower(module: BirModuleFragment) {
         transformLateinitProperties()
@@ -60,7 +61,8 @@ class BirJvmLateinitLowering : BirLoweringPhase() {
     }
 
     private fun transformIsLateinitInitialized() {
-        getAllElementsWithIndex(lateinitInitializerCalls).forEach { call ->
+        val lateinitIsInitializedFunction = getAllElementsWithIndex(lateinitIsInitializedFunctionKey).singleOrNull()
+        lateinitIsInitializedFunction?.getBackReferences(functionCalls)?.forEach { call ->
             transformCallToLateinitIsInitializedPropertyGetter(call)
         }
     }
