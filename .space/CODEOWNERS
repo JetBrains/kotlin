@@ -386,7 +386,6 @@
 /plugins/power-assert/ "Kotlin Compiler Core"
 /plugins/sam-with-receiver/ "Kotlin Compiler Core"
 /plugins/scripting/ "Kotlin Compiler Core"
-/plugins/swift-export/ "Kotlin Native"
 
 /prepare/ "Kotlin Build Infrastructure"
 
