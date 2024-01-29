@@ -95,10 +95,10 @@ private fun parseOptions(args: Array<String>): Map<String, List<String>> {
     for (index in args.indices step 2) {
         val key = args[index]
         if (key[0] != '-') {
-            throw IllegalArgumentException("Expected a flag with initial dash: $key")
+            logError("Expected a flag with initial dash: $key")
         }
         if (index + 1 == args.size) {
-            throw IllegalArgumentException("Expected an value after $key")
+            logError("Expected an value after $key")
         }
         val value = listOf(args[index + 1])
         options[key]?.addAll(value) ?: options.put(key, value.toMutableList())
