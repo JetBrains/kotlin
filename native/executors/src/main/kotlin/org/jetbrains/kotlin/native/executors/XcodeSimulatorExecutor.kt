@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.logging.Logger
-import kotlin.time.Duration
 
 private fun defaultDeviceId(target: KonanTarget) = when (target.family) {
     Family.TVOS -> "com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-4K"

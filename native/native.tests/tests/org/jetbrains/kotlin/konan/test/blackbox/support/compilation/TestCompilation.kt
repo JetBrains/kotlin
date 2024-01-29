@@ -86,6 +86,10 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
                 // - klib+static_cache -> framework
                 // option `-Xstatic-framework` can be supplied only to `-p framework` stage, so must be filtered out for other stages
                 add(freeCompilerArgs.compilerArgs.filter { it != "-Xstatic-framework" })
+            is ObjCFrameworkCompilation ->
+                // Lazy headers must not be generated during 2nd stage of TWO_STAGE_MULTI_MODULE mode, since no source files are passed, only klib.
+                // If allowed, incomplete lazy header would overwrite full lazy header generated during 1st stage, which would fail the test.
+                add(freeCompilerArgs.compilerArgs.filterNot { sourceModules.isEmpty() && it.startsWith("-Xemit-lazy-objc-header=") })
             else -> add(freeCompilerArgs.compilerArgs)
         }
     }

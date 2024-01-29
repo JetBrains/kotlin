@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
+import org.jetbrains.kotlin.native.executors.runProcess
+import org.jetbrains.kotlin.test.KtAssert.fail
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
@@ -298,37 +300,37 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun objCExportTest() {
-        objCExportTestImpl("", emptyList(), emptyList(), false)
+        objCExportTestImpl("", emptyList(), emptyList(), false, true)
     }
 
     @Test
     fun objCExportTestNoGenerics() {
         objCExportTestImpl("NoGenerics", listOf("-Xno-objc-generics"),
-                           listOf("-D", "NO_GENERICS"), false)
+                           listOf("-D", "NO_GENERICS"), false, true)
     }
 
     @Test
     fun objCExportTestLegacySuspendUnit() {
         objCExportTestImpl("LegacySuspendUnit", listOf("-Xbinary=unitSuspendFunctionObjCExport=legacy"),
-                           listOf("-D", "LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT"), false)
+                           listOf("-D", "LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT"), false, true)
     }
 
     @Test
     fun objCExportTestNoSwiftMemberNameMangling() {
         objCExportTestImpl("NoSwiftMemberNameMangling", listOf("-Xbinary=objcExportDisableSwiftMemberNameMangling=true"),
-                           listOf("-D", "DISABLE_MEMBER_NAME_MANGLING"), false)
+                           listOf("-D", "DISABLE_MEMBER_NAME_MANGLING"), false, false)
     }
 
     @Test
     fun objCExportTestNoInterfaceMemberNameMangling() {
         objCExportTestImpl("NoInterfaceMemberNameMangling", listOf("-Xbinary=objcExportIgnoreInterfaceMethodCollisions=true"),
-                           listOf("-D", "DISABLE_INTERFACE_METHOD_NAME_MANGLING"), false)
+                           listOf("-D", "DISABLE_INTERFACE_METHOD_NAME_MANGLING"), false, false)
     }
 
     @Test
     fun objCExportTestStatic() {
         objCExportTestImpl("Static", listOf("-Xbinary=objcExportSuspendFunctionLaunchThreadRestriction=none"),
-                           listOf("-D", "ALLOW_SUSPEND_ANY_THREAD"), true)
+                           listOf("-D", "ALLOW_SUSPEND_ANY_THREAD"), true, false)
     }
 
     private fun objCExportTestImpl(
@@ -336,8 +338,12 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         frameworkOpts: List<String>,
         swiftOpts: List<String>,
         isStaticFramework: Boolean,
+        needLazyHeaderCheck: Boolean,
     ) {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val doLazyHeaderCheck = needLazyHeaderCheck && testRunSettings.get<PipelineType>() == PipelineType.K1
+        val lazyHeader: File = buildDir.resolve("lazy-$suffix.h").also { it.delete() } // Clean up lazy header after previous runs
+
         // Compile a couple of KLIBs
         val library = compileToLibrary(
             testSuiteDir.resolve("objcexport/library"),
@@ -372,6 +378,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
                     "-Xexport-kdoc",
                     "-Xbinary=bundleId=foo.bar",
                     "-module-name", frameworkName,
+                    "-Xemit-lazy-objc-header=${lazyHeader.absolutePath}".takeIf { doLazyHeaderCheck },
                 )
             ),
             givenDependencies = setOf(TestModule.Given(library.klibFile), TestModule.Given(noEnumEntries.klibFile)),
@@ -410,6 +417,16 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         val infoPlistContents = infoPlist.readText()
         assertTrue(infoPlistContents.contains(Regex("<key>CFBundleIdentifier</key>\\s*<string>foo.bar</string>"))) {
             "${infoPlist.absolutePath} does not contain expected pattern with `foo.bar`:\n$infoPlistContents"
+        }
+
+        if (doLazyHeaderCheck) {
+            val expectedLazyHeaderName = "expectedLazy/expectedLazy${suffix}.h"
+            val expectedLazyHeader = objcExportTestSuiteDir.resolve(expectedLazyHeaderName)
+            if (!expectedLazyHeader.exists() || expectedLazyHeader.readLines() != lazyHeader.readLines()) {
+                runProcess("diff", "-u", expectedLazyHeader.absolutePath, lazyHeader.absolutePath)
+                lazyHeader.copyTo(expectedLazyHeader, overwrite = true)
+                fail("$expectedLazyHeader file patched;\nPlease review this change and commit the patch, if change is correct")
+            }
         }
     }
 
