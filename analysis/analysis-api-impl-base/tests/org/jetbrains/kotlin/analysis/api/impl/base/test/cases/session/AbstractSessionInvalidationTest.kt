@@ -49,6 +49,8 @@ abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBas
         val ktModules = testServices.ktTestModuleStructure.mainModules.map { it.ktModule }
 
         val sessionsBeforeModification = getSessions(ktModules)
+        checkSessionValidityBeforeModification(sessionsBeforeModification, testServices)
+
         testServices.ktTestModuleStructure.publishWildcardModificationEventsByDirective(modificationEventKind)
         val sessionsAfterModification = getSessions(ktModules)
 
@@ -59,6 +61,9 @@ abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBas
 
         checkInvalidatedModules(invalidatedSessions, testServices)
         checkSessionsMarkedInvalid(invalidatedSessions, testServices)
+
+        val untouchedSessions = sessionsBeforeModification.intersect(sessionsAfterModification)
+        checkUntouchedSessionValidity(untouchedSessions, testServices)
     }
 
     private fun getSessions(modules: List<KtModule>): List<SESSION> = modules.map(::getSession)
@@ -89,6 +94,17 @@ abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBas
         )
     }
 
+    private fun checkSessionValidityBeforeModification(
+        sessions: List<SESSION>,
+        testServices: TestServices,
+    ) {
+        sessions.forEach { session ->
+            testServices.assertions.assertTrue(isSessionValid(session)) {
+                "The session `$session` should be valid before invalidation is triggered."
+            }
+        }
+    }
+
     private fun checkSessionsMarkedInvalid(
         invalidatedSessions: Set<SESSION>,
         testServices: TestServices,
@@ -98,6 +114,17 @@ abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBas
 
             testServices.assertions.assertFalse(isSessionValid(session)) {
                 "The invalidated session `${session}` should have been marked invalid."
+            }
+        }
+    }
+
+    private fun checkUntouchedSessionValidity(
+        sessions: Set<SESSION>,
+        testServices: TestServices,
+    ) {
+        sessions.forEach { session ->
+            testServices.assertions.assertTrue(isSessionValid(session)) {
+                "The session `$session` has not been evicted from the session cache and should still be valid."
             }
         }
     }
