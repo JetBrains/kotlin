@@ -286,7 +286,6 @@ private val singleAbstractMethodPhase = makeIrModulePhase(
     description = "Replace SAM conversions with instances of interface-implementing classes"
 )
 
-
 private val localDelegatedPropertiesLoweringPhase = makeIrModulePhase<WasmBackendContext>(
     { LocalDelegatedPropertiesLowering() },
     name = "LocalDelegatedPropertiesLowering",
@@ -305,6 +304,13 @@ private val localClassExtractionPhase = makeIrModulePhase(
     name = "LocalClassExtractionPhase",
     description = "Move local declarations into nearest declaration container",
     prerequisite = setOf(localDeclarationsLoweringPhase)
+)
+
+private val staticCallableReferenceLoweringPhase = makeIrModulePhase(
+    ::WasmStaticCallableReferenceLowering,
+    name = "WasmStaticCallableReferenceLowering",
+    description = "Turn static callable references into singletons",
+    prerequisite = setOf(callableReferencePhase, localClassExtractionPhase)
 )
 
 private val innerClassesLoweringPhase = makeIrModulePhase<WasmBackendContext>(
@@ -653,6 +659,7 @@ val loweringList = listOf(
     localDelegatedPropertiesLoweringPhase,
     localDeclarationsLoweringPhase,
     localClassExtractionPhase,
+    staticCallableReferenceLoweringPhase,
     innerClassesLoweringPhase,
     innerClassesMemberBodyLoweringPhase,
     innerClassConstructorCallsLoweringPhase,

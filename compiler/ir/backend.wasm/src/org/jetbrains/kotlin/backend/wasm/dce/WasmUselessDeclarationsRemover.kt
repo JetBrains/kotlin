@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm.dce
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.lower.isFunctionReferenceInstanceField
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.utils.isObjectInstanceField
 import org.jetbrains.kotlin.ir.declarations.*
@@ -56,7 +57,7 @@ class WasmUselessDeclarationsRemover(
 
     private fun IrSimpleFunction.removeUnusedObjectsInitializers() {
         (body as? IrBlockBody)?.statements?.removeIf {
-            it is IrSetField && it.symbol.owner.isObjectInstanceField() && it.symbol.owner !in usefulDeclarations
+            it is IrSetField && it.symbol.owner.run { isObjectInstanceField() || isFunctionReferenceInstanceField() } && it.symbol.owner !in usefulDeclarations
         }
     }
 }

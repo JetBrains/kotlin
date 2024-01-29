@@ -6427,6 +6427,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/closures/closureWithParameterAndBoxing.kt");
         }
 
+        @TestMetadata("closuresAsSingleton.kt")
+        public void testClosuresAsSingleton() throws Exception {
+            runTest("compiler/testData/codegen/box/closures/closuresAsSingleton.kt");
+        }
+
         @TestMetadata("crossinlineLocalDeclaration.kt")
         public void testCrossinlineLocalDeclaration() throws Exception {
             runTest("compiler/testData/codegen/box/closures/crossinlineLocalDeclaration.kt");

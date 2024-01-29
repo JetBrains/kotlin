@@ -120,10 +120,6 @@ fun IrSimpleFunction.isObjectInstanceGetter(): Boolean {
     return origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION
 }
 
-fun IrDeclaration.isObjectInstanceField(): Boolean {
-    return this is IrField && isObjectInstanceField()
-}
-
 fun IrField.isObjectInstanceField(): Boolean {
     return origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
 }

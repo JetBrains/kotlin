@@ -6165,6 +6165,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("closuresAsSingleton.kt")
+            public void testClosuresAsSingleton() throws Exception {
+                runTest("compiler/testData/codegen/box/closures/closuresAsSingleton.kt");
+            }
+
+            @Test
             @TestMetadata("crossinlineLocalDeclaration.kt")
             public void testCrossinlineLocalDeclaration() throws Exception {
                 runTest("compiler/testData/codegen/box/closures/crossinlineLocalDeclaration.kt");
