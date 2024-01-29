@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,38 +33,101 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
-class FirDesignationWithFile(
-    path: List<FirRegularClass>,
-    target: FirElementWithResolveState,
-    val firFile: FirFile
-) : FirDesignation(
-    path,
-    target,
+/**
+ * This class describes where locates [target] element and its essential [path].
+ *
+ * Usually a resolver uses [path] to resolve [target] in the proper context.
+ *
+ * @see org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
+ */
+class FirDesignation(
+    /**
+     * The path to [target] element.
+     *
+     * ### Contracts:
+     * * Can contain [FirFile] only in the first position
+     * * Can contain [FirScript] only in the first or second position
+     *
+     * @see file
+     * @see fileOrNull
+     * @see script
+     * @see scriptOrNull
+     */
+    val path: List<FirDeclaration>,
+    val target: FirElementWithResolveState,
 ) {
-    fun toSequenceWithFile(includeTarget: Boolean): Sequence<FirElementWithResolveState> = sequence {
-        yield(firFile)
-        yieldAll(path)
-        if (includeTarget) yield(target)
+    init {
+        for ((index, declaration) in path.withIndex()) {
+            when (declaration) {
+                is FirFile -> requireWithAttachment(
+                    index == 0,
+                    { "${FirFile::class.simpleName} can be only in the first position of the path, but actual is '$index'" },
+                ) {
+                    withFirDesignationEntry("designation", this@FirDesignation)
+                }
+
+                is FirScript -> requireWithAttachment(
+                    index == 0 || index == 1 && path.first() is FirFile,
+                    { "${FirScript::class.simpleName} can be only in the first or second position of the path, but actual is '$index'" },
+                ) {
+                    withFirDesignationEntry("designation", this@FirDesignation)
+                }
+
+                is FirRegularClass -> {}
+                else -> errorWithAttachment("Unexpected declaration type: ${declaration::class.simpleName}") {
+                    withFirDesignationEntry("designation", this@FirDesignation)
+                }
+            }
+        }
+    }
+
+    val file: FirFile
+        get() = fileOrNull ?: errorWithAttachment("File is not found") {
+            withFirDesignationEntry("designation", this@FirDesignation)
+        }
+
+    val fileOrNull: FirFile? get() = path.firstOrNull() as? FirFile
+
+    val script: FirScript
+        get() = scriptOrNull ?: errorWithAttachment("Script is not found") {
+            withFirDesignationEntry("designation", this@FirDesignation)
+        }
+
+    val scriptOrNull: FirScript? get() = path.getOrNull(0) as? FirScript ?: path.getOrNull(1) as? FirScript
+
+    /**
+     * This property exists only for compatibility and should be dropped after KT-65345
+     */
+    val classPath: List<FirRegularClass> get() = path.filterIsInstance<FirRegularClass>()
+
+    /**
+     * This constructor exists only for compatibility and should be dropped after KT-65345
+     */
+    constructor(
+        firFile: FirFile,
+        path: List<FirRegularClass>,
+        target: FirElementWithResolveState,
+    ) : this(listOf(firFile) + path, target)
+}
+
+fun ExceptionAttachmentBuilder.withFirDesignationEntry(name: String, designation: FirDesignation) {
+    withEntryGroup(name) {
+        for ((index, declaration) in designation.path.withIndex()) {
+            withFirEntry("path$index", declaration)
+        }
+
+        withFirEntry("target", designation.target)
     }
 }
 
-class FirDesignationWithScript(
-    path: List<FirRegularClass>,
-    target: FirElementWithResolveState,
-    val firScript: FirScript,
-): FirDesignation(path, target)
-
-open class FirDesignation(
-    val path: List<FirRegularClass>,
-    val target: FirElementWithResolveState,
-) {
-    fun toSequence(includeTarget: Boolean): Sequence<FirElementWithResolveState> = sequence {
-        yieldAll(path)
-        if (includeTarget) yield(target)
-    }
+fun FirDesignation.toSequence(includeTarget: Boolean): Sequence<FirElementWithResolveState> = sequence {
+    yieldAll(path)
+    if (includeTarget) yield(target)
 }
 
 private fun collectDesignationPath(target: FirElementWithResolveState): List<FirRegularClass>? {
@@ -247,7 +310,7 @@ private fun findKotlinStdlibClass(classId: ClassId, target: FirDeclaration): Fir
     return FirElementFinder.findClassifierWithClassId(firFile, classId) as? FirRegularClass
 }
 
-fun FirElementWithResolveState.collectDesignation(firFile: FirFile): FirDesignationWithFile =
+fun FirElementWithResolveState.collectDesignation(firFile: FirFile): FirDesignation =
     tryCollectDesignation(firFile) ?: errorWithAttachment("No designation of local declaration") {
         withFirEntry("firFile", firFile)
     }
@@ -258,15 +321,15 @@ fun FirElementWithResolveState.collectDesignation(): FirDesignation =
             withFirEntry("FirDeclaration", this@collectDesignation)
         }
 
-fun FirElementWithResolveState.collectDesignationWithFile(): FirDesignationWithFile =
+fun FirElementWithResolveState.collectDesignationWithFile(): FirDesignation =
     tryCollectDesignationWithFile()
         ?: errorWithAttachment("No designation of local declaration") {
             withFirEntry("FirDeclaration", this@collectDesignationWithFile)
         }
 
-fun FirElementWithResolveState.tryCollectDesignation(firFile: FirFile): FirDesignationWithFile? =
+fun FirElementWithResolveState.tryCollectDesignation(firFile: FirFile): FirDesignation? =
     collectDesignationPath(this)?.let {
-        FirDesignationWithFile(it, this, firFile)
+        FirDesignation(firFile, it, this)
     }
 
 fun FirElementWithResolveState.tryCollectDesignation(): FirDesignation? =
@@ -274,11 +337,11 @@ fun FirElementWithResolveState.tryCollectDesignation(): FirDesignation? =
         FirDesignation(it, this)
     }
 
-fun FirElementWithResolveState.tryCollectDesignationWithFile(): FirDesignationWithFile? {
+fun FirElementWithResolveState.tryCollectDesignationWithFile(): FirDesignation? {
     return when (this) {
         is FirScript, is FirCodeFragment, is FirFileAnnotationsContainer -> {
             val firFile = getContainingFile() ?: return null
-            FirDesignationWithFile(path = emptyList(), this, firFile)
+            FirDesignation(firFile, path = emptyList(), this)
         }
 
         is FirSyntheticProperty, is FirSyntheticPropertyAccessor -> unexpectedElementError<FirElementWithResolveState>(this)
@@ -288,24 +351,24 @@ fun FirElementWithResolveState.tryCollectDesignationWithFile(): FirDesignationWi
 
             val path = collectDesignationPath(this) ?: return null
             val firFile = path.lastOrNull()?.getContainingFile() ?: getContainingFile() ?: return null
-            FirDesignationWithFile(path, this, firFile)
+            FirDesignation(firFile, path, this)
         }
 
         else -> unexpectedElementError<FirElementWithResolveState>(this)
     }
 }
 
-private fun FirDeclaration.scriptDesignation(): FirDesignationWithFile? {
+private fun FirDeclaration.scriptDesignation(): FirDesignation? {
     return when {
         this is FirAnonymousInitializer -> {
             val firScriptSymbol = (containingDeclarationSymbol as? FirScriptSymbol) ?: return null
             val firFile = firScriptSymbol.fir.getContainingFile() ?: return null
-            FirDesignationWithFile(path = emptyList(), firScriptSymbol.fir, firFile)
+            FirDesignation(firFile, path = emptyList(), firScriptSymbol.fir)
         }
         isScriptDependentDeclaration -> {
             val firFile = getContainingFile() ?: return null
             val firScript = firFile.declarations.singleOrNull() as? FirScript ?: return null
-            FirDesignationWithFile(path = emptyList(), firScript, firFile)
+            FirDesignation(firFile, path = emptyList(), firScript)
         }
         else -> null
     }

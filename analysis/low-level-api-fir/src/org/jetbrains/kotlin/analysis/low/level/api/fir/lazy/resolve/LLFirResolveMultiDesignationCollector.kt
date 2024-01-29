@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -29,7 +29,7 @@ internal object LLFirResolveMultiDesignationCollector {
 
     fun getDesignationsToResolveWithCallableMembers(target: FirRegularClass): List<LLFirResolveTarget> {
         val designation = target.tryCollectDesignationWithFile() ?: return emptyList()
-        val resolveTarget = LLFirClassWithAllCallablesResolveTarget(designation.firFile, designation.path, target)
+        val resolveTarget = LLFirClassWithAllCallablesResolveTarget(designation.file, designation.classPath, target)
         return listOf(resolveTarget)
     }
 
@@ -42,7 +42,7 @@ internal object LLFirResolveMultiDesignationCollector {
         }
 
         val designation = target.tryCollectDesignationWithFile() ?: return emptyList()
-        val resolveTarget = LLFirWholeElementResolveTarget(designation.firFile, designation.path, target)
+        val resolveTarget = LLFirWholeElementResolveTarget(designation.file, designation.classPath, target)
         return listOf(resolveTarget)
     }
 
