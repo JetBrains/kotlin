@@ -80,8 +80,9 @@ private:
 
 template <typename Impl>
 ExtraSafePointActionActivator<Impl>::~ExtraSafePointActionActivator() noexcept {
-    std::unique_lock lock(mutex_);
+    // FIXME this looks super-weired
     active_.store(false, std::memory_order_relaxed);
+    std::unique_lock lock(mutex_);
 }
 
 namespace test_support {
