@@ -1,0 +1,28 @@
+FILE: either.kt
+    public sealed interface Either : R|kotlin/Any| {
+        public final class Left : R|Either| {
+            public constructor(): R|Either.Left| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final class Right : R|Either| {
+            public constructor(): R|Either.Right| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun test(x: R|Either|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|Either.Left|) ->  {
+                Int(1)
+            }
+            (R|<local>/x| is R|Either.Right|) ->  {
+                Int(2)
+            }
+        }
+
+    }

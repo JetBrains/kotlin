@@ -621,35 +621,6 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <T> withWhenSubjectType(
-        subjectType: ConeKotlinType?,
-        sessionHolder: SessionHolder,
-        f: () -> T,
-    ): T {
-        val session = sessionHolder.session
-
-        val withContextSensitiveResolution =
-            session.languageVersionSettings.supportsFeature(LanguageFeature.ContextSensitiveEnumResolutionInWhen)
-
-        if (withContextSensitiveResolution) {
-            val subjectClassSymbol = (subjectType as? ConeClassLikeType)
-                ?.lookupTag?.toRegularClassSymbol(session)?.takeIf { it.fir.classKind == ClassKind.ENUM_CLASS }
-            val whenSubjectImportingScope = subjectClassSymbol?.let {
-                FirWhenSubjectImportingScope(it.classId, session, sessionHolder.scopeSession)
-            }
-            whenSubjectImportingScopes.add(whenSubjectImportingScope)
-        }
-
-        return try {
-            f()
-        } finally {
-            if (withContextSensitiveResolution) {
-                whenSubjectImportingScopes.removeLast()
-            }
-        }
-    }
-
-    @OptIn(PrivateForInline::class)
     inline fun <T> withWhenSubjectImportingScope(f: () -> T): T {
         val whenSubjectImportingScope = whenSubjectImportingScopes.lastOrNull() ?: return f()
         val newTowerDataContext = towerDataContext.addNonLocalScope(whenSubjectImportingScope)

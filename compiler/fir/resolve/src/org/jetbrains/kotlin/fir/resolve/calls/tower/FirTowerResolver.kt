@@ -68,6 +68,7 @@ class FirTowerResolver(
             TowerDataElementsForName(info.name, components.towerDataContext),
             candidateFactoriesAndCollectors.resultCollector,
             candidateFactoriesAndCollectors.candidateFactory,
+            info.resolutionMode
         )
         // unwrapSmartCastExpression() shouldn't be here, otherwise we can get FirResolvedQualifier instead of 'this' (see e.g. kt2811.kt)
         when (val receiver = info.explicitReceiver) {

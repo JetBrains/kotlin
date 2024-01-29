@@ -1,0 +1,65 @@
+FILE: intersection.kt
+    public abstract interface A : R|kotlin/Any| {
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Any| {
+                ^foo Int(1)
+            }
+
+        }
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|B.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun bar(): R|kotlin/Any| {
+                ^bar Int(2)
+            }
+
+        }
+
+    }
+    public abstract interface C : R|B| {
+    }
+    public final fun handle(test: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/test| is R|A|) && (R|<local>/test| is R|B|) ->  {
+                when (R|<local>/test|) {
+                    ==($subj$, this@R|/A.Companion|.R|/A.Companion.foo|()) ->  {
+                        Int(1)
+                    }
+                    ==($subj$, this@R|/B.Companion|.R|/B.Companion.bar|()) ->  {
+                        Int(2)
+                    }
+                    else ->  {
+                        Int(3)
+                    }
+                }
+
+            }
+        }
+
+        when () {
+            (R|<local>/test| is R|C|) ->  {
+                when (R|<local>/test|) {
+                    ==($subj$, <Unresolved name: foo>#()) ->  {
+                        Int(1)
+                    }
+                    ==($subj$, this@R|/B.Companion|.R|/B.Companion.bar|()) ->  {
+                        Int(2)
+                    }
+                    else ->  {
+                        Int(3)
+                    }
+                }
+
+            }
+        }
+
+    }

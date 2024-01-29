@@ -1,0 +1,27 @@
+FILE: nested.kt
+    public sealed interface Boo : R|kotlin/Any| {
+        public final data class Baa : R|Boo| {
+            public constructor(x: R|kotlin/String|): R|Boo.Baa| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val x: R|kotlin/String| = R|<local>/x|
+                public get(): R|kotlin/String|
+
+            public final operator fun component1(): R|kotlin/String|
+
+            public final fun copy(x: R|kotlin/String| = this@R|/Boo.Baa|.R|/Boo.Baa.x|): R|Boo.Baa|
+
+        }
+
+    }
+    public final fun boo(b: R|Boo|): R|kotlin/String| {
+        ^boo when (R|<local>/b|) {
+            ($subj$ is R|Boo.Baa|) ->  {
+                String(hello)
+            }
+        }
+
+    }
+    public final val x: R|Boo| = R|/Boo.Baa.Baa|(String(a))
+        public get(): R|Boo|

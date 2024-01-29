@@ -1,4 +1,5 @@
-// LANGUAGE: +ContextSensitiveEnumResolutionInWhen
+// LANGUAGE: +ExpectedTypeGuidedResolution
+
 enum class Some {
     FIRST,
     SECOND;

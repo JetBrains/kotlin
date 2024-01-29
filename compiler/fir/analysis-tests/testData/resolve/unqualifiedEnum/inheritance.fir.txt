@@ -1,0 +1,39 @@
+FILE: inheritance.kt
+    package test
+
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|test/Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val four: R|test/Duration| = R|test/Duration.Duration|(Int(4))
+            public get(): R|test/Duration|
+
+    }
+    public final class Duration : R|kotlin/Any| {
+        public constructor(milliseconds: R|kotlin/Int|): R|test/Duration| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val milliseconds: R|kotlin/Int| = R|<local>/milliseconds|
+            public get(): R|kotlin/Int|
+
+        public final companion object Companion : R|test/Base| {
+            private constructor(): R|test/Duration.Companion| {
+                super<R|test/Base|>()
+            }
+
+        }
+
+    }
+    public final fun foo(duration: R|test/Duration|): R|kotlin/Int| {
+        ^foo when (R|<local>/duration|) {
+            ==($subj$, this@R|test/Duration.Companion|.R|test/Base.four|) ->  {
+                Int(1)
+            }
+            else ->  {
+                Int(0)
+            }
+        }
+
+    }

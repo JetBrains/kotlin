@@ -18,10 +18,10 @@ FILE: enumWithTheSameNameAsEntry.kt
     }
     public final fun test(a: R|A|): R|kotlin/String| {
         ^test when (R|<local>/a|) {
-            ==($subj$, R|/A.A|.<Unresolved name: A>#) ->  {
+            ==($subj$, Q|A|.R|/A.A|) ->  {
                 String(A)
             }
-            ==($subj$, R|/A.A|.<Unresolved name: B>#) ->  {
+            ==($subj$, Q|A|.R|/A.B|) ->  {
                 String(B)
             }
         }

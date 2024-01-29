@@ -33,15 +33,15 @@ FILE: unqualifiedEnum.kt
         }
 
     }
-    public final fun shouldNotWork(s: R|test/Sample|): R|kotlin/Int| {
-        ^shouldNotWork when () {
-            ==(R|<local>/s|, <Unresolved name: FIRST>#) ->  {
+    public final fun equalities(s: R|test/Sample|): R|kotlin/Int| {
+        ^equalities when () {
+            ==(R|<local>/s|, R|test/Sample.FIRST|) ->  {
                 Int(1)
             }
-            ==(R|<local>/s|, <Unresolved name: SECOND>#) ->  {
+            ==(R|<local>/s|, R|test/Sample.SECOND|) ->  {
                 Int(2)
             }
-            ==(R|<local>/s|, <Unresolved name: THIRD>#) ->  {
+            ==(R|<local>/s|, R|test/Sample.THIRD|) ->  {
                 Int(3)
             }
             else ->  {

@@ -954,7 +954,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // One of the reasons is just consistency with K1 and with the desugared form `a.equals(b)`. See KT-47409 for clarifications.
         val leftArgumentTransformed: FirExpression = arguments[0].transform(transformer, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.exitEqualityOperatorLhs()
-        val rightArgumentTransformed: FirExpression = arguments[1].transform(transformer, withExpectedType(builtinTypes.nullableAnyType))
+        val contextType = leftArgumentTransformed.takeIf { it.isResolved }
+            ?.resolvedType?.toFirResolvedTypeRef(leftArgumentTransformed.source)
+        val leftArgumentMode = ResolutionMode.WithContextTypeForEquality(builtinTypes.nullableAnyType, contextType)
+        val rightArgumentTransformed: FirExpression = arguments[1].transform(transformer, leftArgumentMode)
 
         equalityOperatorCall
             .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
@@ -1003,15 +1006,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         typeOperatorCall: FirTypeOperatorCall,
         data: ResolutionMode,
     ): FirStatement {
-        val resolved = components.typeResolverTransformer.withBareTypes {
-            if (typeOperatorCall.operation == IS || typeOperatorCall.operation == NOT_IS) {
-                components.typeResolverTransformer.withIsOperandOfIsOperator {
-                    typeOperatorCall.transformConversionTypeRef(transformer, ResolutionMode.ContextIndependent)
-                }
-            } else {
-                typeOperatorCall.transformConversionTypeRef(transformer, ResolutionMode.ContextIndependent)
-            }
-        }.transformTypeOperatorCallChildren()
+        val resolved = when (typeOperatorCall.operation) {
+            IS, NOT_IS -> transformIsOperatorCall(typeOperatorCall)
+            AS, SAFE_AS -> transformAsOperatorCall(typeOperatorCall)
+            else -> error("Unknown type operator: ${typeOperatorCall.operation}")
+        }
 
         val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument, typeOperatorCall.operation)
         resolved.transformChildren(object : FirDefaultTransformer<Any?>() {
@@ -1046,35 +1045,60 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return resolved
     }
 
-    private fun FirTypeOperatorCall.transformTypeOperatorCallChildren(): FirTypeOperatorCall {
-        if (operation == AS || operation == SAFE_AS) {
-            val argument = argumentList.arguments.singleOrNull() ?: error("Not a single argument: ${this.render()}")
+    private fun transformIsOperatorCall(
+        typeOperatorCall: FirTypeOperatorCall,
+    ): FirTypeOperatorCall {
+        require(typeOperatorCall.operation == IS || typeOperatorCall.operation == NOT_IS)
 
-            // For calls in the form of (materialize() as MyClass) we've got a special rule that adds expect type to the `materialize()` call
-            // AS operator doesn't add expected type to any other expressions
-            // See https://kotlinlang.org/docs/whatsnew12.html#support-for-foo-as-a-shorthand-for-this-foo
-            // And limitations at org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleterKt.isFunctionForExpectTypeFromCastFeature(org.jetbrains.kotlin.fir.declarations.FirFunction<?>)
-            if (argument is FirFunctionCall || (argument is FirSafeCallExpression && argument.selector is FirFunctionCall)) {
-                val expectedType = conversionTypeRef.coneTypeSafe<ConeKotlinType>()?.takeIf {
+        // Use the argument type to guide the resolution of the conversion type
+        val argumentResolved = typeOperatorCall.transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
+        val typeResolutionMode = when {
+            argumentResolved.argument.isResolved -> ResolutionMode.WithExpectedType(
+                argumentResolved.argument.resolvedType.toFirResolvedTypeRef(typeOperatorCall.argument.source)
+            )
+            else -> ResolutionMode.ContextIndependent
+        }
+        return components.typeResolverTransformer.withBareTypes {
+            components.typeResolverTransformer.withIsOperandOfIsOperator {
+                argumentResolved.transformConversionTypeRef(transformer, typeResolutionMode)
+            }
+        }
+    }
+
+    private fun transformAsOperatorCall(
+        typeOperatorCall: FirTypeOperatorCall,
+    ): FirTypeOperatorCall {
+        require(typeOperatorCall.operation == AS || typeOperatorCall.operation == SAFE_AS)
+
+        val argument = typeOperatorCall.argumentList.arguments.singleOrNull() ?: error("Not a single argument: ${typeOperatorCall.render()}")
+
+        val resolved = components.typeResolverTransformer.withBareTypes {
+            typeOperatorCall.transformConversionTypeRef(transformer, ResolutionMode.ContextIndependent)
+        }
+
+        // For calls in the form of (materialize() as MyClass) we've got a special rule that adds expect type to the `materialize()` call
+        // AS operator doesn't add expected type to any other expressions
+        // See https://kotlinlang.org/docs/whatsnew12.html#support-for-foo-as-a-shorthand-for-this-foo
+        // And limitations at org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleterKt.isFunctionForExpectTypeFromCastFeature(org.jetbrains.kotlin.fir.declarations.FirFunction<?>)
+        val resolutionMode = if (argument is FirFunctionCall || (argument is FirSafeCallExpression && argument.selector is FirFunctionCall)) {
+                resolved.conversionTypeRef.coneTypeSafe<ConeKotlinType>()?.takeIf {
                     // is not bare type
                     it !is ConeClassLikeType ||
                             it.typeArguments.isNotEmpty() ||
                             it.lookupTag.toSymbol(session)?.fir?.typeParameters?.isEmpty() == true
                 }?.let {
-                    if (operation == SAFE_AS)
+                    if (typeOperatorCall.operation == SAFE_AS)
                         it.withNullability(nullable = true, session.typeContext)
                     else
                         it
-                }
-
-                if (expectedType != null) {
-                    val newMode = ResolutionMode.WithExpectedType(conversionTypeRef.withReplacedConeType(expectedType), fromCast = true)
-                    return transformOtherChildren(transformer, newMode)
-                }
+                }?.let {
+                    ResolutionMode.WithExpectedType(resolved.conversionTypeRef.withReplacedConeType(it), fromCast = true)
+                } ?: ResolutionMode.ContextIndependent
+            } else {
+                ResolutionMode.ContextIndependent
             }
-        }
 
-        return transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
+        return resolved.transformOtherChildren(transformer, resolutionMode)
     }
 
     @OptIn(UnresolvedExpressionTypeAccess::class)

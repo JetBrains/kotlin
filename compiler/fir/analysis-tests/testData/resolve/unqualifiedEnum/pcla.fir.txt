@@ -1,0 +1,46 @@
+FILE: pcla.kt
+    public abstract interface Thing<A> : R|kotlin/Any| {
+        public abstract fun add(x: R|A|): R|kotlin/Unit|
+
+        public abstract val last: R|A?|
+            public get(): R|A?|
+
+    }
+    public final fun <A> buildThing(builder: R|Thing<A>.() -> kotlin/Unit|): R|kotlin/Int| {
+        ^buildThing R|kotlin/TODO|()
+    }
+    public final class Duration : R|kotlin/Any| {
+        public constructor(milliseconds: R|kotlin/Int|): R|Duration| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val milliseconds: R|kotlin/Int| = R|<local>/milliseconds|
+            public get(): R|kotlin/Int|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Duration.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val R|kotlin/Int|.seconds: R|Duration|
+                public get(): R|Duration| {
+                    ^ R|/Duration.Duration|(this@R|/Duration.Companion.seconds|)
+                }
+
+        }
+
+    }
+    public final val x: R|kotlin/Int| = R|/buildThing|<R|Duration|>(<L> = buildThing@fun R|Thing<Duration>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        this@R|special/anonymous|.R|SubstitutionOverride</Thing.add: R|kotlin/Unit|>|(R|/Duration.Duration|(Int(0)))
+        when (this@R|special/anonymous|.R|SubstitutionOverride</Thing.last: R|Duration?|>|) {
+            ==($subj$, Null(null)) ->  {
+            }
+            ==($subj$, IntegerLiteral(1).<Unresolved name: seconds>#) ->  {
+            }
+            else ->  {
+            }
+        }
+
+    }
+    )
+        public get(): R|kotlin/Int|
