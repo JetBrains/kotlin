@@ -67,9 +67,9 @@ private object KtOutOfContentRootModuleFactory : KtModuleFactory {
     override fun createModule(
         testModule: TestModule,
         contextModule: KtModuleWithFiles?,
+        dependencyPaths: Collection<Path>,
         testServices: TestServices,
         project: Project,
-        dependencyPaths: Collection<Path>,
     ): KtModuleWithFiles {
         val psiFiles = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
         val platform = testModule.targetPlatform

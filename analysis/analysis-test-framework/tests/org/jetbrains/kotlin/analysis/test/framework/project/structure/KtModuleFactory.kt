@@ -21,13 +21,15 @@ fun interface KtModuleFactory : TestService {
      * @param contextModule a module to use as a context module. Some kinds of modules (such as dangling file modules) require a
      * context module. Modules representing code fragments also require a context element – that is why the [KtModuleWithFiles] is passed,
      * instead of a plain (KtModule)[org.jetbrains.kotlin.analysis.project.structure.KtModule].
+     *
+     * @param dependencyPaths Paths of directories containing dependency libraries. The paths will be set as class paths for compilation.
      */
     fun createModule(
         testModule: TestModule,
         contextModule: KtModuleWithFiles?,
+        dependencyPaths: Collection<Path>,
         testServices: TestServices,
         project: Project,
-        dependencyPaths: Collection<Path>,
     ): KtModuleWithFiles
 }
 

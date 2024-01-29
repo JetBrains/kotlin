@@ -112,10 +112,10 @@ object TestModuleStructureFactory {
             val contextModuleName = testModule.directives.singleOrZeroValue(AnalysisApiTestDirectives.CONTEXT_MODULE)
             val contextModule = contextModuleName?.let(existingModules::getValue)
 
-            val dependencies = testModule.regularDependencies.mapNotNull { moduleNamesToPaths[it.moduleName] }.flatten()
+            val dependencyPaths = testModule.regularDependencies.mapNotNull { moduleNamesToPaths[it.moduleName] }.flatten()
             val moduleWithFiles = testServices
                 .getKtModuleFactoryForTestModule(testModule)
-                .createModule(testModule, contextModule, testServices, project, dependencies)
+                .createModule(testModule, contextModule, dependencyPaths, testServices, project)
 
             existingModules[testModule.name] = moduleWithFiles
             result.add(moduleWithFiles)

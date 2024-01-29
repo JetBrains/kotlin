@@ -29,9 +29,9 @@ object KtCodeFragmentModuleFactory : KtModuleFactory {
     override fun createModule(
         testModule: TestModule,
         contextModule: KtModuleWithFiles?,
+        dependencyPaths: Collection<Path>,
         testServices: TestServices,
         project: Project,
-        dependencyPaths: Collection<Path>
     ): KtModuleWithFiles {
         requireNotNull(contextModule) { "Code fragment requires a context module" }
 
