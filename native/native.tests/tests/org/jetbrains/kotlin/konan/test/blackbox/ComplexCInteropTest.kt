@@ -116,7 +116,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         ).assertSuccess().resultingArtifact
         println(cinteropKlib)
 
-        val ignoredTests = if (testRunSettings.get<GCType>() != GCType.NOOP) emptySet() else setOf(
+        val ignoredTestGTestPatterns = if (testRunSettings.get<GCType>() != GCType.NOOP) emptySet() else setOf(
             "Kt41811Kt.*",
             "CustomStringKt.testCustomString",
             "Kt42482Kt.testKT42482",
@@ -131,7 +131,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
                 "-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion",
                 "-tr", "-e", "main", "-linker-option", "-L${buildDir.absolutePath}"
             ),
-            extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT, ignoredTests),
+            extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT, ignoredTestGTestPatterns),
         )
         val success = compileToExecutable(testCase, cinteropKlib.asLibraryDependency()).assertSuccess()
         println(success)

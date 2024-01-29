@@ -86,15 +86,19 @@ internal sealed interface TestRunParameter {
         override fun testMatches(testName: TestName) = this.testName == testName
     }
 
-    class WithRegexFilter(val pattern: String, val positive: Boolean) : WithFilter() {
+    class WithGTestPatterns(val positivePatterns: Set<String> = setOf("*"), val negativePatterns: Set<String>) : WithFilter() {
+        val positiveRegexes = positivePatterns.map(::fromGTestPattern)
+        val negativeRegexes = negativePatterns.map(::fromGTestPattern)
+
         override fun applyTo(programArgs: MutableList<String>) {
-            programArgs += if (positive)
-                "--ktest_regex_filter=$pattern"
-            else
-                "--ktest_negative_regex_filter=$pattern"
+            "--ktest_filter=${positivePatterns.joinToString(":")}-${negativePatterns.joinToString(":")}"
         }
 
-        override fun testMatches(testName: TestName) = Regex(pattern).matches(testName.toString()) == positive
+        override fun testMatches(testName: TestName): Boolean {
+            val testNameStr = testName.toString()
+            return positiveRegexes.any { it.matches(testNameStr) } &&
+                    !negativeRegexes.any { it.matches(testNameStr) }
+        }
     }
 
     object WithTCTestLogger : TestRunParameter {
@@ -133,3 +137,23 @@ internal inline fun <reified T : TestRunParameter> List<TestRunParameter>.has():
 internal inline fun <reified T : TestRunParameter> List<TestRunParameter>.get(onFound: T.() -> Unit) {
     firstIsInstanceOrNull<T>()?.let(onFound)
 }
+
+
+// must be in sync with `fromGTestPattern(String)` in kotlin-native/runtime/src/main/kotlin/kotlin/native/internal/test/TestRunner.kt
+internal fun fromGTestPattern(pattern: String): Regex {
+    val result = StringBuilder()
+    result.append("^")
+    var prevIndex = 0
+    pattern.forEachIndexed { index, c ->
+        if (c == '*' || c == '?') {
+            result.append(pattern.substringEscaped(prevIndex until index))
+            prevIndex = index + 1
+            result.append(if (c == '*') ".*" else ".")
+        }
+    }
+    result.append(pattern.substringEscaped(prevIndex until pattern.length))
+    result.append("$")
+    return result.toString().toRegex()
+}
+
+private fun String.substringEscaped(range: IntRange) = this.substring(range).let { if (it.isNotEmpty()) Regex.escape(it) else "" }

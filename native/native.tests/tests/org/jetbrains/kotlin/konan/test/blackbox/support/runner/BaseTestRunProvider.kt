@@ -48,7 +48,7 @@ internal open class BaseTestRunProvider {
                 else {
                     val ignoredTests = (testCase.extras as TestCase.WithTestRunnerExtras).ignoredTests
                     if (ignoredTests.isNotEmpty()) {
-                        add(TestRunParameter.WithRegexFilter("(${ignoredTests.joinToString("|")})", positive = false))
+                        add(TestRunParameter.WithGTestPatterns(negativePatterns = ignoredTests))
                     }
                 }
             }
