@@ -61,6 +61,11 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typePro
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.*
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractGlobalModuleStateModificationAnalysisSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractGlobalSourceModuleStateModificationAnalysisSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractGlobalSourceOutOfBlockModificationAnalysisSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractModuleOutOfBlockModificationAnalysisSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractModuleStateModificationAnalysisSessionInvalidationTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractBuiltInTypeTest
@@ -231,6 +236,37 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
     group("substitutors", filter = frontendIs(FrontendKind.Fir)) {
         test<AbstractAnalysisApiSubstitutorsTest> {
             model(it, "typeSubstitution")
+        }
+    }
+
+    // We don't test Standalone API analysis session invalidation because it doesn't support modification (yet). The test infrastructure
+    // registers an "always accessible" lifetime token, which is at odds with checking the validity of an analysis session after
+    // invalidation.
+    group(
+        "sessions",
+        filter = frontendIs(FrontendKind.Fir)
+                and testModuleKindIs(TestModuleKind.Source)
+                and analysisSessionModeIs(AnalysisSessionMode.Normal)
+                and analysisApiModeIs(AnalysisApiMode.Ide)
+    ) {
+        test<AbstractModuleStateModificationAnalysisSessionInvalidationTest> {
+            model("sessionInvalidation")
+        }
+
+        test<AbstractModuleOutOfBlockModificationAnalysisSessionInvalidationTest> {
+            model("sessionInvalidation")
+        }
+
+        test<AbstractGlobalModuleStateModificationAnalysisSessionInvalidationTest> {
+            model("sessionInvalidation")
+        }
+
+        test<AbstractGlobalSourceModuleStateModificationAnalysisSessionInvalidationTest> {
+            model("sessionInvalidation")
+        }
+
+        test<AbstractGlobalSourceOutOfBlockModificationAnalysisSessionInvalidationTest> {
+            model("sessionInvalidation")
         }
     }
 }
