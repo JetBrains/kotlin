@@ -49,6 +49,7 @@ dependencies {
     kotlinNativeEmbedded(project(":kotlin-native:utilities:cli-runner"))
     kotlinNativeEmbedded(project(":kotlin-native:utilities:basic-utils"))
     kotlinNativeEmbedded(project(":kotlin-native:klib"))
+    kotlinNativeEmbedded(project(":kotlin-native:backend.native", "cli_bcApiElements"))
     kotlinNativeEmbedded(project(":kotlin-native:endorsedLibraries:kotlinx.cli", "jvmRuntimeElements"))
     kotlinNativeEmbedded(project(":kotlin-compiler")) { isTransitive = false }
 

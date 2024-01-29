@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.cli.klib
 
-import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.utils.Printer
