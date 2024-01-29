@@ -26,9 +26,10 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import javax.inject.Inject
 
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 open class KotlinJsCompilation @Inject internal constructor(
     compilation: KotlinCompilationImpl,
-) : AbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(compilation),
+) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(compilation),
     HasBinaries<KotlinJsBinaryContainer> {
 
     @Suppress("UNCHECKED_CAST")
