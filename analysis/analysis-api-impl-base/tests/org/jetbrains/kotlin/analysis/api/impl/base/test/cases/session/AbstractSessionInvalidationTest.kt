@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.test.framework.directives.publishWildcardMo
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.services.moduleStructure
 
 /**
  * Checks that sessions are invalidated after publishing modification events. The type of published modification event depends on the value
@@ -41,11 +40,11 @@ abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBas
     protected abstract fun isSessionValid(session: SESSION): Boolean
 
     override fun doTest(testServices: TestServices) {
-        val allKtModules = testServices.ktTestModuleStructure.mainModules.map { it.ktModule }
+        val ktModules = testServices.ktTestModuleStructure.mainModules.map { it.ktModule }
 
-        val sessionsBeforeModification = getSessions(allKtModules)
+        val sessionsBeforeModification = getSessions(ktModules)
         testServices.ktTestModuleStructure.publishWildcardModificationEventsByDirective(modificationEventKind)
-        val sessionsAfterModification = getSessions(allKtModules)
+        val sessionsAfterModification = getSessions(ktModules)
 
         val invalidatedSessions = buildSet {
             addAll(sessionsBeforeModification)
@@ -62,14 +61,8 @@ abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBas
         invalidatedSessions: Set<SESSION>,
         testServices: TestServices,
     ) {
-        val testModuleNames = testServices.moduleStructure.modules.map { it.name }
-
         val invalidatedModuleDescriptions = invalidatedSessions
             .map { getSessionKtModule(it).toString() }
-            .filter {
-                // We only want to include test modules in the output. Otherwise, it might include libraries from the test infrastructure.
-                it in testModuleNames
-            }
             .distinct()
             .sorted()
 
