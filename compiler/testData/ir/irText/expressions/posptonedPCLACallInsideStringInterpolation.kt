@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-65341
 class Controller<K> {
     fun yield(k: K) {}
