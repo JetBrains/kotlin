@@ -63,7 +63,7 @@ internal class KtFirCompletionCandidateChecker(
         nameExpression: KtSimpleNameExpression,
         possibleExplicitReceiver: KtExpression?,
     ): KtExtensionApplicabilityResult {
-        val asFunctionalVariableCall = checkCandidateAsFunctionalVariableCall(candidateSymbol)
+        val asFunctionalVariableCall = isCandidateInvocableAsFunctionalVariableCall(candidateSymbol)
         if (nameExpression.parent is KtCallableReferenceExpression && asFunctionalVariableCall) {
             return KtExtensionApplicabilityResult.NonApplicable(token)
         }
@@ -138,7 +138,7 @@ internal class KtFirCompletionCandidateChecker(
             return null
         }
 
-        val parent = parent
+        val parent = this.parent
         if (parent is KtCallableReferenceExpression) {
             return getMatchingFirExpressionForCallableReferenceReceiver(parent, resolver)
         }
@@ -166,7 +166,7 @@ internal class KtFirCompletionCandidateChecker(
         return explicitReceiverExpression
     }
 
-    private fun checkCandidateAsFunctionalVariableCall(
+    private fun isCandidateInvocableAsFunctionalVariableCall(
         candidateSymbol: FirCallableDeclaration,
     ): Boolean = candidateSymbol is FirVariable &&
             candidateSymbol.symbol.receiverParameter == null &&
