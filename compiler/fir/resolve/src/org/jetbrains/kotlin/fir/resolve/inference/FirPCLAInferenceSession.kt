@@ -202,6 +202,8 @@ class FirPCLAInferenceSession(
         if (this is FirCallableReferenceAccess) return true
         if (this is FirAnonymousObjectExpression) return true
 
+        if (this is FirStringConcatenationCall && this.arguments.any { it.doesArgumentLeadToCallPostponement() }) return true
+
         return false
     }
 

@@ -2403,6 +2403,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("kt65341.kt")
+        public void testKt65341() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/kt65341.kt");
+        }
+
         @TestMetadata("lambdaParameterHasTVType.kt")
         public void testLambdaParameterHasTVType() throws Exception {
             runTest("compiler/testData/codegen/box/builderInference/lambdaParameterHasTVType.kt");
@@ -2426,6 +2431,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("pclaRootIsTrySyntheticCall.kt")
         public void testPclaRootIsTrySyntheticCall() throws Exception {
             runTest("compiler/testData/codegen/box/builderInference/pclaRootIsTrySyntheticCall.kt");
+        }
+
+        @TestMetadata("posptonedPCLACallInsideStringInterpolation.kt")
+        public void testPosptonedPCLACallInsideStringInterpolation() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/posptonedPCLACallInsideStringInterpolation.kt");
         }
 
         @TestMetadata("receiverUsesOuterTVButReturnTypeIsProper.kt")

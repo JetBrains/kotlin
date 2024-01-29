@@ -1,0 +1,10 @@
+MODULE main
+	CLASS Kt65341Kt$nodeTransformer$1.class
+		K1
+			---
+		K2
+			invoke(LNodeTransformer1;)Lkotlin/Unit; [public, final]
+		K1
+			invoke(LNodeTransformer1;)V [public, final]
+		K2
+			---

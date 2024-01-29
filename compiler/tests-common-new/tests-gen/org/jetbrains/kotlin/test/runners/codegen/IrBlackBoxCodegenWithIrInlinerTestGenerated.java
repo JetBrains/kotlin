@@ -2756,6 +2756,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("kt65341.kt")
+        public void testKt65341() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/kt65341.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaParameterHasTVType.kt")
         public void testLambdaParameterHasTVType() throws Exception {
             runTest("compiler/testData/codegen/box/builderInference/lambdaParameterHasTVType.kt");
@@ -2783,6 +2789,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         @TestMetadata("pclaRootIsTrySyntheticCall.kt")
         public void testPclaRootIsTrySyntheticCall() throws Exception {
             runTest("compiler/testData/codegen/box/builderInference/pclaRootIsTrySyntheticCall.kt");
+        }
+
+        @Test
+        @TestMetadata("posptonedPCLACallInsideStringInterpolation.kt")
+        public void testPosptonedPCLACallInsideStringInterpolation() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/posptonedPCLACallInsideStringInterpolation.kt");
         }
 
         @Test

@@ -1997,6 +1997,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Test
+            @TestMetadata("posptonedPCLACallInsideStringInterpolation.kt")
+            public void testPosptonedPCLACallInsideStringInterpolation() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/posptonedPCLACallInsideStringInterpolation.kt");
+            }
+
+            @Test
             @TestMetadata("receiverUsesOuterTVButReturnTypeIsProper.kt")
             public void testReceiverUsesOuterTVButReturnTypeIsProper() throws Exception {
                 runTest("compiler/testData/codegen/box/builderInference/receiverUsesOuterTVButReturnTypeIsProper.kt");
