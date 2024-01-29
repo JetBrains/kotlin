@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ContextSensitiveEnumResolutionInWhen
+// LANGUAGE: +ExpectedTypeGuidedResolution
 // FILE: first.kt
 
 package first

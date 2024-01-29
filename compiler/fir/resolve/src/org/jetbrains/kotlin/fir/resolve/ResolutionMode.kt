@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
@@ -15,7 +17,10 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 sealed class ResolutionMode(
     val forceFullCompletion: Boolean,
 ) {
-    data object ContextDependent : ResolutionMode(forceFullCompletion = false)
+    data class ContextDependentWithInfo(
+        val isFunctionArgument: Boolean = false
+    ) : ResolutionMode(forceFullCompletion = false)
+
     data object Delegate : ResolutionMode(forceFullCompletion = false)
     data object ContextIndependent : ResolutionMode(forceFullCompletion = true)
 
@@ -25,7 +30,7 @@ sealed class ResolutionMode(
     }
 
     @OptIn(WithExpectedType.ExpectedTypeRefAccess::class)
-    class WithExpectedType(
+    open class WithExpectedType(
         @property:ExpectedTypeRefAccess
         val expectedTypeRef: FirResolvedTypeRef,
         val mayBeCoercionToUnitApplied: Boolean = false,
@@ -94,6 +99,20 @@ sealed class ResolutionMode(
         AnnotationParameter,
     }
 
+    /**
+     * This resolution mode is used for resolving the RHS of equality operators.
+     *
+     * It carries an expected type, as [WithExpectedType], but also additional contextual information about the LHS.
+     */
+    @OptIn(WithExpectedType.ExpectedTypeRefAccess::class)
+    class WithContextTypeForEquality(
+        expectedTypeRef: FirResolvedTypeRef,
+        @property:ExpectedTypeRefAccess
+        val contextTypeRef: FirResolvedTypeRef?,
+    ) : WithExpectedType(expectedTypeRef) {
+        val contextType: ConeKotlinType get() = contextTypeRef?.coneType ?: expectedType
+    }
+
     class WithStatus(val status: FirDeclarationStatus) : ResolutionMode(forceFullCompletion = false) {
         override fun toString(): String {
             return "WithStatus: ${status.render()}"
@@ -121,7 +140,10 @@ sealed class ResolutionMode(
         override fun toString(): String = "AssignmentLValue: ${variableAssignment.render()}"
     }
 
-    private companion object {
+    companion object {
+        val ContextDependent : ContextDependentWithInfo = ContextDependentWithInfo(false)
+        val ContextDependentFunctionArgument : ContextDependentWithInfo = ContextDependentWithInfo(true)
+
         private fun FirTypeRef?.prettyString(): String {
             if (this == null) return "null"
             val coneType = this.coneTypeSafe<ConeKotlinType>() ?: return this.render()
@@ -135,6 +157,47 @@ val ResolutionMode.expectedType: ConeKotlinType?
         is ResolutionMode.WithExpectedType -> expectedType.takeIf { !this.fromCast }
         else -> null
     }
+
+val ResolutionMode.contextType: ConeKotlinType?
+    get() = when (this) {
+        is ResolutionMode.WithContextTypeForEquality -> contextType
+        is ResolutionMode.WithExpectedType -> expectedType
+        else -> null
+    }
+
+fun ResolutionMode.fullyExpandedClassFromContext(session: FirSession): FirRegularClass? =
+    contextType?.singleDefiniteType(session)?.toRegularClassSymbol(session)?.fir
+
+/**
+ * Single definite type as defined per the KEEP
+ * https://github.com/Kotlin/KEEP/blob/improved-resolution-expected-type/proposals/improved-resolution-expected-type.md#single-definite-expected-type
+ */
+fun ConeKotlinType.singleDefiniteType(session: FirSession): ConeKotlinType? {
+    if (kind != ProjectionKind.INVARIANT && kind != ProjectionKind.OUT) return null
+    return when (this) {
+        is ConeErrorType -> null
+        is ConeFlexibleType -> {
+            val lowerDefiniteType = lowerBound.singleDefiniteType(session) ?: return null
+            val upperDefiniteType = upperBound.singleDefiniteType(session) ?: return null
+            lowerDefiniteType.takeIf { it == upperDefiniteType }
+        }
+        is ConeDefinitelyNotNullType -> original.singleDefiniteType(session)
+        is ConeIntersectionType -> {
+            val withoutAny = intersectedTypes.filter { !it.isAnyOrNullableAny }
+            when (val result = ConeTypeIntersector.intersectTypes(session.typeContext, withoutAny)) {
+                is ConeIntersectionType -> null
+                else -> result.singleDefiniteType(session)
+            }
+        }
+        is ConeLookupTagBasedType -> this
+        is ConeCapturedType -> { // only <T : A>
+            if (constructor.typeParameterMarker == null) return null
+            constructor.supertypes?.singleOrNull()?.singleDefiniteType(session)
+        }
+        else -> null
+    }?.withNullability(false, session.typeContext)
+}
+
 
 fun withExpectedType(
     expectedTypeRef: FirTypeRef,

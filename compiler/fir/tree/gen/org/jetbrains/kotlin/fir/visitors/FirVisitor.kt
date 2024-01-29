@@ -386,6 +386,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitNamedReference(namedReference: FirNamedReference, data: D): R =
         visitElement(namedReference, data)
 
+    open fun visitDelayedNameReference(delayedNameReference: FirDelayedNameReference, data: D): R =
+        visitElement(delayedNameReference, data)
+
     open fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase, data: D): R =
         visitElement(namedReferenceWithCandidateBase, data)
 

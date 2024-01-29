@@ -1,0 +1,47 @@
+FILE: constructors.kt
+    public sealed interface Tree : R|kotlin/Any| {
+        public final data object Leaf : R|Tree| {
+            private constructor(): R|Tree.Leaf| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final data class Node : R|kotlin/Any| {
+            public constructor(left: R|Tree|, info: R|kotlin/Int|, right: R|Tree|): R|Tree.Node| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val left: R|Tree| = R|<local>/left|
+                public get(): R|Tree|
+
+            public final val info: R|kotlin/Int| = R|<local>/info|
+                public get(): R|kotlin/Int|
+
+            public final val right: R|Tree| = R|<local>/right|
+                public get(): R|Tree|
+
+            public final operator fun component1(): R|Tree|
+
+            public final operator fun component2(): R|kotlin/Int|
+
+            public final operator fun component3(): R|Tree|
+
+            public final fun copy(left: R|Tree| = this@R|/Tree.Node|.R|/Tree.Node.left|, info: R|kotlin/Int| = this@R|/Tree.Node|.R|/Tree.Node.info|, right: R|Tree| = this@R|/Tree.Node|.R|/Tree.Node.right|): R|Tree.Node|
+
+        }
+
+    }
+    public final val leaf: R|Tree| = Q|Tree.Leaf|
+        public get(): R|Tree|
+    public final fun create(n: R|kotlin/Int|): R|Tree| {
+        ^create when (R|<local>/n|) {
+            ==($subj$, Int(0)) ->  {
+                Q|Tree.Leaf|
+            }
+            else ->  {
+                Q|Tree|.R|/Tree.Node.Node|(Leaf#, R|<local>/n|, Leaf#)
+            }
+        }
+
+    }

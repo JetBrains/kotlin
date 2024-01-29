@@ -767,7 +767,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         var samConversions: MutableMap<FirElement, FirSamResolver.SamConversionInfo>? = null
         val arguments = argumentMapping.flatMap { (atom, valueParameter) ->
-            val argument = atom.expression
+            val argument = atom.digExpression()
             val expectedType = when {
                 isIntegerOperator -> ConeIntegerConstantOperatorTypeImpl(
                     isUnsigned = symbol.isWrappedIntegerOperatorForUnsignedType() && callInfo.name in binaryOperatorsWithSignedArgument,
@@ -792,6 +792,11 @@ class FirCallCompletionResultsWriterTransformer(
 
         if (lambdasReturnType.isEmpty() && arguments.isEmpty()) return null
         return ExpectedArgumentType.ArgumentsMap(arguments, lambdasReturnType, samConversions ?: emptyMap(), forErrorReference)
+    }
+
+    fun ConeResolutionAtom.digExpression(): FirExpression = when (this) {
+        is ConeResolutionAtomWithPostponedChild -> subAtom?.digExpression() ?: expression
+        else -> expression
     }
 
     override fun transformDelegatedConstructorCall(

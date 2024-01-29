@@ -1,0 +1,36 @@
+FILE: propagation.kt
+    public final enum class Sample : R|kotlin/Enum<Sample>| {
+        private constructor(): R|Sample| {
+            super<R|kotlin/Enum<Sample>|>()
+        }
+
+        public final static enum entry FIRST: R|Sample|
+        public final static enum entry SECOND: R|Sample|
+        public final static fun values(): R|kotlin/Array<Sample>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Sample| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Sample>|
+            public get(): R|kotlin/enums/EnumEntries<Sample>|
+
+    }
+    public final fun trivial1(message: R|kotlin/String|): R|Sample| {
+        ^trivial1 <Unresolved name: FIRST>#.R|kotlin/takeIf<None of the following candidates is applicable because of receiver type mismatch: [kotlin/takeIf]>#|<R|Sample?|>(<L> = takeIf@fun <anonymous>(it: R|Sample?|): R|kotlin/Boolean| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ ==(R|<local>/message|, String(hello))
+        }
+        ) ?: R|/Sample.SECOND|
+    }
+    public final fun trivial2(message: R|kotlin/String|): R|Sample| {
+        ^trivial2 Q|Sample|.R|/Sample.FIRST|.R|kotlin/takeIf|<R|Sample|>(<L> = takeIf@fun <anonymous>(it: R|Sample|): R|kotlin/Boolean| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ ==(R|<local>/message|, String(hello))
+        }
+        ) ?: R|/Sample.SECOND|
+    }
+    public final fun trivial3(): R|Sample| {
+        ^trivial3 R|kotlin/run<Inapplicable(INAPPLICABLE): kotlin/run>#|<R|Sample|>(<L> = run@fun <anonymous>(): R|Sample| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ <Unresolved name: FIRST>#
+        }
+        )
+    }

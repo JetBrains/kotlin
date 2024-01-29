@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.lastExpression
+import org.jetbrains.kotlin.fir.references.FirDelayedNameReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaRetur
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
+import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -88,9 +90,13 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
                     expression,
                     createRawAtom((expression.selector as? FirExpression)?.unwrapSmartcastExpression(), allowUnresolvedExpression)
                 )
-                is FirResolvable -> when (val candidate = expression.candidate()) {
-                    null -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
-                    else -> ConeAtomWithCandidate(expression, candidate)
+                is FirResolvable -> {
+                    val candidate = expression.candidate()
+                    when {
+                        expression.calleeReference is FirDelayedNameReference -> ConeResolutionAtomWithPostponedChild(expression)
+                        candidate == null -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
+                        else -> ConeAtomWithCandidate(expression, candidate)
+                    }
                 }
                 is FirWrappedArgumentExpression -> ConeResolutionAtomWithSingleChild(
                     expression,
@@ -309,6 +315,35 @@ class ConeResolvedCallableReferenceAtom(
         revisedExpectedType = expectedType
     }
 }
+
+class ConeDelayedReferenceAtom(
+    val originalExpression: FirQualifiedAccessExpression,
+    private val initialExpectedType: ConeKotlinType?
+) : ConePostponedResolvedAtom(), PostponedAtomWithRevisableExpectedType {
+    override val inputTypes: Collection<ConeKotlinType> = emptyList()
+    override val outputType: ConeKotlinType? = null
+
+    override val expectedType: ConeKotlinType?
+        get() = revisedExpectedType ?: initialExpectedType
+
+    override var revisedExpectedType: ConeKotlinType? = null
+        private set
+
+    override fun reviseExpectedType(expectedType: KotlinTypeMarker) {
+        require(expectedType is ConeKotlinType)
+        revisedExpectedType = expectedType
+    }
+
+    override val expression: FirExpression
+        get() = revisedExpression
+
+    private var revisedExpression: FirExpression = originalExpression
+
+    fun reviseExpression(expression: FirExpression) {
+        revisedExpression = expression
+    }
+}
+
 
 //  -------------------------- Utils --------------------------
 

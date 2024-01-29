@@ -513,7 +513,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     if (enableArrayOfCallTransformation && data is ResolutionMode.WithExpectedType) {
                         transformCallArgumentsInsideAnnotationContext(functionCall, data)
                     } else {
-                        it.replaceArgumentList(it.argumentList.transform(this, ResolutionMode.ContextDependent))
+                        it.replaceArgumentList(it.argumentList.transform(this, ResolutionMode.ContextDependentFunctionArgument))
                     }
                     dataFlowAnalyzer.exitCallArguments()
                 }
@@ -615,13 +615,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                             forceFullCompletion = false,
                             arrayLiteralPosition = ArrayLiteralPosition.AnnotationArgument,
                         )
-                    } ?: ResolutionMode.ContextDependent
+                    } ?: ResolutionMode.ContextDependentFunctionArgument
 
                     arg.transformSingle(transformer, resolutionMode)
                 }
             })
         } else {
-            call.replaceArgumentList(call.argumentList.transform(transformer, ResolutionMode.ContextDependent))
+            call.replaceArgumentList(call.argumentList.transform(transformer, ResolutionMode.ContextDependentFunctionArgument))
         }
     }
 
@@ -646,7 +646,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         )
 
         val approximationIsNeeded =
-            resolutionMode !is ResolutionMode.ReceiverResolution && resolutionMode !is ResolutionMode.ContextDependent
+            resolutionMode !is ResolutionMode.ReceiverResolution && resolutionMode !is ResolutionMode.ContextDependentWithInfo
 
         val integerOperatorCall = buildIntegerLiteralOperatorCall {
             source = originalCall.source
@@ -756,7 +756,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         dataFlowAnalyzer.enterCallArguments(augmentedAssignment, listOf(augmentedAssignment.rightArgument))
         val leftArgument = augmentedAssignment.leftArgument
             .transformAsExplicitReceiver(ResolutionMode.ReceiverResolution, isUsedAsGetClassReceiver = false)
-        val rightArgument = augmentedAssignment.rightArgument.transformSingle(transformer, ResolutionMode.ContextDependent)
+        val rightArgument = augmentedAssignment.rightArgument.transformSingle(transformer, ResolutionMode.ContextDependentFunctionArgument)
         dataFlowAnalyzer.exitCallArguments()
 
         val generator = GeneratorOfPlusAssignCalls(
@@ -984,7 +984,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // One of the reasons is just consistency with K1 and with the desugared form `a.equals(b)`. See KT-47409 for clarifications.
         val leftArgumentTransformed: FirExpression = arguments[0].transform(transformer, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.exitEqualityOperatorLhs()
-        val rightArgumentTransformed: FirExpression = arguments[1].transform(transformer, withExpectedType(builtinTypes.nullableAnyType))
+        val contextType = leftArgumentTransformed.takeIf { it.isResolved }
+            ?.resolvedType?.toFirResolvedTypeRef(leftArgumentTransformed.source)
+        val leftArgumentMode = ResolutionMode.WithContextTypeForEquality(builtinTypes.nullableAnyType, contextType)
+        val rightArgumentTransformed: FirExpression = arguments[1].transform(transformer, leftArgumentMode)
 
         equalityOperatorCall
             .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
@@ -1033,15 +1036,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         typeOperatorCall: FirTypeOperatorCall,
         data: ResolutionMode,
     ): FirStatement {
-        val resolved = components.typeResolverTransformer.withBareTypes {
-            if (typeOperatorCall.operation == IS || typeOperatorCall.operation == NOT_IS) {
-                components.typeResolverTransformer.withIsOperandOfIsOperator {
-                    typeOperatorCall.transformConversionTypeRef(transformer, ResolutionMode.ContextIndependent)
-                }
-            } else {
-                typeOperatorCall.transformConversionTypeRef(transformer, ResolutionMode.ContextIndependent)
-            }
-        }.transformTypeOperatorCallChildren()
+        val resolved = when (typeOperatorCall.operation) {
+            IS, NOT_IS -> transformIsOperatorCall(typeOperatorCall)
+            AS, SAFE_AS -> transformAsOperatorCall(typeOperatorCall)
+            else -> error("Unknown type operator: ${typeOperatorCall.operation}")
+        }
 
         val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument, typeOperatorCall.operation)
         resolved.transformChildren(object : FirDefaultTransformer<Any?>() {
@@ -1076,35 +1075,60 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return resolved
     }
 
-    private fun FirTypeOperatorCall.transformTypeOperatorCallChildren(): FirTypeOperatorCall {
-        if (operation == AS || operation == SAFE_AS) {
-            val argument = argumentList.arguments.singleOrNull() ?: error("Not a single argument: ${this.render()}")
+    private fun transformIsOperatorCall(
+        typeOperatorCall: FirTypeOperatorCall,
+    ): FirTypeOperatorCall {
+        require(typeOperatorCall.operation == IS || typeOperatorCall.operation == NOT_IS)
 
-            // For calls in the form of (materialize() as MyClass) we've got a special rule that adds expect type to the `materialize()` call
-            // AS operator doesn't add expected type to any other expressions
-            // See https://kotlinlang.org/docs/whatsnew12.html#support-for-foo-as-a-shorthand-for-this-foo
-            // And limitations at org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleterKt.isFunctionForExpectTypeFromCastFeature(org.jetbrains.kotlin.fir.declarations.FirFunction<?>)
-            if (argument is FirFunctionCall || (argument is FirSafeCallExpression && argument.selector is FirFunctionCall)) {
-                val expectedType = conversionTypeRef.coneTypeSafe<ConeKotlinType>()?.takeIf {
+        // Use the argument type to guide the resolution of the conversion type
+        val argumentResolved = typeOperatorCall.transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
+        val typeResolutionMode = when {
+            argumentResolved.argument.isResolved -> ResolutionMode.WithExpectedType(
+                argumentResolved.argument.resolvedType.toFirResolvedTypeRef(typeOperatorCall.argument.source)
+            )
+            else -> ResolutionMode.ContextIndependent
+        }
+        return components.typeResolverTransformer.withBareTypes {
+            components.typeResolverTransformer.withIsOperandOfIsOperator {
+                argumentResolved.transformConversionTypeRef(transformer, typeResolutionMode)
+            }
+        }
+    }
+
+    private fun transformAsOperatorCall(
+        typeOperatorCall: FirTypeOperatorCall,
+    ): FirTypeOperatorCall {
+        require(typeOperatorCall.operation == AS || typeOperatorCall.operation == SAFE_AS)
+
+        val argument = typeOperatorCall.argumentList.arguments.singleOrNull() ?: error("Not a single argument: ${typeOperatorCall.render()}")
+
+        val resolved = components.typeResolverTransformer.withBareTypes {
+            typeOperatorCall.transformConversionTypeRef(transformer, ResolutionMode.ContextIndependent)
+        }
+
+        // For calls in the form of (materialize() as MyClass) we've got a special rule that adds expect type to the `materialize()` call
+        // AS operator doesn't add expected type to any other expressions
+        // See https://kotlinlang.org/docs/whatsnew12.html#support-for-foo-as-a-shorthand-for-this-foo
+        // And limitations at org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleterKt.isFunctionForExpectTypeFromCastFeature(org.jetbrains.kotlin.fir.declarations.FirFunction<?>)
+        val resolutionMode = if (argument is FirFunctionCall || (argument is FirSafeCallExpression && argument.selector is FirFunctionCall)) {
+                resolved.conversionTypeRef.coneTypeSafe<ConeKotlinType>()?.takeIf {
                     // is not bare type
                     it !is ConeClassLikeType ||
                             it.typeArguments.isNotEmpty() ||
                             it.lookupTag.toSymbol(session)?.fir?.typeParameters?.isEmpty() == true
                 }?.let {
-                    if (operation == SAFE_AS)
+                    if (typeOperatorCall.operation == SAFE_AS)
                         it.withNullability(nullable = true, session.typeContext)
                     else
                         it
-                }
-
-                if (expectedType != null) {
-                    val newMode = ResolutionMode.WithExpectedType(conversionTypeRef.withReplacedConeType(expectedType), fromCast = true)
-                    return transformOtherChildren(transformer, newMode)
-                }
+                }?.let {
+                    ResolutionMode.WithExpectedType(resolved.conversionTypeRef.withReplacedConeType(it), fromCast = true)
+                } ?: ResolutionMode.ContextIndependent
+            } else {
+                ResolutionMode.ContextIndependent
             }
-        }
 
-        return transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
+        return resolved.transformOtherChildren(transformer, resolutionMode)
     }
 
     @OptIn(UnresolvedExpressionTypeAccess::class)
@@ -1229,7 +1253,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         transformedLHS?.let { callableReferenceAccess.replaceExplicitReceiver(transformedLHS) }
 
-        return if (data is ResolutionMode.ContextDependent) {
+        return if (data is ResolutionMode.ContextDependentWithInfo) {
             context.storeCallableReferenceContext(callableReferenceAccess)
             callableReferenceAccess
         } else {
@@ -1444,7 +1468,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         dataFlowAnalyzer.enterCallArguments(delegatedConstructorCall, delegatedConstructorCall.arguments)
         val lastDispatchReceiver = implicitValueStorage.lastDispatchReceiver()
         context.forDelegatedConstructorCall(containingConstructor, containingClass as? FirRegularClass, components) {
-            delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
+            delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependentFunctionArgument)
         }
         dataFlowAnalyzer.exitCallArguments()
 
@@ -1469,7 +1493,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         // it seems that we may leave this code as is
         // without adding `context.withTowerDataContext(context.getTowerDataContextForConstructorResolution())`
-        val result = callCompleter.completeCall(resolvedCall, ResolutionMode.ContextIndependent)
+        val result = context.forDelegatedConstructorCall(containingConstructor, containingClass as? FirRegularClass, components) {
+            callCompleter.completeCall(resolvedCall, ResolutionMode.ContextIndependent)
+        }
         dataFlowAnalyzer.exitDelegatedConstructorCall(result, data.forceFullCompletion)
 
         // Update source of delegated constructor call when supertype isn't initialized
@@ -1588,7 +1614,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // transformedLhsCall: a.get(index)
         val transformedLhsCall = indexedAccessAugmentedAssignment.lhsGetCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
             .also { it.setIndexedAccessAugmentedAssignSource(fakeSourceElementKind) }
-        val transformedRhs = indexedAccessAugmentedAssignment.rhs.transformSingle(transformer, ResolutionMode.ContextDependent)
+        val transformedRhs = indexedAccessAugmentedAssignment.rhs.transformSingle(transformer, ResolutionMode.ContextDependentFunctionArgument)
         dataFlowAnalyzer.exitCallArguments()
 
         val generator = GeneratorOfPlusAssignCalls(

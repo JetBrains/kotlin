@@ -1,0 +1,43 @@
+FILE: filterByEntries1.kt
+    public final enum class A : R|kotlin/Enum<A>| {
+        private constructor(): R|A| {
+            super<R|kotlin/Enum<A>|>()
+        }
+
+        public final static enum entry A1: R|A|
+        public final static enum entry A2: R|A|
+        public final static fun values(): R|kotlin/Array<A>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|A| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<A>|
+            public get(): R|kotlin/enums/EnumEntries<A>|
+
+    }
+    public final enum class B : R|kotlin/Enum<B>| {
+        private constructor(): R|B| {
+            super<R|kotlin/Enum<B>|>()
+        }
+
+        public final static enum entry B1: R|B|
+        public final static enum entry B2: R|B|
+        public final static fun values(): R|kotlin/Array<B>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|B| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<B>|
+            public get(): R|kotlin/enums/EnumEntries<B>|
+
+    }
+    public final fun foo(a: R|A|): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+    public final fun foo(b: R|B|): R|kotlin/Int| {
+        ^foo Int(2)
+    }
+    public final val result: R|kotlin/String| = <Ambiguity: foo, [/foo, /foo]>#(<Unresolved name: A1>#).R|kotlin/plus|(<Ambiguity: foo, [/foo, /foo]>#(<Unresolved name: B2>#))
+        public get(): R|kotlin/String|

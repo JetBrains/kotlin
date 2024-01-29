@@ -5684,9 +5684,21 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       }
 
       @Test
+      @TestMetadata("constructors.kt")
+      public void testConstructors() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/constructors.kt");
+      }
+
+      @Test
       @TestMetadata("correctJava.kt")
       public void testCorrectJava() {
         runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/correctJava.kt");
+      }
+
+      @Test
+      @TestMetadata("either.kt")
+      public void testEither() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/either.kt");
       }
 
       @Test
@@ -5696,9 +5708,45 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       }
 
       @Test
+      @TestMetadata("extensions.kt")
+      public void testExtensions() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/extensions.kt");
+      }
+
+      @Test
+      @TestMetadata("filterByEntries1.kt")
+      public void testFilterByEntries1() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/filterByEntries1.kt");
+      }
+
+      @Test
+      @TestMetadata("filterByEntries2.kt")
+      public void testFilterByEntries2() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/filterByEntries2.kt");
+      }
+
+      @Test
+      @TestMetadata("functionCall.kt")
+      public void testFunctionCall() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/functionCall.kt");
+      }
+
+      @Test
       @TestMetadata("incorrectJava.kt")
       public void testIncorrectJava() {
         runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/incorrectJava.kt");
+      }
+
+      @Test
+      @TestMetadata("inheritance.kt")
+      public void testInheritance() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/inheritance.kt");
+      }
+
+      @Test
+      @TestMetadata("lambas.kt")
+      public void testLambas() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/lambas.kt");
       }
 
       @Test
@@ -5714,9 +5762,33 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       }
 
       @Test
+      @TestMetadata("oneLevelDeep.kt")
+      public void testOneLevelDeep() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/oneLevelDeep.kt");
+      }
+
+      @Test
+      @TestMetadata("pcla.kt")
+      public void testPcla() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/pcla.kt");
+      }
+
+      @Test
       @TestMetadata("priority.kt")
       public void testPriority() {
         runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/priority.kt");
+      }
+
+      @Test
+      @TestMetadata("propagation.kt")
+      public void testPropagation() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/propagation.kt");
+      }
+
+      @Test
+      @TestMetadata("smartcast.kt")
+      public void testSmartcast() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/smartcast.kt");
       }
 
       @Test
@@ -5865,6 +5937,28 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       @TestMetadata("extensionFunctionAddedToStdlib.kt")
       public void testExtensionFunctionAddedToStdlib() {
         runTest("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage/extensionFunctionAddedToStdlib.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/withExpectedType")
+    @TestDataPath("$PROJECT_ROOT")
+    public class WithExpectedType {
+      @Test
+      public void testAllFilesPresentInWithExpectedType() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/withExpectedType"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+      }
+
+      @Test
+      @TestMetadata("enum.kt")
+      public void testEnum() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/withExpectedType/enum.kt");
+      }
+
+      @Test
+      @TestMetadata("nested.kt")
+      public void testNested() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/withExpectedType/nested.kt");
       }
     }
   }

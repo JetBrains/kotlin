@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.createCurrentScopeList
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedClassFromContext
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
@@ -93,13 +94,20 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         val resolvedTypeRef = if (typeRef is FirResolvedTypeRef) {
             typeRef
         } else {
+            val contextScope = when {
+                session.languageVersionSettings.supportsContextSensitiveResolution -> { ->
+                    data.fullyExpandedClassFromContext(session)?.staticScope(session, scopeSession)
+                }
+                else -> null
+            }
             typeResolverTransformer.withFile(context.file) {
                 transformTypeRef(
                     typeRef,
                     ScopeClassDeclaration(
                         components.createCurrentScopeList(),
                         context.containingClassDeclarations,
-                        context.containers.lastOrNull { it is FirTypeParameterRefsOwner && it !is FirAnonymousFunction }
+                        context.containers.lastOrNull { it is FirTypeParameterRefsOwner && it !is FirAnonymousFunction },
+                        contextScope = contextScope,
                     )
                 )
             }

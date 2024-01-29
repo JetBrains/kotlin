@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.scopes.FirScope
 
 data class ScopeClassDeclaration(
@@ -13,4 +14,5 @@ data class ScopeClassDeclaration(
     val containingDeclarations: List<FirDeclaration>,
     val topContainer: FirDeclaration? = null,
     val containerDeclaration: FirDeclaration? = null,
+    val contextScope: (() -> FirScope?)? = null,
 )

@@ -200,6 +200,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitNamedReference(namedReference: FirNamedReference, data: D): R =
         visitReference(namedReference, data)
 
+    override fun visitDelayedNameReference(delayedNameReference: FirDelayedNameReference, data: D): R =
+        visitNamedReference(delayedNameReference, data)
+
     override fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase, data: D): R =
         visitNamedReference(namedReferenceWithCandidateBase, data)
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirDelayedNameReference
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
@@ -101,10 +102,13 @@ internal object ArgumentCheckingProcessor {
     // -------------------------------------------- Real implementation --------------------------------------------
 
     private fun ArgumentContext.resolveArgumentExpression(atom: ConeResolutionAtom) {
+        val expression = atom.expression
         when (atom) {
-            is ConeResolutionAtomWithPostponedChild -> when (atom.expression) {
-                is FirAnonymousFunctionExpression -> preprocessLambdaArgument(atom)
-                is FirCallableReferenceAccess -> preprocessCallableReference(atom)
+            is ConeResolutionAtomWithPostponedChild -> when {
+                expression is FirAnonymousFunctionExpression -> preprocessLambdaArgument(atom)
+                expression is FirCallableReferenceAccess -> preprocessCallableReference(atom)
+                expression is FirQualifiedAccessExpression && expression.calleeReference is FirDelayedNameReference ->
+                    preprocessDelayedReference(atom)
             }
 
             is ConeSimpleLeafResolutionAtom, is ConeAtomWithCandidate -> resolvePlainExpressionArgument(atom)
@@ -305,6 +309,17 @@ internal object ArgumentCheckingProcessor {
             return
         }
         createResolvedLambdaAtom(atom, duringCompletion = false, returnTypeVariable = null)
+    }
+
+    private fun ArgumentContext.preprocessDelayedReference(atom: ConeResolutionAtomWithPostponedChild) {
+        val expression = atom.expression
+        require(expression is FirQualifiedAccessExpression)
+        val reference = expression.calleeReference
+        require(reference is FirDelayedNameReference)
+
+        val postponedAtom = ConeDelayedReferenceAtom(expression, expectedType)
+        atom.subAtom = postponedAtom
+        candidate.addPostponedAtom(postponedAtom)
     }
 
     /**

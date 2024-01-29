@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.expectedType
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.TemporaryInferenceSessionHook
 import org.jetbrains.kotlin.fir.resolve.transformExpressionUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
@@ -67,59 +66,56 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         return context.withWhenExpression(whenExpression, session) with@{
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubject(transformer, ResolutionMode.ContextIndependent)
-            val subjectType = whenExpression.subject?.resolvedType?.fullyExpandedType(session)
             var completionNeeded = false
-            context.withWhenSubjectType(subjectType, components) {
-                when {
-                    whenExpression.branches.isEmpty() -> {
-                        whenExpression.resultType = session.builtinTypes.unitType.coneType
-                    }
-                    whenExpression.isOneBranch() && data.forceFullCompletion && data !is ResolutionMode.WithExpectedType -> {
-                        whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextIndependent)
-                        whenExpression.resultType = whenExpression.branches.first().result.resolvedType
-                        // when with one branch cannot be completed if it's not already complete in the first place
-                    }
-                    else -> {
-                        val resolutionModeForBranches =
-                            (data as? ResolutionMode.WithExpectedType)
-                                // Currently we don't use information from cast, but probably we could have
-                                ?.takeUnless { it.fromCast }
-                                ?.copy(forceFullCompletion = false)
-                                ?: ResolutionMode.ContextDependent
-                        whenExpression = whenExpression.transformBranches(
-                            transformer,
-                            resolutionModeForBranches,
-                        )
-
-                        whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(
-                            whenExpression,
-                            resolutionContext,
-                            data,
-                        )
-                        completionNeeded = true
-                    }
+            when {
+                whenExpression.branches.isEmpty() -> {
+                    whenExpression.resultType = session.builtinTypes.unitType.coneType
                 }
-                whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
-
-                // This is necessary to perform outside the place where the synthetic call is created because
-                // exhaustiveness is not yet computed there, but at the same time to compute it properly
-                // we need having branches condition bes analyzed that is why we can't have call
-                // `whenExpression.transformSingle(whenExhaustivenessTransformer, null)` at the beginning
-                if (completionNeeded) {
-                    val completionResult = callCompleter.completeCall(
-                        whenExpression,
-                        // For non-exhaustive when expressions, we should complete then as independent because below
-                        // their type is artificially replaced with Unit, while candidate symbol's return type remains the same
-                        // So when combining two when's the inner one was erroneously resolved as a normal dependent exhaustive sub-expression
-                        // At the same time, it all looks suspicious and inconsistent, so we hope it would be investigated at KT-55175
-                        if (whenExpression.isProperlyExhaustive) data else ResolutionMode.ContextIndependent,
+                whenExpression.isOneBranch() && data.forceFullCompletion && data !is ResolutionMode.WithExpectedType -> {
+                    whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextIndependent)
+                    whenExpression.resultType = whenExpression.branches.first().result.resolvedType
+                    // when with one branch cannot be completed if it's not already complete in the first place
+                }
+                else -> {
+                    val resolutionModeForBranches =
+                        (data as? ResolutionMode.WithExpectedType)
+                            // Currently we don't use information from cast, but probably we could have
+                            ?.takeUnless { it.fromCast }
+                            ?.copy(forceFullCompletion = false)
+                            ?: ResolutionMode.ContextDependent
+                    whenExpression = whenExpression.transformBranches(
+                        transformer,
+                        resolutionModeForBranches,
                     )
-                    whenExpression = completionResult
+
+                    whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(
+                        whenExpression,
+                        resolutionContext,
+                        data,
+                    )
+                    completionNeeded = true
                 }
-                dataFlowAnalyzer.exitWhenExpression(whenExpression, data.forceFullCompletion)
-                whenExpression.replaceReturnTypeIfNotExhaustive(session)
-                whenExpression
             }
+            whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
+
+            // This is necessary to perform outside the place where the synthetic call is created because
+            // exhaustiveness is not yet computed there, but at the same time to compute it properly
+            // we need having branches condition bes analyzed that is why we can't have call
+            // `whenExpression.transformSingle(whenExhaustivenessTransformer, null)` at the beginning
+            if (completionNeeded) {
+                val completionResult = callCompleter.completeCall(
+                    whenExpression,
+                    // For non-exhaustive when expressions, we should complete then as independent because below
+                    // their type is artificially replaced with Unit, while candidate symbol's return type remains the same
+                    // So when combining two when's the inner one was erroneously resolved as a normal dependent exhaustive sub-expression
+                    // At the same time, it all looks suspicious and inconsistent, so we hope it would be investigated at KT-55175
+                    if (whenExpression.isProperlyExhaustive) data else ResolutionMode.ContextIndependent,
+                )
+                whenExpression = completionResult
+            }
+            dataFlowAnalyzer.exitWhenExpression(whenExpression, data.forceFullCompletion)
+            whenExpression.replaceReturnTypeIfNotExhaustive(session)
+            whenExpression
         }
     }
 

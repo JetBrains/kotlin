@@ -1,0 +1,51 @@
+FILE: oneLevelDeep.kt
+    public final enum class Day : R|kotlin/Enum<Day>| {
+        private constructor(): R|Day| {
+            super<R|kotlin/Enum<Day>|>()
+        }
+
+        public final static enum entry MONDAY: R|Day|
+        public final static enum entry TUESDAY: R|Day|
+        public final static fun values(): R|kotlin/Array<Day>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Day| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Day>|
+            public get(): R|kotlin/enums/EnumEntries<Day>|
+
+    }
+    public final fun test(x: R|Day|): R|kotlin/Int| {
+        ^test when () {
+            ==(R|<local>/x|, <Unresolved name: entries>#.<Unresolved name: get>#(Int(0))) ->  {
+                Int(1)
+            }
+            else ->  {
+                Int(2)
+            }
+        }
+
+    }
+    public final fun test2(x: R|Day|): R|kotlin/Int| {
+        ^test2 when () {
+            ==(R|<local>/x|, <Unresolved name: valueOf>#(String(MONDAY))) ->  {
+                Int(1)
+            }
+            else ->  {
+                Int(2)
+            }
+        }
+
+    }
+    public final fun test3(x: R|Day|): R|kotlin/Int| {
+        ^test3 when () {
+            ==(R|<local>/x|, <Unresolved name: values>#().<Unresolved name: get>#(Int(0))) ->  {
+                Int(1)
+            }
+            else ->  {
+                Int(2)
+            }
+        }
+
+    }

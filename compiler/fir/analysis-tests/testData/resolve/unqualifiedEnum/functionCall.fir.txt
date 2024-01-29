@@ -1,0 +1,27 @@
+FILE: functionCall.kt
+    package test
+
+    public final enum class Sample : R|kotlin/Enum<test/Sample>| {
+        private constructor(): R|test/Sample| {
+            super<R|kotlin/Enum<test/Sample>|>()
+        }
+
+        public final static enum entry FIRST: R|test/Sample|
+        public final static enum entry SECOND: R|test/Sample|
+        public final static enum entry THIRD: R|test/Sample|
+        public final static fun values(): R|kotlin/Array<test/Sample>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|test/Sample| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<test/Sample>|
+            public get(): R|kotlin/enums/EnumEntries<test/Sample>|
+
+    }
+    public final fun foo(sample: R|test/Sample|): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+    public final fun bar(): R|kotlin/Int| {
+        ^bar R|test/foo|(R|test/Sample.FIRST|)
+    }

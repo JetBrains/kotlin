@@ -259,6 +259,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitReference(namedReference)
     }
 
+    override fun visitDelayedNameReference(delayedNameReference: FirDelayedNameReference) {
+        visitNamedReference(delayedNameReference)
+    }
+
     override fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase) {
         visitNamedReference(namedReferenceWithCandidateBase)
     }

@@ -995,6 +995,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(namedReference)
     }
 
+    final override fun visitDelayedNameReference(delayedNameReference: FirDelayedNameReference, data: Nothing?) {
+        visitDelayedNameReference(delayedNameReference)
+    }
+
+    open fun visitDelayedNameReference(delayedNameReference: FirDelayedNameReference) {
+        visitElement(delayedNameReference)
+    }
+
     final override fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase, data: Nothing?) {
         visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase)
     }

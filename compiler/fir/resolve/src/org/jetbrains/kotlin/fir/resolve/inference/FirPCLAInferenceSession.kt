@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.references.FirDelayedNameReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
@@ -234,7 +235,7 @@ class FirPCLAInferenceSession(
                 error("$this call should not be analyzed in ${callInfo.resolutionMode}")
 
             is ResolutionMode.AssignmentLValue,
-            is ResolutionMode.ContextDependent,
+            is ResolutionMode.ContextDependentWithInfo,
             is ResolutionMode.ContextIndependent,
             is ResolutionMode.ReceiverResolution,
             -> {
@@ -278,9 +279,13 @@ class FirPCLAInferenceSession(
             // Anyway, they should lead to integrated resolution of containing call
             is FirCallableReferenceAccess -> false
 
-            is FirResolvable -> when (val candidate = candidate()) {
-                null -> !resolvedType.containsNotFixedTypeVariables()
-                else -> !candidate.usedOuterCs
+            is FirResolvable -> {
+                val candidate = candidate()
+                when {
+                    calleeReference is FirDelayedNameReference -> false
+                    candidate == null -> !resolvedType.containsNotFixedTypeVariables()
+                    else -> !candidate.usedOuterCs
+                }
             }
 
             is FirWrappedExpression -> expression.isTrivialArgument()

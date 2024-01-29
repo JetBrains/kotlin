@@ -1,0 +1,47 @@
+FILE: lambas.kt
+    package test
+
+    public final enum class Sample : R|kotlin/Enum<test/Sample>| {
+        private constructor(): R|test/Sample| {
+            super<R|kotlin/Enum<test/Sample>|>()
+        }
+
+        public final static enum entry FIRST: R|test/Sample|
+        public final static enum entry SECOND: R|test/Sample|
+        public final static enum entry THIRD: R|test/Sample|
+        public final static fun values(): R|kotlin/Array<test/Sample>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|test/Sample| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<test/Sample>|
+            public get(): R|kotlin/enums/EnumEntries<test/Sample>|
+
+    }
+    public final val foo: R|() -> test/Sample| = fun <anonymous>(): R|test/Sample| <inline=Unknown>  {
+        ^ R|test/Sample.FIRST|
+    }
+
+        public get(): R|() -> test/Sample|
+    public final fun boo(): R|test/Sample| {
+        ^boo R|test/Sample.FIRST|
+    }
+    public final fun <A, B> R|A|.let(transform: R|(A) -> B|): R|B| {
+        ^let R|<local>/transform|.R|SubstitutionOverride<kotlin/Function1.invoke: R|B|>|(this@R|test/let|)
+    }
+    public final fun <A> R|A|.letSample(transform: R|(A) -> test/Sample|): R|test/Sample| {
+        ^letSample R|<local>/transform|.R|SubstitutionOverride<kotlin/Function1.invoke: R|test/Sample|>|(this@R|test/letSample|)
+    }
+    public final fun bar1(n: R|kotlin/Int|): R|test/Sample| {
+        ^bar1 R|<local>/n|.R|test/let<Inapplicable(INAPPLICABLE): test/let>#|<R|kotlin/Int|, R|test/Sample|>(<L> = let@fun <anonymous>(it: R|kotlin/Int|): R|test/Sample| <inline=NoInline>  {
+            ^ <Unresolved name: FIRST>#
+        }
+        )
+    }
+    public final fun bar2(n: R|kotlin/Int|): R|test/Sample| {
+        ^bar2 R|<local>/n|.R|test/letSample|<R|kotlin/Int|>(<L> = letSample@fun <anonymous>(it: R|kotlin/Int|): R|test/Sample| <inline=NoInline>  {
+            ^ R|test/Sample.FIRST|
+        }
+        )
+    }

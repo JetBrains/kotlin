@@ -1,0 +1,54 @@
+FILE: Duration.kt
+    package Duration
+
+    public final data class Duration : R|kotlin/Any| {
+        public constructor(milliseconds: R|kotlin/Int|): R|Duration/Duration| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val milliseconds: R|kotlin/Int| = R|<local>/milliseconds|
+            public get(): R|kotlin/Int|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Duration/Duration.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val ZERO: R|Duration/Duration| = R|Duration/Duration.Duration|(Int(0))
+                public get(): R|Duration/Duration|
+
+            public final val R|kotlin/Int|.seconds: R|Duration/Duration|
+                public get(): R|Duration/Duration| {
+                    ^ R|Duration/Duration.Duration|(this@R|Duration/Duration.Companion.seconds|.R|kotlin/Int.times|(Int(1000)))
+                }
+
+            public final val R|kotlin/Int|.minutes: R|Duration/Duration|
+                public get(): R|Duration/Duration| {
+                    ^ (this@R|Duration/Duration.Companion|, this@R|Duration/Duration.Companion.minutes|.R|kotlin/Int.times|(Int(60))).R|Duration/Duration.Companion.seconds|
+                }
+
+        }
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(milliseconds: R|kotlin/Int| = this@R|Duration/Duration|.R|Duration/Duration.milliseconds|): R|Duration/Duration|
+
+    }
+    public final val R|Duration/Duration.Companion|.ONE_SECOND: R|Duration/Duration|
+        public get(): R|Duration/Duration| {
+            ^ R|Duration/Duration.Duration|(Int(1000))
+        }
+FILE: Test1.kt
+    public final val z1: R|Duration/Duration| = this@R|Duration/Duration.Companion|.R|Duration/Duration.Companion.ZERO|
+        public get(): R|Duration/Duration|
+    public final val d1: R|Duration/Duration| = IntegerLiteral(1).<Unresolved name: seconds>#
+        public get(): R|Duration/Duration|
+    public final val o1: R|Duration/Duration| = <Unresolved name: ONE_SECOND>#
+        public get(): R|Duration/Duration|
+FILE: Test2.kt
+    public final val z2: R|Duration/Duration| = this@R|Duration/Duration.Companion|.R|Duration/Duration.Companion.ZERO|
+        public get(): R|Duration/Duration|
+    public final val d2: R|Duration/Duration| = IntegerLiteral(1).<Unresolved name: seconds>#
+        public get(): R|Duration/Duration|
+    public final val o2: R|Duration/Duration| = this@R|Duration/Duration.Companion|.R|Duration/ONE_SECOND|
+        public get(): R|Duration/Duration|

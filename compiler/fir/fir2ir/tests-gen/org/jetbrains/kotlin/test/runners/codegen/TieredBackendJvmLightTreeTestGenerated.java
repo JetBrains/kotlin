@@ -25317,9 +25317,33 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
     @TestDataPath("$PROJECT_ROOT")
     public class UnqualifiedEnum {
       @Test
+      @TestMetadata("constructors.kt")
+      public void testConstructors() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/constructors.kt");
+      }
+
+      @Test
       @TestMetadata("correctJava.kt")
       public void testCorrectJava() {
         runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/correctJava.kt");
+      }
+
+      @Test
+      @TestMetadata("enumWithTheSameNameAsEntry.kt")
+      public void testEnumWithTheSameNameAsEntry() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/enumWithTheSameNameAsEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("functionCall.kt")
+      public void testFunctionCall() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/functionCall.kt");
+      }
+
+      @Test
+      @TestMetadata("inheritance.kt")
+      public void testInheritance() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/inheritance.kt");
       }
 
       @Test
@@ -25332,6 +25356,12 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
       @TestMetadata("typeAlias.kt")
       public void testTypeAlias() {
         runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/typeAlias.kt");
+      }
+
+      @Test
+      @TestMetadata("unqualifiedEnum.kt")
+      public void testUnqualifiedEnum() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/unqualifiedEnum.kt");
       }
     }
 
@@ -25383,6 +25413,17 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
       @TestMetadata("superAccessToJavaField.kt")
       public void testSuperAccessToJavaField() {
         runTest("compiler/fir/analysis-tests/testData/resolve/visibility/superAccessToJavaField.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/withExpectedType")
+    @TestDataPath("$PROJECT_ROOT")
+    public class WithExpectedType {
+      @Test
+      @TestMetadata("enum.kt")
+      public void testEnum() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/withExpectedType/enum.kt");
       }
     }
   }

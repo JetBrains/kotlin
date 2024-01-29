@@ -493,6 +493,9 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
                 }
             }
         }
+        is FirDelayedNameReference -> {
+            typeFromCallee(access, calleeReference.delayedReference)
+        }
         else -> errorWithAttachment("Failed to extract type from: ${calleeReference::class.simpleName}") {
             withFirEntry("reference", calleeReference)
         }

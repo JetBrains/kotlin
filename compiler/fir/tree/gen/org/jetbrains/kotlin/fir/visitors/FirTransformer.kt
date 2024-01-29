@@ -995,6 +995,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformNamedReference(namedReference, data)
     }
 
+    open fun transformDelayedNameReference(delayedNameReference: FirDelayedNameReference, data: D): FirReference {
+        return transformElement(delayedNameReference, data)
+    }
+
+    final override fun visitDelayedNameReference(delayedNameReference: FirDelayedNameReference, data: D): FirReference {
+        return transformDelayedNameReference(delayedNameReference, data)
+    }
+
     open fun transformNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase, data: D): FirReference {
         return transformElement(namedReferenceWithCandidateBase, data)
     }

@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.smartcastScope
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
+import org.jetbrains.kotlin.fir.scopes.FirFilteringTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirThisOwnerSymbol
@@ -175,19 +177,26 @@ private fun receiverExpression(
     }
 }
 
-class ImplicitDispatchReceiverValue(
+open class ImplicitDispatchReceiverValue(
     boundSymbol: FirClassSymbol<*>,
     type: ConeKotlinType,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean = true,
+    val filter: ((FirCallableSymbol<*>) -> Boolean)? = null
 ) : ImplicitReceiverValue<FirClassSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession, mutable) {
     constructor(
-        boundSymbol: FirClassSymbol<*>, useSiteSession: FirSession, scopeSession: ScopeSession
+        boundSymbol: FirClassSymbol<*>, useSiteSession: FirSession, scopeSession: ScopeSession,
+        filter: ((FirCallableSymbol<*>) -> Boolean)? = null
     ) : this(
         boundSymbol, boundSymbol.constructType(),
-        useSiteSession, scopeSession
+        useSiteSession, scopeSession, filter = filter
     )
+
+    override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? {
+        val originalScope = super.scope(useSiteSession, scopeSession)
+        return if (originalScope == null || filter == null) originalScope else FirFilteringTypeScope(originalScope, filter)
+    }
 
     override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirClassSymbol<*>> {
         return ImplicitDispatchReceiverValue(boundSymbol, type, useSiteSession, scopeSession, keepMutable)
