@@ -47,6 +47,15 @@ tasks.withType(KotlinCompile).configureEach {
     }
 }
 
+afterEvaluate {
+    lint {
+        lintOptions {
+            // Until fully switch to K2, existing FE1.0 usages are legitimate
+            disable("KotlincFE10")
+        }
+    }
+}
+
 androidx {
     name = "Compose Hosted Compiler Plugin"
     // This is only published because that is required when exporting it to g3.
