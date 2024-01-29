@@ -838,8 +838,9 @@ fun FirExpression.asCompileTimeIrInitializer(components: Fir2IrComponents, expec
  */
 context(Fir2IrComponents)
 internal fun FirVariable.irTypeForPotentiallyComponentCall(predefinedType: IrType? = null): IrType {
-    val typeRef = when (val initializer = initializer) {
-        is FirComponentCall -> initializer.resolvedType
+    val initializer = initializer
+    val typeRef = when {
+        isVal && initializer is FirComponentCall -> initializer.resolvedType
         else -> {
             if (predefinedType != null) return predefinedType
             this.returnTypeRef.coneType
