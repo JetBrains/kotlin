@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.processCompilerOutput
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
-import org.junit.jupiter.api.Assumptions
+import org.jetbrains.kotlin.native.executors.RunProcessException
+import org.jetbrains.kotlin.native.executors.runProcess
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -170,34 +170,14 @@ internal fun invokeCInterop(
     }
 }
 
-private data class HostExecutionOutput(val executablePath: String, var exitCode: Int, var duration: Duration, val stdOut: String, val stdErr: String)
-
-private fun executeHostProcess(executable: String, args: List<String> = listOf(), env: Map<String, String> = emptyMap()): HostExecutionOutput {
-    val processBuilder = ProcessBuilder(executable, *args.toTypedArray())
-        .redirectOutput(ProcessBuilder.Redirect.PIPE)
-        .redirectError(ProcessBuilder.Redirect.PIPE)
-    processBuilder.environment().putAll(env)
-    val process = processBuilder.start()
-    val (exitCode, duration) = measureTimedValue {
-        process.waitFor()
-    }
-    return HostExecutionOutput(
-        executable,
-        exitCode,
-        duration,
-        process.inputStream.bufferedReader().readText(),
-        process.errorStream.bufferedReader().readText(),
-    )
-}
-
 internal fun codesign(path: String) {
-    Assumptions.assumeTrue(HostManager.hostIsMac) { "Apple specific code signing is needed" }
-    val processOutput = executeHostProcess(executable = "/usr/bin/codesign", args = listOf("--verbose", "-s", "-", path))
-    check(processOutput.exitCode == 0) {
-        """
-        |Codesign failed with exitCode: ${processOutput.exitCode}
-        |stdout: ${processOutput.stdOut}
-        |stderr: ${processOutput.stdErr}
-        """.trimMargin()
+    val executableAbsolutePath = "/usr/bin/codesign"
+    val args = arrayOf("--verbose", "-s", "-", path)
+    try {
+        runProcess(executableAbsolutePath, *args) {
+            timeout = Duration.parse("30s")
+        }
+    } catch (rpe: RunProcessException) {
+        throw AssertionError("`$executableAbsolutePath ${args.joinToString(" ")}` failed with exitCode=${rpe.exitCode}: ${rpe.message}")
     }
 }
