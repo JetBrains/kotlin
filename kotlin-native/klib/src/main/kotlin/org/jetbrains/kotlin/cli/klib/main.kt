@@ -74,7 +74,7 @@ fun printUsage() {
                                            (such as Compose) were used during compilation of the library, there would be different
                                            signatures for patched declarations.
                signatures                [DEPRECATED] Renamed to "dump-metadata-signatures". Please, use new command name.
-               dump-metadata             Dump the metadata of all public declarations in the library in the form of Kotlin-alike code.
+               dump-metadata             Dump the metadata of all non-private declarations in the library in the form of Kotlin-alike code.
                                            The output of this command is intended to be used for debugging purposes only.
                contents                  [DEPRECATED] Renamed to "dump-metadata". Please, use new command name.
 
