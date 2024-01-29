@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
@@ -46,9 +48,7 @@ object TestModuleStructureFactory {
         testServices: TestServices,
         project: Project
     ): KtModuleProjectStructure {
-        val modules = moduleStructure.modules.mapWithPrevious<TestModule, KtModuleWithFiles> { contextModule, testModule ->
-            testServices.getKtModuleFactoryForTestModule(testModule).createModule(testModule, contextModule, testServices, project)
-        }
+        val modules = createModules(moduleStructure, testServices, project)
 
         val modulesByName = modules.associateByName()
 
@@ -64,14 +64,27 @@ object TestModuleStructureFactory {
         return KtModuleProjectStructure(modules, libraryCache.values)
     }
 
-    private fun <T : Any, R> List<T>.mapWithPrevious(transform: (R?, T) -> R): List<R> {
-        val result = ArrayList<R>(this.size)
-        var previousResult: R? = null
-        for (item in this) {
-            val newResult = transform(previousResult, item)
-            result.add(newResult)
-            previousResult = newResult
+    private fun createModules(
+        moduleStructure: TestModuleStructure,
+        testServices: TestServices,
+        project: Project
+    ): List<KtModuleWithFiles> {
+        val moduleCount = moduleStructure.modules.size
+        val existingModules = HashMap<String, KtModuleWithFiles>(moduleCount)
+        val result = ArrayList<KtModuleWithFiles>(moduleCount)
+
+        for (testModule in moduleStructure.modules) {
+            val contextModuleName = testModule.directives.singleOrZeroValue(AnalysisApiTestDirectives.CONTEXT_MODULE)
+            val contextModule = contextModuleName?.let(existingModules::getValue)
+
+            val moduleWithFiles = testServices
+                .getKtModuleFactoryForTestModule(testModule)
+                .createModule(testModule, contextModule, testServices, project)
+
+            existingModules[testModule.name] = moduleWithFiles
+            result.add(moduleWithFiles)
         }
+
         return result
     }
 

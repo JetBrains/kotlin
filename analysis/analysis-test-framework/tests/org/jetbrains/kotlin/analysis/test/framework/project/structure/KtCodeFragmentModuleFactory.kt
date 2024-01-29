@@ -31,7 +31,7 @@ object KtCodeFragmentModuleFactory : KtModuleFactory {
         testServices: TestServices,
         project: Project,
     ): KtModuleWithFiles {
-        requireNotNull(contextModule) { "Context module should precede the code fragment module" }
+        requireNotNull(contextModule) { "Code fragment requires a context module" }
 
         val testFile = testModule.files.singleOrNull() ?: error("A single file is expected for a code fragment module")
 

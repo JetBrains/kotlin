@@ -20,6 +20,7 @@ fun consume(text: String) {}
 
 // MODULE: main
 // MODULE_KIND: CodeFragment
+// CONTEXT_MODULE: context
 
 // FILE: fragment.kt
 // CODE_FRAGMENT_KIND: EXPRESSION

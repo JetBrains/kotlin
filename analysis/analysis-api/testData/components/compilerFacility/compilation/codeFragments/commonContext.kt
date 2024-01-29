@@ -17,6 +17,7 @@ expect class Foo {
 
 // MODULE: main
 // MODULE_KIND: CodeFragment
+// CONTEXT_MODULE: common
 
 // FILE: fragment.kt
 // CODE_FRAGMENT_KIND: EXPRESSION

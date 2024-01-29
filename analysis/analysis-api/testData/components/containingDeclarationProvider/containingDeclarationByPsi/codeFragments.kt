@@ -10,6 +10,7 @@ fun foo() {}
 
 // MODULE: main
 // MODULE_KIND: CodeFragment
+// CONTEXT_MODULE: context
 
 // FILE: main.kt
 // CODE_FRAGMENT_KIND: EXPRESSION
