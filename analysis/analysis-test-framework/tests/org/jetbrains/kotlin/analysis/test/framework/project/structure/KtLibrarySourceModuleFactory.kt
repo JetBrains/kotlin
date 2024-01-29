@@ -22,7 +22,12 @@ import java.nio.file.Path
  * @see org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind.LibrarySource
  */
 object KtLibrarySourceModuleFactory : KtModuleFactory {
-    override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
+    override fun createModule(
+        testModule: TestModule,
+        testServices: TestServices,
+        project: Project,
+        dependencyPaths: Collection<Path>,
+    ): KtModuleWithFiles {
         Assume.assumeFalse("Compilation of multi-platform libraries is not supported", testModule.targetPlatform.isMultiPlatform())
 
         val (libraryJar, librarySourcesJar) = testServices.compiledLibraryProvider.compileToLibrary(testModule)

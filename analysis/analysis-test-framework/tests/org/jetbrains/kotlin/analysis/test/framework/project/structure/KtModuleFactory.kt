@@ -12,9 +12,18 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.moduleKin
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
+import java.nio.file.Path
 
 fun interface KtModuleFactory : TestService {
-    fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles
+    /**
+     * @param dependencyPaths Paths of directories containing dependency libraries. The paths will be set as class paths for compilation.
+     */
+    fun createModule(
+        testModule: TestModule,
+        testServices: TestServices,
+        project: Project,
+        dependencyPaths: Collection<Path>,
+    ): KtModuleWithFiles
 }
 
 private val TestServices.ktModuleFactory: KtModuleFactory by TestServices.testServiceAccessor()

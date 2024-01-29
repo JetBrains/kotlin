@@ -18,7 +18,7 @@ import kotlin.io.path.div
 import kotlin.io.path.writeText
 
 abstract class TestModuleCompiler : TestService {
-    fun compileTestModuleToLibrary(module: TestModule, testServices: TestServices): Path {
+    fun compileTestModuleToLibrary(module: TestModule, testServices: TestServices, dependencyPaths: Collection<Path> = emptyList()): Path {
         val tmpDir = KtTestUtil.tmpDir("testSourcesToCompile").toPath()
         for (testFile in module.files) {
             val text = testServices.sourceFileProvider.getContentOfSourceFile(testFile)
@@ -28,10 +28,15 @@ abstract class TestModuleCompiler : TestService {
             val tmpSourceFile = filePath.createFile()
             tmpSourceFile.writeText(text)
         }
-        return compile(tmpDir, module, testServices)
+        return compile(tmpDir, module, testServices, dependencyPaths)
     }
 
-    abstract fun compile(tmpDir: Path, module: TestModule, testServices: TestServices): Path
+    abstract fun compile(
+        tmpDir: Path,
+        module: TestModule,
+        testServices: TestServices,
+        dependencyPaths: Collection<Path> = emptyList(),
+    ): Path
 
     abstract fun compileTestModuleToLibrarySources(module: TestModule, testServices: TestServices): Path?
 

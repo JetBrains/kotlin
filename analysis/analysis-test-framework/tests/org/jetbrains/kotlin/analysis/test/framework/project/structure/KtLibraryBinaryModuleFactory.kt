@@ -13,13 +13,19 @@ import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledL
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.testModuleDecompiler
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import java.nio.file.Path
 
 /**
  * @see org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind.LibraryBinary
  */
 object KtLibraryBinaryModuleFactory : KtModuleFactory {
-    override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
-        val library = testServices.compiledLibraryProvider.compileToLibrary(testModule).artifact
+    override fun createModule(
+        testModule: TestModule,
+        testServices: TestServices,
+        project: Project,
+        dependencyPaths: Collection<Path>,
+    ): KtModuleWithFiles {
+        val library = testServices.compiledLibraryProvider.compileToLibrary(testModule, dependencyPaths).artifact
         val decompiledFiles = testServices.testModuleDecompiler.getAllPsiFilesFromLibrary(library, project)
 
         return KtModuleWithFiles(
