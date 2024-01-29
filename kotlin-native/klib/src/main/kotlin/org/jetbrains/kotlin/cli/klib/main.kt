@@ -65,9 +65,9 @@ fun printUsage() {
                                            Remove the library from the local repository.
                dump-ir                   Dump the intermediate representation (IR) of all declarations in the library. The output of this
                                            command is intended to be used for debugging purposes only.
-               dump-ir-signatures        Dump IR signatures of all public declarations in the library and all public declarations consumed
-                                           by this library (as two separate lists). This command relies purely on the data in IR.
-               dump-metadata-signatures  Dump IR signatures of all public declarations in the library. Note, that this command renders
+               dump-ir-signatures        Dump IR signatures of all non-private declarations in the library and all non-private declarations
+                                           consumed by this library (as two separate lists). This command relies purely on the data in IR.
+               dump-metadata-signatures  Dump IR signatures of all non-private declarations in the library. Note, that this command renders
                                            the signatures based on the library metadata. This is different from "dump-ir-signatures",
                                            which renders signatures based on the IR. On practice, in most cases there is no difference
                                            between output of these two commands. However, if IR transforming compiler plugins
