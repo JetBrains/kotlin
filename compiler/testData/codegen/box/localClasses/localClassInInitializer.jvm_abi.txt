@@ -1,8 +1,0 @@
-MODULE main
-	CLASS A$o$1.class
-		CLASS METADATA
-			Property: class.metadata.superTypes
-				K1
-					[.A$B]
-				K2
-					[.A.B]

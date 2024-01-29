@@ -1,6 +1,4 @@
 // KT-44050
-// JVM_ABI_K1_K2_DIFF: KT-63655
-
 enum class Enum {
     Entry1() {
         fun bogus() = 42

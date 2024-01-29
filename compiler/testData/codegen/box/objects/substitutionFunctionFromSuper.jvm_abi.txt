@@ -1,9 +1,0 @@
-MODULE main
-	CLASS Outer.class
-		CLASS METADATA
-			PROPERTY obj
-				Property: class.metadata.property.returnType
-					K1
-						.Outer$obj$1
-					K2
-						.Outer.<no name provided>

@@ -1,5 +1,4 @@
 // KT-44054
-// JVM_ABI_K1_K2_DIFF: KT-63655
 enum class Enum {
     Entry1,
     Entry2

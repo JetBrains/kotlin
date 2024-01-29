@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -77,14 +78,27 @@ class FirJvmSerializerExtension(
         state: GenerationState,
         metadata: MetadataSource?,
         localDelegatedProperties: List<FirProperty>,
+        localPoppedUpClasses: List<IrAttributeContainer>,
         approximator: AbstractTypeApproximator,
         typeMapper: IrTypeMapper,
         components: Fir2IrComponents
     ) : this(
-        session, bindings, metadata, localDelegatedProperties, approximator, components.scopeSession,
-        state.globalSerializationBindings, state.config.useTypeTableInSerializer, state.moduleName, state.classBuilderMode,
-        state.config.isParamAssertionsDisabled, state.config.unifiedNullChecks, state.config.metadataVersion, state.jvmDefaultMode,
-        FirJvmElementAwareStringTable(typeMapper, components), ConstValueProviderImpl(components),
+        session,
+        bindings,
+        metadata,
+        localDelegatedProperties,
+        approximator,
+        components.scopeSession,
+        state.globalSerializationBindings,
+        state.config.useTypeTableInSerializer,
+        state.moduleName,
+        state.classBuilderMode,
+        state.config.isParamAssertionsDisabled,
+        state.config.unifiedNullChecks,
+        state.config.metadataVersion,
+        state.jvmDefaultMode,
+        FirJvmElementAwareStringTable(typeMapper, components, localPoppedUpClasses),
+        ConstValueProviderImpl(components),
         components.annotationsFromPluginRegistrar.createAdditionalMetadataProvider()
     )
 
