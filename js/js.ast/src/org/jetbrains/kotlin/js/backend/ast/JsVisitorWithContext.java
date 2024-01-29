@@ -163,6 +163,10 @@ public abstract class JsVisitorWithContext {
         endVisit((JsExpression) x, ctx);
     }
 
+    public void endVisit(@NotNull JsBigIntLiteral x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
+    }
+
     public void endVisit(@NotNull JsObjectLiteral x, @NotNull JsContext ctx) {
         endVisit((JsExpression) x, ctx);
     }
@@ -346,6 +350,10 @@ public abstract class JsVisitorWithContext {
     }
 
     public boolean visit(@NotNull JsNumberLiteral x, @NotNull JsContext ctx) {
+        return true;
+    }
+
+    public boolean visit(@NotNull JsBigIntLiteral x, @NotNull JsContext ctx) {
         return true;
     }
 

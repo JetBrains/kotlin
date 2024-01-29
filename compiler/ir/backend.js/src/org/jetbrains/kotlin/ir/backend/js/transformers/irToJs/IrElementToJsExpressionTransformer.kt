@@ -68,10 +68,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             is IrConstKind.Byte -> JsIntLiteral(kind.valueOf(expression).toInt())
             is IrConstKind.Short -> JsIntLiteral(kind.valueOf(expression).toInt())
             is IrConstKind.Int -> JsIntLiteral(kind.valueOf(expression))
-            is IrConstKind.Long -> compilationException(
-                "Long const should have been lowered at this point",
-                expression
-            )
+            is IrConstKind.Long -> JsBigIntLiteral(kind.valueOf(expression).toBigInteger())
             is IrConstKind.Char -> compilationException(
                 "Char const should have been lowered at this point",
                 expression

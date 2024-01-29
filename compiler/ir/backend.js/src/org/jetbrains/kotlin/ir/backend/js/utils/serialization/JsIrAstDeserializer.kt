@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramTestEnv
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.util.*
 
@@ -312,6 +313,9 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         }
                         INT_LITERAL -> {
                             JsIntLiteral(readInt())
+                        }
+                        BIGINT_LITERAL -> {
+                            JsBigIntLiteral(BigInteger(readString()))
                         }
                         DOUBLE_LITERAL -> {
                             JsDoubleLiteral(readDouble())

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2024 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,31 +16,21 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.annotations.NotNull;
+import java.math.BigInteger
 
-public class JsBigIntLiteral(val value: Long) : JsNumberLiteral() {
-    override fun accept(visitor: JsVisitor?) {
-        v.visitBigInt(this)
+class JsBigIntLiteral(val value: BigInteger) : JsNumberLiteral() {
+    override fun accept(visitor: JsVisitor) {
+        visitor.visitBigInt(this)
     }
 
-    @Override
-    public void accept(JsVisitor v) {
-        v.visitInt(this);
+    override fun toString() = value.toString()
+
+    override fun traverse(visitor: JsVisitorWithContext, ctx: JsContext<*>) {
+        visitor.visit(this@JsBigIntLiteral, ctx)
+        visitor.endVisit(this@JsBigIntLiteral, ctx)
     }
 
-    public String toString() {
-        return String.valueOf(value);
-    }
-
-    @Override
-    public void traverse(JsVisitorWithContext v, JsContext ctx) {
-        v.visit(this, ctx);
-        v.endVisit(this, ctx);
-    }
-
-    @NotNull
-    @Override
-    public JsExpression deepCopy() {
-        return new JsBigIntLiteral(value).withMetadataFrom(this);
+    override fun deepCopy(): JsExpression {
+        return JsBigIntLiteral(value).withMetadataFrom(this)
     }
 }

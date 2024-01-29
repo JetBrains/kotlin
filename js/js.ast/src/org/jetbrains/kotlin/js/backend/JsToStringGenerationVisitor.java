@@ -970,6 +970,18 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
+    public void visitBigInt(@NotNull JsBigIntLiteral x) {
+        pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
+
+        p.print(x.getValue().toString());
+        p.print('n');
+
+        printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
+    @Override
     public void visitDouble(@NotNull JsDoubleLiteral x) {
         pushSourceInfo(x.getSource());
         printCommentsBeforeNode(x);
