@@ -921,6 +921,12 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
             }
 
             @Test
+            @TestMetadata("LocalClass.kt")
+            public void testLocalClass() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment/LocalClass.kt");
+            }
+
+            @Test
             @TestMetadata("Simple.kt")
             public void testSimple() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment/Simple.kt");
