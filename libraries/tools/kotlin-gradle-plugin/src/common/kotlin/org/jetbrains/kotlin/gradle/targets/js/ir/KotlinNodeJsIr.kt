@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalMainFunctionArgumentsDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
@@ -32,6 +33,7 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         project.tasks.withType<NodeJsExec>().named(runTaskName).configure(body)
     }
 
+    @ExperimentalMainFunctionArgumentsDsl
     override fun passProcessArgvToMainFunction() {
         target.passAsArgumentToMainFunction("process.argv")
     }
