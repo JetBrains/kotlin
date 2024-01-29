@@ -218,6 +218,33 @@ private fun List<ClassBinarySignature>.filterOutNotAnnotated(
     }
 }
 
+/**
+ * Extracts name of packages annotated by one of the [targetAnnotations].
+ * If there are no such packages, returns an empty list.
+ *
+ * Package is checked for being annotated by looking at classes with `package-info` name
+ * ([see JSL 7.4.1](https://docs.oracle.com/javase/specs/jls/se21/html/jls-7.html#jls-7.4)
+ * for details about `package-info`).
+ */
+@ExternalApi
+public fun List<ClassBinarySignature>.extractAnnotatedPackages(targetAnnotations: Set<String>): List<String> {
+    if (targetAnnotations.isEmpty()) return emptyList()
+
+    return filter {
+        it.name.endsWith("/package-info")
+    }.filter {
+        // package-info classes are private synthetic abstract interfaces since 2005 (JDK-6232928).
+        it.access.isInterface && it.access.isSynthetic && it.access.isAbstract
+    }.filter {
+        it.annotations.any {
+            ann -> targetAnnotations.any { ann.refersToName(it) }
+        }
+    }.map {
+        val res = it.name.substring(0, it.name.length - "/package-info".length)
+        res
+    }
+}
+
 @ExternalApi
 public fun List<ClassBinarySignature>.filterOutNonPublic(
     nonPublicPackages: Collection<String> = emptyList(),

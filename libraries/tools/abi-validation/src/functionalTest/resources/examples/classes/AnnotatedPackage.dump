@@ -1,0 +1,6 @@
+public final class annotated/ClassFromAnnotatedPackage {
+	public fun <init> ()V
+}
+
+public abstract interface annotation class annotated/PackageAnnotation : java/lang/annotation/Annotation {
+}

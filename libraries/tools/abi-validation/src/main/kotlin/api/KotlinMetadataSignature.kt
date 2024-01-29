@@ -157,6 +157,8 @@ internal data class AccessFlags(val access: Int) {
     val isStatic: Boolean get() = isStatic(access)
     val isFinal: Boolean get() = isFinal(access)
     val isSynthetic: Boolean get() = isSynthetic(access)
+    val isAbstract: Boolean get() = isAbstract(access)
+    val isInterface: Boolean get() = isInterface(access)
 
     private fun getModifiers(): List<String> =
         ACCESS_NAMES.entries.mapNotNull { if (access and it.key != 0) it.value else null }
