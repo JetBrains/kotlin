@@ -27,7 +27,7 @@ internal class KParameterImpl(
     val callable: KCallableImpl<*>,
     override val index: Int,
     override val kind: KParameter.Kind,
-    computeDescriptor: () -> ParameterDescriptor
+    computeDescriptor: () -> ParameterDescriptor,
 ) : KParameter {
     private val descriptor: ParameterDescriptor by ReflectProperties.lazySoft(computeDescriptor)
 
@@ -78,8 +78,14 @@ internal class KParameterImpl(
             } else {
                 when (val caller = callable.caller) {
                     is ValueClassAwareCaller -> {
-                        val slice = caller.getRealSlicesOfParameters(index)
-                        val parameterTypes = caller.parameterTypes.slice(slice)
+                        val parameterTypes = if (callable.isBound) {
+                            val slice = caller.getRealSlicesOfParameters(index + 1)
+                            val offset = caller.getRealSlicesOfParameters(0).last + 1
+                            caller.parameterTypes.slice((slice.first - offset)..(slice.last - offset))
+                        } else {
+                            val slice = caller.getRealSlicesOfParameters(index)
+                            caller.parameterTypes.slice(slice)
+                        }
                         compoundType(*parameterTypes.toTypedArray())
                     }
                     is ValueClassAwareCaller.MultiFieldValueClassPrimaryConstructorCaller ->
