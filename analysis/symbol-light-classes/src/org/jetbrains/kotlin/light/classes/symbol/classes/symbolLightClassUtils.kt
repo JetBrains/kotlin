@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -544,7 +544,7 @@ internal fun KtSymbolWithMembers.createInnerClasses(
     // we can't prohibit creating light classes with null names either since they can contain members
 
     getStaticDeclaredMemberScope().getClassifierSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapTo(result) {
-        val classOrObjectDeclaration = it.psiSafe<KtClassOrObject>()
+        val classOrObjectDeclaration = it.sourcePsiSafe<KtClassOrObject>()
         if (classOrObjectDeclaration != null) {
             createLightClassNoCache(classOrObjectDeclaration, containingClass.ktModule)
         } else {
