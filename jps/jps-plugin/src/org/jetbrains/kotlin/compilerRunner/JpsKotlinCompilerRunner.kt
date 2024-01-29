@@ -138,7 +138,9 @@ class JpsKotlinCompilerRunner {
         moduleFile: File,
         buildMetricReporter: JpsBuilderMetricReporter?,
     ) {
+        environment.progressReporter.progress("K2JVMArguments: ${k2jvmArguments.toArgumentStrings()}")
         val arguments = mergeBeans(commonArguments, XmlSerializerUtil.createCopy(k2jvmArguments))
+        environment.progressReporter.progress("Finalized arguments: ${arguments.toArgumentStrings()}")
         setupK2JvmArguments(moduleFile, arguments)
         withCompilerSettings(compilerSettings) {
             runCompiler(KotlinCompilerClass.JVM, arguments, environment, buildMetricReporter)
@@ -230,6 +232,7 @@ class JpsKotlinCompilerRunner {
         return doWithDaemon(environment) { sessionId, daemon ->
             environment.withProgressReporter { progress ->
                 progress.compilationStarted()
+                progress.progress("CompilerArgs: ${compilerArgs.toArgumentStrings()}")
                 daemon.compile(
                     sessionId,
                     withAdditionalCompilerArgs(compilerArgs),

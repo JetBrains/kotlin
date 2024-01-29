@@ -821,6 +821,7 @@ class CompileServiceImpl(
         servicesFacade: CompilerServicesFacadeBase,
         compilationResults: CompilationResults?,
     ) = ifAlive {
+        log.info("compilerArguments: ${compilerArguments.joinToString(",")}")
         compileImpl(
             sessionId,
             compilerArguments,

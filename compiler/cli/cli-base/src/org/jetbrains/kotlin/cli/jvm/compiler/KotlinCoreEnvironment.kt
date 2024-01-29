@@ -112,6 +112,8 @@ class KotlinCoreEnvironment private constructor(
     configFiles: EnvironmentConfigFiles
 ) {
 
+    private val compilerLog by lazy { java.util.logging.Logger.getLogger("compiler") }
+
     class ProjectEnvironment(
         disposable: Disposable,
         applicationEnvironment: KotlinCoreApplicationEnvironment,
@@ -255,8 +257,13 @@ class KotlinCoreEnvironment private constructor(
             classpathRootsResolver.convertClasspathRoots(configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
         this.initialRoots.addAll(initialRoots)
 
+        compilerLog.info("Configuration roots: ${configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS).joinToString(",")}")
+        compilerLog.info("initial roots: ${initialRoots.joinToString(",")}")
+
         val (roots, singleJavaFileRoots) =
             initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+
+        compilerLog.info("roots that will get into trouble: ${roots.filter { !it.file.isDirectory }.joinToString(",")}")
 
         // REPL and kapt2 update classpath dynamically
         rootsIndex = JvmDependenciesDynamicCompoundIndex().apply {
