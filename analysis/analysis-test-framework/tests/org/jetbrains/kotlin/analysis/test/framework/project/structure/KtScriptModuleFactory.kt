@@ -19,9 +19,9 @@ object KtScriptModuleFactory : KtModuleFactory {
     override fun createModule(
         testModule: TestModule,
         contextModule: KtModuleWithFiles?,
+        dependencyPaths: Collection<Path>,
         testServices: TestServices,
         project: Project,
-        dependencyPaths: Collection<Path>,
     ): KtModuleWithFiles {
         val ktFile = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project).single() as KtFile
         val module = KtScriptModuleImpl(

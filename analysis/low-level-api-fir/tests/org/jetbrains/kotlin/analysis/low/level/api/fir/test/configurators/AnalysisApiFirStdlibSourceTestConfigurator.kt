@@ -29,9 +29,9 @@ private object KtStdlibSourceModuleFactory : KtModuleFactory {
     override fun createModule(
         testModule: TestModule,
         contextModule: KtModuleWithFiles?,
+        dependencyPaths: Collection<Path>,
         testServices: TestServices,
         project: Project,
-        dependencyPaths: Collection<Path>,
     ): KtModuleWithFiles {
         val libraryJar = ForTestCompileRuntime.runtimeJarForTests().toPath()
         val librarySourcesJar = ForTestCompileRuntime.runtimeSourcesJarForTests().toPath()

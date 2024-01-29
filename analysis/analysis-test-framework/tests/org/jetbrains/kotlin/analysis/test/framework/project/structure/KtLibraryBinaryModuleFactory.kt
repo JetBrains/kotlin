@@ -22,9 +22,9 @@ object KtLibraryBinaryModuleFactory : KtModuleFactory {
     override fun createModule(
         testModule: TestModule,
         contextModule: KtModuleWithFiles?,
+        dependencyPaths: Collection<Path>,
         testServices: TestServices,
         project: Project,
-        dependencyPaths: Collection<Path>,
     ): KtModuleWithFiles {
         val library = testServices.compiledLibraryProvider.compileToLibrary(testModule, dependencyPaths).artifact
         val decompiledFiles = testServices.testModuleDecompiler.getAllPsiFilesFromLibrary(library, project)

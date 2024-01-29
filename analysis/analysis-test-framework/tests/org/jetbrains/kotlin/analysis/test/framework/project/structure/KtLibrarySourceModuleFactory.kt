@@ -25,9 +25,9 @@ object KtLibrarySourceModuleFactory : KtModuleFactory {
     override fun createModule(
         testModule: TestModule,
         contextModule: KtModuleWithFiles?,
+        dependencyPaths: Collection<Path>,
         testServices: TestServices,
         project: Project,
-        dependencyPaths: Collection<Path>,
     ): KtModuleWithFiles {
         Assume.assumeFalse("Compilation of multi-platform libraries is not supported", testModule.targetPlatform.isMultiPlatform())
 
