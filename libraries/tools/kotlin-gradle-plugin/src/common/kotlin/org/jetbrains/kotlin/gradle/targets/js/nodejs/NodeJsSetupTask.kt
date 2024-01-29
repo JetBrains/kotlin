@@ -11,8 +11,8 @@ import org.gradle.internal.hash.FileHasher
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.extractWithUpToDate
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
 import java.net.URI
@@ -117,7 +117,7 @@ abstract class NodeJsSetupTask : DefaultTask() {
                 it.into(destination)
             }
 
-            fixBrokenSymlinks(destination, env.isWindows, fixBrokenSymLinks)
+            fixBrokenSymlinks(this.destination, env.isWindows, fixBrokenSymLinks)
 
             if (!env.isWindows) {
                 File(env.nodeExecutable).setExecutable(true)
@@ -137,7 +137,7 @@ abstract class NodeJsSetupTask : DefaultTask() {
         name: String,
         nodeBinDirPath: Path,
         nodeDirProvider: File,
-        isWindows: Boolean
+        isWindows: Boolean,
     ) {
         val script = nodeBinDirPath.resolve(name)
         val scriptFile = computeNpmScriptFile(nodeDirProvider, name, isWindows)
@@ -148,5 +148,6 @@ abstract class NodeJsSetupTask : DefaultTask() {
 
     companion object {
         const val NAME: String = "kotlinNodeJsSetup"
+        const val CACHE_VERSION = "2"
     }
 }

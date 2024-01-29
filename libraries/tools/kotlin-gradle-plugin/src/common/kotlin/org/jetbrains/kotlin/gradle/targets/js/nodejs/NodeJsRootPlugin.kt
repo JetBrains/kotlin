@@ -8,25 +8,28 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
-import org.gradle.util.GradleVersion
+import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
-import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModulesCache
-import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
-import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
+import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmCachesSetup
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.tasks.withType
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
+import org.jetbrains.kotlin.gradle.utils.onlyIfCompat
+import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 
 open class NodeJsRootPlugin : Plugin<Project> {
     override fun apply(project: Project) {
@@ -44,14 +47,29 @@ open class NodeJsRootPlugin : Plugin<Project> {
             project
         )
 
+        val npm = project.extensions.create(
+            NpmExtension.EXTENSION_NAME,
+            NpmExtension::class.java,
+            project
+        )
+
         addPlatform(project, nodeJs)
+
+        npm.nodeJsEnvironment.value(
+            project.provider {
+                nodeJs.requireConfigured()
+            }
+        ).disallowChanges()
+
+        nodeJs.packageManagerExtension.convention(
+            npm
+        )
 
         val setupTask = project.registerTask<NodeJsSetupTask>(NodeJsSetupTask.NAME) {
             it.group = TASKS_GROUP_NAME
             it.description = "Download and install a local node/npm version"
             it.configuration = project.provider {
                 project.configurations.detachedConfiguration(project.dependencies.create(it.ivyDependency))
-                    .markResolvable()
                     .also { conf -> conf.isTransitive = false }
             }
         }
@@ -99,20 +117,125 @@ open class NodeJsRootPlugin : Plugin<Project> {
 
         val objectFactory = project.objects
 
-        // TODO: Could we use common approach with build services to KotlinNpmResolutionManager?
-        val npmResolutionManager = project.gradle.sharedServices.registerIfAbsent(
-            KotlinNpmResolutionManager::class.java.name,
-            KotlinNpmResolutionManager::class.java
-        ) {
-            it.parameters.resolution.set(
-                objectFactory.providerWithLazyConvention {
-                    nodeJs.resolver.close()
-                }
-            )
-            it.parameters.gradleNodeModulesProvider.set(gradleNodeModulesProvider)
+        val npmResolutionManager: Provider<KotlinNpmResolutionManager> = KotlinNpmResolutionManager.registerIfAbsent(
+            project,
+            objectFactory.providerWithLazyConvention {
+                nodeJs.resolver.close()
+            },
+            gradleNodeModulesProvider
+        )
+
+        val rootPackageJson = project.tasks.register(RootPackageJsonTask.NAME, RootPackageJsonTask::class.java) { task ->
+            task.dependsOn(nodeJs.npmCachesSetupTaskProvider)
+            task.group = TASKS_GROUP_NAME
+            task.description = "Create root package.json"
+
+            task.npmResolutionManager.value(npmResolutionManager)
+                .disallowChanges()
+
+            task.onlyIfCompat("Prepare NPM project only in configuring state") {
+                it as RootPackageJsonTask
+                it.npmResolutionManager.get().isConfiguringState()
+            }
         }
 
-        YarnPlugin.apply(project)
+        configureRequiresNpmDependencies(project, rootPackageJson)
+
+        val packageJsonUmbrella = nodeJs
+            .packageJsonUmbrellaTaskProvider
+
+        nodeJs.rootPackageJsonTaskProvider.configure {
+            it.dependsOn(packageJsonUmbrella)
+        }
+
+        npmInstall.configure {
+            it.dependsOn(rootPackageJson)
+            it.inputs.property("npmIgnoreScripts", { npm.ignoreScripts })
+        }
+
+        project.tasks.register(LockCopyTask.STORE_PACKAGE_LOCK_NAME, LockStoreTask::class.java) { task ->
+            task.dependsOn(npmInstall)
+            task.inputFile.set(nodeJs.rootPackageDir.resolve(LockCopyTask.PACKAGE_LOCK))
+
+            task.additionalInputFiles.from(
+                nodeJs.rootPackageDir.resolve(LockCopyTask.YARN_LOCK)
+            )
+            task.additionalInputFiles.from(
+                task.outputDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
+            )
+
+            task.outputDirectory.set(npm.lockFileDirectory)
+            task.fileName.set(npm.lockFileName)
+
+            task.lockFileMismatchReport.value(
+                project.provider { npm.requireConfigured().packageLockMismatchReport }
+            ).disallowChanges()
+            task.reportNewLockFile.value(
+                project.provider { npm.requireConfigured().reportNewPackageLock }
+            ).disallowChanges()
+            task.lockFileAutoReplace.value(
+                project.provider { npm.requireConfigured().packageLockAutoReplace }
+            ).disallowChanges()
+        }
+
+        project.tasks.register(LockCopyTask.UPGRADE_PACKAGE_LOCK, LockStoreTask::class.java) { task ->
+            task.dependsOn(npmInstall)
+            task.inputFile.set(nodeJs.rootPackageDir.resolve(LockCopyTask.PACKAGE_LOCK))
+            task.outputDirectory.set(npm.lockFileDirectory)
+            task.fileName.set(npm.lockFileName)
+
+            task.additionalInputFiles.from(
+                nodeJs.rootPackageDir.resolve(LockCopyTask.YARN_LOCK)
+            )
+            task.additionalInputFiles.from(
+                task.outputDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
+            )
+
+            task.lockFileMismatchReport.value(
+                LockFileMismatchReport.NONE
+            ).disallowChanges()
+            task.reportNewLockFile.value(
+                false
+            ).disallowChanges()
+            task.lockFileAutoReplace.value(
+                true
+            ).disallowChanges()
+        }
+
+        project.tasks.register(LockCopyTask.RESTORE_PACKAGE_LOCK_NAME, LockCopyTask::class.java) { task ->
+            val lockFileName = npm.lockFileName
+            task.inputFile.set(
+                npm.lockFileDirectory.flatMap { dir ->
+                    dir.file(lockFileName)
+                }
+            )
+            task.additionalInputFiles.from(
+                npm.lockFileDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
+            )
+            task.outputDirectory.set(nodeJs.rootPackageDir)
+            task.fileName.set(LockCopyTask.PACKAGE_LOCK)
+            task.onlyIf {
+                val inputFileExists = task.inputFile.getOrNull()?.asFile?.exists() == true
+                // Workaround for "skip if not exists"
+                // https://github.com/gradle/gradle/issues/2919
+                if (!inputFileExists) {
+                    task.inputFile.set(null as RegularFile?)
+                }
+                inputFileExists || task.additionalInputFiles.files.any { it.exists() }
+            }
+        }
+
+        npm.preInstallTasks.value(
+            listOf(npm.restorePackageLockTaskProvider)
+        ).disallowChanges()
+
+        npm.postInstallTasks.value(
+            listOf(npm.storePackageLockTaskProvider)
+        ).disallowChanges()
+
+        npmInstall.configure {
+            it.dependsOn(nodeJs.packageManagerExtension.map { it.preInstallTasks })
+        }
 
         npmInstall.configure {
             it.npmResolutionManager.value(npmResolutionManager).disallowChanges()
@@ -122,6 +245,12 @@ open class NodeJsRootPlugin : Plugin<Project> {
             it.cleanableStoreProvider = project.provider { nodeJs.requireConfigured().cleanableStore }
             it.group = TASKS_GROUP_NAME
             it.description = "Clean unused local node version"
+        }
+
+        val propertiesProvider = PropertiesProvider(project)
+
+        if (propertiesProvider.yarn) {
+            YarnPlugin.apply(project)
         }
     }
 
@@ -143,6 +272,42 @@ open class NodeJsRootPlugin : Plugin<Project> {
         ).disallowChanges()
     }
 
+    // Yes, we need to break Task Configuration Avoidance here
+    // In case when we need to create package.json's files and execute kotlinNpmInstall,
+    // We need to configure all RequiresNpmDependencies tasks to install them,
+    // Because we need to persist lock file
+    // We execute this block in configure phase of rootPackageJson to be sure,
+    // That Task Configuration Avoidance will not be broken for tasks not related with NPM installing
+    // https://youtrack.jetbrains.com/issue/KT-48241
+    private fun configureRequiresNpmDependencies(
+        project: Project,
+        rootPackageJson: TaskProvider<RootPackageJsonTask>,
+    ) {
+        val fn: (Project) -> Unit = {
+            it.tasks.implementing(RequiresNpmDependencies::class)
+                .forEach {}
+        }
+        rootPackageJson.configure {
+            project.allprojects
+                .forEach { project ->
+                    if (it.state.executed) {
+                        fn(project)
+                    }
+                }
+        }
+
+        project.allprojects
+            .forEach {
+                if (!it.state.executed) {
+                    it.afterEvaluate { project ->
+                        rootPackageJson.configure {
+                            fn(project)
+                        }
+                    }
+                }
+            }
+    }
+
     companion object {
         const val TASKS_GROUP_NAME: String = "nodeJs"
 
@@ -155,30 +320,14 @@ open class NodeJsRootPlugin : Plugin<Project> {
         val Project.kotlinNodeJsExtension: NodeJsRootExtension
             get() = extensions.getByName(NodeJsRootExtension.EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
-        private val Project.gradleNodeModules
-            get() = GradleNodeModulesCache.registerIfAbsent(
-                this,
-                null,
-                null
-            )
-
         val Project.kotlinNpmResolutionManager: Provider<KotlinNpmResolutionManager>
             get() {
-                val npmResolutionManager = project.gradle.sharedServices.registerIfAbsent(
+                return project.gradle.sharedServices.registerIfAbsent(
                     KotlinNpmResolutionManager::class.java.name,
                     KotlinNpmResolutionManager::class.java
                 ) {
                     error("Must be already registered")
                 }
-
-                SingleActionPerProject.run(project, UsesKotlinNpmResolutionManager::class.java.name) {
-                    project.tasks.withType<UsesKotlinNpmResolutionManager>().configureEach { task ->
-                        task.usesService(npmResolutionManager)
-                        task.usesService(gradleNodeModules)
-                    }
-                }
-
-                return npmResolutionManager
             }
     }
 }

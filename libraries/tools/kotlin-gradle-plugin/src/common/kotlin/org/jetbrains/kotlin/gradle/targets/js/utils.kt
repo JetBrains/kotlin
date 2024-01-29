@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.internal.hash.FileHasher
 import org.gradle.internal.hash.Hashing.defaultFunction
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask.Companion.CACHE_VERSION
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.File
 import java.nio.file.Files
@@ -42,16 +43,17 @@ fun extractWithUpToDate(
     destinationHashFile: File,
     dist: File,
     fileHasher: FileHasher,
-    extract: (File, File) -> Unit
+    extract: (File, File) -> Unit,
 ) {
     var distHash: String? = null
     val upToDate = destinationHashFile.let { file ->
         if (file.exists()) {
             file.useLines { seq ->
                 val list = seq.first().split(" ")
-                list.size == 2 &&
-                        list[0] == fileHasher.calculateDirHash(destination) &&
-                        list[1] == fileHasher.hash(dist).toByteArray().toHex().also { distHash = it }
+                list.size == 3 &&
+                        list[0] == CACHE_VERSION &&
+                        list[1] == fileHasher.calculateDirHash(destination) &&
+                        list[2] == fileHasher.hash(dist).toByteArray().toHex().also { distHash = it }
             }
         } else false
     }
@@ -67,14 +69,16 @@ fun extractWithUpToDate(
     extract(dist, destination.parentFile)
 
     destinationHashFile.writeText(
-        fileHasher.calculateDirHash(destination)!! +
+        CACHE_VERSION +
+                " " +
+                fileHasher.calculateDirHash(destination)!! +
                 " " +
                 (distHash ?: fileHasher.hash(dist).toByteArray().toHex())
     )
 }
 
 fun FileHasher.calculateDirHash(
-    dir: File
+    dir: File,
 ): String? {
     if (!dir.isDirectory) return null
 
@@ -82,7 +86,7 @@ fun FileHasher.calculateDirHash(
     dir.walk()
         .forEach { file ->
             hasher.putString(file.toRelativeString(dir))
-            if (file.isFile && !Files.isSymbolicLink(file.toPath())) {
+            if (file.isFile) {
                 if (!Files.isSymbolicLink(file.toPath())) {
                     hasher.putHash(hash(file))
                 } else {

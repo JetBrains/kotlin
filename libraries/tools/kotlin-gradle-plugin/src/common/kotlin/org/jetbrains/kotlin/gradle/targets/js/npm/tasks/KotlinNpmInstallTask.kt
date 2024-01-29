@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
@@ -13,10 +14,8 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
-import org.jetbrains.kotlin.gradle.targets.js.npm.asNpmEnvironment
-import org.jetbrains.kotlin.gradle.targets.js.npm.asYarnEnvironment
+import org.jetbrains.kotlin.gradle.targets.js.npm.asNodeJsEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
-import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
 import java.io.File
 
 @DisableCachingByDefault
@@ -33,20 +32,17 @@ abstract class KotlinNpmInstallTask :
     private val nodeJs: NodeJsRootExtension
         get() = project.rootProject.kotlinNodeJsExtension
 
-    private val yarn
-        get() = project.rootProject.yarn
-
     private val rootResolver: KotlinRootNpmResolver
         get() = nodeJs.resolver
 
     // -----
 
     private val npmEnvironment by lazy {
-        nodeJs.requireConfigured().asNpmEnvironment
+        nodeJs.requireConfigured().asNodeJsEnvironment
     }
 
-    private val yarnEnv by lazy {
-        yarn.requireConfigured().asYarnEnvironment
+    private val packageManagerEnv by lazy {
+        nodeJs.packageManagerExtension.get().environment
     }
 
     @Input
@@ -57,7 +53,7 @@ abstract class KotlinNpmInstallTask :
     @get:NormalizeLineEndings
     @get:InputFiles
     val preparedFiles: Collection<File> by lazy {
-        nodeJs.packageManager.preparedFiles(npmEnvironment)
+        nodeJs.packageManagerExtension.get().packageManager.preparedFiles(npmEnvironment)
     }
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -71,9 +67,9 @@ abstract class KotlinNpmInstallTask :
             .map { it.npmProjectPackageJsonFile }
     }
 
-    @get:OutputFile
-    val yarnLock: File by lazy {
-        nodeJs.rootPackageDir.resolve("yarn.lock")
+    @get:OutputFiles
+    val additionalFiles: FileCollection by lazy {
+        nodeJs.packageManagerExtension.get().additionalInstallOutput
     }
 
     // node_modules as OutputDirectory is performance problematic
@@ -91,7 +87,7 @@ abstract class KotlinNpmInstallTask :
                 services = services,
                 logger = logger,
                 npmEnvironment,
-                yarnEnv
+                packageManagerEnv
             ) ?: throw (npmResolutionManager.get().state as KotlinNpmResolutionManager.ResolutionState.Error).wrappedException
     }
 

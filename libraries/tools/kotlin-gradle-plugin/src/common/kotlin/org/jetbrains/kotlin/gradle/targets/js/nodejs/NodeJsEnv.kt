@@ -1,10 +1,11 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
 
 data class NodeJsEnv(
+    val download: Boolean,
     val cleanableStore: CleanableStore,
     val rootPackageDir: File,
     val nodeDir: File,
@@ -16,7 +17,7 @@ data class NodeJsEnv(
     val ivyDependency: String,
     val downloadBaseUrl: String,
 
-    val packageManager: NpmApi,
+    val packageManager: NpmApiExecution<PackageManagerEnvironment>,
 ) {
     val isWindows: Boolean
         get() = platformName == "win"

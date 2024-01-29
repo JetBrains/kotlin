@@ -77,7 +77,7 @@ internal class GradleNodeModuleBuilder(
 
         packageJson.devDependencies.clear()
 
-        // yarn requires semver
+        // npm requires semver
         packageJson.version = fixSemver(packageJson.version)
 
         val actualFiles = files.filterNot { it.name.endsWith(".$META_JS") }

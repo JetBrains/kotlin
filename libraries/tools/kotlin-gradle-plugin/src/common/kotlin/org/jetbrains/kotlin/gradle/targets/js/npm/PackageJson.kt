@@ -35,7 +35,7 @@ class PackageJson(
 
     var workspaces: Collection<String>? = null
 
-    var resolutions: Map<String, String>? = null
+    var overrides: Map<String, String>? = null
 
     var types: String? = null
 

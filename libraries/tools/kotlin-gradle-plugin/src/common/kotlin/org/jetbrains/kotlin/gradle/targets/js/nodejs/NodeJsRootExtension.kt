@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmCachesSetup
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
-import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockStoreTask
+import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
@@ -67,7 +67,7 @@ open class NodeJsRootExtension(
 
     var nodeCommand by Property("node")
 
-    var packageManager: NpmApi by Property(Yarn())
+    val packageManagerExtension: org.gradle.api.provider.Property<NpmApiExt> = project.objects.property()
 
     val taskRequirements: TasksRequirements
         get() = resolver.tasksRequirements
@@ -106,7 +106,10 @@ open class NodeJsRootExtension(
             return "org.nodejs:node:$nodeVersion:$name-$architecture@$type"
         }
 
+        packageManagerExtension.disallowChanges()
+
         return NodeJsEnv(
+            download = download,
             cleanableStore = cleanableStore,
             rootPackageDir = rootPackageDir,
             nodeDir = nodeDir,
@@ -116,7 +119,7 @@ open class NodeJsRootExtension(
             architectureName = architecture,
             ivyDependency = getIvyDependency(),
             downloadBaseUrl = nodeDownloadBaseUrl,
-            packageManager = packageManager
+            packageManager = packageManagerExtension.get().packageManager
         )
     }
 
@@ -135,8 +138,9 @@ open class NodeJsRootExtension(
     val npmCachesSetupTaskProvider: TaskProvider<out KotlinNpmCachesSetup>
         get() = project.tasks.withType(KotlinNpmCachesSetup::class.java).named(KotlinNpmCachesSetup.NAME)
 
-    val storeYarnLockTaskProvider: TaskProvider<out YarnLockCopyTask>
-        get() = project.tasks.withType(YarnLockCopyTask::class.java).named(YarnLockCopyTask.STORE_YARN_LOCK_NAME)
+    @Deprecated("This is deprecated and will be removed. Use corresponding property from YarnRootExtension")
+    val storeYarnLockTaskProvider: TaskProvider<YarnLockStoreTask>
+        get() = project.yarn.storeYarnLockTaskProvider
 
     companion object {
         const val EXTENSION_NAME: String = "kotlinNodeJs"

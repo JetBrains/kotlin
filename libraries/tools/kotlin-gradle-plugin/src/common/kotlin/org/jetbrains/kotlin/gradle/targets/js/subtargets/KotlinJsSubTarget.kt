@@ -107,10 +107,11 @@ abstract class KotlinJsSubTarget(
 
             testJs.dependsOn(
                 nodeJsTaskProviders.npmInstallTaskProvider,
-                nodeJsTaskProviders.storeYarnLockTaskProvider,
                 compileTask,
                 nodeJsTaskProviders.nodeJsSetupTaskProvider
             )
+
+            testJs.dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
 
             testJs.onlyIf {
                 compileOutputFile.get().exists()

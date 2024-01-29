@@ -5,9 +5,9 @@ plugins {
 rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
     rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().nodeVersion = "20.2.0"
 
-    tasks.named<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask>("kotlinStoreYarnLock") {
+    tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask>("kotlinStorePackageLock") {
         //A little hacky way to make yarn results
-        inputFile.fileValue(projectDir.resolve("yarnLockStub"))
+        inputFile.fileValue(projectDir.resolve("packageLockStub"))
     }
 }
 

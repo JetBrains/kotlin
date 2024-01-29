@@ -112,8 +112,8 @@ constructor(
                     it.workingDir = npmProject.dir
                     it.dependsOn(
                         nodeJsTaskProviders.npmInstallTaskProvider,
-                        nodeJsTaskProviders.storeYarnLockTaskProvider,
                     )
+                    it.dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
                 }
                 it.dependsOn(nodeJsTaskProviders.nodeJsSetupTaskProvider)
                 it.dependsOn(compilation.compileKotlinTaskProvider)
