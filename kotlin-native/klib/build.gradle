@@ -23,4 +23,5 @@ dependencies {
     implementation project(":kotlin-stdlib")
     implementation project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
     implementation project(":kotlin-native:utilities:basic-utils")
+    implementation project(":kotlin-util-klib-abi")
 }

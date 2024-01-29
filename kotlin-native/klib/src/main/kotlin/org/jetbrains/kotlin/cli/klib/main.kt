@@ -32,13 +32,13 @@ import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolverByName
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
@@ -48,7 +48,9 @@ import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
+import java.io.File
 import kotlin.system.exitProcess
+import org.jetbrains.kotlin.konan.file.File as KFile
 
 private val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
 
@@ -63,6 +65,9 @@ fun printUsage() {
                                            Install the library to the local repository.
                remove                    [DEPRECATED] Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
                                            Remove the library from the local repository.
+               dump-abi                  Dump the ABI snapshot of the library. Each line in the snapshot corresponds exactly to one
+                                           declaration. Whenever an ABI-incompatible change happens to a declaration, this should
+                                           be visible in the corresponding line of the snapshot.
                dump-ir                   Dump the intermediate representation (IR) of all declarations in the library. The output of this
                                            command is intended to be used for debugging purposes only.
                dump-ir-signatures        Dump IR signatures of all non-private declarations in the library and all non-private declarations
@@ -171,7 +176,7 @@ object KlibToolLogger : Logger, IrMessageLogger {
     }
 }
 
-val defaultRepository = File(DependencyDirectories.localKonanDir.resolve("klib").absolutePath)
+val defaultRepository = KFile(DependencyDirectories.localKonanDir.resolve("klib").absolutePath)
 
 open class ModuleDeserializer(val library: ByteArray) {
     protected val moduleHeader: KlibMetadataProtoBuf.Header
@@ -202,7 +207,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
 
     val repository = requestedRepository?.let {
         klibRepoDeprecationWarning.logOnceIfNecessary() // Due to use of "-repository" option.
-        File(it)
+        KFile(it)
     } ?: defaultRepository
 
     fun info() {
@@ -214,7 +219,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
         val moduleName = ModuleDeserializer(library.moduleHeaderData).moduleName
 
         println("")
-        println("Resolved to: ${library.libraryName.File().absolutePath}")
+        println("Resolved to: ${KFile(library.libraryName).absolutePath}")
         println("Module name: $moduleName")
         println("ABI version: $headerAbiVersion")
         println("Compiler version: $headerCompilerVersion")
@@ -235,10 +240,10 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
             repository.mkdirs()
         }
 
-        val libraryTrueName = File(libraryNameOrPath).name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT)
+        val libraryTrueName = KFile(libraryNameOrPath).name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT)
         val library = libraryInCurrentDir(libraryNameOrPath)
 
-        val installLibDir = File(repository, libraryTrueName)
+        val installLibDir = KFile(repository, libraryTrueName)
 
         if (installLibDir.exists) installLibDir.deleteRecursively()
 
@@ -335,6 +340,55 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
         output.append(irFragment.dump(DumpIrTreeOptions(printSignatures = printSignatures)))
     }
 
+    @OptIn(ExperimentalLibraryAbiReader::class)
+    fun dumpAbi(output: Appendable, signatureVersion: KotlinIrSignatureVersion?) {
+        val library = libraryInCurrentDir(libraryNameOrPath)
+        checkLibraryHasIr(library)
+
+        val abiSignatureVersion = if (signatureVersion != null) {
+            signatureVersion.checkSupportedInLibrary(library)
+
+            val abiSignatureVersion = AbiSignatureVersion.resolveByVersionNumber(signatureVersion.number)
+            if (!abiSignatureVersion.isSupportedByAbiReader)
+                logError(
+                        "Signature version ${signatureVersion.number} is not supported by the KLIB ABI reader." +
+                                " Supported versions: ${AbiSignatureVersion.allSupportedByAbiReader.joinToString { it.versionNumber.toString() }}"
+                )
+
+            abiSignatureVersion
+        } else {
+            val versionsSupportedByAbiReader: Map<Int, AbiSignatureVersion> = AbiSignatureVersion.allSupportedByAbiReader
+                    .associateBy { it.versionNumber }
+
+            val abiSignatureVersion = library.versions.irSignatureVersions
+                    .map { it.number }
+                    .sortedDescending()
+                    .firstNotNullOfOrNull { versionsSupportedByAbiReader[it] }
+
+            if (abiSignatureVersion == null)
+                logError(
+                        "There is no signature version that would be both supported in library ${library.libraryFile}" +
+                                " and by the KLIB ABI reader. Supported versions in the library:" +
+                                " ${library.versions.irSignatureVersions.joinToString { it.number.toString() }}" +
+                                ". Supported versions by the KLIB ABI reader: ${AbiSignatureVersion.allSupportedByAbiReader.joinToString { it.versionNumber.toString() }}"
+                )
+
+            abiSignatureVersion
+        }
+
+        LibraryAbiRenderer.render(
+                libraryAbi = LibraryAbiReader.readAbiInfo(File(library.libraryFile.absolutePath)),
+                output = output,
+                settings = AbiRenderingSettings(
+                        renderedSignatureVersion = abiSignatureVersion,
+                        renderManifest = false,
+                        renderDeclarations = true,
+                        indentationString = "    ",
+
+                        )
+        )
+    }
+
     fun contents(output: Appendable, printSignatures: Boolean, signatureVersion: KotlinIrSignatureVersion?) {
         logWarning("\"contents\" has been renamed to \"dump-metadata\". Please, use new command name.")
         dumpMetadata(output, printSignatures, signatureVersion)
@@ -414,12 +468,12 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
 val currentLanguageVersion = LanguageVersion.LATEST_STABLE
 val currentApiVersion = ApiVersion.LATEST_STABLE
 
-fun libraryInRepo(repository: File, name: String) =
+fun libraryInRepo(repository: KFile, name: String) =
         resolverByName(listOf(repository.absolutePath), skipCurrentDir = true, logger = KlibToolLogger).resolve(name)
 
 fun libraryInCurrentDir(name: String) = resolverByName(emptyList(), logger = KlibToolLogger).resolve(name)
 
-fun libraryInRepoOrCurrentDir(repository: File, name: String) =
+fun libraryInRepoOrCurrentDir(repository: KFile, name: String) =
         resolverByName(listOf(repository.absolutePath), logger = KlibToolLogger).resolve(name)
 
 private enum class KnownOption(val option: String) {
@@ -428,7 +482,7 @@ private enum class KnownOption(val option: String) {
     SIGNATURE_VERSION("-signature-version");
 
     companion object {
-        fun parseOrNull(option: String): KnownOption? = values().firstOrNull { it.option == option }
+        fun parseOrNull(option: String): KnownOption? = entries.firstOrNull { it.option == option }
     }
 }
 
@@ -443,6 +497,7 @@ fun main(args: Array<String>) {
     val library = Library(command.library, repository)
 
     when (command.verb) {
+        "dump-abi" -> library.dumpAbi(System.out, signatureVersion)
         "dump-ir" -> library.dumpIr(System.out, printSignatures, signatureVersion)
         "dump-ir-signatures" -> library.dumpIrSignatures(System.out, signatureVersion)
         "dump-metadata" -> library.dumpMetadata(System.out, printSignatures, signatureVersion)
