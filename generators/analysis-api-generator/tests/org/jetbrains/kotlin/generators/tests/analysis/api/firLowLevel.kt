@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractScriptWho
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceLazyDeclarationResolveScopeBasedTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceWholeFileResolvePhaseTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.AbstractResolveExtensionDisposalAfterModificationEventTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractGlobalModuleStateModificationSessionInvalidationTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractGlobalSourceModuleStateModificationSessionInvalidationTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractGlobalSourceOutOfBlockModificationSessionInvalidationTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractModuleOutOfBlockModificationSessionInvalidationTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractModuleStateModificationSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractGlobalModuleStateModificationLLFirSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractGlobalSourceModuleStateModificationLLFirSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractGlobalSourceOutOfBlockModificationLLFirSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractModuleOutOfBlockModificationLLFirSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractModuleStateModificationLLFirSessionInvalidationTest
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
@@ -297,26 +297,6 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         testClass<AbstractResolveExtensionDisposalAfterModificationEventTest> {
             model("resolveExtensionDisposal")
         }
-
-        testClass<AbstractModuleStateModificationSessionInvalidationTest> {
-            model("sessionInvalidation")
-        }
-
-        testClass<AbstractModuleOutOfBlockModificationSessionInvalidationTest> {
-            model("sessionInvalidation")
-        }
-
-        testClass<AbstractGlobalModuleStateModificationSessionInvalidationTest> {
-            model("sessionInvalidation")
-        }
-
-        testClass<AbstractGlobalSourceModuleStateModificationSessionInvalidationTest> {
-            model("sessionInvalidation")
-        }
-
-        testClass<AbstractGlobalSourceOutOfBlockModificationSessionInvalidationTest> {
-            model("sessionInvalidation")
-        }
     }
 
     testGroup("analysis/low-level-api-fir/tests", "analysis/analysis-api/testData") {
@@ -424,6 +404,29 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
 
         testClass<AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataSpecTest>(suiteTestClassName = "PreFirIdeSpecTestGenerated") {
             modelInit()
+        }
+    }
+
+    testGroup(testsRoot = "analysis/low-level-api-fir/tests", testDataRoot = "analysis/analysis-api/testData") {
+        // Session invalidation test data is shared with analysis session invalidation tests.
+        testClass<AbstractModuleStateModificationLLFirSessionInvalidationTest> {
+            model("sessions/sessionInvalidation")
+        }
+
+        testClass<AbstractModuleOutOfBlockModificationLLFirSessionInvalidationTest> {
+            model("sessions/sessionInvalidation")
+        }
+
+        testClass<AbstractGlobalModuleStateModificationLLFirSessionInvalidationTest> {
+            model("sessions/sessionInvalidation")
+        }
+
+        testClass<AbstractGlobalSourceModuleStateModificationLLFirSessionInvalidationTest> {
+            model("sessions/sessionInvalidation")
+        }
+
+        testClass<AbstractGlobalSourceOutOfBlockModificationLLFirSessionInvalidationTest> {
+            model("sessions/sessionInvalidation")
         }
     }
 }
