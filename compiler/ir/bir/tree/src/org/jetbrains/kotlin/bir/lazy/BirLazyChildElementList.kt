@@ -119,6 +119,16 @@ class BirLazyChildElementList<E : BirElement?>(
     }
 
 
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        val size = size
+        if (size == 0) return
+
+        for (i in 0..<size) {
+            val element = this[i]
+            element?.accept(data, visitor)
+        }
+    }
+
     override fun acceptChildrenLite(visitor: BirElementVisitorScopeLite.(BirElementBase) -> Unit) {
         // todo: thread-safety
         val size = _size
