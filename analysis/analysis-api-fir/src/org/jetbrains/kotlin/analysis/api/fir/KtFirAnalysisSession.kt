@@ -36,6 +36,12 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+/**
+ * The lifetime and validity of a cached [KtFirAnalysisSession] depends on the lifetime of the underlying
+ * [LLFirSession][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession]. This requires the [KtFirAnalysisSession] to keep a
+ * strong reference to the `LLFirSession`. See the documentation of [LLFirSession][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession]
+ * for more information.
+ */
 @OptIn(KtAnalysisApiInternals::class, KtAnalysisNonPublicApi::class)
 @Suppress("AnalysisApiMissingLifetimeCheck")
 internal class KtFirAnalysisSession

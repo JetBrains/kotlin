@@ -39,6 +39,12 @@ abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBas
 
     protected abstract fun isSessionValid(session: SESSION): Boolean
 
+    /**
+     * In some cases, it might be legal for a session cache to evict sessions which are still valid. Such sessions would fail the validity
+     * check (see [checkSessionsMarkedInvalid]) and should be skipped.
+     */
+    protected open fun shouldSkipValidityCheck(session: SESSION): Boolean = false
+
     override fun doTest(testServices: TestServices) {
         val ktModules = testServices.ktTestModuleStructure.mainModules.map { it.ktModule }
 
@@ -88,6 +94,8 @@ abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBas
         testServices: TestServices,
     ) {
         invalidatedSessions.forEach { session ->
+            if (shouldSkipValidityCheck(session)) return@forEach
+
             testServices.assertions.assertFalse(isSessionValid(session)) {
                 "The invalidated session `${session}` should have been marked invalid."
             }

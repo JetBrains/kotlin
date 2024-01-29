@@ -21,4 +21,11 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.references.ReadWriteAccessCheckerFirImpl"
     />
   </extensions>
+
+  <projectListeners>
+    <listener
+        class="org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider$SessionInvalidationListener"
+        topic="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationListener"
+    />
+  </projectListeners>
 </idea-plugin>
