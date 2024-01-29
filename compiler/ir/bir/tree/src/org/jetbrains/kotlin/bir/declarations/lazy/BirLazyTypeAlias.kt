@@ -37,9 +37,4 @@ class BirLazyTypeAlias(
     override var expandedType by lazyVar<BirLazyTypeAlias, _> { converter.remapType(originalIrElement.expandedType) }
     override val typeParameters = lazyChildElementList<BirLazyTypeAlias, BirTypeParameter>(1) { originalIrElement.typeParameters }
     override val annotations = lazyChildElementList<BirLazyTypeAlias, BirConstructorCall>(2) { originalIrElement.annotations }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        annotations.acceptChildrenLite(visitor)
-        typeParameters.acceptChildrenLite(visitor)
-    }
 }

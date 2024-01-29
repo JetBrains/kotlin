@@ -56,9 +56,4 @@ class BirLazyValueParameter(
     }
     override var defaultValue: BirExpressionBody? by _defaultValue
     override val annotations = lazyChildElementList<BirLazyValueParameter, BirConstructorCall>(1) { originalIrElement.annotations }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        annotations.acceptChildrenLite(visitor)
-        _defaultValue.acceptLiteIfPresent(visitor)
-    }
 }

@@ -41,9 +41,8 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         get() = BirMetadata.allElementsById.getOrNull(elementClassId.toInt())
 
 
-    abstract override val parent: BirElementBase?
-
-    internal abstract fun setParentWithInvalidation(new: BirElementParent?)
+    override val parent: BirElementBase?
+        get() = _parent as? BirElementBase
 
     final override fun getContainingDatabase(): BirDatabase? {
         // perf: it should be possible to realize movements only for this element
@@ -78,6 +77,28 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         }
 
         return false
+    }
+
+    internal fun moveElementToNewParent(newParent: BirElementParent, newDatabase: BirDatabase?) {
+        val oldParent = _parent
+        if (oldParent != null) {
+            require(this is BirImplElementBase) { "Lazy BIR elements cannot be moved" }
+
+            replacedWithInternal(null)
+            setParentWithInvalidation(newParent)
+            if (oldParent is BirImplElementBase) {
+                oldParent.invalidate()
+            }
+
+            newDatabase?.elementMoved(this, oldParent)
+        } else {
+            // Lazy elements have permanent parent, reflecting
+            // the one in Fir2Ir class.
+            if (this is BirImplElementBase) {
+                setParentWithInvalidation(newParent)
+            }
+            newDatabase?.elementAttached(this)
+        }
     }
 
 
@@ -200,12 +221,12 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         }
     }
 
+
     protected fun BirDynamicPropertyAccessToken<*, *>.requireValid() {
         if (this is TemporaryBirDynamicProperty<*, *>) {
             require(isValid) { "The property token can only be used within the phase $validInPhase" }
         }
     }
-
 
     protected fun addRelatedElement(relatedElement: BirElementBase, isBackReference: Boolean) {
         val hasBeenRegisteredFlag =

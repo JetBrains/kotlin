@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.bir.lazy
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementBase
-import org.jetbrains.kotlin.bir.BirElementVisitorScopeLite
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.ir.IrElement
 import kotlin.concurrent.Volatile
 
@@ -126,22 +123,6 @@ class BirLazyChildElementList<E : BirElement?>(
         for (i in 0..<size) {
             val element = this[i]
             element?.accept(data, visitor)
-        }
-    }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorScopeLite.(BirElementBase) -> Unit) {
-        // todo: thread-safety
-        val size = _size
-        if (size == 0) return
-
-        val scope = BirElementVisitorScopeLite(visitor)
-        @Suppress("UNCHECKED_CAST")
-        val elementArray = elementArray as Array<BirElementBase?>?
-        for (i in 0..<size) {
-            val element = elementArray?.getOrNull(i)
-            if (element != null) {
-                visitor.invoke(scope, element)
-            }
         }
     }
 

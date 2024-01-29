@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.*
@@ -153,8 +154,16 @@ abstract class Bir2IrConverterBase(
     fun <IrS : IrSymbol, BirS : BirSymbol> remapSymbol(old: BirS?): IrS? = if (old == null) null else remapSymbol(old)
 
     protected fun <BirS : BirSymbol, IrS : IrBindableSymbol<*, *>> createBindableSymbol(old: BirS): IrS {
-        val descriptor = (old as? BirModuleFragment)?.descriptor
+        var descriptor = (old as? BirModuleFragment)?.descriptor
             ?: (old as? BirDeclaration)?.get(GlobalBirDynamicProperties.Descriptor)
+
+        // workaround for a crash happening due to some unimplemented logic
+        if (descriptor is IrBasedDeclarationDescriptor<*>) {
+            val parent = descriptor.owner.parent
+            if (parent is IrSymbolOwner && parent !is IrDeclaration && parent.symbol is DescriptorlessExternalPackageFragmentSymbol) {
+                descriptor = null
+            }
+        }
 
         @Suppress("UNCHECKED_CAST")
         return when (old) {

@@ -78,11 +78,4 @@ class BirLazyClass(
     override val typeParameters = lazyChildElementList<BirLazyClass, BirTypeParameter>(1) { originalIrElement.typeParameters }
     override val annotations = lazyChildElementList<BirLazyClass, BirConstructorCall>(2) { originalIrElement.annotations }
     override val declarations = lazyChildElementList<BirLazyClass, BirDeclaration>(3) { originalIrElement.declarations }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        annotations.acceptChildrenLite(visitor)
-        typeParameters.acceptChildrenLite(visitor)
-        declarations.acceptChildrenLite(visitor)
-        _thisReceiver.acceptLiteIfPresent(visitor)
-    }
 }

@@ -101,8 +101,6 @@ abstract class BirChildElementList<E : BirElement?>(
         containingListId = 0
     }
 
-    internal abstract fun acceptChildrenLite(visitor: BirElementVisitorLite)
-
     abstract override fun iterator(): MutableIterator<E>
     abstract override fun listIterator(): MutableListIterator<E>
     abstract override fun listIterator(index: Int): MutableListIterator<E>
