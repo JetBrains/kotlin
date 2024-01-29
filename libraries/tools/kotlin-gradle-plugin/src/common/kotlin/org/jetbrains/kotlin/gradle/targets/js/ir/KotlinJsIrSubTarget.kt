@@ -223,7 +223,7 @@ abstract class KotlinJsIrSubTarget(
                     it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
                     it.from(binary.linkSyncTask)
 
-                    it.into(binary.distribution.directory)
+                    it.into(binary.distribution.outputDirectory)
                 }
 
                 if (mode == KotlinJsBinaryMode.PRODUCTION) {
