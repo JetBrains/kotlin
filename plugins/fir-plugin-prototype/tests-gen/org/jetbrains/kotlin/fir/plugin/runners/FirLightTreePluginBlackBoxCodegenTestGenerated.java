@@ -98,6 +98,12 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
     }
 
     @Test
+    @TestMetadata("nullableComposableParameterAcrossModules.kt")
+    public void testNullableComposableParameterAcrossModules() throws Exception {
+        runTest("plugins/fir-plugin-prototype/testData/box/nullableComposableParameterAcrossModules.kt");
+    }
+
+    @Test
     @TestMetadata("replaceActualFunctionBodyWitExpectDefaultValue.kt")
     public void testReplaceActualFunctionBodyWitExpectDefaultValue() throws Exception {
         runTest("plugins/fir-plugin-prototype/testData/box/replaceActualFunctionBodyWitExpectDefaultValue.kt");
