@@ -101,25 +101,6 @@ abstract class BirChildElementList<E : BirElement?>(
         containingListId = 0
     }
 
-    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        val size = size
-        if (size == 0) return
-
-        when (val elementArray = elementArray) {
-            is Array<*> -> {
-                @Suppress("UNCHECKED_CAST")
-                elementArray as Array<BirElementBase?>
-                for (i in 0..<size) {
-                    val element = elementArray[i]
-                    element?.accept(data, visitor)
-                }
-            }
-            else -> {
-                (elementArray as BirElementBase?)?.accept(data, visitor)
-            }
-        }
-    }
-
     internal abstract fun acceptChildrenLite(visitor: BirElementVisitorLite)
 
     abstract override fun iterator(): MutableIterator<E>
