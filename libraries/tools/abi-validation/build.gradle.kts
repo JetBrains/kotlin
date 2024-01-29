@@ -17,7 +17,7 @@ plugins {
 }
 
 group = "org.jetbrains.kotlinx"
-providers.gradleProperty("DeployVersion").orNull?.let {
+project.findProperty("DeployVersion")?.let {
     version = it
 }
 
@@ -124,6 +124,9 @@ publishing {
         signPublicationIfKeyPresent(this)
     }
 
+    tasks.withType<PublishToMavenRepository>().configureEach {
+        dependsOn(tasks.withType<Sign>())
+    }
     // a publication will be created automatically by com.gradle.plugin-publish
 }
 
