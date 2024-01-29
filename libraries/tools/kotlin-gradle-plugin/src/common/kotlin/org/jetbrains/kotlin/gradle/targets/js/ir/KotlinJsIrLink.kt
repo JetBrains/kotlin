@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -137,16 +136,3 @@ abstract class KotlinJsIrLink @Inject constructor(
     private fun usingCacheDirectory() =
         incrementalJsIr && modeProperty.get() == DEVELOPMENT
 }
-
-val KotlinPlatformType.fileExtension
-    get() = when (this) {
-        KotlinPlatformType.wasm -> {
-            ".mjs"
-        }
-
-        KotlinPlatformType.js -> {
-            ".js"
-        }
-
-        else -> error("Only JS and WASM supported for KotlinJsTest")
-    }
