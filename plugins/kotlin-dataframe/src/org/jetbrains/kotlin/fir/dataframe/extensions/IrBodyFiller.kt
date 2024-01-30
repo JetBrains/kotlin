@@ -10,29 +10,39 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.copyAttributes
+import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.getValueArgument
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.superTypes
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -161,60 +171,5 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         val constructor = expression.type.getClass()!!.constructors.toList().single()
         val type = expression.type
         return IrConstructorCallImpl(-1, -1, type, constructor.symbol, 0, 0, 0)
-    }
-
-    override fun visitFunction(declaration: IrFunction): IrStatement {
-        /*
-* IrBlockBodyImpl
-* - IrReturnImpl
-*  - value: IrTypeOperatorCallImpl
-*      - type: ...
-*      - typeOperand: IrTypeOperator CAST
-*      - argument: IrCallImpl
-*/
-        if (declaration.isPropertyAccessor) return declaration
-        val origin = declaration.origin
-        if (origin !is IrDeclarationOrigin.GeneratedByPlugin || origin.pluginKey != DataFramePlugin) {
-            declaration.transformChildrenVoid(this)
-            return declaration
-        }
-        val annotation = declaration.annotations.single { it.type.classFqName?.shortName() == Name.identifier("Refine") }
-        val prototypeName = (annotation.getValueArgument(0)!! as IrConst<*>).value as String
-        val functions = context
-            .referenceFunctions(CallableId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier(prototypeName.substringBefore("_"))))
-
-        val function = functions.single {
-            it.owner.annotations.any { (
-                it.getValueArgument(Name.identifier("id")) as? IrConst<*>)?.let { (it.value as? String) == prototypeName } ?: false
-            }
-        }
-        declaration.body = context.irFactory.createBlockBody(-1, -1) {
-            val call = IrCallImpl(
-                startOffset = -1,
-                endOffset = -1,
-                type = function.owner.returnType,
-                symbol = function,
-                typeArgumentsCount = function.owner.typeParameters.size,
-                valueArgumentsCount = function.owner.valueParameters.size
-            ).apply {
-                extensionReceiver = IrGetValueImpl(-1, -1, declaration.extensionReceiverParameter!!.symbol)
-            }
-            declaration.valueParameters.forEachIndexed { index, irValueParameter ->
-                call.putValueArgument(index, IrGetValueImpl(-1, -1, irValueParameter.symbol))
-            }
-            declaration.typeParameters.forEachIndexed { index, irTypeParameter ->
-                call.putTypeArgument(index, IrSimpleTypeImpl(irTypeParameter.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList()))
-            }
-            val typeOp = IrTypeOperatorCallImpl(
-                startOffset = -1,
-                endOffset = -1,
-                type = declaration.returnType,
-                operator = IrTypeOperator.CAST,
-                typeOperand = declaration.returnType,
-                argument = call
-            )
-            statements += IrReturnImpl(-1, -1, declaration.returnType, declaration.symbol, typeOp)
-        }
-        return declaration
     }
 }
