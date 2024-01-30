@@ -469,6 +469,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
         }
 
         @Test
+        @TestMetadata("fakeOverrideModality.kt")
+        public void testFakeOverrideModality() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/fakeOverrideModality.kt");
+        }
+
+        @Test
         @TestMetadata("fakeOverrides.kt")
         public void testFakeOverrides() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/fakeOverrides.kt");
@@ -538,6 +544,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
         @TestMetadata("kt52677.kt")
         public void testKt52677() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/kt52677.kt");
+        }
+
+        @Test
+        @TestMetadata("kt65236.kt")
+        public void testKt65236() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/kt65236.kt");
         }
 
         @Test

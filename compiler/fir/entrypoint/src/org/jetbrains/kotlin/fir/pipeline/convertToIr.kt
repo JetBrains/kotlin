@@ -19,15 +19,19 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.KotlinMangler
@@ -117,7 +121,8 @@ fun FirResult.convertToIrAndActualize(
         // actualization separately. This should go away, after useIrFakeOverrideBuilder becomes
         // always enabled
         irActualizer?.actualizeClassifiers()
-        components.fakeOverrideBuilder.buildForAll(allIrModules)
+        val temporaryResolver = SpecialFakeOverrideSymbolsResolver(emptyMap())
+        components.fakeOverrideBuilder.buildForAll(allIrModules, temporaryResolver)
     }
     val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: emptyMap()
     if (components.configuration.useIrFakeOverrideBuilder) {
@@ -132,15 +137,58 @@ fun FirResult.convertToIrAndActualize(
     return Fir2IrActualizedResult(irModuleFragment, components, pluginContext, actualizationResult)
 }
 
-private fun IrFakeOverrideBuilder.buildForAll(modules: List<IrModuleFragment>) {
+
+private fun resolveOverridenSymbolsInLazyClass(
+    clazz: Fir2IrLazyClass,
+    resolver: SpecialFakeOverrideSymbolsResolver
+) {
+    /*
+     * Eventually, we should be able to process lazy classes with the same code.
+     *
+     * Now we can't do this, because overriding by Java function is not supported correctly in IR builder.
+     * In most cases, nothing need to be done for lazy classes. For other cases, it is
+     * caller responsibility to handle them.
+     *
+     * Super-classes already have processed fake overrides at this moment.
+     * Also, all Fir2IrLazyClass super-classes are always platform classes,
+     * so it's valid to process it with empty expect-actual mapping.
+     *
+     * But this is still a hack, and should be removed within KT-64352
+     */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    for (declaration in clazz.declarations) {
+        when (declaration) {
+            is IrSimpleFunction -> {
+                declaration.overriddenSymbols = declaration.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
+            }
+            is IrProperty -> {
+                declaration.overriddenSymbols = declaration.overriddenSymbols.map { resolver.getReferencedProperty(it) }
+                declaration.getter?.let { getter ->
+                    getter.overriddenSymbols = getter.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
+                }
+                declaration.setter?.let { setter ->
+                    setter.overriddenSymbols = setter.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
+                }
+            }
+        }
+    }
+}
+
+private fun IrFakeOverrideBuilder.buildForAll(
+    modules: List<IrModuleFragment>,
+    resolver: SpecialFakeOverrideSymbolsResolver
+) {
     val builtFakeOverridesClasses = mutableSetOf<IrClass>()
     fun buildFakeOverrides(clazz: IrClass) {
-        if (clazz is IrLazyDeclarationBase) return
         if (!builtFakeOverridesClasses.add(clazz)) return
         for (c in clazz.superTypes) {
             c.getClass()?.let { buildFakeOverrides(it) }
         }
-        buildFakeOverridesForClass(clazz, false)
+        if (clazz is IrLazyDeclarationBase) {
+            resolveOverridenSymbolsInLazyClass(clazz as Fir2IrLazyClass, resolver)
+        } else {
+            buildFakeOverridesForClass(clazz, false)
+        }
     }
 
     class ClassVisitor : IrElementVisitorVoid {

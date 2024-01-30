@@ -1,0 +1,42 @@
+open class Base {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Child : Base {
+  constructor() /* primary */ {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface I {
+  abstract fun foo(): Base
+
+}
+
+abstract class J {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  abstract fun foo(): Child
+
+}
+
+abstract class A : I, J {
+  constructor() /* primary */ {
+    super/*J*/()
+    /* <init>() */
+
+  }
+
+}
