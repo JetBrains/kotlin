@@ -13,6 +13,13 @@ package kotlin.collections
 public expect abstract class AbstractMutableList<E> : MutableList<E> {
     protected constructor()
 
+    /**
+     * Removes the range of elements from this list starting from [fromIndex] and ending with but not including [toIndex].
+     */
+    // TODO: Should be @SinceKotlin("2.0"), see KT-64904
+    @SinceKotlin("1.9")
+    protected open fun removeRange(fromIndex: Int, toIndex: Int): Unit
+
     // From List
 
     override fun isEmpty(): Boolean
