@@ -29,18 +29,15 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
                 runViaBuildToolsApi = false,
                 incremental = false,
             ),
-            dependencyManagement = DependencyManagement.DefaultDependencyManagement(
-                setOf("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
-            )
         ) {
             build("assemble") {
                 assertNoDiagnostic(KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency)
             }
-            enableOtherVersionBuildToolsImpl()
+            chooseCompilerVersion(TestVersions.Kotlin.STABLE_RELEASE)
             buildAndFail("assemble") {
                 assertHasDiagnostic(KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency)
                 assertOutputContains("Expected version: ${defaultBuildOptions.kotlinVersion}")
-                assertOutputContains("Actual resolved version: $OTHER_KOTLIN_VERSION")
+                assertOutputContains("Actual resolved version: ${TestVersions.Kotlin.STABLE_RELEASE}")
             }
         }
     }
@@ -51,12 +48,9 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
         project(
             "simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(
                 incremental = false,
-            ),
-            dependencyManagement = DependencyManagement.DefaultDependencyManagement(
-                setOf("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
             )
         ) {
-            enableOtherVersionBuildToolsImpl()
+            chooseCompilerVersion(TestVersions.Kotlin.STABLE_RELEASE)
             build("assemble") {
                 assertNoDiagnostic(KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency)
             }
@@ -151,16 +145,4 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
             }
         }
     }
-}
-
-private const val OTHER_KOTLIN_VERSION = "1.9.30-dev-460"
-
-private fun TestProject.enableOtherVersionBuildToolsImpl() {
-    buildGradle.append(
-        """
-        kotlin {
-            compilerVersion.set("$OTHER_KOTLIN_VERSION")
-        }
-        """.trimIndent()
-    )
 }
