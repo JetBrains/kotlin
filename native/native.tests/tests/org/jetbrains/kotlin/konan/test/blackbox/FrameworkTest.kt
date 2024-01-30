@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.FileWriter
-import kotlin.test.assertTrue
+import kotlin.time.Duration
 
 @TestDataPath("\$PROJECT_ROOT")
 class ClassicFrameworkTest : FrameworkTestBase()
@@ -65,81 +65,60 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testMultipleFrameworks() {
-        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
-        val testName = "multiple"
-
-        val testDir = testSuiteDir.resolve(testName)
-        val framework1Dir = testDir.resolve("framework1")
-        val sharedDir = testDir.resolve("shared")
-        val moduleName1st = "First"
-        val testCase1 = generateObjCFrameworkTestCase(
-            TestKind.STANDALONE_NO_TR, extras, moduleName1st,
-            listOf(
-                framework1Dir.resolve("first.kt"),
-                framework1Dir.resolve("test.kt"),
-                sharedDir.resolve("shared.kt"),
-            ),
-            TestCompilerArgs("-Xbinary=bundleId=$moduleName1st")
-        )
-        testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase1, testRunSettings).result.assertSuccess()
-
-        val framework2Dir = testDir.resolve("framework2")
-        val moduleName2nd = "Second"
-        val testCase2 = generateObjCFrameworkTestCase(
-            TestKind.STANDALONE_NO_TR, extras, moduleName2nd,
-            listOf(
-                framework2Dir.resolve("second.kt"),
-                framework2Dir.resolve("test.kt"),
-                sharedDir.resolve("shared.kt"),
-            ),
-            TestCompilerArgs("-Xbinary=bundleId=$moduleName2nd")
-        )
-        testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase2, testRunSettings).result.assertSuccess()
-
-        compileAndRunSwift(testName, testCase1)  // testCase1 provides testRun parameters. testCase2 should have the same.
+        // This test might fail with dynamic caches until https://youtrack.jetbrains.com/issue/KT-34262 is fixed
+        val checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout)
+        testMultipleFrameworksImpl("multiple", emptyList(), checks)
     }
 
     @Test
     fun testMultipleFrameworksStatic() {
-        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
-        val testName = "multiple"
+        val checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout)
+        testMultipleFrameworksImpl("multiple", listOf("-Xstatic-framework", "-Xpre-link-caches=enable"), checks)
+    }
 
-        val testDir = testSuiteDir.resolve(testName)
-        val framework1Dir = testDir.resolve("framework1")
-        val sharedDir = testDir.resolve("shared")
-        val freeCompilerArgs = listOf("-Xstatic-framework", "-Xpre-link-caches=enable")
-        val moduleName1st = "First"
+    @Test
+    fun testMultipleFrameworksStaticFailsWithStaticCaches() {
         val defaultChecks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout)
         val checks = if (testRunSettings.get<CacheMode>() != CacheMode.WithoutCache) {
-            // KT-34262, KT-65289: one assert in testIsolation4() fails with caches:
-            //     try assertFalse(obj2 is First.KotlinBase)
+            // KT-34261: two asserts in testIsolation4() fail with static caches.
             defaultChecks.copy(exitCodeCheck = TestRunCheck.ExitCode.Expected(134))
         } else defaultChecks
+
+        testMultipleFrameworksImpl("multipleFailsWithCaches", listOf("-Xstatic-framework", "-Xpre-link-caches=enable"), checks)
+    }
+
+    private fun testMultipleFrameworksImpl(testName: String, freeCompilerArgs: List<String>, checks: TestRunChecks) {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+
+        val testDir = testSuiteDir.resolve("multiple")
+        val framework1Dir = testDir.resolve("framework1")
+        val sharedDir = testDir.resolve("shared")
+        val moduleNameFirst = "First"
         val testCase1 = generateObjCFrameworkTestCase(
-            TestKind.STANDALONE_NO_TR, extras, moduleName1st,
+            TestKind.STANDALONE_NO_TR, extras, moduleNameFirst,
             listOf(
                 framework1Dir.resolve("first.kt"),
                 framework1Dir.resolve("test.kt"),
                 sharedDir.resolve("shared.kt"),
             ),
-            freeCompilerArgs = TestCompilerArgs(freeCompilerArgs + "-Xbinary=bundleId=$moduleName1st"),
+            freeCompilerArgs = TestCompilerArgs(freeCompilerArgs + "-Xbinary=bundleId=$moduleNameFirst"),
             checks = checks,
         )
         testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase1, testRunSettings).result.assertSuccess()
 
         val framework2Dir = testDir.resolve("framework2")
-        val moduleName2nd = "Second"
+        val moduleNameSecond = "Second"
         val testCase2 = generateObjCFrameworkTestCase(
-            TestKind.STANDALONE_NO_TR, extras, moduleName2nd,
+            TestKind.STANDALONE_NO_TR, extras, moduleNameSecond,
             listOf(
                 framework2Dir.resolve("second.kt"),
                 framework2Dir.resolve("test.kt"),
                 sharedDir.resolve("shared.kt"),
-            ), freeCompilerArgs = TestCompilerArgs(freeCompilerArgs + "-Xbinary=bundleId=$moduleName2nd")
+            ), freeCompilerArgs = TestCompilerArgs(freeCompilerArgs + "-Xbinary=bundleId=$moduleNameSecond")
         )
         testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase2, testRunSettings).result.assertSuccess()
 
-        compileAndRunSwift(testName, testCase1)
+        compileAndRunSwift(testName, testCase1, swiftExtraOpts = emptyList(), testDir)
     }
 
     @Test
@@ -382,8 +361,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
                 )
             ),
             givenDependencies = setOf(TestModule.Given(library.klibFile), TestModule.Given(noEnumEntries.klibFile)),
-            // test must make huge amount of repetitions to make sure there's no race conditions, so bigger timeout is needed.
-            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 2),
+            checks = TestRunChecks.Default(Duration.parse("5m")), // 1 minute is not enough running testsuite locally in parallel.
         )
         testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings, listOf(noEnumEntries)).result.assertSuccess()
 
@@ -454,8 +432,14 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         return testCase
     }
 
-    private fun compileAndRunSwift(testName: String, testCase: TestCase, swiftExtraOpts: List<String> = emptyList()) {
-        val success = compileSwift(testName, swiftExtraOpts)
+    private fun compileAndRunSwift(
+        testName: String,
+        testCase: TestCase,
+        swiftExtraOpts: List<String> = emptyList(),
+        testDir: File = testSuiteDir.resolve(testName),
+    ) {
+        val success =
+            compileSwift(listOf(testDir.resolve("$testName.swift")), swiftExtraOpts)
         val testExecutable = TestExecutable(
             success.resultingArtifact,
             success.loggedData,
@@ -463,12 +447,6 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         )
         runExecutableAndVerify(testCase, testExecutable)
     }
-
-    private fun compileSwift(
-        name: String,
-        swiftExtraOpts: List<String>,
-    ): TestCompilationResult.Success<out TestCompilationArtifact.Executable> =
-        compileSwift(listOf(testSuiteDir.resolve(name).resolve("$name.swift")), swiftExtraOpts)
 
     private fun compileSwift(
         testSources: List<File>,

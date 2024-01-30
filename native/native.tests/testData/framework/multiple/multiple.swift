@@ -63,9 +63,11 @@ func testIsolation4() throws {
     try assertTrue(obj1 is First.KotlinBase)
     try assertFalse(obj1 is Second.KotlinBase)
 
-    let obj2: Any = Second.SharedKt.getUnexposedStdlibClassInstance()
-    try assertFalse(obj2 is First.KotlinBase)
-    try assertTrue(obj2 is Second.KotlinBase)
+// KT-34261 The following two commented out asserts fail with static caches, see explanation above
+// They are tested separately in multipleFailsWithCaches.swift
+//    let obj2: Any = Second.SharedKt.getUnexposedStdlibClassInstance()
+//    try assertFalse(obj2 is First.KotlinBase)
+//    try assertTrue(obj2 is Second.KotlinBase)
 }
 
 class MultipleTests : TestProvider {
