@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
@@ -141,8 +140,8 @@ class JavaClassUseSiteMemberScope(
         }
 
         /*
-         * From supertype we can get at most two results:
-         * 1. Set of properties with same name
+         * From supertype we can get:
+         * 1. Set of properties with same name (including regular and extension properties)
          * 2. Field from some java superclass (only one, if class have more than one superclass then we can choose
          *   just one field because this is incorrect code anyway)
          */
@@ -153,23 +152,24 @@ class JavaClassUseSiteMemberScope(
         }
 
         assert(fieldsFromSupertype.size in 0..1)
-        assert(propertiesFromSupertypes.size in 0..1)
 
         fieldsFromSupertype.firstOrNull()?.chosenSymbol?.let { fieldSymbol ->
             require(fieldSymbol is FirFieldSymbol)
             if (fieldSymbol.name !in fieldNames) {
-                result.addIfNotNull(fieldSymbol)
+                result.add(fieldSymbol)
             }
         }
 
         @Suppress("UNCHECKED_CAST")
-        val overriddenProperty = propertiesFromSupertypes.firstOrNull() as ResultOfIntersection<FirPropertySymbol>? ?: return result
-        val overrideInClass = syntheticPropertyCache.getValue(name, this to overriddenProperty)
+        for (overriddenProperty in propertiesFromSupertypes as List<ResultOfIntersection<FirPropertySymbol>>) {
+            val overrideInClass = syntheticPropertyCache.getValue(name, this to overriddenProperty)
 
-        val chosenSymbol = overrideInClass ?: overriddenProperty.chosenSymbol
-        directOverriddenProperties[chosenSymbol] = listOf(overriddenProperty)
-        overriddenProperty.overriddenMembers.forEach { overrideByBase[it.member] = overrideInClass }
-        result += chosenSymbol
+            val chosenSymbol = overrideInClass ?: overriddenProperty.chosenSymbol
+            directOverriddenProperties[chosenSymbol] = listOf(overriddenProperty)
+            overriddenProperty.overriddenMembers.forEach { overrideByBase[it.member] = overrideInClass }
+            result += chosenSymbol
+        }
+
         return result
     }
 
