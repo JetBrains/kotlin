@@ -1549,6 +1549,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/anonymousObjectType.args");
         }
 
+        @TestMetadata("getOrDefault.args")
+        public void testGetOrDefault() throws Exception {
+            runTest("compiler/testData/cli/metadata/getOrDefault.args");
+        }
+
         @TestMetadata("hmppModules.args")
         public void testHmppModules() throws Exception {
             runTest("compiler/testData/cli/metadata/hmppModules.args");
