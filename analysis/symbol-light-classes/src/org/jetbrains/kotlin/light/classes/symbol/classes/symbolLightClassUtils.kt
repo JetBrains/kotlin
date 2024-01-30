@@ -440,7 +440,7 @@ private fun hasBackingField(property: KtPropertySymbol): Boolean {
     val fieldUseSite = AnnotationUseSiteTarget.FIELD
     if (property.isExpect ||
         property.modality == Modality.ABSTRACT ||
-        property.isHiddenOrSynthetic(fieldUseSite, fieldUseSite.toOptionalFilter())
+        property.hasJvmSyntheticAnnotation(fieldUseSite.toOptionalFilter())
     ) return false
 
     return hasBackingFieldByPsi ?: property.hasBackingField
