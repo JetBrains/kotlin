@@ -5921,6 +5921,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
         }
 
         @Test
+        @TestMetadata("kt65197.kt")
+        public void testKt65197() throws Exception {
+            runTest("compiler/testData/codegen/box/casts/kt65197.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaToUnitCast.kt")
         public void testLambdaToUnitCast() throws Exception {
             runTest("compiler/testData/codegen/box/casts/lambdaToUnitCast.kt");
