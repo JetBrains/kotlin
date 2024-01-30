@@ -68,17 +68,15 @@ abstract class KotlinNpmInstallTask :
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:InputFiles
-    val packageJsonFiles: FileCollection = project.objects.fileCollection().from(
-        {
-            rootResolver.projectResolvers.values
-                .flatMap { it.compilationResolvers }
-                .map { it.compilationNpmResolution }
-                .map { resolution ->
-                    val name = resolution.npmProjectName
-                    packagesDir.map { it.dir(name).file(NpmProject.PACKAGE_JSON) }
-                }
-        }
-    )
+    val packageJsonFiles: List<RegularFile> by lazy {
+        rootResolver.projectResolvers.values
+            .flatMap { it.compilationResolvers }
+            .map { it.compilationNpmResolution }
+            .map { resolution ->
+                val name = resolution.npmProjectName
+                packagesDir.map { it.dir(name).file(NpmProject.PACKAGE_JSON) }.get()
+            }
+    }
 
     @get:OutputFiles
     val additionalFiles: FileCollection by lazy {
