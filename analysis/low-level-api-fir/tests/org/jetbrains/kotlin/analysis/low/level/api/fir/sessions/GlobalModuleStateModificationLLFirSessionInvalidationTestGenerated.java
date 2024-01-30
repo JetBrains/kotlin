@@ -78,6 +78,54 @@ public class GlobalModuleStateModificationLLFirSessionInvalidationTestGenerated 
   }
 
   @Test
+  @TestMetadata("codeFragmentInvalidateFragment1.kt")
+  public void testCodeFragmentInvalidateFragment1() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateFragment1.kt");
+  }
+
+  @Test
+  @TestMetadata("codeFragmentInvalidateFragment2.kt")
+  public void testCodeFragmentInvalidateFragment2() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateFragment2.kt");
+  }
+
+  @Test
+  @TestMetadata("codeFragmentInvalidateLibrary.kt")
+  public void testCodeFragmentInvalidateLibrary() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("codeFragmentInvalidateNone.kt")
+  public void testCodeFragmentInvalidateNone() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateNone.kt");
+  }
+
+  @Test
+  @TestMetadata("codeFragmentInvalidateSourceModule.kt")
+  public void testCodeFragmentInvalidateSourceModule() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateSourceModule.kt");
+  }
+
+  @Test
+  @TestMetadata("codeFragmentWithContextModuleDependent.kt")
+  public void testCodeFragmentWithContextModuleDependent() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentWithContextModuleDependent.kt");
+  }
+
+  @Test
+  @TestMetadata("codeFragmentWithUnrelatedModule.kt")
+  public void testCodeFragmentWithUnrelatedModule() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentWithUnrelatedModule.kt");
+  }
+
+  @Test
+  @TestMetadata("codeFragmentWithUnrelatedModuleAndLibrary.kt")
+  public void testCodeFragmentWithUnrelatedModuleAndLibrary() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentWithUnrelatedModuleAndLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("linearInvalidateC.kt")
   public void testLinearInvalidateC() {
     runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateC.kt");
@@ -135,5 +183,17 @@ public class GlobalModuleStateModificationLLFirSessionInvalidationTestGenerated 
   @TestMetadata("rhombusInvalidateLibrarySourceL2.kt")
   public void testRhombusInvalidateLibrarySourceL2() {
     runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateLibrarySourceL2.kt");
+  }
+
+  @Test
+  @TestMetadata("transitiveCodeFragment.kt")
+  public void testTransitiveCodeFragment() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/transitiveCodeFragment.kt");
+  }
+
+  @Test
+  @TestMetadata("unrelatedCodeFragment.kt")
+  public void testUnrelatedCodeFragment() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/unrelatedCodeFragment.kt");
   }
 }

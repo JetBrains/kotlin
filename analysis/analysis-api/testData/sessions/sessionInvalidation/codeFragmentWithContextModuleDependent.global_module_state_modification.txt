@@ -1,0 +1,4 @@
+Module names of invalidated sessions:
+context
+dependent
+fragment1.kt
