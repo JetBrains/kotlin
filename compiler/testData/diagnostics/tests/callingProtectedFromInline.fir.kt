@@ -11,7 +11,7 @@ open class A {
         this.foo()
 
         val receiver: A = this
-        receiver.<!INVISIBLE_MEMBER, PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>foo<!>()
+        receiver.<!INVISIBLE_REFERENCE, PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>foo<!>()
 
         val receiver2 = this
         receiver2.foo()
