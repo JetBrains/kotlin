@@ -92,7 +92,10 @@ dependencies {
     }
     commonRuntimeOnly(project(":kotlin-util-klib"))
     commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
-    commonRuntimeOnly(project(":native:swift:sir-runner-embeddable"))
+
+    if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
+        commonRuntimeOnly(project(":native:swift:sir-runner-embeddable"))
+    }
 
     embedded(project(":kotlin-gradle-build-metrics"))
     embedded(project(":kotlin-gradle-statistics"))
