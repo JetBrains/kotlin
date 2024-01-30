@@ -1215,12 +1215,13 @@ TYPED_TEST_P(TracingGCTest, WeakResurrectionInMark) {
 
             auto weakReferee = weaks[i]->get();
             (*roots[i])->field2 = weakReferee;
-            bool resurected = weakReferee != nullptr;
+            bool resurrected = weakReferee != nullptr;
 
             while (!gcDone.load(std::memory_order_relaxed)) {
                 safePoint(threadData);
             }
-            if (resurected) {
+
+            if (resurrected) {
                 EXPECT_NE(weaks[i]->get(), nullptr);
             } else {
                 EXPECT_EQ(weaks[i]->get(), nullptr);

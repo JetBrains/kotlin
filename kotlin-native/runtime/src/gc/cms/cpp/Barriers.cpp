@@ -180,12 +180,14 @@ NO_INLINE ObjHeader* weakRefReadInWeakSweepSlowPath(ObjHeader* weakReferee) noex
 
 ALWAYS_INLINE ObjHeader* gc::barriers::weakRefReadBarrier(std::atomic<ObjHeader*>& weakReferee) noexcept {
     // TODO reread the referee under the barrier guard if `disableBarriers` would be possible outsied of STW
-    auto weak = weakReferee.load(std::memory_order_relaxed);
-    if (!weak) return nullptr;
+//    auto weak = weakReferee.load(std::memory_order_relaxed);
+//    if (!weak) return nullptr;
 
     if (__builtin_expect(currentPhase() != BarriersPhase::kDisabled, false)) {
         // Mark dispatcher requires weak reads be protected by the following:
         auto weakReadProtector = markDispatcher().weakReadProtector();
+        auto weak = weakReferee.load(std::memory_order_relaxed);
+        if (!weak) return nullptr;
 
         auto phase = currentPhase();
         BarriersLogDebug(phase, "Weak read %p", weak);
@@ -200,5 +202,5 @@ ALWAYS_INLINE ObjHeader* gc::barriers::weakRefReadBarrier(std::atomic<ObjHeader*
         return weak;
     }
 
-    return weak;
+    return weakReferee.load(std::memory_order_relaxed);
 }

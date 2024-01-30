@@ -121,11 +121,8 @@ public:
      * Weak reference reads may be mutually exclusive with certain parts of mark oprocess.
      * Every read must be guarded by the object returned by this method.
      */
-    auto weakReadProtector() noexcept { return std::shared_lock{markTerminationMutex_}; }
-
-    ALWAYS_INLINE void assertWeakReadForbiden() noexcept {
-        std::shared_lock lock(markTerminationMutex_, std::try_to_lock);
-        RuntimeAssert(!lock, "Mark termination mutex must be held for write by a GC thread");
+    auto weakReadProtector() noexcept {
+        return std::pair{ThreadStateGuard{ThreadState::kNative}, std::shared_lock{markTerminationMutex_}};
     }
 
 private:
@@ -134,7 +131,7 @@ private:
     void completeMutatorsRootSet(MarkTraits::MarkQueue& markQueue);
     void tryCollectRootSet(mm::ThreadData& thread, ParallelProcessor::Worker& markQueue);
     void parallelMark(ParallelProcessor::Worker& worker);
-    void waitForMutatorsToFlush() noexcept;
+    void flushMutatorQueues() noexcept;
     bool tryTerminateMark(std::size_t& everSharedBatches) noexcept;
 
     void resetMutatorFlags();
@@ -145,4 +142,9 @@ private:
 
     RWSpinLock<MutexThreadStateHandling::kIgnore> markTerminationMutex_;
 };
+
+namespace test_support {
+bool flushActionRequested();
+}
+
 } // namespace kotlin::gc::mark

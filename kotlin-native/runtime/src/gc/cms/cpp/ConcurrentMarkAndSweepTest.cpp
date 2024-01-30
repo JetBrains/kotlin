@@ -67,21 +67,21 @@ TYPED_TEST_P(TracingGCTest, WeakResurrectionAtMarkTermination) {
     std::vector<std::future<void>> mutatorFutures;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         mutatorFutures.emplace_back(mutators[i].Execute([&, i](mm::ThreadData& threadData, Mutator& mutator) noexcept {
-            safePoint(threadData);
-
-            // Wait for the second pause request
-            while (!mm::IsThreadSuspensionRequested() && !gcDone.load(std::memory_order_relaxed)) {
-                threadData.gc().impl().gc().mark().onSafePoint();
+            while (!gc::mark::test_support::flushActionRequested() && !gcDone.load(std::memory_order_relaxed)) {
+                safePoint(threadData);
             }
+
+            threadData.gc().impl().gc().mark().onSafePoint();
 
             auto weakReferee = weaks[i]->get();
             (*roots[i])->field2 = weakReferee;
-            bool resurected = weakReferee != nullptr;
+            bool resurrected = weakReferee != nullptr;
 
             while (!gcDone.load(std::memory_order_relaxed)) {
                 safePoint(threadData);
             }
-            if (resurected) {
+
+            if (resurrected) {
                 EXPECT_NE(weaks[i]->get(), nullptr);
             } else {
                 EXPECT_EQ(weaks[i]->get(), nullptr);

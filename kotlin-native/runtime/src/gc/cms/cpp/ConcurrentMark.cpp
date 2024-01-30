@@ -60,7 +60,7 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
     resumeTheWorld(gcHandle());
 
     // Mutator threads might release their internal batch at a pretty arbitrary moment (during a barrier execution with overflow).
-    // So there are not so many relieable ways to track releases of new work.
+    // So there are not so many reliable ways to track releases of new work.
     // The number of batches sharad inside a parallel processor may only grow,
     // we use this number to decide when to finish the mark.
     auto everSharedBatches = parallelProcessor_->batchesEverShared();
@@ -68,9 +68,6 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
     do {
         GCLogDebug(gcHandle().getEpoch(), "Building mark closure (attempt #%d)", iter);
         Mark<MarkTraits>(gcHandle(), mainWorker);
-
-        waitForMutatorsToFlush();
-
         ++iter;
     } while (!tryTerminateMark(everSharedBatches));
 
@@ -84,7 +81,6 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
 
     stopTheWorld(gcHandle(), "GC stop the world #2: finish mark");
 
-    // TODO do weak sweep before
     barriers::disableBarriers();
 }
 
@@ -118,7 +114,7 @@ void gc::mark::ConcurrentMark::parallelMark(ParallelProcessor::Worker& worker) {
     Mark<MarkTraits>(gcHandle(), worker);
 }
 
-void gc::mark::ConcurrentMark::waitForMutatorsToFlush() noexcept {
+void gc::mark::ConcurrentMark::flushMutatorQueues() noexcept {
     for (auto& mutator : *lockedMutatorsList_) {
         mutator.gc().impl().gc().mark().flushAction_.construct();
     }
@@ -150,10 +146,14 @@ void gc::mark::ConcurrentMark::waitForMutatorsToFlush() noexcept {
 
 /** Terminates the mark loop if possible, otherwise returns `false`. */
 bool gc::mark::ConcurrentMark::tryTerminateMark(std::size_t& everSharedBatches) noexcept {
+    // prevent unwanted mutations (such as weak-reachable resurrection) during termination detection
     std::unique_lock markTerminationGuard(markTerminationMutex_);
 
+    // has to happen under the termination lock guard
+    flushMutatorQueues();
+
     // After the mutators have been forced to flush their local queues,
-    // there is only on possibility for this counster to remain the same as on a previous iteration:
+    // there is only on possibility for this counter to remain the same as on a previous iteration:
     // 1. Mutator local queues are empty,
     // 2. AND were empty before the flush request was made,
     // 3. AND the last attempt at completing mark closure encountered 0 new objects // FIXME this is actually redundant
@@ -173,4 +173,8 @@ void gc::mark::ConcurrentMark::resetMutatorFlags() {
     for (auto& mut : *lockedMutatorsList_) {
         mut.gc().impl().gc().clearMarkFlags();
     }
+}
+
+bool gc::mark::test_support::flushActionRequested() {
+    return FlushActionActivator::isActive();
 }

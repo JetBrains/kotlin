@@ -77,7 +77,7 @@ private:
     std::mutex mutex_;
 };
 
-/** A guard helping to ensure a certain action is executed only once. Even with cincurrent attepts from multiple threads. */
+/** A guard helping to ensure a certain action is executed only once. Even with concurrent attempts from multiple threads. */
 class OnceExecutable : private OnceComputable<void> {
 public:
     bool executed() const noexcept { return computed(); }

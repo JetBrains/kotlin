@@ -64,6 +64,10 @@ public:
         }
     }
 
+    static bool isActive() noexcept {
+        return active_.load(std::memory_order_relaxed);
+    }
+
     ExtraSafePointActionActivator() noexcept {
         std::unique_lock lock(mutex_);
         active_.store(true, std::memory_order_relaxed);
