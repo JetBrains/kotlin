@@ -221,6 +221,13 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
             return list.set(fromIndex + index, element)
         }
 
+        override fun removeRange(fromIndex: Int, toIndex: Int) {
+            checkForComodification()
+            list.removeRange(this.fromIndex + fromIndex, this.fromIndex + toIndex)
+            _size -= toIndex - fromIndex
+            modCount = list.modCount
+        }
+
         override val size: Int
             get() {
                 checkForComodification()

@@ -203,6 +203,11 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
             return list.set(fromIndex + index, element)
         }
 
+        override fun removeRange(fromIndex: Int, toIndex: Int) {
+            list.removeRange(this.fromIndex + fromIndex, this.fromIndex + toIndex)
+            _size -= toIndex - fromIndex
+        }
+
         override val size: Int get() = _size
 
         internal override fun checkIsMutable(): Unit = list.checkIsMutable()
