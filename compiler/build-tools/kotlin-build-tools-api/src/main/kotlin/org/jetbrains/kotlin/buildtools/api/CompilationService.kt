@@ -26,7 +26,12 @@ import java.io.File
 @ExperimentalBuildToolsApi
 public interface CompilationService {
     /**
-     * TODO KT-57565
+     * Calculates JVM classpath snapshot for [classpathEntry] used for detecting changes in incremental compilation with specified [granularity].
+     *
+     * The [ClassSnapshotGranularity.CLASS_LEVEL] granularity should be preferred for rarely changing dependencies as more lightweight in terms of the resulting snapshot size.
+     *
+     * @param classpathEntry path to existent classpath entry
+     * @param granularity determines granularity of tracking.
      */
     public fun calculateClasspathSnapshot(classpathEntry: File, granularity: ClassSnapshotGranularity): ClasspathEntrySnapshot
 
@@ -57,7 +62,7 @@ public interface CompilationService {
         strategyConfig: CompilerExecutionStrategyConfiguration,
         compilationConfig: JvmCompilationConfiguration,
         sources: List<File>,
-        arguments: List<String>
+        arguments: List<String>,
     ): CompilationResult
 
     /**
