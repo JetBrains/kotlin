@@ -62,6 +62,12 @@ enum class AppStateTracking {
     kEnabled = 1,
 };
 
+enum class GCBarriersCodegenMode : int32_t {
+    kBranch = 0,
+    kCall = 1,
+    kBranchCall = 2,
+};
+
 ALWAYS_INLINE inline bool shouldContainDebugInfo() noexcept {
     return Kotlin_needDebugInfo != 0;
 }
@@ -108,6 +114,7 @@ DestroyRuntimeMode destroyRuntimeMode() noexcept;
 bool gcMutatorsCooperate() noexcept;
 uint32_t auxGCThreads() noexcept;
 bool suspendFunctionsFromAnyThreadFromObjCEnabled() noexcept;
+GCBarriersCodegenMode gcBarriersCodegenMode() noexcept;
 AppStateTracking appStateTracking() noexcept;
 int getSourceInfo(void* addr, SourceInfo *result, int result_size) noexcept;
 bool mimallocUseDefaultOptions() noexcept;

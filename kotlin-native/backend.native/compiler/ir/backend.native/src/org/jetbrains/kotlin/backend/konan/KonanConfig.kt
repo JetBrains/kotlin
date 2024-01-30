@@ -229,6 +229,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
     }
 
+    val gcBarriersCodegenMode: GCBarriersCodegenMode by lazy {
+        configuration.get(BinaryOptions.gcBarriersCodegenMode) ?: GCBarriersCodegenMode.BRANCH
+    }
+
     val irVerificationMode: IrVerificationMode
         get() = configuration.getNotNull(KonanConfigKeys.VERIFY_IR)
 

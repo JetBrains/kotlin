@@ -27,6 +27,7 @@ RUNTIME_WEAK Kotlin_getSourceInfo_FunctionType Kotlin_getSourceInfo_Function = n
 #ifdef KONAN_ANDROID
 RUNTIME_WEAK int32_t Kotlin_printToAndroidLogcat = 1;
 #endif
+RUNTIME_WEAK int32_t Kotlin_gcBarriersCodegenMode = 0;
 // Keep it 0 even when the compiler defaults to 1: if the overriding mechanism breaks, keeping it disabled is safer.
 RUNTIME_WEAK int32_t Kotlin_appStateTracking = 0;
 RUNTIME_WEAK int32_t Kotlin_mimallocUseDefaultOptions = 1;
@@ -55,6 +56,10 @@ ALWAYS_INLINE compiler::WorkerExceptionHandling compiler::workerExceptionHandlin
 
 ALWAYS_INLINE bool compiler::suspendFunctionsFromAnyThreadFromObjCEnabled() noexcept {
     return Kotlin_suspendFunctionsFromAnyThreadFromObjC != 0;
+}
+
+ALWAYS_INLINE compiler::GCBarriersCodegenMode compiler::gcBarriersCodegenMode() noexcept {
+    return static_cast<compiler::GCBarriersCodegenMode>(Kotlin_gcBarriersCodegenMode);
 }
 
 ALWAYS_INLINE compiler::AppStateTracking compiler::appStateTracking() noexcept {

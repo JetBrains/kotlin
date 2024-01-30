@@ -16,6 +16,22 @@ using namespace kotlin;
 
 namespace {
 
+using WriteBarrier = void(*)(mm::DirectRefAccessor, ObjHeader*);
+//using WeakReadBarrier = ObjHeader*(*)(ObjHeader*);
+
+void writeBarrierNoop(mm::DirectRefAccessor, ObjHeader*) {}
+//ObjHeader* weakReadBarrierNoop(ObjHeader* weakReferent) {
+//    return weakReferent;
+//}
+
+const WriteBarrier writeBarrierDefault = compiler::gcBarriersCodegenMode() == compiler::GCBarriersCodegenMode::kCall ? writeBarrierNoop : nullptr;
+//const WeakReadBarrier weakReadBarrierDefault = compiler::gcBarriersCodegenMode() == compiler::GCBarriersCodegenMode::kCall ? weakReadBarrierNoop : nullptr;
+
+std::atomic<WriteBarrier> markBarrier = writeBarrierDefault;
+//std::atomic<WeakReadBarrier> weakBarrier = weakReadBarrierDefault;
+
+///////////////////////////
+
 enum class BarriersPhase {
     /** Normal execution */
     kDisabled,
@@ -59,9 +75,28 @@ ALWAYS_INLINE void assertPhaseNot(BarriersPhase expected) noexcept {
     RuntimeAssert(currentPhaseRelaxed() != expected, "Barriers phase: phase %s not expected", toString(expected));
 }
 
+void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor, ObjHeader*) noexcept;
+ObjHeader* weakRefReadInMarkSlowPath(ObjHeader* weakReferee) noexcept;
+ObjHeader* weakRefReadInWeakSweepSlowPath(ObjHeader* weakReferee) noexcept;
+
 void switchPhase(BarriersPhase from, BarriersPhase to) noexcept {
     auto prev = barriersPhase.exchange(to, std::memory_order_release);
     assertPhase(prev, from);
+
+    // FIXME ?
+    if (to == BarriersPhase::kMarkClosure) {
+        markBarrier = beforeHeapRefUpdateSlowPath;
+        //weakBarrier = weakRefReadInMarkSlowPath;
+    } else {
+        markBarrier = writeBarrierDefault;
+
+        //if (to == BarriersPhase::kWeakProcessing) {
+        //    weakBarrier = weakRefReadInWeakSweepSlowPath;
+        //} else {
+        //    weakBarrier = weakReadBarrierDefault;
+        //}
+    }
+
 }
 
 auto& markDispatcher() noexcept {
@@ -147,10 +182,22 @@ NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader*
 } // namespace
 
 ALWAYS_INLINE void gc::barriers::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept {
-    auto phase = currentPhase();
-    BarriersLogDebug(phase, "Write *%p <- %p (%p overwritten)", ref.location(), value, ref.load());
-    if (__builtin_expect(phase == BarriersPhase::kMarkClosure, false)) {
-        beforeHeapRefUpdateSlowPath(ref, value);
+    if (compiler::gcBarriersCodegenMode() == compiler::GCBarriersCodegenMode::kBranch) {
+        auto phase = currentPhase();
+        BarriersLogDebug(phase, "Write *%p <- %p (%p overwritten)", ref.location(), value, ref.load());
+        if (__builtin_expect(phase == BarriersPhase::kMarkClosure, false)) {
+            beforeHeapRefUpdateSlowPath(ref, value);
+        }
+    } else if (compiler::gcBarriersCodegenMode() == compiler::GCBarriersCodegenMode::kCall) {
+        WriteBarrier barrierImpl = markBarrier.load(std::memory_order_acquire);
+        BarriersLogDebug(currentPhaseRelaxed(), "Write *%p <- %p (%p overwritten)", ref.location(), value, ref.load());
+        barrierImpl(ref, value);
+    } else {
+        WriteBarrier barrierImpl = markBarrier.load(std::memory_order_acquire);
+        BarriersLogDebug(currentPhaseRelaxed(), "Write *%p <- %p (%p overwritten)", ref.location(), value, ref.load());
+        if (__builtin_expect(barrierImpl != nullptr, false)) {
+            barrierImpl(ref, value);
+        }
     }
 }
 
@@ -160,11 +207,12 @@ namespace {
  * Before the mark closure is built, every weak read may resurrect a weakly-reachable object.
  * Thus, the referent must be pushed in a mark queue, in case it wold be resureceted behind the mark front.
  */
-NO_INLINE void weakRefReadInMarkSlowPath(ObjHeader* weakReferee) noexcept {
+NO_INLINE ObjHeader* weakRefReadInMarkSlowPath(ObjHeader* weakReferee) noexcept {
     assertPhase(BarriersPhase::kMarkClosure);
     auto& threadData = *mm::ThreadRegistry::Instance().CurrentThreadData();
     auto& markQueue = *threadData.gc().impl().gc().mark().markQueue();
     gc::mark::ConcurrentMark::MarkTraits::tryEnqueue(markQueue, weakReferee);
+    return weakReferee;
 }
 
 /** After the mark closure is built, but weak refs are not yet nulled out, every weak read shouuld check if the weak referent is marked. */

@@ -49,6 +49,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val auxGCThreads by uintOption()
 
+    val gcBarriersCodegenMode by option<GCBarriersCodegenMode>()
+
     val linkRuntime by option<RuntimeLinkageStrategyBinaryOption>()
 
     val bundleId by stringOption()
