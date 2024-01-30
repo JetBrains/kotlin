@@ -50,7 +50,7 @@ public class CommonizeNativeDistributionTest {
             LINUX_X64, LINUX_ARM64,
             MACOS_X64, MACOS_ARM64,
             IOS_X64, IOS_ARM64,
-            WATCHOS_ARM64, WATCHOS_ARM32, WATCHOS_X86, WATCHOS_DEVICE_ARM64,
+            WATCHOS_ARM64, WATCHOS_ARM32, WATCHOS_DEVICE_ARM64,
             TVOS_ARM64, TVOS_X64
         )
 

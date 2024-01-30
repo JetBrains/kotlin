@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.REMOVED_TARGET_MESSAGE
 import org.jetbrains.kotlin.tooling.core.closure
 
 
@@ -192,9 +193,8 @@ private class KotlinHierarchyBuilderImpl(
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.ANDROID_ARM64
     }
 
-    override fun withIosArm32() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.IOS_ARM32
-    }
+    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    override fun withIosArm32() = Unit
 
     override fun withIosArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.IOS_ARM64
@@ -260,35 +260,23 @@ private class KotlinHierarchyBuilderImpl(
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_ARM64
     }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withWatchosX86() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.WATCHOS_X86
-    }
+    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    override fun withWatchosX86() = Unit
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withMingwX86() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.MINGW_X86
-    }
+    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    override fun withMingwX86() = Unit
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withLinuxArm32Hfp() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_ARM32_HFP
-    }
+    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    override fun withLinuxArm32Hfp() = Unit
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withLinuxMips32() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_MIPS32
-    }
+    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    override fun withLinuxMips32() = Unit
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withLinuxMipsel32() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_MIPSEL32
-    }
+    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    override fun withLinuxMipsel32() = Unit
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withWasm32() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.WASM32
-    }
+    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    override fun withWasm32() = Unit
 
     override fun toString(): String {
         return "KotlinHierarchyBuilder($node)"

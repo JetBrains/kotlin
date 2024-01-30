@@ -340,8 +340,7 @@ constructor(
                 when {
                     outputKind == CompilerOutputKind.FRAMEWORK ->
                         it.asValidFrameworkName()
-                    outputKind in listOf(CompilerOutputKind.STATIC, CompilerOutputKind.DYNAMIC) ||
-                            outputKind == CompilerOutputKind.PROGRAM && konanTarget == KonanTarget.WASM32 ->
+                    outputKind in listOf(CompilerOutputKind.STATIC, CompilerOutputKind.DYNAMIC) ->
                         it.replace('-', '_')
                     else -> it
                 }

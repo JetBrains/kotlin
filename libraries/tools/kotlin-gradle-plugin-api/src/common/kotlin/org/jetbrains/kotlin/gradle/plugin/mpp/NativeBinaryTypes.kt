@@ -52,16 +52,12 @@ enum class NativeOutputKind(
         CompilerOutputKind.DYNAMIC,
         "shared",
         description = "a dynamic library"
-    ) {
-        override fun availableFor(target: KonanTarget) = target != KonanTarget.WASM32
-    },
+    ),
     STATIC(
         CompilerOutputKind.STATIC,
         "static",
         description = "a static library"
-    ) {
-        override fun availableFor(target: KonanTarget) = target != KonanTarget.WASM32
-    },
+    ),
     FRAMEWORK(
         CompilerOutputKind.FRAMEWORK,
         "framework",

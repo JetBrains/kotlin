@@ -438,19 +438,15 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
     fun `test platform integers in multi-target commonization`() {
         val intTarget1 = LINUX_ARM32_HFP.name
-        val intTarget2 = LINUX_MIPS32.name
-        val intTarget3 = LINUX_MIPSEL32.name
+        val intTarget2 = WATCHOS_ARM64.name
         val longTarget1 = LINUX_X64.name
         val longTarget2 = LINUX_ARM64.name
-        val longTarget3 = MACOS_X64.name
 
         val outputCommonizerTargets = arrayOf(
-            "($intTarget1, $intTarget2)", "($longTarget1, $longTarget2)", "($intTarget3, $longTarget3)",
-            "($intTarget1, $intTarget2, $intTarget3)", "($longTarget1, $longTarget2, $longTarget3)",
-            "($intTarget1, $intTarget2, $intTarget3, $longTarget1)",
+            "($intTarget1, $intTarget2)", "($longTarget1, $longTarget2)", "($intTarget1, $longTarget1)",
+            "($intTarget1, $intTarget2, $longTarget1)",
+            "($longTarget1, $longTarget2, $intTarget1)",
             "($intTarget1, $intTarget2, $longTarget1, $longTarget2)",
-            "($longTarget1, $longTarget2, $longTarget3, $intTarget1)",
-            "($intTarget1, $intTarget2, $intTarget3, $longTarget1, $longTarget2, $longTarget3)",
         )
 
         val result = commonize {
@@ -472,13 +468,6 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 typealias XV = IntVarOf<X>
             """.trimIndent()
 
-            intTarget3 withSource """
-                import kotlinx.cinterop.*
-                
-                typealias X = Int
-                typealias XV = IntVarOf<X>
-            """.trimIndent()
-
             longTarget1 withSource """
                 import kotlinx.cinterop.*
                 
@@ -493,25 +482,10 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 typealias XV = LongVarOf<X>
             """.trimIndent()
 
-            longTarget3 withSource """
-                import kotlinx.cinterop.*
-                
-                typealias X = Long
-                typealias XV = LongVarOf<X>
-            """.trimIndent()
         }
 
         result.assertCommonized(
             "($intTarget1, $intTarget2)", """
-            import kotlinx.cinterop.*
-            
-            typealias X = Int
-            typealias XV = IntVarOf<X>
-        """.trimIndent()
-        )
-
-        result.assertCommonized(
-            "($intTarget1, $intTarget2, $intTarget3)", """
             import kotlinx.cinterop.*
             
             typealias X = Int
@@ -529,16 +503,25 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
 
         result.assertCommonized(
-            "($longTarget1, $longTarget2, $longTarget3)", """
+            "($intTarget1, $longTarget1)", """
             import kotlinx.cinterop.*
             
-            typealias X = Long
-            typealias XV = LongVarOf<X>
+            typealias X = PlatformInt
+            typealias XV = PlatformIntVarOf<X>
         """.trimIndent()
         )
 
         result.assertCommonized(
-            "($intTarget3, $longTarget3)", """
+            "($intTarget1, $intTarget2, $longTarget1)", """
+            import kotlinx.cinterop.*
+            
+            typealias X = PlatformInt
+            typealias XV = PlatformIntVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($longTarget1, $longTarget2, $intTarget1)", """
             import kotlinx.cinterop.*
             
             typealias X = PlatformInt
@@ -554,40 +537,13 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             typealias XV = PlatformIntVarOf<X>
         """.trimIndent()
         )
-
-        result.assertCommonized(
-            "($intTarget1, $intTarget2, $intTarget3, $longTarget1)", """
-            import kotlinx.cinterop.*
-            
-            typealias X = PlatformInt
-            typealias XV = PlatformIntVarOf<X>
-        """.trimIndent()
-        )
-
-        result.assertCommonized(
-            "($longTarget1, $longTarget2, $longTarget3, $intTarget1)", """
-            import kotlinx.cinterop.*
-            
-            typealias X = PlatformInt
-            typealias XV = PlatformIntVarOf<X>
-        """.trimIndent()
-        )
-
-        result.assertCommonized(
-            "($intTarget1, $intTarget2, $intTarget3, $longTarget1, $longTarget2, $longTarget3)", """
-            import kotlinx.cinterop.*
-            
-            typealias X = PlatformInt
-            typealias XV = PlatformIntVarOf<X>
-        """.trimIndent()
-        )
     }
 
     fun `test platform types from known leaf targets are commonized`() {
         val result = commonize {
-            outputTarget("(${LINUX_X64.name}, ${IOS_ARM32.name})")
+            outputTarget("(${LINUX_X64.name}, ${WATCHOS_ARM64.name})")
             setting(PlatformIntegerCommonizationEnabledKey, true)
-            registerFakeStdlibIntegersDependency("(${LINUX_X64.name}, ${IOS_ARM32.name})")
+            registerFakeStdlibIntegersDependency("(${LINUX_X64.name}, ${WATCHOS_ARM64.name})")
 
             LINUX_X64.name withSource """
                 val platformPropertyInOneLeafTarget: PlatformInt 
@@ -596,7 +552,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                     get() = null!!
             """.trimIndent()
 
-            IOS_ARM32.name withSource """
+            WATCHOS_ARM64.name withSource """
                 val platformPropertyInOneLeafTarget: Int 
                     get() = 42
                 val platformPropertyInBothLeafTargets: PlatformInt 
@@ -605,7 +561,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         }
 
         result.assertCommonized(
-            "(${LINUX_X64.name}, ${IOS_ARM32.name})", """
+            "(${LINUX_X64.name}, ${WATCHOS_ARM64.name})", """
             expect val platformPropertyInOneLeafTarget: PlatformInt
             expect val platformPropertyInBothLeafTargets: PlatformInt
         """.trimIndent()
@@ -614,9 +570,9 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
     fun `test platform types from unknown targets are not commonized`() {
         val result = commonize {
-            outputTarget("(unknown, ${IOS_ARM32.name})")
+            outputTarget("(unknown, ${WATCHOS_ARM64.name})")
             setting(PlatformIntegerCommonizationEnabledKey, true)
-            registerFakeStdlibIntegersDependency("(unknown, ${IOS_ARM32.name})")
+            registerFakeStdlibIntegersDependency("(unknown, ${WATCHOS_ARM64.name})")
 
             "unknown" withSource """
                 val platformPropertyInOneLeafTarget: PlatformInt 
@@ -625,7 +581,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                     get() = null!!
             """.trimIndent()
 
-            IOS_ARM32.name withSource """
+            WATCHOS_ARM64.name withSource """
                 val platformPropertyInOneLeafTarget: Int 
                     get() = 42
                 val platformPropertyInOtherLeafTarget: PlatformInt 
@@ -634,18 +590,18 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         }
 
         result.assertCommonized(
-            "(unknown, ${IOS_ARM32.name})", "".trimIndent()
+            "(unknown, ${WATCHOS_ARM64.name})", "".trimIndent()
         )
     }
 
     // Issue: KT-51528
     fun `test multiple argument function with over the edge type alias available`() {
         val result = commonize {
-            outputTarget("(${IOS_ARM32.name}, ${IOS_ARM64.name})")
+            outputTarget("(${WATCHOS_ARM64.name}, ${IOS_ARM64.name})")
             setting(PlatformIntegerCommonizationEnabledKey, true)
-            registerFakeStdlibIntegersDependency("(${IOS_ARM32.name}, ${IOS_ARM64.name})")
+            registerFakeStdlibIntegersDependency("(${WATCHOS_ARM64.name}, ${IOS_ARM64.name})")
 
-            IOS_ARM32.name withSource """
+            WATCHOS_ARM64.name withSource """
                 typealias Arm32Alias = UInt
                 typealias OtherAlias = UInt
                 
@@ -671,7 +627,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         }
 
         result.assertCommonized(
-            "(${IOS_ARM32.name}, ${IOS_ARM64.name})", """
+            "(${WATCHOS_ARM64.name}, ${IOS_ARM64.name})", """
                 typealias OtherAlias = PlatformUInt
                 
                 expect class Box<T>()
