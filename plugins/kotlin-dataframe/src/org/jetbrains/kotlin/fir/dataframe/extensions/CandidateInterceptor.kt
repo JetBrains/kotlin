@@ -75,7 +75,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
 import kotlin.math.abs
 
-class NewCandidateInterceptor(
+class CandidateInterceptor(
     session: FirSession,
     val nextFunction: (String) -> CallableId,
     val nextName: (String) -> ClassId,
