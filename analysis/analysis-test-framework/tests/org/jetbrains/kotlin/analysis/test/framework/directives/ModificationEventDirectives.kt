@@ -41,10 +41,13 @@ enum class ModificationEventKind {
     GLOBAL_MODULE_STATE_MODIFICATION,
     GLOBAL_SOURCE_MODULE_STATE_MODIFICATION,
     GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION,
+    CODE_FRAGMENT_CONTEXT_MODIFICATION,
 }
 
 val ModificationEventKind.isModuleLevel: Boolean
-    get() = this == ModificationEventKind.MODULE_STATE_MODIFICATION || this == ModificationEventKind.MODULE_OUT_OF_BLOCK_MODIFICATION
+    get() = this == ModificationEventKind.MODULE_STATE_MODIFICATION ||
+            this == ModificationEventKind.MODULE_OUT_OF_BLOCK_MODIFICATION ||
+            this == ModificationEventKind.CODE_FRAGMENT_CONTEXT_MODIFICATION
 
 val ModificationEventKind.isGlobalLevel: Boolean
     get() = !isModuleLevel
@@ -144,6 +147,12 @@ private fun publishModificationEventByKind(modificationEventKind: ModificationEv
 
             ModificationEventKind.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION -> {
                 project.analysisMessageBus.syncPublisher(KotlinTopics.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION).onModification()
+            }
+
+            ModificationEventKind.CODE_FRAGMENT_CONTEXT_MODIFICATION -> {
+                project.analysisMessageBus
+                    .syncPublisher(KotlinTopics.CODE_FRAGMENT_CONTEXT_MODIFICATION)
+                    .onModification(ktModule ?: errorModuleRequired())
             }
         }
     }
