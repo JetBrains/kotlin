@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlinx.jspo.gradle
 
+import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.*
 
@@ -29,8 +30,12 @@ class JsPlainObjectsKotlinGradleSubplugin : KotlinCompilerPluginSupportPlugin {
 
     override fun applyToCompilation(
         kotlinCompilation: KotlinCompilation<*>
-    ): Provider<List<SubpluginOption>> =
-        kotlinCompilation.target.project.provider { emptyList() }
+    ): Provider<List<SubpluginOption>> {
+        kotlinCompilation.dependencies {
+            implementation(kotlin("js-plain-objects"))
+        }
+        return kotlinCompilation.target.project.provider { emptyList() }
+    }
 
     override fun getPluginArtifact(): SubpluginArtifact =
         JetBrainsSubpluginArtifact(JS_PLAIN_OBJECTS_ARTIFACT_NAME)
