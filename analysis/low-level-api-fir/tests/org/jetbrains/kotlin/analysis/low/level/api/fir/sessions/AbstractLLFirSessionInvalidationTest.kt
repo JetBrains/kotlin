@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 abstract class AbstractLLFirSessionInvalidationTest : AbstractSessionInvalidationTest<LLFirSession>() {
     override val resultFileSuffix: String? get() = null
 
-    override fun getSession(ktModule: KtModule): LLFirSession = LLFirSessionCache.getInstance(ktModule.project).getSession(ktModule)
+    override fun getSession(ktModule: KtModule): LLFirSession =
+        LLFirSessionCache.getInstance(ktModule.project).getSession(ktModule, preferBinary = true)
 
     override fun getSessionKtModule(session: LLFirSession): KtModule = session.ktModule
     override fun isSessionValid(session: LLFirSession): Boolean = session.isValid
