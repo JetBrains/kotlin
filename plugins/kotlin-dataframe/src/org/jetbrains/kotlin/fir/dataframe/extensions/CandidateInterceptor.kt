@@ -405,4 +405,6 @@ class CandidateInterceptor(
     private fun findLet(): FirFunctionSymbol<*> {
         return session.symbolProvider.getTopLevelFunctionSymbols(FqName("kotlin"), Name.identifier("let")).single()
     }
+
+    private fun String.titleCase() = replaceFirstChar { it.uppercaseChar() }
 }
