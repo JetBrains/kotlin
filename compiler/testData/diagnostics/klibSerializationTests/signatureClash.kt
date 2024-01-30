@@ -27,4 +27,12 @@ fun movedToLib() {}
 fun main() {
     foo()
     movedToLib()
+
+    // Test that the diagnostic is reported for declarations that are referenced before they are declared
+    bar()
 }
+
+<!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Deprecated("", level = DeprecationLevel.HIDDEN)
+fun bar(): Long = 0L<!>
+
+<!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun bar(): Long = 1L<!>

@@ -12,3 +12,11 @@
     fun foo(): kotlin.Long defined in com.example.klib.serialization.diagnostics
     fun foo(): kotlin.String defined in com.example.klib.serialization.diagnostics
     fun foo(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+
+/main.kt:35:1: error: Platform declaration clash: The following declarations have the same IR signature (com.example.klib.serialization.diagnostics/bar|bar(){}[0]):
+    fun bar(): kotlin.Long defined in com.example.klib.serialization.diagnostics
+    fun bar(): kotlin.Long defined in com.example.klib.serialization.diagnostics
+
+/main.kt:38:1: error: Platform declaration clash: The following declarations have the same IR signature (com.example.klib.serialization.diagnostics/bar|bar(){}[0]):
+    fun bar(): kotlin.Long defined in com.example.klib.serialization.diagnostics
+    fun bar(): kotlin.Long defined in com.example.klib.serialization.diagnostics

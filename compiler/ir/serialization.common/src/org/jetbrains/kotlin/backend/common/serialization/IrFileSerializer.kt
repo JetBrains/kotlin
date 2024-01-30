@@ -206,8 +206,8 @@ open class IrFileSerializer(
 
     /* ------- IdSignature ------------------------------------------------------ */
 
-    private fun protoIdSignature(declaration: IrDeclaration): Int {
-        val idSig = declarationTable.signatureByDeclaration(declaration, compatibilityMode.oldSignatures)
+    private fun protoIdSignature(declaration: IrDeclaration, recordInSignatureClashDetector: Boolean): Int {
+        val idSig = declarationTable.signatureByDeclaration(declaration, compatibilityMode.oldSignatures, recordInSignatureClashDetector)
         return idSignatureSerializer.protoIdSignature(idSig)
     }
 
@@ -256,14 +256,14 @@ open class IrFileSerializer(
         }
     }
 
-    private fun serializeIrSymbol(symbol: IrSymbol): Long {
+    private fun serializeIrSymbol(symbol: IrSymbol, isDeclared: Boolean = false): Long {
         val symbolKind = protoSymbolKind(symbol)
 
         val signatureId = when {
             symbol is IrFileSymbol -> idSignatureSerializer.protoIdSignature(IdSignature.FileSignature(symbol)) // TODO: special signature for files?
             else -> {
                 val declaration = symbol.owner as? IrDeclaration ?: error("Expected IrDeclaration: ${symbol.owner.render()}")
-                protoIdSignature(declaration)
+                protoIdSignature(declaration, recordInSignatureClashDetector = isDeclared)
             }
         }
 
@@ -1003,7 +1003,7 @@ open class IrFileSerializer(
 
     private fun serializeIrDeclarationBase(declaration: IrDeclaration, flags: Long?): ProtoDeclarationBase {
         return with(ProtoDeclarationBase.newBuilder()) {
-            symbol = serializeIrSymbol((declaration as IrSymbolOwner).symbol)
+            symbol = serializeIrSymbol((declaration as IrSymbolOwner).symbol, isDeclared = true)
             coordinates = serializeCoordinates(declaration.startOffset, declaration.endOffset)
             addAllAnnotation(serializeAnnotations(declaration.annotations))
             flags?.let { setFlags(it) }
@@ -1345,7 +1345,7 @@ open class IrFileSerializer(
             }
 
             val byteArray = serializeDeclaration(it).toByteArray()
-            val idSig = declarationTable.signatureByDeclaration(it, compatibilityMode.oldSignatures)
+            val idSig = declarationTable.signatureByDeclaration(it, compatibilityMode.oldSignatures, recordInSignatureClashDetector = false)
             require(idSig == idSig.topLevelSignature()) { "IdSig: $idSig\ntopLevel: ${idSig.topLevelSignature()}" }
             require(!idSig.isPackageSignature()) { "IsSig: $idSig\nDeclaration: ${it.render()}" }
 

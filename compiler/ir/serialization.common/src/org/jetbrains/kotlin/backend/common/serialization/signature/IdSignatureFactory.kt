@@ -224,7 +224,7 @@ class IdSignatureFactory(
                 mask = 0,
                 description = null,
             )
-            is IrDeclaration -> table.signatureByDeclaration(container, compatibleMode)
+            is IrDeclaration -> table.signatureByDeclaration(container, compatibleMode, recordInSignatureClashDetector = false)
             else -> error("Unexpected container ${container.render()}")
         }
 
