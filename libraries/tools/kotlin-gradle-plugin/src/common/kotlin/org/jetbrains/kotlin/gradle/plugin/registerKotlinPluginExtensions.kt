@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.gradle.targets.native.CreateFatFrameworksSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeConfigureBinariesSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.SetupEmbedAndSignAppleFrameworkTaskSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
-import org.jetbrains.kotlin.gradle.targets.native.swiftExport.tasks.KotlinSwiftExportSetupAction
+import org.jetbrains.kotlin.gradle.targets.native.internal.AddKotlinPlatformIntegersSupportLibrary
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizedCInteropApiElementsConfigurationsSetupAction
+import org.jetbrains.kotlin.gradle.targets.native.internal.SetupCInteropApiElementsConfigurationSideEffect
+import org.jetbrains.kotlin.gradle.targets.native.internal.SetupKotlinNativePlatformDependenciesForLegacyImport
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionSetupAction
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 
@@ -73,8 +76,6 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, KotlinRegisterCompilationArchiveTasksExtension)
             register(project, IdeMultiplatformImportActionSetupAction)
             register(project, KotlinLLDBScriptSetupAction)
-            register(project, KotlinSwiftExportSetupAction)
-            register(project, ExcludeDefaultPlatformDependenciesFromKotlinNativeCompileTasks)
         }
     }
 
