@@ -82,6 +82,18 @@ public class FirIdeNormalAnalysisSourceModuleGlobalModuleStateModificationAnalys
   }
 
   @Test
+  @TestMetadata("binaryTreeInvalidateLibrarySourceL1.kt")
+  public void testBinaryTreeInvalidateLibrarySourceL1() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateLibrarySourceL1.kt");
+  }
+
+  @Test
+  @TestMetadata("binaryTreeInvalidateLibrarySourceL2.kt")
+  public void testBinaryTreeInvalidateLibrarySourceL2() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateLibrarySourceL2.kt");
+  }
+
+  @Test
   @TestMetadata("binaryTreeInvalidateNone.kt")
   public void testBinaryTreeInvalidateNone() {
     runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateNone.kt");
@@ -97,6 +109,12 @@ public class FirIdeNormalAnalysisSourceModuleGlobalModuleStateModificationAnalys
   @TestMetadata("linearInvalidateL1.kt")
   public void testLinearInvalidateL1() {
     runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateL1.kt");
+  }
+
+  @Test
+  @TestMetadata("linearInvalidateLibrarySourceL1.kt")
+  public void testLinearInvalidateLibrarySourceL1() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateLibrarySourceL1.kt");
   }
 
   @Test
@@ -127,5 +145,17 @@ public class FirIdeNormalAnalysisSourceModuleGlobalModuleStateModificationAnalys
   @TestMetadata("rhombusInvalidateL2.kt")
   public void testRhombusInvalidateL2() {
     runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateL2.kt");
+  }
+
+  @Test
+  @TestMetadata("rhombusInvalidateLibrarySourceL1.kt")
+  public void testRhombusInvalidateLibrarySourceL1() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateLibrarySourceL1.kt");
+  }
+
+  @Test
+  @TestMetadata("rhombusInvalidateLibrarySourceL2.kt")
+  public void testRhombusInvalidateLibrarySourceL2() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateLibrarySourceL2.kt");
   }
 }
