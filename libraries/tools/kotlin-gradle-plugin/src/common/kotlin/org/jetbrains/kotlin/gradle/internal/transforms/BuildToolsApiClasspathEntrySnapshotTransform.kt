@@ -75,15 +75,11 @@ abstract class BuildToolsApiClasspathEntrySnapshotTransform : TransformAction<Bu
 
         val granularity = getClassSnapshotGranularity(classpathEntryInputDirOrJar, parameters.gradleUserHomeDir.get().asFile)
 
-        try {
-            val classLoader = parameters.classLoadersCachingService.get()
-                .getClassLoader(parameters.classpath.toList(), SharedApiClassesClassLoaderProvider)
-            val compilationService = CompilationService.loadImplementation(classLoader)
-            val snapshot = compilationService.calculateClasspathSnapshot(classpathEntryInputDirOrJar, granularity)
-            snapshot.saveSnapshot(snapshotOutputFile)
-        } catch (e: Throwable) {
-            throw e
-        }
+        val classLoader = parameters.classLoadersCachingService.get()
+            .getClassLoader(parameters.classpath.toList(), SharedApiClassesClassLoaderProvider)
+        val compilationService = CompilationService.loadImplementation(classLoader)
+        val snapshot = compilationService.calculateClasspathSnapshot(classpathEntryInputDirOrJar, granularity)
+        snapshot.saveSnapshot(snapshotOutputFile)
     }
 
     /**
