@@ -6,6 +6,9 @@ public final class Test /* test.pkg.Test*/ {
   private java.lang.String pOld_getter_deprecatedOnGetter = null /* initializer type: null */;
 
   @org.jetbrains.annotations.Nullable()
+  private java.lang.String pOld_getter_deprecatedOnProperty = null /* initializer type: null */;
+
+  @org.jetbrains.annotations.Nullable()
   private java.lang.String pOld_getter_deprecatedOnSetter = null /* initializer type: null */;
 
   @org.jetbrains.annotations.Nullable()

@@ -6,6 +6,9 @@ public final class Test /* test.pkg.Test*/ {
   private java.lang.String pOld_noAccessor_deprecatedOnGetter = "42" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
+  private java.lang.String pOld_noAccessor_deprecatedOnProperty = "42" /* initializer type: java.lang.String */;
+
+  @org.jetbrains.annotations.NotNull()
   private java.lang.String pOld_noAccessor_deprecatedOnSetter = "42" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
