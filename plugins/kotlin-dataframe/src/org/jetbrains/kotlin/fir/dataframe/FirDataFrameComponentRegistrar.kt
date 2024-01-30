@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.extensions.*
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.name.CallableId
@@ -28,9 +27,6 @@ interface IGeneratedNames {
     val scopes: Set<ClassId>
     val callables: Set<CallableId>
     val tokens: Set<ClassId>
-    val scopeState: MutableMap<ClassId, SchemaContext>
-    val tokenState: MutableMap<ClassId, SchemaContext>
-    val callableState: MutableMap<Name, FirSimpleFunction>
     fun nextName(s: String): ClassId
     fun nextScope(s: String): ClassId
     fun nextFunction(s: String): CallableId
@@ -50,9 +46,6 @@ class GeneratedNames : IGeneratedNames {
     override val scopes = mutableSetOf<ClassId>()
     override val callables = mutableSetOf<CallableId>()
     override val tokens = mutableSetOf<ClassId>()
-    override val scopeState = mutableMapOf<ClassId, SchemaContext>()
-    override val tokenState = mutableMapOf<ClassId, SchemaContext>()
-    override val callableState = mutableMapOf<Name, FirSimpleFunction>()
 
     private val id = mutableMapOf<String, Int>().withDefault { 0 }
 

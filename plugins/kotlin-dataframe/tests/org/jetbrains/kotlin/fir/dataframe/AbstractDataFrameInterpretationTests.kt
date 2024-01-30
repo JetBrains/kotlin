@@ -67,8 +67,8 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
 //                        +{ it: FirSession -> ScopesGenerator(it, scopes, scopeState) }
                         +{ it: FirSession ->
                             InterpretersRunner(it,
-                                scopeState,
-                                tokenState,
+//                                scopeState,
+//                                tokenState,
                                 getTestFilePath,
                                 this::nextName,
                                 this::nextScope)
@@ -82,8 +82,8 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
 
     class InterpretersRunner(
         session: FirSession,
-        val state: MutableMap<ClassId, SchemaContext>,
-        val tokenState: MutableMap<ClassId, SchemaContext>,
+//        val state: MutableMap<ClassId, SchemaContext>,
+//        val tokenState: MutableMap<ClassId, SchemaContext>,
         val getTestFilePath: () -> String,
         val nextName: (String) -> ClassId,
         val nextScope: (String) -> ClassId
@@ -105,7 +105,9 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
             }
             val file = getTestFilePath()
             val associatedScopes = mutableMapOf<ClassId, List<ConeKotlinType>>()
-            return generateAccessorsScopesForRefinedCall(functionCall, state, tokenState, associatedScopes, nextName = nextName, nextScope = nextScope)
+            // used to actually inject api for some reason
+//            return generateAccessorsScopesForRefinedCall(functionCall, state, tokenState, associatedScopes, nextName = nextName, nextScope = nextScope)
+            return emptyList()
         }
 
 //        fun expectedResult(id: String): Any? {

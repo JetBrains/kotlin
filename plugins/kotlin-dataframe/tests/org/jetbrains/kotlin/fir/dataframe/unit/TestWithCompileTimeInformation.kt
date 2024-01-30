@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.*
 import org.jetbrains.kotlin.fir.dataframe.extensions.ExtensionsGenerator
-import org.jetbrains.kotlin.fir.dataframe.extensions.SchemaContext
 import org.jetbrains.kotlin.fir.dataframe.services.BaseTestRunner
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -85,7 +83,7 @@ abstract class TestWithCompileTimeInformation : BaseTestRunner() {
                         +::ExtensionsGenerator
 //                        +::ScopesGenerator
 //                        +{ it: FirSession -> RefinedFunctionsGenerator(it, callables, callableState) }
-                        +{ it: FirSession -> InterpretersRunner(it, tokenState, getTestFilePath, setTestSubject, onCompile) }
+                        +{ it: FirSession -> InterpretersRunner(it, /*tokenState,*/ getTestFilePath, setTestSubject, onCompile) }
                     }
                 }
             })
@@ -94,7 +92,7 @@ abstract class TestWithCompileTimeInformation : BaseTestRunner() {
 
     class InterpretersRunner(
         session: FirSession,
-        val tokenState: MutableMap<ClassId, SchemaContext>,
+//        val tokenState: MutableMap<ClassId, SchemaContext>,
         val getTestFilePath: () -> String,
         val setTestSubject: (PluginDataFrameSchema) -> Unit,
         val onCompile: (FirSession) -> Unit
