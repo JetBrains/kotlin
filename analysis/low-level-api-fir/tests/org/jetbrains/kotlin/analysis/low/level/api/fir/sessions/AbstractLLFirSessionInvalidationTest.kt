@@ -53,3 +53,8 @@ abstract class AbstractGlobalSourceOutOfBlockModificationLLFirSessionInvalidatio
     override val modificationEventKind: ModificationEventKind
         get() = ModificationEventKind.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION
 }
+
+abstract class AbstractCodeFragmentContextModificationLLFirSessionInvalidationTest : AbstractLLFirSessionInvalidationTest() {
+    override val modificationEventKind: ModificationEventKind
+        get() = ModificationEventKind.CODE_FRAGMENT_CONTEXT_MODIFICATION
+}

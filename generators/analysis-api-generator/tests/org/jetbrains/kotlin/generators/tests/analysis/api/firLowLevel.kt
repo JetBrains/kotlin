@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractScriptWho
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceLazyDeclarationResolveScopeBasedTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceWholeFileResolvePhaseTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.AbstractResolveExtensionDisposalAfterModificationEventTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractCodeFragmentContextModificationLLFirSessionInvalidationTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractGlobalModuleStateModificationLLFirSessionInvalidationTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractGlobalSourceModuleStateModificationLLFirSessionInvalidationTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractGlobalSourceOutOfBlockModificationLLFirSessionInvalidationTest
@@ -426,6 +427,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
 
         testClass<AbstractGlobalSourceOutOfBlockModificationLLFirSessionInvalidationTest> {
+            model("sessions/sessionInvalidation")
+        }
+
+        testClass<AbstractCodeFragmentContextModificationLLFirSessionInvalidationTest> {
             model("sessions/sessionInvalidation")
         }
     }
