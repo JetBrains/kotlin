@@ -75,7 +75,7 @@ dependencies {
     }
     commonCompileOnly(project(":kotlin-tooling-metadata"))
     commonCompileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
-    commonCompileOnly(project(":native:swift:sir-runner"))
+    commonCompileOnly(project(":native:swift:swift-export-standalone"))
     commonCompileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all")) { isTransitive = false }
 
     commonImplementation(project(":kotlin-gradle-plugin-idea"))
@@ -93,7 +93,7 @@ dependencies {
     commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
 
     if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
-        commonRuntimeOnly(project(":native:swift:sir-runner-embeddable"))
+        embedded(project(":native:swift:swift-export-embeddable"))
     }
 
     embedded(project(":kotlin-gradle-build-metrics"))

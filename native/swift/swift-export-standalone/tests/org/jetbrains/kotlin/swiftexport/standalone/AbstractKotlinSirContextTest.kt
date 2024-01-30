@@ -33,7 +33,7 @@ abstract class AbstractSwiftRunnerTestBase {
 
         runSwiftExport(
             input = SwiftExportInput(
-                sourceRoot = moduleRoot,
+                sourceRoots = listOf(moduleRoot),
             ),
             output = output,
             config = SwiftExportConfig(

@@ -6,11 +6,10 @@ plugins {
 
 dependencies {
     embedded(project(":native:swift:sir")) { isTransitive = false }
-    embedded(project(":native:swift:sir-runner")) { isTransitive = false }
-    embedded(project(":native:swift:sir-analysis-api")) { isTransitive = false }
     embedded(project(":native:swift:sir-compiler-bridge")) { isTransitive = false }
     embedded(project(":native:swift:sir-passes")) { isTransitive = false }
     embedded(project(":native:swift:sir-printer")) { isTransitive = false }
+    embedded(project(":native:swift:swift-export-standalone")) { isTransitive = false }
 
     embedded(project(":analysis:analysis-api-standalone")) { isTransitive = false }
     embedded(project(":analysis:analysis-api")) { isTransitive = false }
@@ -23,16 +22,13 @@ dependencies {
     embedded(project(":analysis:low-level-api-fir")) { isTransitive = false }
     embedded(project(":analysis:symbol-light-classes")) { isTransitive = false }
 
-    runtimeOnly(kotlinStdlib())
-    runtimeOnly(project(":kotlin-compiler-embeddable"))
+    compileOnly(kotlinStdlib())
 }
 
 sourceSets {
     "main" {}
     "test" {}
 }
-
-publish()
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
 sourcesJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public sources
