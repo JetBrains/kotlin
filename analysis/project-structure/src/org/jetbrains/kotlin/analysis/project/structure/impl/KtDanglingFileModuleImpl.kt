@@ -38,7 +38,7 @@ public class KtDanglingFileModuleImpl(
     }
 
     override val file: KtFile
-        get() = fileRef.element?.takeIf { it.isValid } ?: error("Dangling file module is invalid")
+        get() = validFileOrNull ?: error("Dangling file module is invalid")
 
     override val project: Project
         get() = contextModule.project
@@ -81,4 +81,9 @@ public class KtDanglingFileModuleImpl(
     override fun hashCode(): Int {
         return Objects.hash(fileRef.element, contextModule)
     }
+
+    override fun toString(): String = validFileOrNull?.name ?: "Invalid dangling file module"
+
+    private val validFileOrNull: KtFile?
+        get() = fileRef.element?.takeIf { it.isValid }
 }
