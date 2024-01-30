@@ -423,9 +423,7 @@ include ":compiler:build-tools:kotlin-build-tools-api",
 include ":plugins:compose-compiler-plugin:compiler",
         ":plugins:compose-compiler-plugin:compiler:integration-tests",
         ":plugins:compose-compiler-plugin:compiler-hosted",
-        ":plugins:compose-compiler-plugin:testutils-gradle-plugin",
-        ":plugins:compose-compiler-plugin:compiler-daemon", // Should be removed after a while
-        ":plugins:compose-compiler-plugin:compiler-daemon:integration-tests" // Should be removed after a while
+        ":plugins:compose-compiler-plugin:testutils-gradle-plugin"
 
 // Swift Export modules
 include ":native:swift:sir",
