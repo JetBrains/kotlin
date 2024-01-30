@@ -71,6 +71,8 @@ abstract class BuildToolsApiClasspathEntrySnapshotTransform : TransformAction<Bu
             checkVersionConsistency()
         }
         val classpathEntryInputDirOrJar = inputArtifact.get().asFile
+        if (!classpathEntryInputDirOrJar.exists()) return
+
         val snapshotOutputFile = outputs.file(classpathEntryInputDirOrJar.name.replace('.', '_') + "-snapshot.bin")
 
         val granularity = getClassSnapshotGranularity(classpathEntryInputDirOrJar, parameters.gradleUserHomeDir.get().asFile)

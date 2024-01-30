@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 @JvmGradlePluginTests
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.DisplayName
 class GeneralClasspathSnapshotIT : KGPBaseTest() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(useGradleClasspathSnapshot = true) // ensure classpath snapshotting is enabled
 
-    @Disabled
     @DisplayName("Non-existent dependency files do not fail the build")
     @GradleTest
     fun nonExistentDependency(gradleVersion: GradleVersion) {
