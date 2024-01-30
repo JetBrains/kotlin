@@ -15,7 +15,7 @@ publishing {
     }
 
     repositories {
-        maven(rootDir.resolve("repo"))
+        maven("<localRepo>")
     }
 }
 

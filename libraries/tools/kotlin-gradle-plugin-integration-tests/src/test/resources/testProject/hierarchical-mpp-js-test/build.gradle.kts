@@ -5,13 +5,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-repositories {
-	val thirdPartyRepo: String by project
-	maven(thirdPartyRepo)
-	mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
     sourceSets {
         val commonMain by getting {

@@ -6,11 +6,6 @@ plugins {
 group = "org.sample"
 version = "2.0"
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
     <SingleNativeTarget>("native")
 }

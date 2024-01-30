@@ -3,11 +3,6 @@ plugins {
     `maven-publish`
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 group = "com.example.bar"
 version = "1.0"
 

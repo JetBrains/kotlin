@@ -32,7 +32,11 @@ class WasmConfigurationCacheIT : KGPBaseTest() {
     @GradleTest
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
     fun testD8Run(gradleVersion: GradleVersion) {
-        project("wasm-d8-simple-project", gradleVersion) {
+        project(
+            "wasm-d8-simple-project",
+            gradleVersion,
+            dependencyManagement = DependencyManagement.DisabledDependencyManagement // :d8Download adds custom ivy repository during build
+        ) {
             build("wasmJsD8Run", buildOptions = buildOptions) {
                 assertTasksExecuted(":wasmJsD8Run")
                 assertOutputContains(

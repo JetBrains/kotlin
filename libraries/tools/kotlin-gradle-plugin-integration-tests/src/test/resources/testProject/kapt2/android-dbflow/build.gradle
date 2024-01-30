@@ -9,12 +9,3 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
-
-allprojects {
-    repositories {
-        mavenLocal()
-        google()
-        mavenCentral()
-        maven { url "https://jitpack.io" }
-    }
-}

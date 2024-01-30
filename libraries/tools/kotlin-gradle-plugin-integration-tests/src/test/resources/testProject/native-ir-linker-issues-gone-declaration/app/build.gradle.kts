@@ -2,12 +2,6 @@ plugins {
     id("org.jetbrains.kotlin.multiplatform")
 }
 
-repositories {
-    mavenCentral()
-    mavenLocal()
-    maven("<localRepo>")
-}
-
 kotlin {
     <SingleNativeTarget>("native") {
         binaries {

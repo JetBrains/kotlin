@@ -36,10 +36,3 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 }
-
-repositories {
-    mavenLocal()
-    maven { url 'https://maven.google.com' }
-    mavenCentral()
-    maven { url "https://clojars.org/repo/" }
-}

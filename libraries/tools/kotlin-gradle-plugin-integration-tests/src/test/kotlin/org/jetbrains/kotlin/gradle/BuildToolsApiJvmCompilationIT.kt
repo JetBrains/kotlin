@@ -28,6 +28,9 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
             "simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(
                 runViaBuildToolsApi = false,
                 incremental = false,
+            ),
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(
+                setOf("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
             )
         ) {
             build("assemble") {
@@ -48,6 +51,9 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
         project(
             "simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(
                 incremental = false,
+            ),
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(
+                setOf("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
             )
         ) {
             enableOtherVersionBuildToolsImpl()
@@ -152,9 +158,6 @@ private const val OTHER_KOTLIN_VERSION = "1.9.30-dev-460"
 private fun TestProject.enableOtherVersionBuildToolsImpl() {
     buildGradle.append(
         """
-        repositories {
-            maven { setUrl("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap") }
-        }
         kotlin {
             useCompilerVersion("$OTHER_KOTLIN_VERSION")
         }

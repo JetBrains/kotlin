@@ -3,12 +3,6 @@ plugins {
     `maven-publish`
 }
 
-repositories {
-    mavenLocal()
-    maven("../repo")
-    mavenCentral()
-}
-
 group = "com.example"
 version = "1.0"
 
@@ -19,6 +13,6 @@ kotlin {
 
 publishing {
     repositories {
-        maven("../repo")
+        maven("<localRepo>")
     }
 }

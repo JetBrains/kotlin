@@ -535,7 +535,11 @@ open class CommonizerIT : KGPBaseTest() {
     @DisplayName("KT-57796 commonization with two cinterop commonizer groups`")
     @GradleTest
     fun testCommonizationWithLibraryContainingTwoRoots(gradleVersion: GradleVersion) {
-        project("commonize-kt-56729-consume-library-with-two-roots", gradleVersion) {
+        project(
+            "commonize-kt-56729-consume-library-with-two-roots",
+            gradleVersion,
+            localRepoDir = defaultLocalRepo(gradleVersion)
+        ) {
             build("publish")
 
             build(":consumer:assemble") {

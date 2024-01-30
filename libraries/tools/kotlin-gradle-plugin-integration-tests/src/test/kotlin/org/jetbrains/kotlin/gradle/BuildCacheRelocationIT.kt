@@ -121,7 +121,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     fun testRelocationAndroidProject(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
+        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
         val (firstProject, secondProject) = prepareTestProjects(
             "AndroidProject",
@@ -150,7 +150,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     fun testRelocationAndroidDagger(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
+        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
         val (firstProject, secondProject) = prepareTestProjects(
             "kapt2/android-dagger",
@@ -179,7 +179,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     fun kaptIgnoreEmptyAndroidVariant(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
+        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
         val (firstProject, secondProject) = prepareTestProjects(
             "kapt2/android-dagger",
@@ -209,6 +209,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @DisplayName("with native project")
     @GradleTest
     fun testRelocationNative(gradleVersion: GradleVersion) {
+        val localRepoDir = defaultLocalRepo(gradleVersion)
         val buildOptionsBeforeCaching = defaultBuildOptions.copy(
             nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
                 version = TestVersions.Kotlin.STABLE_RELEASE,
@@ -218,15 +219,15 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         val (firstProject, secondProject) = prepareTestProjects(
             "native-build-cache",
             gradleVersion,
-            buildOptions = buildOptionsBeforeCaching
+            buildOptions = buildOptionsBeforeCaching,
+            localRepoDir = localRepoDir
         ) {
-            val localRepoUri = it.projectPath.resolve("repo").toUri()
             it.subProject("build-cache-app").buildGradleKts.append(
                 """
                 
                 repositories {
                     maven {
-                        setUrl("$localRepoUri")
+                        setUrl("$localRepoDir")
                     }
                 }
                 """.trimIndent()
@@ -286,14 +287,15 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         buildOptions: BuildOptions = defaultBuildOptions,
         buildJdk: File? = null,
-        additionalConfiguration: (TestProject) -> Unit = {}
+        localRepoDir: Path? = null,
+        additionalConfiguration: (TestProject) -> Unit = {},
     ): Pair<TestProject, TestProject> {
-        val firstProject = project(projectName, gradleVersion, buildOptions, buildJdk = buildJdk, forceOutput = true) {
+        val firstProject = project(projectName, gradleVersion, buildOptions, buildJdk = buildJdk, localRepoDir = localRepoDir) {
             enableLocalBuildCache(localBuildCacheDir)
             additionalConfiguration(this)
         }
 
-        val secondProject = project(projectName, gradleVersion, buildOptions, buildJdk = buildJdk, forceOutput = true) {
+        val secondProject = project(projectName, gradleVersion, buildOptions, buildJdk = buildJdk, localRepoDir = localRepoDir) {
             enableLocalBuildCache(localBuildCacheDir)
             additionalConfiguration(this)
         }
@@ -323,7 +325,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
 
     private fun checkKaptCachingIncrementalBuild(
         firstProject: TestProject,
-        secondProject: TestProject
+        secondProject: TestProject,
     ) {
         val options = defaultBuildOptions.copy(
             kaptOptions = BuildOptions.KaptOptions(
@@ -408,7 +410,9 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         configureProject: (TestProject) -> Unit = {},
     ) {
         val (firstProject, secondProject) =
-            prepareTestProjects("buildCacheSimple", gradleVersion, buildOptions, buildJdk = null, configureProject)
+            prepareTestProjects("buildCacheSimple", gradleVersion, buildOptions, buildJdk = null) {
+                configureProject(it)
+            }
 
         // Build the first project -- It should be a cache miss
         firstProject.build(":compileKotlin") {

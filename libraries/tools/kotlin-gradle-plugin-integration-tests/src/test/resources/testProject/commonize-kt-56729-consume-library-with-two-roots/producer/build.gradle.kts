@@ -12,7 +12,7 @@ group = "org.jetbrains.sample"
 
 publishing {
     repositories {
-        maven(buildDir.resolve("repo"))
+        maven("<localRepo>")
     }
 }
 

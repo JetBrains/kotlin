@@ -2,12 +2,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-repositories {
-    maven(rootDir.resolve("repo"))
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
     jvm()
 
