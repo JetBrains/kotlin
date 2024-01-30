@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.logging.Logger
+import kotlin.jvm.Volatile
+import kotlin.jvm.Synchronized
 
 private fun defaultDeviceId(target: KonanTarget) = when (target.family) {
     Family.TVOS -> "com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-4K"
@@ -61,8 +63,10 @@ class XcodeSimulatorExecutor(
         return hostExecutor.runProcess("/usr/bin/xcrun", "simctl", *args).stdout
     }
 
+    @Volatile
     private var deviceChecked: SimulatorDeviceDescriptor? = null
 
+    @Synchronized
     private fun ensureSimulatorExists() {
         // Already ensured that simulator for `deviceId` exists.
         if (deviceId == deviceChecked?.deviceTypeIdentifier) {
