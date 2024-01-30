@@ -28,7 +28,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintWriter
 
-class JvmAbiConsistencyHandler(testServices: TestServices) : AnalysisHandler<BinaryArtifacts.JvmFromK1AndK2>(testServices, true, true) {
+class JvmAbiConsistencyHandler(testServices: TestServices) : AnalysisHandler<BinaryArtifacts.JvmFromK1AndK2>(testServices) {
     override val artifactKind: TestArtifactKind<BinaryArtifacts.JvmFromK1AndK2>
         get() = ArtifactKinds.JvmFromK1AndK2
 

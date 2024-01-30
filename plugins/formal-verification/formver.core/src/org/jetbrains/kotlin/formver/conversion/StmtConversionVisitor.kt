@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
+import org.jetbrains.kotlin.fir.references.toResolvedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
-import org.jetbrains.kotlin.formver.calleeCallableSymbol
-import org.jetbrains.kotlin.formver.calleeSymbol
 import org.jetbrains.kotlin.formver.embeddings.BooleanTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.NullableTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
@@ -195,7 +195,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext): ExpEmbedding {
-        val symbol = functionCall.calleeCallableSymbol
+        val symbol = functionCall.toResolvedCallableSymbol()
         val callee = data.embedFunction(symbol as FirFunctionSymbol<*>)
         return callee.insertCall(functionCall.functionCallArguments.map(data::convert), data)
     }
@@ -204,9 +204,9 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
         implicitInvokeCall: FirImplicitInvokeCall,
         data: StmtConversionContext,
     ): ExpEmbedding {
-        val receiver = implicitInvokeCall.dispatchReceiver
+        val receiver = implicitInvokeCall.dispatchReceiver as? FirPropertyAccessExpression
             ?: throw NotImplementedError("Implicit invoke calls only support a limited range of receivers at the moment.")
-        val receiverSymbol = receiver.calleeSymbol
+         val receiverSymbol = receiver.calleeReference.toResolvedSymbol<FirBasedSymbol<*>>()!!
         val args = implicitInvokeCall.argumentList.arguments.map(data::convert)
         return when (val exp = data.embedLocalSymbol(receiverSymbol).ignoringMetaNodes()) {
             is LambdaExp -> {
@@ -215,7 +215,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
                 exp.insertCall(args, data)
             }
             else -> {
-                val retType = data.embedType(implicitInvokeCall.calleeCallableSymbol.resolvedReturnType)
+                val retType = data.embedType(implicitInvokeCall.toResolvedCallableSymbol()!!.resolvedReturnType)
                 val leaks = args.filter { it.type is UnspecifiedFunctionTypeEmbedding }
                     .map { Assert(DuplicableCall(it)) }
                 val call = InvokeFunctionObject(data.convert(receiver), args, retType)

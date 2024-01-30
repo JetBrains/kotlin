@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirCatch
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.formver.calleeSymbol
 import org.jetbrains.kotlin.formver.embeddings.ClassPropertyAccess
 import org.jetbrains.kotlin.formver.embeddings.PropertyAccessEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
@@ -72,7 +72,7 @@ fun StmtConversionContext.declareAnonVar(type: TypeEmbedding, initializer: ExpEm
     Declare(freshAnonVar(type), initializer)
 
 fun StmtConversionContext.embedPropertyAccess(accessExpression: FirPropertyAccessExpression): PropertyAccessEmbedding =
-    when (val calleeSymbol = accessExpression.calleeSymbol) {
+    when (val calleeSymbol = accessExpression.calleeReference.symbol) {
         is FirValueParameterSymbol -> embedParameter(calleeSymbol).asPropertyAccess()
         is FirPropertySymbol -> when {
             accessExpression.dispatchReceiver != null -> {
