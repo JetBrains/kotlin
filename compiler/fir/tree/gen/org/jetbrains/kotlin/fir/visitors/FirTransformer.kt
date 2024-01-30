@@ -555,12 +555,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformTryExpression(tryExpression, data)
     }
 
-    open fun <T> transformConstExpression(constExpression: FirConstExpression<T>, data: D): FirStatement {
-        return transformElement(constExpression, data)
+    open fun <T> transformLiteralExpression(literalExpression: FirLiteralExpression<T>, data: D): FirStatement {
+        return transformElement(literalExpression, data)
     }
 
-    final override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: D): FirStatement {
-        return transformConstExpression(constExpression, data)
+    final override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: D): FirStatement {
+        return transformLiteralExpression(literalExpression, data)
     }
 
     open fun transformTypeProjection(typeProjection: FirTypeProjection, data: D): FirTypeProjection {

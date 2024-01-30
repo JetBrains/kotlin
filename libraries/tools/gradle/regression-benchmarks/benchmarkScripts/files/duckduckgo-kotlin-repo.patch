@@ -153,6 +153,20 @@ index 334cd9396..cefa04a4f 100644
 -</manifest>
 \ No newline at end of file
 +</manifest>
+diff --git a/app-tracking-protection/vpn-store/build.gradle b/app-tracking-protection/vpn-store/build.gradle
+index 4205d3434..61d290ada 100644
+--- a/app-tracking-protection/vpn-store/build.gradle
++++ b/app-tracking-protection/vpn-store/build.gradle
+@@ -80,4 +80,6 @@ dependencies {
+     testImplementation AndroidX.test.ext.junit
+
+     androidTestUtil AndroidX.test.orchestrator
+-}
+\ No newline at end of file
++}
++
++kotlin.compilerOptions.freeCompilerArgs = ['-Xjvm-default=all']
+\ No newline at end of file
 diff --git a/app/build.gradle b/app/build.gradle
 index 2c2f0d413..6a35d3108 100644
 --- a/app/build.gradle
@@ -344,6 +358,17 @@ index 8a18ef859..148e24fba 100644
 -</manifest>
 \ No newline at end of file
 +</manifest>
+diff --git a/autofill/autofill-store/build.gradle b/autofill/autofill-store/build.gradle
+index 83dfbf3be..5c8f5fd03 100644
+--- a/autofill/autofill-store/build.gradle
++++ b/autofill/autofill-store/build.gradle
+@@ -55,3 +55,5 @@ android {
+     }
+     namespace 'com.duckduckgo.autofill.store'
+ }
++
++kotlin.compilerOptions.freeCompilerArgs = ['-Xjvm-default=all']
+\ No newline at end of file
 diff --git a/build.gradle b/build.gradle
 index b445a8d6a..5b66cf35c 100644
 --- a/build.gradle
@@ -594,6 +619,17 @@ index d65fbf432..5d1a0ea81 100644
 -}
 \ No newline at end of file
 +}
+diff --git a/cookies/cookies-store/build.gradle b/cookies/cookies-store/build.gradle
+index 431026403..2336bb2bb 100644
+--- a/cookies/cookies-store/build.gradle
++++ b/cookies/cookies-store/build.gradle
+@@ -58,3 +58,5 @@ dependencies {
+ android {
+     namespace 'com.duckduckgo.cookies.store'
+ }
++
++kotlin.compilerOptions.freeCompilerArgs = ['-Xjvm-default=all']
+\ No newline at end of file
 diff --git a/device-auth/device-auth-impl/build.gradle b/device-auth/device-auth-impl/build.gradle
 index 32920e289..f017c0e71 100644
 --- a/device-auth/device-auth-impl/build.gradle
@@ -1147,7 +1183,7 @@ index 46bd7069a..ac438fcd8 100644
 \ No newline at end of file
 +}
 diff --git a/runtime-checks/runtime-checks-store/build.gradle b/runtime-checks/runtime-checks-store/build.gradle
-index 2d9ad2e90..94c342bd2 100644
+index 2d9ad2e90..50e2d8299 100644
 --- a/runtime-checks/runtime-checks-store/build.gradle
 +++ b/runtime-checks/runtime-checks-store/build.gradle
 @@ -22,6 +22,8 @@ plugins {
@@ -1159,13 +1195,16 @@ index 2d9ad2e90..94c342bd2 100644
  dependencies {
      implementation project(path: ':common-utils')
      implementation Kotlin.stdlib.jdk7
-@@ -54,4 +56,4 @@ dependencies {
+@@ -54,4 +56,6 @@ dependencies {
      testImplementation 'app.cash.turbine:turbine:_'
      testImplementation Testing.robolectric
      testImplementation project(path: ':common-test')
 -}
 \ No newline at end of file
 +}
++
++kotlin.compilerOptions.freeCompilerArgs = ['-Xjvm-default=all']
+\ No newline at end of file
 diff --git a/runtime-checks/runtime-checks-store/src/main/AndroidManifest.xml b/runtime-checks/runtime-checks-store/src/main/AndroidManifest.xml
 index 0af574d93..75e2ad68e 100644
 --- a/runtime-checks/runtime-checks-store/src/main/AndroidManifest.xml
@@ -1454,6 +1493,20 @@ index 9c4fb9721..4bc40348f 100644
 -}
 \ No newline at end of file
 +}
+diff --git a/web-compat/web-compat-store/build.gradle b/web-compat/web-compat-store/build.gradle
+index 422a3ae7f..879ac9f20 100644
+--- a/web-compat/web-compat-store/build.gradle
++++ b/web-compat/web-compat-store/build.gradle
+@@ -50,4 +50,6 @@ dependencies {
+     testImplementation "org.mockito.kotlin:mockito-kotlin:_"
+     testImplementation Testing.junit4
+     testImplementation project(path: ':common-test')
+-}
+\ No newline at end of file
++}
++
++kotlin.compilerOptions.freeCompilerArgs = ['-Xjvm-default=all']
+\ No newline at end of file
 diff --git a/windows/windows-impl/build.gradle b/windows/windows-impl/build.gradle
 index 0fc212a9a..ae155bc25 100644
 --- a/windows/windows-impl/build.gradle

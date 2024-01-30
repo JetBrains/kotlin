@@ -169,6 +169,7 @@ dependencies {
     distPack project(':kotlin-native:utilities:cli-runner')
     distPack project(':kotlin-native:utilities:basic-utils')
     distPack project(':kotlin-native:klib')
+    distPack project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
     distPack project(path: ':kotlin-native:endorsedLibraries:kotlinx.cli', configuration: "jvmRuntimeElements")
     commonSources project(path: ':kotlin-stdlib', configuration: 'metadataSourcesElements')
     commonSources project(path: ':kotlin-test', configuration: 'metadataSourcesElements')

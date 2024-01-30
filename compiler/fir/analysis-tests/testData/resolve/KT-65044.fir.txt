@@ -1,0 +1,5 @@
+FILE: KT-65044.kt
+    public final val <ERROR TYPE REF: Symbol not found for A>.b: <ERROR TYPE REF: Symbol not found for A?>by <Unresolved name: A>#.<Unresolved name: test>#()
+        public get(): <ERROR TYPE REF: Symbol not found for A?> {
+            ^ D|/b|.<Unresolved name: getValue>#(this@R|/b|, ::R|/b|)
+        }

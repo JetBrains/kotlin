@@ -1,0 +1,32 @@
+<caret_1> resolved to:
+0: (in test) fun kotlin.Any.ext()
+
+<caret_2> resolved to:
+0: (in dep1) class Foo
+1: (in dep2) class Foo
+
+<caret_3> resolved to:
+0: (in dep1) fun dep1.Foo.depExtShared()
+1: (in dep2) fun dep2.Foo.depExtShared()
+
+<caret_4> resolved to:
+0: (in dep1) class Foo
+1: (in dep2) class Foo
+
+<caret_5> resolved to:
+0: (in dep1) fun dep1.Foo.depExt1()
+
+<caret_6> resolved to:
+0: (in dep1) class Foo
+
+<caret_7> resolved to:
+0: (in dep2) fun dep2.Foo.depExt2()
+
+<caret_8> resolved to:
+0: (in dep2) class Foo
+
+<caret_9> resolved to:
+0: (in dep1) class Foo
+
+<caret_10> resolved to:
+0: (in dep2) class Foo

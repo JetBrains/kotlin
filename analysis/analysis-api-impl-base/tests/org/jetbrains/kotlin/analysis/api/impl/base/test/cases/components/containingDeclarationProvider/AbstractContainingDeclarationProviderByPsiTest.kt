@@ -20,7 +20,7 @@ abstract class AbstractContainingDeclarationProviderByPsiTest : AbstractAnalysis
     override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
         val currentPath = mutableListOf<KtDeclaration>()
         val ktClasses = mutableListOf<KtClassOrObject>()
-        analyseForTest(mainFile.declarations.first()) {
+        analyseForTest(mainFile) {
             val expectedFileSymbol = mainFile.getFileSymbol()
             mainFile.accept(object : KtVisitorVoid() {
                 override fun visitElement(element: PsiElement) {

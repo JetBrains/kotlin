@@ -62,7 +62,7 @@ class Fir2IrImplicitCastInserter(
 
     override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: IrElement): IrElement = data
 
-    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: IrElement): IrElement = data
+    override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: IrElement): IrElement = data
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: IrElement): IrElement = data
 

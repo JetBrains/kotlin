@@ -93,7 +93,7 @@ private val FirBasedSymbol<*>.resolvedStatus
         else -> null
     }
 
-private fun isExpectAndActual(declaration1: FirBasedSymbol<*>, declaration2: FirBasedSymbol<*>): Boolean {
+internal fun isExpectAndActual(declaration1: FirBasedSymbol<*>, declaration2: FirBasedSymbol<*>): Boolean {
     val status1 = declaration1.resolvedStatus ?: return false
     val status2 = declaration2.resolvedStatus ?: return false
     return (status1.isExpect && status2.isActual) || (status1.isActual && status2.isExpect)
@@ -496,7 +496,7 @@ private fun FirDeclarationCollector<*>.areNonConflictingCallables(
     declaration: FirBasedSymbol<*>,
     conflicting: FirBasedSymbol<*>,
 ): Boolean {
-    if (isExpectAndActual(declaration, conflicting)) return true
+    if (isExpectAndActual(declaration, conflicting) && declaration.moduleData != conflicting.moduleData) return true
 
     val declarationIsLowPriority = hasLowPriorityAnnotation(declaration.annotations)
     val conflictingIsLowPriority = hasLowPriorityAnnotation(conflicting.annotations)

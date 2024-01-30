@@ -569,7 +569,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is FirNamedArgumentExpression -> argument.expression
             else -> argument
         } ?: return null
-        return (argument as? FirConstExpression<*>)?.value
+        return (argument as? FirLiteralExpression<*>)?.value
     }
 
     override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? {

@@ -53,6 +53,12 @@ public class FirIdeDependentAnalysisSourceModuleContainingDeclarationProviderByP
     }
 
     @Test
+    @TestMetadata("codeFragments.kt")
+    public void testCodeFragments() throws Exception {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/codeFragments.kt");
+    }
+
+    @Test
     @TestMetadata("deeplyNestedCode.kt")
     public void testDeeplyNestedCode() throws Exception {
         runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/deeplyNestedCode.kt");

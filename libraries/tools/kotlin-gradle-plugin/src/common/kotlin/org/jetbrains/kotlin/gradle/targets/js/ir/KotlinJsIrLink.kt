@@ -14,20 +14,15 @@ import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.statistics.CompileKotlinJsIrLinkMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryNext
-import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
-import org.jetbrains.kotlin.statistics.metrics.StringMetrics
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import javax.inject.Inject
 
 @CacheableTask
@@ -121,32 +116,10 @@ abstract class KotlinJsIrLink @Inject constructor(
 
     override fun processArgsBeforeCompile(args: K2JSCompilerArguments) {
         buildFusService.orNull?.reportFusMetrics {
-            it.report(BooleanMetrics.JS_IR_INCREMENTAL, incrementalJsIr)
-            val newArgs = K2JSCompilerArguments()
-            parseCommandLineArguments(ArgumentUtils.convertArgumentsToStringList(args), newArgs)
-            it.report(
-                StringMetrics.JS_OUTPUT_GRANULARITY,
-                if (newArgs.irPerModule)
-                    KotlinJsIrOutputGranularity.PER_MODULE.name.toLowerCaseAsciiOnly()
-                else
-                    KotlinJsIrOutputGranularity.WHOLE_PROGRAM.name.toLowerCaseAsciiOnly()
-            )
+            CompileKotlinJsIrLinkMetrics.collectMetrics(args, incrementalJsIr, it)
         }
     }
 
     private fun usingCacheDirectory() =
         incrementalJsIr && modeProperty.get() == DEVELOPMENT
 }
-
-val KotlinPlatformType.fileExtension
-    get() = when (this) {
-        KotlinPlatformType.wasm -> {
-            ".mjs"
-        }
-
-        KotlinPlatformType.js -> {
-            ".js"
-        }
-
-        else -> error("Only JS and WASM supported for KotlinJsTest")
-    }

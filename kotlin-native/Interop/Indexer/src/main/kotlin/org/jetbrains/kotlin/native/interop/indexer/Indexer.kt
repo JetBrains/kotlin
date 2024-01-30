@@ -936,6 +936,11 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
             CXIdxEntity_ObjCClass -> if (cursor.kind != CXCursorKind.CXCursor_ObjCClassRef /* not a forward declaration */) {
                 indexObjCClass(cursor)
+            } else {
+                // It is a class reference. To get the declaration cursor, we can use clang_getCursorReferenced.
+                // If there is a real declaration besides this forward declaration, the function will automatically
+                // resolve it.
+                indexObjCClass(clang_getCursorReferenced(cursor))
             }
 
             CXIdxEntity_ObjCCategory -> {
@@ -946,6 +951,11 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
             CXIdxEntity_ObjCProtocol -> if (cursor.kind != CXCursorKind.CXCursor_ObjCProtocolRef /* not a forward declaration */) {
                 indexObjCProtocol(cursor)
+            } else {
+                // It is a protocol reference. To get the declaration cursor, we can use clang_getCursorReferenced.
+                // If there is a real declaration besides this forward declaration, the function will automatically
+                // resolve it.
+                indexObjCProtocol(clang_getCursorReferenced(cursor))
             }
 
             CXIdxEntity_ObjCProperty -> {

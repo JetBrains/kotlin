@@ -320,7 +320,7 @@ object CheckDslScopeViolation : ResolutionStage() {
 
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         fun checkReceiver(receiver: FirExpression?) {
-            val thisReference = receiver?.toReference() as? FirThisReference ?: return
+            val thisReference = receiver?.toReference(context.session) as? FirThisReference ?: return
             if (thisReference.isImplicit) {
                 checkImpl(
                     candidate,
@@ -554,7 +554,7 @@ internal object CheckArguments : CheckerStage() {
 
 private val Candidate.isInvokeFromExtensionFunctionType: Boolean
     get() = explicitReceiverKind == DISPATCH_RECEIVER
-            && dispatchReceiver?.resolvedType?.isExtensionFunctionType == true
+            && dispatchReceiver?.resolvedType?.fullyExpandedType(this.callInfo.session)?.isExtensionFunctionType == true
             && (symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
 
 internal fun Candidate.shouldHaveLowPriorityDueToSAM(bodyResolveComponents: BodyResolveComponents): Boolean {
@@ -755,7 +755,7 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
         /** Actual declarations are checked by [FirDeprecationChecker] */
         if (symbol.isActual) return
         val deprecation = symbol.getDeprecation(context.session, callInfo.callSite)
-        if (deprecation?.deprecationLevel == DeprecationLevelValue.HIDDEN || isHiddenForThisCallSite(symbol, callInfo, candidate)) {
+        if (deprecation?.deprecationLevel == DeprecationLevelValue.HIDDEN || isHiddenForThisCallSite(symbol, callInfo, candidate, context.session)) {
             sink.yieldDiagnostic(HiddenCandidate)
         }
     }
@@ -764,8 +764,9 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
         symbol: FirCallableSymbol<*>,
         callInfo: CallInfo,
         candidate: Candidate,
+        session: FirSession
     ): Boolean {
-        val isSuperCall = callInfo.callSite.isSuperCall()
+        val isSuperCall = callInfo.callSite.isSuperCall(session)
         if (symbol.fir.dispatchReceiverType == null || symbol !is FirNamedFunctionSymbol) return false
         if (symbol.isHidden(isSuperCall)) return true
 
@@ -784,8 +785,8 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
         return result
     }
 
-    private fun FirElement.isSuperCall(): Boolean =
-        this is FirQualifiedAccessExpression && explicitReceiver?.calleeReference is FirSuperReference
+    private fun FirElement.isSuperCall(session: FirSession): Boolean =
+        this is FirQualifiedAccessExpression && explicitReceiver?.toReference(session) is FirSuperReference
 
     private fun FirCallableSymbol<*>.isHidden(isSuperCall: Boolean): Boolean {
         val fir = fir

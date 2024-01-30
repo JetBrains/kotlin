@@ -17,7 +17,7 @@ typealias Model = org.jetbrains.kotlin.generators.tree.Model<Element>
 
 fun main(args: Array<String>) {
     val generationPath = args.firstOrNull()?.let { File(it) }
-        ?: File("../../tree/gen").canonicalFile
+        ?: File("./native/swift/sir/gen/").canonicalFile
     val model = SwiftIrTree.build()
     generateTree(
         generationPath,

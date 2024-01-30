@@ -9,15 +9,12 @@ import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleSerializer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 
 class JsIrModuleSerializer(
     diagnosticReporter: IrDiagnosticReporter,
-    messageLogger: IrMessageLogger,
     irBuiltIns: IrBuiltIns,
     compatibilityMode: CompatibilityMode,
     normalizeAbsolutePaths: Boolean,
@@ -27,7 +24,6 @@ class JsIrModuleSerializer(
     private val jsIrFileMetadataFactory: JsIrFileMetadataFactory = JsIrFileEmptyMetadataFactory,
 ) : IrModuleSerializer<JsIrFileSerializer>(
     diagnosticReporter,
-    messageLogger,
     compatibilityMode,
     normalizeAbsolutePaths,
     sourceBaseDirs,
@@ -38,7 +34,6 @@ class JsIrModuleSerializer(
 
     override fun createSerializerForFile(file: IrFile): JsIrFileSerializer =
         JsIrFileSerializer(
-            messageLogger,
             DeclarationTable(globalDeclarationTable),
             compatibilityMode = compatibilityMode,
             normalizeAbsolutePaths = normalizeAbsolutePaths,

@@ -12,12 +12,10 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 class KonanIrFileSerializer(
-    messageLogger: IrMessageLogger,
     declarationTable: DeclarationTable,
     languageVersionSettings: LanguageVersionSettings,
     bodiesOnlyForInlines: Boolean = false,
@@ -26,7 +24,6 @@ class KonanIrFileSerializer(
     sourceBaseDirs: Collection<String>,
     skipPrivateApi: Boolean = false,
 ) : IrFileSerializer(
-    messageLogger,
     declarationTable,
     compatibilityMode,
     languageVersionSettings,

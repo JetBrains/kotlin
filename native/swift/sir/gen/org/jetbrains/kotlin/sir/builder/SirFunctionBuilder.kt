@@ -23,6 +23,7 @@ class SirFunctionBuilder {
     val parameters: MutableList<SirParameter> = mutableListOf()
     lateinit var returnType: SirType
     var body: SirFunctionBody? = null
+    var documentation: String? = null
 
     fun build(): SirFunction {
         return SirFunctionImpl(
@@ -33,6 +34,7 @@ class SirFunctionBuilder {
             parameters,
             returnType,
             body,
+            documentation,
         )
     }
 
@@ -59,5 +61,6 @@ inline fun buildFunctionCopy(original: SirFunction, init: SirFunctionBuilder.() 
     copyBuilder.parameters.addAll(original.parameters)
     copyBuilder.returnType = original.returnType
     copyBuilder.body = original.body
+    copyBuilder.documentation = original.documentation
     return copyBuilder.apply(init).build()
 }

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -121,7 +121,7 @@ internal class StubBasedFirTypeDeserializer(
                     }
                     this.argumentMapping = buildAnnotationArgumentMapping {
                         mapping[StandardNames.NAME] =
-                            buildConstExpression(null, ConstantValueKind.String, paramName, setType = true)
+                            buildLiteralExpression(null, ConstantValueKind.String, paramName, setType = true)
                     }
                 }
             }

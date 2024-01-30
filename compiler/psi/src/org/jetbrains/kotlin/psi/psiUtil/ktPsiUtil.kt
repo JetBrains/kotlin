@@ -12,6 +12,7 @@ import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -642,7 +643,7 @@ fun String.quoteIfNeeded(): String = if (this.isIdentifier()) this else "`$this`
 
 fun PsiElement.isTopLevelKtOrJavaMember(): Boolean {
     return when (this) {
-        is KtDeclaration -> parent is KtFile
+        is KtDeclaration -> isKtFile(parent)
         is PsiClass -> containingClass == null && this.qualifiedName != null
         else -> false
     }
@@ -714,4 +715,10 @@ tailrec fun KtTypeElement.unwrapNullability(): KtTypeElement? {
         is KtNullableType -> this.innerType?.unwrapNullability()
         else -> this
     }
+}
+
+internal fun isKtFile(parent: PsiElement?): Boolean {
+    //avoid loading KtFile which depends on java psi, which is not available in some setup
+    //e.g. remote dev https://youtrack.jetbrains.com/issue/GTW-7554
+    return parent is PsiFile && parent.language == KotlinLanguage.INSTANCE
 }

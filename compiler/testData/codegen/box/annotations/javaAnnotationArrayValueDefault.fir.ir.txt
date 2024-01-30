@@ -113,28 +113,28 @@ FILE fqName:<root> fileName:/1.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=null
+              arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=GET_ARRAY_ELEMENT
                 $this: GET_VAR 'val value1: kotlin.Array<kotlin.String> declared in <root>.box' type=kotlin.Array<kotlin.String> origin=null
                 index: CONST Int type=kotlin.Int value=0
               arg1: CONST String type=kotlin.String value="d1"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             STRING_CONCATENATION type=kotlin.String
               CONST String type=kotlin.String value="fail2: "
-              CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=null
+              CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=GET_ARRAY_ELEMENT
                 $this: GET_VAR 'val value1: kotlin.Array<kotlin.String> declared in <root>.box' type=kotlin.Array<kotlin.String> origin=null
                 index: CONST Int type=kotlin.Int value=0
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=null
+              arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=GET_ARRAY_ELEMENT
                 $this: GET_VAR 'val value1: kotlin.Array<kotlin.String> declared in <root>.box' type=kotlin.Array<kotlin.String> origin=null
                 index: CONST Int type=kotlin.Int value=1
               arg1: CONST String type=kotlin.String value="d2"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             STRING_CONCATENATION type=kotlin.String
               CONST String type=kotlin.String value="fail3: "
-              CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=null
+              CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=GET_ARRAY_ELEMENT
                 $this: GET_VAR 'val value1: kotlin.Array<kotlin.String> declared in <root>.box' type=kotlin.Array<kotlin.String> origin=null
                 index: CONST Int type=kotlin.Int value=1
       VAR name:value2 type:kotlin.Array<kotlin.String> [val]
@@ -163,28 +163,28 @@ FILE fqName:<root> fileName:/1.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=null
+              arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=GET_ARRAY_ELEMENT
                 $this: GET_VAR 'val value2: kotlin.Array<kotlin.String> declared in <root>.box' type=kotlin.Array<kotlin.String> origin=null
                 index: CONST Int type=kotlin.Int value=0
               arg1: CONST String type=kotlin.String value="d1"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             STRING_CONCATENATION type=kotlin.String
               CONST String type=kotlin.String value="fail5: "
-              CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=null
+              CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=GET_ARRAY_ELEMENT
                 $this: GET_VAR 'val value2: kotlin.Array<kotlin.String> declared in <root>.box' type=kotlin.Array<kotlin.String> origin=null
                 index: CONST Int type=kotlin.Int value=0
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=null
+              arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=GET_ARRAY_ELEMENT
                 $this: GET_VAR 'val value2: kotlin.Array<kotlin.String> declared in <root>.box' type=kotlin.Array<kotlin.String> origin=null
                 index: CONST Int type=kotlin.Int value=1
               arg1: CONST String type=kotlin.String value="d2"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             STRING_CONCATENATION type=kotlin.String
               CONST String type=kotlin.String value="fail6: "
-              CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=null
+              CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=GET_ARRAY_ELEMENT
                 $this: GET_VAR 'val value2: kotlin.Array<kotlin.String> declared in <root>.box' type=kotlin.Array<kotlin.String> origin=null
                 index: CONST Int type=kotlin.Int value=1
       VAR name:value3 type:kotlin.Array<kotlin.String> [val]
@@ -213,14 +213,14 @@ FILE fqName:<root> fileName:/1.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=null
+              arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=GET_ARRAY_ELEMENT
                 $this: GET_VAR 'val value3: kotlin.Array<kotlin.String> declared in <root>.box' type=kotlin.Array<kotlin.String> origin=null
                 index: CONST Int type=kotlin.Int value=0
               arg1: CONST String type=kotlin.String value="asd"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             STRING_CONCATENATION type=kotlin.String
               CONST String type=kotlin.String value="fail8: "
-              CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=null
+              CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.String origin=GET_ARRAY_ELEMENT
                 $this: GET_VAR 'val value3: kotlin.Array<kotlin.String> declared in <root>.box' type=kotlin.Array<kotlin.String> origin=null
                 index: CONST Int type=kotlin.Int value=0
       VAR name:value4 type:kotlin.Array<kotlin.String> [val]

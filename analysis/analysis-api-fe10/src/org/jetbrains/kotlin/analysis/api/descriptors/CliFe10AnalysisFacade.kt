@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors
 import com.intellij.openapi.extensions.AreaInstance
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
@@ -35,33 +36,32 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.util.CancellationChecker
 
 class CliFe10AnalysisFacade : Fe10AnalysisFacade {
-    override fun getResolveSession(element: KtElement): ResolveSession {
-        return getHandler(element).resolveSession ?: error("Resolution is not performed")
+    override fun getAnalysisContext(element: KtElement, token: KtLifetimeToken): Fe10AnalysisContext {
+        val handler = getHandler(element)
+        return getAnalysisContext(handler, token)
     }
 
-    override fun getDeprecationResolver(element: KtElement): DeprecationResolver {
-        return getHandler(element).deprecationResolver ?: error("Resolution is not performed")
+    override fun getAnalysisContext(ktModule: KtModule, token: KtLifetimeToken): Fe10AnalysisContext {
+        val handler = KtFe10AnalysisHandlerExtension.getInstance(ktModule.project, ktModule)
+        return getAnalysisContext(handler, token)
     }
 
-    override fun getCallResolver(element: KtElement): CallResolver {
-        return getHandler(element).callResolver ?: error("Resolution is not performed")
-    }
-
-    override fun getKotlinToResolvedCallTransformer(element: KtElement): KotlinToResolvedCallTransformer {
-        return getHandler(element).kotlinToResolvedCallTransformer ?: error("Resolution is not performed")
-    }
-
-    override fun getOverloadingConflictResolver(element: KtElement): OverloadingConflictResolver<ResolvedCall<*>> {
-        return getHandler(element).overloadingConflictResolver ?: error("Resolution is not performed")
-    }
-
-    override fun getKotlinTypeRefiner(element: KtElement): KotlinTypeRefiner {
-        return getHandler(element).kotlinTypeRefiner ?: error("Resolution is not performed")
+    private fun getAnalysisContext(handler: KtFe10AnalysisHandlerExtension, token: KtLifetimeToken): Fe10AnalysisContext {
+        return Fe10AnalysisContext(
+            facade = this,
+            handler.resolveSession.orThrowResolutionNotPerformedError(),
+            handler.deprecationResolver.orThrowResolutionNotPerformedError(),
+            handler.callResolver.orThrowResolutionNotPerformedError(),
+            handler.kotlinToResolvedCallTransformer.orThrowResolutionNotPerformedError(),
+            handler.overloadingConflictResolver.orThrowResolutionNotPerformedError(),
+            handler.kotlinTypeRefiner.orThrowResolutionNotPerformedError(),
+            token,
+        )
     }
 
     override fun analyze(elements: List<KtElement>, mode: Fe10AnalysisFacade.AnalysisMode): BindingContext {
         val element = elements.firstOrNull() ?: return BindingContext.EMPTY
-        return getResolveSession(element).bindingContext
+        return getHandler(element).resolveSession.orThrowResolutionNotPerformedError().bindingContext
     }
 
     override fun getOrigin(file: VirtualFile): KtSymbolOrigin {
@@ -73,6 +73,9 @@ class CliFe10AnalysisFacade : Fe10AnalysisFacade {
         val ktModule = ProjectStructureProvider.getModule(project, useSiteElement, contextualModule = null)
         return KtFe10AnalysisHandlerExtension.getInstance(project, ktModule)
     }
+
+    private fun <T : Any> T?.orThrowResolutionNotPerformedError(): T =
+        this ?: error("Resolution is not performed")
 }
 
 class KtFe10AnalysisHandlerExtension(

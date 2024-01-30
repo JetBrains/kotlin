@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/inapplicableCollectionSet.kt
       VALUE_PARAMETER name:javaName index:0 type:kotlin.String
       BLOCK_BODY
         VAR name:result type:<root>.Flaf? [var]
-          CALL 'public abstract fun get (key: K of kotlin.collections.MutableMap): V of kotlin.collections.MutableMap? declared in kotlin.collections.MutableMap' type=<root>.Flaf? origin=null
+          CALL 'public abstract fun get (key: K of kotlin.collections.MutableMap): V of kotlin.collections.MutableMap? declared in kotlin.collections.MutableMap' type=<root>.Flaf? origin=GET_ARRAY_ELEMENT
             $this: CALL 'private final fun <get-INSTANCES> (): kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> declared in <root>.Flaf' type=kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.Flaf declared in <root>.Flaf.forJavaName' type=<root>.Flaf origin=null
             key: GET_VAR 'javaName: kotlin.String declared in <root>.Flaf.forJavaName' type=kotlin.String origin=null
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/inapplicableCollectionSet.kt
               arg1: CONST Null type=kotlin.Nothing? value=null
             then: BLOCK type=kotlin.Unit origin=null
               SET_VAR 'var result: <root>.Flaf? declared in <root>.Flaf.forJavaName' type=kotlin.Unit origin=EQ
-                CALL 'public abstract fun get (key: K of kotlin.collections.MutableMap): V of kotlin.collections.MutableMap? declared in kotlin.collections.MutableMap' type=<root>.Flaf? origin=null
+                CALL 'public abstract fun get (key: K of kotlin.collections.MutableMap): V of kotlin.collections.MutableMap? declared in kotlin.collections.MutableMap' type=<root>.Flaf? origin=GET_ARRAY_ELEMENT
                   $this: CALL 'private final fun <get-INSTANCES> (): kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> declared in <root>.Flaf' type=kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> origin=GET_PROPERTY
                     $this: GET_VAR '<this>: <root>.Flaf declared in <root>.Flaf.forJavaName' type=<root>.Flaf origin=null
                   key: STRING_CONCATENATION type=kotlin.String

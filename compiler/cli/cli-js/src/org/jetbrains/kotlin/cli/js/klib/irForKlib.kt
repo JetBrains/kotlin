@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationRemover
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.ICData
+import org.jetbrains.kotlin.backend.common.serialization.KotlinFileSerializedData
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.backend.js.KotlinFileSerializedData
 import org.jetbrains.kotlin.ir.backend.js.generateModuleFragmentWithPlugins
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
@@ -87,7 +87,7 @@ fun generateIrForKlibSerialization(
             messageLogger = messageLogger
         ),
         feContext,
-        ICData(icData.map { it.irData }, errorPolicy.allowErrors),
+        ICData(icData.map { it.irData!! }, errorPolicy.allowErrors),
         stubGenerator = stubGenerator
     )
 

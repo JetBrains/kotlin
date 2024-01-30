@@ -79,6 +79,46 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceResolveTestGenerated
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CodeFragment {
+        @Test
+        public void testAllFilesPresentInCodeFragment() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment")
+        @TestDataPath("$PROJECT_ROOT")
+        public class BlockCodeFragment {
+            @Test
+            public void testAllFilesPresentInBlockCodeFragment() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
+            }
+        }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ExpressionCodeFragment {
+            @Test
+            public void testAllFilesPresentInExpressionCodeFragment() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
+            }
+        }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment")
+        @TestDataPath("$PROJECT_ROOT")
+        public class TypeCodeFragment {
+            @Test
+            public void testAllFilesPresentInTypeCodeFragment() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
+            }
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/constructorDelegatingReference")
     @TestDataPath("$PROJECT_ROOT")
     public class ConstructorDelegatingReference {
@@ -278,6 +318,26 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceResolveTestGenerated
         }
 
         @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/extensions")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Extensions {
+            @Test
+            public void testAllFilesPresentInExtensions() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/extensions"), Pattern.compile("^(.+)\\.kts$"), null, true);
+            }
+
+            @Nested
+            @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/generics")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Generics {
+                @Test
+                public void testAllFilesPresentInGenerics() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/generics"), Pattern.compile("^(.+)\\.kts$"), null, true);
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/imports")
         @TestDataPath("$PROJECT_ROOT")
         public class Imports {
@@ -304,6 +364,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceResolveTestGenerated
             @Test
             public void testAllFilesPresentInLocalContext() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/localContext"), Pattern.compile("^(.+)\\.kts$"), null, true);
+            }
+        }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/packages")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Packages {
+            @Test
+            public void testAllFilesPresentInPackages() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/packages"), Pattern.compile("^(.+)\\.kts$"), null, true);
             }
         }
 

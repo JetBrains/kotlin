@@ -43,7 +43,7 @@ public class FirIdeNormalAnalysisSourceModuleMultiModuleCompilerFacilityTestGene
 
     @Test
     public void testAllFilesPresentInCompilationMultiModule() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class FirIdeNormalAnalysisSourceModuleMultiModuleCompilerFacilityTestGene
     public class CodeFragments {
         @Test
         public void testAllFilesPresentInCodeFragments() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test

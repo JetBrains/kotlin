@@ -22,7 +22,7 @@ public final annotation class EnumAnno : R|kotlin/Annotation| {
 }
 
 public final class EnumArgumentWithCustomToString : R|kotlin/Any| {
-    @R|test/EnumAnno|(value = R|test/E.CAKE|) @R|test/EnumArrayAnno|(value = <implicitArrayOf>(R|test/E.CAKE|, R|test/E.CAKE|)) public final fun annotated(): R|kotlin/Unit|
+    @R|test/EnumAnno|(value = test/E.CAKE) @R|test/EnumArrayAnno|(value = <implicitArrayOf>(test/E.CAKE, test/E.CAKE)) public final fun annotated(): R|kotlin/Unit|
 
     public constructor(): R|test/EnumArgumentWithCustomToString|
 

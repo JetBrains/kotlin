@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -1373,9 +1374,22 @@ open class PsiRawFirBuilder(
                         when (file) {
                             is KtExpressionCodeFragment -> file.getContentElement()?.toFirBlock() ?: buildEmptyExpressionBlock()
                             is KtBlockCodeFragment -> configureBlockWithoutBuilding(file.getContentElement()).build()
+                            is KtTypeCodeFragment -> convertTypeCodeFragmentBlock(file)
                             else -> error("Unexpected code fragment type: ${file::class}")
                         }
                     }
+                }
+            }
+        }
+
+        private fun convertTypeCodeFragmentBlock(file: KtTypeCodeFragment): FirBlock {
+            return buildBlock {
+                statements += buildTypeOperatorCall {
+                    operation = FirOperation.IS
+                    conversionTypeRef = file.getContentElement().toFirOrErrorType()
+                    argumentList = buildUnaryArgumentList(
+                        buildLiteralExpression(source = null, ConstantValueKind.Null, value = null, setType = false)
+                    )
                 }
             }
         }
@@ -2961,11 +2975,11 @@ open class PsiRawFirBuilder(
                         }
                     )
 
-                calleeExpression is KtSuperExpression || parenthesizedArgument?.calleeReference is FirSuperReference -> {
+                calleeExpression is KtSuperExpression || (parenthesizedArgument as? FirResolvable)?.calleeReference is FirSuperReference -> {
                     CalleeAndReceiver(
                         buildErrorNamedReference {
                             source = (calleeExpression as? KtSuperExpression)?.toFirSourceElement()
-                                ?: parenthesizedArgument?.calleeReference?.source
+                                ?: (parenthesizedArgument as? FirResolvable)?.calleeReference?.source
                             diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
                         }
                     )

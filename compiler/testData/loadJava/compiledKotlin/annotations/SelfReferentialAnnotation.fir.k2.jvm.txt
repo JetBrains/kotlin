@@ -6,7 +6,7 @@ public final annotation class Ann : R|kotlin/Annotation| {
 
 }
 
-@R|test/MyRequiresOptIn|(a = String(), b = R|test/MyRequiresOptIn.MyLevel.ERROR|) public final annotation class MyRequiresOptIn : R|kotlin/Annotation| {
+@R|test/MyRequiresOptIn|(a = String(), b = test/MyRequiresOptIn.MyLevel.ERROR) public final annotation class MyRequiresOptIn : R|kotlin/Annotation| {
     public final val a: R|kotlin/String| = String()
         public get(): R|kotlin/String|
 

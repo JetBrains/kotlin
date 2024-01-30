@@ -361,6 +361,7 @@
 /native/commonizer/ "Kotlin Apple Ecosystem"
 /native/commonizer-api/ "Kotlin Apple Ecosystem"
 /native/commonizer-embeddable/ "Kotlin Apple Ecosystem"
+/native/objcexport-header-generator/ "Kotlin Native" "Kotlin in Fleet"
 /native/objcexport-header-generator/impl/analysis-api/ "Kotlin in Fleet"
 
 /plugins/allopen/ "Kotlin Compiler Core"
@@ -385,7 +386,6 @@
 /plugins/power-assert/ "Kotlin Compiler Core"
 /plugins/sam-with-receiver/ "Kotlin Compiler Core"
 /plugins/scripting/ "Kotlin Compiler Core"
-/plugins/swift-export/ "Kotlin Native"
 
 /prepare/ "Kotlin Build Infrastructure"
 

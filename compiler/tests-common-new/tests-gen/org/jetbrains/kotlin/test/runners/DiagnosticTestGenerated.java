@@ -10688,6 +10688,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("lambdaDelegate.kt")
+                public void testLambdaDelegate() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/lambdaDelegate.kt");
+                }
+
+                @Test
                 @TestMetadata("lambdaWithMultipleReturns.kt")
                 public void testLambdaWithMultipleReturns() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/lambdaWithMultipleReturns.kt");
@@ -11600,6 +11606,22 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 public void testWarning() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/warning.kt");
                 }
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/destructuring")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Destructuring {
+            @Test
+            public void testAllFilesPresentInDestructuring() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/destructuring"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("delegationInDestructuring.kt")
+            public void testDelegationInDestructuring() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/destructuring/delegationInDestructuring.kt");
             }
         }
 
@@ -16930,6 +16952,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("kt62609.kt")
             public void testKt62609() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/kt62609.kt");
+            }
+
+            @Test
+            @TestMetadata("kt63577.kt")
+            public void testKt63577() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/kt63577.kt");
             }
 
             @Test
@@ -24750,6 +24778,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("actualWithoutExpectWhenExpectIsFakeOverride.kt")
+            public void testActualWithoutExpectWhenExpectIsFakeOverride() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/actualWithoutExpectWhenExpectIsFakeOverride.kt");
+            }
+
+            @Test
             public void testAllFilesPresentInMultiplatform() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -24824,6 +24858,24 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("expectActualClassesAreInBeta_suppressWarningWithLv.kt")
             public void testExpectActualClassesAreInBeta_suppressWarningWithLv() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualClassesAreInBeta_suppressWarningWithLv.kt");
+            }
+
+            @Test
+            @TestMetadata("expectActualInTheSameModule.kt")
+            public void testExpectActualInTheSameModule() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualInTheSameModule.kt");
+            }
+
+            @Test
+            @TestMetadata("expectActualInTheSameModuleDifferentFiles.kt")
+            public void testExpectActualInTheSameModuleDifferentFiles() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualInTheSameModuleDifferentFiles.kt");
+            }
+
+            @Test
+            @TestMetadata("expectActualMainInTheSameModuleDifferentFiles.kt")
+            public void testExpectActualMainInTheSameModuleDifferentFiles() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualMainInTheSameModuleDifferentFiles.kt");
             }
 
             @Test
@@ -40544,6 +40596,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("kt56283.kt")
             public void testKt56283() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/kt56283.kt");
+            }
+
+            @Test
+            @TestMetadata("kt63434.kt")
+            public void testKt63434() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/kt63434.kt");
             }
 
             @Test

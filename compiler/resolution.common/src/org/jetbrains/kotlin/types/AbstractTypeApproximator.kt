@@ -319,6 +319,9 @@ abstract class AbstractTypeApproximator(
         }
         val baseSubType = type.lowerType() ?: nothingType()
 
+        val approximatedSuperType by lazy(LazyThreadSafetyMode.NONE) { approximateToSuperType(baseSuperType, conf, depth) }
+        val approximatedSubType by lazy(LazyThreadSafetyMode.NONE) { approximateToSubType(baseSubType, conf, depth) }
+
         if (!conf.capturedType(ctx, type)) {
             /**
              * Here everything is ok if bounds for this captured type should not be approximated.
@@ -326,17 +329,14 @@ abstract class AbstractTypeApproximator(
              * And we cannot create new capture type, because meaning of new captured type is not clear.
              * So, we will just approximate such types
              *
+             * TODO remove workaround when we can create captured types with external identity KT-65228.
              * todo handle flexible types
              */
-            if (approximateToSuperType(baseSuperType, conf, depth) == null && approximateToSubType(baseSubType, conf, depth) == null) {
+            if (approximatedSuperType == null && approximatedSubType == null) {
                 return null
             }
         }
-        val baseResult = if (toSuper) approximateToSuperType(baseSuperType, conf, depth) ?: baseSuperType else approximateToSubType(
-            baseSubType,
-            conf,
-            depth
-        ) ?: baseSubType
+        val baseResult = if (toSuper) approximatedSuperType ?: baseSuperType else approximatedSubType ?: baseSubType
 
         // C = in Int, Int <: C => Int? <: C?
         // C = out Number, C <: Number => C? <: Number?
@@ -482,6 +482,7 @@ abstract class AbstractTypeApproximator(
             // In approximateCapturedType, we check if the super/subtypes of captured types need approximation even if captured types
             // themselves don't need approximation, and will land here.
             // To support this case, we also don't want to approximate captured types here if the configuration says so.
+            // TODO rework captured types approximation KT-65228
             if (capturedType != null &&
                 isK2 &&
                 !conf.capturedType(ctx, capturedType) &&

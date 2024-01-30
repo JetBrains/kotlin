@@ -50,7 +50,7 @@ class SirPackageInflaterTests {
 
             declarations += buildEnum {
                 name = "com"
-                origin = SirOrigin.Namespace(path =  listOf("com"))
+                origin = SirOrigin.Namespace(path = listOf("com"))
                 declarations += listOf(
                     makeFunction("com.foo"),
                     makeFunction("com.bar"),
@@ -84,7 +84,7 @@ class SirPackageInflaterTests {
                 buildStruct { name = "Orphan" },
                 buildEnum {
                     name = "com"
-                    origin = SirOrigin.Namespace(path =  listOf("com"))
+                    origin = SirOrigin.Namespace(path = listOf("com"))
                     declarations += listOf(
                         makeFunction("com.foo"),
                         makeFunction("com.bar"),
@@ -117,7 +117,7 @@ class SirPackageInflaterTests {
 
             declarations += buildEnum {
                 name = "com"
-                origin = SirOrigin.Namespace(path =  listOf("com"))
+                origin = SirOrigin.Namespace(path = listOf("com"))
                 declarations += listOf(
                     makeFunction("com.foo"),
                     makeFunction("com.baz"),
@@ -162,7 +162,7 @@ class SirPackageInflaterTests {
                 makeFunction("orphan"),
                 buildEnum {
                     name = "com"
-                    origin = SirOrigin.Namespace(path =  listOf("com"))
+                    origin = SirOrigin.Namespace(path = listOf("com"))
                     declarations += listOf(
                         makeFunction("com.foo"),
                         makeFunction("com.baz"),
@@ -170,20 +170,20 @@ class SirPackageInflaterTests {
                 },
                 buildEnum {
                     name = "org"
-                    origin = SirOrigin.Namespace(path =  listOf("org"))
+                    origin = SirOrigin.Namespace(path = listOf("org"))
                     declarations += listOf(
                         makeFunction("org.bar"),
                         buildEnum {
                             name = "jetbrains"
-                            origin = SirOrigin.Namespace(path =  listOf("org", "jetbrains"))
+                            origin = SirOrigin.Namespace(path = listOf("org", "jetbrains"))
                             declarations += listOf(
                                 makeFunction("org.jetbrains.baz"),
                                 buildEnum {
                                     name = "mascots"
-                                    origin = SirOrigin.Namespace(path =  listOf("org", "jetbrains", "mascots"))
+                                    origin = SirOrigin.Namespace(path = listOf("org", "jetbrains", "mascots"))
                                     declarations += buildEnum {
                                         name = "kotlin"
-                                        origin = SirOrigin.Namespace(path =  listOf("org", "jetbrains", "mascots", "kotlin"))
+                                        origin = SirOrigin.Namespace(path = listOf("org", "jetbrains", "mascots", "kotlin"))
                                         declarations += makeFunction("org.jetbrains.mascots.kotlin.kodee")
                                     }
                                 }

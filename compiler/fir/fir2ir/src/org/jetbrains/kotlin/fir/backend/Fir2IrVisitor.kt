@@ -876,8 +876,8 @@ class Fir2IrVisitor(
         return desugaredAssignmentValueReferenceExpression.expressionRef.value.accept(this, null)
     }
 
-    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?): IrElement {
-        return constExpression.toIrConst(constExpression.resolvedType.toIrType())
+    override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: Any?): IrElement {
+        return literalExpression.toIrConst(literalExpression.resolvedType.toIrType())
     }
 
     // ==================================================================================
@@ -908,6 +908,7 @@ class Fir2IrVisitor(
                     is KtFakeSourceElementKind.DesugaredForLoop -> IrStatementOrigin.FOR_LOOP
                     is KtFakeSourceElementKind.DesugaredArrayAugmentedAssign ->
                         augmentedArrayAssignSourceKindToIrStatementOrigin[expression.source?.kind]
+                    is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> incOrDeclSourceKindToIrStatementOrigin[expression.source?.kind]
                     else -> null
                 }
                 expression.convertToIrExpressionOrBlock(origin)
@@ -1091,7 +1092,7 @@ class Fir2IrVisitor(
     }
 
     private fun FirBlock.convertToIrExpressionOrBlock(origin: IrStatementOrigin? = null): IrExpression {
-        if (this.source?.kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
+        if (this.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
             tryConvertDynamicIncrementOrDecrementToIr()?.let {
                 return it
             }
@@ -1146,7 +1147,7 @@ class Fir2IrVisitor(
             } else {
                 val irStatements = mapToIrStatements()
                 val singleStatement = irStatements.singleOrNull()
-                if (origin?.isLoop != true && singleStatement is IrBlock &&
+                if (singleStatement is IrBlock && (!forceUnitType || singleStatement.type.isUnit()) &&
                     (singleStatement.origin == IrStatementOrigin.POSTFIX_INCR || singleStatement.origin == IrStatementOrigin.POSTFIX_DECR)
                 ) {
                     singleStatement

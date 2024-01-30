@@ -37,14 +37,13 @@ import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.statistics.CompilerArgumentMetrics
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.IncrementalModuleEntry
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
-import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
-import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -170,46 +169,7 @@ internal open class GradleCompilerRunner(
         }
         val argsArray = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray()
 
-        // compilerArgs arguments may have some attributes which are overrided by freeCompilerArguments.
-        // Here we perform the work which is repeated in compiler in order to obtain correct values. This extra work could be avoided when
-        // compiler would report metrics by itself via JMX
-        fusMetricsConsumer?.let { metricsConsumer ->
-            when (compilerArgs) {
-                is K2JVMCompilerArguments -> {
-                    val args = K2JVMCompilerArguments()
-                    parseCommandLineArguments(argsArray.toList(), args)
-                    metricsConsumer.report(StringMetrics.JVM_DEFAULTS, args.jvmDefault)
-                    metricsConsumer.report(StringMetrics.USE_FIR, args.useK2.toString())
-
-                    val pluginPatterns = listOf(
-                        Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ALL_OPEN, "kotlin-allopen-.*jar"),
-                        Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_NO_ARG, "kotlin-noarg-.*jar"),
-                        Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_SAM_WITH_RECEIVER, "kotlin-sam-with-receiver-.*jar"),
-                        Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_LOMBOK, "kotlin-lombok-.*jar"),
-                        Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_PARSELIZE, "kotlin-parcelize-compiler-.*jar"),
-                        Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ATOMICFU, "atomicfu-.*jar")
-                    )
-                    val pluginJars = args.pluginClasspaths?.map { it.replace("\\", "/").split("/").last() }
-                    if (pluginJars != null) {
-                        for (pluginPattern in pluginPatterns) {
-                            if (pluginJars.any { it.matches(pluginPattern.second.toRegex()) }) {
-                                metricsConsumer.report(pluginPattern.first, true)
-                            }
-                        }
-                    }
-                }
-                is K2JSCompilerArguments -> {
-                    val args = K2JSCompilerArguments()
-                    parseCommandLineArguments(argsArray.toList(), args)
-                    if (!args.isPreIrBackendDisabled() || args.irProduceJs) {
-                        metricsConsumer.report(BooleanMetrics.JS_SOURCE_MAP, args.sourceMap)
-                    }
-                    if (args.irProduceJs) {
-                        metricsConsumer.report(StringMetrics.JS_PROPERTY_LAZY_INITIALIZATION, args.irPropertyLazyInitialization.toString())
-                    }
-                }
-            }
-        }
+        fusMetricsConsumer?.let { metricsConsumer -> CompilerArgumentMetrics.collectMetrics(compilerArgs, argsArray, metricsConsumer) }
 
         val incrementalCompilationEnvironment = environment.incrementalCompilationEnvironment
         val modulesInfo = incrementalCompilationEnvironment?.let { incrementalModuleInfoProvider.orNull?.info }

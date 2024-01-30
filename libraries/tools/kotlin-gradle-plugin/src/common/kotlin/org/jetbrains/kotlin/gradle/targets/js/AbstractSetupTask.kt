@@ -10,8 +10,8 @@ import org.gradle.api.tasks.*
 import org.gradle.internal.hash.FileHasher
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.plugin.statistics.UrlRepoConfigurationMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
-import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
 import java.net.URI
 import javax.inject.Inject
@@ -78,7 +78,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Settings : AbstractSettings<
                 val downloadDuration = System.currentTimeMillis() - startDownloadTime
                 if (downloadDuration > 0) {
                     buildFusService.orNull?.reportFusMetrics { metricsConsumer ->
-                        metricsConsumer.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, it.length() * 1000 / downloadDuration)
+                        UrlRepoConfigurationMetrics.collectMetrics(it.length(), downloadDuration, metricsConsumer)
                     }
                 }
             }
@@ -138,9 +138,10 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Settings : AbstractSettings<
             if (file.exists()) {
                 file.useLines { seq ->
                     val list = seq.first().split(" ")
-                    list.size == 2 &&
-                            list[0] == fileHasher.calculateDirHash(destination) &&
-                            list[1] == fileHasher.hash(dist).toByteArray().toHex().also { distHash = it }
+                    list.size == 3 &&
+                            list[0] == CACHE_VERSION &&
+                            list[1] == fileHasher.calculateDirHash(destination) &&
+                            list[2] == fileHasher.hash(dist).toByteArray().toHex().also { distHash = it }
                 }
             } else false
         }
@@ -156,11 +157,17 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Settings : AbstractSettings<
         extract(dist, destination.parentFile)
 
         destinationHashFile.writeText(
-            fileHasher.calculateDirHash(destination)!! +
+            CACHE_VERSION +
+                    " " +
+                    fileHasher.calculateDirHash(destination)!! +
                     " " +
                     (distHash ?: fileHasher.hash(dist).toByteArray().toHex())
         )
     }
 
     abstract fun extract(archive: File, destination: File)
+
+    companion object {
+        const val CACHE_VERSION = "2"
+    }
 }

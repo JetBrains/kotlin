@@ -1,0 +1,26 @@
+<caret_1> resolved to:
+0: (in test) fun <T> T.anyExt()
+
+<caret_2> resolved to:
+0: (in test) fun <T> T.anyExt()
+
+<caret_3> resolved to:
+0: (in test) fun <T> T.anyExt()
+
+<caret_4> resolved to:
+Nothing (Unresolved reference)
+
+<caret_5> resolved to:
+0: (in test) fun <T : test.Base> T.baseExt()
+
+<caret_6> resolved to:
+0: (in test) fun <T : test.Base> T.baseExt()
+
+<caret_7> resolved to:
+Nothing (Unresolved reference)
+
+<caret_8> resolved to:
+Nothing (Unresolved reference)
+
+<caret_9> resolved to:
+0: (in test) fun <T : test.Child> T.childExt()

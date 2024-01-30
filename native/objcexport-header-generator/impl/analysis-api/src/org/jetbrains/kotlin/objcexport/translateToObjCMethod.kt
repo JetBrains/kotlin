@@ -6,7 +6,6 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.annotationInfos
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.objcexport.*
@@ -284,7 +283,7 @@ private fun String.mangleIfSpecialFamily(prefix: String): String {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.startsWithWords]
  */
 private fun String.startsWithWords(words: String) = this.startsWith(words) &&
-        (this.length == words.length || !this[words.length].isLowerCase())
+    (this.length == words.length || !this[words.length].isLowerCase())
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.MethodBrideExtensionsKt.valueParametersAssociated]
@@ -294,23 +293,27 @@ fun MethodBridge.valueParametersAssociated(
     function: KtFunctionLikeSymbol,
 ): List<Pair<MethodBridgeValueParameter, KtValueParameterSymbol?>> {
 
-    val allParameters = function.valueParameters.iterator()
-    if (!allParameters.hasNext()) return emptyList()
-
     val skipFirstKotlinParameter = when (this.receiver) {
         MethodBridgeReceiver.Static -> false
-        MethodBridgeReceiver.Factory, MethodBridgeReceiver.Instance -> true
-    }
-    if (skipFirstKotlinParameter && allParameters.hasNext()) {
-        allParameters.next()
+        MethodBridgeReceiver.Instance -> false
+        MethodBridgeReceiver.Factory -> true
     }
 
-    return this.valueParameters.map {
-        when (it) {
-            is MethodBridgeValueParameter.Mapped -> it to allParameters.next()
+    val allParameters = function.valueParameters.let { valueParameters ->
+        if (skipFirstKotlinParameter) valueParameters.drop(1)
+        else valueParameters
+    }
+
+    if (allParameters.isEmpty()) return emptyList()
+
+
+    return this.valueParameters.mapIndexed { index, valueParameterBridge ->
+        when (valueParameterBridge) {
+            is MethodBridgeValueParameter.Mapped -> valueParameterBridge to allParameters[index]
+
             is MethodBridgeValueParameter.SuspendCompletion,
             is MethodBridgeValueParameter.ErrorOutParameter,
-            -> it to null
+            -> valueParameterBridge to null
         }
     }
 }
@@ -326,7 +329,7 @@ fun KtFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): 
         MethodBridge.ReturnValue.Void,
         -> ObjCVoidType
         MethodBridge.ReturnValue.HashCode -> ObjCPrimitiveType.NSUInteger
-        is MethodBridge.ReturnValue.Mapped -> returnType.mapType(returnBridge.bridge)
+        is MethodBridge.ReturnValue.Mapped -> returnType.translateToObjCType(returnBridge.bridge)
         MethodBridge.ReturnValue.WithError.Success -> ObjCPrimitiveType.BOOL
         is MethodBridge.ReturnValue.WithError.ZeroForError -> {
             val successReturnType = mapReturnType(returnBridge.successBridge)
@@ -334,7 +337,7 @@ fun KtFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): 
             if (!returnBridge.successMayBeZero) {
                 check(
                     successReturnType is ObjCNonNullReferenceType
-                            || (successReturnType is ObjCPointerType && !successReturnType.nullable)
+                        || (successReturnType is ObjCPointerType && !successReturnType.nullable)
                 ) {
                     "Unexpected return type: $successReturnType in $this"
                 }
@@ -346,39 +349,5 @@ fun KtFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): 
         MethodBridge.ReturnValue.Instance.InitResult,
         MethodBridge.ReturnValue.Instance.FactoryResult,
         -> ObjCInstanceType
-    }
-}
-
-
-/**
- * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapType]
- */
-context(KtAnalysisSession, KtObjCExportSession)
-private fun KtType.mapType(typeBridge: TypeBridge): ObjCType {
-
-    //if (!this.isObjCObjectType()) return null //TODO implement isObjCObjectType
-
-    return when (typeBridge) {
-        is ReferenceBridge -> this.translateToObjCReferenceType()
-        is BlockPointerBridge -> this.translateToObjCFunctionType(typeBridge)
-        is ValueTypeBridge -> {
-            when {
-                isBoolean -> ObjCPrimitiveType.BOOL
-                isChar -> ObjCPrimitiveType.int8_t
-                isByte -> ObjCPrimitiveType.char
-                isShort -> ObjCPrimitiveType.int16_t
-                isInt -> ObjCPrimitiveType.int32_t
-                isLong -> ObjCPrimitiveType.long_long
-                isFloat -> ObjCPrimitiveType.float
-                isDouble -> ObjCPrimitiveType.double
-                isUByte -> ObjCPrimitiveType.unsigned_char
-                isUShort -> ObjCPrimitiveType.unsigned_short
-                isUInt -> ObjCPrimitiveType.unsigned_int
-                isULong -> ObjCPrimitiveType.unsigned_long_long
-
-
-                else -> TODO("Handle primitive KtType mapping to ObjCType: $this")
-            }
-        }
     }
 }

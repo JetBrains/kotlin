@@ -1,5 +1,5 @@
 MODULE_FRAGMENT
-  FILE fqName:<root> fileName:localFunctionLocalClosureMutating.kt
+  FILE fqName:<root> fileName:context.kt
     FUN name:call visibility:local modality:FINAL <> () returnType:kotlin.Unit
     FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
       BLOCK_BODY

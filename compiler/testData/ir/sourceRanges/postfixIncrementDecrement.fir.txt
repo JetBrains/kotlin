@@ -8,16 +8,16 @@
       @3:4..11 SET_VAR 'var y: kotlin.Int [var] declared in <root>.test' type=kotlin.Unit origin=EQ
         @3:8..11 BLOCK type=kotlin.Int origin=POSTFIX_INCR
           @3:8..11 VAR IR_TEMPORARY_VARIABLE name:<unary> type:kotlin.Int [val]
-            @3:8..9 GET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Int origin=null
+            @3:8..9 GET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Int origin=POSTFIX_INCR
           @3:8..11 SET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Unit origin=POSTFIX_INCR
-            @3:9..11 CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            @3:9..11 CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
               @3:8..11 GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null
           @3:8..11 GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null
       @4:4..11 SET_VAR 'var y: kotlin.Int [var] declared in <root>.test' type=kotlin.Unit origin=EQ
         @4:8..11 BLOCK type=kotlin.Int origin=POSTFIX_DECR
           @4:8..11 VAR IR_TEMPORARY_VARIABLE name:<unary> type:kotlin.Int [val]
-            @4:8..9 GET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Int origin=null
+            @4:8..9 GET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Int origin=POSTFIX_DECR
           @4:8..11 SET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Unit origin=POSTFIX_DECR
-            @4:9..11 CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            @4:9..11 CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
               @4:8..11 GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null
           @4:8..11 GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null

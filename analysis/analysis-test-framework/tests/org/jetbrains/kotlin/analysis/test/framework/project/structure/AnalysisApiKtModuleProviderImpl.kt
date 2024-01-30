@@ -67,6 +67,7 @@ fun List<KtModuleWithFiles>.associateByName(): Map<String, KtModuleWithFiles> {
             is KtBuiltinsModule -> "Builtins for ${ktModule.platform}"
             is KtNotUnderContentRootModule -> ktModule.name
             is KtScriptModule -> ktModule.file.name
+            is KtDanglingFileModule -> ktModule.file.name
             else -> error("Unsupported module type: " + ktModule.javaClass.name)
         }
     }

@@ -12,11 +12,11 @@ MODULE_FRAGMENT
           BLOCK type=kotlin.Int origin=null
             CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
               $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
-                $this: CALL 'public final fun callFoo (foo: <root>.Foo): kotlin.Int declared in <root>.NestedOuterClassKt' type=kotlin.Int origin=null
+                $this: CALL 'public final fun callFoo (foo: <root>.Foo): kotlin.Int declared in <root>.ContextKt' type=kotlin.Int origin=null
                   foo: GET_VAR 'p0: <root>.Foo declared in <root>.CodeFragment.run' type=<root>.Foo origin=null
-                other: CALL 'public final fun callString (string: kotlin.String): kotlin.Int declared in <root>.NestedOuterClassKt' type=kotlin.Int origin=null
+                other: CALL 'public final fun callString (string: kotlin.String): kotlin.Int declared in <root>.ContextKt' type=kotlin.Int origin=null
                   string: CALL 'private final fun <get-a> (): kotlin.String declared in <root>.Foo' type=kotlin.String origin=GET_PROPERTY
                     $this: GET_VAR 'p0: <root>.Foo declared in <root>.CodeFragment.run' type=<root>.Foo origin=null
-              other: CALL 'public final fun callString (string: kotlin.String): kotlin.Int declared in <root>.NestedOuterClassKt' type=kotlin.Int origin=null
+              other: CALL 'public final fun callString (string: kotlin.String): kotlin.Int declared in <root>.ContextKt' type=kotlin.Int origin=null
                 string: CALL 'private final fun <get-b> (): kotlin.String declared in <root>.Foo.Bar' type=kotlin.String origin=GET_PROPERTY
                   $this: GET_VAR 'p1: <root>.Foo.Bar declared in <root>.CodeFragment.run' type=<root>.Foo.Bar origin=null

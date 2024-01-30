@@ -45,21 +45,17 @@ tasks.test.configure {
     enabled = false
 }
 
-nativeTest("testK1", tag = null, requirePlatformLibs = true) {
-    useJUnitPlatform()
-    enableJunit5ExtensionsAutodetection()
+objCExportHeaderGeneratorTest("testK1", testDisplayNameTag = "K1") {
     classpath += k1TestRuntimeClasspath
 }
 
-nativeTest("testAnalysisApi", tag = null, requirePlatformLibs = true) {
-    useJUnitPlatform()
-    enableJunit5ExtensionsAutodetection()
-    testClassesDirs += files(sourceSets.test.map { it.output.classesDirs })
+objCExportHeaderGeneratorTest("testAnalysisApi", testDisplayNameTag = "AA") {
     classpath += analysisApiRuntimeClasspath
 }
 
 tasks.check.configure {
     dependsOn("testK1")
+    dependsOn("testAnalysisApi")
     dependsOn(":native:objcexport-header-generator-k1:check")
     dependsOn(":native:objcexport-header-generator-analysis-api:check")
 }

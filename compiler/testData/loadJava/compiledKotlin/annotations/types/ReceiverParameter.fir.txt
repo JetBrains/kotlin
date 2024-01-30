@@ -1,6 +1,6 @@
 public final fun R|@R|test/A|()  kotlin/String|.foo(): R|kotlin/Unit|
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class A : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.TYPE)) public final annotation class A : R|kotlin/Annotation| {
     public constructor(): R|test/A|
 
 }

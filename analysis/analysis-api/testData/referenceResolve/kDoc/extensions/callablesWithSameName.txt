@@ -1,0 +1,15 @@
+<caret_1> resolved to:
+0: (in test) fun test.Foo.ext()
+1: (in test) val test.Foo.ext: kotlin.Int
+
+<caret_2> resolved to:
+0: (in test) fun test.Foo.ext()
+1: (in test) val test.Foo.ext: kotlin.Int
+
+<caret_3> resolved to:
+0: (in test) fun test.Foo.ext()
+1: (in test) val test.Foo.ext: kotlin.Int
+
+<caret_4> resolved to:
+0: (in test) fun test.Foo.ext()
+1: (in test) val test.Foo.ext: kotlin.Int

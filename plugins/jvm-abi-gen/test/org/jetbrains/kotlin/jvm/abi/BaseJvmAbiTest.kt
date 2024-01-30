@@ -79,6 +79,11 @@ abstract class BaseJvmAbiTest : TestCase() {
                 abiOption(JvmAbiCommandLineProcessor.OUTPUT_PATH_OPTION.optionName, compilation.abiDir.canonicalPath),
                 abiOption(JvmAbiCommandLineProcessor.REMOVE_DEBUG_INFO_OPTION.optionName, true.toString()).takeIf {
                     InTextDirectivesUtils.findStringWithPrefixes(directives, "// REMOVE_DEBUG_INFO") != null
+                },
+                abiOption(
+                    JvmAbiCommandLineProcessor.REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE_OPTION.optionName, true.toString()
+                ).takeIf {
+                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE") != null
                 }
             ).toTypedArray()
             destination = compilation.destinationDir.canonicalPath

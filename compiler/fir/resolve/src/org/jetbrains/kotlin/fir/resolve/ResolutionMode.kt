@@ -13,20 +13,9 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
 sealed class ResolutionMode(
     val forceFullCompletion: Boolean,
-    // Only true AugmentedAssignmentCallOption, don't run an even slightest form of completion
-    val skipEvenPartialCompletion: Boolean = false,
 ) {
-    sealed class ContextDependent(
-        skipCompletion: Boolean = false,
-    ) : ResolutionMode(forceFullCompletion = false, skipCompletion) {
-        companion object Default : ContextDependent() {
-            override fun toString(): String = "ContextDependent"
-        }
-
-        data object Delegate : ContextDependent()
-        data object AugmentedAssignmentCallOption : ContextDependent(skipCompletion = true)
-    }
-
+    data object ContextDependent : ResolutionMode(forceFullCompletion = false)
+    data object Delegate : ResolutionMode(forceFullCompletion = false)
     data object ContextIndependent : ResolutionMode(forceFullCompletion = true)
 
     sealed class ReceiverResolution(val forCallableReference: Boolean) : ResolutionMode(forceFullCompletion = true) {

@@ -32,18 +32,32 @@ class JvmAbiCommandLineProcessor : CommandLineProcessor {
                         "sites of inline functions.",
                 false,
             )
+
+        val REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE_OPTION: CliOption =
+            CliOption(
+                "removeDataClassCopyIfConstructorIsPrivate",
+                "true/false",
+                "Remove the 'copy' function from ABI if the primary constructor of the data class is private. False by default. " +
+                        "Note that if ABI jars are used for incremental compilation, removal of the 'copy' function might break usages " +
+                        "outside of the compilation unit where it's declared.",
+                false,
+            )
     }
 
     override val pluginId: String
         get() = COMPILER_PLUGIN_ID
 
     override val pluginOptions: Collection<CliOption>
-        get() = listOf(OUTPUT_PATH_OPTION, REMOVE_DEBUG_INFO_OPTION)
+        get() = listOf(OUTPUT_PATH_OPTION, REMOVE_DEBUG_INFO_OPTION, REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE_OPTION)
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             OUTPUT_PATH_OPTION -> configuration.put(JvmAbiConfigurationKeys.OUTPUT_PATH, value)
             REMOVE_DEBUG_INFO_OPTION -> configuration.put(JvmAbiConfigurationKeys.REMOVE_DEBUG_INFO, value == "true")
+            REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE_OPTION -> configuration.put(
+                JvmAbiConfigurationKeys.REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE,
+                value == "true"
+            )
             else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
     }

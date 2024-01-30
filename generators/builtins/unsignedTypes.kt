@@ -19,7 +19,7 @@ fun generateUnsignedTypes(
     targetDir: File,
     generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) -> Unit
 ) {
-    for (type in UnsignedType.values()) {
+    for (type in UnsignedType.entries) {
         generate(File(targetDir, "kotlin/${type.capitalized}.kt")) { UnsignedTypeGenerator(type, it) }
         generate(File(targetDir, "kotlin/${type.capitalized}Array.kt")) { UnsignedArrayGenerator(type, it) }
     }
@@ -30,8 +30,8 @@ fun generateUnsignedTypes(
 }
 
 class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltInsSourceGenerator(out) {
-    val className = type.capitalized
-    val storageType = type.asSigned.capitalized
+    private val className = type.capitalized
+    private val storageType = type.asSigned.capitalized
 
     internal fun binaryOperatorDoc(operator: String, operand1: UnsignedType, operand2: UnsignedType): String = when (operator) {
         "floorDiv" ->
@@ -119,7 +119,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
 
     private fun generateCompareTo() {
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             out.println("""
     /**
      * Compares this value with the specified value for order.
@@ -155,7 +155,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     }
 
     private fun generateOperator(name: String) {
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             val returnType = getOperatorReturnType(type, otherType)
 
             out.printDoc(binaryOperatorDoc(name, type, otherType), "    ")
@@ -176,7 +176,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     }
 
     private fun generateFloorDivMod(name: String) {
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             val operationType = getOperatorReturnType(type, otherType)
             val returnType = if (name == "mod") otherType else operationType
 
@@ -299,14 +299,16 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             out.println("    @kotlin.internal.InlineOnly")
             out.print("    public inline fun to$signed(): $signed = ")
             out.println(when {
-                otherType < type -> "data.to$signed()"
-                otherType == type -> "data"
-                else -> "data.to$signed() and ${type.mask}"
-            })
+                    type == UnsignedType.UINT && otherType == UnsignedType.ULONG -> "uintToLong(data)"
+                    otherType < type -> "data.to$signed()"
+                    otherType == type -> "data"
+                    else -> "data.to$signed() and ${type.mask}"
+                }
+            )
         }
         out.println()
 
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             val name = otherType.capitalized
 
             if (type == otherType)
@@ -332,11 +334,14 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
             out.println("    @kotlin.internal.InlineOnly")
             out.print("    public inline fun to$name(): $name = ")
-            out.println(when {
-                otherType > type -> "${otherType.capitalized}(data.to${otherType.asSigned.capitalized}() and ${type.mask})"
-                otherType == type -> "this"
-                else -> "data.to${otherType.capitalized}()"
-            })
+            out.println(
+                when {
+                    type == UnsignedType.UINT && otherType == UnsignedType.ULONG -> "uintToULong(data)"
+                    otherType > type -> "${otherType.capitalized}(data.to${otherType.asSigned.capitalized}() and ${type.mask})"
+                    otherType == type -> "this"
+                    else -> "data.to${otherType.capitalized}()"
+                }
+            )
         }
         out.println()
     }
@@ -359,16 +364,16 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             out.print("    public inline fun to$otherName(): $otherName = ")
             when (type) {
                 UnsignedType.UINT, UnsignedType.ULONG ->
-                    out.println(if (otherType == PrimitiveType.FLOAT) "this.toDouble().toFloat()" else className.lowercase() + "ToDouble(data)")
+                    out.println(className.lowercase() + "To$otherName(data)")
                 else ->
-                    out.println("this.toInt().to$otherName()")
+                    out.println("uintTo$otherName(this.toInt())")
             }
         }
         out.println()
     }
 
     private fun generateExtensionConversions() {
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             val otherSigned = otherType.asSigned.capitalized
             val thisSigned = type.asSigned.capitalized
 
@@ -424,18 +429,16 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             out.println("@WasExperimental(ExperimentalUnsignedTypes::class)")
             out.println("@kotlin.internal.InlineOnly")
             out.print("public inline fun $otherName.to$className(): $className = ")
-            val conversion = if (otherType == PrimitiveType.DOUBLE) "" else ".toDouble()"
-            out.println("doubleTo$className(this$conversion)")
+            out.println("${otherName.lowercase()}To$className(this)")
         }
     }
 
 
     private fun generateToStringHashCode() {
-
         out.print("    public override fun toString(): String = ")
         when (type) {
             UnsignedType.UBYTE, UnsignedType.USHORT -> out.println("toInt().toString()")
-            UnsignedType.UINT -> out.println("toLong().toString()")
+            UnsignedType.UINT -> out.println("uintToString(data)")
             UnsignedType.ULONG -> out.println("ulongToString(data)")
         }
 
@@ -455,11 +458,11 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
 
 class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltInsSourceGenerator(out) {
-    val elementType = type.capitalized
-    val arrayType = elementType + "Array"
-    val arrayTypeOf = elementType.lowercase() + "ArrayOf"
-    val storageElementType = type.asSigned.capitalized
-    val storageArrayType = storageElementType + "Array"
+    private val elementType = type.capitalized
+    private val arrayType = elementType + "Array"
+    private val arrayTypeOf = elementType.lowercase() + "ArrayOf"
+    private val storageElementType = type.asSigned.capitalized
+    private val storageArrayType = storageElementType + "Array"
     override fun generateBody() {
         out.println("import kotlin.jvm.*")
         out.println()
@@ -548,10 +551,10 @@ public inline fun $arrayTypeOf(vararg elements: $elementType): $arrayType = elem
 }
 
 class UnsignedRangeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltInsSourceGenerator(out) {
-    val elementType = type.capitalized
-    val signedType = type.asSigned.capitalized
-    val stepType = signedType
-    val stepMinValue = "$stepType.MIN_VALUE"
+    private val elementType = type.capitalized
+    private val signedType = type.asSigned.capitalized
+    private val stepType = signedType
+    private val stepMinValue = "$stepType.MIN_VALUE"
 
     override fun getPackage(): String = "kotlin.ranges"
 

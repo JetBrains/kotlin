@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirSealedClassInheritorsProcessorFactoryForTests
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLSealedInheritorsProviderFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLSealedInheritorsProviderFactoryForTests
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.NoOpKtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.PackagePartProviderTestImpl
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
@@ -28,7 +28,7 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         project.apply {
             FirStandaloneServiceRegistrar.registerProjectServices(project)
 
-            registerService(FirSealedClassInheritorsProcessorFactory::class.java, LLFirSealedClassInheritorsProcessorFactoryForTests())
+            registerService(LLSealedInheritorsProviderFactory::class.java, LLSealedInheritorsProviderFactoryForTests())
             registerService(PackagePartProviderFactory::class.java, PackagePartProviderTestImpl(testServices))
             registerService(KtCompilerPluginsProvider::class.java, NoOpKtCompilerPluginsProvider)
         }

@@ -74,7 +74,7 @@ constructor(
         }
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
-        val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+        val mainCompilation = compilations.getByName(MAIN_COMPILATION_NAME)
         val usageContexts = createUsageContexts(mainCompilation).toMutableSet()
 
         val componentName =
@@ -413,6 +413,7 @@ constructor(
 
     }
 
+    @ExperimentalMainFunctionArgumentsDsl
     override fun passAsArgumentToMainFunction(jsExpression: String) {
         compilations
             .all {

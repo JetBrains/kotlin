@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
-import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
@@ -16,10 +15,9 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.library.SerializedIrModule
-import org.jetbrains.kotlin.library.SerializedMetadata
 
 internal data class SerializerInput(
         val moduleDescriptor: ModuleDescriptor,
@@ -27,19 +25,13 @@ internal data class SerializerInput(
         val produceHeaderKlib: Boolean,
 )
 
-data class SerializerOutput(
-        val serializedMetadata: SerializedMetadata?,
-        val serializedIr: SerializedIrModule?,
-        val dataFlowGraph: ByteArray?,
-        val neededLibraries: List<KonanLibrary>
-)
+typealias SerializerOutput = org.jetbrains.kotlin.backend.common.serialization.SerializerOutput<KonanLibrary>
 
 internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, SerializerInput, SerializerOutput>(
         "Serializer", "IR serializer",
         outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, null, emptyList()) }
 ) { context: PhaseContext, input: SerializerInput ->
     val config = context.config
-    val messageLogger = config.configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
     val relativePathBase = config.configuration.get(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES) ?: emptyList()
     val normalizeAbsolutePaths = config.configuration.get(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH) ?: false
 
@@ -50,7 +42,6 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
                         DiagnosticReporterFactory.createPendingReporter(),
                         config.languageVersionSettings
                 ),
-                messageLogger,
                 ir.irBuiltins,
                 compatibilityMode = CompatibilityMode.CURRENT,
                 normalizeAbsolutePaths = normalizeAbsolutePaths,

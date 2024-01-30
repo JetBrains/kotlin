@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KtFirSymbolContainingDeclarationProvider(
@@ -114,12 +115,28 @@ internal class KtFirSymbolContainingDeclarationProvider(
 
     private fun hasParentSymbol(symbol: KtSymbol): Boolean {
         when (symbol) {
-            is KtReceiverParameterSymbol -> return true // KT-55124
-            !is KtDeclarationSymbol -> return false
-            is KtSamConstructorSymbol -> return false // SAM constructors are always top-level
-            is KtScriptSymbol -> return false // Scripts are always top-level
-            else -> {
-                if (symbol is KtSymbolWithKind && symbol.symbolKind == KtSymbolKind.TOP_LEVEL) {
+            is KtReceiverParameterSymbol -> {
+                // KT-55124
+                return true
+            }
+
+            !is KtDeclarationSymbol -> {
+                // File, package, etc.
+                return false
+            }
+
+            is KtSamConstructorSymbol -> {
+                // SAM constructors are always top-level
+                return false
+            }
+
+            is KtScriptSymbol -> {
+                // Scripts are always top-level
+                return false
+            }
+
+            is KtSymbolWithKind -> {
+                if (symbol.symbolKind == KtSymbolKind.TOP_LEVEL) {
                     val containingFile = (symbol.firSymbol.fir as? FirElementWithResolveState)?.getContainingFile()
                     if (containingFile == null || containingFile.declarations.firstOrNull() !is FirScript) {
                         // Should be replaced with proper check after KT-61451 and KT-61887
@@ -129,11 +146,15 @@ internal class KtFirSymbolContainingDeclarationProvider(
 
                 return true
             }
+
+            else -> {
+                return true
+            }
         }
     }
 
-    fun getContainingDeclarationByPsi(symbol: KtSymbol): KtDeclarationSymbol {
-        val containingDeclaration = getContainingPsi(symbol)
+    fun getContainingDeclarationByPsi(symbol: KtSymbol): KtDeclarationSymbol? {
+        val containingDeclaration = getContainingPsi(symbol) ?: return null
         return with(analysisSession) { containingDeclaration.getSymbol() }
     }
 
@@ -200,7 +221,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
         return symbol.getContainingKtModule(analysisSession.firResolveSession)
     }
 
-    private fun getContainingPsi(symbol: KtSymbol): KtDeclaration {
+    private fun getContainingPsi(symbol: KtSymbol): KtDeclaration? {
         val source = symbol.firSymbol.source
             ?: errorWithAttachment("PSI should present for declaration built by Kotlin code") {
                 withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
@@ -224,10 +245,21 @@ internal class KtFirSymbolContainingDeclarationProvider(
         }
 
         if (isOrdinarySymbolWithSource(symbol)) {
-            return psi.getContainingKtDeclaration()
-                ?: errorWithAttachment("Containing declaration should present for nested declaration ${psi::class}") {
+            val result = psi.getContainingPsiDeclaration()
+
+            if (result == null) {
+                val containingFile = psi.containingFile
+                if (containingFile is KtCodeFragment) {
+                    // All content inside a code fragment is implicitly local, but there is no non-local parent
+                    return null
+                }
+
+                errorWithAttachment("Containing declaration should present for nested declaration ${psi::class}") {
                     withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
                 }
+            }
+
+            return result
         }
 
         errorWithAttachment("Unsupported declaration origin ${symbol.origin} ${psi::class}") {
@@ -266,9 +298,13 @@ internal class KtFirSymbolContainingDeclarationProvider(
         }
     }
 
-    private fun PsiElement.getContainingKtDeclaration(): KtDeclaration? =
-        when (val container = this.parentOfType<KtDeclaration>()) {
-            is KtDestructuringDeclaration -> container.parentOfType()
-            else -> container
-        }?.let { it.originalDeclaration ?: it }
+    private fun PsiElement.getContainingPsiDeclaration(): KtDeclaration? {
+        for (parent in parents) {
+            if (parent is KtDeclaration && parent !is KtDestructuringDeclaration) {
+                return parent.originalDeclaration ?: parent
+            }
+        }
+
+        return null
+    }
 }

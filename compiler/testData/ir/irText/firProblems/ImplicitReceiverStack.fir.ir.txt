@@ -241,7 +241,7 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
               $receiver: GET_VAR 'val stack: <root>.PersistentImplicitReceiverStack declared in <root>.box' type=<root>.PersistentImplicitReceiverStack origin=null
           other: BLOCK type=kotlin.String? origin=SAFE_CALL
             VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.ImplicitReceiverValue<*>? [val]
-              CALL 'public open fun get (name: kotlin.String?): <root>.ImplicitReceiverValue<*>? declared in <root>.PersistentImplicitReceiverStack' type=<root>.ImplicitReceiverValue<*>? origin=null
+              CALL 'public open fun get (name: kotlin.String?): <root>.ImplicitReceiverValue<*>? declared in <root>.PersistentImplicitReceiverStack' type=<root>.ImplicitReceiverValue<*>? origin=GET_ARRAY_ELEMENT
                 $this: GET_VAR 'val stack: <root>.PersistentImplicitReceiverStack declared in <root>.box' type=<root>.PersistentImplicitReceiverStack origin=null
                 name: CONST Null type=kotlin.Nothing? value=null
             WHEN type=kotlin.String? origin=null

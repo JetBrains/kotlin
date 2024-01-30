@@ -1,6 +1,7 @@
 -target 11
 -dontoptimize
 -dontobfuscate
+-dontprocesskotlinmetadata
 
 -keep class kotlin.Metadata
 

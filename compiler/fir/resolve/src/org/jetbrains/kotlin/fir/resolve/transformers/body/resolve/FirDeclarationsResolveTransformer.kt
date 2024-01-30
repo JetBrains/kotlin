@@ -292,7 +292,7 @@ open class FirDeclarationsResolveTransformer(
         if (property.returnTypeRef is FirResolvedTypeRef) {
             val typeArguments = (type.type as ConeClassLikeType).typeArguments
             val extensionType = property.receiverParameter?.typeRef?.coneType
-            val dispatchType = context.containingClass?.let { containingClass ->
+            val dispatchType = context.containingRegularClass?.let { containingClass ->
                 containingClass.symbol.constructStarProjectedType(containingClass.typeParameters.size)
             }
             propertyReferenceAccess.replaceConeTypeOrNull(
@@ -403,7 +403,7 @@ open class FirDeclarationsResolveTransformer(
         // TODO: this generates some nodes in the control flow graph which we don't want if we
         //  end up not selecting this option, KT-59684
         transformer.expressionsTransformer?.transformFunctionCallInternal(
-            provideDelegateCall, ResolutionMode.ReceiverResolution, provideDelegate = true
+            provideDelegateCall, ResolutionMode.ReceiverResolution, FirExpressionsResolveTransformer.CallResolutionMode.PROVIDE_DELEGATE,
         )
 
         // If we got successful candidate for provideDelegate, let's select it
@@ -440,7 +440,7 @@ open class FirDeclarationsResolveTransformer(
     }
 
     private fun transformDelegateExpression(delegate: FirWrappedDelegateExpression): FirExpression =
-        delegate.expression.transformSingle(transformer, ResolutionMode.ContextDependent.Delegate)
+        delegate.expression.transformSingle(transformer, ResolutionMode.Delegate)
             .transformSingle(components.integerLiteralAndOperatorApproximationTransformer, null)
 
     /**
@@ -789,21 +789,23 @@ open class FirDeclarationsResolveTransformer(
         anonymousObject: FirAnonymousObject,
         data: ResolutionMode
     ): FirAnonymousObject = whileAnalysing(session, anonymousObject) {
-        if (anonymousObject !in context.targetedLocalClasses) {
-            return anonymousObject.runAllPhasesForLocalClass(components, data, transformer.firResolveContextCollector)
-        }
+        context.withContainingClass(anonymousObject) {
+            if (anonymousObject !in context.targetedLocalClasses) {
+                return anonymousObject.runAllPhasesForLocalClass(components, data, transformer.firResolveContextCollector)
+            }
 
-        require(anonymousObject.controlFlowGraphReference == null)
-        val buildGraph = !implicitTypeOnly
-        dataFlowAnalyzer.enterClass(anonymousObject, buildGraph)
-        val result = context.withAnonymousObject(anonymousObject, components) {
-            transformDeclarationContent(anonymousObject, data) as FirAnonymousObject
+            require(anonymousObject.controlFlowGraphReference == null)
+            val buildGraph = !implicitTypeOnly
+            dataFlowAnalyzer.enterClass(anonymousObject, buildGraph)
+            val result = context.withAnonymousObject(anonymousObject, components) {
+                transformDeclarationContent(anonymousObject, data) as FirAnonymousObject
+            }
+            val graph = dataFlowAnalyzer.exitClass()
+            if (graph != null) {
+                result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(graph))
+            }
+            result
         }
-        val graph = dataFlowAnalyzer.exitClass()
-        if (graph != null) {
-            result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(graph))
-        }
-        return result
     }
 
     override fun transformSimpleFunction(
@@ -1022,7 +1024,12 @@ open class FirDeclarationsResolveTransformer(
             }
             is ResolutionMode.WithExpectedType ->
                 transformAnonymousFunctionWithExpectedType(anonymousFunction, data.expectedTypeRef, data)
-            is ResolutionMode.ContextIndependent, is ResolutionMode.AssignmentLValue, is ResolutionMode.ReceiverResolution ->
+
+            is ResolutionMode.ContextIndependent,
+            is ResolutionMode.AssignmentLValue,
+            is ResolutionMode.ReceiverResolution,
+            is ResolutionMode.Delegate,
+            ->
                 transformAnonymousFunctionWithExpectedType(anonymousFunction, FirImplicitTypeRefImplWithoutSource, data)
             is ResolutionMode.WithStatus ->
                 throw AssertionError("Should not be here in WithStatus/WithExpectedTypeFromCast mode")

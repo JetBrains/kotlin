@@ -10682,6 +10682,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("lambdaDelegate.kt")
+                public void testLambdaDelegate() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/lambdaDelegate.kt");
+                }
+
+                @Test
                 @TestMetadata("lambdaWithMultipleReturns.kt")
                 public void testLambdaWithMultipleReturns() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/lambdaWithMultipleReturns.kt");
@@ -11594,6 +11600,22 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 public void testWarning() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/warning.kt");
                 }
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/destructuring")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Destructuring {
+            @Test
+            public void testAllFilesPresentInDestructuring() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/destructuring"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+            }
+
+            @Test
+            @TestMetadata("delegationInDestructuring.kt")
+            public void testDelegationInDestructuring() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/destructuring/delegationInDestructuring.kt");
             }
         }
 
@@ -16924,6 +16946,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             @TestMetadata("kt62609.kt")
             public void testKt62609() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/kt62609.kt");
+            }
+
+            @Test
+            @TestMetadata("kt63577.kt")
+            public void testKt63577() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/kt63577.kt");
             }
 
             @Test
@@ -38212,6 +38240,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             @TestMetadata("kt56283.kt")
             public void testKt56283() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/kt56283.kt");
+            }
+
+            @Test
+            @TestMetadata("kt63434.kt")
+            public void testKt63434() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/kt63434.kt");
             }
 
             @Test

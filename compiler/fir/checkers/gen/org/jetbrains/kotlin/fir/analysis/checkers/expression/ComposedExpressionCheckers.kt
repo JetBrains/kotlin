@@ -65,8 +65,8 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         get() = _typeOperatorCallCheckers
     override val resolvedQualifierCheckers: Set<FirResolvedQualifierChecker>
         get() = _resolvedQualifierCheckers
-    override val constExpressionCheckers: Set<FirConstExpressionChecker>
-        get() = _constExpressionCheckers
+    override val literalExpressionCheckers: Set<FirLiteralExpressionChecker>
+        get() = _literalExpressionCheckers
     override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker>
         get() = _callableReferenceAccessCheckers
     override val thisReceiverExpressionCheckers: Set<FirThisReceiverExpressionChecker>
@@ -108,7 +108,7 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
     private val _stringConcatenationCallCheckers: MutableSet<FirStringConcatenationCallChecker> = mutableSetOf()
     private val _typeOperatorCallCheckers: MutableSet<FirTypeOperatorCallChecker> = mutableSetOf()
     private val _resolvedQualifierCheckers: MutableSet<FirResolvedQualifierChecker> = mutableSetOf()
-    private val _constExpressionCheckers: MutableSet<FirConstExpressionChecker> = mutableSetOf()
+    private val _literalExpressionCheckers: MutableSet<FirLiteralExpressionChecker> = mutableSetOf()
     private val _callableReferenceAccessCheckers: MutableSet<FirCallableReferenceAccessChecker> = mutableSetOf()
     private val _thisReceiverExpressionCheckers: MutableSet<FirThisReceiverExpressionChecker> = mutableSetOf()
     private val _whileLoopCheckers: MutableSet<FirWhileLoopChecker> = mutableSetOf()
@@ -144,7 +144,7 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         checkers.stringConcatenationCallCheckers.filterTo(_stringConcatenationCallCheckers, predicate)
         checkers.typeOperatorCallCheckers.filterTo(_typeOperatorCallCheckers, predicate)
         checkers.resolvedQualifierCheckers.filterTo(_resolvedQualifierCheckers, predicate)
-        checkers.constExpressionCheckers.filterTo(_constExpressionCheckers, predicate)
+        checkers.literalExpressionCheckers.filterTo(_literalExpressionCheckers, predicate)
         checkers.callableReferenceAccessCheckers.filterTo(_callableReferenceAccessCheckers, predicate)
         checkers.thisReceiverExpressionCheckers.filterTo(_thisReceiverExpressionCheckers, predicate)
         checkers.whileLoopCheckers.filterTo(_whileLoopCheckers, predicate)

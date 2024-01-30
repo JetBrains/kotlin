@@ -60,7 +60,7 @@ class ErrorNodeDiagnosticCollectorComponent(
         var source = reference.source
         val callOrAssignment = context.callsOrAssignments.lastOrNull()?.takeIf {
             // Use the source of the enclosing FirQualifiedAccess if it is exactly the call to the erroneous callee.
-            it.calleeReference == reference
+            it.toReference(session) == reference
         }
         // Don't report duplicated unresolved reference on annotation entry (already reported on its type)
         if (source?.elementType == KtNodeTypes.ANNOTATION_ENTRY && diagnostic is ConeUnresolvedNameError) return
@@ -162,7 +162,7 @@ class ErrorNodeDiagnosticCollectorComponent(
         }
 
         // Prefix inc/dec on array access will have two calls to .get(...), don't report for the second one.
-        if (source?.kind == KtFakeSourceElementKind.DesugaredPrefixSecondGetReference) {
+        if (source?.kind is KtFakeSourceElementKind.DesugaredPrefixSecondGetReference) {
             return
         }
 

@@ -1,4 +1,3 @@
-// UNRESOLVED_REFERENCE
 package test
 
 interface Foo

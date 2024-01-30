@@ -60,6 +60,27 @@ private class CalculatorForNestedCall(
         ConstraintSystemCompleter.getOrderedNotAnalyzedPostponedArguments(candidate)
     }
 
+    /**
+     * Let's imagine we've got a call `foo(bar())` and currently we're about to compute the completion mode for `bar()`
+     * If it has a return type ReturnType<a_1,.., a_n>, let's compute a collection of pairs: (TypeVariable, Direction)
+     * where Direction is either TO_SUBTYPE or EQUALITY.
+     *
+     * Direction in a pair is equal to TO_SUBTYPE when the type variable might be only constrained with upper constraint
+     * when processing subtyping relation ReturnType<a_1, .., a_n> <: ExpectedType
+     *
+     * For example, for type T, it would be just [(T, TO_SUBTYPE)]
+     * For Out<T> --> [(T, TO_SUBTYPE)]
+     * For Triple<out X, in Y, Z> --> [(X, TO_SUBTYPE), (Y, EQUALITY), (Z, EQUALITY)]
+     *
+     * After that, for each variable, we check that if it either:
+     * - Has a lower proper constraint _and_ TO_SUBTYPE direction
+     * - Has at least one equals proper constraint
+     *
+     * If the condition is satisfied for all the pairs from the collection, we suggest FULL completion
+     *
+     * The intuition behind this is that if for some TV E, only E <: OtherType constraints might be added from the expected type,
+     * _and_ we've got lower constraint SomeLowerType <: E, it's safe just to fix E to SomeLowerType.
+     */
     fun computeCompletionMode(): ConstraintSystemCompletionMode = with(context) {
         // Add fixation directions for variables based on effective variance in type
         typesToProcess.add(returnType)

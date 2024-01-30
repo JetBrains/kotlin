@@ -1,0 +1,9 @@
+<caret_1> resolved to:
+0: (in dep1) class Foo
+1: (in dep2) class Foo
+
+<caret_2> resolved to:
+0: (in dep1) class Foo
+
+<caret_3> resolved to:
+0: (in dep2) class Foo

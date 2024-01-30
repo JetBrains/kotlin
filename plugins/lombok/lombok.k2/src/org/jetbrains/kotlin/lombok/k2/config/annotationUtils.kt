@@ -8,11 +8,7 @@ package org.jetbrains.kotlin.lombok.k2.config
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.utils.trimToNull
@@ -26,9 +22,11 @@ fun FirAnnotation.getAccessLevel(field: Name = LombokConfigNames.VALUE): AccessL
 private fun FirAnnotation.getArgumentAsString(field: Name): String? {
     val argument = findArgumentByName(field) ?: return null
     return when (argument) {
-        is FirConstExpression<*> -> argument.value as? String
+        is FirLiteralExpression<*> -> argument.value as? String
+        is FirEnumEntryDeserializedAccessExpression -> argument.enumEntryName.identifier
         is FirQualifiedAccessExpression -> {
-            val symbol = argument.toResolvedCallableSymbol()
+            @OptIn(UnsafeExpressionUtility::class)
+            val symbol = argument.toResolvedCallableSymbolUnsafe()
             if (symbol is FirEnumEntrySymbol) {
                 symbol.callableId.callableName.identifier
             } else {

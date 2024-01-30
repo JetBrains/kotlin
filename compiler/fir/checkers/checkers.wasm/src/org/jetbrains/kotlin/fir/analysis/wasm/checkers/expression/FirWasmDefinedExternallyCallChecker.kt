@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.calleeReference
+import org.jetbrains.kotlin.fir.expressions.toReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirWasmDefinedExternallyCallChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        val symbol = expression.calleeReference?.toResolvedCallableSymbol() ?: return
+        val symbol = expression.toReference(context.session)?.toResolvedCallableSymbol() ?: return
 
         if (symbol.callableId != WebCommonStandardClassIds.Callables.JsDefinedExternally) {
             return

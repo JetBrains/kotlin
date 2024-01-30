@@ -1,4 +1,6 @@
 // TARGET_BACKEND: JS_IR
+// KT-65195
+// IGNORE_BACKEND_K2: JS_IR
 
 fun testArrayIncrementDecrement(d: dynamic) {
     val t1 = ++d["prefixIncr"]

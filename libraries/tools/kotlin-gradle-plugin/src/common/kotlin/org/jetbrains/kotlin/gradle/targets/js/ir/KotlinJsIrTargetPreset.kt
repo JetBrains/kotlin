@@ -7,15 +7,14 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
-import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
-import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
-import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinJsIrTargetMetrics
 
 @DeprecatedTargetPresetApi
 open class KotlinJsIrTargetPreset(
@@ -32,15 +31,11 @@ open class KotlinJsIrTargetPreset(
         return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType).apply {
             this.isMpp = this@KotlinJsIrTargetPreset.isMpp
             project.runProjectConfigurationHealthCheckWhenEvaluated {
-
-                project.addConfigurationMetrics {
-                    when {
-                        isBrowserConfigured && isNodejsConfigured -> it.put(StringMetrics.JS_TARGET_MODE, "both")
-                        isBrowserConfigured -> it.put(StringMetrics.JS_TARGET_MODE, "browser")
-                        isNodejsConfigured -> it.put(StringMetrics.JS_TARGET_MODE, "nodejs")
-                        !isBrowserConfigured && !isNodejsConfigured -> it.put(StringMetrics.JS_TARGET_MODE, "none")
-                    }
-                }
+                KotlinJsIrTargetMetrics.collectMetrics(
+                    isBrowserConfigured = isBrowserConfigured,
+                    isNodejsConfigured = isNodejsConfigured,
+                    project
+                )
             }
         }
     }

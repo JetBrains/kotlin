@@ -2151,6 +2151,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val conflictingDeclarations: List<KtSymbol>
     }
 
+    interface ExpectAndActualInTheSameModule : KtFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectAndActualInTheSameModule::class
+        val declaration: KtSymbol
+    }
+
     interface MethodOfAnyImplementedInInterface : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = MethodOfAnyImplementedInInterface::class
     }

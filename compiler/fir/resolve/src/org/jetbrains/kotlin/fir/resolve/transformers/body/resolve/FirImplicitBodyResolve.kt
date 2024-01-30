@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -271,13 +272,15 @@ open class ReturnTypeCalculatorWithJump(
         }
     }
 
+
+    protected fun recursionInImplicitTypeRef(): FirErrorTypeRef = buildErrorTypeRef {
+        diagnostic = ConeSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes)
+    }
+
     private fun computeReturnTypeRef(declaration: FirCallableDeclaration): FirResolvedTypeRef {
         val computedReturnType = when (val status = implicitBodyResolveComputationSession.getStatus(declaration.symbol)) {
             is ImplicitBodyResolveComputationStatus.Computed -> status.resolvedTypeRef
-            is ImplicitBodyResolveComputationStatus.Computing -> buildErrorTypeRef {
-                diagnostic = ConeSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes)
-            }
-
+            is ImplicitBodyResolveComputationStatus.Computing -> recursionInImplicitTypeRef()
             else -> null
         }
 

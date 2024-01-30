@@ -105,7 +105,7 @@ internal class ExternalTool(val path: String) {
         val stdout = StringBuilder()
         val bufferedStdout = BufferedReader(InputStreamReader(process.inputStream))
 
-        while (process.isAlive) {
+        while (true) {
             val line = bufferedStdout.readLine() ?: break
             stdout.appendLine(line)
             println(line)

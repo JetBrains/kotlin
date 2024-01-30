@@ -114,7 +114,7 @@ class FirCallResolver(
         val resultFunctionCall = if (candidate != null && candidate.callInfo != result.info) {
             // This branch support case for the call of the type `a.invoke()`
             // 1. Handle candidate for `a`
-            (resolvedReceiver?.calleeReference as? FirNamedReferenceWithCandidate)?.candidate?.updateSourcesOfReceivers()
+            (resolvedReceiver?.toReference(session) as? FirNamedReferenceWithCandidate)?.candidate?.updateSourcesOfReceivers()
             // 2. Handle candidate for `invoke`
             candidate.updateSourcesOfReceivers()
             functionCall.copyAsImplicitInvokeCall {
@@ -616,7 +616,7 @@ class FirCallResolver(
 
                 annotation.transformArgumentList { argumentsToParameters[it]?.returnTypeRef }
             } else {
-                annotation.replaceArgumentList(annotation.argumentList.transform(transformer, ResolutionMode.ContextDependent.Default))
+                annotation.replaceArgumentList(annotation.argumentList.transform(transformer, ResolutionMode.ContextDependent))
             }
 
             val callInfo = toCallInfo(annotation, reference)
@@ -633,7 +633,7 @@ class FirCallResolver(
                 explicitReceiver = null
             )
         } else {
-            annotation.replaceArgumentList(annotation.argumentList.transform(transformer, ResolutionMode.ContextDependent.Default))
+            annotation.replaceArgumentList(annotation.argumentList.transform(transformer, ResolutionMode.ContextDependent))
 
             val callInfo = toCallInfo(annotation, reference)
 
@@ -815,7 +815,7 @@ class FirCallResolver(
 
             candidates.isEmpty() -> {
                 when {
-                    name.asString() == "invoke" && explicitReceiver is FirConstExpression<*> ->
+                    name.asString() == "invoke" && explicitReceiver is FirLiteralExpression<*> ->
                         ConeFunctionExpectedError(
                             explicitReceiver.value?.toString() ?: "",
                             explicitReceiver.resolvedType,

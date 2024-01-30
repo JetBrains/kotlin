@@ -483,7 +483,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         // Because of that, we have "honest" checker at backend IR stage
         // and "only simplest case" checker in frontend, so that we have at least some reporting in the IDE.
         return when {
-            expression1 is FirConstExpression<*> && expression2 is FirConstExpression<*> -> {
+            expression1 is FirLiteralExpression<*> && expression2 is FirLiteralExpression<*> -> {
                 expression1.value == expression2.value
             }
             else -> true

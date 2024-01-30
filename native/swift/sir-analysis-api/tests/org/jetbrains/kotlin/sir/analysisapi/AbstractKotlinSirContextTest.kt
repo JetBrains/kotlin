@@ -43,9 +43,11 @@ abstract class AbstractKotlinSirContextTestBase : AbstractAnalysisApiBasedTest()
         val actual = buildString {
             module.declarations
                 .filterIsInstance<SirForeignFunction>()
-                .forEach {
-                    val function = it.origin as SirKotlinOrigin.Function
-                    appendLine("${function.path}")
+                .forEach { sirForeignFunction ->
+                    val function = sirForeignFunction.origin as SirKotlinOrigin.Function
+                    val functionPath = "${function.path}"
+                    val isCommented = function.documentation?.let { " commented" } ?: ""
+                    appendLine("$functionPath$isCommented")
                 }
         }
 

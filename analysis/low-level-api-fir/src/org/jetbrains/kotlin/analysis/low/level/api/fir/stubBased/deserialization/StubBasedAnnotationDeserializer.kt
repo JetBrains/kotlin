@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -198,8 +198,8 @@ class StubBasedAnnotationDeserializer(
         value: T,
         typeRef: FirResolvedTypeRef,
         sourceElement: PsiElement
-    ): FirConstExpression<T> {
-        return buildConstExpression(
+    ): FirLiteralExpression<T> {
+        return buildLiteralExpression(
             KtRealPsiSourceElement(sourceElement),
             kind,
             value,

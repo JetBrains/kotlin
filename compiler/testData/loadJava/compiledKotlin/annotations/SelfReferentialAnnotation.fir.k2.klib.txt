@@ -6,14 +6,14 @@ public final annotation class Ann : R|kotlin/Annotation| {
 
 }
 
-@R|test/MyRequiresOptIn|(a = String(), b = R|test/MyRequiresOptIn.MyLevel.ERROR|) public final annotation class MyRequiresOptIn : R|kotlin/Annotation| {
+@R|test/MyRequiresOptIn|(a = String(), b = test/MyRequiresOptIn.MyLevel.ERROR) public final annotation class MyRequiresOptIn : R|kotlin/Annotation| {
     public final val a: R|kotlin/String|
         public get(): R|kotlin/String|
 
     public final val b: R|test/MyRequiresOptIn.MyLevel|
         public get(): R|test/MyRequiresOptIn.MyLevel|
 
-    public constructor(a: R|kotlin/String| = STUB, @R|test/MyRequiresOptIn|(a = String(), b = R|test/MyRequiresOptIn.MyLevel.WARNING|) b: R|test/MyRequiresOptIn.MyLevel| = STUB): R|test/MyRequiresOptIn|
+    public constructor(a: R|kotlin/String| = STUB, @R|test/MyRequiresOptIn|(a = String(), b = test/MyRequiresOptIn.MyLevel.WARNING) b: R|test/MyRequiresOptIn.MyLevel| = STUB): R|test/MyRequiresOptIn|
 
     public final enum class MyLevel : R|kotlin/Enum<test/MyRequiresOptIn.MyLevel>| {
         private constructor(): R|test/MyRequiresOptIn.MyLevel|

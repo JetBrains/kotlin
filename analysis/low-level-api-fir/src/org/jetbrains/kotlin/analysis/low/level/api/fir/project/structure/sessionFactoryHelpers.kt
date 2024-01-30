@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.IdeSessionComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.createSealedInheritorsProvider
@@ -39,7 +38,7 @@ import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 internal fun LLFirSession.registerIdeComponents(project: Project) {
     register(IdeSessionComponents::class, IdeSessionComponents.create())
     register(FirCachesFactory::class, FirThreadSafeCachesFactory)
-    register(SealedClassInheritorsProvider::class, project.createSealedInheritorsProvider())
+    register(SealedClassInheritorsProvider::class, createSealedInheritorsProvider(project))
     register(FirExceptionHandler::class, LLFirExceptionHandler)
     register(CodeFragmentScopeProvider::class, CodeFragmentScopeProvider(this))
     createResolveExtensionTool()?.let {

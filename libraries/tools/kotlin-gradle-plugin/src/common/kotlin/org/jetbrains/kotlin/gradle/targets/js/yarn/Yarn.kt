@@ -7,39 +7,36 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.logging.Logger
 import org.gradle.internal.service.ServiceRegistry
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmEnvironment
-import org.jetbrains.kotlin.gradle.targets.js.npm.YarnEnvironment
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
+import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import java.io.File
 
-class Yarn : NpmApi {
+class Yarn : NpmApiExecution<YarnEnvironment> {
     private val yarnWorkspaces = YarnWorkspaces()
 
-    override fun preparedFiles(nodeJs: NpmEnvironment): Collection<File> =
+    override fun preparedFiles(nodeJs: NodeJsEnvironment): Collection<File> =
         yarnWorkspaces.preparedFiles(nodeJs)
 
     override fun prepareRootProject(
-        nodeJs: NpmEnvironment,
+        nodeJs: NodeJsEnvironment,
+        yarn: YarnEnvironment,
         rootProjectName: String,
         rootProjectVersion: String,
-        logger: Logger,
         subProjects: Collection<PreparedKotlinCompilationNpmResolution>,
-        resolutions: Map<String, String>,
     ) = yarnWorkspaces
         .prepareRootProject(
             nodeJs,
+            yarn,
             rootProjectName,
             rootProjectVersion,
-            logger,
             subProjects,
-            resolutions,
         )
 
     override fun resolveRootProject(
         services: ServiceRegistry,
         logger: Logger,
-        nodeJs: NpmEnvironment,
+        nodeJs: NodeJsEnvironment,
         yarn: YarnEnvironment,
         npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
         cliArgs: List<String>

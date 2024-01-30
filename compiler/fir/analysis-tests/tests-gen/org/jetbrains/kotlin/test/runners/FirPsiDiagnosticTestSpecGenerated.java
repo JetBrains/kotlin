@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticTestSpec {
     @Test
     public void testAllFilesPresentInDiagnostics() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "helpers", "linked/annotations", "linked/built-in-types-and-their-semantics", "linked/control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "linked/declarations/classifier-declaration/class-declaration/nested-and-inner-classifiers", "linked/declarations/classifier-declaration/classifier-initialization", "linked/declarations/classifier-declaration/data-class-declaration", "linked/declarations/function-declaration", "linked/declarations/property-declaration/property-initialization", "linked/declarations/type-alias", "linked/expressions/call-and-property-access-expressions", "linked/expressions/function-literals", "linked/inheritance", "linked/overload-resolution/c-level-partition", "linked/overload-resolution/determining-function-applicability-for-a-specific-call/rationale", "linked/overloadable-operators", "linked/statements/assignments/simple-assignments", "linked/type-inference/local-type-inference", "linked/type-inference/smart-casts/smart-cast-types", "linked/type-system/subtyping/subtyping-for-nullable-types", "linked/type-system/type-kinds/type-parameters");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "helpers", "linked/annotations", "linked/built-in-types-and-their-semantics", "linked/control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "linked/declarations/classifier-declaration/class-declaration/nested-and-inner-classifiers", "linked/declarations/classifier-declaration/classifier-initialization", "linked/declarations/classifier-declaration/data-class-declaration", "linked/declarations/function-declaration", "linked/declarations/property-declaration/property-initialization", "linked/declarations/type-alias", "linked/expressions/call-and-property-access-expressions", "linked/expressions/function-literals", "linked/inheritance", "linked/overload-resolution/c-level-partition", "linked/overload-resolution/determining-function-applicability-for-a-specific-call/rationale", "linked/overloadable-operators", "linked/statements/assignments/simple-assignments", "linked/type-inference/local-type-inference", "linked/type-inference/smart-casts/smart-cast-types", "linked/type-system/subtyping/subtyping-for-nullable-types", "linked/type-system/type-kinds/type-parameters");
     }
 
     @Nested
@@ -30,7 +30,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
     public class Linked {
         @Test
         public void testAllFilesPresentInLinked() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "annotations", "built-in-types-and-their-semantics", "control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "declarations/classifier-declaration/class-declaration/nested-and-inner-classifiers", "declarations/classifier-declaration/classifier-initialization", "declarations/classifier-declaration/data-class-declaration", "declarations/function-declaration", "declarations/property-declaration/property-initialization", "declarations/type-alias", "expressions/call-and-property-access-expressions", "expressions/function-literals", "inheritance", "overload-resolution/c-level-partition", "overload-resolution/determining-function-applicability-for-a-specific-call/rationale", "overloadable-operators", "statements/assignments/simple-assignments", "type-inference/local-type-inference", "type-inference/smart-casts/smart-cast-types", "type-system/subtyping/subtyping-for-nullable-types", "type-system/type-kinds/type-parameters");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "annotations", "built-in-types-and-their-semantics", "control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "declarations/classifier-declaration/class-declaration/nested-and-inner-classifiers", "declarations/classifier-declaration/classifier-initialization", "declarations/classifier-declaration/data-class-declaration", "declarations/function-declaration", "declarations/property-declaration/property-initialization", "declarations/type-alias", "expressions/call-and-property-access-expressions", "expressions/function-literals", "inheritance", "overload-resolution/c-level-partition", "overload-resolution/determining-function-applicability-for-a-specific-call/rationale", "overloadable-operators", "statements/assignments/simple-assignments", "type-inference/local-type-inference", "type-inference/smart-casts/smart-cast-types", "type-system/subtyping/subtyping-for-nullable-types", "type-system/type-kinds/type-parameters");
         }
 
         @Nested
@@ -39,7 +39,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
         public class Control__and_data_flow_analysis {
             @Test
             public void testAllFilesPresentInControl__and_data_flow_analysis() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "performing-analysis-on-the-control-flow-graph");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "performing-analysis-on-the-control-flow-graph");
             }
 
             @Nested
@@ -48,7 +48,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Control_flow_graph {
                 @Test
                 public void testAllFilesPresentInControl_flow_graph() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -57,7 +57,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Expressions_1 {
                     @Test
                     public void testAllFilesPresentInExpressions_1() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -66,7 +66,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class Conditional_expressions {
                         @Test
                         public void testAllFilesPresentInConditional_expressions() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -75,7 +75,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                         public class P_1 {
                             @Test
                             public void testAllFilesPresentInP_1() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
 
                             @Nested
@@ -114,7 +114,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInNeg() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
 
@@ -142,7 +142,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
                         }
@@ -157,7 +157,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
         public class Declarations {
             @Test
             public void testAllFilesPresentInDeclarations() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "classifier-declaration/class-declaration/nested-and-inner-classifiers", "classifier-declaration/classifier-initialization", "classifier-declaration/data-class-declaration", "function-declaration", "property-declaration/property-initialization", "type-alias");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "classifier-declaration/class-declaration/nested-and-inner-classifiers", "classifier-declaration/classifier-initialization", "classifier-declaration/data-class-declaration", "function-declaration", "property-declaration/property-initialization", "type-alias");
             }
 
             @Nested
@@ -166,7 +166,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Classifier_declaration {
                 @Test
                 public void testAllFilesPresentInClassifier_declaration() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "class-declaration/nested-and-inner-classifiers", "classifier-initialization", "data-class-declaration");
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "class-declaration/nested-and-inner-classifiers", "classifier-initialization", "data-class-declaration");
                 }
 
                 @Nested
@@ -175,7 +175,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Class_declaration {
                     @Test
                     public void testAllFilesPresentInClass_declaration() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "nested-and-inner-classifiers");
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "nested-and-inner-classifiers");
                     }
 
                     @Nested
@@ -184,7 +184,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class Abstract_classes {
                         @Test
                         public void testAllFilesPresentInAbstract_classes() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -193,7 +193,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                         public class P_1 {
                             @Test
                             public void testAllFilesPresentInP_1() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
 
                             @Nested
@@ -214,7 +214,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInNeg() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
 
@@ -230,7 +230,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
                         }
@@ -241,7 +241,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                         public class P_2 {
                             @Test
                             public void testAllFilesPresentInP_2() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
 
                             @Nested
@@ -310,7 +310,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInNeg() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
 
@@ -344,7 +344,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
                         }
@@ -356,7 +356,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class Constructor_declaration {
                         @Test
                         public void testAllFilesPresentInConstructor_declaration() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -365,7 +365,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                         public class P_4 {
                             @Test
                             public void testAllFilesPresentInP_4() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
 
                             @Nested
@@ -380,7 +380,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
                         }
@@ -391,7 +391,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                         public class P_5 {
                             @Test
                             public void testAllFilesPresentInP_5() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
 
                             @Nested
@@ -424,7 +424,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInNeg() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
 
@@ -512,7 +512,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
                         }
@@ -526,7 +526,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Property_declaration {
                 @Test
                 public void testAllFilesPresentInProperty_declaration() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "property-initialization");
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "property-initialization");
                 }
 
                 @Nested
@@ -535,7 +535,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Local_property_declaration {
                     @Test
                     public void testAllFilesPresentInLocal_property_declaration() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -544,7 +544,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -559,7 +559,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -573,7 +573,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
         public class Expressions {
             @Test
             public void testAllFilesPresentInExpressions() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "call-and-property-access-expressions", "function-literals");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "call-and-property-access-expressions", "function-literals");
             }
 
             @Nested
@@ -582,7 +582,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Additive_expression {
                 @Test
                 public void testAllFilesPresentInAdditive_expression() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -591,7 +591,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_4 {
                     @Test
                     public void testAllFilesPresentInP_4() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -606,7 +606,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -618,7 +618,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Built_in_types_and_their_semantics {
                 @Test
                 public void testAllFilesPresentInBuilt_in_types_and_their_semantics() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -627,7 +627,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Kotlin_nothing_1 {
                     @Test
                     public void testAllFilesPresentInKotlin_nothing_1() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -636,7 +636,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -651,7 +651,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -663,7 +663,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Kotlin_unit {
                     @Test
                     public void testAllFilesPresentInKotlin_unit() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -672,7 +672,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -687,7 +687,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -700,7 +700,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Comparison_expressions {
                 @Test
                 public void testAllFilesPresentInComparison_expressions() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -709,7 +709,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_1 {
                     @Test
                     public void testAllFilesPresentInP_1() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -724,7 +724,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -735,7 +735,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_4 {
                     @Test
                     public void testAllFilesPresentInP_4() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -750,7 +750,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -761,7 +761,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_5 {
                     @Test
                     public void testAllFilesPresentInP_5() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -776,7 +776,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -788,7 +788,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Conditional_expression {
                 @Test
                 public void testAllFilesPresentInConditional_expression() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -797,7 +797,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_6 {
                     @Test
                     public void testAllFilesPresentInP_6() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -812,7 +812,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
 
@@ -828,7 +828,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -840,7 +840,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Constant_literals {
                 @Test
                 public void testAllFilesPresentInConstant_literals() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -849,7 +849,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Boolean_literals {
                     @Test
                     public void testAllFilesPresentInBoolean_literals() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -858,7 +858,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -879,7 +879,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -907,7 +907,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -919,7 +919,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Character_literals {
                     @Test
                     public void testAllFilesPresentInCharacter_literals() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -928,7 +928,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -943,7 +943,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -959,7 +959,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -970,7 +970,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_4 {
                         @Test
                         public void testAllFilesPresentInP_4() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -985,7 +985,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -1007,7 +1007,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -1019,7 +1019,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Integer_literals {
                     @Test
                     public void testAllFilesPresentInInteger_literals() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -1028,7 +1028,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class Binary_integer_literals {
                         @Test
                         public void testAllFilesPresentInBinary_integer_literals() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -1037,7 +1037,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                         public class P_1 {
                             @Test
                             public void testAllFilesPresentInP_1() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
 
                             @Nested
@@ -1070,7 +1070,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInNeg() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
                         }
@@ -1082,7 +1082,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class Decimal_integer_literals {
                         @Test
                         public void testAllFilesPresentInDecimal_integer_literals() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -1091,7 +1091,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                         public class P_1 {
                             @Test
                             public void testAllFilesPresentInP_1() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
 
                             @Nested
@@ -1118,7 +1118,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInNeg() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
                         }
@@ -1130,7 +1130,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class Hexadecimal_integer_literals {
                         @Test
                         public void testAllFilesPresentInHexadecimal_integer_literals() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -1139,7 +1139,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                         public class P_1 {
                             @Test
                             public void testAllFilesPresentInP_1() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
 
                             @Nested
@@ -1178,7 +1178,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInNeg() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
                         }
@@ -1191,7 +1191,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Real_literals {
                     @Test
                     public void testAllFilesPresentInReal_literals() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -1200,7 +1200,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -1221,7 +1221,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -1255,7 +1255,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -1266,7 +1266,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -1299,7 +1299,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -1321,7 +1321,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -1332,7 +1332,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -1359,7 +1359,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -1417,7 +1417,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -1428,7 +1428,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_4 {
                         @Test
                         public void testAllFilesPresentInP_4() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -1467,7 +1467,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -1507,7 +1507,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -1518,7 +1518,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_5 {
                         @Test
                         public void testAllFilesPresentInP_5() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -1557,7 +1557,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -1569,7 +1569,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class The_types_for_integer_literals {
                     @Test
                     public void testAllFilesPresentInThe_types_for_integer_literals() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -1578,7 +1578,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -1635,7 +1635,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -1675,7 +1675,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -1688,7 +1688,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Elvis_operator_expression {
                 @Test
                 public void testAllFilesPresentInElvis_operator_expression() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -1697,7 +1697,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_3 {
                     @Test
                     public void testAllFilesPresentInP_3() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -1712,7 +1712,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -1724,7 +1724,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Equality_expressions {
                 @Test
                 public void testAllFilesPresentInEquality_expressions() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -1733,7 +1733,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Value_equality_expressions {
                     @Test
                     public void testAllFilesPresentInValue_equality_expressions() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -1742,7 +1742,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -1757,7 +1757,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -1770,7 +1770,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Jump_expressions {
                 @Test
                 public void testAllFilesPresentInJump_expressions() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -1779,7 +1779,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Break_expression {
                     @Test
                     public void testAllFilesPresentInBreak_expression() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -1788,7 +1788,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -1803,7 +1803,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -1815,7 +1815,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Continue_expression {
                     @Test
                     public void testAllFilesPresentInContinue_expression() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -1824,7 +1824,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -1839,7 +1839,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -1851,7 +1851,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -1866,7 +1866,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -1877,7 +1877,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Return_expressions {
                     @Test
                     public void testAllFilesPresentInReturn_expressions() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -1886,7 +1886,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -1901,7 +1901,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -1912,7 +1912,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_4 {
                         @Test
                         public void testAllFilesPresentInP_4() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -1927,7 +1927,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -1940,7 +1940,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Logical_conjunction_expression {
                 @Test
                 public void testAllFilesPresentInLogical_conjunction_expression() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -1949,7 +1949,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -1964,7 +1964,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
 
@@ -1980,7 +1980,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -1992,7 +1992,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Logical_disjunction_expression {
                 @Test
                 public void testAllFilesPresentInLogical_disjunction_expression() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -2001,7 +2001,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2016,7 +2016,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
 
@@ -2032,7 +2032,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -2044,7 +2044,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Multiplicative_expression {
                 @Test
                 public void testAllFilesPresentInMultiplicative_expression() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -2053,7 +2053,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_5 {
                     @Test
                     public void testAllFilesPresentInP_5() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2068,7 +2068,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -2080,7 +2080,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Not_null_assertion_expression {
                 @Test
                 public void testAllFilesPresentInNot_null_assertion_expression() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -2089,7 +2089,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2104,7 +2104,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -2115,7 +2115,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_3 {
                     @Test
                     public void testAllFilesPresentInP_3() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2130,7 +2130,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -2142,7 +2142,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Prefix_expressions {
                 @Test
                 public void testAllFilesPresentInPrefix_expressions() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -2151,7 +2151,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Logical_not_expression {
                     @Test
                     public void testAllFilesPresentInLogical_not_expression() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2160,7 +2160,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -2175,7 +2175,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -2187,7 +2187,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Prefix_decrement_expression {
                     @Test
                     public void testAllFilesPresentInPrefix_decrement_expression() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2196,7 +2196,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_4 {
                         @Test
                         public void testAllFilesPresentInP_4() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -2211,7 +2211,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -2222,7 +2222,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_5 {
                         @Test
                         public void testAllFilesPresentInP_5() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -2237,7 +2237,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -2249,7 +2249,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Prefix_increment_expression {
                     @Test
                     public void testAllFilesPresentInPrefix_increment_expression() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2258,7 +2258,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_4 {
                         @Test
                         public void testAllFilesPresentInP_4() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -2273,7 +2273,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -2284,7 +2284,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_5 {
                         @Test
                         public void testAllFilesPresentInP_5() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -2299,7 +2299,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -2311,7 +2311,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Unary_minus_expression {
                     @Test
                     public void testAllFilesPresentInUnary_minus_expression() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2320,7 +2320,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -2335,7 +2335,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -2347,7 +2347,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Unary_plus_expression {
                     @Test
                     public void testAllFilesPresentInUnary_plus_expression() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2356,7 +2356,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -2371,7 +2371,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -2384,7 +2384,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Range_expression {
                 @Test
                 public void testAllFilesPresentInRange_expression() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -2393,7 +2393,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_4 {
                     @Test
                     public void testAllFilesPresentInP_4() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2408,7 +2408,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -2420,7 +2420,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Try_expression {
                 @Test
                 public void testAllFilesPresentInTry_expression() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -2429,7 +2429,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_1 {
                     @Test
                     public void testAllFilesPresentInP_1() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2462,7 +2462,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
 
@@ -2502,7 +2502,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -2513,7 +2513,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2528,7 +2528,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -2539,7 +2539,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_5 {
                     @Test
                     public void testAllFilesPresentInP_5() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2560,7 +2560,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -2571,7 +2571,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_8 {
                     @Test
                     public void testAllFilesPresentInP_8() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2586,7 +2586,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
 
@@ -2602,7 +2602,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -2614,7 +2614,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Type_checking_and_containment_checking_expressions {
                 @Test
                 public void testAllFilesPresentInType_checking_and_containment_checking_expressions() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -2623,7 +2623,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Containment_checking_expression {
                     @Test
                     public void testAllFilesPresentInContainment_checking_expression() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2632,7 +2632,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_5 {
                         @Test
                         public void testAllFilesPresentInP_5() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -2647,7 +2647,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -2659,7 +2659,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Type_checking_expression {
                     @Test
                     public void testAllFilesPresentInType_checking_expression() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2668,7 +2668,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_4 {
                         @Test
                         public void testAllFilesPresentInP_4() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -2683,7 +2683,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -2696,7 +2696,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class When_expression {
                 @Test
                 public void testAllFilesPresentInWhen_expression() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -2705,7 +2705,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Exhaustive_when_expressions {
                     @Test
                     public void testAllFilesPresentInExhaustive_when_expressions() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2714,7 +2714,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -2765,7 +2765,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -2829,7 +2829,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -2841,7 +2841,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_1 {
                     @Test
                     public void testAllFilesPresentInP_1() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2862,7 +2862,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -2873,7 +2873,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2894,7 +2894,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
 
@@ -2934,7 +2934,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -2945,7 +2945,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_3 {
                     @Test
                     public void testAllFilesPresentInP_3() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2960,7 +2960,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -2971,7 +2971,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_4 {
                     @Test
                     public void testAllFilesPresentInP_4() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -2986,7 +2986,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
 
@@ -3002,7 +3002,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -3013,7 +3013,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_5 {
                     @Test
                     public void testAllFilesPresentInP_5() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -3028,7 +3028,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
 
@@ -3050,7 +3050,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -3061,7 +3061,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_6 {
                     @Test
                     public void testAllFilesPresentInP_6() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -3118,7 +3118,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
 
@@ -3194,7 +3194,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -3207,7 +3207,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
         public class Overload_resolution {
             @Test
             public void testAllFilesPresentInOverload_resolution() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "c-level-partition", "determining-function-applicability-for-a-specific-call/rationale");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "c-level-partition", "determining-function-applicability-for-a-specific-call/rationale");
             }
 
             @Nested
@@ -3216,7 +3216,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Building_the_overload_candidate_set_ocs {
                 @Test
                 public void testAllFilesPresentInBuilding_the_overload_candidate_set_ocs() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -3225,7 +3225,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Call_with_an_explicit_receiver {
                     @Test
                     public void testAllFilesPresentInCall_with_an_explicit_receiver() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -3234,7 +3234,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class Call_with_an_explicit_type_receiver {
                         @Test
                         public void testAllFilesPresentInCall_with_an_explicit_type_receiver() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -3243,7 +3243,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                         public class P_3 {
                             @Test
                             public void testAllFilesPresentInP_3() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
 
                             @Nested
@@ -3258,7 +3258,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
                         }
@@ -3270,7 +3270,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_6 {
                         @Test
                         public void testAllFilesPresentInP_6() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -3375,7 +3375,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -3387,7 +3387,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Call_with_named_parameters {
                     @Test
                     public void testAllFilesPresentInCall_with_named_parameters() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -3396,7 +3396,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -3501,7 +3501,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -3512,7 +3512,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_5 {
                         @Test
                         public void testAllFilesPresentInP_5() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -3521,7 +3521,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                         public class Pos {
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -3533,7 +3533,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Call_with_specified_type_parameters {
                     @Test
                     public void testAllFilesPresentInCall_with_specified_type_parameters() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -3542,7 +3542,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -3557,7 +3557,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -3569,7 +3569,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Call_with_trailing_lambda_expressions {
                     @Test
                     public void testAllFilesPresentInCall_with_trailing_lambda_expressions() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -3578,7 +3578,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -3713,7 +3713,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -3725,7 +3725,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Call_without_an_explicit_receiver {
                     @Test
                     public void testAllFilesPresentInCall_without_an_explicit_receiver() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -3734,7 +3734,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_5 {
                         @Test
                         public void testAllFilesPresentInP_5() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -3785,7 +3785,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -3891,7 +3891,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -3903,7 +3903,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Infix_function_call {
                     @Test
                     public void testAllFilesPresentInInfix_function_call() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -3912,7 +3912,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -3951,7 +3951,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -3991,7 +3991,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4003,7 +4003,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Operator_call {
                     @Test
                     public void testAllFilesPresentInOperator_call() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -4012,7 +4012,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -4069,7 +4069,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -4097,7 +4097,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4108,7 +4108,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -4153,7 +4153,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4164,7 +4164,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_4 {
                         @Test
                         public void testAllFilesPresentInP_4() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -4179,7 +4179,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -4195,7 +4195,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4208,7 +4208,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Callables_and_invoke_convention {
                 @Test
                 public void testAllFilesPresentInCallables_and_invoke_convention() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -4217,7 +4217,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -4244,7 +4244,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -4256,7 +4256,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Choosing_the_most_specific_candidate_from_the_overload_candidate_set {
                 @Test
                 public void testAllFilesPresentInChoosing_the_most_specific_candidate_from_the_overload_candidate_set() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -4265,7 +4265,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Algorithm_of_msc_selection {
                     @Test
                     public void testAllFilesPresentInAlgorithm_of_msc_selection() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -4274,7 +4274,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_11 {
                         @Test
                         public void testAllFilesPresentInP_11() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -4331,7 +4331,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4342,7 +4342,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_12 {
                         @Test
                         public void testAllFilesPresentInP_12() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -4393,7 +4393,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4404,7 +4404,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_14 {
                         @Test
                         public void testAllFilesPresentInP_14() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -4455,7 +4455,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4466,7 +4466,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_17 {
                         @Test
                         public void testAllFilesPresentInP_17() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -4487,7 +4487,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4498,7 +4498,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -4531,7 +4531,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4542,7 +4542,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_9 {
                         @Test
                         public void testAllFilesPresentInP_9() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -4569,7 +4569,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -4585,7 +4585,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4597,7 +4597,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Rationale_1 {
                     @Test
                     public void testAllFilesPresentInRationale_1() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -4606,7 +4606,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -4621,7 +4621,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4632,7 +4632,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -4647,7 +4647,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4660,7 +4660,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Determining_function_applicability_for_a_specific_call {
                 @Test
                 public void testAllFilesPresentInDetermining_function_applicability_for_a_specific_call() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "rationale");
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "rationale");
                 }
 
                 @Nested
@@ -4669,7 +4669,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Description {
                     @Test
                     public void testAllFilesPresentInDescription() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -4678,7 +4678,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -4693,7 +4693,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4706,7 +4706,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Receivers {
                 @Test
                 public void testAllFilesPresentInReceivers() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -4715,7 +4715,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_5 {
                     @Test
                     public void testAllFilesPresentInP_5() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -4742,7 +4742,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -4754,7 +4754,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Resolving_callable_references {
                 @Test
                 public void testAllFilesPresentInResolving_callable_references() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -4763,7 +4763,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Bidirectional_resolution_for_callable_calls {
                     @Test
                     public void testAllFilesPresentInBidirectional_resolution_for_callable_calls() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -4772,7 +4772,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -4787,7 +4787,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4798,7 +4798,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -4813,7 +4813,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -4847,7 +4847,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4859,7 +4859,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -4874,7 +4874,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -4885,7 +4885,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Resolving_callable_references_not_used_as_arguments_to_a_call {
                     @Test
                     public void testAllFilesPresentInResolving_callable_references_not_used_as_arguments_to_a_call() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -4894,7 +4894,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -4933,7 +4933,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -4961,7 +4961,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -4975,7 +4975,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
         public class Statements {
             @Test
             public void testAllFilesPresentInStatements() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "assignments/simple-assignments");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "assignments/simple-assignments");
             }
 
             @Nested
@@ -4984,7 +4984,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Assignments {
                 @Test
                 public void testAllFilesPresentInAssignments() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "simple-assignments");
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "simple-assignments");
                 }
 
                 @Nested
@@ -4993,7 +4993,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Operator_assignments {
                     @Test
                     public void testAllFilesPresentInOperator_assignments() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -5002,7 +5002,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -5017,7 +5017,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -5033,7 +5033,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -5045,7 +5045,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_1 {
                     @Test
                     public void testAllFilesPresentInP_1() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -5060,7 +5060,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -5071,7 +5071,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -5092,7 +5092,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -5104,7 +5104,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Loop_statements {
                 @Test
                 public void testAllFilesPresentInLoop_statements() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -5113,7 +5113,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Do_while_loop_statement {
                     @Test
                     public void testAllFilesPresentInDo_while_loop_statement() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -5122,7 +5122,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -5137,7 +5137,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -5148,7 +5148,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -5163,7 +5163,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -5175,7 +5175,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class While_loop_statement {
                     @Test
                     public void testAllFilesPresentInWhile_loop_statement() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -5184,7 +5184,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -5199,7 +5199,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -5210,7 +5210,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -5225,7 +5225,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -5239,7 +5239,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
         public class Type_inference {
             @Test
             public void testAllFilesPresentInType_inference() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "local-type-inference", "smart-casts/smart-cast-types");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "local-type-inference", "smart-casts/smart-cast-types");
             }
 
             @Nested
@@ -5248,7 +5248,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Smart_casts {
                 @Test
                 public void testAllFilesPresentInSmart_casts() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "smart-cast-types");
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "smart-cast-types");
                 }
 
                 @Nested
@@ -5257,7 +5257,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Smart_cast_sink_stability {
                     @Test
                     public void testAllFilesPresentInSmart_cast_sink_stability() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -5266,7 +5266,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_5 {
                         @Test
                         public void testAllFilesPresentInP_5() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -5281,7 +5281,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -5297,7 +5297,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -5311,7 +5311,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
         public class Type_system {
             @Test
             public void testAllFilesPresentInType_system() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "subtyping/subtyping-for-nullable-types", "type-kinds/type-parameters");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "subtyping/subtyping-for-nullable-types", "type-kinds/type-parameters");
             }
 
             @Nested
@@ -5320,7 +5320,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Introduction_1 {
                 @Test
                 public void testAllFilesPresentInIntroduction_1() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -5329,7 +5329,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_6 {
                     @Test
                     public void testAllFilesPresentInP_6() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -5356,7 +5356,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -5367,7 +5367,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class P_8 {
                     @Test
                     public void testAllFilesPresentInP_8() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -5388,7 +5388,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -5400,7 +5400,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Subtyping {
                 @Test
                 public void testAllFilesPresentInSubtyping() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "subtyping-for-nullable-types");
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "subtyping-for-nullable-types");
                 }
 
                 @Nested
@@ -5409,7 +5409,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Subtyping_for_intersection_types {
                     @Test
                     public void testAllFilesPresentInSubtyping_for_intersection_types() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -5418,7 +5418,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -5445,7 +5445,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -5457,7 +5457,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Subtyping_rules {
                     @Test
                     public void testAllFilesPresentInSubtyping_rules() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -5466,7 +5466,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -5481,7 +5481,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -5494,7 +5494,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Type_contexts_and_scopes {
                 @Test
                 public void testAllFilesPresentInType_contexts_and_scopes() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -5503,7 +5503,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Inner_and_nested_type_contexts {
                     @Test
                     public void testAllFilesPresentInInner_and_nested_type_contexts() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -5512,7 +5512,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -5539,7 +5539,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -5561,7 +5561,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -5574,7 +5574,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Type_kinds {
                 @Test
                 public void testAllFilesPresentInType_kinds() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true, "type-parameters");
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "type-parameters");
                 }
 
                 @Nested
@@ -5583,7 +5583,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Built_in_types {
                     @Test
                     public void testAllFilesPresentInBuilt_in_types() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -5592,7 +5592,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class Kotlin_any {
                         @Test
                         public void testAllFilesPresentInKotlin_any() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -5601,7 +5601,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                         public class P_1 {
                             @Test
                             public void testAllFilesPresentInP_1() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
 
                             @Nested
@@ -5622,7 +5622,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
                         }
@@ -5634,7 +5634,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class Kotlin_nothing {
                         @Test
                         public void testAllFilesPresentInKotlin_nothing() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -5643,7 +5643,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                         public class P_1 {
                             @Test
                             public void testAllFilesPresentInP_1() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
 
                             @Nested
@@ -5658,7 +5658,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInNeg() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
 
@@ -5680,7 +5680,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
                         }
@@ -5696,7 +5696,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
     public class NotLinked {
         @Test
         public void testAllFilesPresentInNotLinked() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
 
         @Nested
@@ -5705,7 +5705,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
         public class Annotations {
             @Test
             public void testAllFilesPresentInAnnotations() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
 
             @Nested
@@ -5714,7 +5714,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Annotation_classes {
                 @Test
                 public void testAllFilesPresentInAnnotation_classes() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -5729,7 +5729,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                     @Test
                     public void testAllFilesPresentInNeg() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
                 }
             }
@@ -5740,7 +5740,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Type_annotations {
                 @Test
                 public void testAllFilesPresentInType_annotations() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -5815,7 +5815,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                     @Test
                     public void testAllFilesPresentInNeg() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
                 }
             }
@@ -5827,7 +5827,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
         public class Coercion_to_unit {
             @Test
             public void testAllFilesPresentInCoercion_to_unit() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/coercion-to-unit"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/coercion-to-unit"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
 
             @Nested
@@ -5842,7 +5842,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                 @Test
                 public void testAllFilesPresentInNeg() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/coercion-to-unit/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/coercion-to-unit/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
             }
         }
@@ -5853,7 +5853,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
         public class Contracts {
             @Test
             public void testAllFilesPresentInContracts() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
 
             @Nested
@@ -5862,7 +5862,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Analysis {
                 @Test
                 public void testAllFilesPresentInAnalysis() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -5871,7 +5871,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Common {
                     @Test
                     public void testAllFilesPresentInCommon() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -5886,7 +5886,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
 
@@ -5908,7 +5908,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -5919,7 +5919,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class ControlFlow {
                     @Test
                     public void testAllFilesPresentInControlFlow() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -5928,7 +5928,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class Initialization {
                         @Test
                         public void testAllFilesPresentInInitialization() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -5967,7 +5967,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -6019,7 +6019,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -6030,7 +6030,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class UnreachableCode {
                         @Test
                         public void testAllFilesPresentInUnreachableCode() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -6045,7 +6045,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -6097,7 +6097,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -6109,7 +6109,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Smartcasts {
                     @Test
                     public void testAllFilesPresentInSmartcasts() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -6208,7 +6208,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
 
@@ -6302,7 +6302,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -6314,7 +6314,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Declarations {
                 @Test
                 public void testAllFilesPresentInDeclarations() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -6323,7 +6323,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class ContractBuilder {
                     @Test
                     public void testAllFilesPresentInContractBuilder() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -6332,7 +6332,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class Common {
                         @Test
                         public void testAllFilesPresentInCommon() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -6449,7 +6449,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
 
@@ -6471,7 +6471,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
                         }
                     }
@@ -6482,7 +6482,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                     public class Effects {
                         @Test
                         public void testAllFilesPresentInEffects() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
 
                         @Nested
@@ -6491,7 +6491,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                         public class CallsInPlace {
                             @Test
                             public void testAllFilesPresentInCallsInPlace() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
 
                             @Nested
@@ -6512,7 +6512,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInNeg() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
 
@@ -6540,7 +6540,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
                         }
@@ -6551,7 +6551,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                         public class Common {
                             @Test
                             public void testAllFilesPresentInCommon() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/common"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/common"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
 
                             @Nested
@@ -6566,7 +6566,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInNeg() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/common/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/common/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
                         }
@@ -6577,7 +6577,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                         public class Returns {
                             @Test
                             public void testAllFilesPresentInReturns() throws Exception {
-                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                             }
 
                             @Nested
@@ -6628,7 +6628,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInNeg() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
 
@@ -6662,7 +6662,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                                 @Test
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                                 }
                             }
                         }
@@ -6675,7 +6675,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class ContractFunction {
                     @Test
                     public void testAllFilesPresentInContractFunction() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -6708,7 +6708,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
 
@@ -6730,7 +6730,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }
@@ -6743,7 +6743,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
         public class Dfa {
             @Test
             public void testAllFilesPresentInDfa() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/dfa"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/dfa"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
 
             @Nested
@@ -7022,7 +7022,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                 @Test
                 public void testAllFilesPresentInNeg() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
             }
 
@@ -7470,7 +7470,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                 @Test
                 public void testAllFilesPresentInPos() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
             }
         }
@@ -7481,7 +7481,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
         public class Local_variables {
             @Test
             public void testAllFilesPresentInLocal_variables() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/local-variables"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/local-variables"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
 
             @Nested
@@ -7490,7 +7490,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Type_parameters {
                 @Test
                 public void testAllFilesPresentInType_parameters() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -7505,7 +7505,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                     @Test
                     public void testAllFilesPresentInNeg() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
                 }
             }
@@ -7517,7 +7517,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
         public class Objects {
             @Test
             public void testAllFilesPresentInObjects() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/objects"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/objects"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
 
             @Nested
@@ -7526,7 +7526,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Inheritance {
                 @Test
                 public void testAllFilesPresentInInheritance() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -7577,7 +7577,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                     @Test
                     public void testAllFilesPresentInNeg() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
                 }
             }
@@ -7589,7 +7589,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
         public class Overload_resolution {
             @Test
             public void testAllFilesPresentInOverload_resolution() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
 
             @Nested
@@ -7598,7 +7598,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
             public class Building_the_overload_candidate_set_ocs {
                 @Test
                 public void testAllFilesPresentInBuilding_the_overload_candidate_set_ocs() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Nested
@@ -7607,7 +7607,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
                 public class Infix_function_call {
                     @Test
                     public void testAllFilesPresentInInfix_function_call() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                     }
 
                     @Nested
@@ -7640,7 +7640,7 @@ public class FirPsiDiagnosticTestSpecGenerated extends AbstractFirPsiDiagnosticT
 
                         @Test
                         public void testAllFilesPresentInPos() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                         }
                     }
                 }

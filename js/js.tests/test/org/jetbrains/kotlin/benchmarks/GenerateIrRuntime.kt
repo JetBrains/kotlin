@@ -11,8 +11,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.KtPsiSourceFile
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
@@ -485,7 +484,6 @@ class GenerateIrRuntime {
         return psi2IrTranslator.generateModuleFragment(psi2IrContext, files, irProviders, emptyList())
     }
 
-    @OptIn(ExperimentalPathApi::class)
     private fun doSerializeModule(
         moduleFragment: IrModuleFragment,
         bindingContext: BindingContext,
@@ -494,13 +492,19 @@ class GenerateIrRuntime {
     ): String {
         val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
         val tmpKlibDir = createTempDirectory().also { it.toFile().deleteOnExit() }.toString()
-        val metadataSerializer = KlibMetadataIncrementalSerializer(configuration, project, false)
+        val metadataSerializer = KlibMetadataIncrementalSerializer(
+            files,
+            configuration,
+            project,
+            bindingContext,
+            moduleFragment.descriptor,
+            allowErrorTypes = false,
+        )
         serializeModuleIntoKlib(
             moduleName,
             configuration,
-            IrMessageLogger.None,
             diagnosticReporter,
-            files.map(::KtPsiSourceFile),
+            metadataSerializer,
             tmpKlibDir,
             emptyList(),
             moduleFragment,
@@ -508,10 +512,8 @@ class GenerateIrRuntime {
             true,
             perFile,
             abiVersion = KotlinAbiVersion.CURRENT,
-            jsOutputName = null
-        ) { file ->
-            metadataSerializer.serializeScope(file, bindingContext, moduleFragment.descriptor)
-        }
+            jsOutputName = null,
+        )
 
         return tmpKlibDir
     }
@@ -534,7 +536,6 @@ class GenerateIrRuntime {
                 DiagnosticReporterFactory.createPendingReporter(),
                 configuration.languageVersionSettings,
             ),
-            IrMessageLogger.None,
             module.irBuiltins,
             CompatibilityMode.CURRENT,
             normalizeAbsolutePaths = false,

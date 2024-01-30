@@ -141,7 +141,7 @@ object LightTreePositioningStrategies {
             val (returnTypeRef, nameIdentifierOrPlaceHolder) = when {
                 node.tokenType == KtNodeTypes.PROPERTY_ACCESSOR ->
                     tree.typeReference(node) to tree.accessorNamePlaceholder(node)
-                node.isDeclaration ->
+                node.isDeclaration || node.tokenType == KtNodeTypes.VALUE_PARAMETER ->
                     tree.typeReference(node) to tree.nameIdentifier(node)
                 else ->
                     null to null

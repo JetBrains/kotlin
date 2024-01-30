@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,16 +35,22 @@ internal class LLFirReturnTypeCalculatorWithJump(
 
         val designation = declaration.collectDesignationWithFile().asResolveTarget()
         val targetSession = designation.target.llFirSession
+        val computationSession = implicitBodyResolveComputationSession as LLImplicitBodyResolveComputationSession
         val resolver = LLFirImplicitBodyTargetResolver(
             designation,
             lockProvider = lockProvider,
             scopeSession = targetSession.getScopeSession(),
             firResolveContextCollector = towerDataContextCollector,
-            llImplicitBodyResolveComputationSessionParameter = implicitBodyResolveComputationSession as LLImplicitBodyResolveComputationSession,
+            llImplicitBodyResolveComputationSessionParameter = computationSession,
         )
 
         lockProvider.withGlobalPhaseLock(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
             resolver.resolveDesignation()
+        }
+
+        // Report recursion error if we found cycle during resolution
+        if (computationSession.popCycledSymbolIfExists() == declaration.symbol) {
+            return recursionInImplicitTypeRef()
         }
 
         LLFirImplicitTypesLazyResolver.checkIsResolved(designation)

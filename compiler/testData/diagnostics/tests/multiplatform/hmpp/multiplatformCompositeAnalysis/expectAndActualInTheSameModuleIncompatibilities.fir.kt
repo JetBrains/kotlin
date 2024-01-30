@@ -13,10 +13,10 @@ val callableKind: Int = 1
 expect fun <T> typeParameterCount()
 fun typeParameterCount() {}
 
-expect enum class EnumEntries {
+expect enum class <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>EnumEntries<!> {
     ONE, TWO;
 }
-actual enum class <!ACTUAL_WITHOUT_EXPECT!>EnumEntries<!> {
+actual enum class <!ACTUAL_WITHOUT_EXPECT, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>EnumEntries<!> {
     ONE;
 }
 

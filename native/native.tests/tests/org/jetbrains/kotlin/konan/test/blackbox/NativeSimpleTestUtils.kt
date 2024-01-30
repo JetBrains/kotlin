@@ -146,6 +146,7 @@ internal fun AbstractNativeSimpleTest.cinteropToLibrary(
         targets = targets,
         freeCompilerArgs = freeCompilerArgs,
         defFile = testCase.modules.single().files.single().location,
+        dependencies = emptyList(),
         expectedArtifact = getLibraryArtifact(testCase, outputDir)
     ).result
 }

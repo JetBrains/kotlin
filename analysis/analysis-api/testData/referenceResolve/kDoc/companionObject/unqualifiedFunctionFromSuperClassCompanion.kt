@@ -1,5 +1,3 @@
-// UNRESOLVED_REFERENCE
-
 open class Base {
     companion object {
         fun foo() {}

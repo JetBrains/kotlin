@@ -55,19 +55,19 @@ FILE fqName:<root> fileName:/kt28456b.kt
     VALUE_PARAMETER name:a index:0 type:<root>.A
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testPostfixIncrement (a: <root>.A): kotlin.Int declared in <root>'
-        BLOCK type=kotlin.Int origin=null
+        BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.A [val]
             GET_VAR 'a: <root>.A declared in <root>.testPostfixIncrement' type=<root>.A origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=1
           VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
-            CALL 'public final fun get (i: kotlin.Int, a: kotlin.Int, b: kotlin.Int, c: kotlin.Int, d: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+            CALL 'public final fun get (i: kotlin.Int, a: kotlin.Int, b: kotlin.Int, c: kotlin.Int, d: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
               $receiver: GET_VAR 'val tmp_0: <root>.A declared in <root>.testPostfixIncrement' type=<root>.A origin=null
               i: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
-          CALL 'public final fun set (i: kotlin.Int, j: kotlin.Int, v: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun set (i: kotlin.Int, j: kotlin.Int, v: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
             $receiver: GET_VAR 'val tmp_0: <root>.A declared in <root>.testPostfixIncrement' type=<root>.A origin=null
             i: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
-            v: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            v: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
               $this: GET_VAR 'val tmp_2: kotlin.Int declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
           GET_VAR 'val tmp_2: kotlin.Int declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
   FUN name:testCompoundAssignment visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit

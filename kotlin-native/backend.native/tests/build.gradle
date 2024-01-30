@@ -97,6 +97,7 @@ tasks.withType(KonanCompileNativeBinary.class).configureEach {
 ext.isNoopGC = project.globalTestArgs.contains("-Xbinary=gc=noop") || project.globalTestArgs.contains("-Xgc=noop")
 ext.isSTWMSGC = project.globalTestArgs.contains("-Xbinary=gc=stwms") || project.globalTestArgs.contains("-Xgc=stms")
 ext.isAggressiveGC = project.globalTestArgs.contains("-Xbinary=gcSchedulerType=aggressive")
+ext.isWithStateChecker = project.globalTestArgs.contains("-Xbinary=checkStateAtExternalCalls=true") || project.globalTestArgs.contains("-Xcheck-state-at-external-calls")
 ext.runtimeAssertionsPanic = false
 
 // TODO: It also makes sense to test -g without asserts, and also to test -opt with asserts.
@@ -1652,6 +1653,7 @@ if (PlatformInfo.isAppleTarget(project)) {
         enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null)
             && !isNoopGC // requires some GC
             && !isAggressiveGC // requires careful timing of GC
+            && !isWithStateChecker // TODO(KT-65261)
         source = 'interop/objc/kt63423_dispose_on_main_stress/main.kt'
         interop = "kt63423_dispose_on_main_stress"
         flags = [

@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-// LLDB_TRACE: kt47198.txt
+// FIR_IDENTICAL
 // FILE: kt47198.kt
 fun foo(a:Int) = print("a: $a")
 

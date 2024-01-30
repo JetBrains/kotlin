@@ -34,10 +34,8 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
-import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitutor
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
@@ -83,6 +81,15 @@ internal class KtFirTypeProvider(
         )
 
         return approximatedConeType?.asKtType()
+    }
+
+    override fun getEnhancedType(type: KtType): KtType? {
+        require(type is KtFirType)
+        val coneType = type.coneType
+        val substitutor = EnhancedForWarningConeSubstitutor(typeContext)
+        val enhancedConeType = substitutor.substituteType(coneType)
+
+        return enhancedConeType?.asKtType()
     }
 
     override fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType {
@@ -185,8 +192,19 @@ internal class KtFirTypeProvider(
             }
             is FirCallableReferenceAccess -> {
                 when (val explicitReceiver = fir.explicitReceiver) {
-                    is FirPropertyAccessExpression -> explicitReceiver.resolvedType.asKtType()
-                    else -> fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
+                    is FirPropertyAccessExpression -> {
+                        explicitReceiver.resolvedType.asKtType()
+                    }
+                    is FirResolvedQualifier -> {
+                        explicitReceiver.symbol?.toLookupTag()?.constructType(
+                            explicitReceiver.typeArguments.map { it.toConeTypeProjection() }.toTypedArray(),
+                            isNullable = false
+                        )?.asKtType()
+                            ?: fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
+                    }
+                    else -> {
+                        fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
+                    }
                 }
             }
             else -> {

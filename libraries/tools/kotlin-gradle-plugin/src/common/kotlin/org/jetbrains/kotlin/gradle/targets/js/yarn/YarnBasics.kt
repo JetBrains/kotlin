@@ -8,17 +8,16 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.logging.Logger
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmEnvironment
-import org.jetbrains.kotlin.gradle.targets.js.npm.YarnEnvironment
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
+import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
 import java.io.File
 
-abstract class YarnBasics : NpmApi {
+abstract class YarnBasics : NpmApiExecution<YarnEnvironment> {
 
     fun yarnExec(
         services: ServiceRegistry,
         logger: Logger,
-        nodeJs: NpmEnvironment,
+        nodeJs: NodeJsEnvironment,
         yarn: YarnEnvironment,
         dir: File,
         description: String,
@@ -35,11 +34,7 @@ abstract class YarnBasics : NpmApi {
 
             val nodeExecutable = nodeJs.nodeExecutable
             if (!yarn.ignoreScripts) {
-                val nodePath = if (nodeJs.isWindows) {
-                    File(nodeExecutable).parent
-                } else {
-                    nodeExecutable
-                }
+                val nodePath = File(nodeExecutable).parent
                 exec.environment(
                     "PATH",
                     "$nodePath${File.pathSeparator}${System.getenv("PATH")}"

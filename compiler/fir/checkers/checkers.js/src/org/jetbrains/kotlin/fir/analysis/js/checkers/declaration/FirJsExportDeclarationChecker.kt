@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.isExportedObject
 import org.jetbrains.kotlin.fir.analysis.js.checkers.sanitizeName
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.isEnumEntries
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -242,7 +242,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
 
         val jsNameArgument = declaration.symbol.getAnnotationFirstArgument(JsStandardClassIds.Annotations.JsName, context.session)
         val reportTarget = jsNameArgument?.source ?: declaration.source
-        val name = (jsNameArgument as? FirConstExpression<*>)?.value as? String ?: declaration.nameOrSpecialName.asString()
+        val name = (jsNameArgument as? FirLiteralExpression<*>)?.value as? String ?: declaration.nameOrSpecialName.asString()
 
         if (name in SPECIAL_KEYWORDS || (name !in RESERVED_KEYWORDS && sanitizeName(name) == name)) {
             return

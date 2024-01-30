@@ -74,7 +74,7 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitContinueExpression(continueExpression: FirContinueExpression) = visitLoopJump(continueExpression)
 
-    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>) = visitExpression(constExpression)
+    override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>) = visitExpression(literalExpression)
 
     override fun visitStarProjection(starProjection: FirStarProjection) = visitTypeProjection(starProjection)
 

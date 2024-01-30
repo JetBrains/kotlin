@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -100,7 +100,7 @@ class Fir2IrLazyProperty(
                 components, fir.returnTypeRef.coneType
             )
             // Setting initializers to every other class causes some cryptic errors in lowerings
-            initializer is FirConstExpression<*> -> {
+            initializer is FirLiteralExpression<*> -> {
                 val constType = with(typeConverter) { initializer.resolvedType.toIrType() }
                 factory.createExpressionBody(initializer.toIrConst(constType))
             }

@@ -14,7 +14,19 @@ import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
 
 fun interface KtModuleFactory : TestService {
-    fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles
+    /**
+     * Creates a [KtModule](org.jetbrains.kotlin.analysis.project.structure.KtModule) for the given [testModule].
+     *
+     * @param contextModule a module to use as a context module. Some kinds of modules (such as dangling file modules) require a
+     * context module. Modules representing code fragments also require a context element – that is why the [KtModuleWithFiles] is passed,
+     * instead of a plain (KtModule)[org.jetbrains.kotlin.analysis.project.structure.KtModule].
+     */
+    fun createModule(
+        testModule: TestModule,
+        contextModule: KtModuleWithFiles?,
+        testServices: TestServices,
+        project: Project,
+    ): KtModuleWithFiles
 }
 
 private val TestServices.ktModuleFactory: KtModuleFactory by TestServices.testServiceAccessor()
@@ -27,7 +39,7 @@ private val TestServices.ktModuleFactory: KtModuleFactory by TestServices.testSe
  * [MODULE_KIND][org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives.MODULE_KIND] directive for a specific test module.
  *
  * [DependencyKindModuleStructureTransformer][org.jetbrains.kotlin.analysis.test.framework.services.DependencyKindModuleStructureTransformer]
- * should be used to properly set up [DependencyKind][org.jetbrains.kotlin.test.model.DependencyKind] for module dependencies
+ * should be used to properly set up the [DependencyKind][org.jetbrains.kotlin.test.model.DependencyKind] for module dependencies.
  *
  * @see org.jetbrains.kotlin.analysis.test.framework.services.DependencyKindModuleStructureTransformer
  */
@@ -36,5 +48,6 @@ fun TestServices.getKtModuleFactoryForTestModule(testModule: TestModule): KtModu
     TestModuleKind.LibraryBinary -> KtLibraryBinaryModuleFactory
     TestModuleKind.LibrarySource -> KtLibrarySourceModuleFactory
     TestModuleKind.ScriptSource -> KtScriptModuleFactory
+    TestModuleKind.CodeFragment -> KtCodeFragmentModuleFactory
     else -> ktModuleFactory
 }

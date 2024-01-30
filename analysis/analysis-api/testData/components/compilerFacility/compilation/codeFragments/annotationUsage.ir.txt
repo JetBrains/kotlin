@@ -9,5 +9,5 @@ MODULE_FRAGMENT
         EXPRESSION_BODY
           BLOCK type=kotlin.Int origin=null
             CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
-              $this: CALL 'public final fun foo (): kotlin.Int declared in <root>.MainKt' type=kotlin.Int origin=null
-              other: CALL 'public final fun bar (): kotlin.Int declared in <root>.MainKt' type=kotlin.Int origin=null
+              $this: CALL 'public final fun foo (): kotlin.Int declared in <root>.ContextKt' type=kotlin.Int origin=null
+              other: CALL 'public final fun bar (): kotlin.Int declared in <root>.ContextKt' type=kotlin.Int origin=null

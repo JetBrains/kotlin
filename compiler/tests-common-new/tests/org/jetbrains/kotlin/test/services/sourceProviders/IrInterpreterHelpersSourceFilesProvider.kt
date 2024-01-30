@@ -17,7 +17,10 @@ import java.io.File
 class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
         private const val HELPERS_PATH = "./compiler/testData/ir/interpreter/helpers"
-        private const val UNSIGNED_PATH = "./libraries/stdlib/unsigned/src/kotlin"
+        private val UNSIGNED_PATH = arrayOf(
+            "./libraries/stdlib/unsigned/src/kotlin",
+            "./libraries/stdlib/jvm/src/kotlin/util/UnsignedJVM.kt"
+        )
         private val RUNTIME_PATHS = arrayOf(
             "./libraries/stdlib/src/kotlin/ranges/Progressions.kt",
             "./libraries/stdlib/src/kotlin/ranges/ProgressionIterators.kt",
@@ -60,6 +63,12 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
     }
 
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
-        return getTestFilesForEachDirectory(HELPERS_PATH, UNSIGNED_PATH, *RUNTIME_PATHS, *ANNOTATIONS_PATHS, REFLECT_PATH)
+        return getTestFilesForEachDirectory(
+            HELPERS_PATH,
+            *UNSIGNED_PATH,
+            *RUNTIME_PATHS,
+            *ANNOTATIONS_PATHS,
+            REFLECT_PATH
+        )
     }
 }

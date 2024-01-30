@@ -1,0 +1,2 @@
+expression: a.externalNotNullMethod()
+type: kotlin.String

@@ -11,7 +11,7 @@ jdom2 = "2.0.6.1"
 kotlinx-serialization = "1.5.0"
 shadow = "8.1.1" # Should be in sync with version in kotlin-native/
 spdx = "0.1.0-dev-10"
-proguard = "6.2.2"
+proguard = "7.4.1"
 ktor = "2.3.7"
 kotlinx-metadataJvm = "0.7.0"
 # Forcing gson version because of https://github.com/google/gson/pull/1991
@@ -38,7 +38,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-metadataJvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinx-metadataJvm" }
 shadow-gradlePlugin = { module = "com.github.johnrengelman:shadow", version.ref = "shadow" }
 spdx-gradlePlugin = { module = "org.spdx:spdx-gradle-plugin", version.ref = "spdx" }
-proguard-gradlePlugin = { module = "net.sf.proguard:proguard-gradle", version.ref = "proguard" }
+proguard-gradlePlugin = { module = "com.guardsquare:proguard-gradle", version.ref = "proguard" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }

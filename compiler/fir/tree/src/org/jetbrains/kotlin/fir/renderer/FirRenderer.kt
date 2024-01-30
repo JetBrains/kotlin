@@ -699,10 +699,10 @@ class FirRenderer(
             print("LAZY_EXPRESSION")
         }
 
-        override fun <T> visitConstExpression(constExpression: FirConstExpression<T>) {
-            annotationRenderer?.render(constExpression)
-            val kind = constExpression.kind
-            val value = constExpression.value
+        override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>) {
+            annotationRenderer?.render(literalExpression)
+            val kind = literalExpression.kind
+            val value = literalExpression.value
             print("$kind(")
             if (value !is Char) {
                 print(value.toString())

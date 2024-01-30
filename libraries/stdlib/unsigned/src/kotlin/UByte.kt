@@ -342,14 +342,14 @@ public value class UByte @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
      * The resulting `Float` value represents the same numerical value as this `UByte`.
      */
     @kotlin.internal.InlineOnly
-    public inline fun toFloat(): Float = this.toInt().toFloat()
+    public inline fun toFloat(): Float = uintToFloat(this.toInt())
     /**
      * Converts this [UByte] value to [Double].
      *
      * The resulting `Double` value represents the same numerical value as this `UByte`.
      */
     @kotlin.internal.InlineOnly
-    public inline fun toDouble(): Double = this.toInt().toDouble()
+    public inline fun toDouble(): Double = uintToDouble(this.toInt())
 
     public override fun toString(): String = toInt().toString()
 

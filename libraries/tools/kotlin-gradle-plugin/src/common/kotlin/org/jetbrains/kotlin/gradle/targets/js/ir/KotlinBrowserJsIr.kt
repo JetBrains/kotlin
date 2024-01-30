@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
+import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import javax.inject.Inject
@@ -41,10 +42,8 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     private val nodeJs = project.rootProject.kotlinNodeJsExtension
 
-    private val webpackTaskConfigurations: DomainObjectSet<Action<KotlinWebpack>> = project.objects.domainObjectSet(Action::class.java)
-            as DomainObjectSet<Action<KotlinWebpack>>
-    private val runTaskConfigurations: DomainObjectSet<Action<KotlinWebpack>> = project.objects.domainObjectSet(Action::class.java)
-            as DomainObjectSet<Action<KotlinWebpack>>
+    private val webpackTaskConfigurations = project.objects.domainObjectSet<Action<KotlinWebpack>>()
+    private val runTaskConfigurations = project.objects.domainObjectSet<Action<KotlinWebpack>>()
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -52,9 +51,9 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override fun configureTestDependencies(test: KotlinJsTest) {
         test.dependsOn(
             nodeJs.npmInstallTaskProvider,
-            nodeJs.storeYarnLockTaskProvider,
             nodeJs.nodeJsSetupTaskProvider
         )
+        test.dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {
@@ -76,13 +75,13 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         runTaskConfigurations.add {
             it.webpackConfigApplier(body)
         }
-        testTask(Action {
+        testTask {
             it.onTestFrameworkSet {
                 if (it is KotlinKarma) {
                     body.execute(it.webpackConfig)
                 }
             }
-        })
+        }
     }
 
     override fun runTask(body: Action<KotlinWebpack>) {
@@ -242,7 +241,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         )
                     }
 
-                    copy.into(binary.distribution.directory)
+                    copy.into(binary.distribution.outputDirectory)
                 }
 
                 if (mode == KotlinJsBinaryMode.PRODUCTION) {
@@ -267,9 +266,10 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     ) {
         dependsOn(
             nodeJs.npmInstallTaskProvider,
-            nodeJs.storeYarnLockTaskProvider,
             target.project.tasks.named(compilation.processResourcesTaskName)
         )
+
+        dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
 
         configureOptimization(mode)
 

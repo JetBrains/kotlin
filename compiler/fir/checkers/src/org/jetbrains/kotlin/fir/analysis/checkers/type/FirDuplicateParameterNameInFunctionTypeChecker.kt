@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.customAnnotations
@@ -26,7 +26,7 @@ object FirDuplicateParameterNameInFunctionTypeChecker : FirTypeRefChecker(MppChe
             val type = it.type ?: return@groupBy null
             val annotation = type.customAnnotations.getAnnotationByClassId(StandardNames.FqNames.parameterNameClassId, context.session)
             val nameEntry = annotation?.argumentMapping?.mapping?.get(StandardNames.NAME)
-            (nameEntry as? FirConstExpression<*>)?.value as? String
+            (nameEntry as? FirLiteralExpression<*>)?.value as? String
         }
 
         for ((name, projections) in nameToArgumentProjection) {

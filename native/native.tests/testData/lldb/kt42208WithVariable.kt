@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-// LLDB_TRACE: kt42208WithVariable.txt
+// FIR_IDENTICAL
 // FILE: kt42208-1.kt
 fun main() {
     val a = foo()

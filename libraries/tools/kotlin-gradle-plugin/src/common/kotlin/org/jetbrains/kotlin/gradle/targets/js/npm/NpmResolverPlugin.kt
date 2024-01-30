@@ -30,8 +30,9 @@ class NpmResolverPlugin : Plugin<Project> {
                         }
                         task.dependsOn(
                             kotlinNodeJsTaskProvidersExtension.npmInstallTaskProvider,
-                            kotlinNodeJsTaskProvidersExtension.storeYarnLockTaskProvider,
                         )
+
+                        task.dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
                     }
                 }
         }

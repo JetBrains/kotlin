@@ -14,9 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAcces
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.toReference
+import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
@@ -311,9 +310,9 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
             if (dispatchReceiverParameterClassLookupTag != dispatchReceiverValueOwnerLookupTag) return false
             if (fir.visibility == Visibilities.PrivateToThis) {
-                when (val dispatchReceiverReference = dispatchReceiver.toReference()) {
-                    is FirThisReference -> {
-                        if (dispatchReceiverReference.boundSymbol != dispatchReceiverParameterClassSymbol) {
+                when (dispatchReceiver) {
+                    is FirThisReceiverExpression -> {
+                        if (dispatchReceiver.calleeReference.boundSymbol != dispatchReceiverParameterClassSymbol) {
                             return false
                         }
                     }

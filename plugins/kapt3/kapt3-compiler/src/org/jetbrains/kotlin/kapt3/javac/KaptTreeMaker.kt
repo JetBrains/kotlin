@@ -49,7 +49,7 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
 
     @Suppress("FunctionName")
     fun FqName(internalOrFqName: String): JCTree.JCExpression {
-        val path = getQualifiedName(internalOrFqName).convertSpecialFqName().split('.')
+        val path = getQualifiedName(internalOrFqName).split('.')
         assert(path.isNotEmpty())
         return FqName(path)
     }
@@ -139,15 +139,6 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
 
             dollarIndex = this.indexOf('$', startIndex = dollarIndex + 1)
         }
-    }
-
-    private fun String.convertSpecialFqName(): String {
-        // Hard-coded in ImplementationBodyCodegen, KOTLIN_MARKER_INTERFACES
-        if (this == "kotlin.jvm.internal.markers.KMutableMap\$Entry") {
-            return replace('$', '.')
-        }
-
-        return this
     }
 
     private fun convertBuiltinType(type: Type): JCTree.JCExpression? {

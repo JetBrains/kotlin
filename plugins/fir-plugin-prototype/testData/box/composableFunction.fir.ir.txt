@@ -20,9 +20,9 @@ FILE fqName:<root> fileName:/composableFunction.kt
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
                   VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
-                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=null
+                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=POSTFIX_INCR
                   SET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Unit origin=POSTFIX_INCR
-                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                       $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
                   GET_VAR 'val tmp_0: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
               GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
@@ -33,9 +33,9 @@ FILE fqName:<root> fileName:/composableFunction.kt
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
                   VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
-                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=null
+                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=POSTFIX_INCR
                   SET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Unit origin=POSTFIX_INCR
-                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                       $this: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
                   GET_VAR 'val tmp_1: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
               GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
@@ -46,9 +46,9 @@ FILE fqName:<root> fileName:/composableFunction.kt
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
                   VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
-                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=null
+                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=POSTFIX_INCR
                   SET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Unit origin=POSTFIX_INCR
-                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                       $this: GET_VAR 'val tmp_2: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
                   GET_VAR 'val tmp_2: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
       VAR name:l3 type:kotlin.Function0<kotlin.Unit> [val]
@@ -60,9 +60,9 @@ FILE fqName:<root> fileName:/composableFunction.kt
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
                   VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
-                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=null
+                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=POSTFIX_INCR
                   SET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Unit origin=POSTFIX_INCR
-                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                       $this: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
                   GET_VAR 'val tmp_3: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
               GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
@@ -75,9 +75,9 @@ FILE fqName:<root> fileName:/composableFunction.kt
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
                   VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [val]
-                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=null
+                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=POSTFIX_INCR
                   SET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Unit origin=POSTFIX_INCR
-                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                       $this: GET_VAR 'val tmp_4: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
                   GET_VAR 'val tmp_4: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
       CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -95,9 +95,9 @@ FILE fqName:<root> fileName:/composableFunction.kt
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
                   VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Int [val]
-                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=null
+                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=POSTFIX_INCR
                   SET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Unit origin=POSTFIX_INCR
-                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                       $this: GET_VAR 'val tmp_5: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
                   GET_VAR 'val tmp_5: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
       CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -109,9 +109,9 @@ FILE fqName:<root> fileName:/composableFunction.kt
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
                   VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:kotlin.Int [val]
-                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=null
+                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=POSTFIX_INCR
                   SET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Unit origin=POSTFIX_INCR
-                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                       $this: GET_VAR 'val tmp_6: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
                   GET_VAR 'val tmp_6: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
       RETURN type=kotlin.Nothing from='public final fun test_1 (): kotlin.Int declared in <root>'

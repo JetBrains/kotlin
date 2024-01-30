@@ -51,7 +51,7 @@ class FirAnnotationTypeQualifierResolver(
             is FirArrayLiteral -> arguments.flatMap { it.toEnumNames() }
             is FirVarargArgumentsExpression -> arguments.flatMap { it.toEnumNames() }
             else -> {
-                val name = when (val reference = toReference()) {
+                val name = when (val reference = toReference(session)) {
                     is FirResolvedNamedReference ->
                         (reference.resolvedSymbol as? FirCallableSymbol<*>)?.callableId?.callableName?.asString()
                     is FirFromMissingDependenciesNamedReference -> reference.name.asString()

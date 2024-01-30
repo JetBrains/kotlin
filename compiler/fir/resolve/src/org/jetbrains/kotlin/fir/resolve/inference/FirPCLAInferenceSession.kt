@@ -63,7 +63,7 @@ class FirPCLAInferenceSession(
 
         // Integrating back would happen at FirDelegatedPropertyInferenceSession.completeSessionOrPostponeIfNonRoot
         // after all other delegation-related calls are being analyzed
-        if (resolutionMode == ResolutionMode.ContextDependent.Delegate) return
+        if (resolutionMode == ResolutionMode.Delegate) return
 
         currentCommonSystem.replaceContentWith(candidate.system.currentStorage())
 
@@ -211,7 +211,7 @@ class FirPCLAInferenceSession(
         }
         if (callInfo.arguments.any { it.isQualifiedAccessContainingTypeVariables() || it.doesArgumentUseOuterCS() }) return true
 
-        if (callInfo.resolutionMode is ResolutionMode.ContextDependent.Delegate) return true
+        if (callInfo.resolutionMode is ResolutionMode.Delegate) return true
 
         // For assignments like myVarContainingTV = SomeCallWithNonTrivialInference(...)
         // We should integrate the call into the PCLA tree, too

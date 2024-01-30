@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.utils.newFileProperty
 @DisableCachingByDefault
 open class D8Exec : AbstractExecTask<D8Exec>(D8Exec::class.java) {
     init {
-        onlyIf {
+        this.onlyIf {
             !inputFileProperty.isPresent || inputFileProperty.asFile.map { it.exists() }.get()
         }
     }
@@ -65,7 +65,7 @@ open class D8Exec : AbstractExecTask<D8Exec>(D8Exec::class.java) {
             ) {
                 it.executable = d8.requireConfigured().executablePath.absolutePath
                 it.dependsOn(d8.setupTaskProvider)
-                it.dependsOn(compilation.compileKotlinTaskProvider)
+                it.dependsOn(compilation.compileTaskProvider)
                 if (compilation.platformType == KotlinPlatformType.wasm) {
                     it.d8Args.addWasmExperimentalArguments()
                 }

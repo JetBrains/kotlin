@@ -34,4 +34,9 @@ object AnalysisApiTestDirectives : SimpleDirectivesContainer() {
         description = "Mark the module as main",
         applicability = DirectiveApplicability.Module,
     )
+
+    val CONTEXT_MODULE by stringDirective(
+        description = "Specifies the module name which should be treated as a context module for the current one",
+        applicability = DirectiveApplicability.Module
+    )
 }

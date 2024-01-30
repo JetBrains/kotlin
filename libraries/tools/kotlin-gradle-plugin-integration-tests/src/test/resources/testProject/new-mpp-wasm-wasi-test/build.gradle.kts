@@ -20,9 +20,9 @@ allprojects.forEach {
     }
 }
 
-tasks.named<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask>("kotlinStoreYarnLock") {
+tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask>("kotlinStorePackageLock") {
     //A little hacky way to make yarn results
-    inputFile.fileValue(projectDir.resolve("yarnLockStub"))
+    inputFile.fileValue(projectDir.resolve("packageLockStub"))
 }
 
 repositories {

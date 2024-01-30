@@ -90,19 +90,22 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
                 conflictingDeclaration.isPrimaryConstructor && symbols.all { it.isPrimaryConstructor }
             ) return@forEach
 
-            val factory =
-                if (conflictingDeclaration is FirNamedFunctionSymbol || conflictingDeclaration is FirConstructorSymbol) {
-                    FirErrors.CONFLICTING_OVERLOADS
-                } else if (conflictingDeclaration is FirClassLikeSymbol<*> &&
-                    conflictingDeclaration.getContainingClassSymbol(context.session) == null &&
-                    symbols.any { it is FirClassLikeSymbol<*> }
-                ) {
-                    FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION
-                } else {
-                    FirErrors.REDECLARATION
+            when {
+                symbols.singleOrNull()?.let { isExpectAndActual(conflictingDeclaration, it) } == true -> {
+                    reporter.reportOn(source, FirErrors.EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, conflictingDeclaration, context)
                 }
-
-            reporter.reportOn(source, factory, symbols, context)
+                conflictingDeclaration is FirNamedFunctionSymbol || conflictingDeclaration is FirConstructorSymbol -> {
+                    reporter.reportOn(source, FirErrors.CONFLICTING_OVERLOADS, symbols, context)
+                }
+                conflictingDeclaration is FirClassLikeSymbol<*> &&
+                        conflictingDeclaration.getContainingClassSymbol(context.session) == null &&
+                        symbols.any { it is FirClassLikeSymbol<*> } -> {
+                    reporter.reportOn(source, FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION, symbols, context)
+                }
+                else -> {
+                    reporter.reportOn(source, FirErrors.REDECLARATION, symbols, context)
+                }
+            }
         }
     }
 

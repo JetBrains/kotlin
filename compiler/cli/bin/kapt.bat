@@ -6,5 +6,6 @@ rem Use of this source code is governed by the Apache 2.0 license that can be fo
 setlocal
 set _KOTLIN_COMPILER=org.jetbrains.kotlin.kapt.cli.KaptCli
 set _KOTLIN_TOOL=kotlin-annotation-processing-cli.jar
+if "%JAVA_OPTS%"=="" set JAVA_OPTS=-Xmx512M -Xms128M
 
 call %~dps0kotlinc.bat %*

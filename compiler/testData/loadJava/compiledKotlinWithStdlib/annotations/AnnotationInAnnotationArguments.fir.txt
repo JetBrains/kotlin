@@ -1,4 +1,4 @@
-@R|test/OptionGroups|(o1 = @R|test/StringOptions|(option = <implicitArrayOf>(String(abc), String(d), String(ef))) , o2 = @R|test/EnumOption|(option = R|test/E.ENTRY|) ) public final class AnnotationInAnnotationArguments : R|kotlin/Any| {
+@R|test/OptionGroups|(o1 = @R|test/StringOptions|(option = <implicitArrayOf>(String(abc), String(d), String(ef))) , o2 = @R|test/EnumOption|(option = test/E.ENTRY) ) public final class AnnotationInAnnotationArguments : R|kotlin/Any| {
     public constructor(): R|test/AnnotationInAnnotationArguments|
 
 }

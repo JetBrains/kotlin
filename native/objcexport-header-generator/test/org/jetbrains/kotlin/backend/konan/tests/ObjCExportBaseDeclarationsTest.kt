@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.tests
 
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 import org.jetbrains.kotlin.backend.konan.objcexport.StubRenderer
+import org.jetbrains.kotlin.backend.konan.testUtils.TodoAnalysisApi
 import org.jetbrains.kotlin.backend.konan.testUtils.baseDeclarationsDir
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.Test
@@ -25,11 +26,13 @@ class ObjCExportBaseDeclarationsTest(
 ) {
 
     @Test
+    @TodoAnalysisApi
     fun `test - noTopLevelPrefix`() {
         doTest(baseDeclarationsDir.resolve("!noTopLevelPrefix.h"), "")
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - topLevelPrefix`() {
         doTest(baseDeclarationsDir.resolve("!topLevelPrefix.h"), "MyTopLevelPrefix")
     }

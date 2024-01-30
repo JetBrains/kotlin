@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -132,7 +132,7 @@ class FirJavaElementFinder(
     private fun FirFile.jvmName(): String {
         val jvmNameAnnotation = this.findJvmNameAnnotation()
         val jvmName = jvmNameAnnotation?.findArgumentByName(StandardNames.NAME)
-        val jvmNameValue = (jvmName as? FirConstExpression<*>)?.value as? String
+        val jvmNameValue = (jvmName as? FirLiteralExpression<*>)?.value as? String
         return jvmNameValue ?: (this.name.removeSuffix(".kt").capitalizeAsciiOnly() + "Kt")
     }
 
@@ -211,7 +211,7 @@ class FirJavaElementFinder(
     }
 
     private fun FirAnnotation.findTargets(): List<String> = buildList {
-        forEachAnnotationTarget { add(it.identifier) }
+        forEachAnnotationTarget(session) { add(it.identifier) }
     }
 
     private fun buildFieldStubForConst(firProperty: FirProperty, classStub: PsiClassStubImpl<ClsClassImpl>) {

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
@@ -533,7 +533,7 @@ class FirSignatureEnhancement(
     private fun getPurelyImplementedSupertype(session: FirSession): ConeKotlinType? {
         val purelyImplementedClassIdFromAnnotation = owner.annotations
             .firstOrNull { it.unexpandedClassId?.asSingleFqName() == JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION }
-            ?.let { (it.argumentMapping.mapping.values.firstOrNull() as? FirConstExpression<*>) }
+            ?.let { (it.argumentMapping.mapping.values.firstOrNull() as? FirLiteralExpression<*>) }
             ?.let { it.value as? String }
             ?.takeIf { it.isNotBlank() && isValidJavaFqName(it) }
             ?.let { ClassId.topLevel(FqName(it)) }

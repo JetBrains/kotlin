@@ -9,13 +9,11 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.invocation.Gradle
-import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.gradle.plugin.statistics.plugins.ObservablePlugins
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
-import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import kotlin.system.measureTimeMillis
 
@@ -220,47 +218,3 @@ private fun reportLibrariesVersions(
     }
 }
 
-internal fun reportGlobalMetrics(logger: Logger, metricConsumer: StatisticsValuesConsumer) {
-    runMetricMethodSafely(logger, "reportGlobalMetrics") {
-        System.getProperty("os.name")?.also { metricConsumer.report(StringMetrics.OS_TYPE, System.getProperty("os.name")) }
-        metricConsumer.report(NumericalMetrics.CPU_NUMBER_OF_CORES, Runtime.getRuntime().availableProcessors().toLong())
-        metricConsumer.report(BooleanMetrics.EXECUTED_FROM_IDEA, System.getProperty("idea.active") != null)
-        metricConsumer.report(NumericalMetrics.GRADLE_DAEMON_HEAP_SIZE, Runtime.getRuntime().maxMemory())
-        metricConsumer.report(NumericalMetrics.GRADLE_BUILD_NUMBER_IN_CURRENT_DAEMON, DaemonReuseCounter.incrementAndGetOrdinal())
-    }
-}
-
-internal fun reportBuildFinished(
-    logger: Logger,
-    buildFailed: Boolean,
-    buildStartedTime: Long?,
-    projectEvaluatedTime: Long?,
-    metricsContainer: NonSynchronizedMetricsContainer,
-) {
-    runMetricMethodSafely(logger, "reportBuildFinish") {
-        val finishTime = System.currentTimeMillis()
-        if (buildStartedTime != null) {
-            metricsContainer.report(NumericalMetrics.GRADLE_BUILD_DURATION, finishTime - buildStartedTime)
-        }
-        if (projectEvaluatedTime != null) {
-            metricsContainer.report(NumericalMetrics.GRADLE_EXECUTION_DURATION, finishTime - projectEvaluatedTime)
-        }
-        metricsContainer.report(NumericalMetrics.BUILD_FINISH_TIME, finishTime)
-        metricsContainer.report(BooleanMetrics.BUILD_FAILED, buildFailed)
-    }
-}
-
-internal fun getMetricToReport(task: String) = when (task.substringAfterLast(":")) {
-    "dokkaHtml" -> BooleanMetrics.ENABLED_DOKKA_HTML
-    "dokkaGfm" -> BooleanMetrics.ENABLED_DOKKA_GFM
-    "dokkaJavadoc" -> BooleanMetrics.ENABLED_DOKKA_JAVADOC
-    "dokkaJekyll" -> BooleanMetrics.ENABLED_DOKKA_JEKYLL
-    "dokkaHtmlMultiModule" -> BooleanMetrics.ENABLED_DOKKA_HTML_MULTI_MODULE
-    "dokkaGfmMultiModule" -> BooleanMetrics.ENABLED_DOKKA_GFM_MULTI_MODULE
-    "dokkaJekyllMultiModule" -> BooleanMetrics.ENABLED_DOKKA_JEKYLL_MULTI_MODULE
-    "dokkaHtmlCollector" -> BooleanMetrics.ENABLED_DOKKA_HTML_COLLECTOR
-    "dokkaGfmCollector" -> BooleanMetrics.ENABLED_DOKKA_GFM_COLLECTOR
-    "dokkaJavadocCollector" -> BooleanMetrics.ENABLED_DOKKA_JAVADOC_COLLECTOR
-    "dokkaJekyllCollector" -> BooleanMetrics.ENABLED_DOKKA_JEKYLL_COLLECTOR
-    else -> null
-}

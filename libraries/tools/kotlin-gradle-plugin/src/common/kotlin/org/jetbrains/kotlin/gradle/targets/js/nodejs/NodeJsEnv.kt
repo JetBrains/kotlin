@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.jetbrains.kotlin.gradle.targets.js.AbstractEnv
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
 
@@ -17,7 +17,7 @@ data class NodeJsEnv(
     override val ivyDependency: String,
     override val downloadBaseUrl: String?,
 
-    val packageManager: NpmApi,
+    val packageManager: NpmApiExecution<PackageManagerEnvironment>,
 ) : AbstractEnv {
     val isWindows: Boolean
         get() = platformName == "win"

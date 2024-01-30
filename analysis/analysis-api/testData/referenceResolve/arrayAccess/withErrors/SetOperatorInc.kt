@@ -1,4 +1,3 @@
-// UNRESOLVED_REFERENCE
 package test
 
 class B(val n: Int) {

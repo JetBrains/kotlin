@@ -7,17 +7,24 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NpmApiExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.RESTORE_YARN_LOCK_NAME
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.STORE_YARN_LOCK_NAME
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
 
 open class YarnRootExtension(
     val project: Project
-) : AbstractSettings<YarnEnv>() {
+) : AbstractSettings<YarnEnv>(), NpmApiExtension<YarnEnvironment, Yarn> {
     init {
         check(project == project.rootProject)
     }
@@ -25,6 +32,24 @@ open class YarnRootExtension(
     private val gradleHome = project.gradle.gradleUserHomeDir.also {
         project.logger.kotlinInfo("Storing cached files in $it")
     }
+
+    override val packageManager: Yarn by lazy {
+        Yarn()
+    }
+
+    override val environment: YarnEnvironment by lazy {
+        requireConfigured().asYarnEnvironment
+    }
+
+    override val additionalInstallOutput: FileCollection = project.objects.fileCollection().from(
+        {
+            nodeJsEnvironment.get().rootPackageDir.resolve(LockCopyTask.YARN_LOCK)
+        }
+    )
+
+    override val preInstallTasks: ListProperty<TaskProvider<*>> = project.objects.listProperty(TaskProvider::class.java)
+
+    override val postInstallTasks: ListProperty<TaskProvider<*>> = project.objects.listProperty(TaskProvider::class.java)
 
     override var installationDir by Property(gradleHome.resolve("yarn"))
 
@@ -34,8 +59,8 @@ open class YarnRootExtension(
     override var command by Property("yarn")
 
     override var download by Property(true)
-    var lockFileName by Property("yarn.lock")
-    var lockFileDirectory: File by Property(project.rootDir.resolve("kotlin-js-store"))
+    var lockFileName by Property(LockCopyTask.YARN_LOCK)
+    var lockFileDirectory: File by Property(project.rootDir.resolve(LockCopyTask.KOTLIN_JS_STORE))
 
     var ignoreScripts by Property(true)
 
@@ -49,11 +74,6 @@ open class YarnRootExtension(
         get() = project.tasks
             .withType(YarnSetupTask::class.java)
             .named(YarnSetupTask.NAME)
-
-    val rootPackageJsonTaskProvider: TaskProvider<RootPackageJsonTask>
-        get() = project.tasks
-            .withType(RootPackageJsonTask::class.java)
-            .named(RootPackageJsonTask.NAME)
 
     internal val platform: org.gradle.api.provider.Property<Platform> = project.objects.property(Platform::class.java)
 
@@ -71,6 +91,8 @@ open class YarnRootExtension(
             it.include(version)
         })
     }
+
+    internal val nodeJsEnvironment: org.gradle.api.provider.Property<NodeJsEnv> = project.objects.property(NodeJsEnv::class.java)
 
     override fun finalizeConfiguration(): YarnEnv {
         val cleanableStore = CleanableStore[installationDir.path]
@@ -93,7 +115,6 @@ open class YarnRootExtension(
             cleanableStore = cleanableStore,
             dir = home,
             executable = getExecutable("yarn", command, "cmd"),
-            standalone = !download,
             ivyDependency = "com.yarnpkg:yarn:$version@tar.gz",
             ignoreScripts = ignoreScripts,
             yarnLockMismatchReport = yarnLockMismatchReport,
@@ -102,6 +123,12 @@ open class YarnRootExtension(
             yarnResolutions = resolutions
         )
     }
+
+    val restoreYarnLockTaskProvider: TaskProvider<YarnLockCopyTask>
+        get() = project.tasks.withType(YarnLockCopyTask::class.java).named(RESTORE_YARN_LOCK_NAME)
+
+    val storeYarnLockTaskProvider: TaskProvider<YarnLockStoreTask>
+        get() = project.tasks.withType(YarnLockStoreTask::class.java).named(STORE_YARN_LOCK_NAME)
 
     companion object {
         const val YARN: String = "kotlinYarn"

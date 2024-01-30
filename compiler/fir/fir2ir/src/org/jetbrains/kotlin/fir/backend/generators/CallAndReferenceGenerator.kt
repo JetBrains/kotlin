@@ -319,17 +319,10 @@ class CallAndReferenceGenerator(
                 else -> error("Unexpected name")
             }
 
-            is KtFakeSourceElementKind.DesugaredPrefixNameReference -> when (calleeReference.resolved?.name) {
-                OperatorNameConventions.INC -> IrDynamicOperator.PREFIX_INCREMENT
-                OperatorNameConventions.DEC -> IrDynamicOperator.PREFIX_DECREMENT
-                else -> error("Unexpected name")
-            }
-
-            is KtFakeSourceElementKind.DesugaredPostfixNameReference -> when (calleeReference.resolved?.name) {
-                OperatorNameConventions.INC -> IrDynamicOperator.POSTFIX_INCREMENT
-                OperatorNameConventions.DEC -> IrDynamicOperator.POSTFIX_DECREMENT
-                else -> error("Unexpected name")
-            }
+            is KtFakeSourceElementKind.DesugaredPrefixInc -> IrDynamicOperator.PREFIX_INCREMENT
+            is KtFakeSourceElementKind.DesugaredPrefixDec -> IrDynamicOperator.PREFIX_DECREMENT
+            is KtFakeSourceElementKind.DesugaredPostfixInc -> IrDynamicOperator.POSTFIX_INCREMENT
+            is KtFakeSourceElementKind.DesugaredPostfixDec -> IrDynamicOperator.POSTFIX_DECREMENT
 
             is KtFakeSourceElementKind.DesugaredArrayAugmentedAssign -> when (calleeReference.resolved?.name) {
                 OperatorNameConventions.SET -> IrDynamicOperator.EQ
@@ -519,7 +512,8 @@ class CallAndReferenceGenerator(
                                     getterSymbol,
                                     typeArgumentsCount = property.typeParameters.size,
                                     valueArgumentsCount = property.contextReceivers.size,
-                                    origin = IrStatementOrigin.GET_PROPERTY,
+                                    origin = incOrDeclSourceKindToIrStatementOrigin[qualifiedAccess.source?.kind]
+                                        ?: IrStatementOrigin.GET_PROPERTY,
                                     superQualifierSymbol = dispatchReceiver?.superQualifierSymbol()
                                 )
                             }
@@ -549,7 +543,7 @@ class CallAndReferenceGenerator(
                             variable.irTypeForPotentiallyComponentCall(predefinedType = irType),
                             symbol,
                             origin = if (variableAsFunctionMode) IrStatementOrigin.VARIABLE_AS_FUNCTION
-                            else calleeReference.statementOrigin()
+                            else incOrDeclSourceKindToIrStatementOrigin[qualifiedAccess.source?.kind] ?: calleeReference.statementOrigin()
                         )
                     }
 
@@ -776,7 +770,7 @@ class CallAndReferenceGenerator(
                 )
             }
 
-            val firConstructorSymbol = annotation.toResolvedCallableSymbol() as? FirConstructorSymbol
+            val firConstructorSymbol = annotation.toResolvedCallableSymbol(session) as? FirConstructorSymbol
                 ?: run {
                     // Fallback for FirReferencePlaceholderForResolvedAnnotations from jar
                     val fir = coneType.lookupTag.toSymbol(session)?.fir as? FirClass
@@ -1021,7 +1015,7 @@ class CallAndReferenceGenerator(
                 putValueArgument(valueParameters.indexOf(parameter) + contextReceiverCount, irArgument)
             }
             if (visitor.annotationMode) {
-                val function = call.calleeReference?.toResolvedCallableSymbol()?.fir as? FirFunction
+                val function = call.toReference(session)?.toResolvedCallableSymbol()?.fir as? FirFunction
                 for ((index, parameter) in valueParameters.withIndex()) {
                     if (parameter.isVararg && !argumentMapping.containsValue(parameter)) {
                         val value = if (function?.itOrExpectHasDefaultParameterValue(index) == true) {
@@ -1132,7 +1126,7 @@ class CallAndReferenceGenerator(
             irConversionFunction: IrSimpleFunctionSymbol,
         ): IrExpression {
             return if (argument.isIntegerLiteralOrOperatorCall() ||
-                argument.calleeReference?.toResolvedCallableSymbol()?.let {
+                argument.toReference(session)?.toResolvedCallableSymbol()?.let {
                     it.resolvedStatus.isConst && it.isMarkedWithImplicitIntegerCoercion
                 } == true
             ) {

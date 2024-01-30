@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.resolved
 
 import org.gradle.api.logging.Logger
 import org.gradle.internal.service.ServiceRegistry
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmEnvironment
-import org.jetbrains.kotlin.gradle.targets.js.npm.YarnEnvironment
-import org.jetbrains.kotlin.gradle.targets.js.yarn.toVersionString
+import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
 import java.io.Serializable
 
 class KotlinRootNpmResolution(
@@ -25,8 +24,8 @@ class KotlinRootNpmResolution(
      */
     internal fun prepareInstallation(
         logger: Logger,
-        npmEnvironment: NpmEnvironment,
-        yarnEnvironment: YarnEnvironment,
+        nodeJsEnvironment: NodeJsEnvironment,
+        packageManagerEnvironment: PackageManagerEnvironment,
         npmResolutionManager: KotlinNpmResolutionManager,
     ): Installation {
         synchronized(projects) {
@@ -41,14 +40,12 @@ class KotlinRootNpmResolution(
                     )
                 }
 
-            npmEnvironment.packageManager.prepareRootProject(
-                npmEnvironment,
+            nodeJsEnvironment.packageManager.prepareRootProject(
+                nodeJsEnvironment,
+                packageManagerEnvironment,
                 rootProjectName,
                 rootProjectVersion,
-                logger,
                 projectResolutions,
-                yarnEnvironment.yarnResolutions
-                    .associate { it.path to it.toVersionString() },
             )
 
             return Installation(
@@ -63,15 +60,15 @@ class Installation(val compilationResolutions: Collection<PreparedKotlinCompilat
         args: List<String>,
         services: ServiceRegistry,
         logger: Logger,
-        npmEnvironment: NpmEnvironment,
-        yarnEnvironment: YarnEnvironment,
+        nodeJsEnvironment: NodeJsEnvironment,
+        packageManagerEnvironment: PackageManagerEnvironment,
     ) {
         synchronized(compilationResolutions) {
-            npmEnvironment.packageManager.resolveRootProject(
+            nodeJsEnvironment.packageManager.resolveRootProject(
                 services,
                 logger,
-                npmEnvironment,
-                yarnEnvironment,
+                nodeJsEnvironment,
+                packageManagerEnvironment,
                 compilationResolutions,
                 args
             )

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -61,9 +60,8 @@ class FirWasmKlibBackendFacade(
             serializeModuleIntoKlib(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,
                 configuration,
-                configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
                 inputArtifact.diagnosticReporter,
-                inputArtifact.sourceFiles,
+                inputArtifact.metadataSerializer,
                 klibPath = outputFile,
                 libraries.map { it.library },
                 inputArtifact.irModuleFragment,
@@ -73,9 +71,7 @@ class FirWasmKlibBackendFacade(
                 containsErrorCode = inputArtifact.hasErrors,
                 abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
                 jsOutputName = null
-            ) {
-                inputArtifact.serializeSingleFile(it)
-            }
+            )
         }
 
         // TODO: consider avoiding repeated libraries resolution

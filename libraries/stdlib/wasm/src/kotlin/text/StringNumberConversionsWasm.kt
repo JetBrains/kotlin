@@ -5,7 +5,6 @@
 
 package kotlin.text
 
-import kotlin.math.abs
 import kotlin.wasm.internal.wasm_f32_demote_f64
 
 /**
@@ -103,7 +102,7 @@ public actual fun String.toDoubleOrNull(): Double? {
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
-public actual fun Byte.toString(radix: Int): String = this.toLong().toString(radix)
+public actual fun Byte.toString(radix: Int): String = this.toInt().toString(radix)
 
 /**
  * Returns a string representation of this [Short] value in the specified [radix].
@@ -111,7 +110,7 @@ public actual fun Byte.toString(radix: Int): String = this.toLong().toString(rad
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
-public actual fun Short.toString(radix: Int): String = this.toLong().toString(radix)
+public actual fun Short.toString(radix: Int): String = this.toInt().toString(radix)
 
 /**
  * Returns a string representation of this [Int] value in the specified [radix].
@@ -119,7 +118,13 @@ public actual fun Short.toString(radix: Int): String = this.toLong().toString(ra
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
-public actual fun Int.toString(radix: Int): String = toLong().toString(radix)
+public actual fun Int.toString(radix: Int): String {
+    val isNegative = this < 0
+    val absValue = if (isNegative) -this else this
+    val absValueString = uintToString(absValue, checkRadix(radix))
+
+    return if (isNegative) "-$absValueString" else absValueString
+}
 
 /**
  * Returns a string representation of this [Long] value in the specified [radix].
@@ -128,28 +133,9 @@ public actual fun Int.toString(radix: Int): String = toLong().toString(radix)
  */
 @SinceKotlin("1.2")
 public actual fun Long.toString(radix: Int): String {
-    checkRadix(radix)
-
-    fun Long.getChar() = toInt().let { if (it < 10) '0' + it else 'a' + (it - 10) }
-
-    if (radix == 10) return toString()
-    if (this in 0 until radix) return getChar().toString()
-
     val isNegative = this < 0
-    val buffer = CharArray(Long.SIZE_BITS + 1)
+    val absValue = if (isNegative) -this else this
+    val absValueString = ulongToString(absValue, checkRadix(radix))
 
-    var currentBufferIndex = buffer.lastIndex
-    var current: Long = this
-    while(current != 0L) {
-        buffer[currentBufferIndex] = abs(current % radix).getChar()
-        current /= radix
-        currentBufferIndex--
-    }
-
-    if (isNegative) {
-        buffer[currentBufferIndex] = '-'
-        currentBufferIndex--
-    }
-
-    return buffer.concatToString(currentBufferIndex + 1)
+    return if (isNegative) "-$absValueString" else absValueString
 }

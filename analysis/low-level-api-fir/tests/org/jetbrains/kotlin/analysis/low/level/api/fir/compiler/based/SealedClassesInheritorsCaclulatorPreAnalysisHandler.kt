@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirSealedClassInheritorsProcessorFactoryForTests
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLSealedInheritorsProviderFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLSealedInheritorsProviderFactoryForTests
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtFiles
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSealedClassInheritorsProcessor
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.PreAnalysisHandler
@@ -55,8 +54,7 @@ class SealedClassesInheritorsCaclulatorPreAnalysisHandler(
             val tmpFirResolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSessionNoCaching(ktModule)
             val firFiles = ktFiles.map { it.getOrBuildFirFile(tmpFirResolveSession) }
             val sealedInheritors = collectSealedClassInheritors(firFiles, tmpFirResolveSession)
-            val provider =
-                project.getService(FirSealedClassInheritorsProcessorFactory::class.java) as LLFirSealedClassInheritorsProcessorFactoryForTests
+            val provider = project.getService(LLSealedInheritorsProviderFactory::class.java) as LLSealedInheritorsProviderFactoryForTests
             provider.registerInheritors(ktModule, sealedInheritors)
         }
     }

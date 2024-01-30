@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.psi.NavigatablePsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 
 interface KtElement : NavigatablePsiElement, KtPureElement {
@@ -30,7 +31,7 @@ interface KtElement : NavigatablePsiElement, KtPureElement {
 
 fun KtElement.getModificationStamp(): Long {
     return when (this) {
-        is KtFile -> this.modificationStamp
+        is PsiFile -> this.modificationStamp
         is KtDeclarationStub<*> -> this.modificationStamp
         is KtSuperTypeList -> this.modificationStamp
         is KtScriptInitializer -> this.getModificationStamp()

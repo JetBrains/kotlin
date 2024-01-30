@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
@@ -35,31 +35,31 @@ fun buildFirConstant(
     protoValue: ProtoBuf.Annotation.Argument.Value?, sourceValue: Any?, constKind: String, nameResolver: NameResolver
 ): FirExpression? {
     return when (constKind) {
-        "BYTE", "B" -> buildConstExpression(
+        "BYTE", "B" -> buildLiteralExpression(
             null, ConstantValueKind.Byte, ((protoValue?.intValue ?: sourceValue) as Number).toByte(), setType = true
         )
-        "CHAR", "C" -> buildConstExpression(
+        "CHAR", "C" -> buildLiteralExpression(
             null, ConstantValueKind.Char, ((protoValue?.intValue ?: sourceValue) as Number).toInt().toChar(), setType = true
         )
-        "SHORT", "S" -> buildConstExpression(
+        "SHORT", "S" -> buildLiteralExpression(
             null, ConstantValueKind.Short, ((protoValue?.intValue ?: sourceValue) as Number).toShort(), setType = true
         )
-        "INT", "I" -> buildConstExpression(
+        "INT", "I" -> buildLiteralExpression(
             null, ConstantValueKind.Int, protoValue?.intValue?.toInt() ?: sourceValue as Int, setType = true
         )
-        "LONG", "J" -> buildConstExpression(
+        "LONG", "J" -> buildLiteralExpression(
             null, ConstantValueKind.Long, protoValue?.intValue ?: sourceValue as Long, setType = true
         )
-        "FLOAT", "F" -> buildConstExpression(
+        "FLOAT", "F" -> buildLiteralExpression(
             null, ConstantValueKind.Float, protoValue?.floatValue ?: sourceValue as Float, setType = true
         )
-        "DOUBLE", "D" -> buildConstExpression(
+        "DOUBLE", "D" -> buildLiteralExpression(
             null, ConstantValueKind.Double, protoValue?.doubleValue ?: sourceValue as Double, setType = true
         )
-        "BOOLEAN", "Z" -> buildConstExpression(
+        "BOOLEAN", "Z" -> buildLiteralExpression(
             null, ConstantValueKind.Boolean, (protoValue?.intValue?.toInt() ?: sourceValue) != 0, setType = true
         )
-        "STRING", "Ljava/lang/String;" -> buildConstExpression(
+        "STRING", "Ljava/lang/String;" -> buildLiteralExpression(
             null, ConstantValueKind.String,
             protoValue?.stringValue?.let { nameResolver.getString(it) } ?: sourceValue as String, setType = true
         )

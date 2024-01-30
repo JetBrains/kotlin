@@ -1356,7 +1356,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString(): String =
-        itoa32(this, 10)
+        itoa32(this)
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
@@ -1865,7 +1865,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString(): String =
-        itoa64(this, 10)
+        itoa64(this)
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =

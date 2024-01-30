@@ -15,7 +15,12 @@ import org.jetbrains.kotlin.test.services.TestServices
  * @see org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind.Source
  */
 object KtSourceModuleFactory : KtModuleFactory {
-    override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
+    override fun createModule(
+        testModule: TestModule,
+        contextModule: KtModuleWithFiles?,
+        testServices: TestServices,
+        project: Project,
+    ): KtModuleWithFiles {
         val psiFiles = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
 
         val module = KtSourceModuleImpl(

@@ -1456,7 +1456,9 @@ class LightTreeRawFirDeclarationBuilder(
 
                 contextReceivers.addAll(convertContextReceivers(property))
             }.also {
-                fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
+                if (!isLocal) {
+                    fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
+                }
             }
         }
     }
@@ -1475,6 +1477,8 @@ class LightTreeRawFirDeclarationBuilder(
                 MODIFIER_LIST -> annotations += convertAnnotationList(it)
                 VAR_KEYWORD -> isVar = true
                 DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it)
+                // Property delegates should be ignored as they aren't a valid initializers
+                PROPERTY_DELEGATE -> {}
                 else -> if (it.isExpression()) firExpression =
                     expressionConverter.getAsFirExpression(it, "Initializer required for destructuring declaration")
             }

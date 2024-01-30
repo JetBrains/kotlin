@@ -67,33 +67,37 @@ context(KtAnalysisSession)
 private fun bridgeType(
     type: KtType,
 ): TypeBridge {
-
-    return if (type.isPrimitive) {
-        val objCType = when {
-            type.isBoolean -> ObjCValueType.BOOL
-            type.isChar -> ObjCValueType.UNICHAR
-            type.isByte -> ObjCValueType.CHAR
-            type.isShort -> ObjCValueType.SHORT
-            type.isInt -> ObjCValueType.INT
-            type.isLong -> ObjCValueType.LONG_LONG
-            type.isFloat -> ObjCValueType.FLOAT
-            type.isDouble -> ObjCValueType.DOUBLE
-            type.isUByte -> ObjCValueType.UNSIGNED_CHAR
-            type.isUShort -> ObjCValueType.UNSIGNED_SHORT
-            type.isUInt -> ObjCValueType.UNSIGNED_INT
-            type.isULong -> ObjCValueType.UNSIGNED_LONG_LONG
-            else ->
-                /**
-                 * Handle [KonanPrimitiveType.NON_NULL_NATIVE_PTR] and [KonanPrimitiveType.VECTOR128]
-                 */
-                TODO()
-        }
-        ValueTypeBridge(objCType)
-    } else if (type.isFunctionType) {
-        bridgeFunctionType(type)
-    } else {
-        ReferenceBridge
+    val primitiveObjCValueType = when {
+        type.isBoolean -> ObjCValueType.BOOL
+        type.isChar -> ObjCValueType.UNICHAR
+        type.isByte -> ObjCValueType.CHAR
+        type.isShort -> ObjCValueType.SHORT
+        type.isInt -> ObjCValueType.INT
+        type.isLong -> ObjCValueType.LONG_LONG
+        type.isFloat -> ObjCValueType.FLOAT
+        type.isDouble -> ObjCValueType.DOUBLE
+        type.isUByte -> ObjCValueType.UNSIGNED_CHAR
+        type.isUShort -> ObjCValueType.UNSIGNED_SHORT
+        type.isUInt -> ObjCValueType.UNSIGNED_INT
+        type.isULong -> ObjCValueType.UNSIGNED_LONG_LONG
+        type.isClassTypeWithClassId(KonanPrimitiveType.NON_NULL_NATIVE_PTR.classId) -> ObjCValueType.POINTER
+        else -> null
     }
+
+    if (primitiveObjCValueType != null) {
+        return ValueTypeBridge(primitiveObjCValueType)
+    }
+
+    /* If type is inlined, then build the bridge for the inlined target type */
+    type.getInlineTargetTypeOrNull()?.let { inlinedTargetType ->
+        return bridgeType(inlinedTargetType)
+    }
+
+    if (type.isFunctionType) {
+        return bridgeFunctionType(type)
+    }
+
+    return ReferenceBridge
 }
 
 /**
@@ -107,7 +111,7 @@ private fun bridgeFunctionType(type: KtType): TypeBridge {
 
     if (type is KtFunctionalType) {
         numberOfParameters = type.parameterTypes.size
-        returnType = type.parameterTypes.last()
+        returnType = type.returnType
     } else {
         numberOfParameters = 0
         returnType = type

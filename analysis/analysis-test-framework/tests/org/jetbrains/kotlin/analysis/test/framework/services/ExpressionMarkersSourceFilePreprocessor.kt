@@ -99,6 +99,10 @@ class ExpressionMarkerProvider : TestService {
             }
     }
 
+    fun getAllCarets(file: PsiFile): List<CaretMarker> {
+        return carets.getAllCarets(file.name)
+    }
+
     fun getSelectedRangeOrNull(file: PsiFile): TextRange? = selected[file.name]
     fun getSelectedRange(file: PsiFile): TextRange = getSelectedRangeOrNull(file) ?: error("No selected expression found in file")
 
@@ -257,12 +261,31 @@ class ExpressionMarkerProvider : TestService {
     }
 }
 
+data class CaretMarker(val tag: String, val offset: Int) {
+
+    /**
+     * Full render of this caret marker in the `<caret>` or `<caret_$tag>` form.
+     *
+     * @see ExpressionMarkersSourceFilePreprocessor.TAGS.CARET_REGEXP
+     */
+    val fullTag: String
+        get() = if (tag.isEmpty()) {
+            "<caret>"
+        } else {
+            "<caret_${tag}>"
+        }
+}
+
 private class CaretProvider {
     private val caretToFile = mutableMapOf<String, CaretsInFile>()
 
     fun getCaretOffset(filename: String, caretTag: String?): Int? {
         val cartsInFile = caretToFile[filename] ?: return null
         return cartsInFile.getCaretOffsetByTag(caretTag)
+    }
+
+    fun getAllCarets(filename: String): List<CaretMarker> {
+        return caretToFile[filename]?.getAllCarets().orEmpty()
     }
 
     fun addCaret(filename: String, caretTag: String?, caretOffset: Int) {
@@ -275,6 +298,10 @@ private class CaretProvider {
 
         fun getCaretOffsetByTag(tag: String?): Int? {
             return carets[tag.orEmpty()]
+        }
+
+        fun getAllCarets(): List<CaretMarker> {
+            return carets.map { (tag, offset) -> CaretMarker(tag, offset) }
         }
 
         fun addCaret(caretTag: String?, caretOffset: Int) {

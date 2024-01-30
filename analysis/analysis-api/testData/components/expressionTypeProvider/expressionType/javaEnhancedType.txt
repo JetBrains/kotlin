@@ -1,0 +1,2 @@
+expression: a.bar()
+type: kotlin.String

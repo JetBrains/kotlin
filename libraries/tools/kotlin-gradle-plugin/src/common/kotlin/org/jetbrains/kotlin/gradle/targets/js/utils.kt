@@ -46,7 +46,7 @@ fun FileHasher.calculateDirHash(
     dir.walk()
         .forEach { file ->
             hasher.putString(file.toRelativeString(dir))
-            if (file.isFile && !Files.isSymbolicLink(file.toPath())) {
+            if (file.isFile) {
                 if (!Files.isSymbolicLink(file.toPath())) {
                     hasher.putHash(hash(file))
                 } else {

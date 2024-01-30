@@ -1928,6 +1928,30 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("pcaRootIsDelegatedConstructorCall.kt")
+            public void testPcaRootIsDelegatedConstructorCall() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/pcaRootIsDelegatedConstructorCall.kt");
+            }
+
+            @Test
+            @TestMetadata("pclaRootIsElvisSynthetic.kt")
+            public void testPclaRootIsElvisSynthetic() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/pclaRootIsElvisSynthetic.kt");
+            }
+
+            @Test
+            @TestMetadata("pclaRootIsIfWhenSyntheticCall.kt")
+            public void testPclaRootIsIfWhenSyntheticCall() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/pclaRootIsIfWhenSyntheticCall.kt");
+            }
+
+            @Test
+            @TestMetadata("pclaRootIsTrySyntheticCall.kt")
+            public void testPclaRootIsTrySyntheticCall() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/pclaRootIsTrySyntheticCall.kt");
+            }
+
+            @Test
             @TestMetadata("receiverUsesOuterTVButReturnTypeIsProper.kt")
             public void testReceiverUsesOuterTVButReturnTypeIsProper() throws Exception {
                 runTest("compiler/testData/codegen/box/builderInference/receiverUsesOuterTVButReturnTypeIsProper.kt");
@@ -4876,6 +4900,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("kt64105.kt")
+            public void testKt64105() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/kt64105.kt");
+            }
+
+            @Test
             @TestMetadata("leakMemoryWithRunningThreadUnchecked.kt")
             public void testLeakMemoryWithRunningThreadUnchecked() throws Exception {
                 runTest("compiler/testData/codegen/box/cinterop/leakMemoryWithRunningThreadUnchecked.kt");
@@ -6132,6 +6162,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             @TestMetadata("closureWithParameterAndBoxing.kt")
             public void testClosureWithParameterAndBoxing() throws Exception {
                 runTest("compiler/testData/codegen/box/closures/closureWithParameterAndBoxing.kt");
+            }
+
+            @Test
+            @TestMetadata("closuresAsSingleton.kt")
+            public void testClosuresAsSingleton() throws Exception {
+                runTest("compiler/testData/codegen/box/closures/closuresAsSingleton.kt");
             }
 
             @Test
@@ -16435,6 +16471,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             @TestMetadata("continueAndOuterFinally.kt")
             public void testContinueAndOuterFinally() throws Exception {
                 runTest("compiler/testData/codegen/box/finally/continueAndOuterFinally.kt");
+            }
+
+            @Test
+            @TestMetadata("decrementInFinally.kt")
+            public void testDecrementInFinally() throws Exception {
+                runTest("compiler/testData/codegen/box/finally/decrementInFinally.kt");
             }
 
             @Test
@@ -44619,6 +44661,79 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/boxInline/dontReify")
+        @TestDataPath("$PROJECT_ROOT")
+        @UseExtTestCaseGroupProvider()
+        @UsePartialLinkage(mode = Mode.DISABLED)
+        @Tag("no-partial-linkage-may-be-skipped")
+        public class DontReify {
+            @Test
+            public void testAllFilesPresentInDontReify() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/dontReify"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("arrayRead.kt")
+            public void testArrayRead() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/dontReify/arrayRead.kt");
+            }
+
+            @Test
+            @TestMetadata("arrayWrite.kt")
+            public void testArrayWrite() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/dontReify/arrayWrite.kt");
+            }
+
+            @Test
+            @TestMetadata("dispatchReceiver.kt")
+            public void testDispatchReceiver() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/dontReify/dispatchReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("extensionReceiver.kt")
+            public void testExtensionReceiver() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/dontReify/extensionReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("lambdaParameter.kt")
+            public void testLambdaParameter() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/dontReify/lambdaParameter.kt");
+            }
+
+            @Test
+            @TestMetadata("localDelegatedProperty.kt")
+            public void testLocalDelegatedProperty() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/dontReify/localDelegatedProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("localObjectProperty.kt")
+            public void testLocalObjectProperty() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/dontReify/localObjectProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("localVariable.kt")
+            public void testLocalVariable() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/dontReify/localVariable.kt");
+            }
+
+            @Test
+            @TestMetadata("methodReturnType.kt")
+            public void testMethodReturnType() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/dontReify/methodReturnType.kt");
+            }
+
+            @Test
+            @TestMetadata("parameterInLocalObject.kt")
+            public void testParameterInLocalObject() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/dontReify/parameterInLocalObject.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/enclosingInfo")
         @TestDataPath("$PROJECT_ROOT")
         @UseExtTestCaseGroupProvider()
@@ -46967,6 +47082,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             @Test
             public void testAllFilesPresentInSpecial() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/special"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("blockReturnsNullableUnit.kt")
+            public void testBlockReturnsNullableUnit() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/special/blockReturnsNullableUnit.kt");
             }
 
             @Test

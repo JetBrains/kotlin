@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
@@ -280,61 +280,61 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                     val name = this@toFirAnnotation.symbol.owner.valueParameters[i].name
                     val argument = this@toFirAnnotation.getValueArgument(i) as IrConst<*>
                     this.mapping[name] = when (argument.kind) {
-                        IrConstKind.Boolean -> buildConstExpression(
+                        IrConstKind.Boolean -> buildLiteralExpression(
                             source = null,
                             ConstantValueKind.Boolean,
                             argument.value as Boolean,
                             setType = true
                         )
-                        IrConstKind.Byte -> buildConstExpression(
+                        IrConstKind.Byte -> buildLiteralExpression(
                             source = null,
                             ConstantValueKind.Byte,
                             argument.value as Byte,
                             setType = true
                         )
-                        IrConstKind.Char -> buildConstExpression(
+                        IrConstKind.Char -> buildLiteralExpression(
                             source = null,
                             ConstantValueKind.Char,
                             argument.value as Char,
                             setType = true
                         )
-                        IrConstKind.Double -> buildConstExpression(
+                        IrConstKind.Double -> buildLiteralExpression(
                             source = null,
                             ConstantValueKind.Double,
                             argument.value as Double,
                             setType = true
                         )
-                        IrConstKind.Float -> buildConstExpression(
+                        IrConstKind.Float -> buildLiteralExpression(
                             source = null,
                             ConstantValueKind.Float,
                             argument.value as Float,
                             setType = true
                         )
-                        IrConstKind.Int -> buildConstExpression(
+                        IrConstKind.Int -> buildLiteralExpression(
                             source = null,
                             ConstantValueKind.Int,
                             argument.value as Int,
                             setType = true
                         )
-                        IrConstKind.Long -> buildConstExpression(
+                        IrConstKind.Long -> buildLiteralExpression(
                             source = null,
                             ConstantValueKind.Long,
                             argument.value as Long,
                             setType = true
                         )
-                        IrConstKind.Null -> buildConstExpression(
+                        IrConstKind.Null -> buildLiteralExpression(
                             source = null,
                             ConstantValueKind.Null,
                             value = null,
                             setType = true
                         )
-                        IrConstKind.Short -> buildConstExpression(
+                        IrConstKind.Short -> buildLiteralExpression(
                             source = null,
                             ConstantValueKind.Short,
                             argument.value as Short,
                             setType = false
                         )
-                        IrConstKind.String -> buildConstExpression(
+                        IrConstKind.String -> buildLiteralExpression(
                             source = null,
                             ConstantValueKind.String,
                             argument.value as String,

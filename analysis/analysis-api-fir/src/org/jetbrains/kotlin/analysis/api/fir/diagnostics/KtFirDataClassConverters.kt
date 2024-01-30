@@ -3042,6 +3042,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE) { firDiagnostic ->
+        ExpectAndActualInTheSameModuleImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE) { firDiagnostic ->
         MethodOfAnyImplementedInInterfaceImpl(
             firDiagnostic as KtPsiDiagnostic,

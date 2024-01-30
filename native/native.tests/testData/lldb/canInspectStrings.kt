@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-// LLDB_TRACE: canInspectStrings.txt
+// FIR_IDENTICAL
 fun main(args: Array<String>) {
     val a = "string literal"
     val b = buildString {

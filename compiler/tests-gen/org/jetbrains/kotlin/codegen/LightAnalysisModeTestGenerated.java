@@ -2408,6 +2408,26 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/builderInference/lambdaParameterHasTVType.kt");
         }
 
+        @TestMetadata("pcaRootIsDelegatedConstructorCall.kt")
+        public void testPcaRootIsDelegatedConstructorCall() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/pcaRootIsDelegatedConstructorCall.kt");
+        }
+
+        @TestMetadata("pclaRootIsElvisSynthetic.kt")
+        public void testPclaRootIsElvisSynthetic() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/pclaRootIsElvisSynthetic.kt");
+        }
+
+        @TestMetadata("pclaRootIsIfWhenSyntheticCall.kt")
+        public void testPclaRootIsIfWhenSyntheticCall() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/pclaRootIsIfWhenSyntheticCall.kt");
+        }
+
+        @TestMetadata("pclaRootIsTrySyntheticCall.kt")
+        public void testPclaRootIsTrySyntheticCall() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/pclaRootIsTrySyntheticCall.kt");
+        }
+
         @TestMetadata("receiverUsesOuterTVButReturnTypeIsProper.kt")
         public void testReceiverUsesOuterTVButReturnTypeIsProper() throws Exception {
             runTest("compiler/testData/codegen/box/builderInference/receiverUsesOuterTVButReturnTypeIsProper.kt");
@@ -6405,6 +6425,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("closureWithParameterAndBoxing.kt")
         public void testClosureWithParameterAndBoxing() throws Exception {
             runTest("compiler/testData/codegen/box/closures/closureWithParameterAndBoxing.kt");
+        }
+
+        @TestMetadata("closuresAsSingleton.kt")
+        public void testClosuresAsSingleton() throws Exception {
+            runTest("compiler/testData/codegen/box/closures/closuresAsSingleton.kt");
         }
 
         @TestMetadata("crossinlineLocalDeclaration.kt")
@@ -16054,6 +16079,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fakeOverride/kt49371.kt");
         }
 
+        @TestMetadata("kt65116.kt")
+        public void testKt65116() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/kt65116.kt");
+        }
+
         @TestMetadata("methodOfAnyFromInterface.kt")
         public void testMethodOfAnyFromInterface() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/methodOfAnyFromInterface.kt");
@@ -16205,6 +16235,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("continueAndOuterFinally.kt")
         public void testContinueAndOuterFinally() throws Exception {
             runTest("compiler/testData/codegen/box/finally/continueAndOuterFinally.kt");
+        }
+
+        @TestMetadata("decrementInFinally.kt")
+        public void testDecrementInFinally() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/decrementInFinally.kt");
         }
 
         @TestMetadata("finallyAndFinally.kt")
@@ -36254,6 +36289,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/callBy/boundJvmStaticInObject.kt");
             }
 
+            @TestMetadata("brokenDefaultParametersFromDifferentFunctions.kt")
+            public void testBrokenDefaultParametersFromDifferentFunctions() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt");
+            }
+
+            @TestMetadata("brokenDefaultParametersFromDifferentFunctionsJvmDefault.kt")
+            public void testBrokenDefaultParametersFromDifferentFunctionsJvmDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctionsJvmDefault.kt");
+            }
+
             @TestMetadata("companionObject.kt")
             public void testCompanionObject() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/companionObject.kt");
@@ -36292,6 +36337,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("inlineClassFunctionsAndConstructors.kt")
             public void testInlineClassFunctionsAndConstructors() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassFunctionsAndConstructors.kt");
+            }
+
+            @TestMetadata("inlineClassInterface.kt")
+            public void testInlineClassInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassInterface.kt");
+            }
+
+            @TestMetadata("inlineClassInterfaceJvmDefault.kt")
+            public void testInlineClassInterfaceJvmDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassInterfaceJvmDefault.kt");
             }
 
             @TestMetadata("inlineClassMembers.kt")
@@ -36347,6 +36402,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("mfvcFunctionsAndConstructors.kt")
             public void testMfvcFunctionsAndConstructors() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/mfvcFunctionsAndConstructors.kt");
+            }
+
+            @TestMetadata("mfvcInterface.kt")
+            public void testMfvcInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/mfvcInterface.kt");
+            }
+
+            @TestMetadata("mfvcInterfaceJvmDefault.kt")
+            public void testMfvcInterfaceJvmDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/mfvcInterfaceJvmDefault.kt");
             }
 
             @TestMetadata("mfvcKt61304.kt")

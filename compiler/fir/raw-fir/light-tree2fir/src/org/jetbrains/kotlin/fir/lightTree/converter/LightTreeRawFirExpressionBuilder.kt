@@ -681,10 +681,10 @@ class LightTreeRawFirExpressionBuilder(
                 }
             )
 
-            superNode != null || additionalArgument?.calleeReference is FirSuperReference -> {
+            superNode != null || (additionalArgument as? FirResolvable)?.calleeReference is FirSuperReference -> {
                 CalleeAndReceiver(
                     buildErrorNamedReference {
-                        this.source = superNode?.toFirSourceElement() ?: additionalArgument?.calleeReference?.source
+                        this.source = superNode?.toFirSourceElement() ?: (additionalArgument as? FirResolvable)?.calleeReference?.source
                         diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
                     }
                 )

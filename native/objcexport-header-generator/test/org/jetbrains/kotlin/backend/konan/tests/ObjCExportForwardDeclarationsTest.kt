@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.tests
 
 import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator
+import org.jetbrains.kotlin.backend.konan.testUtils.TodoAnalysisApi
 import org.jetbrains.kotlin.backend.konan.testUtils.forwardDeclarationsDir
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.Test
@@ -17,21 +18,25 @@ class ObjCExportForwardDeclarationsTest(
 ) {
 
     @Test
+    @TodoAnalysisApi
     fun `test - function returning interface`() {
         doTest(forwardDeclarationsDir.resolve("functionReturningInterface"))
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - function returning class`() {
         doTest(forwardDeclarationsDir.resolve("functionReturningClass"))
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - property returning interface`() {
         doTest(forwardDeclarationsDir.resolve("propertyReturningInterface"))
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - property returning class`() {
         doTest(forwardDeclarationsDir.resolve("propertyReturningClass"))
     }

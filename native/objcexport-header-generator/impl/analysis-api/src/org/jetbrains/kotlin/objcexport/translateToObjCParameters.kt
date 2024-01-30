@@ -42,7 +42,7 @@ internal fun KtFunctionLikeSymbol.translateToObjCParameters(baseMethodBridge: Me
 
         val type = when (bridge) {
             is MethodBridgeValueParameter.Mapped ->
-                parameter!!.returnType.translateToObjCReferenceType()
+                parameter!!.returnType.translateToObjCType(bridge.bridge)
             MethodBridgeValueParameter.ErrorOutParameter ->
                 ObjCPointerType(ObjCNullableReferenceType(ObjCClassType("NSError")), nullable = true)
 

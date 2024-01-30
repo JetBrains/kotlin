@@ -37,6 +37,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.KtNodeTypes.PROPERTY_DELEGATE;
 import static org.jetbrains.kotlin.lexer.KtTokens.EQ;
+import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.isKtFile;
 
 public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
         implements KtVariableDeclaration {
@@ -82,7 +83,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
             return stub.isTopLevel();
         }
 
-        return getParent() instanceof KtFile;
+        return isKtFile(getParent());
     }
 
     @Nullable

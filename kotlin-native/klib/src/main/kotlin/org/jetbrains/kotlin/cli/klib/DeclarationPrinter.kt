@@ -1,7 +1,9 @@
 package org.jetbrains.kotlin.cli.klib
 
-import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PROTECTED
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.utils.Printer
 
@@ -12,15 +14,15 @@ internal class DeclarationPrinter(
 ) {
     private val printer = Printer(out, 1, "    ")
 
-    private val DeclarationDescriptorWithVisibility.isPublicOrProtected: Boolean
-        get() = visibility == DescriptorVisibilities.PUBLIC || visibility == DescriptorVisibilities.PROTECTED
+    private val DeclarationDescriptorWithVisibility.isNonPrivate: Boolean
+        get() = visibility == PUBLIC || visibility == PROTECTED || visibility == INTERNAL
 
     private val CallableMemberDescriptor.isFakeOverride: Boolean
         get() = kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 
     private val DeclarationDescriptor.shouldBePrinted: Boolean
-        get() = this is ClassifierDescriptorWithTypeParameters && isPublicOrProtected
-                || this is CallableMemberDescriptor && isPublicOrProtected && !isFakeOverride
+        get() = this is ClassifierDescriptorWithTypeParameters && isNonPrivate
+                || this is CallableMemberDescriptor && isNonPrivate && !isFakeOverride
 
     fun print(module: ModuleDescriptor) {
         module.accept(PrinterVisitor(), Unit)

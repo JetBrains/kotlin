@@ -11,7 +11,7 @@ public class J {
 package constructorVsFun;
 
 public class G {
-    @kotlin.Deprecated("G", level = DeprecationLevel.HIDDEN)
+    @kotlin.Deprecated(message = "G", level = kotlin.DeprecationLevel.HIDDEN)
     public G(String s) {}
 }
 

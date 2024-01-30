@@ -95,7 +95,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val continueExpression by element(Expression, loopJump)
     val catchClause by element("Catch", Expression)
     val tryExpression by element(Expression, expression, resolvable)
-    val constExpression by element(Expression, expression)
+    val literalExpression by element(Expression, expression)
     val typeProjection by element(TypeRef)
     val starProjection by element(TypeRef, typeProjection)
     val placeholderProjection by element(TypeRef, typeProjection)

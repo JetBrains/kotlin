@@ -1,0 +1,14 @@
+<caret_1> resolved to:
+0: (in test) fun test.Foo.fooExt()
+
+<caret_2> resolved to:
+0: (in test) fun test.FooAlias.fooAliasExt()
+
+<caret_3> resolved to:
+0: (in test) fun test.FooAlias.fooAliasExt()
+
+<caret_4> resolved to:
+0: (in test) fun kotlin.Any.anyExt()
+
+<caret_5> resolved to:
+Nothing (Unresolved reference)

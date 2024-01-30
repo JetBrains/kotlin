@@ -11,14 +11,13 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorLoop
 import org.jetbrains.kotlin.fir.expressions.impl.FirBlockImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
@@ -35,7 +34,7 @@ inline val FirAnnotation.unexpandedClassId: ClassId?
 
 fun <T> buildConstOrErrorExpression(source: KtSourceElement?, kind: ConstantValueKind<T>, value: T?, diagnostic: ConeDiagnostic): FirExpression =
     value?.let {
-        buildConstExpression(source, kind, it, setType = false)
+        buildLiteralExpression(source, kind, it, setType = false)
     } ?: buildErrorExpression {
         this.source = source
         this.diagnostic = diagnostic
@@ -59,24 +58,6 @@ inline val FirCall.resolvedArgumentMapping: LinkedHashMap<FirExpression, FirValu
         is FirResolvedArgumentList -> argumentList.mapping
         else -> null
     }
-
-fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
-    return toReference()?.resolved
-}
-
-fun FirExpression.toReference(): FirReference? {
-    return when (this) {
-        is FirWrappedArgumentExpression -> expression.toResolvedCallableReference()
-        is FirSmartCastExpression -> originalExpression.toReference()
-        is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.toReference()
-        is FirResolvable -> calleeReference
-        else -> null
-    }
-}
-
-fun FirExpression.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
-    return toResolvedCallableReference()?.resolvedSymbol as? FirCallableSymbol<*>?
-}
 
 fun buildErrorLoop(source: KtSourceElement?, diagnostic: ConeDiagnostic): FirErrorLoop {
     return buildErrorLoop {
@@ -144,8 +125,6 @@ val FirVariableAssignment.dispatchReceiver: FirExpression? get() = unwrapLValue(
 
 val FirVariableAssignment.extensionReceiver: FirExpression? get() = unwrapLValue()?.extensionReceiver
 
-val FirVariableAssignment.calleeReference: FirReference? get() = lValue.toReference()
-
 val FirVariableAssignment.contextReceiverArguments: List<FirExpression> get() = unwrapLValue()?.contextReceiverArguments ?: emptyList()
 
 fun FirVariableAssignment.unwrapLValue(): FirQualifiedAccessExpression? {
@@ -153,9 +132,6 @@ fun FirVariableAssignment.unwrapLValue(): FirQualifiedAccessExpression? {
     return lValue as? FirQualifiedAccessExpression
         ?: (lValue as? FirDesugaredAssignmentValueReferenceExpression)?.expressionRef?.value as? FirQualifiedAccessExpression
 }
-
-val FirElement.calleeReference: FirReference?
-    get() = (this as? FirResolvable)?.calleeReference ?: (this as? FirVariableAssignment)?.calleeReference
 
 fun FirExpression.unwrapExpression(): FirExpression =
     when (this) {

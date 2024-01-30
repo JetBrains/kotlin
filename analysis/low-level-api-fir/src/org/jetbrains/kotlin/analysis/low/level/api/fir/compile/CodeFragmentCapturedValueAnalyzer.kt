@@ -98,7 +98,7 @@ private class CodeFragmentCapturedValueVisitor(
     override fun visitElement(element: FirElement) {
         processElement(element)
 
-        val lhs = (element as? FirVariableAssignment)?.lValue?.toResolvedCallableSymbol()
+        val lhs = (element as? FirVariableAssignment)?.lValue?.toResolvedCallableSymbol(session)
         if (lhs != null) {
             assignmentLhs.add(lhs)
         }

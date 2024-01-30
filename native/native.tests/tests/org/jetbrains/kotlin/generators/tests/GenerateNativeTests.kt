@@ -317,6 +317,20 @@ fun main() {
                 model("lldb")
             }
         }
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "FirLldbTestGenerated",
+                annotations = listOf(
+                    debugger(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                    forceDebugMode(),
+                    forceHostTarget(),
+                    *frontendFir()
+                )
+            ) {
+                model("lldb")
+            }
+        }
 
         // New frontend test infrastructure tests
         testGroup(testsRoot = "native/native.tests/tests-gen", testDataRoot = "compiler/testData") {

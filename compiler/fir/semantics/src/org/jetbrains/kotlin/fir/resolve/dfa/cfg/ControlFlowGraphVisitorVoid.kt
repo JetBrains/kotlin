@@ -219,7 +219,7 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
-    open fun visitConstExpressionNode(node: ConstExpressionNode) {
+    open fun visitLiteralExpressionNode(node: LiteralExpressionNode) {
         visitNode(node)
     }
 
@@ -500,8 +500,8 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitJumpNode(node)
     }
 
-    final override fun visitConstExpressionNode(node: ConstExpressionNode, data: Nothing?) {
-        visitConstExpressionNode(node)
+    final override fun visitLiteralExpressionNode(node: LiteralExpressionNode, data: Nothing?) {
+        visitLiteralExpressionNode(node)
     }
 
     // ----------------------------------- Check not null call -----------------------------------

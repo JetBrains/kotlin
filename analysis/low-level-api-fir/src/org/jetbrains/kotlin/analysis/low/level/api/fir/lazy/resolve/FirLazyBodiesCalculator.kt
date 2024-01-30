@@ -320,7 +320,7 @@ private fun rebindThisRef(
     oldTarget: FirPropertySymbol,
     canHavePropertySymbolAsThisReference: Boolean,
 ) {
-    if (expression is FirConstExpression<*>) return
+    if (expression is FirLiteralExpression<*>) return
 
     requireWithAttachment(
         expression is FirThisReceiverExpression,

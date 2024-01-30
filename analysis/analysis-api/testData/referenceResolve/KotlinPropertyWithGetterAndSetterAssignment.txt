@@ -1,2 +1,31 @@
-Resolved to:
+<caret_1> resolved to:
+0: (in A) var something: kotlin.Int
+
+<caret_2> resolved to:
+0: (in A) var something: kotlin.Int
+
+<caret_3> resolved to:
+0: (in A) var something: kotlin.Int
+1: (in A) var something: kotlin.Int
+
+<caret_4> resolved to:
+0: (in A) var something: kotlin.Int
+1: (in A) var something: kotlin.Int
+
+<caret_5> resolved to:
+0: (in A) var something: kotlin.Int
+1: (in A) var something: kotlin.Int
+
+<caret_6> resolved to:
+0: (in A) var something: kotlin.Int
+1: (in A) var something: kotlin.Int
+
+<caret_7> resolved to:
+0: (in A) var something: kotlin.Int
+1: (in A) var something: kotlin.Int
+
+<caret_8> resolved to:
+0: (in A) var something: kotlin.Int
+
+<caret_9> resolved to:
 0: (in A) var something: kotlin.Int

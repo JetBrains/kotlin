@@ -25,7 +25,12 @@ object AnalysisApiFirStdlibSourceTestConfigurator : AnalysisApiFirSourceLikeTest
 }
 
 private object KtStdlibSourceModuleFactory : KtModuleFactory {
-    override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
+    override fun createModule(
+        testModule: TestModule,
+        contextModule: KtModuleWithFiles?,
+        testServices: TestServices,
+        project: Project,
+    ): KtModuleWithFiles {
         val libraryJar = ForTestCompileRuntime.runtimeJarForTests().toPath()
         val librarySourcesJar = ForTestCompileRuntime.runtimeSourcesJarForTests().toPath()
         return createKtLibrarySourceModule(

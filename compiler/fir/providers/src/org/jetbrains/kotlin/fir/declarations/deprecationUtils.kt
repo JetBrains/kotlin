@@ -245,9 +245,10 @@ private fun FirAnnotation.getDeprecationLevel(): DeprecationLevelValue? {
             ?.unwrapArgument()
             ?: arguments.lastOrNull()
     } ?: return null
-    val targetExpression = argument as? FirQualifiedAccessExpression ?: return null
-    val targetName = (targetExpression.calleeReference as? FirNamedReference)?.name?.asString() ?: return null
-    return DeprecationLevelValue.values().find { it.name == targetName }
+
+    val targetName = argument.extractEnumValueArgumentInfo()?.enumEntryName?.asString() ?: return null
+
+    return DeprecationLevelValue.entries.find { it.name == targetName }
 }
 
 private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
@@ -272,7 +273,7 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
         for ((deprecated, shouldPropagateToOverrides) in annotations) {
             if (deprecated.unexpandedClassId == StandardClassIds.Annotations.SinceKotlin) {
                 val sinceKotlinSingleArgument = deprecated.findArgumentByName(ParameterNames.sinceKotlinVersion)
-                val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)
+                val apiVersion = ((sinceKotlinSingleArgument as? FirLiteralExpression<*>)?.value as? String)
                     ?.let(ApiVersion.Companion::parse) ?: continue
                 val wasExperimental = this@extractDeprecationAnnotationInfoPerUseSite.any {
                     it.unexpandedClassId == StandardClassIds.Annotations.WasExperimental
@@ -314,7 +315,7 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
 private fun FirAnnotation.getFirstArgumentStringIfNotNamed(): String? {
     if (this !is FirAnnotationCall) return null
     val firstArgument = argumentList.arguments.firstOrNull() ?: return null
-    return (firstArgument as? FirConstExpression<*>)?.value?.toString()
+    return (firstArgument as? FirLiteralExpression<*>)?.value?.toString()
 }
 
 

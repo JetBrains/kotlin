@@ -29,11 +29,16 @@ object AnalysisApiFe10TestConfiguratorFactory : AnalysisApiTestConfiguratorFacto
             data.analysisSessionMode != AnalysisSessionMode.Normal -> false
             data.analysisApiMode != AnalysisApiMode.Ide -> false
             else -> when (data.moduleKind) {
-                TestModuleKind.Source -> true
+                TestModuleKind.Source -> {
+                    true
+                }
+
                 TestModuleKind.ScriptSource,
                 TestModuleKind.LibraryBinary,
                 TestModuleKind.LibrarySource,
-                -> false
+                TestModuleKind.CodeFragment -> {
+                    false
+                }
             }
         }
     }

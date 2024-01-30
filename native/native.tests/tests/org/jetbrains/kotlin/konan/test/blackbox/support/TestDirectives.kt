@@ -8,17 +8,19 @@ package org.jetbrains.kotlin.konan.test.blackbox.support
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ENTRY_POINT
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXIT_CODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_CINTEROP_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.INPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.KIND
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.LLDB_TRACE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_REGEX
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.PROGRAM_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.TEST_RUNNER
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -134,12 +136,6 @@ internal object TestDirectives : SimpleDirectivesContainer() {
 
     val FREE_CINTEROP_ARGS by stringDirective(
         description = "Specify free CInterop tool arguments"
-    )
-
-    val LLDB_TRACE by stringDirective(
-        description = """
-            Specify a filename containing the LLDB commands and the patterns that
-             the output should match""".trimIndent(),
     )
 
     // TODO "MUTED_WHEN" directive should be supported not only in AbstractNativeSimpleTest, but also in other hierarchies
@@ -327,13 +323,16 @@ internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives, locatio
     return entryPoint
 }
 
-internal fun parseLLDBSpec(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): LLDBSessionSpec {
-    val specFile = parseFileBasedDirective(baseDir, LLDB_TRACE, registeredDirectives, location)
-        ?: fail { "$location: An LLDB session specification must be provided" }
+internal fun parseLLDBSpec(testDataFile: File, registeredDirectives: RegisteredDirectives, settings: Settings): LLDBSessionSpec {
+    val firIdentical = FIR_IDENTICAL in registeredDirectives
+    val firSpecificExt = if (settings.get<PipelineType>() == PipelineType.K2 && !firIdentical) "fir." else ""
+    val specFilePathWithoutExtension = testDataFile.absolutePath.removeSuffix(testDataFile.extension)
+    val specFileLocation = "$specFilePathWithoutExtension${firSpecificExt}txt"
+    val specFile = File(specFileLocation)
     return try {
         LLDBSessionSpec.parse(specFile.readText())
     } catch (e: Exception) {
-        Assertions.fail<Nothing>("$location: Cannot parse LLDB session specification: " + e.message, e)
+        Assertions.fail<Nothing>("${testDataFile.absolutePath}: Cannot parse LLDB session specification: " + e.message, e)
     }
 }
 

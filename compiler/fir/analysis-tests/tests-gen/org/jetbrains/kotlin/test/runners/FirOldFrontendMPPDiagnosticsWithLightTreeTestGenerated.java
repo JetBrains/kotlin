@@ -63,6 +63,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("actualWithoutExpectWhenExpectIsFakeOverride.kt")
+    public void testActualWithoutExpectWhenExpectIsFakeOverride() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/actualWithoutExpectWhenExpectIsFakeOverride.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInMultiplatform() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
@@ -137,6 +143,24 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     @TestMetadata("expectActualClassesAreInBeta_suppressWarningWithLv.kt")
     public void testExpectActualClassesAreInBeta_suppressWarningWithLv() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualClassesAreInBeta_suppressWarningWithLv.kt");
+    }
+
+    @Test
+    @TestMetadata("expectActualInTheSameModule.kt")
+    public void testExpectActualInTheSameModule() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualInTheSameModule.kt");
+    }
+
+    @Test
+    @TestMetadata("expectActualInTheSameModuleDifferentFiles.kt")
+    public void testExpectActualInTheSameModuleDifferentFiles() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualInTheSameModuleDifferentFiles.kt");
+    }
+
+    @Test
+    @TestMetadata("expectActualMainInTheSameModuleDifferentFiles.kt")
+    public void testExpectActualMainInTheSameModuleDifferentFiles() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualMainInTheSameModuleDifferentFiles.kt");
     }
 
     @Test

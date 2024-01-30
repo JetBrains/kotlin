@@ -9,6 +9,6 @@ MODULE_FRAGMENT
         VALUE_PARAMETER name:p0 index:0 type:<root>.Test
         EXPRESSION_BODY
           BLOCK type=kotlin.Int origin=null
-            CALL 'public final fun useWithCtx1 ($context_receiver_0: <root>.Ctx1): kotlin.Int declared in <root>.SingleClassContextReceiverKt' type=kotlin.Int origin=null
+            CALL 'public final fun useWithCtx1 ($context_receiver_0: <root>.Ctx1): kotlin.Int declared in <root>.ContextKt' type=kotlin.Int origin=null
               $context_receiver_0: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Ctx1 visibility:private [final]' type=<root>.Ctx1 origin=null
                 receiver: GET_VAR 'p0: <root>.Test declared in <root>.CodeFragment.run' type=<root>.Test origin=null

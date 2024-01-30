@@ -133,7 +133,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             val argumentMapping = functionCall.resolvedArgumentMapping ?: return
             for ((wrappedArgument, valueParameter) in argumentMapping) {
                 val argument = wrappedArgument.unwrapArgument()
-                val resolvedArgumentSymbol = argument.toResolvedCallableSymbol() as? FirVariableSymbol<*> ?: continue
+                val resolvedArgumentSymbol = argument.toResolvedCallableSymbol(session) as? FirVariableSymbol<*> ?: continue
 
                 val valueParameterOfOriginalInlineFunction = inlinableParameters.firstOrNull { it == resolvedArgumentSymbol }
                 if (valueParameterOfOriginalInlineFunction != null) {
@@ -163,7 +163,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             reporter: DiagnosticReporter,
         ) {
             if (receiverExpression == null) return
-            val receiverSymbol = receiverExpression.toResolvedCallableSymbol() as? FirValueParameterSymbol ?: return
+            val receiverSymbol = receiverExpression.toResolvedCallableSymbol(session) as? FirValueParameterSymbol ?: return
             if (receiverSymbol in inlinableParameters) {
                 if (!isInvokeOrInlineExtension(targetSymbol)) {
                     reporter.reportOn(
@@ -456,7 +456,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 expression is FirFunctionCall ||
                 expression is FirLambdaArgumentExpression ||
                 expression is FirAnonymousFunctionExpression ||
-                (expression is FirConstExpression<*> && expression.value == null) //this will be reported separately
+                (expression is FirLiteralExpression<*> && expression.value == null) //this will be reported separately
 
     fun checkCallableDeclaration(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirPropertyAccessor) return

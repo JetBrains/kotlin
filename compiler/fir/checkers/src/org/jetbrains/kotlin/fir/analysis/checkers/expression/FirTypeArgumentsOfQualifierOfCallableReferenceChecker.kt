@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.constructType
 
@@ -23,7 +24,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
         val correspondingDeclaration = lhs.symbol ?: return
 
         var typeArgumentsWithSourceInfo = lhs.typeArguments.toTypeArgumentsWithSourceInfo()
-        var typeParameterSymbols = correspondingDeclaration.typeParameterSymbols
+        var typeParameterSymbols = correspondingDeclaration.typeParameterSymbols.filter { it.containingDeclarationSymbol is FirClassLikeSymbol }
         if (typeParameterSymbols.size != typeArgumentsWithSourceInfo.size) {
             reporter.reportOn(
                 lhs.source,

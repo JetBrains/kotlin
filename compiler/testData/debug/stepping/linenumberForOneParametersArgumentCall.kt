@@ -45,6 +45,6 @@ inline fun lookAtMe(f: (String) -> Unit) {
 // Array.kt:75 $kotlin.Array.set (8, 20, 27, 16, 8, 20, 27, 16)
 // Array.kt:76 $kotlin.Array.set (5, 5)
 // String.kt:149 $kotlin.stringLiteral (11, 4, 11, 4)
-// test.kt:13 $box
+// test.kt:13 $box (4, 6)
 // test.kt:7 $box (17, 17, 17, 17, 8)
 // test.kt:9 $box

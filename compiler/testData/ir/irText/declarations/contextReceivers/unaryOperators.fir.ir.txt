@@ -186,20 +186,20 @@ FILE fqName:<root> fileName:/unaryOperators.kt
               $receiver: VALUE_PARAMETER name:$this$with type:kotlin.Int
               BLOCK_BODY
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  BLOCK type=<root>.Result origin=null
+                  BLOCK type=<root>.Result origin=POSTFIX_INCR
                     VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.Result [val]
-                      GET_VAR 'var result: <root>.Result declared in <root>.box' type=<root>.Result origin=null
-                    SET_VAR 'var result: <root>.Result declared in <root>.box' type=kotlin.Unit origin=EQ
-                      CALL 'public final fun inc ($context_receiver_0: kotlin.Int): <root>.Result declared in <root>' type=<root>.Result origin=null
+                      GET_VAR 'var result: <root>.Result declared in <root>.box' type=<root>.Result origin=POSTFIX_INCR
+                    SET_VAR 'var result: <root>.Result declared in <root>.box' type=kotlin.Unit origin=POSTFIX_INCR
+                      CALL 'public final fun inc ($context_receiver_0: kotlin.Int): <root>.Result declared in <root>' type=<root>.Result origin=POSTFIX_INCR
                         $receiver: GET_VAR 'val tmp_1: <root>.Result declared in <root>.box.<anonymous>' type=<root>.Result origin=null
                         $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                     GET_VAR 'val tmp_1: <root>.Result declared in <root>.box.<anonymous>' type=<root>.Result origin=null
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  BLOCK type=<root>.Result origin=null
+                  BLOCK type=<root>.Result origin=POSTFIX_INCR
                     VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.Result [val]
-                      GET_VAR 'var result: <root>.Result declared in <root>.box' type=<root>.Result origin=null
-                    SET_VAR 'var result: <root>.Result declared in <root>.box' type=kotlin.Unit origin=EQ
-                      CALL 'public final fun inc ($context_receiver_0: kotlin.Int): <root>.Result declared in <root>' type=<root>.Result origin=null
+                      GET_VAR 'var result: <root>.Result declared in <root>.box' type=<root>.Result origin=POSTFIX_INCR
+                    SET_VAR 'var result: <root>.Result declared in <root>.box' type=kotlin.Unit origin=POSTFIX_INCR
+                      CALL 'public final fun inc ($context_receiver_0: kotlin.Int): <root>.Result declared in <root>' type=<root>.Result origin=POSTFIX_INCR
                         $receiver: GET_VAR 'val tmp_2: <root>.Result declared in <root>.box.<anonymous>' type=<root>.Result origin=null
                         $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                     GET_VAR 'val tmp_2: <root>.Result declared in <root>.box.<anonymous>' type=<root>.Result origin=null
@@ -212,11 +212,11 @@ FILE fqName:<root> fileName:/unaryOperators.kt
                     $receiver: GET_VAR 'var result: <root>.Result declared in <root>.box' type=<root>.Result origin=null
                     $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): <root>.Result declared in <root>.box'
-                  BLOCK type=<root>.Result origin=null
+                  BLOCK type=<root>.Result origin=POSTFIX_DECR
                     VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:<root>.Result [val]
-                      GET_VAR 'var result: <root>.Result declared in <root>.box' type=<root>.Result origin=null
-                    SET_VAR 'var result: <root>.Result declared in <root>.box' type=kotlin.Unit origin=EQ
-                      CALL 'public final fun dec ($context_receiver_0: kotlin.Int): <root>.Result declared in <root>' type=<root>.Result origin=null
+                      GET_VAR 'var result: <root>.Result declared in <root>.box' type=<root>.Result origin=POSTFIX_DECR
+                    SET_VAR 'var result: <root>.Result declared in <root>.box' type=kotlin.Unit origin=POSTFIX_DECR
+                      CALL 'public final fun dec ($context_receiver_0: kotlin.Int): <root>.Result declared in <root>' type=<root>.Result origin=POSTFIX_DECR
                         $receiver: GET_VAR 'val tmp_3: <root>.Result declared in <root>.box.<anonymous>' type=<root>.Result origin=null
                         $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                     GET_VAR 'val tmp_3: <root>.Result declared in <root>.box.<anonymous>' type=<root>.Result origin=null

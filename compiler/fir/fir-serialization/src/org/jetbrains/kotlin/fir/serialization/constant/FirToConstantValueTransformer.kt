@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -61,12 +60,12 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
         error("Illegal element as annotation argument: ${element::class.qualifiedName} -> ${element.render()}")
     }
 
-    override fun <T> visitConstExpression(
-        constExpression: FirConstExpression<T>,
+    override fun <T> visitLiteralExpression(
+        literalExpression: FirLiteralExpression<T>,
         data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
-        val value = constExpression.value
-        return when (constExpression.kind) {
+        val value = literalExpression.value
+        return when (literalExpression.kind) {
             ConstantValueKind.Boolean -> BooleanValue(value as Boolean)
             ConstantValueKind.Char -> CharValue(value as Char)
             ConstantValueKind.Byte -> ByteValue((value as Number).toByte())
@@ -108,7 +107,7 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
         val mapping = annotation.argumentMapping.mapping.convertToConstantValues(
             data.session,
             data.constValueProvider
-        ).addEmptyVarargValuesFor(annotation.toReference()?.toResolvedFunctionSymbol())
+        ).addEmptyVarargValuesFor(annotation.toReference(data.session)?.toResolvedFunctionSymbol())
         return AnnotationValue.create(annotation.annotationTypeRef.coneType, mapping)
     }
 
@@ -200,6 +199,14 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
         return visitQualifiedAccessExpression(propertyAccessExpression, data)
     }
 
+    override fun visitEnumEntryDeserializedAccessExpression(
+        enumEntryDeserializedAccessExpression: FirEnumEntryDeserializedAccessExpression,
+        data: FirToConstantValueTransformerData,
+    ): ConstantValue<*> {
+        val element = enumEntryDeserializedAccessExpression
+        return EnumValue(element.enumClassId, element.enumEntryName)
+    }
+
     override fun visitFunctionCall(
         functionCall: FirFunctionCall,
         data: FirToConstantValueTransformerData
@@ -243,11 +250,11 @@ internal object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSessio
         return false
     }
 
-    override fun <T> visitConstExpression(
-        constExpression: FirConstExpression<T>,
+    override fun <T> visitLiteralExpression(
+        literalExpression: FirLiteralExpression<T>,
         data: FirSession
     ): Boolean {
-        return constExpression.kind in supportedConstKinds
+        return literalExpression.kind in supportedConstKinds
     }
 
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: FirSession): Boolean {

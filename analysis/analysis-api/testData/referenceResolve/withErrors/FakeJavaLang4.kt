@@ -1,4 +1,3 @@
-// UNRESOLVED_REFERENCE
 // FILE: main.kt
 package nonRoot
 

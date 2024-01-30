@@ -1,0 +1,2 @@
+Resolved to:
+0: (in <local>: <no name>) fun bar()

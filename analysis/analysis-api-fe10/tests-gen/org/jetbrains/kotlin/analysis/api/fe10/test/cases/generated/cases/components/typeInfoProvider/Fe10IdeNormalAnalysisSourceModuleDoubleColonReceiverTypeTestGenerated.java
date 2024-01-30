@@ -65,9 +65,27 @@ public class Fe10IdeNormalAnalysisSourceModuleDoubleColonReceiverTypeTestGenerat
     }
 
     @Test
+    @TestMetadata("methodReference_java.kt")
+    public void testMethodReference_java() throws Exception {
+        runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_java.kt");
+    }
+
+    @Test
     @TestMetadata("methodReference_type.kt")
     public void testMethodReference_type() throws Exception {
         runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_type.kt");
+    }
+
+    @Test
+    @TestMetadata("methodReference_typeArgument.kt")
+    public void testMethodReference_typeArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_typeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("methodReference_typeArgument_startProjection.kt")
+    public void testMethodReference_typeArgument_startProjection() throws Exception {
+        runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_typeArgument_startProjection.kt");
     }
 
     @Test

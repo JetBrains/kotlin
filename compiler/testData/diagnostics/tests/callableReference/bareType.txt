@@ -3,6 +3,7 @@ package
 public fun f1(): kotlin.reflect.KFunction1<kotlin.collections.Map<*, *>, kotlin.Int>
 public fun f2(): kotlin.reflect.KFunction1<kotlin.collections.Map.Entry<*, *>, kotlin.Int>
 public fun f3(): kotlin.reflect.KFunction1<Outer<*>.Inner, kotlin.Int>
+public fun f4(): kotlin.reflect.KFunction1<Outer.NotInner, kotlin.Int>
 
 public final class Outer</*0*/ T> {
     public constructor Outer</*0*/ T>()
@@ -16,4 +17,12 @@ public final class Outer</*0*/ T> {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
+
+    public final class NotInner {
+        public constructor NotInner()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 }
+

@@ -51,7 +51,7 @@ internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseC
         "SpecialBackendChecks",
         "Special backend checks",
 ) { context, input ->
-    val moduleFragment = input.irModuleFragment
+    val moduleFragment = input.fir2irActualizedResult.irModuleFragment
     SpecialBackendChecksTraversal(
             context,
             input.symbols,

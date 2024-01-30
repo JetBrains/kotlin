@@ -34,4 +34,5 @@ inline fun bar(i: Int = 1) {
 // test.kt:9 $foo$default (0, 17, 17, 17, 17, 0)
 // test.kt:10 $foo
 // test.kt:6 $box
+// test.kt:12 $box (24, 24)
 // test.kt:7 $box

@@ -668,9 +668,9 @@ class JumpNode(owner: ControlFlowGraph, override val fir: FirJump<*>, level: Int
         return visitor.visitJumpNode(this, data)
     }
 }
-class ConstExpressionNode(owner: ControlFlowGraph, override val fir: FirConstExpression<*>, level: Int) : CFGNode<FirConstExpression<*>>(owner, level) {
+class LiteralExpressionNode(owner: ControlFlowGraph, override val fir: FirLiteralExpression<*>, level: Int) : CFGNode<FirLiteralExpression<*>>(owner, level) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitConstExpressionNode(this, data)
+        return visitor.visitLiteralExpressionNode(this, data)
     }
 }
 

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -56,7 +56,7 @@ private fun FirDeclaration.getOwnSinceKotlinVersion(session: FirSession): FirSin
     val sinceKotlinSingleArgument = getAnnotationByClassId(StandardClassIds.Annotations.SinceKotlin, session)?.findArgumentByName(
         StandardClassIds.Annotations.ParameterNames.sinceKotlinVersion
     )
-    val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)?.let(ApiVersion.Companion::parse)
+    val apiVersion = ((sinceKotlinSingleArgument as? FirLiteralExpression<*>)?.value as? String)?.let(ApiVersion.Companion::parse)
     return if (apiVersion != null) {
         FirSinceKotlinValue(apiVersion, loadWasExperimentalMarkerClasses(session))
     } else null

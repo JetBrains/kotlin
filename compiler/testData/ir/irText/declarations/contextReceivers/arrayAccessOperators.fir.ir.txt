@@ -170,7 +170,7 @@ FILE fqName:<root> fileName:/arrayAccessOperators.kt
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
                   BLOCK type=kotlin.String origin=ELVIS
                     VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.String? [val]
-                      CALL 'public final fun get ($context_receiver_0: kotlin.Int, index: kotlin.Int): kotlin.String? declared in <root>' type=kotlin.String? origin=null
+                      CALL 'public final fun get ($context_receiver_0: kotlin.Int, index: kotlin.Int): kotlin.String? declared in <root>' type=kotlin.String? origin=GET_ARRAY_ELEMENT
                         $receiver: GET_VAR 'val myContainer: <root>.MyContainer declared in <root>.box.<anonymous>' type=<root>.MyContainer origin=null
                         $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                         index: CONST Int type=kotlin.Int value=0

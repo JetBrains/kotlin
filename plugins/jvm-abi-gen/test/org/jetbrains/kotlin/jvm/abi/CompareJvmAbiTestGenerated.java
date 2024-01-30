@@ -55,6 +55,16 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/constant/");
     }
 
+    @TestMetadata("dataClassWithPrivateConstructor")
+    public void testDataClassWithPrivateConstructor() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/dataClassWithPrivateConstructor/");
+    }
+
+    @TestMetadata("dataClassWithPrivateConstructorWithoutOption")
+    public void testDataClassWithPrivateConstructorWithoutOption() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/dataClassWithPrivateConstructorWithoutOption/");
+    }
+
     @TestMetadata("debugInfoLineNumberTable")
     public void testDebugInfoLineNumberTable() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/debugInfoLineNumberTable/");

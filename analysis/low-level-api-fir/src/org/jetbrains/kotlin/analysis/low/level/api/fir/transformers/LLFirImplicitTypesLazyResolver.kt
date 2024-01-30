@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.util.setMultimapOf
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
     override fun resolve(
@@ -105,6 +107,29 @@ internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComp
     fun postponedSymbols(target: FirCallableDeclaration): Collection<FirBasedSymbol<*>> {
         return postponedSymbols[target.symbol]
     }
+
+    private var cycledSymbol: FirCallableSymbol<*>? = null
+
+    /**
+     * Push [symbol] with a recursion return type to be able to report it later
+     *
+     * @param symbol is a symbol with the recursion error in the return type
+     *
+     * @see popCycledSymbolIfExists
+     * @see LLFirImplicitBodyTargetResolver.handleCycleInResolution
+     */
+    fun pushCycledSymbol(symbol: FirCallableSymbol<*>) {
+        requireWithAttachment(cycledSymbol == null, { "Nested recursion is not allowed" })
+        cycledSymbol = symbol
+    }
+
+    /**
+     * Pop [FirCallableSymbol] with a recursion return type if it was [pushed][pushCycledSymbol]
+     *
+     * @see pushCycledSymbol
+     * @see org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirReturnTypeCalculatorWithJump.resolveDeclaration
+     */
+    fun popCycledSymbolIfExists(): FirCallableSymbol<*>? = cycledSymbol?.also { cycledSymbol = null }
 }
 
 internal class LLFirImplicitBodyTargetResolver(
@@ -137,6 +162,17 @@ internal class LLFirImplicitBodyTargetResolver(
             llImplicitBodyResolveComputationSession.postponeForeignAnnotationResolution(symbol)
             return annotationCall
         }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirReturnTypeCalculatorWithJump.resolveDeclaration
+     */
+    override fun handleCycleInResolution(target: FirElementWithResolveState) {
+        requireWithAttachment(target is FirCallableDeclaration, { "Resolution cycle is supposed to be only for callable declaration" }) {
+            withFirEntry("target", target)
+        }
+
+        llImplicitBodyResolveComputationSession.pushCycledSymbol(target.symbol)
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
