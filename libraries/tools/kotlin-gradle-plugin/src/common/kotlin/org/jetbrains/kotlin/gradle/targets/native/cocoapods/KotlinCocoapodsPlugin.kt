@@ -334,6 +334,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                     }
 
                     with(interop) {
+                        @Suppress("DEPRECATION") // deprecated property is used intentionally during deprecation period
                         defFileProperty.set(defTask.flatMap { it.defFile.asFile })
                         _packageNameProp.set(project.provider { pod.packageName })
                         _extraOptsProp.addAll(project.provider { pod.extraOpts })
