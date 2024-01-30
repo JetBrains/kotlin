@@ -49,8 +49,6 @@ abstract class FirModuleVisibilityChecker : FirSessionComponent {
     }
 }
 
-val FirModuleData.allDependsOnDependencies: List<FirModuleData> get() = topologicalSort(dependsOnDependencies) { it.dependsOnDependencies }
-
 abstract class FirVisibilityChecker : FirSessionComponent {
     @NoMutableState
     object Default : FirVisibilityChecker() {

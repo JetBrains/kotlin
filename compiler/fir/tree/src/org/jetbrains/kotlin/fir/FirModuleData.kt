@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
@@ -46,6 +47,10 @@ abstract class FirModuleData : FirSessionComponent {
     abstract val name: Name
     abstract val dependencies: List<FirModuleData>
     abstract val dependsOnDependencies: List<FirModuleData>
+
+    /** Transitive closure over [dependsOnDependencies] */
+    abstract val allDependsOnDependencies: List<FirModuleData>
+
     abstract val friendDependencies: List<FirModuleData>
     abstract val platform: TargetPlatform
     abstract val isCommon: Boolean
@@ -87,9 +92,10 @@ class FirModuleDataImpl(
     override val session: FirSession
         get() = boundSession
             ?: error("module data ${this::class.simpleName}:${name} not bound to session")
+
+    override val allDependsOnDependencies: List<FirModuleData> = topologicalSort(dependsOnDependencies) { it.dependsOnDependencies }
 }
 
 val FirSession.nullableModuleData: FirModuleData? by FirSession.nullableSessionComponentAccessor()
 val FirSession.moduleData: FirModuleData
     get() = nullableModuleData ?: error("Module data is not registered in $this")
-

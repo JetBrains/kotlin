@@ -48,6 +48,10 @@ class LLFirModuleData private constructor(val ktModule: KtModule) : FirModuleDat
         ktModule.directDependsOnDependencies.map(::LLFirModuleData)
     }
 
+    override val allDependsOnDependencies: List<FirModuleData> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        ktModule.transitiveDependsOnDependencies.map(::LLFirModuleData)
+    }
+
     override val friendDependencies: List<FirModuleData> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         ktModule.directFriendDependencies.map(::LLFirModuleData)
     }
