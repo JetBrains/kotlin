@@ -1792,9 +1792,27 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
             }
 
             @Test
+            @TestMetadata("sealedInheritorsCorrectExpect.kt")
+            public void testSealedInheritorsCorrectExpect() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/sealedInheritorsCorrectExpect.kt");
+            }
+
+            @Test
             @TestMetadata("sealedInheritorsInComplexModuleStructure.kt")
             public void testSealedInheritorsInComplexModuleStructure() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/sealedInheritorsInComplexModuleStructure.kt");
+            }
+
+            @Test
+            @TestMetadata("sealedInheritorsIncorrectExpect.kt")
+            public void testSealedInheritorsIncorrectExpect() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/sealedInheritorsIncorrectExpect.kt");
+            }
+
+            @Test
+            @TestMetadata("sealedInheritorsIncorrectNonExpect.kt")
+            public void testSealedInheritorsIncorrectNonExpect() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/sealedInheritorsIncorrectNonExpect.kt");
             }
 
             @Nested
