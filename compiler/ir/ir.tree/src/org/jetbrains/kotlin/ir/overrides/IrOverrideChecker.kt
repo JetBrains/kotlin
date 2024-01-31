@@ -66,7 +66,6 @@ class IrOverrideChecker(
             is IrSimpleFunction -> when {
                 subMember !is IrSimpleFunction -> return incompatible("Member kind mismatch")
                 superMember.hasExtensionReceiver != subMember.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
-                superMember.hasDispatchReceiver != subMember.hasDispatchReceiver -> return incompatible("Incompatible staticness")
                 superMember.isSuspend != subMember.isSuspend -> return incompatible("Incompatible suspendability")
                 checkIsInlineFlag && superMember.isInline -> return incompatible("Inline function can't be overridden")
 
@@ -80,7 +79,6 @@ class IrOverrideChecker(
             is IrProperty -> when {
                 subMember !is IrProperty -> return incompatible("Member kind mismatch")
                 superMember.getter.hasExtensionReceiver != subMember.getter.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
-                superMember.getter.hasDispatchReceiver != subMember.getter.hasDispatchReceiver -> return incompatible("Incompatible staticness")
                 checkIsInlineFlag && superMember.isInline -> return incompatible("Inline property can't be overridden")
 
                 else -> {
