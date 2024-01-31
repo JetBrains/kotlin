@@ -64,6 +64,18 @@ public class FirIdeNormalAnalysisSourceModuleMultiModuleCompilerFacilityTestGene
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/internalUsage.kt");
     }
 
+    @Test
+    @TestMetadata("lambdaParameterWithAnnotation.kt")
+    public void testLambdaParameterWithAnnotation() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/lambdaParameterWithAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdaParameterWithAnnotation2.kt")
+    public void testLambdaParameterWithAnnotation2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/lambdaParameterWithAnnotation2.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments")
     @TestDataPath("$PROJECT_ROOT")

@@ -44,10 +44,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.isPrimitiveArray
-import org.jetbrains.kotlin.ir.util.isUnsignedArray
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.types.Variance
@@ -1065,6 +1062,7 @@ class CallAndReferenceGenerator(
         // See KT-62598 and its fix for details.
         val expectedType = unsubstitutedParameterType.takeIf { visitor.annotationMode && unsubstitutedParameterType?.isArrayType == true }
         var irArgument = visitor.convertToIrExpression(argument, expectedType = expectedType)
+        irArgument.attachAnnotationsFromReturnTypeIfNeeded(parameter?.returnTypeRef)
         if (unsubstitutedParameterType != null) {
             with(visitor.implicitCastInserter) {
                 val argumentType = argument.resolvedType.fullyExpandedType(session)
@@ -1109,6 +1107,11 @@ class CallAndReferenceGenerator(
             }
         }
         return this
+    }
+
+    private fun IrExpression.attachAnnotationsFromReturnTypeIfNeeded(firTypeRef: FirTypeRef?) {
+        if (firTypeRef == null || this !is IrFunctionExpression) return
+        function.copyAnnotationsFrom(firTypeRef.toIrType())
     }
 
     private fun IrExpression.applyImplicitIntegerCoercionIfNeeded(
