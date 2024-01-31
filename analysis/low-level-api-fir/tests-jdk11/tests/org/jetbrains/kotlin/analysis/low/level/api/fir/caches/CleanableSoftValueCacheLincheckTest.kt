@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 
 import org.jetbrains.kotlinx.lincheck.annotations.Operation
 import org.jetbrains.kotlinx.lincheck.check
-import org.jetbrains.kotlinx.lincheck.strategy.managed.forClasses
 import org.jetbrains.kotlinx.lincheck.strategy.managed.modelchecking.ModelCheckingOptions
 import org.jetbrains.kotlinx.lincheck.strategy.stress.StressOptions
 import org.junit.jupiter.api.Test
@@ -44,14 +43,8 @@ class CleanableSoftValueCacheLincheckTest {
     @Operation
     fun remove(key: Int): Int? = cache.remove(key)
 
-    /**
-     * The guarantee for [ConcurrentHashMap][java.util.concurrent.ConcurrentHashMap] is required for model checking to succeed because
-     * `ConcurrentHashMap` doesn't pass Lincheck model checking itself.
-     */
     @Test
-    fun modelCheckingTest() = ModelCheckingOptions()
-        .addGuarantee(forClasses("java.util.concurrent.ConcurrentHashMap").allMethods().treatAsAtomic())
-        .check(this::class)
+    fun modelCheckingTest() = ModelCheckingOptions().check(this::class)
 
     @Test
     fun stressTest() = StressOptions().check(this::class)
