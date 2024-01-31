@@ -35,20 +35,22 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun ConeKotlinType.canBeUsedForConstVal(): Boolean = with(lowerBoundIfFlexible()) { isPrimitive || isString || isUnsignedType }
 
-fun canBeEvaluatedAtCompileTime(expression: FirExpression?, session: FirSession): Boolean {
-    return checkConstantArguments(expression, session) == ConstantArgumentKind.VALID_CONST
+fun canBeEvaluatedAtCompileTime(expression: FirExpression?, session: FirSession, allowErrors: Boolean): Boolean {
+    val result = checkConstantArguments(expression, session)
+    return result == ConstantArgumentKind.VALID_CONST || allowErrors && result == ConstantArgumentKind.RESOLUTION_ERROR
 }
 
 fun checkConstantArguments(
     expression: FirExpression?,
     session: FirSession,
 ): ConstantArgumentKind {
-    if (expression == null) return ConstantArgumentKind.VALID_CONST
+    if (expression == null) return ConstantArgumentKind.RESOLUTION_ERROR
     return expression.accept(FirConstCheckVisitor(session), null)
 }
 
 enum class ConstantArgumentKind {
     VALID_CONST,
+    RESOLUTION_ERROR,
     NOT_CONST,
     ENUM_NOT_CONST,
     NOT_KCLASS_LITERAL,
@@ -84,8 +86,9 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
 
     override fun visitErrorExpression(errorExpression: FirErrorExpression, data: Nothing?): ConstantArgumentKind {
         // Error expression already signalizes about some problem, and later we will report some diagnostic.
-        // We count this expression as valid and skip diagnostic reporting not to pollute output with a lot of error messages.
-        return ConstantArgumentKind.VALID_CONST
+        // Depending on the context, we can count this as valid or as error expression.
+        // So we delegate the final decision to the caller.
+        return ConstantArgumentKind.RESOLUTION_ERROR
     }
 
     override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: Nothing?): ConstantArgumentKind {
@@ -202,7 +205,7 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
             // Null symbol means some error occurred.
             // We use the same logic as in `visitErrorExpression`.
             // Better to report "UNRESOLVED_REFERENCE" later than some "NOT_CONST" diagnostic right now.
-            null -> return ConstantArgumentKind.VALID_CONST
+            null -> return ConstantArgumentKind.RESOLUTION_ERROR
             is FirPropertySymbol -> {
                 val classKindOfParent = (propertySymbol.getReferencedClassSymbol() as? FirRegularClassSymbol)?.classKind
                 if (classKindOfParent == ClassKind.ENUM_CLASS) {
@@ -251,7 +254,7 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?): ConstantArgumentKind {
         val calleeReference = functionCall.calleeReference
         if (calleeReference is FirErrorNamedReference || calleeReference is FirResolvedErrorReference) {
-            return ConstantArgumentKind.VALID_CONST
+            return ConstantArgumentKind.RESOLUTION_ERROR
         }
         if (functionCall.getExpandedType().classId == StandardClassIds.KClass) {
             return ConstantArgumentKind.NOT_KCLASS_LITERAL

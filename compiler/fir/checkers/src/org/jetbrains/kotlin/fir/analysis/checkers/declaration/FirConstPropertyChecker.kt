@@ -64,7 +64,7 @@ object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
         }
 
         val errorKind = when (checkConstantArguments(initializer, context.session)) {
-            ConstantArgumentKind.VALID_CONST -> return
+            ConstantArgumentKind.VALID_CONST, ConstantArgumentKind.RESOLUTION_ERROR -> return
             ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
             else -> FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER
         }

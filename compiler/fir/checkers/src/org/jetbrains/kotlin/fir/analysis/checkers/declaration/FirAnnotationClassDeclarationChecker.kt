@@ -68,7 +68,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
                         reporter.reportOn(source, FirErrors.VAR_ANNOTATION_PARAMETER, context)
                     }
                     val defaultValue = parameter.defaultValue
-                    if (defaultValue != null && !canBeEvaluatedAtCompileTime(defaultValue, context.session)) {
+                    if (defaultValue != null && !canBeEvaluatedAtCompileTime(defaultValue, context.session, allowErrors = true)) {
                         reporter.reportOn(defaultValue.source, FirErrors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT, context)
                     }
 

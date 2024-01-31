@@ -107,7 +107,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
                     ConstantArgumentKind.NOT_KCLASS_LITERAL -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL
                     ConstantArgumentKind.KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR -> FirErrors.ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
                     ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
-                    ConstantArgumentKind.VALID_CONST ->
+                    ConstantArgumentKind.VALID_CONST, ConstantArgumentKind.RESOLUTION_ERROR ->
                         //try to go deeper if we are not sure about this function call
                         //to report non-constant val in not fully resolved calls
                         if (expression is FirFunctionCall) checkArgumentList(expression.argumentList)

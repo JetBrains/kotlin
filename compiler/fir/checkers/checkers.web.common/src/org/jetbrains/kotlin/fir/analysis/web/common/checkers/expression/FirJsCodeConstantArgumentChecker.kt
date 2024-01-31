@@ -44,10 +44,12 @@ object FirJsCodeConstantArgumentChecker : FirFunctionCallChecker(MppCheckerKind.
             override fun visitElement(element: FirElement) {
                 val lastReported = lastReportedElement
                 element.acceptChildren(this)
-                if (lastReported == lastReportedElement && !canBeEvaluatedAtCompileTime(element as? FirExpression, context.session)) {
-                    lastReportedElement = element
-                    val source = element.source ?: jsCodeExpression.source
-                    reporter.reportOn(source, FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION, context)
+                if (lastReported == lastReportedElement) {
+                    if (!canBeEvaluatedAtCompileTime(element as? FirExpression, context.session, allowErrors = true)) {
+                        lastReportedElement = element
+                        val source = element.source ?: jsCodeExpression.source
+                        reporter.reportOn(source, FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION, context)
+                    }
                 }
             }
 
