@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.openapi.util.objectTree;
 
 import com.intellij.openapi.diagnostic.UntraceableException;
@@ -90,13 +90,15 @@ public final class ThrowableInterner {
     private static final Field BACKTRACE_FIELD;
 
     static {
+        Field backtraceField;
         try {
-            BACKTRACE_FIELD = Throwable.class.getDeclaredField("backtrace");
+            backtraceField = Throwable.class.getDeclaredField("backtrace");
+            backtraceField.setAccessible(true);
         }
         catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
+            backtraceField = null;
         }
-        BACKTRACE_FIELD.setAccessible(true);
+        BACKTRACE_FIELD = backtraceField;
     }
 
     private static Object[] getBacktrace(@NotNull Throwable throwable) {
