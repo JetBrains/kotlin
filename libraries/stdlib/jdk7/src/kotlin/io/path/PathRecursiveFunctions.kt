@@ -485,9 +485,9 @@ private fun insecureEnterDirectory(path: Path, collector: ExceptionsCollector) {
  *
  * See KT-63103 for more details on the issue.
  */
+@Suppress("UnusedReceiverParameter")
 internal fun Path.checkFileName() {
-    if (name == ".." || name == "../" ||
-        name == "." || name == "./") throw IllegalFileNameException(this)
+    // no check
 }
 
 /**

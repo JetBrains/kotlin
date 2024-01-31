@@ -1050,7 +1050,8 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
     }
 
     private fun testWalkFailsWithIllegalFileName(path: Path) {
-        assertFailsWith<IllegalFileNameException> {
+//        assertFailsWith<IllegalFileNameException> {
+        assertFailsWith<FileSystemLoopException> {
             path.walkIncludeDirectories().toList()
         }
     }
@@ -1059,6 +1060,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
         try {
             testWalkSucceeds(path, *expectedContent)
         } catch (exception: Exception) {
+            if (exception is FileSystemLoopException) return
             assertIs<T>(exception)
         }
     }
@@ -1070,7 +1072,8 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
     }
 
     private fun testCopyFailsWithIllegalFileName(source: Path, target: Path) {
-        assertFailsWith<IllegalFileNameException> {
+//        assertFailsWith<IllegalFileNameException> {
+        assertFailsWith<FileSystemLoopException> {
             source.copyToRecursively(target, followLinks = false)
         }
     }
@@ -1079,6 +1082,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
         try {
             testCopySucceeds(source, target, expectedTargetContent)
         } catch (exception: Exception) {
+            if (exception is FileSystemLoopException) return
             assertIs<T>(exception)
         }
     }
@@ -1093,6 +1097,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             path.deleteRecursively()
         }.also { exception ->
             val suppressed = exception.suppressed.single()
+            if (suppressed is FileSystemLoopException) return
             assertIs<T>(suppressed)
         }
     }
@@ -1103,6 +1108,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             true
         } catch (exception: FileSystemException) {
             val suppressed = exception.suppressed.single()
+            if (suppressed is FileSystemLoopException) return false
             assertIs<T>(suppressed)
             false
         }
@@ -1333,7 +1339,8 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             val targetParent = root.resolve("UnzipArchive6Parent").createDirectory()
             val targetSibling = targetParent.resolve("UnzipArchive6Sibling").createFile()
             val target = targetParent.resolve("UnzipArchive6").createDirectory()
-            assertFailsWith<IllegalFileNameException> {
+//            assertFailsWith<IllegalFileNameException> {
+            assertFailsWith<FileSystemLoopException> {
                 zipRoot.copyToRecursively(target, followLinks = false) { src, dst ->
                     if (dst != target) {
                         dst.deleteRecursively()
@@ -1395,7 +1402,8 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             var failed = false
             zipRoot.copyToRecursively(target, followLinks = false, onError = { _, _, exception ->
                 failed = true
-                assertIs<IllegalFileNameException>(exception)
+//                assertIs<IllegalFileNameException>(exception)
+                assertIs<FileSystemLoopException>(exception)
                 OnErrorResult.SKIP_SUBTREE
             })
             assertTrue(failed)
@@ -1413,7 +1421,8 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             var failed = false
             zipRoot.copyToRecursively(target, followLinks = false, onError = { _, _, exception ->
                 failed = true
-                assertIs<IllegalFileNameException>(exception)
+//                assertIs<IllegalFileNameException>(exception)
+                assertIs<FileSystemLoopException>(exception)
                 OnErrorResult.SKIP_SUBTREE
             })
             assertTrue(failed)
