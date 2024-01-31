@@ -95,7 +95,6 @@ internal class TestProcessor(val suites: List<TestSuite>, val args: Array<String
     // must be in sync with `fromGTestPattern(String)` in native/native.tests/tests/org/jetbrains/kotlin/konan/test/blackbox/support/runner/TestRun.kt
     private fun fromGTestPattern(pattern: String): Regex {
         val result = StringBuilder()
-        result.append("^")
         var prevIndex = 0
         pattern.forEachIndexed { index, c ->
             if (c == '*' || c == '?') {
@@ -105,7 +104,6 @@ internal class TestProcessor(val suites: List<TestSuite>, val args: Array<String
             }
         }
         result.append(pattern.substringEscaped(prevIndex until pattern.length))
-        result.append("$")
         return result.toString().toRegex()
     }
 

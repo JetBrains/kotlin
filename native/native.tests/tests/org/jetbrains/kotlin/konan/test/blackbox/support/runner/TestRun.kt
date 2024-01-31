@@ -142,7 +142,6 @@ internal inline fun <reified T : TestRunParameter> List<TestRunParameter>.get(on
 // must be in sync with `fromGTestPattern(String)` in kotlin-native/runtime/src/main/kotlin/kotlin/native/internal/test/TestRunner.kt
 internal fun fromGTestPattern(pattern: String): Regex {
     val result = StringBuilder()
-    result.append("^")
     var prevIndex = 0
     pattern.forEachIndexed { index, c ->
         if (c == '*' || c == '?') {
@@ -152,7 +151,6 @@ internal fun fromGTestPattern(pattern: String): Regex {
         }
     }
     result.append(pattern.substringEscaped(prevIndex until pattern.length))
-    result.append("$")
     return result.toString().toRegex()
 }
 
