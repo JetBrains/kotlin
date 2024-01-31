@@ -177,15 +177,9 @@ tasks.named("clean", Delete.class) {
 
 tasks.named("run") {
     dependsOn(tasks.withType(KonanTest).matching { it.enabled })
-    // Add framework tests
-    dependsOn(tasks.withType(FrameworkTest).matching { it.enabled })
     dependsOn(tasks.withType(FileCheckTest).matching { it.enabled })
-    dependsOn(tasks.withType(KonanTest).matching { it.enabled })
-    // Add framework tests
-    dependsOn(tasks.withType(FrameworkTest).matching { it.enabled })
     // Add regular gradle test tasks
     dependsOn(tasks.withType(Test).matching { it.enabled })
-    dependsOn(tasks.withType(FileCheckTest).matching { it.enabled })
     dependsOn(":kotlin-native:Interop:Indexer:check")
     dependsOn(":kotlin-native:Interop:StubGenerator:check")
     dependsOn(":native:kotlin-native-utils:check")
@@ -1834,42 +1828,6 @@ standaloneTest("split_compilation_pipeline") {
     }
     flags = ["-Xread-dependencies-from=${dir}/split_compilation_pipeline.deps", "-Xcompile-from-bitcode=${dir}/tmp/split/out.bc"]
     useGoldenData = true
-}
-
-Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
-    return KotlinNativeTestKt.createTest(project, name, FrameworkTest) { task ->
-        configurator.delegate = task
-        UtilsKt.dependsOnDist(task)
-        configurator()
-        if (task.enabled) {
-            konanArtifacts {
-                task.frameworks.forEach { fr ->
-                    framework(fr.name, targets: [target.name]) {
-                        fr.sources.forEach { src ->
-                            srcFiles src
-                        }
-                        baseDir "$testOutputFramework/${task.name}"
-
-                        fr.libraries.forEach { library ->
-                            dependsOn konanArtifacts[library].getByTarget(target.name)
-                            libraries {
-                                klibFile konanArtifacts[library].getArtifactByTarget(target.name)
-                            }
-                            linkerOpts "-L${project.layout.buildDirectory.get().asFile}"
-                            UtilsKt.dependsOnKonanBuildingTask(task, library, target)
-                        }
-
-                        if (fr.isStatic) extraOpts "-Xstatic-framework"
-                        extraOpts fr.opts
-                        extraOpts project.globalTestArgs
-
-                        artifactName fr.artifact
-                    }
-                    UtilsKt.dependsOnDist(project.tasks.findByName("compileKonan${fr.name.capitalize()}${UtilsKt.getTestTargetSuffix(project)}"))
-                }
-            }
-        }
-    }
 }
 
 tasks.register("override_konan_properties0", KonanDriverTest) {

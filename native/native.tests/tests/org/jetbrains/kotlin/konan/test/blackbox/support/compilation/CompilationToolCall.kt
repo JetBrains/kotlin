@@ -189,6 +189,8 @@ internal fun invokeSwiftC(
                 File(configs.absoluteTargetToolchain).resolveSibling("ExtraFrameworks").absolutePath
         }
     } catch (rpe: RunProcessException) {
+        if (rpe.exitCode == null)
+            throw rpe // Treat compiler timeouts as fatal errors
         return CompilationToolCallResult(
             exitCode = ExitCode.COMPILATION_ERROR,
             toolOutput = "ARGS: $args\nSTDOUT: ${rpe.stdout}\nSTDERR: ${rpe.stderr}",
@@ -207,11 +209,7 @@ internal fun invokeSwiftC(
 internal fun codesign(path: String) {
     val executableAbsolutePath = "/usr/bin/codesign"
     val args = arrayOf("--verbose", "-s", "-", path)
-    try {
-        runProcess(executableAbsolutePath, *args) {
-            timeout = Duration.parse("30s")
-        }
-    } catch (rpe: RunProcessException) {
-        throw AssertionError("`$executableAbsolutePath ${args.joinToString(" ")}` failed with exitCode=${rpe.exitCode}: ${rpe.message}")
+    runProcess(executableAbsolutePath, *args) {
+        timeout = Duration.parse("30s")
     }
 }
