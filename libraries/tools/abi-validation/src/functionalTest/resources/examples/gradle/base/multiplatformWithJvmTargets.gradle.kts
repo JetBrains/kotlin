@@ -21,6 +21,9 @@ kotlin {
             testRuns["test"].executionTask.configure {
                 useJUnit()
             }
+            attributes {
+                attribute(Attribute.of("variant", String::class.java), "a")
+            }
         }
         jvm("anotherJvm") {
             compilations.all {
@@ -28,6 +31,9 @@ kotlin {
             }
             testRuns["test"].executionTask.configure {
                 useJUnit()
+            }
+            attributes {
+                attribute(Attribute.of("variant", String::class.java), "b")
             }
         }
     }
