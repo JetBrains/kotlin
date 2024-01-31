@@ -1216,6 +1216,8 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
 
         private fun KmType.dumpToString(dumpExtras: Boolean): String = buildString {
             append(classifier.dumpToString(dumpClassifierType = false))
+            if (isNullable) append("?")
+            if (isDefinitelyNonNull) append("!!")
             if (arguments.isNotEmpty()) {
                 arguments.joinTo(this, prefix = "<", postfix = ">") { argument ->
                     argument.dumpToString(dumpExtras = false)
