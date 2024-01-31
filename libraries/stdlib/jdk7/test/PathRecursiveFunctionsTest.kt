@@ -1035,7 +1035,12 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
         } catch (e: ZipException) {
             // Later JDK versions do not allow opening zip files that have entry named "." or "..".
             // See https://bugs.openjdk.org/browse/JDK-8251329 and https://bugs.openjdk.org/browse/JDK-8283486
-            println("Opening a ZIP file failed with $e")
+            if (e.message?.contains("a '.' or '..' element") == true) {
+                println("Opening a ZIP file failed with $e")
+            } else {
+                // Potentially a different cause for the failed opening.
+                throw e
+            }
             return
         }
         zipFs.use {
