@@ -946,6 +946,12 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         checkWhen(emptyArray(), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
     }
 
+    @WorkingDir("KotlinProjectWithSingleKotlinFileAsSourceRoot")
+    fun testBuildProjectWithSingleKotlinFileAsSource() {
+        initProject(JVM_MOCK_RUNTIME)
+        buildAllModules().assertSuccessful()
+    }
+
     fun testBuildAfterGdwBuild() {
         initProject(JVM_FULL_RUNTIME)
         findModule("module2").let {
