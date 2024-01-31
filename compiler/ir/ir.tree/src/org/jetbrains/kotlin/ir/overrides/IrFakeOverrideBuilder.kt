@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.collectAndFilterRealOverrides
-import org.jetbrains.kotlin.ir.util.fileOrNull
-import org.jetbrains.kotlin.ir.util.isFromJava
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
@@ -65,28 +62,54 @@ class IrFakeOverrideBuilder(
      */
     fun buildFakeOverridesForClass(clazz: IrClass, oldSignatures: Boolean) {
         strategy.inFile(clazz.fileOrNull) {
-            val allFromSuper = clazz.superTypes.flatMap { superType ->
-                val superClass = superType.getClass() ?: error("Unexpected super type: $superType")
-                superClass.declarations
-                    .filterIsInstance<IrOverridableMember>()
-                    .mapNotNull {
-                        val fakeOverride = strategy.fakeOverrideMember(superType, it, clazz) ?: return@mapNotNull null
-                        FakeOverride(fakeOverride, it)
-                    }
-            }
+            val (staticMembers, instanceMembers) =
+                clazz.declarations.filterIsInstance<IrOverridableMember>().partition { it.isStaticMember }
 
-            val allFromSuperByName = allFromSuper.groupBy { it.override.name }
-            val allFromCurrentByName = clazz.declarations.filterIsInstance<IrOverridableMember>().groupBy { it.name }
+            buildFakeOverridesForClassImpl(clazz, instanceMembers, oldSignatures, clazz.superTypes) { !it.isStaticMember }
 
-            allFromSuperByName.forEach { (name, superMembers) ->
-                generateOverridesInFunctionGroup(
-                    superMembers,
-                    allFromCurrentByName[name] ?: emptyList(),
-                    clazz,
-                    oldSignatures
-                )
-            }
+            // Static Java members from the superclass need fake overrides in the subclass, to support the case when the static member is
+            // declared in an inaccessible grandparent class but is exposed as public in the parent. For example:
+            //
+            //     class A { public static void f() {} }
+            //     public class B extends A {}
+            //
+            // `A.f` is inaccessible from another package, but `B.f` is accessible from everywhere because Java doesn't have the
+            // "exposed visibility" error. Accessing the method via the class A would result in an IllegalAccessError at runtime, thus
+            // we need to generate a fake override in class B. This is only possible in case of superclasses, as static _interface_ members
+            // are not inherited (see JLS 8.4.8 and 9.4.1).
+            val superClass = clazz.superTypes.filter { it.classOrFail.owner.isClass }
+            buildFakeOverridesForClassImpl(clazz, staticMembers, oldSignatures, superClass) { it.isStaticMember }
         }
+    }
+
+    private fun buildFakeOverridesForClassImpl(
+        clazz: IrClass,
+        allFromCurrent: List<IrOverridableMember>,
+        oldSignatures: Boolean,
+        supertypes: List<IrType>,
+        declarationFilter: (IrOverridableMember) -> Boolean,
+    ) {
+        val allFromSuper = supertypes.flatMap { superType ->
+            superType.classOrFail.owner.declarations
+                .filterIsInstanceAnd<IrOverridableMember>(declarationFilter)
+                .mapNotNull {
+                    val fakeOverride = strategy.fakeOverrideMember(superType, it, clazz) ?: return@mapNotNull null
+                    FakeOverride(fakeOverride, it)
+                }
+        }
+
+        val allFromSuperByName = allFromSuper.groupBy { it.override.name }
+        val allFromCurrentByName = allFromCurrent.groupBy { it.name }
+
+        allFromSuperByName.forEach { (name, superMembers) ->
+            generateOverridesInFunctionGroup(
+                superMembers,
+                allFromCurrentByName[name] ?: emptyList(),
+                clazz,
+                oldSignatures
+            )
+        }
+
     }
 
     /**

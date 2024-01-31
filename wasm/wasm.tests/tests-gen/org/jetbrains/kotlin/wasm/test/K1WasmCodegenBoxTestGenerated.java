@@ -22980,6 +22980,16 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/javaInterop/statics")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Statics {
+            @Test
+            public void testAllFilesPresentInStatics() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/statics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+        }
     }
 
     @Nested

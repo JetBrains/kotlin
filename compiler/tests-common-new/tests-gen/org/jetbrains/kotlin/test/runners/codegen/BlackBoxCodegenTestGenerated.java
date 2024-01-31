@@ -29700,6 +29700,28 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/nullableInt.kt");
             }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/javaInterop/statics")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Statics {
+            @Test
+            public void testAllFilesPresentInStatics() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/statics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @Test
+            @TestMetadata("inheritTwoStaticMethods.kt")
+            public void testInheritTwoStaticMethods() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/statics/inheritTwoStaticMethods.kt");
+            }
+
+            @Test
+            @TestMetadata("overrideInstanceMethodWithIrrelevantStatic.kt")
+            public void testOverrideInstanceMethodWithIrrelevantStatic() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/statics/overrideInstanceMethodWithIrrelevantStatic.kt");
+            }
+        }
     }
 
     @Nested

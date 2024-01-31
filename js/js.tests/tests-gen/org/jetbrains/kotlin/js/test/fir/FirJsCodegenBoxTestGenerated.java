@@ -22992,6 +22992,16 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/javaInterop/statics")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Statics {
+            @Test
+            public void testAllFilesPresentInStatics() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/statics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+        }
     }
 
     @Nested

@@ -26718,6 +26718,29 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/nullableInt.kt");
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/javaInterop/statics")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Statics extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInStatics() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/statics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("inheritTwoStaticMethods.kt")
+            public void testInheritTwoStaticMethods() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/statics/inheritTwoStaticMethods.kt");
+            }
+
+            @TestMetadata("overrideInstanceMethodWithIrrelevantStatic.kt")
+            public void testOverrideInstanceMethodWithIrrelevantStatic() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/statics/overrideInstanceMethodWithIrrelevantStatic.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/javaVisibility")

@@ -26579,6 +26579,19 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/javaInterop/statics")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @UseExtTestCaseGroupProvider()
+            public class Statics {
+                @Test
+                public void testAllFilesPresentInStatics() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/statics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+            }
         }
 
         @Nested
