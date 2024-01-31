@@ -5,6 +5,8 @@
 
 package kotlin.jdk7.test
 
+import test.testOnJvm8
+import test.testOnJvm9AndAbove
 import java.lang.NullPointerException
 import java.nio.file.*
 import java.util.zip.ZipEntry
@@ -1390,6 +1392,56 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             testDeleteSucceeds(b)
             // The deleted "/a/../b" path actually deleted the "b" outside "a"
             assertNull(zipRoot.listDirectoryEntries().find { it.name == "b" })
+        }
+    }
+
+    @Test
+    fun zipWindowsPathSeparators() {
+        // When creating a zip archive, entries are added with the exact given names.
+        testOnJvm8 {
+            // JDK8 converts backslashes to slashes when reading entries, but later can't find those entries
+            withZip("Archive1.zip", listOf("b\\", "b\\d", "a\\")) { root, zipRoot ->
+                assertFailsWith<NoSuchFileException> {
+                    zipRoot.walkIncludeDirectories().toList()
+                }
+
+                // There is no directory with name "a", thus empty walk sequence
+                testWalkSucceeds(zipRoot.resolve("a"), emptySet())
+
+                assertFailsWith<NoSuchFileException> {
+                    val target = root.resolve("UnzipArchive1")
+                    zipRoot.copyToRecursively(target, followLinks = false)
+                }
+
+                assertFailsWith<FileSystemException> {
+                    zipRoot.deleteRecursively()
+                }.also { exception ->
+                    exception.suppressed.forEach {
+                        assertIs<NoSuchFileException>(it)
+                    }
+                }
+            }
+        }
+
+        testOnJvm9AndAbove {
+            // JDK9+ treats backslashes as part of entry name
+            withZip("Archive1.zip", listOf("b\\", "b\\d", "a\\", "a\\..\\b\\c")) { root, zipRoot ->
+                val expectedWalk = listOf("", "b\\", "b\\d", "a\\", "a\\..\\b\\c").map { "/$it" }.toSet()
+                val walk = zipRoot.walkIncludeDirectories().map { it.toString() }.toSet()
+                assertEquals(expectedWalk, walk)
+
+                // There is no directory with name "a", thus empty walk sequence
+                testWalkSucceeds(zipRoot.resolve("a"), emptySet())
+
+                val target = root.resolve("UnzipArchive1")
+                // Fails in Windows
+                testCopyMaybeFailsWith<NoSuchFileException>(zipRoot, target, target.resolve("", "b\\", "b\\d", "a\\", "a\\..\\b\\c"))
+
+                // Deleting a zip root throws NPE
+                testDeleteFailsWith<NullPointerException>(zipRoot)
+                // All entries inside are deleted
+                testWalkSucceeds(zipRoot, setOf(zipRoot))
+            }
         }
     }
 
