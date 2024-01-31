@@ -1035,9 +1035,9 @@ class ComposerLambdaMemoization(
             val cacheTmpVar = irTemporary(cache, "tmpCache")
             cacheTmpVar.wrap(
                 type = expression.type,
-                before = listOf(irStartReplaceableGroup(irCurrentComposer(), irConst(key))),
+                before = listOf(irStartReplaceGroup(irCurrentComposer(), irConst(key))),
                 after = listOf(
-                    irEndReplaceableGroup(irCurrentComposer()),
+                    irEndReplaceGroup(irCurrentComposer()),
                     irGet(cacheTmpVar)
                 )
             )

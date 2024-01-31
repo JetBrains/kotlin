@@ -32,7 +32,7 @@ fun Something(param: Function0<String>?, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     Something(<block>{
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "<{>")
       val tmp1_group = if (param != null) {
         sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
@@ -46,7 +46,7 @@ fun Something(param: Function0<String>?, %composer: Composer?, %changed: Int) {
       } else {
         null
       }
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
       tmp1_group
     }, %composer, 0)
     if (isTraceInProgress()) {

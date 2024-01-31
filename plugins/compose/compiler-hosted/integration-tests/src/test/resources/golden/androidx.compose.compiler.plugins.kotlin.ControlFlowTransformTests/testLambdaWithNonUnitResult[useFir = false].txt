@@ -25,7 +25,7 @@ fun Test(%composer: Composer?, %changed: Int) {
       traceEventStart(<>, %changed, -1, <>)
     }
     val factory = createFactory { %composer: Composer?, %changed: Int ->
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
@@ -33,7 +33,7 @@ fun Test(%composer: Composer?, %changed: Int) {
       if (isTraceInProgress()) {
         traceEventEnd()
       }
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
       tmp0
     }
     factory(%composer, 0)

@@ -50,12 +50,12 @@ internal object ComposableSingletons%TestKt {
       IW({ %composer: Composer?, %changed: Int ->
         sourceInformationMarkerStart(%composer, <>, "C<T(2)>,<T(4)>:Test.kt")
         T(2, %composer, 0b0110)
-        %composer.startReplaceableGroup(<>)
+        %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "*<T(3)>")
         repeat(3) { it: Int ->
           T(3, %composer, 0b0110)
         }
-        %composer.endReplaceableGroup()
+        %composer.endReplaceGroup()
         T(4, %composer, 0b0110)
         sourceInformationMarkerEnd(%composer)
       }, %composer, 0)

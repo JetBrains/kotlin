@@ -33,14 +33,14 @@ fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     IW({ %composer: Composer?, %changed: Int ->
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C<A()>:Test.kt")
       if (condition) {
-        %composer.endReplaceableGroup()
+        %composer.endReplaceGroup()
         return@IW
       }
       A(%composer, 0)
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
     }, %composer, 0)
     if (isTraceInProgress()) {
       traceEventEnd()

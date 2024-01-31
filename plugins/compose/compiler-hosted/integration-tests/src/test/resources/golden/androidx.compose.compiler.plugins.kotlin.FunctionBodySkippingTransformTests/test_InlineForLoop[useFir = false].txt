@@ -47,13 +47,13 @@ fun Test(%composer: Composer?, %changed: Int) {
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun <T> Bug(items: List<T>, content: Function3<@[ParameterName(name = 'item')] T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(Bug)P(1):Test.kt")
-  %composer.startReplaceableGroup(<>)
+  %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "*<conten...>")
   val <iterator> = items.iterator()
   while (<iterator>.hasNext()) {
     val item = <iterator>.next()
     content(item, %composer, 0b01110000 and %changed)
   }
-  %composer.endReplaceableGroup()
+  %composer.endReplaceGroup()
   sourceInformationMarkerEnd(%composer)
 }

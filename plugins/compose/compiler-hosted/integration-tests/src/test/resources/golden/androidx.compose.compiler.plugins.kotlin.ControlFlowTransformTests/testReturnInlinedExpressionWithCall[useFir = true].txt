@@ -31,14 +31,14 @@ fun Test(x: Int, %composer: Composer?, %changed: Int): Int {
     traceEventStart(<>, %changed, -1, <>)
   }
   val tmp0 = <block>{
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "*<A()>")
     val tmp1_group = x.let { it: Int ->
       A(%composer, 0)
       val tmp0_return = 123
       tmp0_return
     }
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
     tmp1_group
   }
   if (isTraceInProgress()) {

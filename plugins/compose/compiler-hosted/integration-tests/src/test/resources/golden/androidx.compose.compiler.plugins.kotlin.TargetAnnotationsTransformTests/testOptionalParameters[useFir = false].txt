@@ -161,7 +161,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
     }
     one(%composer, 0b1110 and %dirty)
     val tmp0_safe_receiver = two
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "<invoke...>")
     val tmp0_group = when {
       tmp0_safe_receiver == null -> {
@@ -171,10 +171,10 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
         tmp0_safe_receiver(%composer, 0b1110 and %dirty shr 0b0011)
       }
     }
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
     tmp0_group
     val tmp1_safe_receiver = three
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "*<it()>")
     val tmp1_group = when {
       tmp1_safe_receiver == null -> {
@@ -186,10 +186,10 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
         }
       }
     }
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
     tmp1_group
     val tmp2_safe_receiver = four
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "*<four()>")
     val tmp2_group = when {
       tmp2_safe_receiver == null -> {
@@ -201,16 +201,16 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
         }
       }
     }
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
     tmp2_group
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "<five()>")
     if (five != null) {
       five(%composer, 0b1110 and %dirty shr 0b1100)
     }
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
     val tmp3_safe_receiver = six
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "*<Wrappe...>")
     val tmp3_group = when {
       tmp3_safe_receiver == null -> {
@@ -222,7 +222,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
         }
       }
     }
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
     tmp3_group
     content(%composer, 0b1110 and %dirty shr 0b00010010)
     if (isTraceInProgress()) {

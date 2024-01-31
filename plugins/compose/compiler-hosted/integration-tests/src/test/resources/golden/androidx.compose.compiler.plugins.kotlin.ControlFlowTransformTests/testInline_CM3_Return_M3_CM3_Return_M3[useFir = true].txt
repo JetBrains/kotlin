@@ -42,26 +42,26 @@ fun testInline_M1_W_Return_Func(condition: Boolean, %composer: Composer?, %chang
     }
     A(%composer, 0)
     M3({ %composer: Composer?, %changed: Int ->
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C<A()>,<A()>:Test.kt")
       A(%composer, 0)
       if (condition) {
-        %composer.endReplaceableGroup()
+        %composer.endReplaceGroup()
         return@M3
       }
       A(%composer, 0)
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
     }, %composer, 0)
     M3({ %composer: Composer?, %changed: Int ->
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C<A()>,<A()>:Test.kt")
       A(%composer, 0)
       if (condition) {
-        %composer.endReplaceableGroup()
+        %composer.endReplaceGroup()
         return@M3
       }
       A(%composer, 0)
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
     }, %composer, 0)
     A(%composer, 0)
     if (isTraceInProgress()) {

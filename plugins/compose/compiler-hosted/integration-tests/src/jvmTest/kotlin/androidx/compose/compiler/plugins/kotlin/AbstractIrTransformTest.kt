@@ -123,7 +123,8 @@ abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(us
             // replace source keys for start group calls
             .replace(
                 Regex(
-                    "(%composer\\.start(Restart|Movable|Replaceable)Group\\()-?((0b)?[-\\d]+)"
+                    "(%composer\\.start(Restart|Movable|Replaceable|Replace)" +
+                        "Group\\()-?((0b)?[-\\d]+)"
                 )
             ) {
                 val stringKey = it.groupValues[3]
@@ -162,7 +163,7 @@ abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(us
             // replace source information with source it references
             .replace(
                 Regex(
-                    "(%composer\\.start(Restart|Movable|Replaceable)Group\\" +
+                    "(%composer\\.start(Restart|Movable|Replaceable|Replace)Group\\" +
                         "([^\"\\n]*)\"(.*)\"\\)"
                 )
             ) {

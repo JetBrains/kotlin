@@ -38,10 +38,10 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int) {
     val tmp0_subject = state.value
     when {
       tmp0_subject == true -> {
-        %composer.startReplaceableGroup(<>)
+        %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "<Text(t...>")
         val tmp1_return = Text("true", %composer, 0b0110)
-        %composer.endReplaceableGroup()
+        %composer.endReplaceGroup()
         if (isTraceInProgress()) {
           traceEventEnd()
         }
@@ -51,10 +51,10 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int) {
         return tmp1_return
       }
       else -> {
-        %composer.startReplaceableGroup(<>)
+        %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "<Text(t...>")
         Text("false", %composer, 0b0110)
-        %composer.endReplaceableGroup()
+        %composer.endReplaceGroup()
       }
     }
     if (isTraceInProgress()) {

@@ -35,24 +35,24 @@ fun Example(x: Int, %composer: Composer?, %changed: Int) {
     val tmp0_subject = x
     when {
       tmp0_subject == 0 -> {
-        %composer.startReplaceableGroup(<>)
+        %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "<R(a)>")
         val tmp0_group = R(a, %composer, 0)
-        %composer.endReplaceableGroup()
+        %composer.endReplaceGroup()
         tmp0_group
       }
       tmp0_subject == 0b0001 -> {
-        %composer.startReplaceableGroup(<>)
+        %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "<R(b)>")
         val tmp1_group = R(b, %composer, 0)
-        %composer.endReplaceableGroup()
+        %composer.endReplaceGroup()
         tmp1_group
       }
       else -> {
-        %composer.startReplaceableGroup(<>)
+        %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "<R(c)>")
         val tmp2_group = R(c, %composer, 0)
-        %composer.endReplaceableGroup()
+        %composer.endReplaceGroup()
         tmp2_group
       }
     }

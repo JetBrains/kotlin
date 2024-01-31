@@ -32,11 +32,11 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int): String? {
     traceEventStart(<>, %changed, -1, <>)
   }
   val tmp0 = Test(<block>{
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "<Test(>")
     val tmp3_group = if (param == null) {
       Test(<block>{
-        %composer.startReplaceableGroup(<>)
+        %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "<rememb...>")
         val tmp2_group = if (param == null) {
           sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
@@ -48,13 +48,13 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int): String? {
         } else {
           null
         }
-        %composer.endReplaceableGroup()
+        %composer.endReplaceGroup()
         tmp2_group
       }, %composer, 0)
     } else {
       null
     }
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
     tmp3_group
   }, %composer, 0)
   if (isTraceInProgress()) {
