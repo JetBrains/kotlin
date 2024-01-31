@@ -481,13 +481,14 @@ private fun insecureEnterDirectory(path: Path, collector: ExceptionsCollector) {
  * For instance, "/a/b/.." is a valid starting path for traversal. However, if traversal begins from "/a"
  * and reaches "a/b/..", it will result in a cycle.
  *
- * @throws IllegalFileNameException if the file name is "..", "../", ".", or "./" since these may lead to traversal cycles.
+ * @throws IllegalFileNameException if the file name is "..", "../", , "..\", ".", "./", or ".\" since these may lead to traversal cycles.
  *
  * See KT-63103 for more details on the issue.
  */
 internal fun Path.checkFileName() {
-    if (name == ".." || name == "../" ||
-        name == "." || name == "./") throw IllegalFileNameException(this)
+    val fileName = this.name
+    if (fileName == ".." || fileName == "../" || fileName == "..\\" ||
+        fileName == "." || fileName == "./" || fileName == ".\\") throw IllegalFileNameException(this)
 }
 
 /**
