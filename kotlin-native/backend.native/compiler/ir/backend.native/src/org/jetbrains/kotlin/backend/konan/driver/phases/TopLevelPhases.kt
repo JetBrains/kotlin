@@ -74,6 +74,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 newEngine(generationState) { generationStateEngine ->
                     if (context.config.produce.isCache) {
                         generationStateEngine.runPhase(BuildAdditionalCacheInfoPhase, module)
+                        if (context.config.produce.isHeaderCache) return@newEngine
                     }
                     if (context.config.produce == CompilerOutputKind.PROGRAM) {
                         generationStateEngine.runPhase(EntryPointPhase, module)
