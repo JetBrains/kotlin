@@ -46,9 +46,11 @@ class IrFakeOverrideBuilder(
                 is IrSimpleFunction -> this.overriddenSymbols =
                     value.memoryOptimizedMap { it as? IrSimpleFunctionSymbol ?: error("Unexpected function overridden symbol: $it") }
                 is IrProperty -> {
-                    val overriddenProperties = value.memoryOptimizedMap { it as? IrPropertySymbol ?: error("Unexpected property overridden symbol: $it") }
-                    val getter = this.getter ?: error("Property has no getter: ${render()}")
-                    getter.overriddenSymbols = overriddenProperties.memoryOptimizedMap { it.owner.getter!!.symbol }
+                    val overriddenProperties =
+                        value.memoryOptimizedMap { it as? IrPropertySymbol ?: error("Unexpected property overridden symbol: $it") }
+                    this.getter?.let { getter ->
+                        getter.overriddenSymbols = overriddenProperties.memoryOptimizedMapNotNull { it.owner.getter?.symbol }
+                    }
                     this.setter?.let { setter ->
                         setter.overriddenSymbols = overriddenProperties.memoryOptimizedMapNotNull { it.owner.setter?.symbol }
                     }
