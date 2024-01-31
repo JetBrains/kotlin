@@ -22860,6 +22860,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("removeAt.kt")
+                public void testRemoveAt() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/primitiveOverrides/removeAt.kt");
+                }
+
+                @Test
                 @TestMetadata("specializedMap.kt")
                 public void testSpecializedMap() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/primitiveOverrides/specializedMap.kt");
