@@ -79,7 +79,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     protected abstract fun applySpecificArgs(argsBuilder: ArgsBuilder)
     protected open fun applyDependencies(argsBuilder: ArgsBuilder) = with(argsBuilder) {
         if (this@BasicCompilation !is LibraryCompilation) {
-            // To use static caches, `-Xcache-directory=` option must be provided for backend, similar to ``
+            // To use static caches, `-Xcache-directory=` option must be provided for backend, similar to what old infra did.
             // This is so-known 2nd compilation stage, which can also be a result of a split, which happens in driver.
             // (The split: "source to binary" is splitted to "source to klib"+"klib to binary" )
             // Now three subclasses of SourceBasedCompilation use backend, and need the option,
@@ -87,12 +87,9 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
             // For LibraryCompilation any backend-related options are useless.
             // All this would "soon" change, when 1-stage testing would be stopped, and SourceBasedCompilation would have only one subclass:
             // LibraryCompilation. Three others (Executable, ObjCFramework, BinaryLibrary) would go to separate hierarchy: KLibBasedCompilation.
-            if (tryPassSystemCacheDirectory) {
-                add("-Xcache-directory=${
-                    cacheMode.staticCacheForDistributionLibrariesRootDir?.absolutePath
-                        ?: fail { "No cache root directory found for cache mode $cacheMode" }
-                }")
-            }
+            cacheMode.staticCacheForDistributionLibrariesRootDir
+                ?.takeIf { tryPassSystemCacheDirectory}
+                ?.let { cacheRootDir -> add("-Xcache-directory=$cacheRootDir") }
             add(dependencies.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
         }
     }
