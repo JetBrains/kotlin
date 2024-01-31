@@ -102,11 +102,6 @@ class FirDesignation(
         }
 
     val scriptOrNull: FirScript? get() = path.getOrNull(0) as? FirScript ?: path.getOrNull(1) as? FirScript ?: target as? FirScript
-
-    /**
-     * This property exists only for compatibility and should be dropped after KT-65345
-     */
-    val classPath: List<FirRegularClass> get() = path.filterIsInstance<FirRegularClass>()
 }
 
 fun ExceptionAttachmentBuilder.withFirDesignationEntry(name: String, designation: FirDesignation) {
@@ -132,7 +127,7 @@ private fun collectDesignationPath(target: FirElementWithResolveState): List<Fir
         is FirConstructor,
         is FirEnumEntry,
         is FirPropertyAccessor,
-        is FirErrorProperty
+        is FirErrorProperty,
         -> {
             requireIsInstance<FirCallableDeclaration>(target)
             // We shouldn't try to build a designation path for such fake declarations as they

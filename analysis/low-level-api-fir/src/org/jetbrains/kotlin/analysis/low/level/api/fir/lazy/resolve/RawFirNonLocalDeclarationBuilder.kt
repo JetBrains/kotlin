@@ -99,13 +99,14 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 functionsToRebind = functionsToRebind,
                 replacementApplier = replacementApplier
             )
+
             builder.context.packageFqName = rootNonLocalDeclaration.containingKtFile.packageFqName
             if (rebindContainingSymbol) {
                 @OptIn(PrivateForInline::class)
                 builder.context.forcedContainerSymbol = designation.target.symbol
             }
 
-            return builder.moveNext(designation.classPath.iterator(), containingClass = null)
+            return builder.moveNext(designation.path.iterator(), containingDeclaration = null)
         }
     }
 
@@ -316,8 +317,9 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         }
     }
 
-    private fun moveNext(iterator: Iterator<FirDeclaration>, containingClass: FirRegularClass?): FirDeclaration {
+    private fun moveNext(iterator: Iterator<FirDeclaration>, containingDeclaration: FirDeclaration?): FirDeclaration {
         if (!iterator.hasNext()) {
+            val containingClass = containingDeclaration as? FirRegularClass
             val visitor = VisitorWithReplacement(containingClass)
             return when (declarationToBuild) {
                 is KtProperty -> {
@@ -350,7 +352,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         }
 
         val parent = iterator.next()
-        if (parent !is FirRegularClass) return moveNext(iterator, containingClass = null)
+        if (parent !is FirRegularClass) return moveNext(iterator, containingDeclaration = null)
 
         val classOrObject = parent.psi
         if (classOrObject !is KtClassOrObject) {
