@@ -19898,6 +19898,24 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kotlinJavaStaticAccidentalOverride.kt")
+        public void testKotlinJavaStaticAccidentalOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/kotlinJavaStaticAccidentalOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("kotlinJavaStaticAccidentalOverride2.kt")
+        public void testKotlinJavaStaticAccidentalOverride2() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/kotlinJavaStaticAccidentalOverride2.kt");
+        }
+
+        @Test
+        @TestMetadata("kotlinJavaStaticFromInterfaceAccidentalOverride.kt")
+        public void testKotlinJavaStaticFromInterfaceAccidentalOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/kotlinJavaStaticFromInterfaceAccidentalOverride.kt");
+        }
+
+        @Test
         @TestMetadata("kt61856.kt")
         public void testKt61856() throws Exception {
             runTest("compiler/testData/codegen/box/fir/kt61856.kt");

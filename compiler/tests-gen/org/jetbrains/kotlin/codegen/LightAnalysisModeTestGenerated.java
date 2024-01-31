@@ -16397,6 +16397,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/emptyIntersectionWarning.kt");
         }
 
+        @TestMetadata("kotlinJavaStaticAccidentalOverride.kt")
+        public void ignoreKotlinJavaStaticAccidentalOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/kotlinJavaStaticAccidentalOverride.kt");
+        }
+
+        @TestMetadata("kotlinJavaStaticAccidentalOverride2.kt")
+        public void ignoreKotlinJavaStaticAccidentalOverride2() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/kotlinJavaStaticAccidentalOverride2.kt");
+        }
+
         @TestMetadata("selectingLambdas.kt")
         public void ignoreSelectingLambdas() throws Exception {
             runTest("compiler/testData/codegen/box/fir/selectingLambdas.kt");
@@ -16628,6 +16638,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("kotlinJavaKotlin.kt")
         public void testKotlinJavaKotlin() throws Exception {
             runTest("compiler/testData/codegen/box/fir/kotlinJavaKotlin.kt");
+        }
+
+        @TestMetadata("kotlinJavaStaticFromInterfaceAccidentalOverride.kt")
+        public void testKotlinJavaStaticFromInterfaceAccidentalOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/kotlinJavaStaticFromInterfaceAccidentalOverride.kt");
         }
 
         @TestMetadata("kt61856.kt")
