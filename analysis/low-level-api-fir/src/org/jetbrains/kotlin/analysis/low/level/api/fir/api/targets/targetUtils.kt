@@ -12,11 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-internal fun FirDesignation.asResolveTarget(): LLFirSingleResolveTarget = LLFirSingleResolveTarget(
-    file,
-    classPath,
-    target,
-)
+internal fun FirDesignation.asResolveTarget(): LLFirSingleResolveTarget = LLFirSingleResolveTarget(this)
 
 /**
  * Resolves the target to the specified [phase].

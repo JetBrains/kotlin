@@ -57,9 +57,7 @@ internal object FileElementFactory {
 
         val firClassDesignation = firClass.collectDesignationWithFile()
         val designationWithMembers = LLFirClassWithSpecificMembersResolveTarget(
-            firClassDesignation.file,
-            firClassDesignation.classPath,
-            firClass,
+            firClassDesignation,
             classMembersToResolve,
         )
 

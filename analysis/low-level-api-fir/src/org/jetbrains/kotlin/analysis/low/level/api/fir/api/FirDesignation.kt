@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -63,6 +62,8 @@ class FirDesignation(
     val path: List<FirDeclaration>,
     val target: FirElementWithResolveState,
 ) {
+    constructor(target: FirElementWithResolveState) : this(emptyList(), target)
+
     init {
         for ((index, declaration) in path.withIndex()) {
             when (declaration) {
@@ -93,14 +94,14 @@ class FirDesignation(
             withFirDesignationEntry("designation", this@FirDesignation)
         }
 
-    val fileOrNull: FirFile? get() = path.firstOrNull() as? FirFile
+    val fileOrNull: FirFile? get() = path.firstOrNull() as? FirFile ?: target as? FirFile
 
     val script: FirScript
         get() = scriptOrNull ?: errorWithAttachment("Script is not found") {
             withFirDesignationEntry("designation", this@FirDesignation)
         }
 
-    val scriptOrNull: FirScript? get() = path.getOrNull(0) as? FirScript ?: path.getOrNull(1) as? FirScript
+    val scriptOrNull: FirScript? get() = path.getOrNull(0) as? FirScript ?: path.getOrNull(1) as? FirScript ?: target as? FirScript
 
     /**
      * This property exists only for compatibility and should be dropped after KT-65345
@@ -131,6 +132,7 @@ private fun collectDesignationPath(target: FirElementWithResolveState): List<Fir
         is FirConstructor,
         is FirEnumEntry,
         is FirPropertyAccessor,
+        is FirErrorProperty
         -> {
             requireIsInstance<FirCallableDeclaration>(target)
             // We shouldn't try to build a designation path for such fake declarations as they
@@ -168,17 +170,8 @@ private fun collectDesignationPath(target: FirElementWithResolveState): List<Fir
             }
         }
 
-        is FirErrorProperty -> {
-            return if (target.diagnostic == ConeDestructuringDeclarationsOnTopLevel) emptyList() else null
-        }
-
-        is FirScript, is FirCodeFragment, is FirFileAnnotationsContainer -> {
-            return emptyList()
-        }
-
-        else -> {
-            return null
-        }
+        is FirScript, is FirCodeFragment, is FirFileAnnotationsContainer -> return emptyList()
+        else -> return null
     }
 }
 

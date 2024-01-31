@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassWithAllCallablesResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 
 internal object LLFirResolveMultiDesignationCollector {
     fun getDesignationsToResolve(target: FirElementWithResolveState): List<LLFirResolveTarget> = when (target) {
-        is FirFile -> listOf(LLFirSingleResolveTarget(target))
+        is FirFile -> listOf(FirDesignation(target).asResolveTarget())
         is FirSyntheticPropertyAccessor -> getDesignationsToResolve(target.delegate)
         is FirSyntheticProperty -> getDesignationsToResolve(target.getter) + target.setter?.let(::getDesignationsToResolve).orEmpty()
         else -> listOfNotNull(getMainDesignationToResolve(target))
@@ -29,20 +30,20 @@ internal object LLFirResolveMultiDesignationCollector {
 
     fun getDesignationsToResolveWithCallableMembers(target: FirRegularClass): List<LLFirResolveTarget> {
         val designation = target.tryCollectDesignationWithFile() ?: return emptyList()
-        val resolveTarget = LLFirClassWithAllCallablesResolveTarget(designation.file, designation.classPath, target)
+        val resolveTarget = LLFirClassWithAllCallablesResolveTarget(designation)
         return listOf(resolveTarget)
     }
 
     fun getDesignationsToResolveRecursively(target: FirElementWithResolveState): List<LLFirResolveTarget> {
-        if (target is FirFile) return listOf(LLFirWholeElementResolveTarget(target))
+        if (target is FirFile) return listOf(LLFirWholeElementResolveTarget(FirDesignation(target)))
 
         if (!target.shouldBeResolved()) return emptyList()
         if (target is FirCallableDeclaration && target.isCopyCreatedInScope) {
-            return listOf(LLFirSingleResolveTarget(target))
+            return listOf(FirDesignation(target).asResolveTarget())
         }
 
         val designation = target.tryCollectDesignationWithFile() ?: return emptyList()
-        val resolveTarget = LLFirWholeElementResolveTarget(designation.file, designation.classPath, target)
+        val resolveTarget = LLFirWholeElementResolveTarget(designation)
         return listOf(resolveTarget)
     }
 
@@ -54,7 +55,7 @@ internal object LLFirResolveMultiDesignationCollector {
             target is FirBackingField -> getMainDesignationToResolve(target.propertySymbol.fir)
             target is FirTypeParameter -> getMainDesignationToResolve(target.containingDeclarationSymbol.fir)
             target is FirValueParameter -> getMainDesignationToResolve(target.containingFunctionSymbol.fir)
-            target is FirCallableDeclaration && target.isCopyCreatedInScope -> LLFirSingleResolveTarget(target)
+            target is FirCallableDeclaration && target.isCopyCreatedInScope -> FirDesignation(target).asResolveTarget()
             else -> target.tryCollectDesignationWithFile()?.asResolveTarget()
         }
     }
