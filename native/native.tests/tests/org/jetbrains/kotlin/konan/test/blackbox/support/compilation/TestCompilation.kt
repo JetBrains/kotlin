@@ -45,11 +45,13 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     private val compilerOutputInterceptor: CompilerOutputInterceptor,
     protected val freeCompilerArgs: TestCompilerArgs,
     protected val compilerPlugins: CompilerPlugins,
+    protected val cacheMode: CacheMode,
     protected val dependencies: CategorizedDependencies,
     protected val expectedArtifact: A
 ) : TestCompilation<A>() {
     protected abstract val sourceModules: Collection<TestModule>
     protected abstract val binaryOptions: Map<String, String>
+    protected open val tryPassSystemCacheDirectory: Boolean = true
 
     // Runs the compiler and memorizes the result on property access.
     final override val result: TestCompilationResult<out A> by lazy {
@@ -75,7 +77,25 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     }
 
     protected abstract fun applySpecificArgs(argsBuilder: ArgsBuilder)
-    protected abstract fun applyDependencies(argsBuilder: ArgsBuilder)
+    protected open fun applyDependencies(argsBuilder: ArgsBuilder) = with(argsBuilder) {
+        if (this@BasicCompilation !is LibraryCompilation) {
+            // To use static caches, `-Xcache-directory=` option must be provided for backend, similar to ``
+            // This is so-known 2nd compilation stage, which can also be a result of a split, which happens in driver.
+            // (The split: "source to binary" is splitted to "source to klib"+"klib to binary" )
+            // Now three subclasses of SourceBasedCompilation use backend, and need the option,
+            // but not LibraryCompilation(which uses only frontend, thus can be used only as 1st compilation stage).
+            // For LibraryCompilation any backend-related options are useless.
+            // All this would "soon" change, when 1-stage testing would be stopped, and SourceBasedCompilation would have only one subclass:
+            // LibraryCompilation. Three others (Executable, ObjCFramework, BinaryLibrary) would go to separate hierarchy: KLibBasedCompilation.
+            if (tryPassSystemCacheDirectory) {
+                add("-Xcache-directory=${
+                    cacheMode.staticCacheForDistributionLibrariesRootDir?.absolutePath
+                        ?: fail { "No cache root directory found for cache mode $cacheMode" }
+                }")
+            }
+            add(dependencies.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
+        }
+    }
 
     private fun ArgsBuilder.applyFreeArgs() {
         when (this@BasicCompilation) {
@@ -174,7 +194,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     private val gcScheduler: GCScheduler,
     private val allocator: Allocator,
     private val pipelineType: PipelineType,
-    private val cacheMode: CacheMode,
+    cacheMode: CacheMode,
     freeCompilerArgs: TestCompilerArgs,
     compilerPlugins: CompilerPlugins,
     override val sourceModules: Collection<TestModule>,
@@ -188,6 +208,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     compilerOutputInterceptor = compilerOutputInterceptor,
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = compilerPlugins,
+    cacheMode = cacheMode,
     dependencies = dependencies,
     expectedArtifact = expectedArtifact
 ) {
@@ -206,9 +227,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
             add("-friend-modules", friends.joinToString(File.pathSeparator) { friend -> friend.path })
         }
         add(dependencies.includedLibraries) { include -> "-Xinclude=${include.path}" }
-        // static caches of distlibs should be used, like in old testinfra. Relates to KT-65289 for ObjC frameworks
-        cacheMode.staticCacheForDistributionLibrariesRootDir
-            ?.let { cacheRootDir -> add("-Xcache-directory=$cacheRootDir") }
+        super.applyDependencies(argsBuilder)
     }
 
     private fun applyK2MPPArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
@@ -431,7 +450,8 @@ internal class SwiftCompilation(
         val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
         val args = swiftExtraOpts + sources.map { it.absolutePath } + listOf(
             "-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget,
-            "-g", "-o", expectedArtifact.executableFile.absolutePath,
+            "-o", expectedArtifact.executableFile.absolutePath,
+            "-g", // TODO https://youtrack.jetbrains.com/issue/KT-65436/K-N-ObjCExport-tests-use-various-optimization-flags-for-swiftc
             "-Xlinker", "-rpath", "-Xlinker", "@executable_path/Frameworks",
             "-Xlinker", "-rpath", "-Xlinker", buildDir.absolutePath,
             "-F", buildDir.absolutePath,
@@ -476,7 +496,7 @@ internal class ExecutableCompilation(
     private val extras: Extras,
     dependencies: Iterable<TestCompilationDependency<*>>,
     expectedArtifact: Executable,
-    val tryPassSystemCacheDirectory: Boolean = true,
+    override val tryPassSystemCacheDirectory: Boolean = true,
 ) : SourceBasedCompilation<Executable>(
     targets = settings.get(),
     home = settings.get(),
@@ -496,7 +516,6 @@ internal class ExecutableCompilation(
     dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
 ) {
-    private val cacheMode: CacheMode = settings.get()
     override val binaryOptions = BinaryOptions.RuntimeAssertionsMode.chooseFor(cacheMode, optimizationMode, freeCompilerArgs.assertionsMode)
 
     private val partialLinkageConfig: UsedPartialLinkageConfig = settings.get()
@@ -532,10 +551,6 @@ internal class ExecutableCompilation(
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         super.applyDependencies(argsBuilder)
-        cacheMode.staticCacheForDistributionLibrariesRootDir
-            ?.takeIf { tryPassSystemCacheDirectory }
-            ?.let { cacheRootDir -> add("-Xcache-directory=$cacheRootDir") }
-        add(dependencies.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
     }
 
     override fun postCompileCheck() {
@@ -593,6 +608,7 @@ internal class StaticCacheCompilation(
     compilerOutputInterceptor = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
+    cacheMode = settings.get(),
     dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
 ) {
@@ -603,11 +619,6 @@ internal class StaticCacheCompilation(
 
     override val sourceModules get() = emptyList<TestModule>()
     override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.forUseWithCache
-
-    private val cacheRootDir: File = run {
-        val cacheMode = settings.get<CacheMode>()
-        cacheMode.staticCacheForDistributionLibrariesRootDir ?: fail { "No cache root directory found for cache mode $cacheMode" }
-    }
 
     private val makePerFileCache: Boolean = makePerFileCacheOverride ?: settings.get<CacheMode>().makePerFileCaches
 
@@ -630,7 +641,6 @@ internal class StaticCacheCompilation(
         add(
             "-Xadd-cache=${dependencies.libraryToCache.path}",
             "-Xcache-directory=${expectedArtifact.cacheDir.path}",
-            "-Xcache-directory=$cacheRootDir"
         )
         if (makePerFileCache)
             add("-Xmake-per-file-cache")
@@ -644,7 +654,7 @@ internal class StaticCacheCompilation(
             add("-friend-modules", friends.joinToString(File.pathSeparator) { friend -> friend.path })
         }
         addFlattened(dependencies.cachedLibraries) { (_, library) -> listOf("-l", library.path) }
-        add(dependencies.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
+        super.applyDependencies(argsBuilder)
     }
 
     override fun postCompileCheck() {
