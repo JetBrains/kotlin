@@ -189,7 +189,7 @@ private class CodeFragmentCapturedValueVisitor(
                 if (symbol.isLocal) {
                     val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
                     val capturedValue = when {
-                        symbol.fir.foreignValueMarker == true -> CodeFragmentCapturedValue.ForeignValue(symbol.name, isCrossingInlineBounds)
+                        symbol.isForeignValue -> CodeFragmentCapturedValue.ForeignValue(symbol.name, isCrossingInlineBounds)
                         symbol.hasDelegate -> CodeFragmentCapturedValue.LocalDelegate(symbol.name, symbol.isMutated, isCrossingInlineBounds)
                         else -> CodeFragmentCapturedValue.Local(symbol.name, symbol.isMutated, isCrossingInlineBounds)
                     }
