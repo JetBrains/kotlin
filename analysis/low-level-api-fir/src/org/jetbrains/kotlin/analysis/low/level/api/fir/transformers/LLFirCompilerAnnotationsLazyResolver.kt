@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -90,12 +90,13 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
     private val llFirComputationSession: LLFirCompilerRequiredAnnotationsComputationSession
         get() = transformer.annotationTransformer.computationSession as LLFirCompilerRequiredAnnotationsComputationSession
 
-    override fun withFile(firFile: FirFile, action: () -> Unit) {
+    @Deprecated("Should never be called directly, only for override purposes, please use withFile", level = DeprecationLevel.ERROR)
+    override fun withContainingFile(firFile: FirFile, action: () -> Unit) {
         transformer.annotationTransformer.withFileAndFileScopes(firFile, action)
     }
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
-    override fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
+    override fun withContainingRegularClass(firClass: FirRegularClass, action: () -> Unit) {
         transformer.annotationTransformer.withRegularClass(firClass, action)
     }
 
