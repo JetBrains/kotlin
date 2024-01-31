@@ -142,9 +142,9 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
                         if (useFlavors) {
                             it + "\n" + """
                             android { 
-                                flavorDimensions "myFlavor"
+                                flavorDimensions("myFlavor")
                                 productFlavors {
-                                    flavor1 { dimension "myFlavor" }
+                                    create("flavor1") { dimension = "myFlavor" }
                                 }
                             }
                             """.trimIndent()
@@ -153,7 +153,7 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
                         // Simulate the behavior with user-defined consumable configuration added with no proper attributes:
                         it + "\n" + """
                         configurations.create("legacyConfiguration") {
-                            def bundlingAttribute = Attribute.of("org.gradle.dependency.bundling", String)
+                            val bundlingAttribute = Attribute.of("org.gradle.dependency.bundling", String::class.java)
                             attributes.attribute(bundlingAttribute, "external")
                         }
                         """.trimIndent()

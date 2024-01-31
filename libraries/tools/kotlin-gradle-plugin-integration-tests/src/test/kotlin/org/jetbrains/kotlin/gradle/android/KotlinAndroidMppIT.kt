@@ -161,11 +161,10 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             groupDir.deleteRecursively()
 
             // Choose a single variant to publish, check that it's there:
-            subProject("lib").buildGradle.appendText(
-                //language=Gradle
+            subProject("lib").buildGradleKts.appendText(
                 """
                     
-                kotlin.android('androidLib').publishLibraryVariants = ['release']
+                kotlin.androidTarget("androidLib").publishLibraryVariants("release")
                 """.trimIndent()
             )
             build("publish") {
@@ -182,11 +181,10 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             groupDir.deleteRecursively()
 
             // Enable publishing for all Android variants:
-            subProject("lib").buildGradle.appendText(
-                //language=Gradle
+            subProject("lib").buildGradleKts.appendText(
                 """
 
-                kotlin.android('androidLib') { publishAllLibraryVariants() }
+                kotlin.androidTarget("androidLib") { publishAllLibraryVariants() }
                 """.trimIndent()
             )
             build("publish") {
@@ -214,11 +212,10 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             groupDir.deleteRecursively()
 
             // Then group the variants by flavor and check that only one publication is created:
-            subProject("lib").buildGradle.appendText(
-                //language=Gradle
+            subProject("lib").buildGradleKts.appendText(
                 """
 
-                kotlin.android('androidLib').publishLibraryVariantsGroupedByFlavor = true
+                kotlin.androidTarget("androidLib").publishLibraryVariantsGroupedByFlavor = true
                 """.trimIndent()
             )
             build("publish") {
@@ -246,11 +243,21 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             groupDir.deleteRecursively()
 
             // Add one flavor dimension with two flavors, check that the flavors produce grouped publications:
-            subProject("lib").buildGradle.appendText(
-                //language=Gradle
+            subProject("lib").buildGradleKts.appendText(
                 """
 
-                android { flavorDimensions('foo'); productFlavors { fooBar { dimension 'foo' }; fooBaz { dimension 'foo' } } }                    
+                android { 
+                    flavorDimensions("foo") 
+                    productFlavors {
+                        create("fooBar") {
+                            dimension = "foo"
+                        }
+
+                        create("fooBaz") {
+                            dimension = "foo"
+                        }
+                    }
+                }                    
                 """.trimIndent()
             )
             build("publish") {
@@ -291,11 +298,10 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             groupDir.deleteRecursively()
 
             // Disable the grouping and check that all the variants are published under separate artifactIds:
-            subProject("lib").buildGradle.appendText(
-                //language=Gradle
+            subProject("lib").buildGradleKts.appendText(
                 """
                     
-                kotlin.android('androidLib') { publishLibraryVariantsGroupedByFlavor = false }    
+                kotlin.androidTarget("androidLib") { publishLibraryVariantsGroupedByFlavor = false }    
                 """.trimIndent()
             )
             build("publish") {
@@ -352,13 +358,12 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            subProject("lib").buildGradle.appendText(
-                //language=Gradle
+            subProject("lib").buildGradleKts.appendText(
                 """
                     
-                    kotlin.android('androidLib') {
-                        withSourcesJar(false)
-                        publishLibraryVariants = ['release']
+                    kotlin.androidTarget("androidLib") {
+                        withSourcesJar(publish = false)
+                        publishLibraryVariants("release")
                     }
                 """.trimIndent()
             )
@@ -393,26 +398,55 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             // check that the dependencies in the POMs are correctly rewritten:
             val appGroupDir = subProject("app").projectPath.resolve("build/repo/com/example")
 
-            subProject("lib").buildGradle.appendText(
-                //language=Gradle
+            subProject("lib").buildGradleKts.appendText(
                 """
                 
-                android { flavorDimensions('foo'); productFlavors { fooBar { dimension 'foo' }; fooBaz { dimension 'foo' } } }
+                android { 
+                    flavorDimensions("foo") 
+                    productFlavors {
+                        create("fooBar") {
+                            dimension = "foo"
+                        }
+
+                        create("fooBaz") {
+                            dimension = "foo"
+                        }
+                    }
+                }
                 """.trimIndent()
             )
 
-            subProject("app").buildGradle.modify {
+            subProject("app").buildGradleKts.modify {
                 it.replace("com.android.application", "com.android.library")
-                    .replace("applicationId", "//") +
-                        //language=Gradle
+                    .replace("applicationId", "//")
+                    .replace("versionCode", "//")
+                    .replace("versionName", "//")
+                    .replace("plugins {\n", "plugins {\n `maven-publish`\n") +
                         """
-    
-                        apply plugin: 'maven-publish'
-                        publishing { repositories { maven { url = uri("${'$'}buildDir/repo") } } }
-                        kotlin.android('androidApp') { publishAllLibraryVariants() }
-                        android { flavorDimensions('foo'); productFlavors { fooBar { dimension 'foo' }; fooBaz { dimension 'foo' } } }
+
+                        publishing {
+                            repositories {
+                                maven {
+                                    url = uri("${'$'}buildDir/repo")
+                                }
+                            }
+                        }
+                        kotlin.androidTarget("androidApp") { publishAllLibraryVariants() }
+                        android { 
+                            flavorDimensions("foo") 
+                            productFlavors {
+                                create("fooBar") {
+                                    dimension = "foo"
+                                }
+            
+                                create("fooBaz") {
+                                    dimension = "foo"
+                                }
+                            }
+                        }                        
                         """.trimIndent()
             }
+            makeSnapshotTo("/tmp/111")
             build("publish") {
                 listOf("foobar", "foobaz").forEach { flavor ->
                     listOf("-debug", "").forEach { buildType ->
@@ -431,13 +465,12 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             appGroupDir.deleteRecursively()
 
             // Also check that api and runtimeOnly MPP dependencies get correctly published with the appropriate scope, KT-29476:
-            subProject("app").buildGradle.modify {
-                it.replace("implementation project(':lib')", "api project(':lib')") +
-                        //language=Gradle
+            subProject("app").buildGradleKts.modify {
+                it.replace("implementation(project(\":lib\")", "api(project(\":lib\")") +
                         """
 
-                        kotlin.sourceSets.commonMain.dependencies {
-                            runtimeOnly(kotlin('reflect'))
+                        kotlin.sourceSets.getByName("commonMain").dependencies {
+                            runtimeOnly(kotlin("reflect"))
                         }
                         """.trimIndent()
             }
@@ -521,24 +554,23 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildJdk = jdkVersion.location
         ) {
             // Test the fix for KT-29343
-            subProject("lib").buildGradle.appendText(
-                //language=Gradle
+            subProject("lib").buildGradleKts.appendText(
                 """
 
                 kotlin.sourceSets {
                     commonMain {
                         dependencies {
-                            implementation kotlin("stdlib-common")
+                            implementation(kotlin("stdlib-common"))
                         }
                     }
-                    androidLibDebug {
+                    val androidLibDebug by creating {
                         dependencies {
-                            implementation kotlin("reflect")
+                            implementation(kotlin("reflect"))
                         }
                     }
-                    androidLibRelease {
+                    val androidLibRelease by creating {
                         dependencies {
-                            implementation kotlin("test-junit")
+                            implementation(kotlin("test-junit"))
                         }
                     }
                 }
@@ -577,15 +609,14 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            val libBuildScript = subProject("lib").buildGradle
-            val appBuildScript = subProject("app").buildGradle
+            val libBuildScript = subProject("lib").buildGradleKts
+            val appBuildScript = subProject("app").buildGradleKts
 
             // Enable publishing for all Android variants:
             libBuildScript.appendText(
-                //language=Gradle
                 """
 
-                kotlin.android('androidLib') { publishAllLibraryVariants() }
+                kotlin.androidTarget("androidLib") { publishAllLibraryVariants() }
                 """.trimIndent()
             )
 
@@ -608,25 +639,24 @@ class KotlinAndroidMppIT : KGPBaseTest() {
 
             // Check that the consumer side uses custom attributes specified in the target and compilations:
             val appBuildScriptBackup = appBuildScript.readText()
+            val libBuildScriptBackup = libBuildScript.readText()
 
             libBuildScript.appendText(
-                //language=Gradle
                 """
 
                 kotlin.targets.all { 
                     attributes.attribute(
-                        Attribute.of("com.example.target", String),
+                        Attribute.of("com.example.target", String::class.java),
                         targetName
                     )
                 }
                 """.trimIndent()
             )
             appBuildScript.appendText(
-                //language=Gradle
                 """
 
-                kotlin.targets.androidApp.attributes.attribute(
-                    Attribute.of("com.example.target", String),
+                kotlin.targets.getByName("androidApp").attributes.attribute(
+                    Attribute.of("com.example.target", String::class.java),
                     "notAndroidLib"
                 )
                 """.trimIndent()
@@ -641,18 +671,14 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             }
 
             libBuildScript.writeText(
-                appBuildScriptBackup +
-                        //language=Gradle
+                libBuildScriptBackup +
                         """
-                            
-                        android {
-                            namespace 'app.example.com.lib'
-                        }
+
                         kotlin.targets.all {
                             compilations.all {
                                 attributes.attribute(
-                                    Attribute.of("com.example.compilation", String),
-                                    targetName + compilationName.capitalize()
+                                    Attribute.of("com.example.compilation", String::class.java),
+                                    target.name + compilationName.capitalize()
                                 )
                             }
                         }
@@ -660,15 +686,11 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             )
             appBuildScript.writeText(
                 appBuildScriptBackup +
-                        //language=Gradle
                         """
-                            
-                        android {
-                            namespace 'app.example.com.app_sample'
-                        }
-                        kotlin.targets.androidApp.compilations.all {
+
+                        kotlin.targets.getByName("androidApp").compilations.all {
                             attributes.attribute(
-                                Attribute.of("com.example.compilation", String),
+                                Attribute.of("com.example.compilation", String::class.java),
                                 "notDebug"
                             )
                         }
@@ -938,4 +960,5 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             build("assemble")
         }
     }
+
 }
