@@ -13,7 +13,7 @@ import org.intellij.lang.annotations.Language
 public val API_DIR: String = ApiValidationExtension().apiDumpDirectory
 
 internal fun BaseKotlinGradleTest.test(
-    gradleVersion: String = "7.4.2",
+    gradleVersion: String = "8.5",
     injectPluginClasspath: Boolean = true,
     fn: BaseKotlinScope.() -> Unit
 ): GradleRunner {
