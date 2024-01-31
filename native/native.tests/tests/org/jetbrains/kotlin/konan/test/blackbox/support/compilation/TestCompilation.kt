@@ -95,20 +95,23 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     }
 
     private fun ArgsBuilder.applyFreeArgs() {
-        when (this@BasicCompilation) {
-            is LibraryCompilation, is StaticCacheCompilation ->
-                // In TWO_STAGE_MULTI_MODULE mode, source->framework compilation is split to
-                // - `source -> klib` stage,
-                // - `klib -> static_cache stage(if caches enabled) and
-                // - klib+static_cache -> framework
-                // option `-Xstatic-framework` can be supplied only to `-p framework` stage, so must be filtered out for other stages
-                add(freeCompilerArgs.compilerArgs.filter { it != "-Xstatic-framework" })
-            is ObjCFrameworkCompilation ->
-                // Lazy headers must not be generated during 2nd stage of TWO_STAGE_MULTI_MODULE mode, since no source files are passed, only klib.
-                // If allowed, incomplete lazy header would overwrite full lazy header generated during 1st stage, which would fail the test.
-                add(freeCompilerArgs.compilerArgs.filterNot { sourceModules.isEmpty() && it.startsWith("-Xemit-lazy-objc-header=") })
-            else -> add(freeCompilerArgs.compilerArgs)
-        }
+        // In TWO_STAGE_MULTI_MODULE mode, source->framework compilation is split to two stages, (or even three, if cache are involved)
+        // - `source -> klib` stage,
+        // - `klib -> static_cache stage(if caches enabled) and
+        // - klib+static_cache -> framework
+        // option `-Xstatic-framework` can be supplied only to last stage, so must be filtered out for other stages
+        fun BasicCompilation<*>.isNotApplicableOptionStaticFramework(it: String) =
+            it == "-Xstatic-framework" && this !is ObjCFrameworkCompilation
+
+        // Lazy headers must be generated only during 1st stage, where actual source files are passed.
+        // If allowed for later stages -> incomplete lazy header would overwrite full lazy header generated during 1st stage, which would fail the test.
+        fun isNotApplicableOptionEmitLazy(it: String) =
+            sourceModules.isEmpty() && it.startsWith("-Xemit-lazy-objc-header=")
+
+        add(freeCompilerArgs.compilerArgs
+                .filterNot(::isNotApplicableOptionEmitLazy)
+                .filterNot(::isNotApplicableOptionStaticFramework)
+        )
     }
 
     private fun ArgsBuilder.applyCompilerPlugins() {
