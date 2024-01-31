@@ -38573,6 +38573,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("privateToThisExotic.kt")
+            public void testPrivateToThisExotic() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/privateToThisExotic.kt");
+            }
+
+            @Test
             @TestMetadata("protectedInternal.kt")
             public void testProtectedInternal() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/protectedInternal.kt");
