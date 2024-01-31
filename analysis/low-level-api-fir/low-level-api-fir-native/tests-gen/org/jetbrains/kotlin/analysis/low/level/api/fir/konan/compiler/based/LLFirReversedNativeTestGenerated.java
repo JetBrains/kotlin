@@ -75,6 +75,30 @@ public class LLFirReversedNativeTestGenerated extends AbstractLLFirReversedNativ
     }
 
     @Test
+    @TestMetadata("objCName2.kt")
+    public void testObjCName2() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/objCName2.kt");
+    }
+
+    @Test
+    @TestMetadata("objCName3.kt")
+    public void testObjCName3() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/objCName3.kt");
+    }
+
+    @Test
+    @TestMetadata("objCName4.kt")
+    public void testObjCName4() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/objCName4.kt");
+    }
+
+    @Test
+    @TestMetadata("objCName5.kt")
+    public void testObjCName5() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/objCName5.kt");
+    }
+
+    @Test
     @TestMetadata("objCRefinement.kt")
     public void testObjCRefinement() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/objCRefinement.kt");
