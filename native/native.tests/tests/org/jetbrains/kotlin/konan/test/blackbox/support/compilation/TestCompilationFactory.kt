@@ -230,7 +230,7 @@ internal class TestCompilationFactory {
 
         return cachedKlibCompilations.computeIfAbsent(cacheKey) {
             val (klibCompilation, makePerFileCacheOverride) = if (isGivenKlibArtifact)
-                GivenLibraryCompilation(klibArtifact) to null
+                GivenLibraryCompilation(klibArtifact) to false // Don't make per-file-cache from given dependencies(usually, cinterop)
             else {
                 val filesByExtension = sourceModules.first().files
                     .map { it.location }
