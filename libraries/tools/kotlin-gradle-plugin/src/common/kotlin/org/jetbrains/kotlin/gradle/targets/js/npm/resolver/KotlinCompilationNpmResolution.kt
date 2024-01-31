@@ -149,7 +149,7 @@ class KotlinCompilationNpmResolution(
     ): Collection<NpmDependencyDeclaration> {
         val unique = others.groupBy(NpmDependencyDeclaration::name)
             .filterKeys { k -> direct.none { it.name == k } }
-            .mapNotNull { (name, dependencies) ->
+            .mapNotNull { (_, dependencies) ->
                 dependencies.maxByOrNull { dep ->
                     SemVer.from(dep.version, true)
                 }?.also { selected ->

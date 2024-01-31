@@ -397,19 +397,19 @@ class LightTreeRawFirExpressionBuilder(
      */
     private fun convertLabeledExpression(labeledExpression: LighterASTNode): FirElement {
         var firExpression: FirElement? = null
-        var errorLabelSource: KtSourceElement? = null
+        var labelSource: KtSourceElement? = null
+        var forbiddenLabelKind: ForbiddenLabelKind? = null
+
+        val isRepetitiveLabel = labeledExpression.getLabeledExpression()?.tokenType == LABELED_EXPRESSION
 
         labeledExpression.forEachChildren {
             context.setNewLabelUserNode(it)
             when (it.tokenType) {
                 LABEL_QUALIFIER -> {
-                    val rawName = it.toString()
-                    val pair = buildLabelAndErrorSource(
-                        rawName.substring(0, rawName.length - 1),
-                        it.getChildNodesByType(LABEL).single().toFirSourceElement()
-                    )
-                    context.addNewLabel(pair.first)
-                    errorLabelSource = pair.second
+                    val name = it.asText.dropLast(1)
+                    labelSource = it.getChildNodesByType(LABEL).single().toFirSourceElement()
+                    context.addNewLabel(buildLabel(name, labelSource!!))
+                    forbiddenLabelKind = getForbiddenLabelKind(name, isRepetitiveLabel)
                 }
                 BLOCK -> firExpression = declarationBuilder.convertBlock(it)
                 PROPERTY -> firExpression = declarationBuilder.convertPropertyDeclaration(it)
@@ -419,7 +419,7 @@ class LightTreeRawFirExpressionBuilder(
 
         context.dropLastLabel()
 
-        return buildExpressionWithErrorLabel(firExpression, errorLabelSource, labeledExpression.toFirSourceElement())
+        return buildExpressionHandlingErrors(firExpression, labeledExpression.toFirSourceElement(), forbiddenLabelKind, labelSource)
     }
 
     /**

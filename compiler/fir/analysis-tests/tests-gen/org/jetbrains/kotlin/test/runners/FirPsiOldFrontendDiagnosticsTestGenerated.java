@@ -166,6 +166,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("callingProtectedFromInline.kt")
+        public void testCallingProtectedFromInline() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/callingProtectedFromInline.kt");
+        }
+
+        @Test
         @TestMetadata("capturedTypesSubtyping.kt")
         public void testCapturedTypesSubtyping() throws Exception {
             runTest("compiler/testData/diagnostics/tests/capturedTypesSubtyping.kt");
@@ -337,6 +343,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         @TestMetadata("Dollar.kt")
         public void testDollar() throws Exception {
             runTest("compiler/testData/diagnostics/tests/Dollar.kt");
+        }
+
+        @Test
+        @TestMetadata("duplicateDefaultValuesSubsumedIntersection.kt")
+        public void testDuplicateDefaultValuesSubsumedIntersection() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/duplicateDefaultValuesSubsumedIntersection.kt");
         }
 
         @Test
@@ -20639,6 +20651,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("labelsAndNonInlineUsage.kt")
+            public void testLabelsAndNonInlineUsage() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/labelsAndNonInlineUsage.kt");
+            }
+
+            @Test
             @TestMetadata("lambdaCast.kt")
             public void testLambdaCast() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/lambdaCast.kt");
@@ -23895,6 +23913,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             public void testLabelsMustBeNamed() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/labels/labelsMustBeNamed.kt");
             }
+
+            @Test
+            @TestMetadata("multipleLabels.kt")
+            public void testMultipleLabels() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/labels/multipleLabels.kt");
+            }
         }
 
         @Nested
@@ -26451,6 +26475,36 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("intersectionOfAbstractAndOpen.kt")
+            public void testIntersectionOfAbstractAndOpen() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/intersectionOfAbstractAndOpen.kt");
+            }
+
+            @Test
+            @TestMetadata("intersectionOfSubstitutedProperties.kt")
+            public void testIntersectionOfSubstitutedProperties() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/intersectionOfSubstitutedProperties.kt");
+            }
+
+            @Test
+            @TestMetadata("intersectionOverrideWithSubsumedDifferentType.kt")
+            public void testIntersectionOverrideWithSubsumedDifferentType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/intersectionOverrideWithSubsumedDifferentType.kt");
+            }
+
+            @Test
+            @TestMetadata("intersectionOverridesIntersection.kt")
+            public void testIntersectionOverridesIntersection() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/intersectionOverridesIntersection.kt");
+            }
+
+            @Test
+            @TestMetadata("intersectionWithSubsumedWithSubstitution.kt")
+            public void testIntersectionWithSubsumedWithSubstitution() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/intersectionWithSubsumedWithSubstitution.kt");
+            }
+
+            @Test
             @TestMetadata("InvisiblePotentialOverride.kt")
             public void testInvisiblePotentialOverride() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/InvisiblePotentialOverride.kt");
@@ -26715,6 +26769,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 @TestMetadata("genericWithUpperBound.kt")
                 public void testGenericWithUpperBound() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/genericWithUpperBound.kt");
+                }
+
+                @Test
+                @TestMetadata("intersectionReturnTypeMismatchSubsumed.kt")
+                public void testIntersectionReturnTypeMismatchSubsumed() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/intersectionReturnTypeMismatchSubsumed.kt");
                 }
 
                 @Test
@@ -34644,6 +34704,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("propertyFromDependsOnModule.kt")
+                public void testPropertyFromDependsOnModule() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/propertyFromDependsOnModule.kt");
+                }
+
+                @Test
                 @TestMetadata("propertyNotNeeded.kt")
                 public void testPropertyNotNeeded() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/variables/propertyNotNeeded.kt");
@@ -34683,6 +34749,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 @TestMetadata("reassignedInRhs.kt")
                 public void testReassignedInRhs() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/variables/reassignedInRhs.kt");
+                }
+
+                @Test
+                @TestMetadata("staticJavaFieldFromOtherModule.kt")
+                public void testStaticJavaFieldFromOtherModule() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/staticJavaFieldFromOtherModule.kt");
+                }
+
+                @Test
+                @TestMetadata("staticJavaFieldFromSameModule.kt")
+                public void testStaticJavaFieldFromSameModule() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/staticJavaFieldFromSameModule.kt");
                 }
 
                 @Test

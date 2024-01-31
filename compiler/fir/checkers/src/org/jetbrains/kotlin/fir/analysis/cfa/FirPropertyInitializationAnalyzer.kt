@@ -74,7 +74,9 @@ fun PropertyInitializationInfoData.checkPropertyAccesses(
 ) {
     // If a property has an initializer (or does not need one), then any reads are OK while any writes are OK
     // if it's a `var` and bad if it's a `val`. `FirReassignmentAndInvisibleSetterChecker` does this without a CFG.
-    val filtered = properties.filterTo(mutableSetOf()) { it.requiresInitialization(isForInitialization) }
+    val filtered = properties.filterTo(mutableSetOf()) {
+        it.requiresInitialization(isForInitialization) || it in conditionallyInitializedProperties
+    }
     if (filtered.isEmpty()) return
 
     checkPropertyAccesses(

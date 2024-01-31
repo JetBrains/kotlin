@@ -1751,6 +1751,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val LABEL by object : DiagnosticGroup("label") {
         val REDUNDANT_LABEL_WARNING by warning<KtLabelReferenceExpression>(PositioningStrategy.LABEL)
+        val MULTIPLE_LABELS_ARE_FORBIDDEN by error<KtLabelReferenceExpression>(PositioningStrategy.LABEL)
     }
 
     val ENUM_ENTRIES_DEPRECATIONS by object : DiagnosticGroup("Enum.entries resolve deprecations") {

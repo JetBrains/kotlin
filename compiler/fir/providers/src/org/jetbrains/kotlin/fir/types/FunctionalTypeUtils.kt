@@ -113,7 +113,7 @@ private fun ConeKotlinType.createFunctionTypeWithNewKind(session: FirSession, ki
     val functionTypeId = ClassId(kind.packageFqName, kind.numberedClassName(expandedType.typeArguments.size - 1))
     return functionTypeId.toLookupTag().constructClassType(
         expandedType.typeArguments,
-        isNullable = false,
+        isNullable = expandedType.isNullable,
         attributes = expandedType.attributes
     )
 }

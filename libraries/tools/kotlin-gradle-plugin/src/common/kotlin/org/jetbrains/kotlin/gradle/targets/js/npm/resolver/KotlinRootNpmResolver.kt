@@ -59,7 +59,6 @@ class KotlinRootNpmResolver internal constructor(
         var containsWasmJs = false
         var containsWasmWasi = false
         var containsIrJs = false
-        var containsLegacyJs = false
         val errorMessage = "Cannot resolve project dependency $src -> $target." +
                 "Dependency to project with multiple js/wasm compilations is not supported yet."
 
@@ -68,31 +67,23 @@ class KotlinRootNpmResolver internal constructor(
 
         check(mainCompilations.size <= maxMainCompilationsCount) { errorMessage }
         for (npmResolver in mainCompilations) {
-            when (val compilation = npmResolver.compilation) {
-                is KotlinJsIrCompilation -> {
-                    if (compilation.platformType == KotlinPlatformType.wasm) {
-                        val jsTarget = compilation.target as KotlinJsIrTarget
-                        if (jsTarget.wasmTargetType == KotlinWasmTargetType.JS) {
-                            check(!containsWasmJs) { errorMessage }
-                            containsWasmJs = true
-                        }
-                        if (jsTarget.wasmTargetType == KotlinWasmTargetType.WASI) {
-                            check(!containsWasmWasi) { errorMessage }
-                            containsWasmWasi = true
-                        }
-                    } else {
-                        check(!containsIrJs) { errorMessage }
-                        containsIrJs = true
-                    }
+            val compilation = npmResolver.compilation
+            if (compilation.platformType == KotlinPlatformType.wasm) {
+                val jsTarget = compilation.target as KotlinJsIrTarget
+                if (jsTarget.wasmTargetType == KotlinWasmTargetType.JS) {
+                    check(!containsWasmJs) { errorMessage }
+                    containsWasmJs = true
                 }
-
-                else -> {
-                    check(!containsLegacyJs) { errorMessage }
-                    containsLegacyJs = true
+                if (jsTarget.wasmTargetType == KotlinWasmTargetType.WASI) {
+                    check(!containsWasmWasi) { errorMessage }
+                    containsWasmWasi = true
                 }
+            } else {
+                check(!containsIrJs) { errorMessage }
+                containsIrJs = true
             }
         }
-        check(containsWasmJs || containsWasmWasi || containsIrJs || containsLegacyJs) { errorMessage }
+        check(containsWasmJs || containsWasmWasi || containsIrJs) { errorMessage }
 
         return mainCompilations
     }

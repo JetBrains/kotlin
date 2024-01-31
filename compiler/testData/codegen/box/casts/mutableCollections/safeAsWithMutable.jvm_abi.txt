@@ -93,10 +93,6 @@ MODULE main
 				---
 			K2
 				values
-		K1
-			---
-		K2
-			remove(Ljava/lang/Object;Ljava/lang/Object;)Z [public]
 	CLASS MM.class
 		CLASS METADATA
 			K1

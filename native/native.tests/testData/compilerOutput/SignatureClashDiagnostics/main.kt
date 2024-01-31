@@ -7,6 +7,10 @@ class A {
     fun foo(): Int = 0
 }
 
+@Deprecated("This function moved to the 'lib' module", level = DeprecationLevel.HIDDEN)
+fun movedToLib() {}
+
 fun main() {
     println(A().foo())
+    movedToLib()
 }

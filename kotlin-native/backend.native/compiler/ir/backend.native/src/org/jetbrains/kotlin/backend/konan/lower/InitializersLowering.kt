@@ -56,6 +56,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                 }
 
                 override fun visitField(declaration: IrField): IrStatement {
+                    if (declaration.isStatic) return declaration
                     val initializer = declaration.initializer ?: return declaration
                     val startOffset = initializer.startOffset
                     val endOffset = initializer.endOffset

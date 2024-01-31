@@ -19,7 +19,9 @@ object FirInlineBodyResolvedQualifierChecker : FirResolvedQualifierChecker(MppCh
         val accessedClass = expression.symbol ?: return
         val source = expression.source ?: return
         if (accessedClass.isCompanion) {
-            inlineFunctionBodyContext.checkAccessedDeclaration(source, accessedClass, accessedClass.visibility, context, reporter)
+            inlineFunctionBodyContext.checkAccessedDeclaration(
+                source, expression, accessedClass, accessedClass.visibility, context, reporter,
+            )
         }
     }
 }

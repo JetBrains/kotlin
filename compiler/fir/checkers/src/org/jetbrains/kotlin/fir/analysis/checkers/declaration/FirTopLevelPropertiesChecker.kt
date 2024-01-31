@@ -74,7 +74,7 @@ private fun FirDeclaration.collectionInitializationInfo(
     if (propertySymbols.isEmpty()) return null
 
     // TODO, KT-59803: merge with `FirPropertyInitializationAnalyzer` for fewer passes.
-    val data = PropertyInitializationInfoData(propertySymbols, receiver = null, graph)
+    val data = PropertyInitializationInfoData(propertySymbols, conditionallyInitializedProperties = emptySet(), receiver = null, graph)
     data.checkPropertyAccesses(isForInitialization = true, context, reporter)
     return data.getValue(graph.exitNode)[NormalPath]
 }

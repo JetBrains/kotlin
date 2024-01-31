@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
@@ -12,6 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -23,9 +26,14 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.Name
 
 class FirKotlinScopeProvider(
     val declaredMemberScopeDecorator: (
@@ -34,7 +42,9 @@ class FirKotlinScopeProvider(
         useSiteSession: FirSession,
         scopeSession: ScopeSession,
         memberRequiredPhase: FirResolvePhase?,
-    ) -> FirContainingNamesAwareScope = { _, declaredMemberScope, _, _, _ -> declaredMemberScope }
+    ) -> FirContainingNamesAwareScope = { _, declaredMemberScope, session, _, _ ->
+        PlatformDependentFilteringScope(declaredMemberScope, session)
+    }
 ) : FirScopeProvider(), FirSessionComponent {
     override fun getUseSiteMemberScope(
         klass: FirClass,
@@ -109,8 +119,52 @@ class FirKotlinScopeProvider(
     ): FirContainingNamesAwareScope? {
         return useSiteSession.nestedClassifierScope(klass)
     }
+
+    class PlatformDependentFilteringScope(
+        val declaredMemberScope: FirContainingNamesAwareScope,
+        val session: FirSession,
+    ) : FirContainingNamesAwareScope() {
+        override fun getCallableNames(): Set<Name> = declaredMemberScope.getCallableNames()
+
+        override fun getClassifierNames(): Set<Name> = declaredMemberScope.getClassifierNames()
+
+        override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+            declaredMemberScope.processPropertiesByName(name, processor)
+        }
+
+        override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+            declaredMemberScope.processClassifiersByNameWithSubstitution(name, processor)
+        }
+
+        override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
+            declaredMemberScope.processDeclaredConstructors(processor)
+        }
+
+        override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+            declaredMemberScope.processFunctionsByName(name) {
+                if (FirPlatformDeclarationFilter.isFunctionAvailable(it.fir, session)) {
+                    processor(it)
+                }
+            }
+        }
+
+        override fun mayContainName(name: Name): Boolean = declaredMemberScope.mayContainName(name)
+
+        override val scopeOwnerLookupNames: List<String>
+            get() = declaredMemberScope.scopeOwnerLookupNames
+    }
 }
 
+object FirPlatformDeclarationFilter {
+    fun isFunctionAvailable(function: FirSimpleFunction, session: FirSession): Boolean {
+        // Optimization: only check the annotations for functions named "getOrDefault" and "remove",
+        // since only two functions with these names in kotlin.collections.Map are currently annotated with @PlatformDependent.
+        // This also allows to optimize more heavyweight FirJvmPlatformDeclarationFilter as it uses this function
+        return function.name !in namesToCheck || !function.hasAnnotation(StandardNames.FqNames.platformDependentClassId, session)
+    }
+
+    private val namesToCheck = listOf("getOrDefault", "remove").map(Name::identifier)
+}
 
 data class ConeSubstitutionScopeKey(
     val lookupTag: ConeClassLikeLookupTag,

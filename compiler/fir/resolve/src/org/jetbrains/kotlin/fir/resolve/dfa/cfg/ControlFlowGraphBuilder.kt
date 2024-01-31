@@ -965,7 +965,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitWhileLoopCondition(loop: FirLoop): Pair<LoopConditionExitNode, LoopBlockEnterNode> {
-        val conditionExitNode = createLoopConditionExitNode(loop.condition).also { addNewSimpleNode(it) }
+        val conditionExitNode = createLoopConditionExitNode(loop.condition, loop).also { addNewSimpleNode(it) }
         val conditionConstBooleanValue = loop.condition.booleanLiteralValue
         addEdge(conditionExitNode, loopExitNodes.getValue(loop), propagateDeadness = false, isDead = conditionConstBooleanValue == true)
         val loopBlockEnterNode = createLoopBlockEnterNode(loop)
@@ -1007,7 +1007,7 @@ class ControlFlowGraphBuilder {
 
     fun exitDoWhileLoop(loop: FirLoop): Pair<LoopConditionExitNode, LoopExitNode> {
         loopConditionEnterNodes.remove(loop)
-        val conditionExitNode = createLoopConditionExitNode(loop.condition)
+        val conditionExitNode = createLoopConditionExitNode(loop.condition, loop)
         val conditionBooleanValue = loop.condition.booleanLiteralValue
         popAndAddEdge(conditionExitNode)
         val blockEnterNode = lastNodes.pop()

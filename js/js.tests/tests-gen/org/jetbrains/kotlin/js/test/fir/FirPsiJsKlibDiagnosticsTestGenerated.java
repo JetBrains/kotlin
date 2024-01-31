@@ -30,4 +30,10 @@ public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagno
     public void testSignatureClash() throws Exception {
         runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClash.kt");
     }
+
+    @Test
+    @TestMetadata("signatureClash_MPP.kt")
+    public void testSignatureClash_MPP() throws Exception {
+        runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClash_MPP.kt");
+    }
 }

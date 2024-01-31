@@ -27,6 +27,10 @@ class ConeUnderscoreIsReserved(source: KtSourceElement) : ConeDiagnosticWithSour
     override val reason: String get() = "Names _, __, ___, ..., are reserved in Kotlin"
 }
 
+class ConeMultipleLabelsAreForbidden(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
+    override val reason: String get() = "Multiple labels per statement are forbidden"
+}
+
 class ConeCannotInferTypeParameterType(
     val typeParameter: FirTypeParameterSymbol,
     override val reason: String = "Cannot infer type for parameter ${typeParameter.name}"

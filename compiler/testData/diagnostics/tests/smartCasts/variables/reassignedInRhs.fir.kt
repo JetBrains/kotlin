@@ -46,6 +46,6 @@ fun safeCall() {
 fun contractFunction() {
     var x: String? = ""
     if (isNotNullAlsoCall(x) { x = null }) {
-        x.length // bad (#2 == true => x#0 != null; but this is x#1 = null)
+        x<!UNSAFE_CALL!>.<!>length // bad (#2 == true => x#0 != null; but this is x#1 = null)
     }
 }

@@ -84,7 +84,7 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
      * or otherwise changes it in a way that iterations in progress may return incorrect results.
      *
      * This value can be used by iterators of the [keys], [values] and [entries] views
-     * to provide fail-fast behavoir when a concurrent modification is detected during iteration.
+     * to provide fail-fast behavior when a concurrent modification is detected during iteration.
      * [ConcurrentModificationException] will be thrown in this case.
      */
     internal var modCount: Int = 0

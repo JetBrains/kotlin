@@ -344,10 +344,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         val scopeProvider = FirKotlinScopeProvider()
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
 
-        val moduleAnchorSession = KotlinAnchorModuleProvider.getInstance(project)?.getAnchorModule(libraryModule)?.let {
-            LLFirSessionCache.getInstance(project).getSession(it)
-        }
-
         val session = LLFirLibraryOrLibrarySourceResolvableModuleSession(module, components, builtinsSession.builtinTypes)
         components.session = session
 
@@ -399,11 +395,12 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
                         addAll(restLibrariesProvider)
 
-                        moduleAnchorSession?.let {
-                            (it.symbolProvider as LLFirModuleWithDependenciesSymbolProvider).also { moduleSymbolProvider ->
-                                addAll(moduleSymbolProvider.providers)
-                                addAll(moduleSymbolProvider.dependencyProvider.providers)
-                            }
+                        KotlinAnchorModuleProvider.getInstance(project)?.getAnchorModule(libraryModule)?.let { anchorModule ->
+                            val anchorModuleSession = LLFirSessionCache.getInstance(project).getSession(anchorModule)
+                            val anchorModuleSymbolProvider = anchorModuleSession.symbolProvider as LLFirModuleWithDependenciesSymbolProvider
+
+                            addAll(anchorModuleSymbolProvider.providers)
+                            addAll(anchorModuleSymbolProvider.dependencyProvider.providers)
                         }
                     }
                 }

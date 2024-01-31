@@ -28,7 +28,8 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
      *
      * @param flows All [PersistentFlow]s which flow into the join flow. These will determine assignments and variable aliases for the
      * resulting join flow.
-     * @param statementFlows A *subset* of [flows] used to determine what [TypeStatement]s will be copied to the join flow.
+     * @param statementFlows A *subset* of [flows] used to determine what [TypeStatement]s and [Implication]s will be copied to the joined
+     * flow.
      * @param union Determines if [TypeStatement]s from different flows should be combined with union or intersection logic.
      */
     fun joinFlow(flows: Collection<PersistentFlow>, statementFlows: Collection<PersistentFlow>, union: Boolean): MutableFlow {
@@ -48,7 +49,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             result.copyCommonAliases(flows)
         }
         result.copyStatements(statementFlows, commonFlow, union)
-        // TODO: compute common implications?
+        result.copyImplications(statementFlows)
         return result
     }
 
@@ -77,7 +78,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             (effect.isEmpty || flow.approvedTypeStatements[effect.variable]?.exactType?.containsAll(effect.exactType) == true)
         ) return
         val variable = implication.condition.variable
-        flow.logicStatements[variable] = flow.logicStatements[variable]?.add(implication) ?: persistentListOf(implication)
+        flow.implications[variable] = flow.implications[variable]?.add(implication) ?: persistentListOf(implication)
     }
 
     fun translateVariableFromConditionInStatements(
@@ -87,12 +88,12 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         transform: (Implication) -> Implication? = { it }
     ) {
         val statements = if (originalVariable.isSynthetic())
-            flow.logicStatements.remove(originalVariable)
+            flow.implications.remove(originalVariable)
         else
-            flow.logicStatements[originalVariable]
+            flow.implications[originalVariable]
         if (statements.isNullOrEmpty()) return
-        val existing = flow.logicStatements[newVariable] ?: persistentListOf()
-        flow.logicStatements[newVariable] = statements.mapNotNullTo(existing.builder()) {
+        val existing = flow.implications[newVariable] ?: persistentListOf()
+        flow.implications[newVariable] = statements.mapNotNullTo(existing.builder()) {
             // TODO: rethink this API - technically it permits constructing invalid flows
             //  (transform can replace the variable in the condition with anything)
             transform(OperationStatement(newVariable, it.condition.operation) implies it.effect)
@@ -108,7 +109,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         statement: OperationStatement,
         removeApprovedOrImpossible: Boolean,
     ): TypeStatements {
-        return approveOperationStatement(flow.logicStatements, statement, removeApprovedOrImpossible)
+        return approveOperationStatement(flow.implications, statement, removeApprovedOrImpossible)
     }
 
     fun recordNewAssignment(flow: MutableFlow, variable: RealVariable, index: Int) {
@@ -201,13 +202,21 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         }
     }
 
+    private fun MutableFlow.copyImplications(flows: Collection<PersistentFlow>) {
+        when (flows.size) {
+            0 -> {}
+            1 -> implications += flows.first().implications
+            else -> {} // TODO, KT-65293: compute common implications?
+        }
+    }
+
     private fun MutableFlow.replaceVariable(variable: RealVariable, replacement: RealVariable?) {
         val original = directAliasMap.remove(variable)
         if (original != null) {
             // All statements should've been made about whatever variable this is an alias to. There is nothing to replace.
             if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
                 assert(variable !in backwardsAliasMap)
-                assert(variable !in logicStatements)
+                assert(variable !in implications)
                 assert(variable !in approvedTypeStatements)
             }
             // `variable.dependentVariables` is not separated by flow, so it may be non-empty if aliasing of this variable
@@ -230,7 +239,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
                     variableStorage.copyRealVariableWithRemapping(dependent, variable, it)
                 })
             }
-            logicStatements.replaceVariable(variable, replacementOrNext)
+            implications.replaceVariable(variable, replacementOrNext)
             approvedTypeStatements.replaceVariable(variable, replacementOrNext)
             if (aliases != null && replacementOrNext != null) {
                 directAliasMap -= replacementOrNext

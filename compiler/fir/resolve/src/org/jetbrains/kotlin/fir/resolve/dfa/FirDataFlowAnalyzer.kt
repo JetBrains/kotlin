@@ -516,10 +516,8 @@ abstract class FirDataFlowAnalyzer(
         }
 
         // Only consider the LHS variable if it has not been reassigned in the RHS.
-        val leftOperandVariable = variableStorage.getOrCreateIfReal(flow, leftOperand).takeIf {
-            val variable = variableStorage.getRealVariableWithoutUnwrappingAlias(lhsExitFlow, leftOperand)
-            variable == null || logicSystem.isSameValueIn(lhsExitFlow, flow, variable)
-        }
+        val leftOperandVariable = variableStorage.getOrCreateIfReal(flow, leftOperand)
+            .takeIf { isSameValueIn(lhsExitFlow, leftOperand, flow) }
         val rightOperandVariable = variableStorage.getOrCreateIfReal(flow, rightOperand)
         if (leftOperandVariable == null && rightOperandVariable == null) return
         val expressionVariable = variableStorage.createSynthetic(expression)
@@ -818,7 +816,7 @@ abstract class FirDataFlowAnalyzer(
 
     fun exitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
         graphBuilder.exitQualifiedAccessExpression(qualifiedAccessExpression).mergeIncomingFlow { _, flow ->
-            processConditionalContract(flow, qualifiedAccessExpression)
+            processConditionalContract(flow, qualifiedAccessExpression, callArgsExit = null)
         }
     }
 
@@ -909,8 +907,10 @@ abstract class FirDataFlowAnalyzer(
 
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {
         context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted)
-        graphBuilder.exitFunctionCall(functionCall, callCompleted).mergeIncomingFlow { _, flow ->
-            processConditionalContract(flow, functionCall)
+        val node = graphBuilder.exitFunctionCall(functionCall, callCompleted)
+        node.mergeIncomingFlow { _, flow ->
+            val callArgsExit = node.previousNodes.singleOrNull { it is FunctionCallArgumentsExitNode }
+            processConditionalContract(flow, functionCall, callArgsExit?.flow)
         }
     }
 
@@ -958,7 +958,11 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    private fun processConditionalContract(flow: MutableFlow, qualifiedAccess: FirStatement) {
+    private fun processConditionalContract(
+        flow: MutableFlow,
+        qualifiedAccess: FirStatement,
+        callArgsExit: PersistentFlow?,
+    ) {
         // contracts has no effect on non-body resolve stages
         if (!components.transformer.baseTransformerPhase.isBodyResolve) return
 
@@ -982,7 +986,13 @@ abstract class FirDataFlowAnalyzer(
         if (conditionalEffects.isEmpty()) return
 
         val arguments = qualifiedAccess.orderedArguments(callee) ?: return
-        val argumentVariables = Array(arguments.size) { i -> arguments[i]?.let { variableStorage.getOrCreateIfReal(flow, it) } }
+        val argumentVariables = Array(arguments.size) { i ->
+            arguments[i]?.let { argument ->
+                variableStorage.getOrCreateIfReal(flow, argument)
+                    // Only apply contract information to argument if it has not been reassigned in a lambda.
+                    .takeIf { callArgsExit == null || isSameValueIn(callArgsExit, argument, flow) }
+            }
+        }
         if (argumentVariables.all { it == null }) return
 
         val typeParameters = callee.typeParameters
@@ -1043,7 +1053,7 @@ abstract class FirDataFlowAnalyzer(
                     logicSystem.recordNewAssignment(flow, variable, context.newAssignmentIndex())
                 }
             }
-            processConditionalContract(flow, assignment)
+            processConditionalContract(flow, assignment, callArgsExit = null)
         }
     }
 
@@ -1461,6 +1471,11 @@ abstract class FirDataFlowAnalyzer(
                 }
             }
         }
+    }
+
+    private fun isSameValueIn(other: PersistentFlow, fir: FirElement, original: MutableFlow): Boolean {
+        val variable = variableStorage.getRealVariableWithoutUnwrappingAlias(other, fir)
+        return variable == null || logicSystem.isSameValueIn(other, original, variable)
     }
 
     private fun MutableFlow.addImplication(statement: Implication) {

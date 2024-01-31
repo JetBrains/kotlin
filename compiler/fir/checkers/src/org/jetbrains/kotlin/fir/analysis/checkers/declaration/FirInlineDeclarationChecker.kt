@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -65,6 +66,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         internal fun checkAccessedDeclaration(
             source: KtSourceElement,
+            accessExpression: FirStatement,
             accessedSymbol: FirBasedSymbol<*>,
             declarationVisibility: Visibility,
             context: CheckerContext,
@@ -76,12 +78,10 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 else -> shouldNotBeCalled()
             }
 
-            val accessedDeclarationEffectiveVisibility = recordedEffectiveVisibility.let {
-                if (it == EffectiveVisibility.Local) {
-                    EffectiveVisibility.Public
-                } else {
-                    it
-                }
+            val accessedDeclarationEffectiveVisibility = when {
+                recordedEffectiveVisibility.isReachableDueToLocalDispatchReceiver(accessExpression, context) -> EffectiveVisibility.Public
+                recordedEffectiveVisibility == EffectiveVisibility.Local -> EffectiveVisibility.Public
+                else -> recordedEffectiveVisibility
             }
             val isCalledFunPublicOrPublishedApi = accessedDeclarationEffectiveVisibility.publicApi
             val isInlineFunPublicOrPublishedApi = inlineFunEffectiveVisibility.publicApi
@@ -105,6 +105,18 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 accessedDeclarationEffectiveVisibility
             )
         }
+
+        private fun EffectiveVisibility.isReachableDueToLocalDispatchReceiver(access: FirStatement, context: CheckerContext): Boolean {
+            val receiverType = access.localDispatchReceiver(context) ?: return false
+            val receiverProtected = EffectiveVisibility.Protected(receiverType.typeConstructor(context.session.typeContext))
+            val relation = receiverProtected.relation(this, context.session.typeContext)
+            return relation == EffectiveVisibility.Permissiveness.SAME || relation == EffectiveVisibility.Permissiveness.LESS
+        }
+
+        private fun FirStatement.localDispatchReceiver(context: CheckerContext): ConeKotlinType? =
+            (this as? FirQualifiedAccessExpression)?.dispatchReceiver?.resolvedType?.takeIf {
+                (it.toSymbol(context.session) as? FirClassLikeSymbol<*>)?.effectiveVisibility == EffectiveVisibility.Local
+            }
 
         internal data class AccessedDeclarationVisibilityData(
             val isInlineFunPublicOrPublishedApi: Boolean,
@@ -132,7 +144,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             val calledFunctionSymbol = targetSymbol as? FirFunctionSymbol ?: return
             val argumentMapping = functionCall.resolvedArgumentMapping ?: return
             for ((wrappedArgument, valueParameter) in argumentMapping) {
-                val argument = wrappedArgument.unwrapArgument()
+                val argument = wrappedArgument.unwrapErrorExpression()?.unwrapArgument() ?: continue
                 val resolvedArgumentSymbol = argument.toResolvedCallableSymbol(session) as? FirVariableSymbol<*> ?: continue
 
                 val valueParameterOfOriginalInlineFunction = inlinableParameters.firstOrNull { it == resolvedArgumentSymbol }
@@ -163,7 +175,8 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             reporter: DiagnosticReporter,
         ) {
             if (receiverExpression == null) return
-            val receiverSymbol = receiverExpression.toResolvedCallableSymbol(session) as? FirValueParameterSymbol ?: return
+            val receiverSymbol =
+                receiverExpression.unwrapErrorExpression()?.toResolvedCallableSymbol(session) as? FirValueParameterSymbol ?: return
             if (receiverSymbol in inlinableParameters) {
                 if (!isInvokeOrInlineExtension(targetSymbol)) {
                     reporter.reportOn(
@@ -217,9 +230,9 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             val containingQualifiedAccess = context.callsOrAssignments.getOrNull(
                 context.callsOrAssignments.size - 2
             ) ?: return false
-            if (this == (containingQualifiedAccess as? FirQualifiedAccessExpression)?.explicitReceiver) return true
+            if (this == (containingQualifiedAccess as? FirQualifiedAccessExpression)?.explicitReceiver?.unwrapErrorExpression()) return true
             val call = containingQualifiedAccess as? FirCall ?: return false
-            return call.arguments.any { it.unwrapArgument() == this }
+            return call.arguments.any { it.unwrapErrorExpression()?.unwrapArgument() == this }
         }
 
         private fun checkVisibilityAndAccess(
@@ -238,6 +251,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             }
             val (isInlineFunPublicOrPublishedApi, isCalledFunPublicOrPublishedApi, calledFunEffectiveVisibility) = checkAccessedDeclaration(
                 source,
+                accessExpression,
                 calledDeclaration,
                 calledDeclaration.visibility,
                 context,

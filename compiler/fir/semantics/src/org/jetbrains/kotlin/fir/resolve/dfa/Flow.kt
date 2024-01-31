@@ -70,7 +70,7 @@ class PersistentFlow internal constructor(
 class MutableFlow internal constructor(
     private val previousFlow: PersistentFlow?,
     internal val approvedTypeStatements: PersistentMap.Builder<RealVariable, PersistentTypeStatement>,
-    internal val logicStatements: PersistentMap.Builder<DataFlowVariable, PersistentList<Implication>>,
+    internal val implications: PersistentMap.Builder<DataFlowVariable, PersistentList<Implication>>,
     internal val assignmentIndex: PersistentMap.Builder<RealVariable, Int>,
     internal val directAliasMap: PersistentMap.Builder<RealVariable, RealVariable>,
     internal val backwardsAliasMap: PersistentMap.Builder<RealVariable, PersistentSet<RealVariable>>,
@@ -96,7 +96,7 @@ class MutableFlow internal constructor(
     fun freeze(): PersistentFlow = PersistentFlow(
         previousFlow,
         approvedTypeStatements.build(),
-        logicStatements.build(),
+        implications.build(),
         assignmentIndex.build(),
         directAliasMap.build(),
         backwardsAliasMap.build(),

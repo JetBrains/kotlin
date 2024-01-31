@@ -25,10 +25,10 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
      * or otherwise changes it in a way that iterations in progress may return incorrect results.
      *
      * This value can be used by iterators returned by [iterator] and [listIterator]
-     * to provide fail-fast behavoir when a concurrent modification is detected during iteration.
+     * to provide fail-fast behavior when a concurrent modification is detected during iteration.
      * [ConcurrentModificationException] will be thrown in this case.
      */
-    protected var modCount: Int = 0
+    protected actual var modCount: Int = 0
 
     abstract override fun add(index: Int, element: E): Unit
     abstract override fun removeAt(index: Int): E
@@ -81,7 +81,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
     /**
      * Removes the range of elements from this list starting from [fromIndex] and ending with but not including [toIndex].
      */
-    protected open fun removeRange(fromIndex: Int, toIndex: Int) {
+    protected actual open fun removeRange(fromIndex: Int, toIndex: Int) {
         val iterator = listIterator(fromIndex)
         repeat(toIndex - fromIndex) {
             iterator.next()
@@ -221,11 +221,28 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
             return list.set(fromIndex + index, element)
         }
 
+        override fun removeRange(fromIndex: Int, toIndex: Int) {
+            checkForComodification()
+            list.removeRange(this.fromIndex + fromIndex, this.fromIndex + toIndex)
+            _size -= toIndex - fromIndex
+            modCount = list.modCount
+        }
+
         override val size: Int
             get() {
                 checkForComodification()
                 return _size
             }
+
+        override fun iterator(): MutableIterator<E> {
+            checkForComodification()
+            return super.iterator()
+        }
+
+        override fun listIterator(index: Int): MutableListIterator<E> {
+            checkForComodification()
+            return super.listIterator(index)
+        }
 
         private fun checkForComodification() {
             if (list.modCount != modCount)

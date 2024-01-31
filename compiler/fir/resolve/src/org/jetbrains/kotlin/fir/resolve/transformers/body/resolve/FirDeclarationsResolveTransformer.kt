@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ProvideDelegateFixationPosition
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
@@ -323,7 +324,13 @@ open class FirDeclarationsResolveTransformer(
         (property.setter?.body?.statements?.singleOrNull() as? FirReturnExpression)?.let { returnExpression ->
             (returnExpression.result as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
         }
-        (property.delegate as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
+        val delegate = property.delegate
+        if (delegate is FirFunctionCall &&
+            delegate.calleeReference.name == OperatorNameConventions.PROVIDE_DELEGATE &&
+            delegate.source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
+        ) {
+            delegate.replacePropertyReferenceTypeInDelegateAccessors(property)
+        }
     }
 
     private fun transformPropertyAccessorsWithDelegate(

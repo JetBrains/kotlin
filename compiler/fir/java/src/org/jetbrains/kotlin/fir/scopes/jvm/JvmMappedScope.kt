@@ -97,8 +97,10 @@ class JvmMappedScope(
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         val declared = mutableListOf<FirNamedFunctionSymbol>()
         declaredMemberScope.processFunctionsByName(name) { symbol ->
-            declared += symbol
-            processor(symbol)
+            if (FirJvmPlatformDeclarationFilter.isFunctionAvailable(symbol.fir, javaMappedClassUseSiteScope, session)) {
+                declared += symbol
+                processor(symbol)
+            }
         }
 
         val declaredSignatures: Set<String> by lazy {
@@ -296,7 +298,7 @@ class JvmMappedScope(
             newTypeParameters = null,
             newContextReceiverTypes = emptyList(),
             isExpect = false,
-            callableCopySubstitutionForTypeUpdater = null,
+            deferredReturnTypeCalculation = null,
             newSource = oldConstructor.source,
         )
         return newSymbol

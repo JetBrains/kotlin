@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 // FILE: PythonRunParams.java
 import java.util.Map;

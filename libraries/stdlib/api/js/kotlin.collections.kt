@@ -10085,6 +10085,8 @@ public final class ArrayDeque<E> : kotlin.collections.AbstractMutableList<E> {
 
     public final fun removeLastOrNull(): E?
 
+    protected open override fun removeRange(fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.Unit
+
     public open override fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
     public open override operator fun set(index: kotlin.Int, element: E): E

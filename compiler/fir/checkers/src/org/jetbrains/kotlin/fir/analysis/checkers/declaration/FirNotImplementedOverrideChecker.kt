@@ -78,7 +78,7 @@ sealed class FirNotImplementedOverrideChecker(mppKind: MppCheckerKind) : FirClas
 
         fun collectSymbol(symbol: FirCallableSymbol<*>) {
             val delegatedWrapperData = symbol.delegatedWrapperData
-            if (delegatedWrapperData != null) {
+            if (delegatedWrapperData != null && symbol !is FirIntersectionCallableSymbol) {
                 val directOverriddenMembersWithBaseScope = classScope
                     .getDirectOverriddenMembersWithBaseScope(symbol)
                     .filter { it.member != symbol }

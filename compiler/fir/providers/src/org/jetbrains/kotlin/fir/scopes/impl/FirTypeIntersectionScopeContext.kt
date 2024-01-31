@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.*
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -159,8 +157,7 @@ class FirTypeIntersectionScopeContext(
             val groupWithInvisible =
                 overrideService.extractBothWaysOverridable(allMembersWithScope.maxByVisibility(), allMembersWithScope, overrideChecker)
             val group = groupWithInvisible.filter { it.isVisible() }.ifEmpty { groupWithInvisible }
-            val nonSubsumed = if (forClassUseSiteScope) group.nonSubsumed() else group
-            val mostSpecific = overrideService.selectMostSpecificMembers(nonSubsumed, ReturnTypeCalculatorForFullBodyResolve.Default)
+            val mostSpecific = overrideService.selectMostSpecificMembers(group, ReturnTypeCalculatorForFullBodyResolve.Default)
             val nonTrivial = if (forClassUseSiteScope) {
                 // Create a non-trivial intersection override when the base methods come from different scopes,
                 // even if one of them is more specific than the others, i.e. when there is more than one method that is not subsumed.
@@ -169,15 +166,15 @@ class FirTypeIntersectionScopeContext(
                 // It is also possible to have the opposite case (> 1 most specific member, but all members are from
                 // the same base scope), but this means there are different instantiations of the same base class,
                 // which should generally result in INCONSISTENT_TYPE_PARAMETER_VALUES errors.
-                nonSubsumed.size > 1 &&
-                        nonSubsumed.mapTo(mutableSetOf()) { it.member.fir.unwrapSubstitutionOverrides().symbol }.size > 1
+                group.size > 1 &&
+                        group.mapTo(mutableSetOf()) { it.member.fir.unwrapSubstitutionOverrides().symbol }.size > 1
             } else {
                 // Create a non-trivial intersection override when return types should be intersected.
                 mostSpecific.size > 1
             }
             if (nonTrivial) {
                 // Only add non-subsumed members to list of overridden in intersection override.
-                result += ResultOfIntersection.NonTrivial(this, mostSpecific, overriddenMembers = nonSubsumed, containingScope = null)
+                result += ResultOfIntersection.NonTrivial(this, mostSpecific, overriddenMembers = group, containingScope = null)
             } else {
                 val (member, containingScope) = mostSpecific.first()
                 result += ResultOfIntersection.SingleMember(member, group, containingScope)
@@ -207,7 +204,7 @@ class FirTypeIntersectionScopeContext(
         mostSpecific: List<MemberWithBaseScope<D>>,
         extractedOverrides: List<MemberWithBaseScope<D>>,
     ): MemberWithBaseScope<FirCallableSymbol<*>> {
-        val newModality = chooseIntersectionOverrideModality(extractedOverrides)
+        val newModality = chooseIntersectionOverrideModality(extractedOverrides.flatMap { it.flattenIntersectionsRecursively() }.nonSubsumed())
         val newVisibility = chooseIntersectionVisibility(extractedOverrides)
         val mostSpecificSymbols = mostSpecific.map { it.member }
         val extractedOverridesSymbols = extractedOverrides.map { it.member }
@@ -226,30 +223,6 @@ class FirTypeIntersectionScopeContext(
 
             else -> error("Unsupported symbol type for creating intersection overrides: ${key.member}")
         }.withScope(key.baseScope)
-    }
-
-    /**
-     * A callable declaration D [subsumes](https://kotlinlang.org/spec/inheritance.html#matching-and-subsumption-of-declarations)
-     * a callable declaration B if D overrides B.
-     */
-    private fun <S : FirCallableSymbol<*>> List<MemberWithBaseScope<S>>.nonSubsumed(): List<MemberWithBaseScope<S>> {
-        val baseMembers = mutableSetOf<FirCallableSymbol<*>>()
-        for ((member, scope) in this) {
-            val unwrapped = member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>()
-            val addIfDifferent = { it: FirCallableSymbol<*> ->
-                val symbol = it.unwrapSubstitutionOverrides()
-                if (symbol != unwrapped) {
-                    baseMembers += symbol
-                }
-                ProcessorAction.NEXT
-            }
-            if (member is FirNamedFunctionSymbol) {
-                scope.processOverriddenFunctions(member, addIfDifferent)
-            } else if (member is FirPropertySymbol) {
-                scope.processOverriddenProperties(member, addIfDifferent)
-            }
-        }
-        return filter { it.member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() !in baseMembers }
     }
 
     private fun <S : FirCallableSymbol<*>> Collection<MemberWithBaseScope<S>>.maxByVisibility(): MemberWithBaseScope<S> {
@@ -374,6 +347,7 @@ class FirTypeIntersectionScopeContext(
             keyFir.name
         )
         val newSymbol = FirIntersectionOverrideFunctionSymbol(callableId, overrides)
+        val deferredReturnTypeCalculation = deferredReturnTypeCalculationOrNull(mostSpecific)
         FirFakeOverrideGenerator.createCopyForFirFunction(
             newSymbol, keyFir, derivedClassLookupTag = null, session,
             FirDeclarationOrigin.IntersectionOverride,
@@ -381,7 +355,8 @@ class FirTypeIntersectionScopeContext(
             newModality = newModality,
             newVisibility = newVisibility,
             newDispatchReceiverType = dispatchReceiverType,
-            newReturnType = if (!forClassUseSiteScope) intersectReturnTypes(mostSpecific) else null,
+            deferredReturnTypeCalculation = deferredReturnTypeCalculation,
+            newReturnType = if (!forClassUseSiteScope && deferredReturnTypeCalculation == null) intersectReturnTypes(mostSpecific) else null,
         ).apply {
             originalForIntersectionOverrideAttr = keyFir
         }
@@ -398,7 +373,7 @@ class FirTypeIntersectionScopeContext(
             mostSpecific,
             overrides,
             ::FirIntersectionOverridePropertySymbol,
-        ) { symbol, fir, returnType ->
+        ) { symbol, fir, deferredReturnTypeCalculation, returnType ->
             FirFakeOverrideGenerator.createCopyForFirProperty(
                 symbol, fir, derivedClassLookupTag = null, session,
                 FirDeclarationOrigin.IntersectionOverride,
@@ -406,6 +381,7 @@ class FirTypeIntersectionScopeContext(
                 newModality = newModality,
                 newVisibility = newVisibility,
                 newDispatchReceiverType = dispatchReceiverType,
+                deferredReturnTypeCalculation = deferredReturnTypeCalculation,
                 // If any of the properties are vars and the types are not equal, these declarations are conflicting
                 // anyway and their uses should result in an overload resolution error.
                 newReturnType = returnType
@@ -423,7 +399,7 @@ class FirTypeIntersectionScopeContext(
             mostSpecific,
             overrides,
             ::FirIntersectionOverrideFieldSymbol
-        ) { symbol, fir, returnType ->
+        ) { symbol, fir, deferredReturnTypeCalculation, returnType ->
             FirFakeOverrideGenerator.createCopyForFirField(
                 symbol, fir, derivedClassLookupTag = null, session,
                 FirDeclarationOrigin.IntersectionOverride,
@@ -431,6 +407,7 @@ class FirTypeIntersectionScopeContext(
                 newModality = newModality,
                 newVisibility = newVisibility,
                 newDispatchReceiverType = dispatchReceiverType,
+                deferredReturnTypeCalculation = deferredReturnTypeCalculation,
                 // If any of the properties are vars and the types are not equal, these declarations are conflicting
                 // anyway and their uses should result in an overload resolution error.
                 newReturnType = returnType
@@ -442,32 +419,46 @@ class FirTypeIntersectionScopeContext(
         mostSpecific: Collection<FirCallableSymbol<*>>,
         overrides: Collection<FirCallableSymbol<*>>,
         createIntersectionOverrideSymbol: (CallableId, Collection<FirCallableSymbol<*>>) -> S,
-        createCopy: (S, F, returnType: ConeKotlinType?) -> F
+        createCopy: (S, F, deferredReturnTypeCalculation: CallableCopyDeferredReturnTypeCalculation?, returnType: ConeKotlinType?) -> F
     ): S {
         val key = mostSpecific.first() as S
         val keyFir = key.fir
         val callableId = CallableId(dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassLookupTagOrNull()?.classId!!, keyFir.name)
         val newSymbol = createIntersectionOverrideSymbol(callableId, overrides)
-        val newReturnType = runIf(!forClassUseSiteScope && mostSpecific.none { (it as FirVariableSymbol<*>).fir.isVar }) {
-            intersectReturnTypes(mostSpecific)
-        }
-        createCopy(newSymbol, keyFir, newReturnType).apply {
+        val deferredReturnTypeCalculation = deferredReturnTypeCalculationOrNull(mostSpecific)
+        val newReturnType =
+            runIf(!forClassUseSiteScope && mostSpecific.none { (it as FirVariableSymbol<*>).fir.isVar } && deferredReturnTypeCalculation == null) {
+                intersectReturnTypes(mostSpecific)
+            }
+        createCopy(newSymbol, keyFir, deferredReturnTypeCalculation, newReturnType).apply {
             originalForIntersectionOverrideAttr = keyFir
         }
         return newSymbol
     }
 
-    private fun intersectReturnTypes(overrides: Collection<FirCallableSymbol<*>>): ConeKotlinType? {
-        val key = overrides.first()
-        // Remap type parameters to the first declaration's:
-        //   (fun <A, B> foo(): B) & (fun <C, D> foo(): D?) -> (fun <A, B> foo(): B & B?)
-        val substituted = overrides.mapNotNull {
-            val returnType = it.fir.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-            if (it == key) return@mapNotNull returnType
-            val substitutor = buildSubstitutorForOverridesCheck(it.fir, key.fir, session) ?: return@mapNotNull null
-            returnType?.let(substitutor::substituteOrSelf)
+    private fun deferredReturnTypeCalculationOrNull(mostSpecific: Collection<FirCallableSymbol<*>>): CallableCopyIntersection? {
+        return runIf(mostSpecific.any { it.fir.returnTypeRef is FirImplicitTypeRef }) {
+            CallableCopyIntersection(mostSpecific, session)
         }
-        return if (substituted.isNotEmpty()) session.typeContext.intersectTypes(substituted) else null
+    }
+
+    private fun intersectReturnTypes(overrides: Collection<FirCallableSymbol<*>>): ConeKotlinType? {
+        return intersectReturnTypes(overrides, session) { returnTypeRef.coneType }
+    }
+
+    companion object {
+        inline fun intersectReturnTypes(overrides: Collection<FirCallableSymbol<*>>, session: FirSession, getReturnType: FirCallableDeclaration.() -> ConeKotlinType?): ConeKotlinType? {
+            val key = overrides.first()
+            // Remap type parameters to the first declaration's:
+            //   (fun <A, B> foo(): B) & (fun <C, D> foo(): D?) -> (fun <A, B> foo(): B & B?)
+            val substituted = overrides.mapNotNull {
+                val returnType = it.fir.getReturnType() ?: return@mapNotNull null
+                if (it == key) return@mapNotNull returnType
+                val substitutor = buildSubstitutorForOverridesCheck(it.fir, key.fir, session) ?: return@mapNotNull null
+                returnType.let(substitutor::substituteOrSelf)
+            }
+            return if (substituted.isNotEmpty()) session.typeContext.intersectTypes(substituted) else null
+        }
     }
 }
 

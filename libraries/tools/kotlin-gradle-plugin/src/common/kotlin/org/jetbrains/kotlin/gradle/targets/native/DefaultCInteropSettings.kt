@@ -80,6 +80,7 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
     private fun getDefaultCinteropDefinitionFile(): File = params.services.projectLayout.projectDirectory.file("src/nativeInterop/cinterop/$name.def").asFile
 
     val definitionFile: RegularFileProperty = params.services.objectFactory.fileProperty().convention(
+        @Suppress("DEPRECATION") // deprecated property is used intentionally during deprecation period
         params.services.projectLayout.file(defFileProperty)
     )
 
@@ -87,6 +88,7 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
     var defFile: File
         get() = definitionFile.getFile()
         set(value) {
+            @Suppress("DEPRECATION") // deprecated property is used intentionally during deprecation period
             defFileProperty.set(value)
         }
 

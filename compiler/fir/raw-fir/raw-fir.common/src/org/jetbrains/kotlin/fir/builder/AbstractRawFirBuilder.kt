@@ -1044,26 +1044,41 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         initContainingClassAttr(context)
     }
 
-    protected fun buildLabelAndErrorSource(rawName: String, source: KtSourceElement): Pair<FirLabel, KtSourceElement?> {
+    protected fun buildLabel(rawName: String, source: KtSourceElement): FirLabel {
         val firLabel = buildLabel {
             name = KtPsiUtil.unquoteIdentifier(rawName)
             this.source = source
         }
 
-        return Pair(firLabel, if (rawName.isUnderscore) firLabel.source else null)
+        return firLabel
     }
 
-    protected fun buildExpressionWithErrorLabel(
+    protected fun getForbiddenLabelKind(rawName: String, isMultipleLabel: Boolean): ForbiddenLabelKind? = when {
+        rawName.isUnderscore -> ForbiddenLabelKind.UNDERSCORE_IS_RESERVED
+        isMultipleLabel -> ForbiddenLabelKind.MULTIPLE_LABEL
+        else -> null
+    }
+
+    protected enum class ForbiddenLabelKind {
+        UNDERSCORE_IS_RESERVED, MULTIPLE_LABEL
+    }
+
+    protected fun buildExpressionHandlingErrors(
         element: FirElement?,
-        errorLabelSource: KtSourceElement?,
         elementSource: KtSourceElement,
+        forbiddenLabelKind: ForbiddenLabelKind?,
+        forbiddenLabelSource: KtSourceElement?,
     ): FirElement {
         return if (element != null) {
-            if (errorLabelSource != null) {
+            if (forbiddenLabelKind != null) {
+                require(forbiddenLabelSource != null)
                 buildErrorExpression {
                     this.source = element.source
                     this.expression = element as? FirExpression
-                    diagnostic = ConeUnderscoreIsReserved(errorLabelSource)
+                    diagnostic = when (forbiddenLabelKind) {
+                        ForbiddenLabelKind.UNDERSCORE_IS_RESERVED -> ConeUnderscoreIsReserved(forbiddenLabelSource)
+                        ForbiddenLabelKind.MULTIPLE_LABEL -> ConeMultipleLabelsAreForbidden(forbiddenLabelSource)
+                    }
                 }
             } else {
                 element

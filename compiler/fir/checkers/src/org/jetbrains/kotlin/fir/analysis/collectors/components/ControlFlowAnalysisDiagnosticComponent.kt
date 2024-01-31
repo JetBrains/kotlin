@@ -13,9 +13,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitorVoid
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableDeclarationNode
+import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
+import org.jetbrains.kotlin.fir.expressions.FirLoop
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
@@ -41,9 +42,10 @@ class ControlFlowAnalysisDiagnosticComponent(
         if (graph.isSubGraph) return
         cfaCheckers.forEach { it.analyze(graph, reporter, context) }
 
-        val properties = mutableSetOf<FirPropertySymbol>().apply { graph.traverse(LocalPropertyCollector(this)) }
+        val collector = LocalPropertyCollector().apply { graph.traverse(this) }
+        val properties = collector.properties
         if (properties.isNotEmpty()) {
-            val data = PropertyInitializationInfoData(properties, receiver = null, graph)
+            val data = PropertyInitializationInfoData(properties, collector.conditionallyInitializedProperties, receiver = null, graph)
             variableAssignmentCheckers.forEach { it.analyze(data, reporter, context) }
         }
     }
@@ -94,11 +96,60 @@ class ControlFlowAnalysisDiagnosticComponent(
         analyze(constructor, data)
     }
 
-    private class LocalPropertyCollector(private val result: MutableSet<FirPropertySymbol>) : ControlFlowGraphVisitorVoid() {
+    private class LocalPropertyCollector : ControlFlowGraphVisitorVoid() {
+        val properties = mutableSetOf<FirPropertySymbol>()
+
+        // Properties which may not be initialized when accessed, even if they have an initializer.
+        val conditionallyInitializedProperties = mutableSetOf<FirPropertySymbol>()
+
+        // Properties defined within do-while loops, and used within the condition of that same do-while loop, are considered conditionally
+        // initialized. It is possible they may not even be defined by the loop condition due to a `continue` in the do-while loop. Track
+        // do-while loop properties so those used in the condition can be recorded.
+        private val doWhileLoopProperties = ArrayDeque<Pair<FirLoop, MutableSet<FirPropertySymbol>>>()
+        private val insideDoWhileConditions = mutableSetOf<FirLoop>()
+
         override fun visitNode(node: CFGNode<*>) {}
 
         override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
-            result.add(node.fir.symbol)
+            val symbol = node.fir.symbol
+            properties.add(symbol)
+            doWhileLoopProperties.lastOrNull()?.second?.add(symbol)
+        }
+
+        override fun visitQualifiedAccessNode(node: QualifiedAccessNode) {
+            if (insideDoWhileConditions.isNotEmpty()) {
+                val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: return
+
+                // It is possible to nest do-while loops within do-while loop conditions via in-place lambda functions. Make sure to check
+                // all properties for all loop conditions.
+                if (doWhileLoopProperties.any { it.first in insideDoWhileConditions && symbol in it.second }) {
+                    conditionallyInitializedProperties.add(symbol)
+                }
+            }
+        }
+
+        override fun visitLoopEnterNode(node: LoopEnterNode) {
+            if (node.fir is FirDoWhileLoop) {
+                doWhileLoopProperties.addLast(node.fir to mutableSetOf())
+            }
+        }
+
+        override fun visitLoopExitNode(node: LoopExitNode) {
+            if (node.fir is FirDoWhileLoop) {
+                doWhileLoopProperties.removeLast()
+            }
+        }
+
+        override fun visitLoopConditionEnterNode(node: LoopConditionEnterNode) {
+            if (node.loop is FirDoWhileLoop) {
+                insideDoWhileConditions.add(node.loop)
+            }
+        }
+
+        override fun visitLoopConditionExitNode(node: LoopConditionExitNode) {
+            if (node.loop is FirDoWhileLoop) {
+                insideDoWhileConditions.remove(node.loop)
+            }
         }
     }
 }
