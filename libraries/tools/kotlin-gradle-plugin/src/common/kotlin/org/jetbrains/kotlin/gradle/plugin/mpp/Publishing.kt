@@ -177,3 +177,14 @@ internal fun Configuration.configureSourcesPublicationAttributes(target: KotlinT
     attributes.setAttribute(Bundling.BUNDLING_ATTRIBUTE, project.attributeValueByName(Bundling.EXTERNAL))
     usesPlatformOf(target)
 }
+
+internal fun Configuration.configureResourcesPublicationAttributes(target: KotlinTarget) {
+    val project = target.project
+
+    // FIXME: How can we make sure not to break disambiguation and compatibility rules. Why does specifying only the Usage break AGP?
+    attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.attributeValueByName(KotlinUsages.KOTLIN_RESOURCES))
+    attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_RESOURCES))
+    attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, project.attributeValueByName(Bundling.EXTERNAL))
+
+    usesPlatformOf(target)
+}

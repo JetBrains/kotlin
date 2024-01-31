@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.HierarchyAttributeContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
+import java.nio.file.Path
 
 internal class ExternalKotlinTargetImpl internal constructor(
     override val project: Project,
@@ -56,6 +58,15 @@ internal class ExternalKotlinTargetImpl internal constructor(
     )
     override val preset: Nothing? = null
 
+    // FIXME: Do we need to support ExternalKotlinTarget?
+    override fun composeCopyResources(resourceDirectoryPathRelativeToSourceSet: Provider<Path>, resourcePlacementPathRelativeToPublicationRoot: Provider<Path>, targetName: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun composeResolveResources(): TaskProvider<*> {
+        TODO("Not yet implemented")
+    }
+
     internal val logger: Logger = Logging.getLogger("${ExternalKotlinTargetImpl::class.qualifiedName}: $name")
 
     @Deprecated("Scheduled for removal with Kotlin 2.2")
@@ -85,6 +96,9 @@ internal class ExternalKotlinTargetImpl internal constructor(
 
     override val sourcesElementsConfigurationName: String
         get() = sourcesElementsConfiguration.name
+
+    override val resourcesElementsConfigurationName: String
+        get() = TODO("Not yet implemented")
 
     @InternalKotlinGradlePluginApi
     override val kotlinComponents: Set<KotlinTargetComponent> = setOf(kotlinTargetComponent)

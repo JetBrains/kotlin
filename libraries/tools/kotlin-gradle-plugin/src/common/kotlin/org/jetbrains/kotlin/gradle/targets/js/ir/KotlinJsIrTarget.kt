@@ -90,6 +90,13 @@ constructor(
             )
         )
 
+        // FIXME: Are all js/wasm targets published in these components?
+        usageContexts.add(
+            createResourcesSoftwareComponentVariant(
+                mainCompilation,
+            )
+        )
+
         val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
 
         setOf(result)

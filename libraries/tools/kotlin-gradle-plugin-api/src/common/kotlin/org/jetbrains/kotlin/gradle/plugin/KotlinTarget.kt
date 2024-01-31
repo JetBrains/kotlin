@@ -11,13 +11,16 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.component.SoftwareComponent
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
+import java.nio.file.Path
 
 @KotlinGradlePluginDsl
 interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
@@ -41,6 +44,7 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     val apiElementsConfigurationName: String
     val runtimeElementsConfigurationName: String
     val sourcesElementsConfigurationName: String
+    val resourcesElementsConfigurationName: String
 
     val publishable: Boolean
 
@@ -69,6 +73,18 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
         level = DeprecationLevel.WARNING
     )
     val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
+    
+    // FIXME: Rename these APIs to not refer to Compose
+    // FIXME: Should these APIs be placed elsewhere (as static extension)?
+    @InternalKotlinGradlePluginApi
+    fun composeCopyResources(
+        resourceDirectoryPathRelativeToSourceSet: Provider<Path>,
+        resourcePlacementPathRelativeToPublicationRoot: Provider<Path>,
+        resourceTypeTaskNameSuffix: String
+    )
+
+    @InternalKotlinGradlePluginApi
+    fun composeResolveResources(): TaskProvider<*>
 }
 
 interface KotlinTargetWithTests<E : KotlinExecution.ExecutionSource, T : KotlinTargetTestRun<E>> : KotlinTarget {
