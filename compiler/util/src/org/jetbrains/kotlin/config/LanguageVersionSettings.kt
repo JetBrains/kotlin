@@ -308,6 +308,7 @@ enum class LanguageFeature(
     ForbidInferringTypeVariablesIntoEmptyIntersection(KOTLIN_2_0, kind = BUG_FIX), // KT-51221
     ProhibitDefaultArgumentsInExpectActualizedByFakeOverride(KOTLIN_2_0, kind = BUG_FIX), // KT-62036
     DisableCompatibilityModeForNewInference(KOTLIN_2_0, kind = OTHER), // KT-63558 (umbrella), KT-64306, KT-64307, KT-64308
+    DfaBooleanVariables(KOTLIN_2_0), // KT-25747
 
     // 2.1
 

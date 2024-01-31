@@ -34963,6 +34963,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("disableDfaBooleanVariables.kt")
+            public void testDisableDfaBooleanVariables() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/disableDfaBooleanVariables.kt");
+            }
+
+            @Test
             @TestMetadata("doubleLambdaArgument.kt")
             public void testDoubleLambdaArgument() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/doubleLambdaArgument.kt");

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import kotlinx.collections.immutable.toPersistentSet
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.descriptors.Modality
@@ -1086,9 +1087,15 @@ abstract class FirDataFlowAnalyzer(
                 // if (b != null) { /* a != null, but a.x could have changed */ }
                 logicSystem.translateVariableFromConditionInStatements(flow, initializerVariable, propertyVariable)
             }
-        } else if (initializerVariable != null && propertyVariable.isStable) {
+        } else if (initializerVariable != null && propertyVariable.isStable &&
+            (components.session.languageVersionSettings.supportsFeature(LanguageFeature.DfaBooleanVariables) ||
+                    !initializer.resolvedType.isBoolean)
+        ) {
             // val b = x is String
             // if (b) { /* x is String */ }
+
+            // val b = x?.foo() // `x?.foo()` is synthetic
+            // if (b != null) { /* x != null */ }
             logicSystem.translateVariableFromConditionInStatements(flow, initializerVariable, propertyVariable)
         }
 
