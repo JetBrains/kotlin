@@ -65,6 +65,11 @@ private:
             elemsCount_ = spliced;
         }
 
+        void clear() noexcept {
+            elems_.clear();
+            elemsCount_ = 0;
+        }
+
     private:
         ListImpl elems_;
         std::size_t elemsCount_ = 0;
@@ -93,6 +98,10 @@ public:
         friend ParallelProcessor;
     public:
         explicit WorkSource(ParallelProcessor& dispatcher) : dispatcher_(dispatcher) {}
+
+        ~WorkSource() noexcept {
+            RuntimeAssert(retainsNoWork(), "A queue must be empty");
+        }
 
         ALWAYS_INLINE bool retainsNoWork() const noexcept {
             return batch_.empty() && overflowList().empty();
@@ -134,6 +143,11 @@ public:
                     batch_.fillFrom(overflowList());
                 }
             }
+        }
+
+        void clear() noexcept {
+            batch_.clear();
+            overflowList().clear();
         }
 
     protected:
@@ -222,7 +236,7 @@ public:
         RuntimeAssert(waitingWorkers_.load() == 0, "All the workers must terminate before dispatcher destruction");
     }
 
-    size_t registeredWorkers() {
+    size_t registeredWorkers() const noexcept {
         return registeredWorkers_.load(std::memory_order_relaxed);
     }
 
@@ -231,6 +245,11 @@ public:
         RuntimeAssert(allDone_, "A work processing iteration must be finished");
         RuntimeAssert(waitingWorkers_ == 0, "There must be no workers sleeping inside processing loop");
         allDone_ = false;
+    }
+
+    /** Returns a total cumulatiove number of bathces that have ever been shared by any of the work sources so far. */
+    size_t batchesEverShared() const noexcept {
+        return sharedBatches_.cumulativeThroughput();
     }
 
 private:

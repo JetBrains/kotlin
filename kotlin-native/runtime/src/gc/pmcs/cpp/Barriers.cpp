@@ -33,7 +33,23 @@ ObjHeader* weakRefBarrierImpl(ObjHeader* weakReferee) noexcept {
 NO_INLINE ObjHeader* weakRefReadSlowPath(std::atomic<ObjHeader*>& weakReferee) noexcept {
     // reread an action to avoid register pollution outside the function
     auto barrier = weakRefBarrier.load(std::memory_order_seq_cst);
+
+    // The referee must be reread here to avoid a possible race with the concurrent barrier disablement.
+    // NOTE: at the moment the barriers are disabled in STW, meaning this all is not the case.
+    //
+    // Consider the following situation:
+    // 1. GC thread enables the barriers and resumes mutators.
+    // 2. A mutator reads obj_ into local variable and sleeps.
+    // 3. GC thread finishes weak processing and disables the barriers.
+    // 4. The mutator continues executing, sees that there's no more barriers (but have not yet communicated this fact with the GC)
+    //    and returns object from the local variable.
+    // Why reading inside the barrier code fixes it:
+    // 1. We read the barrier with seq_cst and do it before reading obj_.
+    // 2. If there's a barrier, we execute it, and the GC is definitely waiting for us to finish,
+    //    and the object is still alive but is not marked (if it's marked, then there's nothing to go wrong)
+    // 3. If there's no barrier, then the GC has already cleaned up all the weaks and we read obj_ after that happening.
     auto* weak = weakReferee.load(std::memory_order_relaxed);
+
     return barrier ? barrier(weak) : weak;
 }
 

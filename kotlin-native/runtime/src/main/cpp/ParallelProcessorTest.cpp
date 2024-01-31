@@ -59,7 +59,7 @@ auto createWork(std::size_t size) {
 
 template <typename WorkList, typename Iterable>
 void offerWork(WorkList& wl, Iterable& batch) {
-    for (auto& task: batch) {
+    for (auto& task : batch) {
         bool accepted = wl.tryPush(task);
         RuntimeAssert(accepted, "Must be accepted");
     }
@@ -74,7 +74,6 @@ using WorkSource = typename Processor::WorkSource;
 
 } // namespace
 
-
 TEST(ParallelProcessorTest, ContededRegistration) {
     Processor processor;
     std::vector<std::unique_ptr<Worker>> workers(kDefaultThreadCount);
@@ -83,7 +82,8 @@ TEST(ParallelProcessorTest, ContededRegistration) {
     std::list<ScopedThread> threads;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         threads.emplace_back([i, &start, &workers, &processor] {
-            while (!start.load()) {}
+            while (!start.load()) {
+            }
             workers[i] = std::make_unique<Worker>(processor);
         });
     }
@@ -115,6 +115,8 @@ TEST(ParallelProcessorTest, Sharing) {
     EXPECT_NE(taker.tryPop(), nullptr);
 
     EXPECT_FALSE(taker.retainsNoWork());
+    taker.clear();
+    giver.clear();
 }
 
 TEST(ParallelProcessorTest, SharingFromNonWorkerSource) {
@@ -135,6 +137,8 @@ TEST(ParallelProcessorTest, SharingFromNonWorkerSource) {
     EXPECT_NE(taker.tryPop(), nullptr);
 
     EXPECT_FALSE(taker.retainsNoWork());
+    taker.clear();
+    giver.clear();
 }
 
 TEST(ParallelProcessorTest, Overflow) {

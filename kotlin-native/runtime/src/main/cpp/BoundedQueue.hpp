@@ -93,6 +93,11 @@ public:
         return std::move(result);
     }
 
+    /** Returns the number of items ever added to the queue: both present in the queue and already dequeed. */
+    size_t cumulativeThroughput() const noexcept {
+        return enqueuePos_.load();
+    }
+
 private:
     struct Cell {
         // TODO describe

@@ -92,7 +92,7 @@ ALWAYS_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader*
 }
 
 ALWAYS_INLINE OBJ_GETTER(gc::weakRefReadBarrier, std::atomic<ObjHeader*>& weakReferee) noexcept {
-    RETURN_RESULT_OF(gc::barriers::weakRefReadBarrier, weakReferee);
+    RETURN_OBJ(gc::barriers::weakRefReadBarrier(weakReferee));
 }
 
 bool gc::isMarked(ObjHeader* object) noexcept {

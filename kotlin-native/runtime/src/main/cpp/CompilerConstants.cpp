@@ -21,6 +21,7 @@ using Kotlin_getSourceInfo_FunctionType = int(*)(void * /*addr*/, SourceInfo* /*
 RUNTIME_WEAK int32_t Kotlin_destroyRuntimeMode = 1;
 RUNTIME_WEAK int32_t Kotlin_gcMutatorsCooperate = 0;
 RUNTIME_WEAK uint32_t Kotlin_auxGCThreads = 0;
+RUNTIME_WEAK uint32_t Kotlin_concurrentMarkMaxIterations = 100;
 RUNTIME_WEAK int32_t Kotlin_workerExceptionHandling = 0;
 RUNTIME_WEAK int32_t Kotlin_suspendFunctionsFromAnyThreadFromObjC = 0;
 RUNTIME_WEAK Kotlin_getSourceInfo_FunctionType Kotlin_getSourceInfo_Function = nullptr;
@@ -46,6 +47,10 @@ ALWAYS_INLINE bool compiler::gcMutatorsCooperate() noexcept {
 
 ALWAYS_INLINE uint32_t compiler::auxGCThreads() noexcept {
     return Kotlin_auxGCThreads;
+}
+
+ALWAYS_INLINE uint32_t compiler::concurrentMarkMaxIterations() noexcept {
+    return Kotlin_concurrentMarkMaxIterations;
 }
 
 ALWAYS_INLINE compiler::WorkerExceptionHandling compiler::workerExceptionHandling() noexcept {

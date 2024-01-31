@@ -197,6 +197,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val concurrentWeakSweep: Boolean
         get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: true
 
+    val concurrentMarkMaxIterations: UInt
+        get() = configuration.get(BinaryOptions.concurrentMarkMaxIterations) ?: 100U
+
     val gcMutatorsCooperate: Boolean by lazy {
         val mutatorsCooperate = configuration.get(BinaryOptions.gcMutatorsCooperate)
         if (gcMarkSingleThreaded) {
