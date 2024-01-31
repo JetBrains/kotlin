@@ -50,6 +50,7 @@ fun test(b: B) {
 // test.kt:10 $B.<init>
 // test.kt:12 $B.<init>
 // test.kt:15 $test
+// Standard.kt:3 $test (51, 64)
 // Standard.kt:67 $test
 // Standard.kt:70 $test (20, 11, 20, 4)
 // test.kt:11 $B.invoke

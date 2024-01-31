@@ -71,8 +71,10 @@ fun box(): String {
 // String.kt:52 $kotlin.String.foldChars (39, 62, 12, 39, 62, 12)
 // String.kt:53 $kotlin.String.foldChars (12, 33, 12, 12, 12, 33, 12, 12)
 // String.kt:54 $kotlin.String.foldChars (12, 12)
-// _WasmArrays.kt:71 $kotlin.String.foldChars (4, 1, 4, 1)
-// _WasmArrays.kt:88 $kotlin.String.foldChars (35, 48, 66, 87, 4, 35, 48, 66, 87, 4)
+// _WasmArrays.kt:68 $kotlin.String.foldChars (0, 0)
+// _WasmArrays.kt:70 $kotlin.String.foldChars (21, 21)
+// _WasmArrays.kt:71 $kotlin.String.foldChars (1, 4, 23, 1, 4, 23)
+// _WasmArrays.kt:88 $kotlin.String.foldChars (35, 48, 66, 74, 87, 4, 35, 48, 66, 74, 87, 4)
 // String.kt:55 $kotlin.String.foldChars (32, 50, 12, 32, 50, 12)
 // String.kt:57 $kotlin.String.foldChars
 // Preconditions.kt:77 $kotlin.String.foldChars (2, 2)

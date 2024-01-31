@@ -148,6 +148,7 @@ fun box() {
 // String.kt:66 $kotlin.String.hashCode (15, 8)
 // String.kt:127 $kotlin.String.hashCode (19, 8)
 // String.kt:128 $kotlin.String.hashCode
+// Standard.kt:136 $kotlin.String.hashCode (18, 52, 61, 52, 66, 51, 51, 44)
 // Standard.kt:152 $kotlin.String.hashCode
 // Standard.kt:154 $kotlin.String.hashCode (18, 4, 26, 4, 18, 9, 18, 4, 26, 4, 4)
 // Standard.kt:155 $kotlin.String.hashCode (8, 15)
@@ -179,7 +180,7 @@ fun box() {
 // StringBuilder.kt:227 $kotlin.text.StringBuilder.append (8, 32, 39, 48, 19, 8, 8, 8, 32, 39, 48, 19, 8, 8, 8, 32, 39, 48, 19, 8, 8, 8, 32, 39, 48, 19, 8, 8)
 // StringBuilder.kt:915 $kotlin.text.insertString (21, 28, 35, 42, 45, 51, 8, 58, 21, 28, 35, 42, 45, 51, 8, 58, 21, 28, 35, 42, 45, 51, 8, 58, 21, 28, 35, 42, 45, 51, 8, 58)
 // StringBuilderWasm.kt:41 $kotlin.text.insertString (4, 4, 4, 4, 4)
-// _WasmArrays.kt:62 $kotlin.text.insertString (53, 60, 66, 53, 60, 66, 53, 60, 66, 53, 60, 66, 53, 60, 66)
+// _WasmArrays.kt:62 $kotlin.text.insertString (53, 47, 60, 66, 53, 47, 60, 66, 53, 47, 60, 66, 53, 47, 60, 66, 53, 47, 60, 66)
 // _WasmArrays.kt:79 $kotlin.text.insertString (21, 21, 21, 21, 21)
 // _WasmArrays.kt:83 $kotlin.text.insertString (10, 3, 10, 3, 10, 3, 10, 3, 10, 3)
 // _WasmArrays.kt:63 $kotlin.text.insertString (2, 2, 2, 2, 2)
@@ -208,7 +209,7 @@ fun box() {
 // _ArraysWasm.kt:1229 $kotlin.collections.copyInto (20, 31, 20, 4)
 // _ArraysWasm.kt:1230 $kotlin.collections.copyInto (35, 54, 74, 54, 85, 97, 17)
 // _ArraysWasm.kt:1231 $kotlin.collections.copyInto
-// _WasmArrays.kt:244 $kotlin.collections.copyInto (42869, 42874, 42883, 42895)
+// _WasmArrays.kt:244 $kotlin.collections.copyInto (42869, 42874, 42883, 42895, 42904, 42916, 42935)
 // _WasmArrays.kt:88 $kotlin.collections.copyInto (35, 48, 66, 74, 87, 4)
 // _ArraysWasm.kt:1232 $kotlin.collections.copyInto (11, 4)
 // _ArraysWasm.kt:1700 $kotlin.collections.copyOfUninitializedElements (11, 4)
@@ -295,8 +296,9 @@ fun box() {
 // StringBuilder.kt:499 $kotlin.text.StringBuilder.toString (64, 71, 74, 38, 82)
 // StringBuilderWasm.kt:46 $kotlin.text.unsafeStringFromCharArray (29, 15, 4)
 // StringBuilderWasm.kt:47 $kotlin.text.unsafeStringFromCharArray
-// _WasmArrays.kt:73 $kotlin.text.unsafeStringFromCharArray (3, 9, 31)
-// _WasmArrays.kt:88 $kotlin.text.unsafeStringFromCharArray (35, 66, 74, 87, 4)
+// _WasmArrays.kt:73 $kotlin.text.unsafeStringFromCharArray (3, 9, 18, 24, 31)
+// _WasmArrays.kt:74 $kotlin.text.unsafeStringFromCharArray
+// _WasmArrays.kt:88 $kotlin.text.unsafeStringFromCharArray (35, 48, 66, 74, 87, 4)
 // StringBuilderWasm.kt:48 $kotlin.text.unsafeStringFromCharArray (16, 4)
 // String.kt:57 $kotlin.text.unsafeStringFromCharArray
 // String.kt:138 $kotlin.text.unsafeStringFromCharArray (4, 4, 4, 4, 11, 17, 22, 29, 4, 34)

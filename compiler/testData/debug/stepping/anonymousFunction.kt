@@ -24,7 +24,7 @@ fun box() {
 // test.kt:10 box
 
 // EXPECTATIONS WASM
-// test.kt:7 $box (9, 9, 4)
+// test.kt:7 $box (9, 4)
 // test.kt:4 $eval (27, 30)
 // test.kt:8 $box$lambda.invoke (8, 8, 8, 8, 12)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17)
