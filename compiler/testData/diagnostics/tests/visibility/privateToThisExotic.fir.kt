@@ -19,7 +19,8 @@ class Foo<in T> : Base<<!TYPE_VARIANCE_CONFLICT_ERROR!>T<!>>() {
     private val flex = foo()
 
     fun bar(f: Foo<Bar>) {
-        val dnn = f.dnn
+        val dnn = f.<!INVISIBLE_REFERENCE!>dnn<!>
+        // This case (and any other with non-denotable type) requires KT-55446 to be fixed
         val flex = f.flex
     }
 }

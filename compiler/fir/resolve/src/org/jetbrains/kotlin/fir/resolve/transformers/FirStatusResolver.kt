@@ -355,28 +355,50 @@ class FirStatusResolver(
     }
 
     private fun contradictsWith(type: ConeKotlinType, requiredVariance: Variance): Boolean {
-        if (type is ConeTypeParameterType) {
-            return !type.lookupTag.typeParameterSymbol.fir.variance.allowsPosition(requiredVariance)
-        }
-        // TODO: handle other types (like flexible, DNN, captured, ...) KT-62134
-        if (type is ConeClassLikeType) {
-            val classLike = type.lookupTag.toSymbol(session)?.fir
-            for ((index, argument) in type.typeArguments.withIndex()) {
-                val typeParameterRef = classLike?.typeParameters?.getOrNull(index)
-                if (typeParameterRef !is FirTypeParameter) continue
-                val requiredVarianceForArgument = when (
-                    EnrichedProjectionKind.getEffectiveProjectionKind(typeParameterRef.variance, argument.variance)
-                ) {
-                    EnrichedProjectionKind.OUT -> requiredVariance
-                    EnrichedProjectionKind.IN -> requiredVariance.opposite()
-                    EnrichedProjectionKind.INV -> Variance.INVARIANT
-                    EnrichedProjectionKind.STAR -> continue // CONFLICTING_PROJECTION error was reported
+        when (type) {
+            is ConeLookupTagBasedType -> {
+                if (type is ConeTypeParameterType) {
+                    return !type.lookupTag.typeParameterSymbol.fir.variance.allowsPosition(requiredVariance)
                 }
-                val argType = argument.type ?: continue
-                if (contradictsWith(argType, requiredVarianceForArgument)) {
-                    return true
+                if (type is ConeClassLikeType) {
+                    val classLike = type.lookupTag.toSymbol(session)?.fir
+                    for ((index, argument) in type.typeArguments.withIndex()) {
+                        val typeParameterRef = classLike?.typeParameters?.getOrNull(index)
+                        if (typeParameterRef !is FirTypeParameter) continue
+                        val requiredVarianceForArgument = when (
+                            EnrichedProjectionKind.getEffectiveProjectionKind(typeParameterRef.variance, argument.variance)
+                        ) {
+                            EnrichedProjectionKind.OUT -> requiredVariance
+                            EnrichedProjectionKind.IN -> requiredVariance.opposite()
+                            EnrichedProjectionKind.INV -> Variance.INVARIANT
+                            EnrichedProjectionKind.STAR -> continue // CONFLICTING_PROJECTION error was reported
+                        }
+                        val argType = argument.type ?: continue
+                        if (contradictsWith(argType, requiredVarianceForArgument)) {
+                            return true
+                        }
+                    }
                 }
             }
+            is ConeFlexibleType -> {
+                return contradictsWith(type.lowerBound, requiredVariance)
+            }
+            is ConeDefinitelyNotNullType -> {
+                return contradictsWith(type.original, requiredVariance)
+            }
+            is ConeIntersectionType -> {
+                return type.intersectedTypes.any { contradictsWith(it, requiredVariance) }
+            }
+            is ConeCapturedType -> {
+                // Looks like not possible here
+                return false
+            }
+            is ConeIntegerConstantOperatorType,
+            is ConeIntegerLiteralConstantType,
+            is ConeStubTypeForChainInference,
+            is ConeStubTypeForTypeVariableInSubtyping,
+            is ConeTypeVariableType,
+            -> return false
         }
         return false
     }

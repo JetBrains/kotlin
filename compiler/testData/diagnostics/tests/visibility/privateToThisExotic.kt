@@ -20,6 +20,7 @@ class Foo<in T> : Base<<!TYPE_VARIANCE_CONFLICT_ERROR!>T<!>>() {
 
     fun bar(f: Foo<Bar>) {
         val dnn = f.<!INVISIBLE_MEMBER!>dnn<!>
+        // This case (and any other with non-denotable type) requires KT-55446 to be fixed
         val flex = f.<!INVISIBLE_MEMBER!>flex<!>
     }
 }
