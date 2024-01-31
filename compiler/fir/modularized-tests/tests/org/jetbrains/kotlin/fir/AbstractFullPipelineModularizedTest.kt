@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.incremental.isJavaFile
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.util.PerformanceCounter
@@ -47,7 +49,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         val gcInfo: Map<String, GCInfo>,
         val components: Map<String, Long>,
         val files: Int,
-        val lines: Int
+        val lines: Int,
     ) {
         constructor() : this(emptyMap(), emptyMap(), 0, 0)
 
@@ -188,7 +190,12 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
 
     abstract fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData)
 
-    protected open fun handleResult(result: ExitCode, moduleData: ModuleData, collector: TestMessageCollector, targetInfo: String): ProcessorAction {
+    protected open fun handleResult(
+        result: ExitCode,
+        moduleData: ModuleData,
+        collector: TestMessageCollector,
+        targetInfo: String,
+    ): ProcessorAction {
         val status = ModuleStatus(moduleData, targetInfo)
         totalModules += status
 
@@ -281,6 +288,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         val tmp = Files.createTempDirectory("compile-output")
         configureBaseArguments(args, moduleData, tmp)
         configureArguments(args, moduleData)
+        args.suppressWarnings = true
 
         val manager = CompilerPerformanceManager()
         val services = Services.Builder().register(CommonCompilerPerformanceManager::class.java, manager).build()
@@ -300,7 +308,44 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             totalPassResult += resultTime
         }
 
+        printDetailedCompilationBenchmark(moduleData, resultTime, manager)
         return handleResult(result, moduleData, collector, manager.getTargetInfo())
+    }
+
+    private fun printDetailedCompilationBenchmark(
+        moduleData: ModuleData,
+        resultTime: CumulativeTime,
+        perfManager: CompilerPerformanceManager,
+    ) {
+        var javaFiles = 0
+        var javaLines = 0
+        moduleData.javaSourceRoots.forEach { javaSrcRoot ->
+            javaSrcRoot.path.walk().forEach { file ->
+                if (file.isFile && file.isJavaFile()) {
+                    javaFiles++
+                    val lines = file.bufferedReader().lines().count().toInt()
+                    javaLines += lines
+                }
+            }
+        }
+
+        println("{{{ perf report")
+        println("module name | ${moduleData.name}")
+        println("module path | ${moduleData.rawOutputDir}")
+        println("files | ${resultTime.files}")
+        println("LOC | ${resultTime.lines}")
+        println("java files | $javaFiles")
+        println("java LOC | $javaLines")
+        resultTime.components.forEach { name, time ->
+            println("time $name | $time")
+        }
+        println("time total | ${resultTime.totalTime()}")
+        resultTime.gcInfo.forEach { name, info ->
+            println("gc collections $name | ${info.collections}")
+            println("gc time $name | ${info.gcTime}")
+        }
+
+        println("perf report }}}")
     }
 
     protected fun createReport(finalReport: Boolean) {
@@ -337,8 +382,8 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
                 irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.LOWERING }?.milliseconds?.let { put("Lowering", it) }
 
                 val generationTime =
-                    irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.GENERATION }?.milliseconds ?:
-                    measurements.filterIsInstance<CodeGenerationMeasurement>().firstOrNull()?.milliseconds
+                    irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.GENERATION }?.milliseconds
+                        ?: measurements.filterIsInstance<CodeGenerationMeasurement>().firstOrNull()?.milliseconds
 
                 if (generationTime != null) {
                     put("Generation", generationTime)
@@ -377,7 +422,6 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
 
 
 }
-
 
 
 fun substituteCompilerPluginPathForKnownPlugins(path: String): File? {
