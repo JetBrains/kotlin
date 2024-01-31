@@ -303,3 +303,7 @@ In order to build and run tests in the project in IDE, two prerequisites are req
 
 * Java 11 or above in order to use the latest ASM
 * All build actions in the IDE should be delegated to Gradle
+
+## Contributing
+
+Read the [Contributing Guidelines](CONTRIBUTING.md).
