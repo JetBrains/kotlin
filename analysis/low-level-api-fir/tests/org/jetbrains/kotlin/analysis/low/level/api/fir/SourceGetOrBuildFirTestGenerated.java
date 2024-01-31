@@ -611,6 +611,22 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/deserialized")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Deserialized {
+        @Test
+        public void testAllFilesPresentInDeserialized() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/deserialized"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("annotationWithEnumEntryArgument.kt")
+        public void testAnnotationWithEnumEntryArgument() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/deserialized/annotationWithEnumEntryArgument.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/destructuring")
     @TestDataPath("$PROJECT_ROOT")
     public class Destructuring {
