@@ -10,16 +10,11 @@ import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.references.builder.buildFromMissingDependenciesNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -207,25 +202,9 @@ class StubBasedAnnotationDeserializer(
         ).apply { this.replaceConeTypeOrNull(typeRef.type) }
     }
 
-    private fun PsiElement.toEnumEntryReferenceExpression(classId: ClassId, entryName: Name): FirExpression {
-        return buildPropertyAccessExpression {
-            source = KtRealPsiSourceElement(this@toEnumEntryReferenceExpression)
-            val enumLookupTag = classId.toLookupTag()
-            val enumSymbol = enumLookupTag.toSymbol(session)
-            val firClass = enumSymbol?.fir as? FirRegularClass
-            val enumEntries = firClass?.collectEnumEntries() ?: emptyList()
-            val enumEntrySymbol = enumEntries.find { it.name == entryName }
-            calleeReference = enumEntrySymbol?.let {
-                buildResolvedNamedReference {
-                    name = entryName
-                    resolvedSymbol = it.symbol
-                }
-            } ?: buildFromMissingDependenciesNamedReference {
-                name = entryName
-            }
-            if (enumEntrySymbol != null) {
-                coneTypeOrNull = enumEntrySymbol.returnTypeRef.coneTypeOrNull
-            }
+    private fun PsiElement.toEnumEntryReferenceExpression(classId: ClassId, entryName: Name): FirExpression =
+        buildEnumEntryDeserializedAccessExpression {
+            enumClassId = classId
+            enumEntryName = entryName
         }
-    }
 }
