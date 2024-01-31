@@ -30,18 +30,18 @@ fun AttemptedToRealizeGroupTwice(%composer: Composer?, %changed: Int) {
     }
     Wrapper({ %composer: Composer?, %changed: Int ->
       sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "*<Leaf(0...>")
       repeat(1) { it: Int ->
-        %composer.startReplaceableGroup(<>)
+        %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "*<Leaf(0...>")
         repeat(1) { it: Int ->
           Leaf(0, %composer, 0b0110, 0)
         }
-        %composer.endReplaceableGroup()
+        %composer.endReplaceGroup()
         Leaf(0, %composer, 0b0110, 0)
       }
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
       sourceInformationMarkerEnd(%composer)
     }, %composer, 0)
     if (isTraceInProgress()) {

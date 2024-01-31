@@ -1254,7 +1254,7 @@ abstract class AbstractComposeLowering(
         }
     }
 
-    fun irStartReplaceableGroup(
+    fun irStartReplaceGroup(
         currentComposer: IrExpression,
         key: IrExpression,
         startOffset: Int = UNDEFINED_OFFSET,
@@ -1262,7 +1262,7 @@ abstract class AbstractComposeLowering(
     ): IrExpression {
         return irMethodCall(
             currentComposer,
-            startReplaceableFunction,
+            startReplaceFunction,
             startOffset,
             endOffset
         ).also {
@@ -1270,14 +1270,14 @@ abstract class AbstractComposeLowering(
         }
     }
 
-    fun irEndReplaceableGroup(
+    fun irEndReplaceGroup(
         currentComposer: IrExpression,
         startOffset: Int = UNDEFINED_OFFSET,
         endOffset: Int = UNDEFINED_OFFSET,
     ): IrExpression {
         return irMethodCall(
             currentComposer,
-            endReplaceableFunction,
+            endReplaceFunction,
             startOffset,
             endOffset
         )
@@ -1310,17 +1310,21 @@ abstract class AbstractComposeLowering(
                 it.valueParameters.first().type.isNullableAny()
         } ?: changedFunction
 
-    val startReplaceableFunction by guardedLazy {
-        composerIrClass.functions
+    private val startReplaceFunction by guardedLazy {
+        composerIrClass.functions.firstOrNull {
+            it.name.identifier == "startReplaceGroup" && it.valueParameters.size == 1
+        } ?: composerIrClass.functions
             .first {
                 it.name.identifier == "startReplaceableGroup" && it.valueParameters.size == 1
             }
     }
 
-    val endReplaceableFunction by guardedLazy {
-        composerIrClass.functions
+    private val endReplaceFunction by guardedLazy {
+        composerIrClass.functions.firstOrNull {
+            it.name.identifier == "endReplaceGroup" && it.valueParameters.isEmpty()
+        } ?: composerIrClass.functions
             .first {
-                it.name.identifier == "endReplaceableGroup" && it.valueParameters.size == 0
+                it.name.identifier == "endReplaceableGroup" && it.valueParameters.isEmpty()
             }
     }
 

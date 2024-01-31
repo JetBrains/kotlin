@@ -35,14 +35,14 @@ fun CustomTextBroken(condition: Boolean, %composer: Composer?, %changed: Int) {
     traceEventStart(<>, %changed, -1, <>)
   }
   FakeBox({ %composer: Composer?, %changed: Int ->
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C<A()>:Test.kt")
     if (condition) {
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
       return@FakeBox
     }
     A(%composer, 0)
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
   }, %composer, 0)
   if (isTraceInProgress()) {
     traceEventEnd()

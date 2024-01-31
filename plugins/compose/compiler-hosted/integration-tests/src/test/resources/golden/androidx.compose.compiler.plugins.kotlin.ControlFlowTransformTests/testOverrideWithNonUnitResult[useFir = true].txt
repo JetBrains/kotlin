@@ -17,7 +17,7 @@ class SomeClassImpl: SomeClass() {
 class SomeClassImpl : SomeClass {
   @Composable
   override fun SomeFunction(%composer: Composer?, %changed: Int): Int {
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(SomeFunction):Test.kt")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
@@ -26,7 +26,7 @@ class SomeClassImpl : SomeClass {
     if (isTraceInProgress()) {
       traceEventEnd()
     }
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
     return tmp0
   }
   static val %stable: Int = 0

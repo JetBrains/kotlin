@@ -24,7 +24,7 @@ interface B {
   val property: A
     @Composable @JvmName(name = "getProperty")
     get() {
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C:Test.kt")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
@@ -33,7 +33,7 @@ interface B {
       if (isTraceInProgress()) {
         traceEventEnd()
       }
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
     }
 }
 @Composable

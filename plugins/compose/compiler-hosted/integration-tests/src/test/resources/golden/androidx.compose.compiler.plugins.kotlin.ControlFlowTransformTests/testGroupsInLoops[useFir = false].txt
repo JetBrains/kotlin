@@ -47,7 +47,7 @@ private fun KeyContent1(items: List<Int>, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     items.forEach { item: Int ->
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "")
       if (item > -1) {
         %composer.startMovableGroup(<>, item)
@@ -63,7 +63,7 @@ private fun KeyContent1(items: List<Int>, %composer: Composer?, %changed: Int) {
         %composer.endMovableGroup()
         tmp0
       }
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
     }
     if (isTraceInProgress()) {
       traceEventEnd()
@@ -90,7 +90,7 @@ private fun KeyContent2(items: List<Int>, %composer: Composer?, %changed: Int) {
     val <iterator> = items.iterator()
     while (<iterator>.hasNext()) {
       val item = <iterator>.next()
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "")
       if (item > -1) {
         %composer.startMovableGroup(<>, item)
@@ -106,7 +106,7 @@ private fun KeyContent2(items: List<Int>, %composer: Composer?, %changed: Int) {
         %composer.endMovableGroup()
         tmp0
       }
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
     }
     if (isTraceInProgress()) {
       traceEventEnd()

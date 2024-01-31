@@ -22,7 +22,7 @@ internal object ComposableSingletons%TestKt {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "*<rememb...>")
     val <iterator> = 0 until count.iterator()
     while (<iterator>.hasNext()) {
@@ -36,7 +36,7 @@ internal object ComposableSingletons%TestKt {
         tmp0_group
       }
     }
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
     val a = <block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp1_group = %composer.cache(false) {

@@ -41,7 +41,7 @@ class FooImpl : BaseFoo {
   @NonRestartableComposable
   @Composable
   override fun bar(%composer: Composer?, %changed: Int) {
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(bar):Test.kt#2487m")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
@@ -49,7 +49,7 @@ class FooImpl : BaseFoo {
     if (isTraceInProgress()) {
       traceEventEnd()
     }
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
   }
   static val %stable: Int = 0
 }

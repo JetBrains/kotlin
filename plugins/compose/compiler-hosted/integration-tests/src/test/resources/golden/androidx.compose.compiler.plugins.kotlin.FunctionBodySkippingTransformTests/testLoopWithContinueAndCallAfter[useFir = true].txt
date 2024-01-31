@@ -31,22 +31,22 @@ fun Example(%composer: Composer?, %changed: Int) {
     traceEventStart(<>, %changed, -1, <>)
   }
   Call(%composer, 0)
-  %composer.startReplaceableGroup(<>)
+  %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "")
   val <iterator> = 0 .. 1.iterator()
   while (<iterator>.hasNext()) {
     val index = <iterator>.next()
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "<Call()>,<Call()>")
     Call(%composer, 0)
     if (condition()) {
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
       continue
     }
     Call(%composer, 0)
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
   }
-  %composer.endReplaceableGroup()
+  %composer.endReplaceGroup()
   if (isTraceInProgress()) {
     traceEventEnd()
   }
