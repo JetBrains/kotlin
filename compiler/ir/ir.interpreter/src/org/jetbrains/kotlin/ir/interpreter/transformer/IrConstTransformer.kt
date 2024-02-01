@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNa
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterPreprocessorData
 import org.jetbrains.kotlin.ir.interpreter.property
 import org.jetbrains.kotlin.ir.interpreter.toConstantValue
-import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import java.io.File
+import java.util.*
 
 fun IrElement.transformConst(
     irFile: IrFile,
@@ -160,8 +160,8 @@ internal abstract class IrConstTransformer(
                 element.acceptChildrenVoid(this)
             }
 
-            private fun report(field: IrField) {
-                inlineConstTracker?.reportOnIr(irFile, field, result)
+            private fun report(field: IrField, property: IrProperty? = null) {
+                inlineConstTracker?.reportOnIr(irFile, field, property, result)
             }
 
             override fun visitGetField(expression: IrGetField) {
@@ -170,20 +170,52 @@ internal abstract class IrConstTransformer(
             }
 
             override fun visitCall(expression: IrCall) {
-                expression.symbol.owner.property?.backingField?.let { backingField -> report(backingField) }
+                expression.symbol.owner.property?.let { property ->
+                    property.backingField?.let { backingField ->
+                        report(backingField, property)
+                    }
+                }
                 super.visitCall(expression)
             }
         })
     }
 }
 
-fun InlineConstTracker.reportOnIr(irFile: IrFile, field: IrField, value: IrConst<*>) {
-    if (field.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return
-
+fun InlineConstTracker.reportOnIr(irFile: IrFile, field: IrField, property: IrProperty?, value: IrConst<*>) {
     val path = irFile.path
-    val owner = field.parentAsClass.classId?.asString()?.replace(".", "$")?.replace("/", ".") ?: return
+    val owner = extractOwner(field, property) ?: return
     val name = field.name.asString()
     val constType = value.kind.asString
 
     report(path, owner, name, constType)
+}
+
+private fun extractOwner(field: IrField, property: IrProperty?): String? {
+    if (field.parentClassOrNull != null) {
+        // Constant owner is a class, and it is passed to compiler along with usage file
+        return field.parentAsClass.classId?.asString()?.replace(".", "$")?.replace("/", ".") ?: return null
+    }
+
+    val parent = field.parent
+    if (parent is IrFile) {
+        // Constant is Kotlin top level declaration
+        val className = File(parent.path).nameWithoutExtension.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+        } + "Kt"
+        return field.parent.kotlinFqName.asString() + "." + className
+    }
+
+    // Constant was declared in file on the previous round of IC compilation and now is present as package fragment from disk
+    val presentableString = property?.containerSource?.presentableString ?: return null
+    if (presentableString.startsWith("Class ")) {
+        return try {
+            // Extract class name
+            presentableString.split("'")[1]
+        } catch (e: IndexOutOfBoundsException) {
+            null
+        }
+    }
+
+    // owner is undefined
+    return null
 }

@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.incremental.components
 
 /**
- * InlineConstTracker is used to track Java constants used in Kotlin for correct build scope expansion in IC during JPS build.
+ * InlineConstTracker is used to track constants used in Kotlin for correct build scope expansion in IC during JPS build.
  */
 interface InlineConstTracker {
 
     /**
-     * Report Java constant, which is defined as [name] in [owner] java class.
+     * Report all constants, which are defined as [name] in [owner] class.
      * This constant is used in Kotlin file [filePath].
      * [constType] is one of Kotlin's [Byte, Short, Int, Long, Float, Double, Boolean, Char, String],
      * that correspond to the eight primitive Java types or String
