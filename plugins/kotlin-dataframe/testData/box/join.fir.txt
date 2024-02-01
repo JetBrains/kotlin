@@ -2,8 +2,8 @@ FILE: join.kt
     package org.jetbrains.kotlinx.dataframe
 
     public final fun box(): R|kotlin/String| {
-        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_973860772>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_973860772>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_973860772>| <inline=Inline, kind=EXACTLY_ONCE>  {
-            local abstract class TokenReadJson_973860772I : R|kotlin/Any| {
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_897935510>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_897935510>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_897935510>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class TokenReadJson_897935510I : R|kotlin/Any| {
                 public abstract val originalId: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
@@ -22,45 +22,45 @@ FILE: join.kt
                 public abstract val achievements: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAchievements_1132858334>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAchievements_1132858334>|
 
-                public constructor(): R|<local>/TokenReadJson_973860772I|
+                public constructor(): R|<local>/TokenReadJson_897935510I|
 
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadJson_973860772I>|.originalId: R|kotlin/Int?|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadJson_897935510I>|.originalId: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadJson_973860772I>|.originalId: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadJson_897935510I>|.originalId: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadJson_973860772I>|.id: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadJson_897935510I>|.id: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadJson_973860772I>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadJson_897935510I>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadJson_973860772I>|._id: R|kotlin/Int?|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadJson_897935510I>|._id: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadJson_973860772I>|._id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadJson_897935510I>|._id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadJson_973860772I>|.order: R|kotlin/Int|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadJson_897935510I>|.order: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadJson_973860772I>|.order: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadJson_897935510I>|.order: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadJson_973860772I>|.name: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadJson_897935510I>|.name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadJson_973860772I>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadJson_897935510I>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadJson_973860772I>|.achievements: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAchievements_1132858334>|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadJson_897935510I>|.achievements: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAchievements_1132858334>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAchievements_1132858334>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadJson_973860772I>|.achievements: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAchievements_1132858334>>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadJson_897935510I>|.achievements: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAchievements_1132858334>>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAchievements_1132858334>>|
 
                 public constructor(): R|<local>/Scope0|
@@ -140,21 +140,21 @@ FILE: join.kt
 
             }
 
-            local abstract class TokenReadJson_973860772 : R|<local>/TokenReadJson_973860772I| {
+            local abstract class TokenReadJson_897935510 : R|<local>/TokenReadJson_897935510I| {
                 public abstract val scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
 
                 public abstract val scope1: R|<local>/Scope1|
                     public get(): R|<local>/Scope1|
 
-                public constructor(): R|<local>/TokenReadJson_973860772|
+                public constructor(): R|<local>/TokenReadJson_897935510|
 
             }
 
-            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/io/readJson|(String(/home/nikita/IdeaProjects/dataframe-examples/datasets/achievements_all.json))
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/io/readJson|(String(testResources/achievements_all.json))
         }
         )
-        lval df2: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_1928912023>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_973860772>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_1928912023>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_973860772>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_1928912023>| <inline=Inline, kind=EXACTLY_ONCE>  {
+        lval df2: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_1928912023>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_897935510>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_1928912023>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_897935510>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJson_1928912023>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class TokenReadJson_1928912023I : R|kotlin/Any| {
                 public abstract val originalId: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
@@ -303,7 +303,7 @@ FILE: join.kt
 
             }
 
-            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/explode|<R|<local>/TokenReadJson_973860772|>(<L> = explode@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/TokenReadJson_973860772>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/TokenReadJson_973860772>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<*>| <inline=NoInline>  {
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/explode|<R|<local>/TokenReadJson_897935510|>(<L> = explode@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/TokenReadJson_897935510>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/TokenReadJson_897935510>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<*>| <inline=NoInline>  {
                 ^ (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/Scope0.achievements|
             }
             )

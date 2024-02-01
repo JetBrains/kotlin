@@ -102,7 +102,7 @@ class FirDataFrameExtensionRegistrar(
             +::ExtensionsGenerator
             +::ReturnTypeBasedReceiverInjector
             +{ it: FirSession ->
-                CandidateInterceptor(it, ::nextFunction, this::nextName)
+                CandidateInterceptor(path, it, ::nextFunction, this::nextName)
             }
             +::TokenGenerator
         }
