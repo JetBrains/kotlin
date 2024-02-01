@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.collectAndFilterRealOverrides
 import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.ir.util.isFromJava
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -65,16 +66,15 @@ class IrFakeOverrideBuilder(
             val allFromSuper = clazz.superTypes.flatMap { superType ->
                 val superClass = superType.getClass() ?: error("Unexpected super type: $superType")
                 superClass.declarations
-                    .filter { it.isOverridableMemberOrAccessor() }
+                    .filterIsInstance<IrOverridableMember>()
                     .mapNotNull {
-                        val overriddenMember = it as IrOverridableMember
-                        val fakeOverride = strategy.fakeOverrideMember(superType, overriddenMember, clazz) ?: return@mapNotNull null
-                        FakeOverride(fakeOverride, overriddenMember)
+                        val fakeOverride = strategy.fakeOverrideMember(superType, it, clazz) ?: return@mapNotNull null
+                        FakeOverride(fakeOverride, it)
                     }
             }
 
             val allFromSuperByName = allFromSuper.groupBy { it.override.name }
-            val allFromCurrentByName = clazz.declarations.filterIsInstanceAnd<IrOverridableMember> { !it.isStaticMember }.groupBy { it.name }
+            val allFromCurrentByName = clazz.declarations.filterIsInstance<IrOverridableMember>().groupBy { it.name }
 
             allFromSuperByName.forEach { (name, superMembers) ->
                 generateOverridesInFunctionGroup(
@@ -107,7 +107,7 @@ class IrFakeOverrideBuilder(
             val superClass = superType.getClass() ?: error("Unexpected super type: $superType")
             superClass.declarations
                 .filterIsInstanceAnd<IrOverridableMember> {
-                    it !in overriddenMembers && it.symbol !in ignoredParentSymbols && !it.isStaticMember
+                    it !in overriddenMembers && it.symbol !in ignoredParentSymbols
                 }
                 .mapNotNull { overriddenMember ->
                     val fakeOverride = strategy.fakeOverrideMember(superType, overriddenMember, clazz) ?: return@mapNotNull null
@@ -122,16 +122,6 @@ class IrFakeOverrideBuilder(
         }
         return fakeOverrides
     }
-
-    private val IrOverridableMember.isStaticMember: Boolean
-        get() = when (this) {
-            is IrFunction ->
-                dispatchReceiverParameter == null
-            is IrProperty ->
-                backingField?.isStatic == true ||
-                        getter?.let { it.dispatchReceiverParameter == null } == true
-            else -> error("Unknown overridable member: ${render()}")
-        }
 
     private fun generateOverridesInFunctionGroup(
         membersFromSupertypes: List<FakeOverride>,
@@ -179,7 +169,7 @@ class IrFakeOverrideBuilder(
 
         // because of binary incompatible changes, it's possible to have private member colliding with fake override
         // In that case we shouldn't generate fake override, but also shouldn't mark them as overridden
-        if (!DescriptorVisibilities.isPrivate(fromCurrent.visibility)) {
+        if (fromCurrent.isOverridableMemberOrAccessor()) {
             fromCurrent.overriddenSymbols = overridden.memoryOptimizedMap { it.original.symbol }
         }
 
@@ -504,10 +494,10 @@ private val IrOverridableMember.returnType: IrType
     }
 
 fun IrSimpleFunction.isOverridableFunction(): Boolean =
-    !DescriptorVisibilities.isPrivate(visibility) && hasDispatchReceiver
+    !DescriptorVisibilities.isPrivate(visibility) && (hasDispatchReceiver || isFromJava())
 
 fun IrProperty.isOverridableProperty(): Boolean =
-    !DescriptorVisibilities.isPrivate(visibility) && (getter.hasDispatchReceiver || setter.hasDispatchReceiver)
+    !DescriptorVisibilities.isPrivate(visibility) && (getter.hasDispatchReceiver || setter.hasDispatchReceiver || isFromJava())
 
 fun IrDeclaration.isOverridableMemberOrAccessor(): Boolean = when (this) {
     is IrSimpleFunction -> isOverridableFunction()
