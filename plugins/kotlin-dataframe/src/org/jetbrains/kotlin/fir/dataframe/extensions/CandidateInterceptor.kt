@@ -76,11 +76,14 @@ import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
 import kotlin.math.abs
 
 class CandidateInterceptor(
+    val path: String?,
     session: FirSession,
     val nextFunction: (String) -> CallableId,
     val nextName: (String) -> ClassId,
 ) : FirFunctionCallRefinementExtension(session), KotlinTypeFacade {
     val Key = DataFramePlugin
+
+    override val resolutionPath: String? = path
 
     override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): FirResolvedTypeRef? {
         val callSiteAnnotations = (callInfo.callSite as? FirAnnotationContainer)?.annotations ?: emptyList()

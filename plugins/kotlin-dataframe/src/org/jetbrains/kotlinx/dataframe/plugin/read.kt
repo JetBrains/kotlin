@@ -24,18 +24,7 @@ internal class ReadCSV0 : AbstractInterpreter<PluginDataFrameSchema>() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         resolutionPath
-        val file = resolutionPath?.let {
-            try {
-                val file = File(it)
-                if (file.exists() && file.isDirectory) {
-                    File(file, fileOrUrl)
-                } else {
-                    null
-                }
-            } catch (_: Exception) {
-                null
-            }
-        }
+        val file = resolveFile(fileOrUrl)
         val df = if (file != null && file.exists()) {
             DataFrame.readCSV(file)
         } else {
@@ -49,6 +38,27 @@ internal class ReadJson0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.path: String by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return DataFrame.readJson(path).schema().toPluginDataFrameSchema()
+        val file = resolveFile(path)
+        val df = if (file != null && file.exists()) {
+            DataFrame.readJson(file)
+        } else {
+            DataFrame.readJson(path)
+        }
+        return df.schema().toPluginDataFrameSchema()
+    }
+}
+
+private fun Arguments.resolveFile(path: String): File? {
+    return  resolutionPath?.let {
+        try {
+            val file = File(it)
+            if (file.exists() && file.isDirectory) {
+                File(file, path)
+            } else {
+                null
+            }
+        } catch (_: Exception) {
+            null
+        }
     }
 }
