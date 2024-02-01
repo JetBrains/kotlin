@@ -109,7 +109,7 @@ class IrFakeOverrideBuilder(
             val superClass = superType.getClass() ?: error("Unexpected super type: $superType")
             superClass.declarations
                 .filterIsInstanceAnd<IrOverridableMember> {
-                    it !in overriddenMembers && it.symbol !in ignoredParentSymbols
+                    it !in overriddenMembers && it.symbol !in ignoredParentSymbols && !it.isStaticMember
                 }
                 .mapNotNull { overriddenMember ->
                     val fakeOverride = strategy.fakeOverrideMember(superType, overriddenMember, clazz) ?: return@mapNotNull null
@@ -124,6 +124,16 @@ class IrFakeOverrideBuilder(
         }
         return fakeOverrides
     }
+
+    private val IrOverridableMember.isStaticMember: Boolean
+        get() = when (this) {
+            is IrFunction ->
+                dispatchReceiverParameter == null
+            is IrProperty ->
+                backingField?.isStatic == true ||
+                        getter?.let { it.dispatchReceiverParameter == null } == true
+            else -> error("Unknown overridable member: ${render()}")
+        }
 
     private fun generateOverridesInFunctionGroup(
         membersFromSupertypes: List<FakeOverride>,
