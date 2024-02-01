@@ -218,7 +218,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             isFinal = true
             isStatic = true
             visibility =
-                if (irClass.isInterface && context.config.jvmDefaultMode.forAllMethodsWithBody) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                if (irClass.isInterface && context.config.jvmDefaultMode.isEnabled) DescriptorVisibilities.PUBLIC
+                else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
         }
 
         val localProperties = mutableListOf<IrLocalDelegatedPropertySymbol>()

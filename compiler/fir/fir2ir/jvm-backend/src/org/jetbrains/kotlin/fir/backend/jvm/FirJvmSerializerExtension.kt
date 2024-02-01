@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.serialization.*
+import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
+import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
+import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
+import org.jetbrains.kotlin.fir.serialization.FirSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
@@ -100,14 +103,14 @@ class FirJvmSerializerExtension(
         writeLocalProperties(proto, JvmProtoBuf.classLocalVariable)
         writeVersionRequirementForJvmDefaultIfNeeded(klass, proto, versionRequirementTable)
 
-        if (jvmDefaultMode.forAllMethodsWithBody && klass is FirRegularClass && klass.classKind == ClassKind.INTERFACE) {
+        if (jvmDefaultMode.isEnabled && klass is FirRegularClass && klass.classKind == ClassKind.INTERFACE) {
             proto.setExtension(
                 JvmProtoBuf.jvmClassFlags,
                 JvmFlags.getClassFlags(
-                    jvmDefaultMode.forAllMethodsWithBody,
+                    true,
                     (JvmDefaultMode.ALL_COMPATIBILITY == jvmDefaultMode &&
                             !klass.hasAnnotation(JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID, session)) ||
-                            (JvmDefaultMode.ALL_INCOMPATIBLE == jvmDefaultMode &&
+                            (JvmDefaultMode.ALL == jvmDefaultMode &&
                                     klass.hasAnnotation(JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID, session))
                 )
             )
@@ -135,7 +138,7 @@ class FirJvmSerializerExtension(
         versionRequirementTable: MutableVersionRequirementTable
     ) {
         if (klass is FirRegularClass && klass.classKind == ClassKind.INTERFACE) {
-            if (jvmDefaultMode == JvmDefaultMode.ALL_INCOMPATIBLE) {
+            if (jvmDefaultMode == JvmDefaultMode.ALL) {
                 builder.addVersionRequirement(
                     DescriptorSerializer.writeVersionRequirement(
                         1,

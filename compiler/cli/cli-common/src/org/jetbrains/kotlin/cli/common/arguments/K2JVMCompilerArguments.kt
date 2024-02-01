@@ -466,7 +466,7 @@ The default value is 'warn'."""
                                  and the class is not annotated with '@JvmDefaultWithoutCompatibility' (see KT-39603 for more details).
 -Xjvm-default=disable            Default behavior. Do not generate JVM default methods."""
     )
-    var jvmDefault: String = JvmDefaultMode.DEFAULT.description
+    var jvmDefault: String = JvmDefaultMode.DISABLE.description
         set(value) {
             checkFrozen()
             field = value
@@ -846,11 +846,7 @@ This option is deprecated and will be deleted in future versions."""
             result[JvmAnalysisFlags.jvmDefaultMode] = it
         } ?: collector.report(
             CompilerMessageSeverity.ERROR,
-            "Unknown -Xjvm-default mode: $jvmDefault, supported modes: ${
-                JvmDefaultMode.values().mapNotNull { mode ->
-                    mode.description.takeIf { JvmDefaultMode.fromStringOrNull(it) != null }
-                }
-            }"
+            "Unknown -Xjvm-default mode: $jvmDefault, supported modes: ${JvmDefaultMode.values().map(JvmDefaultMode::description)}"
         )
         result[JvmAnalysisFlags.inheritMultifileParts] = inheritMultifileParts
         result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
@@ -869,7 +865,7 @@ This option is deprecated and will be deleted in future versions."""
         if (enhanceTypeParameterTypesToDefNotNull) {
             result[LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated] = LanguageFeature.State.ENABLED
         }
-        if (JvmDefaultMode.fromStringOrNull(jvmDefault)?.forAllMethodsWithBody == true) {
+        if (JvmDefaultMode.fromStringOrNull(jvmDefault)?.isEnabled == true) {
             result[LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride] = LanguageFeature.State.ENABLED
             result[LanguageFeature.AbstractClassMemberNotImplementedWithIntermediateAbstractClass] = LanguageFeature.State.ENABLED
         }

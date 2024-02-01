@@ -75,15 +75,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
-    val jvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
     val jvmTarget = get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
-
-    if (jvmDefaultMode == JvmDefaultMode.ENABLE || jvmDefaultMode == JvmDefaultMode.ENABLE_WITH_DEFAULT_IMPLS) {
-        messageCollector.report(
-            WARNING,
-            "'-Xjvm-default=${jvmDefaultMode.description}' is deprecated, please use '-Xjvm-default=all|all-compatibility'"
-        )
-    }
 
     val stringConcat = arguments.stringConcat
     if (stringConcat != null) {

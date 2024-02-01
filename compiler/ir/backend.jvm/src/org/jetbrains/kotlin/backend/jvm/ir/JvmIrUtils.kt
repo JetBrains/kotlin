@@ -98,7 +98,7 @@ fun IrSimpleFunction.isCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boo
         }
         is IrMaybeDeserializedClass -> return klass.isNewPlaceForBodyGeneration
     }
-    return jvmDefaultMode.forAllMethodsWithBody
+    return jvmDefaultMode.isEnabled
 }
 
 fun IrFunction.hasJvmDefault(): Boolean = propertyIfAccessor.hasAnnotation(JVM_DEFAULT_FQ_NAME)

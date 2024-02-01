@@ -75,17 +75,17 @@ class JvmSerializerExtension @JvmOverloads constructor(
         }
         //TODO: support local delegated properties in new defaults scheme
         val containerAsmType =
-            if (isInterface(descriptor) && !jvmDefaultMode.forAllMethodsWithBody) typeMapper.mapDefaultImpls(descriptor) else typeMapper.mapClass(descriptor)
+            if (isInterface(descriptor) && !jvmDefaultMode.isEnabled) typeMapper.mapDefaultImpls(descriptor) else typeMapper.mapClass(descriptor)
         writeLocalProperties(proto, containerAsmType, JvmProtoBuf.classLocalVariable)
         writeVersionRequirementForJvmDefaultIfNeeded(descriptor, proto, versionRequirementTable)
 
-        if (jvmDefaultMode.forAllMethodsWithBody && isInterface(descriptor)) {
+        if (jvmDefaultMode.isEnabled && isInterface(descriptor)) {
             proto.setExtension(
                 JvmProtoBuf.jvmClassFlags,
                 JvmFlags.getClassFlags(
-                    jvmDefaultMode.forAllMethodsWithBody,
+                    true,
                     (JvmDefaultMode.ALL_COMPATIBILITY == jvmDefaultMode && !descriptor.hasJvmDefaultNoCompatibilityAnnotation()) ||
-                            (JvmDefaultMode.ALL_INCOMPATIBLE == jvmDefaultMode && descriptor.hasJvmDefaultWithCompatibilityAnnotation())
+                            (JvmDefaultMode.ALL == jvmDefaultMode && descriptor.hasJvmDefaultWithCompatibilityAnnotation())
                 )
             )
         }
@@ -99,7 +99,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
         versionRequirementTable: MutableVersionRequirementTable
     ) {
         if (isInterface(classDescriptor)) {
-            if (jvmDefaultMode == JvmDefaultMode.ALL_INCOMPATIBLE) {
+            if (jvmDefaultMode == JvmDefaultMode.ALL) {
                 builder.addVersionRequirement(
                     writeVersionRequirement(1, 4, 0, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
                 )

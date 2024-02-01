@@ -896,7 +896,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             val facet = KotlinFacetSettings()
             facet.useProjectSettings = false
             facet.compilerArguments = K2JVMCompilerArguments()
-            (facet.compilerArguments as K2JVMCompilerArguments).jvmDefault = JvmDefaultMode.DEFAULT.description
+            (facet.compilerArguments as K2JVMCompilerArguments).jvmDefault = JvmDefaultMode.DISABLE.description
 
             it.container.setChild(
                 JpsKotlinFacetModuleExtension.KIND,

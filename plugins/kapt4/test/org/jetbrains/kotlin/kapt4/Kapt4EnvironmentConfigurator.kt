@@ -20,7 +20,7 @@ class Kapt4EnvironmentConfigurator(testServices: TestServices) : EnvironmentConf
         languageVersion: LanguageVersion,
     ): Map<AnalysisFlag<*>, Any?> = mapOf(
         JvmAnalysisFlags.generatePropertyAnnotationsMethods to true,
-        JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.ALL_INCOMPATIBLE
+        JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.ALL
     )
 
     override val directiveContainers: List<DirectivesContainer> = listOf(Kapt4TestDirectives)
