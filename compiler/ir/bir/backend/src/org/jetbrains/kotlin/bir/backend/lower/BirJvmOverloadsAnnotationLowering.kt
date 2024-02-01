@@ -6,18 +6,11 @@
 package org.jetbrains.kotlin.bir.backend.lower
 
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.bir.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.builders.*
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.declarations.*
-import org.jetbrains.kotlin.bir.expressions.BirCall
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
-import org.jetbrains.kotlin.bir.expressions.BirExpression
-import org.jetbrains.kotlin.bir.expressions.impl.BirBlockBodyImpl
-import org.jetbrains.kotlin.bir.expressions.impl.BirDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.bir.expressions.impl.BirExpressionBodyImpl
-import org.jetbrains.kotlin.bir.expressions.impl.BirGetValueImpl
 import org.jetbrains.kotlin.bir.types.utils.defaultType
 import org.jetbrains.kotlin.bir.util.*
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -41,18 +34,16 @@ class BirJvmOverloadsAnnotationLowering : BirLoweringPhase() {
         }
     }
 
-    private fun generateWrappers(target: BirFunction, irClass: BirClass) {
+    private fun generateWrappers(target: BirFunction, parentClass: BirClass) {
         val numDefaultParameters = target.valueParameters.count { it.defaultValue != null }
         for (i in numDefaultParameters - 1 downTo 0) {
-            val wrapper = generateWrapper(target, i)
-            irClass.declarations += wrapper
+            generateWrapper(target, parentClass, i)
         }
     }
 
-    private fun generateWrapper(target: BirFunction, numDefaultParametersToExpect: Int): BirFunction {
-        val wrapperBirFunction = generateWrapperHeader(target, numDefaultParametersToExpect)
-
-        birBodyScope {
+    private fun generateWrapper(target: BirFunction, parentClass: BirClass, numDefaultParametersToExpect: Int) {
+        val wrapperBirFunction = generateWrapperHeader(target, parentClass, numDefaultParametersToExpect)
+        wrapperBirFunction.body = birBodyScope {
             val call = when (target) {
                 is BirConstructor -> birCall(target, birBuiltIns.unitType)
                 is BirSimpleFunction -> birCall(target)
@@ -79,7 +70,7 @@ class BirJvmOverloadsAnnotationLowering : BirLoweringPhase() {
                 }
             }
 
-            wrapperBirFunction.body = if (target is BirConstructor) {
+            if (target is BirConstructor) {
                 birBlockBody {
                     +call
                 }
@@ -87,11 +78,9 @@ class BirJvmOverloadsAnnotationLowering : BirLoweringPhase() {
                 birExpressionBody(call)
             }
         }
-
-        return wrapperBirFunction
     }
 
-    private fun generateWrapperHeader(oldFunction: BirFunction, numDefaultParametersToExpect: Int): BirFunction {
+    private fun generateWrapperHeader(oldFunction: BirFunction, parentClass: BirClass, numDefaultParametersToExpect: Int): BirFunction {
         val res = when (oldFunction) {
             is BirConstructor -> {
                 BirConstructor.build {
@@ -115,7 +104,7 @@ class BirJvmOverloadsAnnotationLowering : BirLoweringPhase() {
             }
             else -> error("Unknown kind of BirFunction: $oldFunction")
         }
-
+        parentClass.declarations += res
         res.annotations += oldFunction.copyAnnotations()
         res.copyTypeParametersFrom(oldFunction)
         res.dispatchReceiverParameter = oldFunction.dispatchReceiverParameter?.copyTo(res)
