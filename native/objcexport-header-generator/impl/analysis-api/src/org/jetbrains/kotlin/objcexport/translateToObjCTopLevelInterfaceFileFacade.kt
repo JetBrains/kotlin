@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrPr
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtFileSymbol.translateToObjCTopLevelInterfaceFileFacade(): ObjCInterface? {
     val topLevelCallableStubs = getFileScope().getCallableSymbols()
+        .sortedWith(StableCallableOrder)
         .flatMap { callableSymbol -> callableSymbol.translateToObjCExportStubs() }
         .toList()
         /* If there are no top level functions or properties, we do not need to export a file facade */

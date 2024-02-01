@@ -17,7 +17,11 @@ import org.jetbrains.kotlin.psi.KtFile
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
-    val declarations = files.flatMap { ktFile -> ktFile.translateToObjCExportStubs() }.toMutableList()
+    val declarations = files
+        .sortedWith(StableFileOrder)
+        .flatMap { file -> file.getFileSymbol().translateToObjCExportStubs() }
+        .toMutableList()
+
     val classForwardDeclarations = getClassForwardDeclarations(declarations).toMutableSet()
     val protocolForwardDeclarations = getProtocolForwardDeclarations(declarations)
 
@@ -66,14 +70,11 @@ private fun getProtocolForwardDeclarations(declarations: List<ObjCExportStub>) =
     .flatMap { it.superProtocols }
     .toSet()
 
-context(KtAnalysisSession, KtObjCExportSession)
-fun KtFile.translateToObjCExportStubs(): List<ObjCExportStub> {
-    return this.getFileSymbol().translateToObjCExportStubs()
-}
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtFileSymbol.translateToObjCExportStubs(): List<ObjCExportStub> {
     return listOfNotNull(translateToObjCTopLevelInterfaceFileFacade()) + getFileScope().getClassifierSymbols()
+        .sortedWith(StableClassifierOrder)
         .flatMap { classifierSymbol -> classifierSymbol.translateToObjCExportStubs() }
 }
 

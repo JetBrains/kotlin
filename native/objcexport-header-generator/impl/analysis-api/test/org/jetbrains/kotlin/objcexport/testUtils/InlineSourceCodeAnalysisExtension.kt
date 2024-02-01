@@ -36,7 +36,16 @@ import java.nio.file.Files
  * ```
  */
 interface InlineSourceCodeAnalysis {
+
     fun createKtFile(@Language("kotlin") sourceCode: String): KtFile
+
+    fun createKtFiles(
+        builder: KtModuleBuilder.() -> Unit,
+    ): Map</* File Name */ String, KtFile>
+
+    interface KtModuleBuilder {
+        fun sourceFile(fileName: String, @Language("kotlin") sourceCode: String)
+    }
 }
 
 /**
@@ -68,8 +77,25 @@ class InlineSourceCodeAnalysisExtension : ParameterResolver, AfterEachCallback {
  */
 private class InlineSourceCodeAnalysisImpl(private val tempDir: File) : InlineSourceCodeAnalysis {
     override fun createKtFile(@Language("kotlin") sourceCode: String): KtFile {
-        return createStandaloneAnalysisApiSession(tempDir, listOf(sourceCode))
+        return createStandaloneAnalysisApiSession(tempDir, mapOf("TestSources.kt" to sourceCode))
             .modulesWithFiles.entries.single()
             .value.single() as KtFile
+    }
+
+    override fun createKtFiles(builder: InlineSourceCodeAnalysis.KtModuleBuilder.() -> Unit): Map<String, KtFile> {
+        val sources = KtModuleBuilderImpl().also(builder).sources.toMap()
+        return createStandaloneAnalysisApiSession(tempDir, sources)
+            .modulesWithFiles.entries.single()
+            .value.map { it as KtFile }
+            .associateBy { it.name }
+    }
+
+    private class KtModuleBuilderImpl : InlineSourceCodeAnalysis.KtModuleBuilder {
+        val sources = mutableMapOf<String, String>()
+
+        override fun sourceFile(fileName: String, sourceCode: String) {
+            check(fileName !in sourceCode)
+            sources[fileName] = sourceCode
+        }
     }
 }
