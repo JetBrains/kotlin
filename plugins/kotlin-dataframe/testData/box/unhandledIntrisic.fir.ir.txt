@@ -1,41 +1,41 @@
 FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/unhandledIntrisic.kt
   FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      VAR name:df type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572> [val]
-        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572> origin=null
+      VAR name:df type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747> [val]
+        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747> origin=null
           <T>: org.jetbrains.kotlinx.dataframe.DataFrame.Companion
-          <R>: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572>
+          <R>: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747>
           $receiver: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=org.jetbrains.kotlinx.dataframe.DataFrame.Companion
-          block: FUN_EXPR type=kotlin.Function1<org.jetbrains.kotlinx.dataframe.DataFrame.Companion, org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572>> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:org.jetbrains.kotlinx.dataframe.DataFrame.Companion) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572>
+          block: FUN_EXPR type=kotlin.Function1<org.jetbrains.kotlinx.dataframe.DataFrame.Companion, org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:org.jetbrains.kotlinx.dataframe.DataFrame.Companion) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747>
               VALUE_PARAMETER name:it index:0 type:org.jetbrains.kotlinx.dataframe.DataFrame.Companion
               BLOCK_BODY
-                CLASS CLASS name:DataFrameType1 modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
-                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                  CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1 [primary]
+                CLASS CLASS name:TokenReadCSV_1000286747I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DataFrameType1 modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
-                  PROPERTY name:full_name visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-full_name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.String
-                      correspondingProperty: PROPERTY name:full_name visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                  PROPERTY name:html_url visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-html_url> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:java.net.URL
-                      correspondingProperty: PROPERTY name:html_url visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                  PROPERTY name:stargazers_count visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-stargazers_count> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.Int
-                      correspondingProperty: PROPERTY name:stargazers_count visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                  PROPERTY name:topics visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-topics> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.String
-                      correspondingProperty: PROPERTY name:topics visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                  PROPERTY name:watchers visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-watchers> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.Int
-                      correspondingProperty: PROPERTY name:watchers visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenReadCSV_1000286747I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:full_name visibility:public modality:ABSTRACT [val]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:<get-full_name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I) returnType:kotlin.String
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:full_name visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:topics visibility:public modality:ABSTRACT [val]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:<get-topics> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I) returnType:kotlin.String
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:topics visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:watchers visibility:public modality:ABSTRACT [val]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:<get-watchers> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I) returnType:kotlin.Int
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:watchers visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:stargazers_count visibility:public modality:ABSTRACT [val]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:<get-stargazers_count> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I) returnType:kotlin.Int
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:stargazers_count visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:html_url visibility:public modality:ABSTRACT [val]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:<get-html_url> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I) returnType:java.net.URL
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:html_url visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
                       public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -51,140 +51,150 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/unhandledIntrisic.kt
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                 CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                  CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0 [primary]
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0 [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]'
-                  PROPERTY name:full_name visibility:public modality:FINAL [val]
-                    FUN name:<get-full_name> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:full_name visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:full_name type:kotlin.String visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-full_name> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>) returnType:kotlin.String
                       annotations:
-                        JvmName(name = 'DataFrameType1_full_name')
-                      correspondingProperty: PROPERTY name:full_name visibility:public modality:FINAL [val]
+                        JvmName(name = "TokenReadCSV_1000286747I_full_name")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:full_name visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-full_name> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
-                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-full_name>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              columnName: CONST String type=kotlin.String value="full_name"
-                  PROPERTY name:full_name visibility:public modality:FINAL [val]
-                    FUN name:<get-full_name> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:kotlin.String
-                      annotations:
-                        JvmName(name = 'DataFrameType1_full_name')
-                      correspondingProperty: PROPERTY name:full_name visibility:public modality:FINAL [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-full_name> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                        RETURN type=kotlin.String from='public final fun <get-full_name> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-full_name>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-full_name>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> origin=null
                               name: CONST String type=kotlin.String value="full_name"
-                  PROPERTY name:html_url visibility:public modality:FINAL [val]
-                    FUN name:<get-html_url> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL>
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:full_name visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:full_name type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-full_name> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                       annotations:
-                        JvmName(name = 'DataFrameType1_html_url')
-                      correspondingProperty: PROPERTY name:html_url visibility:public modality:FINAL [val]
+                        JvmName(name = "TokenReadCSV_1000286747I_full_name")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:full_name visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-html_url> (): org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
-                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-html_url>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              columnName: CONST String type=kotlin.String value="html_url"
-                  PROPERTY name:html_url visibility:public modality:FINAL [val]
-                    FUN name:<get-html_url> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:java.net.URL
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> from='public final fun <get-full_name> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-full_name>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> origin=null
+                              columnName: CONST String type=kotlin.String value="full_name"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:topics visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:topics type:kotlin.String visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-topics> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>) returnType:kotlin.String
                       annotations:
-                        JvmName(name = 'DataFrameType1_html_url')
-                      correspondingProperty: PROPERTY name:html_url visibility:public modality:FINAL [val]
+                        JvmName(name = "TokenReadCSV_1000286747I_topics")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:topics visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-html_url> (): java.net.URL declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                        RETURN type=kotlin.String from='public final fun <get-topics> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                          TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-topics>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> origin=null
+                              name: CONST String type=kotlin.String value="topics"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:topics visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:topics type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-topics> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                      annotations:
+                        JvmName(name = "TokenReadCSV_1000286747I_topics")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:topics visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> from='public final fun <get-topics> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-topics>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> origin=null
+                              columnName: CONST String type=kotlin.String value="topics"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:watchers visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:watchers type:kotlin.Int visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-watchers> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>) returnType:kotlin.Int
+                      annotations:
+                        JvmName(name = "TokenReadCSV_1000286747I_watchers")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:watchers visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>
+                      BLOCK_BODY
+                        RETURN type=kotlin.Int from='public final fun <get-watchers> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-watchers>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> origin=null
+                              name: CONST String type=kotlin.String value="watchers"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:watchers visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:watchers type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-watchers> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                      annotations:
+                        JvmName(name = "TokenReadCSV_1000286747I_watchers")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:watchers visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> from='public final fun <get-watchers> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-watchers>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> origin=null
+                              columnName: CONST String type=kotlin.String value="watchers"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:stargazers_count visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:stargazers_count type:kotlin.Int visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-stargazers_count> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>) returnType:kotlin.Int
+                      annotations:
+                        JvmName(name = "TokenReadCSV_1000286747I_stargazers_count")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:stargazers_count visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>
+                      BLOCK_BODY
+                        RETURN type=kotlin.Int from='public final fun <get-stargazers_count> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-stargazers_count>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> origin=null
+                              name: CONST String type=kotlin.String value="stargazers_count"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:stargazers_count visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:stargazers_count type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-stargazers_count> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                      annotations:
+                        JvmName(name = "TokenReadCSV_1000286747I_stargazers_count")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:stargazers_count visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> from='public final fun <get-stargazers_count> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-stargazers_count>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> origin=null
+                              columnName: CONST String type=kotlin.String value="stargazers_count"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:html_url visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:html_url type:java.net.URL visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-html_url> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>) returnType:java.net.URL
+                      annotations:
+                        JvmName(name = "TokenReadCSV_1000286747I_html_url")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:html_url visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>
+                      BLOCK_BODY
+                        RETURN type=java.net.URL from='public final fun <get-html_url> (): java.net.URL declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=java.net.URL origin=CAST typeOperand=java.net.URL
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-html_url>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-html_url>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> origin=null
                               name: CONST String type=kotlin.String value="html_url"
-                  PROPERTY name:stargazers_count visibility:public modality:FINAL [val]
-                    FUN name:<get-stargazers_count> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:html_url visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:html_url type:org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-html_url> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL>
                       annotations:
-                        JvmName(name = 'DataFrameType1_stargazers_count')
-                      correspondingProperty: PROPERTY name:stargazers_count visibility:public modality:FINAL [val]
+                        JvmName(name = "TokenReadCSV_1000286747I_html_url")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:html_url visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I>
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-stargazers_count> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
-                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-stargazers_count>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              columnName: CONST String type=kotlin.String value="stargazers_count"
-                  PROPERTY name:stargazers_count visibility:public modality:FINAL [val]
-                    FUN name:<get-stargazers_count> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:kotlin.Int
-                      annotations:
-                        JvmName(name = 'DataFrameType1_stargazers_count')
-                      correspondingProperty: PROPERTY name:stargazers_count visibility:public modality:FINAL [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-stargazers_count> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
-                          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-stargazers_count>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              name: CONST String type=kotlin.String value="stargazers_count"
-                  PROPERTY name:topics visibility:public modality:FINAL [val]
-                    FUN name:<get-topics> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
-                      annotations:
-                        JvmName(name = 'DataFrameType1_topics')
-                      correspondingProperty: PROPERTY name:topics visibility:public modality:FINAL [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-topics> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
-                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-topics>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              columnName: CONST String type=kotlin.String value="topics"
-                  PROPERTY name:topics visibility:public modality:FINAL [val]
-                    FUN name:<get-topics> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:kotlin.String
-                      annotations:
-                        JvmName(name = 'DataFrameType1_topics')
-                      correspondingProperty: PROPERTY name:topics visibility:public modality:FINAL [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-topics> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
-                          TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-topics>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              name: CONST String type=kotlin.String value="topics"
-                  PROPERTY name:watchers visibility:public modality:FINAL [val]
-                    FUN name:<get-watchers> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
-                      annotations:
-                        JvmName(name = 'DataFrameType1_watchers')
-                      correspondingProperty: PROPERTY name:watchers visibility:public modality:FINAL [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-watchers> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
-                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-watchers>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              columnName: CONST String type=kotlin.String value="watchers"
-                  PROPERTY name:watchers visibility:public modality:FINAL [val]
-                    FUN name:<get-watchers> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:kotlin.Int
-                      annotations:
-                        JvmName(name = 'DataFrameType1_watchers')
-                      correspondingProperty: PROPERTY name:watchers visibility:public modality:FINAL [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-watchers> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
-                          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-watchers>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              name: CONST String type=kotlin.String value="watchers"
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL> from='public final fun <get-html_url> (): org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-html_url>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I> origin=null
+                              columnName: CONST String type=kotlin.String value="html_url"
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
                       public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -198,113 +208,112 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/unhandledIntrisic.kt
                     overridden:
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                CLASS CLASS name:TokenReadCSVDefault_1639480572 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1]
-                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572
-                  CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572 [primary]
+                CLASS CLASS name:TokenReadCSV_1000286747 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747 [primary]
                     BLOCK_BODY
-                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1'
-                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenReadCSVDefault_1639480572 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1]'
-                  PROPERTY name:scope0 visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572) returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY name:scope0 visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenReadCSV_1000286747 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I]'
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747) returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747
                   PROPERTY FAKE_OVERRIDE name:full_name visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
                       public abstract full_name: kotlin.String
-                    FUN FAKE_OVERRIDE name:<get-full_name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.String [fake_override]
+                    FUN FAKE_OVERRIDE name:<get-full_name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:full_name visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
-                        public abstract fun <get-full_name> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                  PROPERTY FAKE_OVERRIDE name:html_url visibility:public modality:ABSTRACT [fake_override,val]
-                    overridden:
-                      public abstract html_url: java.net.URL
-                    FUN FAKE_OVERRIDE name:<get-html_url> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:java.net.URL [fake_override]
-                      correspondingProperty: PROPERTY FAKE_OVERRIDE name:html_url visibility:public modality:ABSTRACT [fake_override,val]
-                      overridden:
-                        public abstract fun <get-html_url> (): java.net.URL declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                  PROPERTY FAKE_OVERRIDE name:stargazers_count visibility:public modality:ABSTRACT [fake_override,val]
-                    overridden:
-                      public abstract stargazers_count: kotlin.Int
-                    FUN FAKE_OVERRIDE name:<get-stargazers_count> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.Int [fake_override]
-                      correspondingProperty: PROPERTY FAKE_OVERRIDE name:stargazers_count visibility:public modality:ABSTRACT [fake_override,val]
-                      overridden:
-                        public abstract fun <get-stargazers_count> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                        public abstract fun <get-full_name> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
                   PROPERTY FAKE_OVERRIDE name:topics visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
                       public abstract topics: kotlin.String
-                    FUN FAKE_OVERRIDE name:<get-topics> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.String [fake_override]
+                    FUN FAKE_OVERRIDE name:<get-topics> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:topics visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
-                        public abstract fun <get-topics> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                        public abstract fun <get-topics> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
                   PROPERTY FAKE_OVERRIDE name:watchers visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
                       public abstract watchers: kotlin.Int
-                    FUN FAKE_OVERRIDE name:<get-watchers> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.Int [fake_override]
+                    FUN FAKE_OVERRIDE name:<get-watchers> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:watchers visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
-                        public abstract fun <get-watchers> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                        public abstract fun <get-watchers> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
+                  PROPERTY FAKE_OVERRIDE name:stargazers_count visibility:public modality:ABSTRACT [fake_override,val]
+                    overridden:
+                      public abstract stargazers_count: kotlin.Int
+                    FUN FAKE_OVERRIDE name:<get-stargazers_count> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I) returnType:kotlin.Int [fake_override]
+                      correspondingProperty: PROPERTY FAKE_OVERRIDE name:stargazers_count visibility:public modality:ABSTRACT [fake_override,val]
+                      overridden:
+                        public abstract fun <get-stargazers_count> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
+                  PROPERTY FAKE_OVERRIDE name:html_url visibility:public modality:ABSTRACT [fake_override,val]
+                    overridden:
+                      public abstract html_url: java.net.URL
+                    FUN FAKE_OVERRIDE name:<get-html_url> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I) returnType:java.net.URL [fake_override]
+                      correspondingProperty: PROPERTY FAKE_OVERRIDE name:html_url visibility:public modality:ABSTRACT [fake_override,val]
+                      overridden:
+                        public abstract fun <get-html_url> (): java.net.URL declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
-                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                     VALUE_PARAMETER name:other index:0 type:kotlin.Any?
                   FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
                     overridden:
-                      public open fun hashCode (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                      public open fun hashCode (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
                     overridden:
-                      public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                      public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame.Companion): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572> declared in org.jetbrains.kotlinx.dataframe.main'
-                  TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572>
-                    CALL 'public final fun readCSVDefault (fileOrUrl: kotlin.String): org.jetbrains.kotlinx.dataframe.DataFrame<*> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.TokenReadCSVDefault_1639480572> origin=null
-                      $receiver: GET_VAR 'it: org.jetbrains.kotlinx.dataframe.DataFrame.Companion declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>' type=org.jetbrains.kotlinx.dataframe.DataFrame.Companion origin=null
-                      fileOrUrl: CONST String type=kotlin.String value="https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv"
-      VAR name:df1 type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_813996149> [val]
-        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_813996149> origin=null
-          <T>: org.jetbrains.kotlinx.dataframe.DataFrame<*>
-          <R>: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_813996149>
-          $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572> declared in org.jetbrains.kotlinx.dataframe.main' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572> origin=null
-          block: FUN_EXPR type=kotlin.Function1<org.jetbrains.kotlinx.dataframe.DataFrame<*>, org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_813996149>> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:org.jetbrains.kotlinx.dataframe.DataFrame<*>) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_813996149>
-              VALUE_PARAMETER name:it index:0 type:org.jetbrains.kotlinx.dataframe.DataFrame<*>
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame.Companion): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747> declared in org.jetbrains.kotlinx.dataframe.main'
+                  CALL 'public final fun readCSV (fileOrUrl: kotlin.String, delimiter: kotlin.Char, header: kotlin.collections.List<kotlin.String>, colTypes: kotlin.collections.Map<kotlin.String, org.jetbrains.kotlinx.dataframe.io.ColType>, skipLines: kotlin.Int, readLines: kotlin.Int?, duplicate: kotlin.Boolean, charset: java.nio.charset.Charset, parserOptions: org.jetbrains.kotlinx.dataframe.api.ParserOptions?): org.jetbrains.kotlinx.dataframe.DataFrame<*> declared in org.jetbrains.kotlinx.dataframe.io' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747> origin=null
+                    $receiver: GET_VAR 'it: org.jetbrains.kotlinx.dataframe.DataFrame.Companion declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>' type=org.jetbrains.kotlinx.dataframe.DataFrame.Companion origin=null
+                    fileOrUrl: CONST String type=kotlin.String value="https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv"
+      VAR name:df1 type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149> [val]
+        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149> origin=null
+          <T>: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747>
+          <R>: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149>
+          $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747> declared in org.jetbrains.kotlinx.dataframe.main' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747> origin=null
+          block: FUN_EXPR type=kotlin.Function1<org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747>, org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747>) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149>
+              VALUE_PARAMETER name:it index:0 type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747>
               BLOCK_BODY
-                CLASS CLASS name:DataFrameType1 modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
-                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                  CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1 [primary]
+                CLASS CLASS name:TokenReadCSV_813996149I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DataFrameType1 modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
-                  PROPERTY name:full_name visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-full_name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.String
-                      correspondingProperty: PROPERTY name:full_name visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                  PROPERTY name:html_url visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-html_url> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:java.net.URL
-                      correspondingProperty: PROPERTY name:html_url visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                  PROPERTY name:stargazers_count visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-stargazers_count> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.Int
-                      correspondingProperty: PROPERTY name:stargazers_count visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                  PROPERTY name:topics visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-topics> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.String
-                      correspondingProperty: PROPERTY name:topics visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                  PROPERTY name:watchers visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-watchers> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.Int
-                      correspondingProperty: PROPERTY name:watchers visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                  PROPERTY name:topicsList visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-topicsList> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.collections.List<kotlin.String>
-                      correspondingProperty: PROPERTY name:topicsList visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenReadCSV_813996149I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:full_name visibility:public modality:ABSTRACT [val]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:<get-full_name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I) returnType:kotlin.String
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:full_name visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:topics visibility:public modality:ABSTRACT [val]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:<get-topics> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I) returnType:kotlin.String
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:topics visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:watchers visibility:public modality:ABSTRACT [val]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:<get-watchers> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I) returnType:kotlin.Int
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:watchers visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:topicsList visibility:public modality:ABSTRACT [val]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:<get-topicsList> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I) returnType:kotlin.collections.List<kotlin.String>
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:topicsList visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:stargazers_count visibility:public modality:ABSTRACT [val]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:<get-stargazers_count> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I) returnType:kotlin.Int
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:stargazers_count visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:html_url visibility:public modality:ABSTRACT [val]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:<get-html_url> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I) returnType:java.net.URL
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:html_url visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
                       public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -320,166 +329,178 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/unhandledIntrisic.kt
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                 CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                  CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0 [primary]
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0 [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]'
-                  PROPERTY name:full_name visibility:public modality:FINAL [val]
-                    FUN name:<get-full_name> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:full_name visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:full_name type:kotlin.String visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-full_name> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>) returnType:kotlin.String
                       annotations:
-                        JvmName(name = 'DataFrameType1_full_name')
-                      correspondingProperty: PROPERTY name:full_name visibility:public modality:FINAL [val]
+                        JvmName(name = "TokenReadCSV_813996149I_full_name")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:full_name visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-full_name> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
-                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-full_name>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              columnName: CONST String type=kotlin.String value="full_name"
-                  PROPERTY name:full_name visibility:public modality:FINAL [val]
-                    FUN name:<get-full_name> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:kotlin.String
-                      annotations:
-                        JvmName(name = 'DataFrameType1_full_name')
-                      correspondingProperty: PROPERTY name:full_name visibility:public modality:FINAL [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-full_name> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                        RETURN type=kotlin.String from='public final fun <get-full_name> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-full_name>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-full_name>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> origin=null
                               name: CONST String type=kotlin.String value="full_name"
-                  PROPERTY name:html_url visibility:public modality:FINAL [val]
-                    FUN name:<get-html_url> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL>
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:full_name visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:full_name type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-full_name> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                       annotations:
-                        JvmName(name = 'DataFrameType1_html_url')
-                      correspondingProperty: PROPERTY name:html_url visibility:public modality:FINAL [val]
+                        JvmName(name = "TokenReadCSV_813996149I_full_name")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:full_name visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-html_url> (): org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
-                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-html_url>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              columnName: CONST String type=kotlin.String value="html_url"
-                  PROPERTY name:html_url visibility:public modality:FINAL [val]
-                    FUN name:<get-html_url> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:java.net.URL
-                      annotations:
-                        JvmName(name = 'DataFrameType1_html_url')
-                      correspondingProperty: PROPERTY name:html_url visibility:public modality:FINAL [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-html_url> (): java.net.URL declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
-                          TYPE_OP type=java.net.URL origin=CAST typeOperand=java.net.URL
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-html_url>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              name: CONST String type=kotlin.String value="html_url"
-                  PROPERTY name:stargazers_count visibility:public modality:FINAL [val]
-                    FUN name:<get-stargazers_count> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
-                      annotations:
-                        JvmName(name = 'DataFrameType1_stargazers_count')
-                      correspondingProperty: PROPERTY name:stargazers_count visibility:public modality:FINAL [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-stargazers_count> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
-                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-stargazers_count>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              columnName: CONST String type=kotlin.String value="stargazers_count"
-                  PROPERTY name:stargazers_count visibility:public modality:FINAL [val]
-                    FUN name:<get-stargazers_count> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:kotlin.Int
-                      annotations:
-                        JvmName(name = 'DataFrameType1_stargazers_count')
-                      correspondingProperty: PROPERTY name:stargazers_count visibility:public modality:FINAL [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-stargazers_count> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
-                          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-stargazers_count>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              name: CONST String type=kotlin.String value="stargazers_count"
-                  PROPERTY name:topics visibility:public modality:FINAL [val]
-                    FUN name:<get-topics> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
-                      annotations:
-                        JvmName(name = 'DataFrameType1_topics')
-                      correspondingProperty: PROPERTY name:topics visibility:public modality:FINAL [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-topics> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> from='public final fun <get-full_name> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-topics>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              columnName: CONST String type=kotlin.String value="topics"
-                  PROPERTY name:topics visibility:public modality:FINAL [val]
-                    FUN name:<get-topics> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:kotlin.String
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-full_name>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> origin=null
+                              columnName: CONST String type=kotlin.String value="full_name"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:topics visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:topics type:kotlin.String visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-topics> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>) returnType:kotlin.String
                       annotations:
-                        JvmName(name = 'DataFrameType1_topics')
-                      correspondingProperty: PROPERTY name:topics visibility:public modality:FINAL [val]
+                        JvmName(name = "TokenReadCSV_813996149I_topics")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:topics visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-topics> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                        RETURN type=kotlin.String from='public final fun <get-topics> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-topics>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-topics>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> origin=null
                               name: CONST String type=kotlin.String value="topics"
-                  PROPERTY name:watchers visibility:public modality:FINAL [val]
-                    FUN name:<get-watchers> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:topics visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:topics type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-topics> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                       annotations:
-                        JvmName(name = 'DataFrameType1_watchers')
-                      correspondingProperty: PROPERTY name:watchers visibility:public modality:FINAL [val]
+                        JvmName(name = "TokenReadCSV_813996149I_topics")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:topics visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-watchers> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
-                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-watchers>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              columnName: CONST String type=kotlin.String value="watchers"
-                  PROPERTY name:watchers visibility:public modality:FINAL [val]
-                    FUN name:<get-watchers> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:kotlin.Int
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> from='public final fun <get-topics> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-topics>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> origin=null
+                              columnName: CONST String type=kotlin.String value="topics"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:watchers visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:watchers type:kotlin.Int visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-watchers> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>) returnType:kotlin.Int
                       annotations:
-                        JvmName(name = 'DataFrameType1_watchers')
-                      correspondingProperty: PROPERTY name:watchers visibility:public modality:FINAL [val]
+                        JvmName(name = "TokenReadCSV_813996149I_watchers")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:watchers visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-watchers> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                        RETURN type=kotlin.Int from='public final fun <get-watchers> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-watchers>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-watchers>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> origin=null
                               name: CONST String type=kotlin.String value="watchers"
-                  PROPERTY name:topicsList visibility:public modality:FINAL [val]
-                    FUN name:<get-topicsList> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.collections.List<kotlin.String>>
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:watchers visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:watchers type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-watchers> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                       annotations:
-                        JvmName(name = 'DataFrameType1_topicsList')
-                      correspondingProperty: PROPERTY name:topicsList visibility:public modality:FINAL [val]
+                        JvmName(name = "TokenReadCSV_813996149I_watchers")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:watchers visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-topicsList> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.collections.List<kotlin.String>> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
-                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.collections.List<kotlin.String>> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.collections.List<kotlin.String>>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-topicsList>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
-                              columnName: CONST String type=kotlin.String value="topicsList"
-                  PROPERTY name:topicsList visibility:public modality:FINAL [val]
-                    FUN name:<get-topicsList> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:kotlin.collections.List<kotlin.String>
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> from='public final fun <get-watchers> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-watchers>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> origin=null
+                              columnName: CONST String type=kotlin.String value="watchers"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:topicsList visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:topicsList type:kotlin.collections.List<kotlin.String> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-topicsList> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>) returnType:kotlin.collections.List<kotlin.String>
                       annotations:
-                        JvmName(name = 'DataFrameType1_topicsList')
-                      correspondingProperty: PROPERTY name:topicsList visibility:public modality:FINAL [val]
+                        JvmName(name = "TokenReadCSV_813996149I_topicsList")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:topicsList visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-topicsList> (): kotlin.collections.List<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                        RETURN type=kotlin.collections.List<kotlin.String> from='public final fun <get-topicsList> (): kotlin.collections.List<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.collections.List<kotlin.String> origin=CAST typeOperand=kotlin.collections.List<kotlin.String>
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-topicsList>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-topicsList>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> origin=null
                               name: CONST String type=kotlin.String value="topicsList"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:topicsList visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:topicsList type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.collections.List<kotlin.String>> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-topicsList> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.collections.List<kotlin.String>>
+                      annotations:
+                        JvmName(name = "TokenReadCSV_813996149I_topicsList")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:topicsList visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.collections.List<kotlin.String>> from='public final fun <get-topicsList> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.collections.List<kotlin.String>> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.collections.List<kotlin.String>> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.collections.List<kotlin.String>>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-topicsList>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> origin=null
+                              columnName: CONST String type=kotlin.String value="topicsList"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:stargazers_count visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:stargazers_count type:kotlin.Int visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-stargazers_count> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>) returnType:kotlin.Int
+                      annotations:
+                        JvmName(name = "TokenReadCSV_813996149I_stargazers_count")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:stargazers_count visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>
+                      BLOCK_BODY
+                        RETURN type=kotlin.Int from='public final fun <get-stargazers_count> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-stargazers_count>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> origin=null
+                              name: CONST String type=kotlin.String value="stargazers_count"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:stargazers_count visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:stargazers_count type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-stargazers_count> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                      annotations:
+                        JvmName(name = "TokenReadCSV_813996149I_stargazers_count")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:stargazers_count visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> from='public final fun <get-stargazers_count> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-stargazers_count>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> origin=null
+                              columnName: CONST String type=kotlin.String value="stargazers_count"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:html_url visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:html_url type:java.net.URL visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-html_url> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>) returnType:java.net.URL
+                      annotations:
+                        JvmName(name = "TokenReadCSV_813996149I_html_url")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:html_url visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>
+                      BLOCK_BODY
+                        RETURN type=java.net.URL from='public final fun <get-html_url> (): java.net.URL declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                          TYPE_OP type=java.net.URL origin=CAST typeOperand=java.net.URL
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-html_url>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> origin=null
+                              name: CONST String type=kotlin.String value="html_url"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:html_url visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:html_url type:org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-html_url> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL>
+                      annotations:
+                        JvmName(name = "TokenReadCSV_813996149I_html_url")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:html_url visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL> from='public final fun <get-html_url> (): org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-html_url>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I> origin=null
+                              columnName: CONST String type=kotlin.String value="html_url"
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
                       public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -493,105 +514,104 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/unhandledIntrisic.kt
                     overridden:
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                CLASS CLASS name:TokenReadCSVDefault_813996149 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1]
-                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_813996149
-                  CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_813996149 [primary]
+                CLASS CLASS name:TokenReadCSV_813996149 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149 [primary]
                     BLOCK_BODY
-                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1'
-                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenReadCSVDefault_813996149 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1]'
-                  PROPERTY name:scope0 visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_813996149) returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY name:scope0 visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_813996149
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenReadCSV_813996149 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I]'
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149) returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149
                   PROPERTY FAKE_OVERRIDE name:full_name visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
                       public abstract full_name: kotlin.String
-                    FUN FAKE_OVERRIDE name:<get-full_name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.String [fake_override]
+                    FUN FAKE_OVERRIDE name:<get-full_name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:full_name visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
-                        public abstract fun <get-full_name> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                  PROPERTY FAKE_OVERRIDE name:html_url visibility:public modality:ABSTRACT [fake_override,val]
-                    overridden:
-                      public abstract html_url: java.net.URL
-                    FUN FAKE_OVERRIDE name:<get-html_url> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:java.net.URL [fake_override]
-                      correspondingProperty: PROPERTY FAKE_OVERRIDE name:html_url visibility:public modality:ABSTRACT [fake_override,val]
-                      overridden:
-                        public abstract fun <get-html_url> (): java.net.URL declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                  PROPERTY FAKE_OVERRIDE name:stargazers_count visibility:public modality:ABSTRACT [fake_override,val]
-                    overridden:
-                      public abstract stargazers_count: kotlin.Int
-                    FUN FAKE_OVERRIDE name:<get-stargazers_count> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.Int [fake_override]
-                      correspondingProperty: PROPERTY FAKE_OVERRIDE name:stargazers_count visibility:public modality:ABSTRACT [fake_override,val]
-                      overridden:
-                        public abstract fun <get-stargazers_count> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                        public abstract fun <get-full_name> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
                   PROPERTY FAKE_OVERRIDE name:topics visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
                       public abstract topics: kotlin.String
-                    FUN FAKE_OVERRIDE name:<get-topics> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.String [fake_override]
+                    FUN FAKE_OVERRIDE name:<get-topics> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:topics visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
-                        public abstract fun <get-topics> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                        public abstract fun <get-topics> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
                   PROPERTY FAKE_OVERRIDE name:watchers visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
                       public abstract watchers: kotlin.Int
-                    FUN FAKE_OVERRIDE name:<get-watchers> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.Int [fake_override]
+                    FUN FAKE_OVERRIDE name:<get-watchers> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:watchers visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
-                        public abstract fun <get-watchers> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                        public abstract fun <get-watchers> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
                   PROPERTY FAKE_OVERRIDE name:topicsList visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
                       public abstract topicsList: kotlin.collections.List<kotlin.String>
-                    FUN FAKE_OVERRIDE name:<get-topicsList> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.collections.List<kotlin.String> [fake_override]
+                    FUN FAKE_OVERRIDE name:<get-topicsList> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I) returnType:kotlin.collections.List<kotlin.String> [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:topicsList visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
-                        public abstract fun <get-topicsList> (): kotlin.collections.List<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                        public abstract fun <get-topicsList> (): kotlin.collections.List<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
+                  PROPERTY FAKE_OVERRIDE name:stargazers_count visibility:public modality:ABSTRACT [fake_override,val]
+                    overridden:
+                      public abstract stargazers_count: kotlin.Int
+                    FUN FAKE_OVERRIDE name:<get-stargazers_count> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I) returnType:kotlin.Int [fake_override]
+                      correspondingProperty: PROPERTY FAKE_OVERRIDE name:stargazers_count visibility:public modality:ABSTRACT [fake_override,val]
+                      overridden:
+                        public abstract fun <get-stargazers_count> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
+                  PROPERTY FAKE_OVERRIDE name:html_url visibility:public modality:ABSTRACT [fake_override,val]
+                    overridden:
+                      public abstract html_url: java.net.URL
+                    FUN FAKE_OVERRIDE name:<get-html_url> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I) returnType:java.net.URL [fake_override]
+                      correspondingProperty: PROPERTY FAKE_OVERRIDE name:html_url visibility:public modality:ABSTRACT [fake_override,val]
+                      overridden:
+                        public abstract fun <get-html_url> (): java.net.URL declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
-                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                     VALUE_PARAMETER name:other index:0 type:kotlin.Any?
                   FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
                     overridden:
-                      public open fun hashCode (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                      public open fun hashCode (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
                     overridden:
-                      public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                      public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<*>): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_813996149> declared in org.jetbrains.kotlinx.dataframe.main'
-                  TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_813996149> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_813996149>
-                    CALL 'public final fun add <R, T> (name: kotlin.String, expression: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.AddDataRow<T of org.jetbrains.kotlinx.dataframe.api.add>, @[ParameterName(name = 'it')] org.jetbrains.kotlinx.dataframe.api.AddDataRow<T of org.jetbrains.kotlinx.dataframe.api.add>, R of org.jetbrains.kotlinx.dataframe.api.add>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.add> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.TokenReadCSVDefault_813996149> origin=null
-                      <R>: kotlin.collections.List<kotlin.String>
-                      <T>: org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572
-                      $receiver: GET_VAR 'it: org.jetbrains.kotlinx.dataframe.DataFrame<*> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>' type=org.jetbrains.kotlinx.dataframe.DataFrame<*> origin=null
-                      name: CONST String type=kotlin.String value="topicsList"
-                      expression: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572>, @[ParameterName(name = 'it')] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572>, kotlin.collections.List<kotlin.String>> origin=LAMBDA
-                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572>, it:@[ParameterName(name = 'it')] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572>) returnType:kotlin.collections.List<kotlin.String>
-                          $receiver: VALUE_PARAMETER name:$this$add type:org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572>
-                          VALUE_PARAMETER name:it index:0 type:@[ParameterName(name = 'it')] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572>
-                          BLOCK_BODY
-                            RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: @[ParameterName(name = 'it')] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572>): kotlin.collections.List<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>'
-                              CALL 'public final fun filter <T> (predicate: kotlin.Function1<T of kotlin.collections.filter, kotlin.Boolean>): kotlin.collections.List<T of kotlin.collections.filter> declared in kotlin.collections' type=kotlin.collections.List<kotlin.String> origin=null
-                                <T>: kotlin.String
-                                $receiver: CALL 'public final fun split (vararg delimiters: kotlin.String, ignoreCase: kotlin.Boolean, limit: kotlin.Int): kotlin.collections.List<kotlin.String> declared in kotlin.text' type=kotlin.collections.List<kotlin.String> origin=null
-                                  $receiver: CALL 'public final fun removeSurrounding (prefix: kotlin.CharSequence, suffix: kotlin.CharSequence): kotlin.String declared in kotlin.text' type=kotlin.String origin=null
-                                    $receiver: CALL 'public final fun <get-topics> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0' type=kotlin.String origin=GET_PROPERTY
-                                      $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0 origin=null
-                                      $receiver: GET_VAR '$this$add: org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.<anonymous>' type=org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSVDefault_1639480572> origin=null
-                                    prefix: CONST String type=kotlin.String value="["
-                                    suffix: CONST String type=kotlin.String value="]"
-                                  delimiters: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-                                    CONST String type=kotlin.String value=", "
-                                predicate: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Boolean> origin=LAMBDA
-                                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Boolean
-                                    VALUE_PARAMETER name:it index:0 type:kotlin.String
-                                    BLOCK_BODY
-                                      RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String): kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.<anonymous>'
-                                        CALL 'public final fun isNotEmpty (): kotlin.Boolean declared in kotlin.text' type=kotlin.Boolean origin=null
-                                          $receiver: GET_VAR 'it: kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.<anonymous>.<anonymous>' type=kotlin.String origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747>): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149> declared in org.jetbrains.kotlinx.dataframe.main'
+                  CALL 'public final fun add <R, T> (name: kotlin.String, expression: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.AddDataRow<T of org.jetbrains.kotlinx.dataframe.api.add>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.AddDataRow<T of org.jetbrains.kotlinx.dataframe.api.add>, R of org.jetbrains.kotlinx.dataframe.api.add>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.add> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_813996149> origin=null
+                    <R>: kotlin.collections.List<kotlin.String>
+                    <T>: org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747
+                    $receiver: GET_VAR 'it: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747> origin=null
+                    name: CONST String type=kotlin.String value="topicsList"
+                    expression: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747>, kotlin.collections.List<kotlin.String>> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747>, it:@[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747>) returnType:kotlin.collections.List<kotlin.String>
+                        $receiver: VALUE_PARAMETER name:$this$add type:org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747>
+                        VALUE_PARAMETER name:it index:0 type:@[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747>
+                        BLOCK_BODY
+                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747>): kotlin.collections.List<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>'
+                            CALL 'public final fun filter <T> (predicate: kotlin.Function1<T of kotlin.collections.filter, kotlin.Boolean>): kotlin.collections.List<T of kotlin.collections.filter> declared in kotlin.collections' type=kotlin.collections.List<kotlin.String> origin=null
+                              <T>: kotlin.String
+                              $receiver: CALL 'public final fun split (vararg delimiters: kotlin.String, ignoreCase: kotlin.Boolean, limit: kotlin.Int): kotlin.collections.List<kotlin.String> declared in kotlin.text' type=kotlin.collections.List<kotlin.String> origin=null
+                                $receiver: CALL 'public final fun removeSurrounding (prefix: kotlin.CharSequence, suffix: kotlin.CharSequence): kotlin.String declared in kotlin.text' type=kotlin.String origin=null
+                                  $receiver: CALL 'public final fun <get-topics> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0' type=kotlin.String origin=GET_PROPERTY
+                                    $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0 origin=null
+                                    $receiver: GET_VAR '$this$add: org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.<anonymous>' type=org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenReadCSV_1000286747> origin=null
+                                  prefix: CONST String type=kotlin.String value="["
+                                  suffix: CONST String type=kotlin.String value="]"
+                                delimiters: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+                                  CONST String type=kotlin.String value=", "
+                              predicate: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Boolean> origin=LAMBDA
+                                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Boolean
+                                  VALUE_PARAMETER name:it index:0 type:kotlin.String
+                                  BLOCK_BODY
+                                    RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String): kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.<anonymous>'
+                                      CALL 'public final fun isNotEmpty (): kotlin.Boolean declared in kotlin.text' type=kotlin.Boolean origin=null
+                                        $receiver: GET_VAR 'it: kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.<anonymous>.<anonymous>' type=kotlin.String origin=null
