@@ -184,6 +184,9 @@ constructor(
         get() = projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
 
     @Input
+    var debug: Boolean = false
+
+    @Input
     var bin: String = "webpack/bin/webpack.js"
 
     @Input
@@ -263,13 +266,19 @@ constructor(
         webpackConfigAppliers
             .forEach { it.execute(config) }
 
+        val webpackArgs = args.run {
+            val port = devServerProperty.orNull?.port
+            if (debug && port != null) plus(listOf("--port", port.toString()))
+            else this
+        }
+
         return KotlinWebpackRunner(
             npmProject,
             logger,
             configFile.get(),
             execHandleFactory,
             bin,
-            args,
+            webpackArgs,
             nodeArgs,
             config
         )
