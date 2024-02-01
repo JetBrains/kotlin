@@ -462,4 +462,22 @@ class LiveLiteralV2TransformTests(useFir: Boolean) : AbstractLiveLiteralTransfor
             ) {}
         """.trimIndent()
     )
+
+    @Test
+    fun verifyInitInClass() {
+        assertTransform(
+            """
+            """,
+            """
+                class ViewModel {
+                    init {
+                        1
+                    }
+                    init {
+                        2
+                    }
+                }
+            """
+        )
+    }
 }

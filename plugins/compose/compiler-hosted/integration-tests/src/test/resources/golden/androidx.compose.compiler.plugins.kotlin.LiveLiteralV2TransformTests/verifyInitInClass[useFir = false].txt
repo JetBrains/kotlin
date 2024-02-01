@@ -1,0 +1,84 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+    class ViewModel {
+        init {
+            1
+        }
+        init {
+            2
+        }
+    }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+class ViewModel {
+  init {
+    LiveLiterals%TestKt.Int%init%class-ViewModel()
+  }
+  init {
+    LiveLiterals%TestKt.Int%init-1%class-ViewModel()
+  }
+  static val %stable: Int = LiveLiterals%TestKt.Int%class-ViewModel()
+}
+@LiveLiteralFileInfo(file = "/Test.kt")
+internal object LiveLiterals%TestKt {
+  val enabled: Boolean = false
+  val Int%init%class-ViewModel: Int = 1
+  var State%Int%init%class-ViewModel: State<Int>?
+  @LiveLiteralInfo(key = "Int%init%class-ViewModel", offset = 93)
+  fun Int%init%class-ViewModel(): Int {
+    if (!enabled) {
+      return Int%init%class-ViewModel
+    }
+    val tmp0 = State%Int%init%class-ViewModel
+    return if (tmp0 == null) {
+      val tmp1 = liveLiteral("Int%init%class-ViewModel", Int%init%class-ViewModel)
+      State%Int%init%class-ViewModel = tmp1
+      tmp1
+    } else {
+      tmp0
+    }
+    .value
+  }
+  val Int%init-1%class-ViewModel: Int = 2
+  var State%Int%init-1%class-ViewModel: State<Int>?
+  @LiveLiteralInfo(key = "Int%init-1%class-ViewModel", offset = 132)
+  fun Int%init-1%class-ViewModel(): Int {
+    if (!enabled) {
+      return Int%init-1%class-ViewModel
+    }
+    val tmp0 = State%Int%init-1%class-ViewModel
+    return if (tmp0 == null) {
+      val tmp1 = liveLiteral("Int%init-1%class-ViewModel", Int%init-1%class-ViewModel)
+      State%Int%init-1%class-ViewModel = tmp1
+      tmp1
+    } else {
+      tmp0
+    }
+    .value
+  }
+  val Int%class-ViewModel: Int = 0
+  var State%Int%class-ViewModel: State<Int>?
+  @LiveLiteralInfo(key = "Int%class-ViewModel", offset = -1)
+  fun Int%class-ViewModel(): Int {
+    if (!enabled) {
+      return Int%class-ViewModel
+    }
+    val tmp0 = State%Int%class-ViewModel
+    return if (tmp0 == null) {
+      val tmp1 = liveLiteral("Int%class-ViewModel", Int%class-ViewModel)
+      State%Int%class-ViewModel = tmp1
+      tmp1
+    } else {
+      tmp0
+    }
+    .value
+  }
+}
