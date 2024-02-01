@@ -248,7 +248,7 @@ fun box() {
 // Number2String.kt:61 $kotlin.wasm.internal.utoa32 (28, 14)
 // Number2String.kt:63 $kotlin.wasm.internal.utoa32 (18, 23, 35, 4)
 // Number2String.kt:69 $kotlin.wasm.internal.utoaDecSimple (11, 23, 11, 11, 4)
-// Assertions.kt:14 $kotlin.assert (11, 18, 4, 11, 18, 4, 11, 18, 4, 11, 18, 4)
+// Assertions.kt:14 $kotlin.assert (11, 4, 11, 4, 11, 4, 11, 4)
 // Assertions.kt:21 $kotlin.assert (9, 8, 9, 8, 9, 8, 9, 8)
 // Assertions.kt:25 $kotlin.assert (1, 1, 1, 1)
 // Assertions.kt:15 $kotlin.assert (1, 1, 1, 1)

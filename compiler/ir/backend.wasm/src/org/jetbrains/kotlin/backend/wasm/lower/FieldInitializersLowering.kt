@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.utils.isObjectInstanceField
 import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -55,9 +56,11 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
                 }
 
                 val initializerStatement = builder.at(initValue).irSetField(null, declaration, initValue)
+                val statements = startFunctionBody.statements
 
-                when (declaration.fqNameWhenAvailable) {
-                    stringPoolFqName -> startFunctionBody.statements.add(0, initializerStatement)
+                when {
+                    declaration.fqNameWhenAvailable == stringPoolFqName -> statements.add(0, initializerStatement)
+                    declaration.isObjectInstanceField() -> statements.add(if (statements.size >= 1) 1 else 0, initializerStatement)
                     else -> startFunctionBody.statements.add(initializerStatement)
                 }
 

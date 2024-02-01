@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.wasm.dce
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
-import org.jetbrains.kotlin.backend.wasm.lower.isFunctionReferenceInstanceField
 import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.ir.backend.js.dce.UsefulDeclarationProcessor
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -49,7 +48,7 @@ internal class WasmUsefulDeclarationProcessor(
         }
 
         override fun visitSetField(expression: IrSetField, data: IrDeclaration) {
-            if (!expression.symbol.owner.run { isObjectInstanceField() || isFunctionReferenceInstanceField() }) {
+            if (!expression.symbol.owner.isObjectInstanceField()) {
                 super.visitSetField(expression, data)
             }
         }
@@ -57,7 +56,7 @@ internal class WasmUsefulDeclarationProcessor(
         override fun visitGetField(expression: IrGetField, data: IrDeclaration) {
             val field = expression.symbol.owner
 
-            if (field.isObjectInstanceField() || field.isFunctionReferenceInstanceField()) {
+            if (field.isObjectInstanceField()) {
                 field.type.classOrFail.owner.primaryConstructor?.enqueue(field, "object lazy initialization")
             }
 
