@@ -16023,6 +16023,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
+            @TestMetadata("fakeOverrideOfPrivateSetter.kt")
+            public void testFakeOverrideOfPrivateSetter() throws Exception {
+                runTest("compiler/testData/codegen/box/fakeOverride/fakeOverrideOfPrivateSetter.kt");
+            }
+
+            @Test
             @TestMetadata("function.kt")
             public void testFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/fakeOverride/function.kt");
