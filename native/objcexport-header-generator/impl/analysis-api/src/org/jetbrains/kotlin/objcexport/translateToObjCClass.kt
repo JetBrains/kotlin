@@ -27,7 +27,11 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
     val comment: ObjCComment? = annotationsList.translateToObjCComment()
     val origin: ObjCExportStubOrigin = getObjCExportStubOrigin()
     val superProtocols: List<String> = superProtocols()
-    val members: List<ObjCExportStub> = getAllMembers().flatMap { it.translateToObjCExportStubs() }
+
+    val members: List<ObjCExportStub> = getAllMembers()
+        .sortedWith(StableSymbolOrder)
+        .flatMap { it.translateToObjCExportStubs() }
+
     val categoryName: String? = null
     val generics: List<ObjCGenericTypeDeclaration> = emptyList()
     val superClassGenerics: List<ObjCNonNullReferenceType> = emptyList()

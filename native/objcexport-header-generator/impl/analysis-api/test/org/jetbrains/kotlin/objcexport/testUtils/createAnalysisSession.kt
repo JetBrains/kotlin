@@ -23,14 +23,14 @@ import kotlin.io.path.Path
  */
 fun createStandaloneAnalysisApiSession(
     tempDir: File,
-    kotlinSources: List<String>,
+    kotlinSources: Map</* File Name */ String, /* Source Code */ String>,
 ): StandaloneAnalysisAPISession {
     val testModuleRoot = tempDir.resolve("testModule")
     testModuleRoot.mkdirs()
 
-    kotlinSources.forEachIndexed { index, kotlinSource ->
-        testModuleRoot.resolve("TestSources$index.kt").apply {
-            writeText(kotlinSource)
+    kotlinSources.forEach { (fileName, sourceCode) ->
+        testModuleRoot.resolve(fileName).apply {
+            writeText(sourceCode)
         }
     }
     return createStandaloneAnalysisApiSession(listOf(testModuleRoot))
