@@ -166,7 +166,9 @@ internal class TestRunProvider(
         if (testCase.kind == TestKind.REGULAR)
             filter { testName -> testName.packageName.startsWith(testCase.nominalPackageName) }
         else if (testCase.extras is WithTestRunnerExtras)
-            filterNot { testName -> testCase.extras<WithTestRunnerExtras>().ignoredTests.contains(testName.toString()) }
+            filterNot { testName -> testCase.extras<WithTestRunnerExtras>().ignoredTests.any {
+                    fromGTestPattern(it).matches(testName.toString())
+                }}
         else
             this
 

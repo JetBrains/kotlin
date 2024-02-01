@@ -22520,6 +22520,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("charAtAndOverload.kt")
+                public void testCharAtAndOverload() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/charAtAndOverload.kt");
+                }
+
+                @Test
+                @TestMetadata("charAtAndOverloadWithoutExplicitOverride.kt")
+                public void testCharAtAndOverloadWithoutExplicitOverride() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/charAtAndOverloadWithoutExplicitOverride.kt");
+                }
+
+                @Test
                 @TestMetadata("charBuffer.kt")
                 public void testCharBuffer() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/charBuffer.kt");
@@ -22553,6 +22565,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 @TestMetadata("containsAndOverload.kt")
                 public void testContainsAndOverload() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/containsAndOverload.kt");
+                }
+
+                @Test
+                @TestMetadata("containsAndOverloadWithoutExplicitOverride.kt")
+                public void testContainsAndOverloadWithoutExplicitOverride() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/containsAndOverloadWithoutExplicitOverride.kt");
                 }
 
                 @Test
@@ -32730,6 +32748,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             @TestMetadata("dataFlowInfoForArguments.kt")
             public void testDataFlowInfoForArguments() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/dataFlowInfoForArguments.kt");
+            }
+
+            @Test
+            @TestMetadata("disableDfaBooleanVariables.kt")
+            public void testDisableDfaBooleanVariables() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/disableDfaBooleanVariables.kt");
             }
 
             @Test

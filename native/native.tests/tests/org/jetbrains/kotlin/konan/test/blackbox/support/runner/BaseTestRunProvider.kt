@@ -43,7 +43,14 @@ internal open class BaseTestRunProvider {
             }
             TestKind.STANDALONE -> {
                 add(TestRunParameter.WithTCTestLogger)
-                addIfNotNull(testName?.let(TestRunParameter::WithTestFilter))
+                if (testName != null)
+                    add(TestRunParameter.WithTestFilter(testName))
+                else {
+                    val ignoredTests = (testCase.extras as TestCase.WithTestRunnerExtras).ignoredTests
+                    if (ignoredTests.isNotEmpty()) {
+                        add(TestRunParameter.WithGTestPatterns(negativePatterns = ignoredTests))
+                    }
+                }
             }
             TestKind.REGULAR -> {
                 add(TestRunParameter.WithTCTestLogger)

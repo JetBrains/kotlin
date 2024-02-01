@@ -1,4 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -PARAMETER_NAME_CHANGED_ON_OVERRIDE
+// SCOPE_DUMP: KA:contains
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 // FILE: A.java
 abstract public class A implements java.util.Collection<String> {

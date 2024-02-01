@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.util.PrivateForInline
 
 @Suppress("ClassName", "unused")
@@ -44,6 +45,12 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val WRONG_NULLABILITY_FOR_JAVA_OVERRIDE by warning<PsiElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
             parameter<FirCallableSymbol<*>>("override")
             parameter<FirCallableSymbol<*>>("base")
+        }
+
+        val ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE by error<KtNamedFunction>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirNamedFunctionSymbol>("hidden")
+            parameter<String>("overrideDescription")
+            parameter<FirNamedFunctionSymbol>("regular")
         }
     }
 

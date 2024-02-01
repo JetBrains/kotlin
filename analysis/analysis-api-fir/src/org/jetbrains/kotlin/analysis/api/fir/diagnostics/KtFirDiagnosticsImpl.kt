@@ -4281,6 +4281,14 @@ internal class WrongNullabilityForJavaOverrideImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.WrongNullabilityForJavaOverride
 
+internal class AccidentalOverrideClashByJvmSignatureImpl(
+    override val hidden: KtFunctionLikeSymbol,
+    override val overrideDescription: String,
+    override val regular: KtFunctionLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KtFirDiagnostic.AccidentalOverrideClashByJvmSignature
+
 internal class JavaTypeMismatchImpl(
     override val expectedType: KtType,
     override val actualType: KtType,

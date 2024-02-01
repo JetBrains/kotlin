@@ -90,7 +90,10 @@ internal class TestProcessor(val suites: List<TestSuite>, val args: Array<String
 
     private fun String.substringEscaped(range: IntRange) = this.substring(range).let { if (it.isNotEmpty()) Regex.escape(it) else "" }
 
-    private fun String.toGTestPatterns() = splitToSequence(':').map { pattern ->
+    private fun String.fromGTestPatterns(): List<Regex> = splitToSequence(':').map(::fromGTestPattern).toList()
+
+    // must be in sync with `fromGTestPattern(String)` in native/native.tests/tests/org/jetbrains/kotlin/konan/test/blackbox/support/runner/TestRun.kt
+    private fun fromGTestPattern(pattern: String): Regex {
         val result = StringBuilder()
         var prevIndex = 0
         pattern.forEachIndexed { index, c ->
@@ -101,8 +104,8 @@ internal class TestProcessor(val suites: List<TestSuite>, val args: Array<String
             }
         }
         result.append(pattern.substringEscaped(prevIndex until pattern.length))
-        return@map result.toString().toRegex()
-    }.toList()
+        return result.toString().toRegex()
+    }
 
     // region filters
 
@@ -115,8 +118,8 @@ internal class TestProcessor(val suites: List<TestSuite>, val args: Array<String
             throw IllegalArgumentException("Wrong pattern syntax: $filter.")
         }
 
-        val positivePatterns = filters[0].toGTestPatterns()
-        val negativePatterns = filters.getOrNull(1)?.toGTestPatterns() ?: emptyList()
+        val positivePatterns = filters[0].fromGTestPatterns()
+        val negativePatterns = filters.getOrNull(1)?.fromGTestPatterns() ?: emptyList()
 
         return { testCase ->
             positivePatterns.any { testCase.prettyName.matches(it) } &&

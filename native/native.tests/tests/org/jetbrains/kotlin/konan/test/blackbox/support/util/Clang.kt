@@ -50,6 +50,7 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
     libraryDirectories: List<File> = emptyList(),
     libraries: List<String> = emptyList(),
     additionalClangFlags: List<String> = emptyList(),
+    fmodules: Boolean = true
 ): TestCompilationResult<out TestCompilationArtifact.Executable> {
     val configurables = testRunSettings.configurables
     val host = testRunSettings.get<KotlinNativeTargets>().hostTarget
@@ -71,7 +72,8 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
         *clangArgs,
         *sourceFiles.map { it.absolutePath }.toTypedArray(),
         *includeDirectories.flatMap { listOf("-I", it.absolutePath) }.toTypedArray(),
-        "-g", "-fmodules",
+        "-g",
+        *(if (fmodules) arrayOf("-fmodules") else arrayOf()),
         *frameworkDirectories.flatMap { listOf("-F", it.absolutePath) }.toTypedArray(),
         *libraryDirectories.flatMap { listOf("-L", it.absolutePath) }.toTypedArray(),
         *libraries.map { "-l$it" }.toTypedArray(),

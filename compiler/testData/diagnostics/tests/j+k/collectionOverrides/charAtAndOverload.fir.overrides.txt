@@ -1,0 +1,6 @@
+KA:
+  [Source]: public open override operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Use site scope of /KA [id: 0]
+    [Enhancement]: public open operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /A [id: 1]
+  [Enhancement]: /* hidden due to clash */ public open operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Use site scope of /KA [id: 0]
+    [Enhancement]: /* hidden due to clash */ public open operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /A [id: 0]
+      [Library]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Use site scope of kotlin/CharSequence [id: 1]

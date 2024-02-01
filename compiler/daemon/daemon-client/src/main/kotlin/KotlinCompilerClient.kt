@@ -463,18 +463,25 @@ object KotlinCompilerClient {
         val platformSpecificOptions = listOf(
             // hide daemon window
             "-Djava.awt.headless=true",
-            "-D$${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property}=$serverHostname"
+            "-D${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property}=$serverHostname"
         )
         val javaVersion = CompilerSystemProperties.JAVA_VERSION.value?.toIntOrNull()
         val javaIllegalAccessWorkaround =
             if (javaVersion != null && javaVersion >= 16)
                 listOf("--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED")
             else emptyList()
+        val jvmArguments = daemonJVMOptions.mappers.flatMap { it.toArgs("-") }
+        val additionalOptimizationOptions = listOfNotNull(
+            "-XX:+UseCodeCacheFlushing",
+            // enable parallel gc only if it's not explicitly disabled and no other GC is selected
+            "-XX:+UseParallelGC".takeIf { jvmArguments.none { it == "-XX:-UseParallelGC" || (it.startsWith("-XX:+Use") && it.endsWith("GC")) } },
+        )
         val args = listOf(
             javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)
         ) +
                 platformSpecificOptions +
-                daemonJVMOptions.mappers.flatMap { it.toArgs("-") } +
+                jvmArguments +
+                additionalOptimizationOptions +
                 javaIllegalAccessWorkaround +
                 COMPILER_DAEMON_CLASS_FQN +
                 daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +

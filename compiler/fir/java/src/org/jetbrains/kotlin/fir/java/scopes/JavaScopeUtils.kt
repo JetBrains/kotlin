@@ -60,13 +60,6 @@ object BuiltinMethodsWithSpecialGenericSignature {
     private val FirNamedFunctionSymbol.hasErasedValueParametersInJava: Boolean
         get() = fir.computeJvmSignature() in ERASED_VALUE_PARAMETERS_SIGNATURES
 
-    fun getOverriddenBuiltinFunctionWithErasedValueParametersInJava(
-        memberWithBaseScope: MemberWithBaseScope<FirNamedFunctionSymbol>
-    ): FirNamedFunctionSymbol? {
-        return getOverriddenBuiltinFunctionWithErasedValueParametersInJava(memberWithBaseScope.member, memberWithBaseScope.baseScope)
-    }
-
-
     @JvmStatic
     fun getOverriddenBuiltinFunctionWithErasedValueParametersInJava(
         functionSymbol: FirNamedFunctionSymbol,

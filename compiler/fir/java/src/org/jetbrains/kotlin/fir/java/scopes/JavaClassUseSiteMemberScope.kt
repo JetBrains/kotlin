@@ -49,6 +49,26 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+/**
+ * It's a kind of use-site scope specialized for a Java owner class. Provides access to symbols by names, both for
+ * declared inside Java-class and inherited from its base classes (as usual for use-site scopes).
+ *
+ * * all functions that are explicitly declared in a Java class, are visible by default.
+ * Exceptions: functions that have corresponding properties; functions that override renamed builtins (e.g. charAt);
+ * functions that are overrides with erased type parameters (e.g. contains(Object)).
+ * See [isVisibleInCurrentClass]. E.g. contains(String) or get(int) are visible as explicitly declared functions.
+ *
+ * * also, this scope as a use-site member scope shows us some functions from supertypes. Here we have two choices (see [collectFunctions]):
+ *     * in the fast path, which is used when supertypes do not include any suspend functions AND the name is "standard"
+ *     (we don't suspect possible builtin renaming or type parameter erasing), we use a standard procedure:
+ *     class sees all supertype functions except those overridden by explicitly declared functions in the class
+ *     * otherwise, [processSpecialFunctions] comes into play.
+ *     It attempts to find a specific override for this "erased type parameter" and "renamed built-in" case.
+ *     In case of success, it always creates a synthetic function and shows it as a scope part:
+ *         * in case we have an "accidental normal override", like contains(String) or get(int),
+ *         its "hidden" version is created as the synthetic function
+ *         * in case we don't have it, we create an implicit function with such a signature (contains(String), get(int)) as the synthetic function
+ */
 class JavaClassUseSiteMemberScope(
     private val klass: FirJavaClass,
     session: FirSession,
@@ -415,9 +435,7 @@ class JavaClassUseSiteMemberScope(
             }
 
             if (processOverridesForFunctionsWithErasedValueParameter(
-                    resultOfIntersectionWithNaturalName.overriddenMembers,
                     requestedName,
-                    explicitlyDeclaredFunctionsWithNaturalName,
                     destination,
                     resultOfIntersectionWithNaturalName,
                     explicitlyDeclaredFunctionWithNaturalName
@@ -444,73 +462,121 @@ class JavaClassUseSiteMemberScope(
         functionsFromSupertypes[requestedName] = resultsOfIntersectionToSaveInCache
     }
 
+    /**
+     * This function collects in [destination] an overriding method for base method group [resultOfIntersectionWithNaturalName],
+     * in case base methods should have their value parameters erased in Java,
+     * e.g. Collection.contains(T) in Kotlin is paired with Collection.contains(Object) in Java.
+     *
+     * Given we have a Java class [klass] and some its method(s) name [name]
+     * with base method group [resultOfIntersectionWithNaturalName] and (maybe)
+     * explicitly declared [explicitlyDeclaredFunctionWithNaturalName],
+     * this function builds a synthetic override for [resultOfIntersectionWithNaturalName] in the Java class,
+     * binds it with this intersection result using the override relation,
+     * and collects it as a matching method with this name.
+     *
+     * Important: all explicitly declared functions are already collected at this point, there is no reason to collect them once more!
+     *
+     * @param name a given method name
+     * @param destination used to collect base functions for [explicitlyDeclaredFunctionWithNaturalName] with erased value parameters in Java
+     * @param resultOfIntersectionWithNaturalName one group of intersected base methods, each "overridden member" inside is a pair of (base method, its scope)
+     * @param explicitlyDeclaredFunctionWithNaturalName the function in the Java class [klass] with the name [name], which overrides [resultOfIntersectionWithNaturalName] (if any)
+     * @return true if we collected something, false otherwise
+     * @see [SpecialGenericSignatures.GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP] and
+     * [SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAME_AND_SIGNATURES]
+     */
     private fun processOverridesForFunctionsWithErasedValueParameter(
-        overriddenMembers: List<MemberWithBaseScope<FirNamedFunctionSymbol>>,
-        naturalName: Name,
-        explicitlyDeclaredFunctionsWithNaturalName: Collection<FirNamedFunctionSymbol>,
+        name: Name,
         destination: MutableCollection<FirNamedFunctionSymbol>,
         resultOfIntersectionWithNaturalName: ResultOfIntersection<FirNamedFunctionSymbol>,
         explicitlyDeclaredFunctionWithNaturalName: FirNamedFunctionSymbol?
     ): Boolean {
-        val overriddenMemberWithErasedValueParameters = overriddenMembers.firstOrNull {
-            BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(it) != null
+        val membersFromSupertypesWithScopes = resultOfIntersectionWithNaturalName.overriddenMembers
+        // E.g. contains(String) or contains(T)
+        val memberFromSupertypeWithValueParametersToBeErased = membersFromSupertypesWithScopes.firstOrNull { (member, scope) ->
+            BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(member, scope) != null
         }?.member ?: return false
 
-        val unwrappedSubstitutionOverride = overriddenMemberWithErasedValueParameters.fir.originalForSubstitutionOverride
-            ?: overriddenMemberWithErasedValueParameters.fir
+        // E.g. contains(T)
+        val unwrappedMemberFromSupertypeWithValueParametersToBeErased =
+            memberFromSupertypeWithValueParametersToBeErased.fir.originalForSubstitutionOverride
+                ?: memberFromSupertypeWithValueParametersToBeErased.fir
 
-        val functionFromSupertypeWithErasedParameterType = unwrappedSubstitutionOverride
+        val functionFromSupertypeWithValueParametersToBeErased = unwrappedMemberFromSupertypeWithValueParametersToBeErased
             .initialSignatureAttr
             ?.symbol as? FirNamedFunctionSymbol
-            ?: unwrappedSubstitutionOverride.symbol
-        val originalDeclaredFunction = declaredMemberScope.getFunctions(naturalName).firstOrNull {
-            it.hasSameJvmDescriptor(functionFromSupertypeWithErasedParameterType) && it.hasErasedParameters() &&
-                    javaOverrideChecker.doesReturnTypesHaveSameKind(functionFromSupertypeWithErasedParameterType.fir, it.fir)
-        } ?: return false
-        /*
-         * See the comment to shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters function
+            ?: unwrappedMemberFromSupertypeWithValueParametersToBeErased.symbol
+
+        // E.g. contains(Object) from Java
+        val explicitlyDeclaredFunctionWithErasedValueParameters =
+            declaredMemberScope.getFunctions(name).firstOrNull { declaredFunction ->
+                declaredFunction.hasSameJvmDescriptor(functionFromSupertypeWithValueParametersToBeErased) &&
+                        declaredFunction.hasErasedParameters() &&
+                        javaOverrideChecker.doesReturnTypesHaveSameKind(
+                            functionFromSupertypeWithValueParametersToBeErased.fir,
+                            declaredFunction.fir
+                        )
+            } ?: return false // No declared functions with erased parameters => no additional processing needed
+
+        /**
+         * See the comment to [shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters] function
          * It explains why we should check value parameters for `Any` type
          */
         var allParametersAreAny = true
-        val renamedDeclaredFunction = buildJavaMethodCopy(originalDeclaredFunction.fir as FirJavaMethod) {
-            name = naturalName
-            symbol = FirNamedFunctionSymbol(originalDeclaredFunction.callableId)
+        // It's a copy like contains(T) or contains(String) in Java, we perform "unerasing" here
+        val declaredFunctionCopyWithParameterTypesFromSupertype = buildJavaMethodCopy(
+            explicitlyDeclaredFunctionWithErasedValueParameters.fir as FirJavaMethod
+        ) {
+            this.name = name
+            symbol = FirNamedFunctionSymbol(explicitlyDeclaredFunctionWithErasedValueParameters.callableId)
             this.valueParameters.clear()
-            originalDeclaredFunction.fir.valueParameters.zip(overriddenMemberWithErasedValueParameters.fir.valueParameters)
-                .mapTo(this.valueParameters) { (overrideParameter, parameterFromSupertype) ->
-                    if (!parameterFromSupertype.returnTypeRef.coneType.lowerBoundIfFlexible().isAny) {
-                        allParametersAreAny = false
-                    }
-                    buildJavaValueParameterCopy(overrideParameter) {
-                        this@buildJavaValueParameterCopy.returnTypeRef = parameterFromSupertype.returnTypeRef
-                    }
+            explicitlyDeclaredFunctionWithErasedValueParameters.fir.valueParameters.zip(
+                memberFromSupertypeWithValueParametersToBeErased.fir.valueParameters
+            ).mapTo(this.valueParameters) { (overrideParameter, parameterFromSupertype) ->
+                if (!parameterFromSupertype.returnTypeRef.coneType.lowerBoundIfFlexible().isAny) {
+                    allParametersAreAny = false
                 }
+                buildJavaValueParameterCopy(overrideParameter) {
+                    this@buildJavaValueParameterCopy.returnTypeRef = parameterFromSupertype.returnTypeRef
+                }
+            }
         }.apply {
-            initialSignatureAttr = originalDeclaredFunction.fir
+            initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters.fir
         }.symbol
 
         if (allParametersAreAny) {
             return false
         }
 
-        val hasAccidentalOverrideWithDeclaredFunction = explicitlyDeclaredFunctionsWithNaturalName.any {
+        // E.g. contains(String) from Java, if any
+        val accidentalOverrideWithDeclaredFunction = explicitlyDeclaredFunctionWithNaturalName?.takeIf {
             overrideChecker.isOverriddenFunction(
-                renamedDeclaredFunction,
+                declaredFunctionCopyWithParameterTypesFromSupertype,
                 it
             )
         }
-        if (!hasAccidentalOverrideWithDeclaredFunction) {
-            destination += renamedDeclaredFunction
-            directOverriddenFunctions[renamedDeclaredFunction] = listOf(resultOfIntersectionWithNaturalName)
-            for (overriddenMember in overriddenMembers) {
-                overrideByBase[overriddenMember.member] = renamedDeclaredFunction
+        val symbolToBeCollected = if (accidentalOverrideWithDeclaredFunction == null) {
+            // Collect synthetic function which is an "unerased" copy of declared one with erased parameters
+            declaredFunctionCopyWithParameterTypesFromSupertype
+        } else {
+            val newSymbol = FirNamedFunctionSymbol(accidentalOverrideWithDeclaredFunction.callableId)
+            val original = accidentalOverrideWithDeclaredFunction.fir
+            val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildSimpleFunctionCopy(original) {
+                this.name = name
+                symbol = newSymbol
+                dispatchReceiverType = klass.defaultType()
+            }.apply {
+                initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters.fir
+                isHiddenToOvercomeSignatureClash = true
             }
-            if (explicitlyDeclaredFunctionWithNaturalName != null) {
-                destination += explicitlyDeclaredFunctionWithNaturalName
-            }
-            return true
+            // Collect synthetic function which is a hidden copy of declared one with unerased parameters
+            accidentalOverrideWithDeclaredFunctionHiddenCopy.symbol
         }
-        return false
+        destination += symbolToBeCollected
+        directOverriddenFunctions[symbolToBeCollected] = listOf(resultOfIntersectionWithNaturalName)
+        for ((member, _) in membersFromSupertypesWithScopes) {
+            overrideByBase[member] = symbolToBeCollected
+        }
+        return true
     }
 
     private fun FirNamedFunctionSymbol.hasSameJvmDescriptor(

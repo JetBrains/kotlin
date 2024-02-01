@@ -181,7 +181,7 @@ fun Iterable<String>.filterExtractProps(vararg groups: OptionsGroup, prefix: Str
 data class DaemonJVMOptions(
         var maxMemory: String = "",
         var maxMetaspaceSize: String = "",
-        var reservedCodeCacheSize: String = "",
+        var reservedCodeCacheSize: String = "320m",
         var jvmParams: MutableCollection<String> = arrayListOf()
 ) : OptionsGroup {
     override val mappers: List<PropMapper<*, *, *>>

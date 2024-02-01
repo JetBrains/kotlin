@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.compilerRunner.processCompilerOutput
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
+import org.jetbrains.kotlin.native.executors.RunProcessException
+import org.jetbrains.kotlin.native.executors.runProcess
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -165,5 +167,17 @@ internal fun invokeCInterop(
             //      from C-interop tool invocation at the moment. This should be fixed in the future.
             CompilationToolCallResult(exitCode = ExitCode.OK, toolOutput = "", toolOutputHasErrors = false, duration)
         }
+    }
+}
+
+internal fun codesign(path: String) {
+    val executableAbsolutePath = "/usr/bin/codesign"
+    val args = arrayOf("--verbose", "-s", "-", path)
+    try {
+        runProcess(executableAbsolutePath, *args) {
+            timeout = Duration.parse("30s")
+        }
+    } catch (rpe: RunProcessException) {
+        throw AssertionError("`$executableAbsolutePath ${args.joinToString(" ")}` failed with exitCode=${rpe.exitCode}: ${rpe.message}")
     }
 }

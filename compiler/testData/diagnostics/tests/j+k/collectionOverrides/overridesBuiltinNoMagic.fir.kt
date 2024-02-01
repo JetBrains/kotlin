@@ -1,3 +1,4 @@
+// SCOPE_DUMP: Y2:removeAt
 // FILE: X.java
 import org.jetbrains.annotations.NotNull;
 
@@ -145,7 +146,7 @@ public class X implements java.util.List<String> {
 
 class Y : X()
 class Y2 : X() {
-    override fun removeAt(index: Int) = ""
+    override fun <!ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE!>removeAt<!>(index: Int) = ""
 }
 
 fun main() {

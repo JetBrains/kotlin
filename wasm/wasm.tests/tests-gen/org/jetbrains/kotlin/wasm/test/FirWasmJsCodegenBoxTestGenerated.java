@@ -26818,6 +26818,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         }
 
         @Test
+        @TestMetadata("reassignDestructured.kt")
+        public void testReassignDestructured() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/reassignDestructured.kt");
+        }
+
+        @Test
         @TestMetadata("stringEqualsHashCodeToString.kt")
         public void testStringEqualsHashCodeToString() throws Exception {
             runTest("compiler/testData/codegen/box/primitiveTypes/stringEqualsHashCodeToString.kt");

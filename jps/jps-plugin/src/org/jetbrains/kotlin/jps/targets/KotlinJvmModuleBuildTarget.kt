@@ -202,7 +202,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 kotlinModuleId.name,
                 outputDir.absolutePath,
                 preprocessSources(allFiles),
-                target.findSourceRoots(dirtyFilesHolder.context),
+                target.findJavaSourceRoots(dirtyFilesHolder.context),
                 target.findClassPathRoots(),
                 preprocessSources(commonSourceFiles),
                 target.findModularJdkRoot(),
@@ -327,13 +327,14 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         return File(url.substringAfter(URLUtil.JRT_PROTOCOL + URLUtil.SCHEME_SEPARATOR).substringBeforeLast(URLUtil.JAR_SEPARATOR))
     }
 
-    private fun findSourceRoots(context: CompileContext): List<JvmSourceRoot> {
+    private fun findJavaSourceRoots(context: CompileContext): List<JvmSourceRoot> {
         val roots = context.projectDescriptor.buildRootIndex.getTargetRoots(jpsModuleBuildTarget, context)
         val result = mutableListOf<JvmSourceRoot>()
         for (root in roots) {
             val file = root.rootFile
+            val filePath = file.toPath()
             val prefix = root.packagePrefix
-            if (Files.exists(file.toPath())) {
+            if (Files.exists(filePath) && (Files.isDirectory(filePath) || file.extension == "java")) {
                 result.add(JvmSourceRoot(file, prefix.ifEmpty { null }))
             }
         }

@@ -86,6 +86,21 @@ internal sealed interface TestRunParameter {
         override fun testMatches(testName: TestName) = this.testName == testName
     }
 
+    class WithGTestPatterns(val positivePatterns: Set<String> = setOf("*"), val negativePatterns: Set<String>) : WithFilter() {
+        val positiveRegexes = positivePatterns.map(::fromGTestPattern)
+        val negativeRegexes = negativePatterns.map(::fromGTestPattern)
+
+        override fun applyTo(programArgs: MutableList<String>) {
+            "--ktest_filter=${positivePatterns.joinToString(":")}-${negativePatterns.joinToString(":")}"
+        }
+
+        override fun testMatches(testName: TestName): Boolean {
+            val testNameStr = testName.toString()
+            return positiveRegexes.any { it.matches(testNameStr) } &&
+                    !negativeRegexes.any { it.matches(testNameStr) }
+        }
+    }
+
     object WithTCTestLogger : TestRunParameter {
         override fun applyTo(programArgs: MutableList<String>) {
             programArgs += "--ktest_logger=TEAMCITY"
@@ -122,3 +137,21 @@ internal inline fun <reified T : TestRunParameter> List<TestRunParameter>.has():
 internal inline fun <reified T : TestRunParameter> List<TestRunParameter>.get(onFound: T.() -> Unit) {
     firstIsInstanceOrNull<T>()?.let(onFound)
 }
+
+
+// must be in sync with `fromGTestPattern(String)` in kotlin-native/runtime/src/main/kotlin/kotlin/native/internal/test/TestRunner.kt
+internal fun fromGTestPattern(pattern: String): Regex {
+    val result = StringBuilder()
+    var prevIndex = 0
+    pattern.forEachIndexed { index, c ->
+        if (c == '*' || c == '?') {
+            result.append(pattern.substringEscaped(prevIndex until index))
+            prevIndex = index + 1
+            result.append(if (c == '*') ".*" else ".")
+        }
+    }
+    result.append(pattern.substringEscaped(prevIndex until pattern.length))
+    return result.toString().toRegex()
+}
+
+private fun String.substringEscaped(range: IntRange) = this.substring(range).let { if (it.isNotEmpty()) Regex.escape(it) else "" }

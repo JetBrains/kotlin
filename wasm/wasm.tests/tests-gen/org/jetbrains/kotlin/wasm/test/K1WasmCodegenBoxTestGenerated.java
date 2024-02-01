@@ -26254,6 +26254,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
         }
 
         @Test
+        @TestMetadata("reassignDestructured.kt")
+        public void testReassignDestructured() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/reassignDestructured.kt");
+        }
+
+        @Test
         @TestMetadata("stringEqualsHashCodeToString.kt")
         public void testStringEqualsHashCodeToString() throws Exception {
             runTest("compiler/testData/codegen/box/primitiveTypes/stringEqualsHashCodeToString.kt");

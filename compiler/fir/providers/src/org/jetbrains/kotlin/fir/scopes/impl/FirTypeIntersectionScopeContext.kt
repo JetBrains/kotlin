@@ -45,7 +45,8 @@ class FirTypeIntersectionScopeContext(
 
     sealed class ResultOfIntersection<D : FirCallableSymbol<*>>(
         val overriddenMembers: List<MemberWithBaseScope<D>>,
-        val containingScope: FirTypeScope?
+        // This member is for debug-purposes only
+        private val containingScope: FirTypeScope?
     ) {
         abstract val chosenSymbol: D
 
