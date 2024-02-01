@@ -65,3 +65,24 @@ public object KotlinTopics {
     public val CODE_FRAGMENT_CONTEXT_MODIFICATION: Topic<KotlinCodeFragmentContextModificationListener> =
         Topic(KotlinCodeFragmentContextModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
 }
+
+/**
+ * [KotlinModificationEventKind] represents the kinds of modification events in [KotlinTopics]. While it is not required to publish or
+ * subscribe to modification events, it can be useful when abstracting over modification events in general, for example in tests.
+ */
+public enum class KotlinModificationEventKind {
+    MODULE_STATE_MODIFICATION,
+    MODULE_OUT_OF_BLOCK_MODIFICATION,
+    GLOBAL_MODULE_STATE_MODIFICATION,
+    GLOBAL_SOURCE_MODULE_STATE_MODIFICATION,
+    GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION,
+    CODE_FRAGMENT_CONTEXT_MODIFICATION,
+}
+
+public val KotlinModificationEventKind.isModuleLevel: Boolean
+    get() = this == KotlinModificationEventKind.MODULE_STATE_MODIFICATION ||
+            this == KotlinModificationEventKind.MODULE_OUT_OF_BLOCK_MODIFICATION ||
+            this == KotlinModificationEventKind.CODE_FRAGMENT_CONTEXT_MODIFICATION
+
+public val KotlinModificationEventKind.isGlobalLevel: Boolean
+    get() = !isModuleLevel

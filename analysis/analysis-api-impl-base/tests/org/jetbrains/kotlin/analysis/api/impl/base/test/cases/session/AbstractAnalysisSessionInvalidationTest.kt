@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.test.framework.directives.ModificationEventKind
+import org.jetbrains.kotlin.analysis.providers.topics.KotlinModificationEventKind
 
 abstract class AbstractAnalysisSessionInvalidationTest : AbstractSessionInvalidationTest<KtAnalysisSession>() {
     override val resultFileSuffix: String get() = "analysis_session"
@@ -28,8 +28,8 @@ abstract class AbstractAnalysisSessionInvalidationTest : AbstractSessionInvalida
      */
     override fun shouldSkipValidityCheck(session: KtAnalysisSession): Boolean =
         when (modificationEventKind) {
-            ModificationEventKind.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION,
-            ModificationEventKind.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION
+            KotlinModificationEventKind.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION,
+            KotlinModificationEventKind.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION
             -> {
                 session.useSiteModule is KtBinaryModule || session.useSiteModule is KtLibrarySourceModule
             }
@@ -38,31 +38,31 @@ abstract class AbstractAnalysisSessionInvalidationTest : AbstractSessionInvalida
 }
 
 abstract class AbstractModuleStateModificationAnalysisSessionInvalidationTest : AbstractAnalysisSessionInvalidationTest() {
-    override val modificationEventKind: ModificationEventKind
-        get() = ModificationEventKind.MODULE_STATE_MODIFICATION
+    override val modificationEventKind: KotlinModificationEventKind
+        get() = KotlinModificationEventKind.MODULE_STATE_MODIFICATION
 }
 
 abstract class AbstractModuleOutOfBlockModificationAnalysisSessionInvalidationTest : AbstractAnalysisSessionInvalidationTest() {
-    override val modificationEventKind: ModificationEventKind
-        get() = ModificationEventKind.MODULE_OUT_OF_BLOCK_MODIFICATION
+    override val modificationEventKind: KotlinModificationEventKind
+        get() = KotlinModificationEventKind.MODULE_OUT_OF_BLOCK_MODIFICATION
 }
 
 abstract class AbstractGlobalModuleStateModificationAnalysisSessionInvalidationTest : AbstractAnalysisSessionInvalidationTest() {
-    override val modificationEventKind: ModificationEventKind
-        get() = ModificationEventKind.GLOBAL_MODULE_STATE_MODIFICATION
+    override val modificationEventKind: KotlinModificationEventKind
+        get() = KotlinModificationEventKind.GLOBAL_MODULE_STATE_MODIFICATION
 }
 
 abstract class AbstractGlobalSourceModuleStateModificationAnalysisSessionInvalidationTest : AbstractAnalysisSessionInvalidationTest() {
-    override val modificationEventKind: ModificationEventKind
-        get() = ModificationEventKind.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION
+    override val modificationEventKind: KotlinModificationEventKind
+        get() = KotlinModificationEventKind.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION
 }
 
 abstract class AbstractGlobalSourceOutOfBlockModificationAnalysisSessionInvalidationTest : AbstractAnalysisSessionInvalidationTest() {
-    override val modificationEventKind: ModificationEventKind
-        get() = ModificationEventKind.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION
+    override val modificationEventKind: KotlinModificationEventKind
+        get() = KotlinModificationEventKind.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION
 }
 
 abstract class AbstractCodeFragmentContextModificationAnalysisSessionInvalidationTest : AbstractAnalysisSessionInvalidationTest() {
-    override val modificationEventKind: ModificationEventKind
-        get() = ModificationEventKind.CODE_FRAGMENT_CONTEXT_MODIFICATION
+    override val modificationEventKind: KotlinModificationEventKind
+        get() = KotlinModificationEventKind.CODE_FRAGMENT_CONTEXT_MODIFICATION
 }
