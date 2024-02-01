@@ -1626,4 +1626,43 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Check source map config of webpack")
+    @GradleTest
+    fun testWebpackSourceMapConfig(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            build("assemble") {
+                assertTasksExecuted(":app:browserProductionWebpack")
+
+                val sourceMapConfig = """
+                |config.module.rules.push({
+                    |test: /\.m?js${'$'}/,
+                    |use: ["source-map-loader"],
+                    |enforce: "pre"
+                |});
+                """.trimMargin()
+
+                val webpackConfig = projectPath.resolve("build/js/packages/kotlin-js-browser-app/webpack.config.js")
+                    .readLines()
+
+                var startIndex = 0
+                for ((index, line) in webpackConfig.withIndex()) {
+                    if (line.contains("// source maps")) {
+                        startIndex = index + 1
+                        break
+                    }
+                }
+
+                val expectedLinesCount = sourceMapConfig.lines().count()
+
+                val actual = webpackConfig.subList(startIndex, startIndex + expectedLinesCount)
+                    .joinToString("\n") { it.trim() }
+
+                assertEquals(
+                    sourceMapConfig,
+                    actual
+                )
+            }
+        }
+    }
 }
