@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstrai
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
@@ -38,8 +39,9 @@ class FirPCLAInferenceSession(
         private set
 
     override fun baseConstraintStorageForCandidate(candidate: Candidate): ConstraintStorage? {
-        if (candidate.needsToBePostponed()) return currentCommonSystem.currentStorage()
-        return null
+        if (candidate.mightBeAnalyzedAndCompletedIndependently()) return null
+
+        return currentCommonSystem.currentStorage()
     }
 
     override fun customCompletionModeInsteadOfFull(
@@ -230,6 +232,75 @@ class FirPCLAInferenceSession(
         if (callInfo.callKind == CallKind.SyntheticSelect) return true
 
         return false
+    }
+
+    private fun FirExpression.isTrivialArgument(): Boolean =
+        when (this) {
+            is FirWrappedExpression -> expression.isTrivialArgument()
+            is FirSamConversionExpression -> expression.isTrivialArgument()
+            is FirSmartCastExpression -> originalExpression.isTrivialArgument()
+
+            is FirCallableReferenceAccess -> false
+
+            is FirResolvable -> when (val candidate = candidate()) {
+                null -> !resolvedType.containsNotFixedTypeVariables()
+                else -> !candidate.usedOuterCs
+            }
+            is FirCall -> argumentList.arguments.all { it.isTrivialArgument() }
+
+            is FirBinaryLogicExpression -> leftOperand.isTrivialArgument() && rightOperand.isTrivialArgument()
+            is FirComparisonExpression -> compareToCall.isTrivialArgument()
+
+            is FirCheckedSafeCallSubject -> originalReceiverRef.value.isTrivialArgument()
+            is FirSafeCallExpression -> receiver.isTrivialArgument() && (selector as? FirExpression)?.isTrivialArgument() == true
+            is FirVarargArgumentsExpression -> arguments.all { it.isTrivialArgument() }
+
+            is FirLiteralExpression<*>, is FirResolvedQualifier, is FirResolvedReifiedParameterReference -> true
+            else -> false
+        }
+
+    private fun Candidate.mightBeAnalyzedAndCompletedIndependently(): Boolean {
+        when (callInfo.resolutionMode) {
+            // Currently, we handle delegates specifically, not completing them even if they are trivial function calls
+            // Thus they are being resolved in the context of outer CS
+            is ResolutionMode.Delegate -> return false
+            is ResolutionMode.WithExpectedType -> when {
+                // For assignments like myVarContainingTV = SomeCallWithNonTrivialInference(...)
+                // We should integrate even simple calls into the PCLA tree, too
+                callInfo.resolutionMode.expectedTypeRef.type.containsNotFixedTypeVariables() -> return false
+            }
+            is ResolutionMode.WithStatus, is ResolutionMode.LambdaResolution ->
+                error("$this call should not be analyzed in ${callInfo.resolutionMode}")
+
+            is ResolutionMode.AssignmentLValue,
+            is ResolutionMode.ContextDependent,
+            is ResolutionMode.ContextIndependent,
+            is ResolutionMode.ReceiverResolution,
+            -> {
+                // Just do nothing, enumerating all the cases just to make sure we don't forget to handle some mode
+            }
+        }
+
+        // I'd say that this might be an assertion, but let's do an early return
+        // TODO: try assertion or proof by type
+        if (callInfo.callSite !is FirResolvable && callInfo.callSite !is FirVariableAssignment) return false
+
+        if (callInfo.callSite is FirAnnotationCall) return true
+
+        // We can't analyze independently the calls which have postponed receivers
+        // Even if the calls themselves are trivial
+        if (dispatchReceiver?.isReceiverPostponed() == true) return false
+        if (givenExtensionReceiverOptions.any { it.isReceiverPostponed() }) return false
+
+        val returnType = (symbol as? FirCallableSymbol)?.let(returnTypeCalculator::tryCalculateReturnType)
+        if (returnType?.type?.containsNotFixedTypeVariables() == true) return false
+
+        // Now, we've got some sort of call/variable access/callable reference/synthetic call (see hierarchy of FirResolvable)
+        // It has regular independent receivers and trivial return type
+        // The only thing we need to check if it has only trivial arguments
+        if (callInfo.arguments.any { !it.isTrivialArgument() }) return false
+
+        return true
     }
 
     private fun FirExpression.doesArgumentUseOuterCS(): Boolean {
