@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.bir.declarations.impl.BirClassImpl
 import org.jetbrains.kotlin.bir.expressions.BirClassReference
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.get
+import org.jetbrains.kotlin.bir.getOrPutDynamicProperty
 import org.jetbrains.kotlin.bir.set
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.types.utils.typeWith
@@ -32,16 +33,27 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
     private val KotlinRepeatableAnnotation by lz { birBuiltIns.findClass(StandardNames.FqNames.repeatable) }
     private val JavaRepeatableAnnotation by lz { birBuiltIns.findClass(JvmAnnotationNames.REPEATABLE_ANNOTATION)!! }
 
+    private val declaredAnnotations = registerIndexKey(BirClass, false) {
+        it.kind == ClassKind.ANNOTATION_CLASS
+    }
     private val elementsWithMultipleAnnotations = registerIndexKey(BirAnnotationContainerElement, false) {
         it.annotations.size >= 2
     }
-    private val repeatedAnnotations = registerIndexKey(BirConstructorCall, false) {
-        it.constructedClass == KotlinRepeatableAnnotation
-    }
 
-    private val repeatedAnnotationSyntheticContainerToken = acquireTemporaryProperty<_, BirClass>(BirClass)
+    private val repeatedAnnotationSyntheticContainerKey = acquireTemporaryProperty<_, BirClass>(BirClass)
 
     override fun lower(module: BirModuleFragment) {
+        getAllElementsWithIndex(declaredAnnotations).forEach { annotationClass ->
+            if (
+                KotlinRepeatableAnnotation?.let { annotationClass.hasAnnotation(it) } == true
+                && !annotationClass.hasAnnotation(JavaRepeatableAnnotation)
+            ) {
+                val repeatedAnnotationSyntheticContainer = createRepeatedAnnotationSyntheticContainer(annotationClass)
+                annotationClass.declarations += repeatedAnnotationSyntheticContainer
+                annotationClass[repeatedAnnotationSyntheticContainerKey] = repeatedAnnotationSyntheticContainer
+            }
+        }
+
         if (generationState.classBuilderMode.generateBodies) {
             getAllElementsWithIndex(elementsWithMultipleAnnotations).forEach { element ->
                 transformMultipleAnnotations(element.annotations)?.let {
@@ -49,16 +61,6 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
                     element.annotations += it
                 }
             }
-        }
-
-        getAllElementsWithIndex(repeatedAnnotations).forEach { annotation ->
-            val annotationClass = annotation.parent as? BirClass ?: return@forEach
-            if (annotationClass.kind != ClassKind.ANNOTATION_CLASS) return@forEach
-            if (annotationClass.hasAnnotation(JavaRepeatableAnnotation)) return@forEach
-
-            val repeatedAnnotationSyntheticContainer = createRepeatedAnnotationSyntheticContainer(annotationClass)
-            annotationClass.declarations += repeatedAnnotationSyntheticContainer
-            annotationClass[repeatedAnnotationSyntheticContainerToken] = repeatedAnnotationSyntheticContainer
         }
     }
 
@@ -91,7 +93,9 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
             (containerClassReference.symbol as? BirClassSymbol)?.owner
                 ?: error("Repeatable annotation container must be a class: $annotationClass")
         } else {
-            annotationClass[repeatedAnnotationSyntheticContainerToken]!!
+            annotationClass.getOrPutDynamicProperty(repeatedAnnotationSyntheticContainerKey) {
+                createRepeatedAnnotationSyntheticContainer(annotationClass)
+            }
         }
     }
 
@@ -129,6 +133,7 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
 
         containerClass.declarations += BirConstructor.build {
             isPrimary = true
+            returnType = containerClass.defaultType
             valueParameters += BirValueParameter.build {
                 name = propertyName
                 type = propertyType
