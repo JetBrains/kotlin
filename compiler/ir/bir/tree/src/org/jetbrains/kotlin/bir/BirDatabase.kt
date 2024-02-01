@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.bir
 
-import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
 import org.jetbrains.kotlin.bir.util.ForwardReferenceRecorder
 import java.lang.AutoCloseable
 
@@ -50,7 +49,7 @@ class BirDatabase : BirElementParent() {
     private var elementClassifier: BirElementIndexClassifier? = null
     private var currentElementIndexIterator: ElementIndexIteratorImpl<*>? = null
     private var currentIndexSlot = 0
-    internal var mutableElementCurrentlyBeingClassified: BirImplElementBase? = null
+    internal var elementCurrentlyBeingClassified: BirElementBase? = null
         private set
 
     var includeEntireSubtreeWhenAttachingElement = true
@@ -257,12 +256,10 @@ class BirDatabase : BirElementParent() {
 
         val forwardReferenceRecorder = if (updateBackReferences) ForwardReferenceRecorder() else null
 
-        assert(mutableElementCurrentlyBeingClassified == null)
-        if (element is BirImplElementBase) {
-            mutableElementCurrentlyBeingClassified = element
-        }
+        val prevElementBeingClassified = elementCurrentlyBeingClassified
+        elementCurrentlyBeingClassified = element
         val indexSlot = classifier.classify(element, currentIndexSlot + 1, forwardReferenceRecorder)
-        mutableElementCurrentlyBeingClassified = null
+        elementCurrentlyBeingClassified = prevElementBeingClassified
 
         if (indexSlot != 0) {
             if (element.indexSlot.toInt() != indexSlot) {
@@ -335,7 +332,7 @@ class BirDatabase : BirElementParent() {
 
     internal fun indexElementAndDependent(element: BirElementBase) {
         indexElement(element, true)
-        (element as? BirImplElementBase)?.indexInvalidatedDependentElements()
+        element.indexInvalidatedDependentElements()
     }
 
     private fun removeElementFromIndex(element: BirElementBase) {
@@ -349,7 +346,7 @@ class BirDatabase : BirElementParent() {
     }
 
     internal val isInsideElementClassification: Boolean
-        get() = mutableElementCurrentlyBeingClassified != null
+        get() = elementCurrentlyBeingClassified != null
 
     internal fun invalidateElement(element: BirElementBase) {
         if (!element.hasFlag(BirElementBase.FLAG_INVALIDATED)) {
