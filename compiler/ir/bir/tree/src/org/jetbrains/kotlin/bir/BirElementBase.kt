@@ -119,46 +119,90 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
 
     internal open fun <T> getDynamicProperty(token: BirDynamicPropertyAccessToken<*, T>): T? {
         token.requireValid()
+        recordPropertyRead()
 
         val arrayMap = dynamicProperties ?: return null
         val keyIndex = findDynamicPropertyIndex(arrayMap, token.key)
-        if (keyIndex < 0) return null
-        @Suppress("UNCHECKED_CAST")
-        return arrayMap[keyIndex + 1] as T
+        if (keyIndex < 0) {
+            return null
+        } else {
+            @Suppress("UNCHECKED_CAST")
+            return arrayMap[keyIndex + 1] as T
+        }
     }
 
-    internal open fun <T> setDynamicProperty(token: BirDynamicPropertyAccessToken<*, T>, value: T?): Boolean {
+    internal fun <T> setDynamicProperty(token: BirDynamicPropertyAccessToken<*, T>, value: T?): T? {
         token.requireValid()
 
         val arrayMap = dynamicProperties
+        val changed: Boolean
+        var previousValue: T? = null
         if (arrayMap == null) {
             if (value == null) {
                 // optimization: next read will return null if the array is null, so no need to initialize it
-                return false
+                changed = false
             } else {
                 initializeDynamicProperties(token, value)
-                return true
+                changed = true
             }
         } else {
             val foundIndex = findDynamicPropertyIndex(arrayMap, token.key)
             if (foundIndex >= 0) {
                 if (value == null) {
                     removeDynamicPropertyAtPruningSubsequent(arrayMap, foundIndex)
-                    return true
+                    changed = true
                 } else {
                     val valueIndex = foundIndex + 1
-                    val old = arrayMap[valueIndex]
+                    @Suppress("UNCHECKED_CAST")
+                    previousValue = arrayMap[valueIndex] as T?
                     arrayMap[valueIndex] = value
-                    return old != value
+                    changed = previousValue != value
                 }
             } else {
                 val entryIndex = -(foundIndex + 1)
-                return addDynamicProperty(arrayMap, entryIndex, token.key, value)
+                changed = addDynamicProperty(arrayMap, entryIndex, token.key, value)
             }
+        }
+
+        if (changed) {
+            invalidate()
+        }
+
+        return previousValue
+    }
+
+    internal fun <T> getOrPutDynamicProperty(token: BirDynamicPropertyAccessToken<*, T>, compute: () -> T): T {
+        token.requireValid()
+
+        val arrayMap = dynamicProperties
+        val foundIndex = if (arrayMap != null)
+            findDynamicPropertyIndex(arrayMap, token.key)
+        else -1
+        if (foundIndex >= 0) {
+            @Suppress("UNCHECKED_CAST")
+            return arrayMap!![foundIndex + 1] as T
+        } else {
+            val newValue = compute()
+
+            if (arrayMap != null) {
+                val entryIndex = -(foundIndex + 1)
+                addDynamicProperty(arrayMap, entryIndex, token.key, newValue)
+            } else {
+                initializeDynamicProperties(token, newValue)
+            }
+
+            invalidate()
+            return newValue
         }
     }
 
-    protected fun <T> initializeDynamicProperties(token: BirDynamicPropertyAccessToken<*, T>, value: T?) {
+    // todo: fine-grained control of which data to copy
+    internal fun copyDynamicProperties(from: BirElementBase) {
+        invalidate()
+        dynamicProperties = from.dynamicProperties?.copyOf()
+    }
+
+    private fun <T> initializeDynamicProperties(token: BirDynamicPropertyAccessToken<*, T>, value: T?) {
         val size = 2
         val arrayMap = arrayOfNulls<Any?>(size * 2)
         arrayMap[0] = token.key
@@ -166,7 +210,7 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         this.dynamicProperties = arrayMap
     }
 
-    protected fun <T> addDynamicProperty(arrayMap: Array<Any?>, index: Int, key: BirDynamicPropertyKey<*, T>, value: T?): Boolean {
+    private fun <T> addDynamicProperty(arrayMap: Array<Any?>, index: Int, key: BirDynamicPropertyKey<*, T>, value: T?): Boolean {
         if (value == null) {
             return false
         }
@@ -182,7 +226,7 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         return true
     }
 
-    protected fun findDynamicPropertyIndex(arrayMap: Array<Any?>, propertyKey: BirDynamicPropertyKey<*, *>): Int {
+    private fun findDynamicPropertyIndex(arrayMap: Array<Any?>, propertyKey: BirDynamicPropertyKey<*, *>): Int {
         var i = 0
         var foundAnyOutdated = false
         while (i < arrayMap.size) {
@@ -221,14 +265,106 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         }
     }
 
-
-    protected fun BirDynamicPropertyAccessToken<*, *>.requireValid() {
+    private fun BirDynamicPropertyAccessToken<*, *>.requireValid() {
         if (this is TemporaryBirDynamicProperty<*, *>) {
             require(isValid) { "The property token can only be used within the phase $validInPhase" }
         }
     }
 
-    protected fun addRelatedElement(relatedElement: BirElementBase, isBackReference: Boolean) {
+
+    internal fun recordPropertyRead() {
+        val database = _containingDatabase ?: return
+        val classifiedElement = database.elementCurrentlyBeingClassified ?: return
+        if (classifiedElement !== this) {
+            registerDependentElement(classifiedElement)
+        }
+    }
+
+    private fun registerDependentElement(dependentElement: BirElementBase) {
+        addRelatedElement(dependentElement, false)
+    }
+
+    internal fun invalidate() {
+        _containingDatabase?.invalidateElement(this)
+    }
+
+    internal fun indexInvalidatedDependentElements() {
+        val database = _containingDatabase ?: return
+
+        val array: Array<BirElementBase?>
+        var storageIsArray = false
+        when (val elementsOrSingle = relatedElements) {
+            null -> return
+            is BirElementBase -> array = arrayOf(elementsOrSingle)
+            else -> {
+                @Suppress("UNCHECKED_CAST")
+                array = elementsOrSingle as Array<BirElementBase?>
+                storageIsArray = true
+            }
+        }
+
+        for (i in array.indices) {
+            val element = array[i] ?: break
+
+            if (!element.hasFlag(FLAG_HAS_BEEN_REGISTERED_AS_DEPENDENT_ELEMENT)) {
+                // This element is certainly not a back reference, so is safe to delete.
+                removeRelatedElement(i)
+            }
+
+            database.indexElement(element, true)
+        }
+    }
+
+
+    internal fun registerBackReference(backReference: BirElementBase) {
+        addRelatedElement(backReference, true)
+    }
+
+    internal fun <R : BirElement> getBackReferences(key: BirElementBackReferencesKey<*, R>): List<BirElementBase> {
+        _containingDatabase?.flushInvalidatedElementBuffer()
+        require(_containingDatabase != null) { "Element must be attached to some BirDatabase" }
+
+        val array = when (val elementsOrSingle = relatedElements) {
+            null -> return emptyList<BirElementBase>()
+            is BirElementBase -> arrayOf(elementsOrSingle)
+            else -> {
+                @Suppress("UNCHECKED_CAST")
+                elementsOrSingle as Array<BirElementBase?>
+            }
+        }
+
+        val results = ArrayList<BirElementBase>(array.size)
+        for (i in array.indices) {
+            val backRef = array[i] ?: break
+
+            var isValidBackRef = false
+            if (backRef.hasFlag(FLAG_HAS_BEEN_REGISTERED_AS_BACK_REFERENCE)) {
+                val forwardReferenceRecorder = ForwardReferenceRecorder()
+                with(forwardReferenceRecorder) {
+                    key.recorder.recordBackReferences(backRef)
+                }
+
+                val recordedRef = forwardReferenceRecorder.recordedRef
+                forwardReferenceRecorder.reset()
+
+                if (recordedRef === this) {
+                    backRef._containingDatabase?.realizeTreeMovements()
+                    if (backRef._containingDatabase != null) {
+                        isValidBackRef = true
+                    }
+                }
+            }
+
+            if (isValidBackRef) {
+                results += backRef
+            }
+        }
+
+        return results
+    }
+
+
+    private fun addRelatedElement(relatedElement: BirElementBase, isBackReference: Boolean) {
         val hasBeenRegisteredFlag =
             if (isBackReference) FLAG_HAS_BEEN_REGISTERED_AS_BACK_REFERENCE
             else FLAG_HAS_BEEN_REGISTERED_AS_DEPENDENT_ELEMENT
@@ -292,7 +428,7 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         relatedElement.setFlag(hasBeenRegisteredFlag, true)
     }
 
-    protected fun removeRelatedElement(index: Int) {
+    private fun removeRelatedElement(index: Int) {
         val relatedElements = relatedElements
         if (relatedElements is Array<*>) {
             @Suppress("UNCHECKED_CAST")
@@ -328,59 +464,11 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         error("Should not reach here")
     }
 
-    internal fun registerBackReference(backReference: BirElementBase) {
-        addRelatedElement(backReference, true)
-    }
-
-    internal fun <R : BirElement> getBackReferences(key: BirElementBackReferencesKey<*, R>): List<BirElementBase> {
-        _containingDatabase?.flushInvalidatedElementBuffer()
-        require(_containingDatabase != null) { "Element must be attached to some BirDatabase" }
-
-        val array = when (val elementsOrSingle = relatedElements) {
-            null -> return emptyList<BirElementBase>()
-            is BirElementBase -> arrayOf(elementsOrSingle)
-            else -> {
-                @Suppress("UNCHECKED_CAST")
-                elementsOrSingle as Array<BirElementBase?>
-            }
-        }
-
-        val results = ArrayList<BirElementBase>(array.size)
-        for (i in array.indices) {
-            val backRef = array[i] ?: break
-
-            var isValidBackRef = false
-            if (backRef.hasFlag(FLAG_HAS_BEEN_REGISTERED_AS_BACK_REFERENCE)) {
-                val forwardReferenceRecorder = ForwardReferenceRecorder()
-                with(forwardReferenceRecorder) {
-                    key.recorder.recordBackReferences(backRef)
-                }
-
-                val recordedRef = forwardReferenceRecorder.recordedRef
-                forwardReferenceRecorder.reset()
-
-                if (recordedRef === this) {
-                    backRef._containingDatabase?.realizeTreeMovements()
-                    if (backRef._containingDatabase != null) {
-                        isValidBackRef = true
-                    }
-                }
-            }
-
-            if (isValidBackRef) {
-                results += backRef
-            }
-        }
-
-        return results
-    }
-
 
     final override fun equals(other: Any?): Boolean {
         return other === this ||
                 (other is BirSymbol && other.ownerIfBound === this)
     }
-
 
     companion object {
         internal const val FLAG_INVALIDATED: Byte = (1 shl 0).toByte()

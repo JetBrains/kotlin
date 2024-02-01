@@ -63,11 +63,11 @@ operator fun <E : BirElement, T> E.get(token: BirDynamicPropertyAccessToken<E, T
 }
 
 operator fun <E : BirElement, T> E.set(token: BirDynamicPropertyAccessToken<E, T>, value: T?) {
-    (this as BirImplElementBase).setDynamicProperty(token, value)
+    (this as BirElementBase).setDynamicProperty(token, value)
 }
 
 fun <E : BirElement, T> E.getOrPutDynamicProperty(token: BirDynamicPropertyAccessToken<E, T>, compute: () -> T): T {
-    return (this as BirImplElementBase).getOrPutDynamicProperty(token, compute)
+    return (this as BirElementBase).getOrPutDynamicProperty(token, compute)
 }
 
 /**
