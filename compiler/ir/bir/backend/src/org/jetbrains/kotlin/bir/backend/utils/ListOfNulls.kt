@@ -22,7 +22,7 @@ private class ListOfNulls<E>(
     override fun lastIndexOf(element: E?): Int =
         if (element == null) size - 1 else -1
 
-    override fun isEmpty(): Boolean = size > 0
+    override fun isEmpty(): Boolean = size == 0
 
     override fun iterator(): Iterator<E?> = IteratorImpl<E>(size)
 
@@ -32,7 +32,7 @@ private class ListOfNulls<E>(
 
     override fun subList(fromIndex: Int, toIndex: Int): List<E?> = ListOfNulls<E>(toIndex - fromIndex)
 
-    private class IteratorImpl<E>(private var size: Int) : ListIterator<E?> {
+    private class IteratorImpl<E>(private val size: Int) : ListIterator<E?> {
         private var index = 0
 
         override fun hasNext(): Boolean = index < size
