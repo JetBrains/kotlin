@@ -191,32 +191,28 @@ class BirImplChildElementList<E : BirElement?>(
             } else {
                 elementArray.copyInto(elementArray, index + newElementsSize, index, currentSize)
             }
-        } else {
-            if (newElementsSize == 1 && index == 0) {
-                this.elementArray = elements.iterator().next()
-            } else {
-                val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
-                if (currentSize == 1) {
-                    newArray[if (index == 0) newElementsSize else 0] = elementArray as BirElementBase
-                }
-                elementArray = newArray
-                this.elementArray = elementArray
+        } else if (!(newElementsSize == 1 && index == 0)) {
+            val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
+            if (currentSize == 1) {
+                newArray[if (index == 0) newElementsSize else 0] = elementArray as BirElementBase
             }
+            elementArray = newArray
+            this.elementArray = elementArray
         }
 
-        if (elementArray is Array<*>) {
-            @Suppress("UNCHECKED_CAST")
-            elementArray as Array<BirElementBase?>
+        var i = index
+        for (element in elements) {
+            checkNewElement(element as BirElementBase?)
+            parent.childReplaced(null, element)
 
-            var i = index
-            for (element in elements) {
-                checkNewElement(element)
-
-                parent.childReplaced(null, element)
-
-                elementArray[i++] = element as BirElementBase?
-                element?.setContainingList()
+            if (newElementsSize == 1 && index == 0) {
+                this.elementArray = element
+            } else {
+                @Suppress("UNCHECKED_CAST")
+                elementArray as Array<BirElementBase?>
+                elementArray[i++] = element
             }
+            element?.setContainingList()
         }
 
         _size = newSize
