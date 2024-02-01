@@ -31,25 +31,17 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
     private val JvmStaticAnnotation by lz { birBuiltIns.findClass(JVM_STATIC_ANNOTATION_FQ_NAME) }
 
     private val staticDeclarations = registerIndexKey<BirDeclaration>(BirSimpleFunction or BirProperty, true) { declaration ->
-        JvmStaticAnnotation?.let { declaration.hasAnnotation(it) } == true
+        val annotation = JvmStaticAnnotation ?: return@registerIndexKey false
+        declaration.hasAnnotation(annotation) ||
+                (declaration as? BirSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(annotation) == true ||
+                (declaration as? BirProperty)?.getter?.hasAnnotation(annotation) == true
     }
-    private val memberAccesses = registerBackReferencesKeyWithUntypedSymbolProperty(BirMemberAccessExpression, BirMemberAccessExpression<*>::symbol)
+    private val memberAccesses =
+        registerBackReferencesKeyWithUntypedSymbolProperty(BirMemberAccessExpression, BirMemberAccessExpression<*>::symbol)
     private val valueReads = registerBackReferencesKey(BirGetValue, BirGetValue::symbol)
 
     override fun lower(module: BirModuleFragment) {
-        val effectivelyStaticDeclarations = buildSet {
-            getAllElementsWithIndex(staticDeclarations).forEach { declaration ->
-                add(declaration)
-                if (declaration is BirSimpleFunction) {
-                    addIfNotNull(declaration.correspondingPropertySymbol?.owner)
-                }
-                if (declaration is BirProperty) {
-                    addIfNotNull(declaration.getter?.owner)
-                }
-            }
-        }
-
-        for (declaration in effectivelyStaticDeclarations) {
+        getAllElementsWithIndex(staticDeclarations).forEach { declaration ->
             val parent = declaration.parent
             if (parent is BirClass && parent.kind == ClassKind.OBJECT && !parent.isCompanion) {
                 declaration.getBackReferences(memberAccesses).forEach { call ->
@@ -76,6 +68,7 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
         if (replaceCallee != null) {
             (this as BirCall).symbol = replaceCallee
         }
+
         if (receiver.isTrivial()) {
             // Receiver has no side effects (aside from maybe class initialization) so discard it.
             return
@@ -101,5 +94,3 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
         }
     }
 }
-
-
