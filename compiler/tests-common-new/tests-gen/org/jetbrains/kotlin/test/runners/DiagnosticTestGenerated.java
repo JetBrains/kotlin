@@ -19642,6 +19642,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("complexTypeUnwrapping.kt")
+                public void testComplexTypeUnwrapping() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/complexTypeUnwrapping.kt");
+                }
+
+                @Test
                 @TestMetadata("kt61717.kt")
                 public void testKt61717() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/kt61717.kt");
