@@ -16,7 +16,7 @@ FILE: complexTypeUnwrapping.kt
             public get(): R|RE|
 
     }
-    public final fun foo(x: R|ElementOrRef<*, *>|): R|AbstractElement<out AbstractElement<out AbstractElement<out AbstractElement<out AbstractElement<out kotlin/Any?, out kotlin/Any?>, out AbstractField<kotlin/Any?>>, out AbstractField<AbstractField<kotlin/Any?>>>, out AbstractField<AbstractField<AbstractField<kotlin/Any?>>>>, out AbstractField<AbstractField<AbstractField<AbstractField<kotlin/Any?>>>>>| {
+    public final fun foo(x: R|ElementOrRef<*, *>|): R|AbstractElement<*, out AbstractField<*>>| {
         ^foo R|<local>/x|.R|SubstitutionOverride</ElementOrRef.element: R|CapturedType(*)|>|
     }
     public abstract interface FieldOrRef<FF : R|AbstractField<FF>|> : R|kotlin/Any| {
@@ -24,6 +24,6 @@ FILE: complexTypeUnwrapping.kt
             public get(): R|FF|
 
     }
-    public final fun bar(y: R|FieldOrRef<*>|): R|AbstractField<AbstractField<AbstractField<AbstractField<AbstractField<kotlin/Any?>>>>>| {
+    public final fun bar(y: R|FieldOrRef<*>|): R|AbstractField<*>| {
         ^bar R|<local>/y|.R|SubstitutionOverride</FieldOrRef.field: R|CapturedType(*)|>|
     }

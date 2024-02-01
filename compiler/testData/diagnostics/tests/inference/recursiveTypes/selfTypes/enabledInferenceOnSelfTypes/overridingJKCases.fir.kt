@@ -37,9 +37,9 @@ fun javaInterfaceTest(a: A1<*>, b: B1<*>, c: C1<*>) {
     val x = a.foo()
     <!DEBUG_INFO_EXPRESSION_TYPE("A1<*>")!>x<!>
     val y = b.foo()
-    <!DEBUG_INFO_EXPRESSION_TYPE("I<out I<out I<out I<out I<out kotlin.Any?>>>>>")!>y<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("I<*>")!>y<!>
     val z = c.foo()
-    <!DEBUG_INFO_EXPRESSION_TYPE("I<out I<out I<out I<out I<out kotlin.Any?>>>>>..I<out I<out I<out I<out I<out kotlin.Any?>>>>>?!")!>z<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("I<*>..I<*>?!")!>z<!>
 }
 
 fun javaClassTest(a: A2<*>, b: B2<*>, c: C2<*>, d: D2<*>) {
