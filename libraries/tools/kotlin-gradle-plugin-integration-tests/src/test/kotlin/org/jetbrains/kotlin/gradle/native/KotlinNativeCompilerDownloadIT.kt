@@ -12,13 +12,14 @@ import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.test.assertContains
 
-
+@OsCondition(supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.LINUX]) // disabled for Windows because of tmp dir problem: KT-62761
 @DisplayName("This test class contains different scenarios with downloading Kotlin Native Compiler during build.")
 @NativeGradlePluginTests
 class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
