@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
@@ -464,6 +465,14 @@ open class LiveLiteralTransformer(
         if (declaration.isAnnotationClass) return declaration
         return siblings("class-${declaration.name.asJvmFriendlyString()}") {
             super.visitClass(declaration)
+        }
+    }
+
+    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement {
+        if (declaration.hasNoLiveLiteralsAnnotation()) return declaration
+
+        return enter("init") {
+            super.visitAnonymousInitializer(declaration)
         }
     }
 
