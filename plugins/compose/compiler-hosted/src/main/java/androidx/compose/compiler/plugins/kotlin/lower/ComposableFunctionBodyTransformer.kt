@@ -4081,14 +4081,18 @@ class ComposableFunctionBodyTransformer(
                 if (
                     isComposable &&
                     (
-                        // We are interested in any object which has @Composable function body and
+                        // We are interested in any object which has skippable function body and
                         // is being able to capture values from outside scope. Technically, that
                         // means we almost never skip in capture-less objects, but it is still more
                         // correct /not/ to skip when its dispatcher receiver changes. In most
                         // cases, we memoize these objects too (e.g fun interface) so the receiver
                         // should === with the previous instances most of time.
                         function.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
-                            function.parentClassOrNull?.isLocal == true
+                            function.dispatchReceiverParameter
+                                ?.type
+                                ?.classOrNull
+                                ?.owner
+                                ?.isLocal == true
                     )
                 ) {
                     // in the case of a composable lambda/anonymous object, we want to make sure
