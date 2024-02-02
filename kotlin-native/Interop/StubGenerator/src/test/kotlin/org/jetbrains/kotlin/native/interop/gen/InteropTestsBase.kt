@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.native.interop.gen
 import kotlinx.cinterop.JvmCInteropCallbacks
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.util.DefFile
-import org.jetbrains.kotlin.konan.util.NativeMemoryAllocator
+import org.jetbrains.kotlin.utils.NativeMemoryAllocator
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.gen.jvm.buildNativeLibrary
 import org.jetbrains.kotlin.native.interop.gen.jvm.prepareTool

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.cli.utilities
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.PlatformManager
-import org.jetbrains.kotlin.konan.util.KonanHomeProvider
+import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.native.interop.gen.jvm.InternalInteropOptions
 import org.jetbrains.kotlin.native.interop.gen.jvm.Interop
 import org.jetbrains.kotlin.native.interop.tool.*
@@ -43,8 +43,8 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
     val repos = arguments.repo
     val targetRequest = arguments.target
     val target = PlatformManager(
-            KonanHomeProvider.determineKonanHome(),
-            konanDataDir = arguments.konanDataDir).targetManager(targetRequest).target
+        KotlinNativePaths.homePath.absolutePath,
+        konanDataDir = arguments.konanDataDir).targetManager(targetRequest).target
 
     val cinteropArgsToCompiler = Interop().interop("native", args,
             InternalInteropOptions(generatedDir.absolutePath,

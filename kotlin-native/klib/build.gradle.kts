@@ -17,7 +17,6 @@ dependencies {
     implementation(project(":native:frontend.native"))
     implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:ir.serialization.native"))
-    implementation(project(":kotlin-native:utilities:basic-utils"))
     implementation(project(":kotlin-util-klib-abi"))
 }
 

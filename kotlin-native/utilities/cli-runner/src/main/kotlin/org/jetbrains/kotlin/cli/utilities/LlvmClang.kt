@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.cli.utilities
 
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.PlatformManager
-import org.jetbrains.kotlin.konan.util.KonanHomeProvider
+import org.jetbrains.kotlin.utils.KotlinNativePaths
 
 fun runLlvmTool(args: Array<String>) {
     val toolName = args[0]
@@ -40,7 +40,7 @@ fun runLlvmClangToolWithTarget(args: Array<String>) {
     runCommand(toolPath, *compilerArgs, *toolArguments.toTypedArray())
 }
 
-private fun platformManager() = PlatformManager(KonanHomeProvider.determineKonanHome())
+private fun platformManager() = PlatformManager(KotlinNativePaths.homePath.absolutePath)
 
 private fun runCommand(vararg args: String) {
     Command(*args)

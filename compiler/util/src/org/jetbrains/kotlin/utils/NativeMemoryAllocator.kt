@@ -1,15 +1,13 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.util
+package org.jetbrains.kotlin.utils
 
 import sun.misc.Unsafe
 
-class ThreadSafeDisposableHelper<T>(create: () -> T, private val dispose: (T) -> Unit) {
-    private val create_ = create
-
+class ThreadSafeDisposableHelper<T>(private val _create: () -> T, private val _dispose: (T) -> Unit) {
     var holder: T? = null
         private set
 
@@ -20,7 +18,7 @@ class ThreadSafeDisposableHelper<T>(create: () -> T, private val dispose: (T) ->
         synchronized(lock) {
             if (counter++ == 0) {
                 check(holder == null)
-                holder = create_()
+                holder = _create()
             }
         }
     }
@@ -28,7 +26,7 @@ class ThreadSafeDisposableHelper<T>(create: () -> T, private val dispose: (T) ->
     fun dispose() {
         synchronized(lock) {
             if (--counter == 0) {
-                dispose(holder!!)
+                _dispose(holder!!)
                 holder = null
             }
         }

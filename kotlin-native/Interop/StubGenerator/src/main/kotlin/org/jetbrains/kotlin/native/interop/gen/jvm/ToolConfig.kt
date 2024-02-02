@@ -17,13 +17,13 @@
 package  org.jetbrains.kotlin.native.interop.tool
 
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.util.KonanHomeProvider
+import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.konan.target.AbstractToolConfig
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.indexer.Language
 
 class ToolConfig(userProvidedTargetName: String?, flavor: KotlinPlatform, propertyOverrides: Map<String, String>, konanDataDir: String? = null)
-    : AbstractToolConfig(KonanHomeProvider.determineKonanHome(), userProvidedTargetName, propertyOverrides, konanDataDir) {
+    : AbstractToolConfig(KotlinNativePaths.homePath.absolutePath, userProvidedTargetName, propertyOverrides, konanDataDir) {
 
     val clang = when (flavor) {
         KotlinPlatform.JVM -> platform.clangForJni

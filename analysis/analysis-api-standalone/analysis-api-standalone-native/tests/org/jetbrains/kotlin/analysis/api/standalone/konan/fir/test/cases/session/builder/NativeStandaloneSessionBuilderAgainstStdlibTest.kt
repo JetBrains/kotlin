@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.konan.fir.test.cases.sessio
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder.AbstractStandaloneSessionBuilderAgainstStdlibTest
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.konanCommonLibraryPath
-import org.jetbrains.kotlin.konan.util.KonanHomeProvider
+import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -16,7 +16,7 @@ import java.io.File
 class NativeStandaloneSessionBuilderAgainstStdlibTest : AbstractStandaloneSessionBuilderAgainstStdlibTest() {
     @Test
     fun testKotlinStdlibJvm() {
-        val konanHome = File(KonanHomeProvider.determineKonanHome())
+        val konanHome = KotlinNativePaths.homePath
         doTestKotlinStdLibResolve(
             NativePlatforms.unspecifiedNativePlatform,
             konanHome.resolve(konanCommonLibraryPath(KONAN_STDLIB_NAME)).toPath()

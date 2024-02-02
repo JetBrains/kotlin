@@ -167,7 +167,6 @@ dependencies {
     distPack project(':native:objcexport-header-generator-k1')
     distPack project(':native:base')
     distPack project(':kotlin-native:utilities:cli-runner')
-    distPack project(':kotlin-native:utilities:basic-utils')
     distPack project(':kotlin-native:klib')
     distPack project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
     distPack project(path: ':kotlin-native:endorsedLibraries:kotlinx.cli', configuration: "jvmRuntimeElements")
