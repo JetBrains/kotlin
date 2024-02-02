@@ -134,11 +134,11 @@ internal class InternalHashMap<K, V> private constructor(
     }
 
     override fun remove(key: K): V? {
-        val index = removeKey(key)  // mutability gets checked here
+        checkIsMutable()
+        val index = findKey(key)
         if (index < 0) return null
-        val valuesArray = valuesArray!!
-        val oldValue = valuesArray[index]
-        valuesArray.resetAt(index)
+        val oldValue = valuesArray!![index]
+        removeEntryAt(index)
         return oldValue
     }
 
@@ -348,16 +348,9 @@ internal class InternalHashMap<K, V> private constructor(
         }
     }
 
-    private fun removeKey(key: K): Int {
-        checkIsMutable()
-        val index = findKey(key)
-        if (index < 0) return TOMBSTONE
-        removeKeyAt(index)
-        return index
-    }
-
-    private fun removeKeyAt(index: Int) {
+    private fun removeEntryAt(index: Int) {
         keysArray.resetAt(index)
+        valuesArray?.resetAt(index)
         removeHashAt(presenceArray[index])
         presenceArray[index] = TOMBSTONE
         _size--
@@ -459,7 +452,7 @@ internal class InternalHashMap<K, V> private constructor(
         val index = findKey(entry.key)
         if (index < 0) return false
         if (valuesArray!![index] != entry.value) return false
-        removeKeyAt(index)
+        removeEntryAt(index)
         return true
     }
 
@@ -467,7 +460,7 @@ internal class InternalHashMap<K, V> private constructor(
         checkIsMutable()
         val index = findValue(value)
         if (index < 0) return false
-        removeKeyAt(index)
+        removeEntryAt(index)
         return true
     }
 
@@ -508,7 +501,7 @@ internal class InternalHashMap<K, V> private constructor(
             checkForComodification()
             check(lastIndex != -1) { "Call next() before removing element from the iterator." }
             map.checkIsMutable()
-            map.removeKeyAt(lastIndex)
+            map.removeEntryAt(lastIndex)
             lastIndex = -1
             expectedModCount = map.modCount
         }
