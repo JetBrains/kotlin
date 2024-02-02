@@ -976,6 +976,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Test
+    @TestMetadata("missingDependencyTypealias.kt")
+    public void testMissingDependencyTypealias() {
+      runTest("compiler/testData/diagnostics/tests/missingDependencyTypealias.kt");
+    }
+
+    @Test
     @TestMetadata("missingIteratorMissing.kt")
     public void testMissingIteratorMissing() {
       runTest("compiler/testData/diagnostics/tests/missingIteratorMissing.kt");
