@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.EnhancedNullability
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -106,9 +107,10 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
     }
 
     private companion object {
-        // TODO (KT-64715): RawTypeAnnotation, FlexibleMutability, EnhancedNullability, RawType, FlexibleArrayElementVariance?
+        // TODO (KT-64715): RawTypeAnnotation, FlexibleMutability, RawType, FlexibleArrayElementVariance?
         val TYPE_ANNOTATIONS_TO_MERGE = listOf(
             FlexibleNullability.asSingleFqName(),
+            EnhancedNullability.asSingleFqName(),
         )
     }
 }
