@@ -73,6 +73,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.selfUpperBoundInference = from.selfUpperBoundInference
     to.skipMetadataVersionCheck = from.skipMetadataVersionCheck
     to.skipPrereleaseCheck = from.skipPrereleaseCheck
+    to.stdlibCompilation = from.stdlibCompilation
     to.suppressApiVersionGreaterThanLanguageVersionError = from.suppressApiVersionGreaterThanLanguageVersionError
     to.suppressVersionWarnings = from.suppressVersionWarnings
     to.unrestrictedBuilderInference = from.unrestrictedBuilderInference

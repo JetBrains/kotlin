@@ -68,6 +68,10 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         description = "Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info (AnalysisFlags.allowKotlinPackage)"
     )
 
+    val STDLIB_COMPILATION by directive(
+        description = "Enables corresponding analysis flag (AnalysisFlags.stdlibCompilation)"
+    )
+
     // It's inverted because otherwise we would have warnings in almost all KMP tests
     val ENABLE_EXPECT_ACTUAL_CLASSES_WARNING by stringDirective(
         description = "Disables -Xexpect-actual-classes key"
