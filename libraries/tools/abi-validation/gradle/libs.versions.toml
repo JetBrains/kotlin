@@ -39,3 +39,7 @@ gradlePlugin-pluginPublishing = { module = "com.gradle.publish:plugin-publish-pl
 gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "androidGradlePlugin" }
 ## endregion
+
+[plugins]
+
+kover = { id = "org.jetbrains.kotlinx.kover", version = "0.7.5" }

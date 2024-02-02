@@ -12,6 +12,8 @@ import org.intellij.lang.annotations.Language
 
 public val API_DIR: String = ApiValidationExtension().apiDumpDirectory
 
+private val koverEnabled: Boolean = System.getProperty("kover.enabled").toBoolean()
+
 internal fun BaseKotlinGradleTest.test(
     gradleVersion: String = "8.5",
     injectPluginClasspath: Boolean = true,
@@ -38,14 +40,19 @@ internal fun BaseKotlinGradleTest.test(
         .withPluginClasspath()
         .withArguments(baseKotlinScope.runner.arguments)
         .withGradleVersion(gradleVersion)
+
+    if (koverEnabled) {
+        // In debug mode, tests will be running inside the same JVM.
+        // That will allow collection coverage info by the Kover.
+        runner.withDebug(true)
+    }
+
     if (injectPluginClasspath) {
         // The hack dating back to https://docs.gradle.org/6.0/userguide/test_kit.html#sub:test-kit-classpath-injection
         // Currently, some tests won't work without it because some classes are missing on the classpath.
         runner.addPluginTestRuntimeClasspath()
     }
     return runner
-    // disabled because of: https://github.com/gradle/gradle/issues/6862
-    // .withDebug(baseKotlinScope.runner.debug)
 }
 
 /**
@@ -165,7 +172,13 @@ internal class AppendableScope(val filePath: String) {
 }
 
 internal class Runner {
-    val arguments: MutableList<String> = mutableListOf("--configuration-cache")
+    val arguments: MutableList<String> = mutableListOf<String>().apply {
+        if (!koverEnabled) {
+            // Configuration cache is incompatible with javaagents being enabled for Gradle
+            // See https://github.com/gradle/gradle/issues/25979
+            add("--configuration-cache")
+        }
+    }
 }
 
 internal fun readFileList(@Language("file-reference") fileName: String): String {

@@ -31,7 +31,7 @@ class MixedMarkersTest : BaseKotlinGradleTest() {
             }
         }
 
-        runner.withDebug(true).build().apply {
+        runner.build().apply {
             assertTaskSuccess(":apiCheck")
         }
     }
