@@ -51,7 +51,7 @@ abstract class KotlinWebpack
 constructor(
     @Internal
     @Transient
-    override val compilation: KotlinJsIrCompilation,
+    final override val compilation: KotlinJsIrCompilation,
     private val objects: ObjectFactory,
 ) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl, UsesBuildMetricsService {
     @Transient
@@ -76,7 +76,7 @@ constructor(
     val compilationId: String by lazy {
         compilation.let {
             val target = it.target
-            target.project.path + "@" + target.name + ":" + it.compilationPurpose
+            target.project.path + "@" + target.name + ":" + it.compilationName
         }
     }
 
@@ -122,7 +122,7 @@ constructor(
         }
 
     init {
-        onlyIf {
+        this.onlyIf {
             entry.get().asFile.exists()
         }
     }
