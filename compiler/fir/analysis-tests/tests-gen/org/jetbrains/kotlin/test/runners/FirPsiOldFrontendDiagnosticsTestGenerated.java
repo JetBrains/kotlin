@@ -20735,6 +20735,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("privateOperatorsInInlineAfter.kt")
+            public void testPrivateOperatorsInInlineAfter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/privateOperatorsInInlineAfter.kt");
+            }
+
+            @Test
+            @TestMetadata("privateOperatorsInInlineBefore.kt")
+            public void testPrivateOperatorsInInlineBefore() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/privateOperatorsInInlineBefore.kt");
+            }
+
+            @Test
             @TestMetadata("propagation.kt")
             public void testPropagation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/propagation.kt");

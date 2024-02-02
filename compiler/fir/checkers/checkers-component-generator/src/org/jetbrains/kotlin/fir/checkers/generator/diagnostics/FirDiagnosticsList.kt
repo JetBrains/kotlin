@@ -1651,6 +1651,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Symbol>("referencedDeclaration")
         }
 
+        val NON_PUBLIC_CALL_FROM_PUBLIC_INLINE_DEPRECATION by warning<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Symbol>("inlineDeclaration")
+            parameter<Symbol>("referencedDeclaration")
+        }
+
         val PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE by error<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Symbol>("inlineDeclaration")
             parameter<Symbol>("referencedDeclaration")

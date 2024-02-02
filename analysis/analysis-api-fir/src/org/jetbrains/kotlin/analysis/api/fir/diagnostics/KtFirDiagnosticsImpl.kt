@@ -3963,6 +3963,13 @@ internal class NonPublicCallFromPublicInlineImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NonPublicCallFromPublicInline
 
+internal class NonPublicCallFromPublicInlineDeprecationImpl(
+    override val inlineDeclaration: KtSymbol,
+    override val referencedDeclaration: KtSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NonPublicCallFromPublicInlineDeprecation
+
 internal class ProtectedConstructorCallFromPublicInlineImpl(
     override val inlineDeclaration: KtSymbol,
     override val referencedDeclaration: KtSymbol,
