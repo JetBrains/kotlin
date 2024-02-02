@@ -632,10 +632,19 @@ class FirSignatureEnhancement(
         defaultQualifiers: JavaTypeQualifiersByElementType?,
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?
     ): FirResolvedTypeRef {
-        val containerApplicabilityType = if (owner is FirJavaField)
+        val containerApplicabilityType = if (owner is FirJavaField) {
             AnnotationQualifierApplicabilityType.FIELD
-        else
+        } else {
             AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE
+        }
+        val forAnnotationMember = if (owner is FirJavaField) {
+            // Fields in annotation interfaces are constant declarations that can have any Java type.
+            // For example: public @interface MyApi { Integer field = -1; }
+            // Therefore, for such annotation interface fields, we use default Java type enhancement.
+            false
+        } else {
+            this.owner.classKind == ClassKind.ANNOTATION_CLASS
+        }
         return owner.enhance(
             overriddenMembers,
             owner,
@@ -644,7 +653,7 @@ class FirSignatureEnhancement(
             containerApplicabilityType,
             TypeInSignature.Return,
             predefinedEnhancementInfo?.returnTypeInfo,
-            forAnnotationMember = this.owner.classKind == ClassKind.ANNOTATION_CLASS
+            forAnnotationMember = forAnnotationMember
         )
     }
 
