@@ -332,8 +332,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
 
 private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
-    origin == IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER ||
-            origin == JvmLoweredDeclarationOrigin.SYNTHETIC_MARKER_PARAMETER
+    origin == IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER
 
 private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, config: JvmBackendConfig) {
     irFunction.extensionReceiverParameter?.let {

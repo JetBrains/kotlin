@@ -171,7 +171,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
             accessor.addValueParameter(
                 "constructor_marker".synthesizedString,
                 context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable(),
-                JvmLoweredDeclarationOrigin.SYNTHETIC_MARKER_PARAMETER
+                IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER,
             )
 
             accessor.body = context.irFactory.createExpressionBody(
