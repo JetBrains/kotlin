@@ -28,6 +28,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.concurrent.ConcurrentHashMap
 
+/**
+ * Generates visible synthetic accessor functions for symbols that are otherwise inaccessible, for example,
+ * when inlining a function that references a private method of a class outside of that class, or generating a class for a lambda
+ * expression that uses a `super` qualifier in its body.
+ */
 class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
     private data class FieldKey(val fieldSymbol: IrFieldSymbol, val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
 
@@ -42,18 +47,15 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
     private val setterMap = ConcurrentHashMap<FieldKey, IrSimpleFunctionSymbol>()
 
     fun getSyntheticFunctionAccessor(expression: IrFunctionAccessExpression, scopes: List<ScopeWithIr>): IrFunctionSymbol {
-        return createAccessor(expression, scopes)
+        return if (expression is IrCall)
+            createAccessor(expression.symbol, scopes, expression.dispatchReceiver?.type, expression.superQualifierSymbol)
+        else
+            createAccessor(expression.symbol, scopes, null, null)
     }
 
     fun getSyntheticFunctionAccessor(reference: IrFunctionReference, scopes: List<ScopeWithIr>): IrFunctionSymbol {
         return createAccessor(reference.symbol, scopes, reference.dispatchReceiver?.type, null)
     }
-
-    private fun createAccessor(expression: IrFunctionAccessExpression, scopes: List<ScopeWithIr>): IrFunctionSymbol =
-        if (expression is IrCall)
-            createAccessor(expression.symbol, scopes, expression.dispatchReceiver?.type, expression.superQualifierSymbol)
-        else
-            createAccessor(expression.symbol, scopes, null, null)
 
     private fun createAccessor(
         symbol: IrFunctionSymbol,
