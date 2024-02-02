@@ -29,7 +29,7 @@ open class NodeJsExec
 constructor(
     @Internal
     @Transient
-    override val compilation: KotlinJsIrCompilation,
+    final override val compilation: KotlinJsIrCompilation,
 ) : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependencies {
     @Transient
     @get:Internal
@@ -39,7 +39,7 @@ constructor(
     val npmProject = compilation.npmProject
 
     init {
-        onlyIf {
+        this.onlyIf {
             !inputFileProperty.isPresent || inputFileProperty.asFile.map {
                 it.exists()
             }.get()
@@ -117,7 +117,7 @@ constructor(
                     it.dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
                 }
                 it.dependsOn(nodeJsTaskProviders.nodeJsSetupTaskProvider)
-                it.dependsOn(compilation.compileKotlinTaskProvider)
+                it.dependsOn(compilation.compileTaskProvider)
                 if (compilation.platformType == KotlinPlatformType.wasm) {
                     it.nodeArgs.addWasmExperimentalArguments()
                 }
