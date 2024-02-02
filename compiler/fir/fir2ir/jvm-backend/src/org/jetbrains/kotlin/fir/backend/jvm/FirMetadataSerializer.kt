@@ -12,13 +12,15 @@ import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.packageFqName
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.TypeApproximatorForMetadataSerializer
@@ -80,9 +82,7 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
     val approximator = TypeApproximatorForMetadataSerializer(session)
 
     val stringTable = object : JvmStringTable(null), FirElementAwareStringTable {
-        override fun getLocalClassIdReplacement(firClass: FirClass): ClassId =
-            ((firClass as? FirRegularClass)?.containingClassForLocal()?.toFirRegularClass(session) ?: firClass)
-                .symbol.classId
+        override fun getLocalClassIdReplacement(firClass: FirClass) = ClassId.fromString("kurwa/Bobr", true)
     }
 
     val firSerializerExtension = FirJvmSerializerExtension(
