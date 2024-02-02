@@ -142,15 +142,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     /**
-     * Casts this expression to `type` without changing its representation in generated code.
-     */
-    @Suppress("UNUSED_PARAMETER")
-    private fun IrExpression.uncheckedCast(type: IrType): IrExpression {
-        // TODO: apply some cast if types are incompatible; not required currently.
-        return this
-    }
-
-    /**
      * Performs an actual type check operation.
      */
     private fun IrExpression.checkedCast(actualType: IrType, expectedType: IrType) =
@@ -158,31 +149,33 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 val expression = irImplicitCast(this@checkedCast, actualType)
                 if (expectedType.isNullable())
                     irAs(expression, expectedType)
-                else irAs(expression, expectedType.makeNullable()).uncheckedCast(expectedType)
+                else irAs(expression, expectedType.makeNullable())
             }
+
+    private fun IrClass.canBeAssignedTo(expectedClass: IrClass) =
+            this.isNothing() || this.symbol.isSubtypeOfClass(expectedClass.symbol)
 
     private fun IrExpression.adaptIfNecessary(actualType: IrType, expectedType: IrType, skipTypeCheck: Boolean = false): IrExpression {
         val conversion = context.getTypeConversion(actualType, expectedType)
         return if (conversion == null) {
-            val actualTypeIsGeneric = actualType.classifierOrFail is IrTypeParameterSymbol
-            return if (actualTypeIsGeneric && expectedType.isUnit())
-                irBuilders.peek()!!.at(this).irImplicitCoercionToUnit(this)
-            else {
-                val expectedClass = expectedType.classOrNull?.owner
-                val erasedExpectedClass = expectedType.erasedUpperBound
-                if (insertSafeCasts && !skipTypeCheck
-                        && actualTypeIsGeneric
-                        && expectedClass != null
-                        && !expectedClass.isNothing()
+            val actualClass = actualType.classOrNull?.owner
+            val erasedExpectedType = expectedType.erasure()
+            val erasedExpectedClass = erasedExpectedType.classOrFail.owner
+            return when {
+                actualType.makeNotNull() == expectedType.makeNotNull() -> this
+                expectedType.isUnit() ->
+                    irBuilders.peek()!!.at(this).irImplicitCoercionToUnit(this)
+                insertSafeCasts && !skipTypeCheck
+                        // For type parameters, actualClass is null, and we
+                        // conservatively insert type check for them (due to unsafe casts).
+                        && actualClass?.canBeAssignedTo(erasedExpectedType.getClass()!!) != true
                         && actualType.getInlinedClassNative() == null
                         && !erasedExpectedClass.isObjCForwardDeclaration()
                         && !erasedExpectedClass.isObjCMetaClass() // See KT-65260 for details.
-                ) {
-                    this.checkedCast(actualType, expectedType)
-                            .uncheckedCast(this.type) // Try not to bring new type incompatibilities.
-                } else {
-                    this
+                -> {
+                    this.checkedCast(actualType, erasedExpectedType)
                 }
+                else -> this
             }
         } else {
             when (this) {
@@ -197,11 +190,10 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             val parameter = conversion.owner.valueParameters.single()
             val argument = if (insertSafeCasts && !skipTypeCheck && expectedType.isInlinedNative())
                 this.checkedCast(actualType, conversion.owner.returnType)
-            else this.uncheckedCast(parameter.type)
+            else this
 
             irBuilders.peek()!!.at(this)
                     .irCall(conversion).apply { this.putValueArgument(parameter.index, argument) }
-                    .uncheckedCast(this.type) // Try not to bring new type incompatibilities.
         }
     }
 
