@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: WASM
+
 // This is same as kotlin/compiler/testData/codegen/boxInline/smap/smap.kt
 // FILE: test.kt
 
@@ -76,7 +76,7 @@ inline fun html(init: () -> Unit) {
 // EXPECTATIONS WASM
 // test.kt:1 $box__JsExportAdapter
 // test.kt:20 $box
-// test.kt:8 $box (15, 15, 15, 15, 4)
+// test.kt:8 $box (14, 14, 14, 14, 4, 18, 10)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8, 19, 26, 34, 8)
 // ThrowHelpers.kt:29 $kotlin.wasm.internal.rangeCheck (6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19)
@@ -90,12 +90,11 @@ inline fun html(init: () -> Unit) {
 // Array.kt:75 $kotlin.Array.set (8, 20, 27, 16, 8, 20, 27, 16)
 // Array.kt:76 $kotlin.Array.set (5, 5)
 // String.kt:149 $kotlin.stringLiteral (11, 4, 11, 4)
-// test.kt:10 $box (4, 4)
-// test.kt:25 $box (98, 23, 46, 39, 91)
-// test.kt:2 $box
+// test.kt:10 $box (4, 3, 4)
+// test.kt:25 $box (124, 49, 72, 65, 117)
+// test.kt:5 $box
 // test.kt:11 $box
-// test.kt:7 $box (20, 12, 27)
-// test.kt:12 $box (19, 19, 19, 19, 12)
+// test.kt:12 $box (18, 18, 18, 18, 12)
 // test.kt:16 $box (11, 4)
 // test.kt:22 $box (11, 4)
 // ExternalWrapper.kt:200 $kotlin.wasm.internal.kotlinToJsStringAdapter

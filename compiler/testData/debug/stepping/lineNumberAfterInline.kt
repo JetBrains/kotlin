@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: WASM
+
 // FILE: test.kt
 
 fun normalFunction() {
@@ -52,7 +52,7 @@ fun box() {
 // test.kt:1 $box
 // test.kt:23 $box
 // test.kt:13 $test1 (4, 4)
-// test.kt:9 $test1 (5, 5, 5, 5)
+// test.kt:9 $test1 (4, 4, 4, 4)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8)
 // ThrowHelpers.kt:29 $kotlin.wasm.internal.rangeCheck (6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19)
@@ -66,13 +66,13 @@ fun box() {
 // Array.kt:75 $kotlin.Array.set (8, 20, 27, 16)
 // Array.kt:76 $kotlin.Array.set
 // String.kt:149 $kotlin.stringLiteral (11, 4)
-// test.kt:14 $test1 (5, 5, 5, 5)
+// test.kt:14 $test1 (4, 4, 4, 4)
 // String.kt:143 $kotlin.stringLiteral (15, 8, 15, 8, 15, 8)
 // test.kt:15 $test1
 // test.kt:24 $box
 // test.kt:18 $test2
-// test.kt:5 $normalFunction (5, 5, 5, 5)
+// test.kt:5 $normalFunction (4, 4, 4, 4)
 // test.kt:6 $normalFunction
-// test.kt:19 $test2 (5, 5, 5, 5)
+// test.kt:19 $test2 (4, 4, 4, 4)
 // test.kt:20 $test2
 // test.kt:25 $box
