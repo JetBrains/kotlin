@@ -79,6 +79,10 @@ include ":benchmarks",
         ":kotlin-compiler-runner-unshaded",
         ":kotlin-compiler-runner",
         ":compiler:ir.tree",
+        ":compiler:bir",
+        ":compiler:bir.tree",
+        ":compiler:bir.tree:tree-generator",
+        ":compiler:bir.backend",
         ":compiler:ir.tree:tree-generator",
         ":compiler:ir.psi2ir",
         ":compiler:ir.objcinterop",
@@ -729,6 +733,10 @@ project(':kotlin-compiler-runner-unshaded').projectDir = "$rootDir/compiler/comp
 project(':kotlin-compiler-runner').projectDir = "$rootDir/compiler/compiler-runner" as File
 project(':kotlin-ant').projectDir = "$rootDir/ant" as File
 project(':compiler:ir.tree').projectDir = "$rootDir/compiler/ir/ir.tree" as File
+project(':compiler:bir').projectDir = "$rootDir/compiler/ir/bir" as File
+project(":compiler:bir.tree").projectDir = "$rootDir/compiler/ir/bir/tree" as File
+project(':compiler:bir.tree:tree-generator').projectDir = "$rootDir/compiler/ir/bir/tree/tree-generator" as File
+project(':compiler:bir.backend').projectDir = "$rootDir/compiler/ir/bir/backend" as File
 project(':compiler:ir.tree:tree-generator').projectDir = "$rootDir/compiler/ir/ir.tree/tree-generator" as File
 project(':compiler:ir.psi2ir').projectDir = "$rootDir/compiler/ir/ir.psi2ir" as File
 project(':compiler:ir.objcinterop').projectDir = "$rootDir/compiler/ir/ir.objcinterop" as File

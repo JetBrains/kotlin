@@ -216,7 +216,10 @@ data class PositionTypeParameterRef(
 open class NamedTypeParameterRef(
     val name: String,
     override val nullable: Boolean = false,
+    origin: NamedTypeParameterRef? = null,
 ) : TypeParameterRef {
+    val origin: NamedTypeParameterRef = origin ?: this
+
     override fun equals(other: Any?): Boolean {
         return other is NamedTypeParameterRef && other.name == name
     }
@@ -232,7 +235,7 @@ open class NamedTypeParameterRef(
         renderNullabilityTo(appendable)
     }
 
-    final override fun copy(nullable: Boolean) = NamedTypeParameterRef(name, nullable)
+    final override fun copy(nullable: Boolean) = NamedTypeParameterRef(name, nullable, origin)
 }
 
 interface TypeRefWithNullability : TypeRef {

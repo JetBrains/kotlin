@@ -156,7 +156,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             args.multiDollarInterpolation = originalArguments.multiDollarInterpolation
             args.skipPrereleaseCheck = originalArguments.skipPrereleaseCheck
             args.whenGuards = originalArguments.whenGuards
-
+            args.useBir = originalArguments.useBir
         } else {
             args.jvmTarget = JVM_TARGET
             args.allowKotlinPackage = true

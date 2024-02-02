@@ -122,7 +122,7 @@ class TreeGenerator(private val generationPath: File, private val treeGeneratorR
 
     inner class Context internal constructor() {
 
-        internal val generatedFiles = mutableListOf<GeneratedFile>()
+        val generatedFiles = mutableListOf<GeneratedFile>()
 
         /**
          * The entry point of the tree generator.
