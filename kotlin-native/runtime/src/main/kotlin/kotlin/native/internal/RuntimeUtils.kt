@@ -264,3 +264,7 @@ internal fun KonanObjectToUtf8Array(value: Any?): ByteArray {
     }
     return string.encodeToByteArray()
 }
+
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.IMMUTABLE_BLOB)
+internal external fun immutableBlobOfImpl(data: String): ImmutableBlob
