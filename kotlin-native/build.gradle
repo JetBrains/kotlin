@@ -788,6 +788,10 @@ publishing {
                     classifier = HostManager.platformName()
                     extension = (PlatformInfo.isWindows()) ? 'zip' : 'tar.gz'
                 }
+                mvn.artifact(sbomBundleRegular.map { it.outputDirectory.file("BundleRegular.spdx.json") }) {
+                    classifier = HostManager.platformName()
+                    extension = "spdx.json"
+                }
             }
 
             KotlinBuildPublishingPluginKt.configureKotlinPomAttributes(
@@ -824,6 +828,10 @@ publishing {
                 mvn.artifact(bundlePrebuilt) {
                     classifier = HostManager.platformName()
                     extension = (PlatformInfo.isWindows()) ? 'zip' : 'tar.gz'
+                }
+                mvn.artifact(sbomBundlePrebuilt.map { it.outputDirectory.file("BundlePrebuilt.spdx.json") }) {
+                    classifier = HostManager.platformName()
+                    extension = "spdx.json"
                 }
             }
             KotlinBuildPublishingPluginKt.configureKotlinPomAttributes(
