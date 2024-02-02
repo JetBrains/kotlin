@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.bir.lazy
 
 import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.ir.IrElement
+import java.util.*
 import kotlin.concurrent.Volatile
 
 class BirLazyChildElementList<E : BirElement?>(
@@ -136,6 +137,10 @@ class BirLazyChildElementList<E : BirElement?>(
     }
 
     override fun listIterator(index: Int): MutableListIterator<E> {
+        TODO("Not yet implemented")
+    }
+
+    override fun spliterator(): Spliterator<E> {
         TODO("Not yet implemented")
     }
 

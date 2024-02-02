@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.bir
 
+import java.util.*
+import kotlin.collections.AbstractList
+
 abstract class BirChildElementList<E : BirElement?>(
     id: Int,
     internal val isNullable: Boolean,
@@ -104,6 +107,7 @@ abstract class BirChildElementList<E : BirElement?>(
     abstract override fun iterator(): MutableIterator<E>
     abstract override fun listIterator(): MutableListIterator<E>
     abstract override fun listIterator(index: Int): MutableListIterator<E>
+    abstract override fun spliterator(): Spliterator<E>
     abstract override fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
 
     companion object {

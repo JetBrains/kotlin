@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.bir
 
+import java.util.*
+import kotlin.ConcurrentModificationException
+
 /**
  * A regular, mutable implementation of [BirChildElementList].
  * It generally mimics the [java.util.ArrayList] class, except
@@ -440,10 +443,13 @@ class BirImplChildElementList<E : BirElement?>(
         TODO("Not yet implemented")
     }
 
-    override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
+    override fun spliterator(): Spliterator<E> {
         TODO("Not yet implemented")
     }
 
+    override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
+        TODO("Not yet implemented")
+    }
 
     private class IteratorImpl<E : BirElement?>(
         private val list: BirImplChildElementList<E>,
