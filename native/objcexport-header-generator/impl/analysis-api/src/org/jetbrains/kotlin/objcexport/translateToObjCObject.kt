@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getAllMembers
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrProtocolName
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getSuperClassSymbolNotAny
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
@@ -32,9 +31,10 @@ fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
     val superClassGenerics: List<ObjCNonNullReferenceType> = emptyList()
     val objectMembers = getDefaultMembers()
 
-    getAllMembers().flatMap { it.translateToObjCExportStubs() }.forEach {
-        objectMembers.add(it)
-    }
+    getMemberScope().getCallableSymbols()
+        .sortedWith(StableCallableOrder)
+        .flatMap { it.translateToObjCExportStubs() }
+        .forEach { objectMembers.add(it) }
 
     return ObjCInterfaceImpl(
         name.objCName,

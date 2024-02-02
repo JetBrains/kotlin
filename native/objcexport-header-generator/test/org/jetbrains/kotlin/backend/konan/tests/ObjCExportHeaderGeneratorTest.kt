@@ -83,7 +83,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi // Early translate of forward declarations
     fun `test - classImplementingInterface`() {
         doTest(headersTestDataDir.resolve("classImplementingInterface"))
     }
@@ -178,7 +177,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi // Early translate of forward declarations
     fun `test - classWithUnresolvedSuperTypeGenerics`() {
         doTest(headersTestDataDir.resolve("classWithUnresolvedSuperTypeGenerics"))
     }

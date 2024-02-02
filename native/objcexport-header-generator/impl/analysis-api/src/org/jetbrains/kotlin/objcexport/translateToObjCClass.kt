@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrProtocolName
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getSuperClassSymbolNotAny
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
@@ -28,9 +27,10 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
     val origin: ObjCExportStubOrigin = getObjCExportStubOrigin()
     val superProtocols: List<String> = superProtocols()
 
-    val members: List<ObjCExportStub> = getAllMembers()
-        .sortedWith(StableSymbolOrder)
+    val members: List<ObjCExportStub> = getMemberScope().getCallableSymbols().plus(getMemberScope().getConstructors())
+        .sortedWith(StableCallableOrder)
         .flatMap { it.translateToObjCExportStubs() }
+        .toList()
 
     val categoryName: String? = null
     val generics: List<ObjCGenericTypeDeclaration> = emptyList()

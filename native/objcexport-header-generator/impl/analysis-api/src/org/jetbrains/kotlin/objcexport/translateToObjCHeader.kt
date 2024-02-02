@@ -5,16 +5,8 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind.*
-import org.jetbrains.kotlin.backend.konan.objcexport.*
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.errorForwardClass
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.errorInterface
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.hasErrorTypes
-import org.jetbrains.kotlin.psi.KtFile
 
-
+/*
 context(KtAnalysisSession, KtObjCExportSession)
 fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
     val declarations = files
@@ -108,3 +100,4 @@ internal fun KtSymbol.translateToObjCExportStubs(): List<ObjCExportStub> {
         else -> emptyList()
     }
 }
+*/

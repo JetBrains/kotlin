@@ -17,7 +17,7 @@ class KtObjCDependencies {
 
     context(KtAnalysisSession, KtObjCExportSession)
     fun collect(symbol: KtClassOrObjectSymbol) {
-
+        /*
         val fqName = symbol.classIdIfNonLocal?.asFqNameString()
 
         if (symbol.isDeclaredInModule) return
@@ -32,6 +32,8 @@ class KtObjCDependencies {
                 }
             }
         }
+        
+         */
     }
 }
 

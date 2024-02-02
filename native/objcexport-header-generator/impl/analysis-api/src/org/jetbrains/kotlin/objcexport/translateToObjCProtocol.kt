@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCComment
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocolImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.toNameAttributes
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDeclaredMembers
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDeclaredSuperInterfaceSymbols
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isCloneable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
@@ -26,9 +25,10 @@ fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
     // TODO: Check error type!
     val name = getObjCClassOrProtocolName()
 
-    val members = getDeclaredMembers()
-        .sortedWith(StableSymbolOrder)
+    val members = getMemberScope().getCallableSymbols()
+        .sortedWith(StableCallableOrder)
         .flatMap { it.translateToObjCExportStubs() }
+        .toList()
 
     val comment: ObjCComment? = annotationsList.translateToObjCComment()
 
