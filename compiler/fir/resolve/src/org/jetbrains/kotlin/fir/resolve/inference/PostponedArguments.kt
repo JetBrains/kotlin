@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch
@@ -61,6 +62,8 @@ fun Candidate.preprocessLambdaArgument(
             duringCompletion || sink == null
         ) ?: extractLambdaInfo(expectedType, anonymousFunction, csBuilder, context.session, this)
 
+    anonymousFunction.attachMissingAnnotationFromFunctionType(resolvedArgument.expectedFunctionTypeKind, expectedType)
+
     if (expectedType != null) {
         val parameters = resolvedArgument.parameters
         val functionTypeKind = context.session.functionTypeService.extractSingleSpecialKindForFunction(anonymousFunction.symbol)
@@ -92,6 +95,21 @@ fun Candidate.preprocessLambdaArgument(
     }
 
     return resolvedArgument
+}
+
+private fun FirAnonymousFunction.attachMissingAnnotationFromFunctionType(
+    expectedFunctionTypeKind: FunctionTypeKind?,
+    expectedType: ConeKotlinType?,
+) {
+    fun FirAnnotation.getClassId() = annotationTypeRef.coneType.classId
+
+    expectedFunctionTypeKind?.annotationOnInvokeClassId?.let { classId ->
+        if (annotations.any { it.getClassId() == classId }) return@let
+        val annotation =
+            expectedType?.attributes?.get(CustomAnnotationTypeAttribute::class)?.annotations?.single { it.getClassId() == classId }
+                ?: return@let
+        replaceAnnotations(annotations + annotation)
+    }
 }
 
 fun Candidate.preprocessCallableReference(

@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.analysis.api.components.KtCompilerFacility
 import org.jetbrains.kotlin.analysis.api.components.KtCompilerTarget
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.ExtensionRegistrarConfigurator
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.PluginAnnotationsProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.PluginRuntimeAnnotationsProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -30,15 +33,14 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -47,6 +49,14 @@ import java.io.File
 import kotlin.test.assertFalse
 
 abstract class AbstractMultiModuleCompilerFacilityTest : AbstractCompilerFacilityTest()
+
+abstract class AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest : AbstractCompilerFacilityTest() {
+    override fun extraConfigurators(): Array<Constructor<AbstractEnvironmentConfigurator>> =
+        arrayOf(::PluginAnnotationsProvider, ::ExtensionRegistrarConfigurator)
+
+    override fun extraCustomRuntimeClasspathProviders(): Array<Constructor<RuntimeClasspathProvider>> =
+        arrayOf(::PluginRuntimeAnnotationsProvider)
+}
 
 abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
     private companion object {
@@ -107,15 +117,20 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
+    open fun extraConfigurators(): Array<Constructor<AbstractEnvironmentConfigurator>> = emptyArray()
+
+    open fun extraCustomRuntimeClasspathProviders(): Array<Constructor<RuntimeClasspathProvider>> = emptyArray()
+
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
             useDirectives(Directives)
-            useConfigurators(::CompilerFacilityEnvironmentConfigurator)
+            useConfigurators(*(extraConfigurators() + ::CompilerFacilityEnvironmentConfigurator))
             defaultDirectives {
                 +ConfigurationDirectives.WITH_STDLIB
                 +JvmEnvironmentConfigurationDirectives.FULL_JDK
             }
+            useCustomRuntimeClasspathProviders(*extraCustomRuntimeClasspathProviders())
         }
     }
 

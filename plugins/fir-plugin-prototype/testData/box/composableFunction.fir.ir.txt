@@ -91,6 +91,8 @@ FILE fqName:<root> fileName:/composableFunction.kt
       CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            annotations:
+              MyComposable
             BLOCK_BODY
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR

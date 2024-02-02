@@ -14,7 +14,7 @@ FILE: inference.kt
             ^@id Unit
         }
         )
-        R|/composableId|<R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>|>(composableId@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/composableId|<R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>|>(@R|org/jetbrains/kotlin/fir/plugin/MyComposable|() composableId@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@composableId Unit
         }
         )

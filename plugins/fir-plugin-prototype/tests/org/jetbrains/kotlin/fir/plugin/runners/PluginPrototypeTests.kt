@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.plugin.runners
 
-import org.jetbrains.kotlin.fir.plugin.services.ExtensionRegistrarConfigurator
-import org.jetbrains.kotlin.fir.plugin.services.PluginAnnotationsProvider
-import org.jetbrains.kotlin.fir.plugin.services.PluginRuntimeAnnotationsProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.ExtensionRegistrarConfigurator
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.PluginAnnotationsProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.PluginRuntimeAnnotationsProvider
 import org.jetbrains.kotlin.js.test.fir.AbstractFirLoadK2CompiledJsKotlinTest
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
