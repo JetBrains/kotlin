@@ -317,11 +317,13 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
 ): FirExpression {
     return FirPropertyAccessExpressionBuilder().apply {
         val fakeSource = info.fakeSourceForImplicitInvokeCallReceiver
-        calleeReference = FirNamedReferenceWithCandidate(
-            fakeSource,
-            symbol.callableId.callableName,
-            candidate
-        )
+        calleeReference = when {
+            candidate.isSuccessful -> FirNamedReferenceWithCandidate(fakeSource, symbol.callableId.callableName, candidate)
+            else -> FirErrorReferenceWithCandidate(
+                fakeSource, symbol.callableId.callableName, candidate,
+                createConeDiagnosticForCandidateWithError(candidate.applicability, candidate),
+            )
+        }
         dispatchReceiver = candidate.dispatchReceiverExpression()
         coneTypeOrNull = returnTypeCalculator.tryCalculateReturnType(symbol.fir).type
 
