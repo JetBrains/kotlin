@@ -22,6 +22,7 @@ internal interface InternalMap<K, V> {
     fun containsOtherEntry(entry: Map.Entry<*, *>): Boolean
 
     fun remove(key: K): V?
+    fun removeKey(key: K): Boolean
     fun removeValue(value: V): Boolean
     fun removeEntry(entry: Map.Entry<K, V>): Boolean
 

@@ -348,6 +348,14 @@ internal class InternalHashMap<K, V> private constructor(
         }
     }
 
+    override fun removeKey(key: K): Boolean {
+        checkIsMutable()
+        val index = findKey(key)
+        if (index < 0) return false
+        removeEntryAt(index)
+        return true
+    }
+
     private fun removeEntryAt(index: Int) {
         keysArray.resetAt(index)
         valuesArray?.resetAt(index)
