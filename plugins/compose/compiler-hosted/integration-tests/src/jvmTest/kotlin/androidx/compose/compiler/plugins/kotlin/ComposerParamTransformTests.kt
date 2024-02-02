@@ -540,4 +540,36 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                 }
             """
         )
+
+    @Test
+    fun composableLocalFunctionInsideLocalClass() =
+        verifyGoldenComposeIrTransform(
+            extra = """
+                import androidx.compose.runtime.*
+
+                abstract class C {
+                    @Composable
+                    abstract fun Render()
+                }
+
+                @Composable fun Button(onClick: () -> Unit, content: @Composable () -> Unit) {}
+            """,
+            source = """
+                import androidx.compose.runtime.*
+
+                fun test() {
+                    object: C() {
+                        @Composable
+                        override fun Render() {
+                            @Composable
+                            fun B() {
+                                Button({}) {}
+                            }
+
+                            B()
+                        }
+                    }
+                }
+            """
+        )
 }
