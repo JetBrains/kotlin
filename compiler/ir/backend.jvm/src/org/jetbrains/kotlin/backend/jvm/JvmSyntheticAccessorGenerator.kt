@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.lower.inline.SyntheticAccessorGenerator
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.concurrent.ConcurrentHashMap
 
-class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : CachedSyntheticDeclarations<JvmBackendContext>(context) {
+class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAccessorGenerator<JvmBackendContext>(context) {
 
     override fun accessorModality(parent: IrDeclarationParent): Modality =
         if (parent is IrClass && parent.isJvmInterface) Modality.OPEN else Modality.FINAL

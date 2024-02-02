@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm
+package org.jetbrains.kotlin.backend.common.lower.inline
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap
  *    accessors on KLIB-based backends ([KT-64865](https://youtrack.jetbrains.com/issue/KT-64865)).
  *    Please consider this fact when you want to change its implementation.
  */
-open class CachedSyntheticDeclarations<Context : BackendContext>(protected val context: Context) {
+open class SyntheticAccessorGenerator<Context : BackendContext>(protected val context: Context) {
     private data class FieldKey(val fieldSymbol: IrFieldSymbol, val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
 
     private data class FunctionKey(
