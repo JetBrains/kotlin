@@ -181,10 +181,10 @@ class BirImplChildElementList<E : BirElement?>(
         val newElementsSize = elements.size
         val currentSize = _size
         val newSize = currentSize + newElementsSize
-        var elementArray = elementArray
-        if (elementArray is Array<*>) {
-            @Suppress("UNCHECKED_CAST")
-            elementArray as Array<BirElementBase?>
+
+        @Suppress("UNCHECKED_CAST")
+        var elementArray = elementArray as? Array<BirElementBase?>
+        if (elementArray != null) {
             if (elementArray.size <= newSize) {
                 val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
                 elementArray.copyInto(newArray, 0, 0, index)
@@ -195,26 +195,29 @@ class BirImplChildElementList<E : BirElement?>(
                 elementArray.copyInto(elementArray, index + newElementsSize, index, currentSize)
             }
         } else if (!(newElementsSize == 1 && index == 0)) {
-            val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
-            if (currentSize == 1) {
-                newArray[if (index == 0) newElementsSize else 0] = elementArray as BirElementBase
-            }
-            elementArray = newArray
+            elementArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
             this.elementArray = elementArray
         }
 
-        var i = index
+        var insertIdx = index
         for (element in elements) {
             checkNewElement(element as BirElementBase?)
-            parent.childReplaced(null, element)
 
             if (newElementsSize == 1 && index == 0) {
                 this.elementArray = element
             } else {
-                @Suppress("UNCHECKED_CAST")
-                elementArray as Array<BirElementBase?>
-                elementArray[i++] = element
+                elementArray!![insertIdx++] = element
             }
+        }
+
+        for (i in index..<newSize) {
+            val element = if (elementArray != null) {
+                elementArray[i]
+            } else {
+                this.elementArray as BirElementBase
+            }
+
+            parent.childReplaced(null, element)
             element?.setContainingList()
         }
 
@@ -300,6 +303,7 @@ class BirImplChildElementList<E : BirElement?>(
     }
 
     internal fun removeInternal(element: BirElementBase): Boolean {
+        modCount++
         @Suppress("UNCHECKED_CAST")
         val index = indexOfInternal(element as E, false)
         if (index != -1) {
@@ -310,7 +314,6 @@ class BirImplChildElementList<E : BirElement?>(
     }
 
     fun replace(old: E, new: E): Boolean {
-        modCount++
         if (new === old) {
             return true
         }
