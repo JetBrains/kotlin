@@ -152,6 +152,12 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             return buildErrorTopLevelDestructuringDeclaration(replacementDeclaration.toFirSourceElement())
         }
 
+        fun convertAnonymousInitializer(element: KtAnonymousInitializer, containingDeclaration: FirDeclaration?): FirAnonymousInitializer {
+            val replacementDeclaration = replacementApplier?.tryReplace(element) ?: element
+            requireIsInstance<KtAnonymousInitializer>(replacementDeclaration)
+            return buildAnonymousInitializer(replacementDeclaration, containingDeclaration?.symbol)
+        }
+
         override fun convertElement(element: KtElement, original: FirElement?): FirElement? =
             super.convertElement(replacementApplier?.tryReplace(element) ?: element, original)
 
@@ -347,6 +353,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                     val firFile = visitor.convertElement(declarationToBuild, originalDeclaration) as FirFile
                     firFile.codeFragment
                 }
+                is KtAnonymousInitializer -> visitor.convertAnonymousInitializer(declarationToBuild, containingDeclaration)
                 else -> visitor.convertElement(declarationToBuild, originalDeclaration)
             } as FirDeclaration
         }

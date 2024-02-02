@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 
@@ -352,37 +351,22 @@ internal object BodyStateKeepers {
         val oldDeclarations = script.declarations
         if (oldDeclarations.none { it.isElementWhichShouldBeResolvedAsPartOfScript }) return@stateKeeper
 
-        val lastProperty = oldDeclarations.lastOrNull()
-        if (lastProperty is FirProperty &&
-            lastProperty.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty &&
-            lastProperty.bodyResolveState != FirPropertyBodyResolveState.ALL_BODIES_RESOLVED
-        ) {
-            add(RESULT_PROPERTY, designation)
-            val recreatedDeclarations = FirLazyBodiesCalculator.createDeclarationsForScript(designation)
-            requireSameSize(oldDeclarations, recreatedDeclarations)
-            lastProperty.replaceInitializer((recreatedDeclarations.last() as FirProperty).initializer)
+        val resultProperty = script.findResultProperty()
+        if (resultProperty != null && resultProperty.bodyResolveState != FirPropertyBodyResolveState.ALL_BODIES_RESOLVED) {
+            entity(resultProperty, RESULT_PROPERTY, designation)
         }
 
         entityList(oldDeclarations.mapNotNull { it as? FirAnonymousInitializer }, ANONYMOUS_INITIALIZER, designation)
         add(FirScript::controlFlowGraphReference, FirScript::replaceControlFlowGraphReference)
     }
 
-    private val RESULT_PROPERTY: StateKeeper<FirScript, FirDesignation> = stateKeeper { script, _ ->
-        val resultedProperty = script.findResultProperty() ?: return@stateKeeper
-        add(
-            provider = { resultedProperty.bodyResolveState },
-            mutator = { _, value -> resultedProperty.replaceBodyResolveState(value) },
-        )
-
-        add(
-            provider = { resultedProperty.returnTypeRef },
-            mutator = { _, value -> resultedProperty.replaceReturnTypeRef(value) },
-        )
-
-        add(
-            provider = { resultedProperty.controlFlowGraphReference },
-            mutator = { _, value -> resultedProperty.replaceControlFlowGraphReference(value) },
-        )
+    private val RESULT_PROPERTY: StateKeeper<FirProperty, FirDesignation> = stateKeeper { property, scriptDesignation ->
+        add(FirProperty::bodyResolveState, FirProperty::replaceBodyResolveState)
+        add(FirProperty::returnTypeRef, FirProperty::replaceReturnTypeRef)
+        add(FirProperty::controlFlowGraphReference, FirProperty::replaceControlFlowGraphReference)
+        add(FirProperty::initializer, FirProperty::replaceInitializer) { _ ->
+            FirLazyBodiesCalculator.createResultPropertyInitializer(scriptDesignation, property)
+        }
     }
 
     val CODE_FRAGMENT: StateKeeper<FirCodeFragment, FirDesignation> = stateKeeper { _, _ ->
@@ -568,21 +552,6 @@ private fun delegatedConstructorCallGuard(fir: FirDelegatedConstructorCall): Fir
                     superTypeRef = originalCalleeReference.superTypeRef
                 }
             }
-        }
-    }
-}
-
-private fun requireSameSize(old: List<FirDeclaration>, new: List<FirDeclaration>) {
-    requireWithAttachment(
-        condition = old.size == new.size,
-        message = { "The number of declarations are different" }
-    ) {
-        withEntryGroup("originalStatements") {
-            old.forEachIndexed { index, statement -> withFirEntry("statement$index", statement) }
-        }
-
-        withEntryGroup("newStatements") {
-            new.forEachIndexed { index, statement -> withFirEntry("statement$index", statement) }
         }
     }
 }

@@ -11,6 +11,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
@@ -85,11 +86,31 @@ internal object FirLazyBodiesCalculator {
         return newAnnotationCall.argumentList
     }
 
-    fun createDeclarationsForScript(designation: FirDesignation): List<FirDeclaration> {
-        designation.target as FirScript
+    fun createResultPropertyInitializer(scriptDesignation: FirDesignation, property: FirProperty): FirExpression {
+        val script = scriptDesignation.target
+        requireWithAttachment(script is FirScript, { "${FirScript::class.simpleName} is not found" }) {
+            withFirDesignationEntry("designation", scriptDesignation)
+            withFirEntry("property", property)
+        }
 
-        val newScript = revive<FirScript>(designation)
-        return newScript.declarations
+        val propertyDesignation = FirDesignation(path = scriptDesignation.path + script, target = property)
+        val newInitializer = revive<FirAnonymousInitializer>(propertyDesignation)
+        val body = newInitializer.body
+        requireWithAttachment(body != null, { "${FirAnonymousInitializer::class.simpleName} without body" }) {
+            withFirDesignationEntry("designation", propertyDesignation)
+            withFirEntry("initializer", newInitializer)
+        }
+
+        val singleStatement = body.statements.singleOrNull()
+        requireWithAttachment(singleStatement is FirExpression, { "Unexpected body content" }) {
+            withFirDesignationEntry("designation", propertyDesignation)
+            withFirEntry("initializer", newInitializer)
+            singleStatement?.let {
+                withFirEntry("statement", it)
+            }
+        }
+
+        return singleStatement
     }
 
     fun needCalculatingAnnotationCall(firAnnotationCall: FirAnnotationCall): Boolean =
