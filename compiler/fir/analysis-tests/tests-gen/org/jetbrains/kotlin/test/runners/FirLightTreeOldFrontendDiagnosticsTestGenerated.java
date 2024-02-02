@@ -32727,6 +32727,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("equalitySmartcast.kt")
+            public void testEqualitySmartcast() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/equalitySmartcast.kt");
+            }
+
+            @Test
             @TestMetadata("equals.kt")
             public void testEquals() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/equals.kt");
