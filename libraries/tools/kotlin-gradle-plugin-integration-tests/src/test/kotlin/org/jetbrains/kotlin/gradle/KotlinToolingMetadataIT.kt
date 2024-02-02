@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
 import org.jetbrains.kotlin.tooling.parseJsonOrThrow
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import kotlin.io.path.appendText
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
@@ -31,9 +33,14 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("Check published metadata contains right data")
     fun checkPublishedMetadata(
-        gradleVersion: GradleVersion
+        gradleVersion: GradleVersion,
+        @TempDir localRepository: Path,
     ) {
-        project("new-mpp-published", gradleVersion) {
+        project(
+            projectName = "new-mpp-published",
+            gradleVersion = gradleVersion,
+            localRepoDir = localRepository
+        ) {
 
             build("publish") {
                 assertTasksExecuted(":$buildKotlinToolingMetadataTaskName")
@@ -53,8 +60,8 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
                 )
 
                 /* Check metadata file in published repository */
-                val publishedMetadataJson = projectPath.parent.resolve(
-                    "repo/com/example/bar/my-lib-bar/1.0/my-lib-bar-1.0-kotlin-tooling-metadata.json"
+                val publishedMetadataJson = localRepository.resolve(
+                    "com/example/bar/my-lib-bar/1.0/my-lib-bar-1.0-kotlin-tooling-metadata.json"
                 ).readText()
 
                 assertEquals(
@@ -88,8 +95,13 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
     @DisplayName("KotlinToolingMetadata should be not published when disabled")
     fun checkPublishingWithKotlinToolingMetadataArtifactDisabled(
         gradleVersion: GradleVersion,
+        @TempDir localRepository: Path,
     ) {
-        project("new-mpp-published", gradleVersion) {
+        project(
+            projectName = "new-mpp-published",
+            gradleVersion = gradleVersion,
+            localRepoDir = localRepository
+        ) {
             gradleProperties.appendText("\nkotlin.mpp.enableKotlinToolingMetadataArtifact=false")
             build("publish") {
                 assertFileNotExists(defaultKotlinToolingMetadataJsonPath)
@@ -101,9 +113,14 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("KotlinToolingMetadata tasks are avaialbe in Kotlin JS browser project")
     fun tasksAreAvailableInKotlinJsBrowser(
-        gradleVersion: GradleVersion
+        gradleVersion: GradleVersion,
+        @TempDir localRepository: Path
     ) {
-        project("kotlin-js-browser-project", gradleVersion) {
+        project(
+            projectName = "kotlin-js-browser-project",
+            gradleVersion = gradleVersion,
+            localRepoDir = localRepository
+        ) {
             build(buildKotlinToolingMetadataTaskName) {
                 assertTasksExecuted(":app:$buildKotlinToolingMetadataTaskName")
                 assertTasksExecuted(":base:$buildKotlinToolingMetadataTaskName")

@@ -9,9 +9,11 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsSource
+import java.nio.file.Path
 import java.util.stream.Stream
 import java.util.zip.ZipFile
 import kotlin.io.path.deleteIfExists
@@ -29,8 +31,13 @@ internal class HierarchicalStructureOptInMigrationArtifactContentMppIT : KGPBase
     fun testArtifactFormatAndContent(
         gradleVersion: GradleVersion,
         hmppMode: Mode,
+        @TempDir localRepository: Path,
     ) {
-        project("new-mpp-published", gradleVersion) {
+        project(
+            projectName = "new-mpp-published",
+            gradleVersion = gradleVersion,
+            localRepoDir = localRepository,
+        ) {
             gradleProperties.deleteIfExists()
 
             val hierarchicalStructureFlag = when (hmppMode) {
@@ -52,7 +59,7 @@ internal class HierarchicalStructureOptInMigrationArtifactContentMppIT : KGPBase
                 ).toTypedArray()
             ) {
                 val metadataJarEntries = ZipFile(
-                    projectPath.resolve("../repo/com/example/bar/my-lib-bar/1.0/my-lib-bar-1.0.jar").toFile()
+                    localRepository.resolve("com/example/bar/my-lib-bar/1.0/my-lib-bar-1.0.jar").toFile()
                 ).use { zip ->
                     zip.entries().asSequence().toList().map { it.name }
                 }

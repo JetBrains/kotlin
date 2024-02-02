@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.parseCompilerArgumentsFromBuildOutput
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import kotlin.io.path.appendText
 
 @DisplayName("'kotlin.experimental.tryNext' option")
@@ -162,10 +164,14 @@ class TryNextIT : KGPBaseTest() {
     @DisplayName("MPP: language version default is changed to next")
     @MppGradlePluginTests
     @GradleTest
-    fun languageVersionChangedMpp(gradleVersion: GradleVersion) {
+    fun languageVersionChangedMpp(
+        gradleVersion: GradleVersion,
+        @TempDir localRepository: Path,
+    ) {
         project(
             "new-mpp-published",
             gradleVersion,
+            localRepoDir = localRepository,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             enableTryNext()
@@ -349,5 +355,5 @@ class TryNextIT : KGPBaseTest() {
         """.trimMargin()
     )
 
-    private val nextKotlinLanguageVersion = KotlinVersion.values().first { it > KotlinVersion.DEFAULT }.version
+    private val nextKotlinLanguageVersion = KotlinVersion.entries.first { it > KotlinVersion.DEFAULT }.version
 }
