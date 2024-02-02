@@ -358,6 +358,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                         val statements = initializer.statements
                         val constructorCall = statements.last() as IrConstructorCall
                         statements[statements.lastIndex] = irInitInstanceCall(instance, constructorCall)
+                        initializer.type = context.irBuiltIns.unitType
                         +initializer
                     }
 
