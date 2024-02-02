@@ -1,11 +1,11 @@
 fun foo(ll: java.util.LinkedList<String>, al: ArrayList<String>, ad: ArrayDeque<String>, jad: java.util.ArrayDeque<String>) {
     ll.addFirst("")
     ll.addLast("")
-    ll.<!UNRESOLVED_REFERENCE!>getFirst<!>()
-    ll.<!INVISIBLE_REFERENCE!>first<!> // synthetic property for getFirst()
+    ll.getFirst()
+    ll.first // synthetic property for getFirst()
     ll.first() // stdlib extension on List
-    ll.<!UNRESOLVED_REFERENCE!>getLast<!>()
-    ll.<!INVISIBLE_REFERENCE!>last<!>
+    ll.getLast()
+    ll.last
     ll.last()
     ll.removeFirst()
     ll.removeLast()
@@ -13,11 +13,11 @@ fun foo(ll: java.util.LinkedList<String>, al: ArrayList<String>, ad: ArrayDeque<
 
     al.addFirst("")
     al.addLast("")
-    al.<!UNRESOLVED_REFERENCE!>getFirst<!>()
-    al.<!FUNCTION_CALL_EXPECTED!>first<!>
+    al.getFirst()
+    al.first
     al.first()
-    al.<!UNRESOLVED_REFERENCE!>getLast<!>()
-    al.<!FUNCTION_CALL_EXPECTED!>last<!>
+    al.getLast()
+    al.last
     al.last()
     al.removeFirst()
     al.removeLast()

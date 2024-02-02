@@ -34,11 +34,11 @@ fun foo(x: MutableList<String>, y: ArrayList<String>, z: A<String>) {
 
     y.addFirst("")
     y.addLast("")
-    y.<!UNRESOLVED_REFERENCE!>getFirst<!>()
-    y.<!FUNCTION_CALL_EXPECTED!>first<!>
+    y.getFirst()
+    y.first
     y.first()
-    y.<!UNRESOLVED_REFERENCE!>getLast<!>()
-    y.<!FUNCTION_CALL_EXPECTED!>last<!>
+    y.getLast()
+    y.last
     y.last()
     y.<!DEBUG_INFO_CALL("fqName: java.util.ArrayList.removeFirst; typeCall: function")!>removeFirst()<!>
     y.<!DEBUG_INFO_CALL("fqName: java.util.ArrayList.removeLast; typeCall: function")!>removeLast()<!>
@@ -46,11 +46,11 @@ fun foo(x: MutableList<String>, y: ArrayList<String>, z: A<String>) {
 
     z.addFirst("")
     z.addLast("")
-    z.<!UNRESOLVED_REFERENCE!>getFirst<!>()
-    z.<!FUNCTION_CALL_EXPECTED!>first<!>
+    z.getFirst()
+    z.first
     z.first()
-    z.<!UNRESOLVED_REFERENCE!>getLast<!>()
-    z.<!FUNCTION_CALL_EXPECTED!>last<!>
+    z.getLast()
+    z.last
     z.last()
     z.<!DEBUG_INFO_CALL("fqName: A.removeFirst; typeCall: function")!>removeFirst()<!>
     z.<!DEBUG_INFO_CALL("fqName: A.removeLast; typeCall: function")!>removeLast()<!>

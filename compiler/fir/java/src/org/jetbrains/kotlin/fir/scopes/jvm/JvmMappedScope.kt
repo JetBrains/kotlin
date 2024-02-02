@@ -134,7 +134,7 @@ class JvmMappedScope(
 
             if (jdkMemberStatus == JDKMemberStatus.DROP) return@processor
             // hidden methods in final class can't be overridden or called with 'super'
-            if (jdkMemberStatus == JDKMemberStatus.HIDDEN && firKotlinClass.isFinal) return@processor
+            if ((jdkMemberStatus == JDKMemberStatus.HIDDEN || jdkMemberStatus == JDKMemberStatus.HIDDEN_IN_DECLARING_CLASS_ONLY) && firKotlinClass.isFinal) return@processor
 
             val newSymbol = mappedSymbolCache.mappedFunctions.getValue(symbol, this to jdkMemberStatus)
             processor(newSymbol)
@@ -201,12 +201,13 @@ class JvmMappedScope(
             }
         }
 
-        // For unknown methods, we use HIDDEN policy by default
-        return JDKMemberStatus.HIDDEN
+        // For unknown methods, we use HIDDEN_IN_DECLARING_CLASS_ONLY policy by default,
+        // meaning they are hidden in the declaring class but visible with deprecation in overrides.
+        return JDKMemberStatus.HIDDEN_IN_DECLARING_CLASS_ONLY
     }
 
     internal enum class JDKMemberStatus {
-        HIDDEN, VISIBLE, DROP
+        HIDDEN, VISIBLE, DROP, HIDDEN_IN_DECLARING_CLASS_ONLY,
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
@@ -228,7 +229,9 @@ class JvmMappedScope(
             newSource = oldFunction.source,
         ).apply {
             if (jdkMemberStatus == JDKMemberStatus.HIDDEN) {
-                isHiddenEverywhereBesideSuperCalls = true
+                isHiddenEverywhereBesideSuperCalls = HiddenEverywhereBesideSuperCallsStatus.HIDDEN
+            } else if (jdkMemberStatus == JDKMemberStatus.HIDDEN_IN_DECLARING_CLASS_ONLY) {
+                isHiddenEverywhereBesideSuperCalls = HiddenEverywhereBesideSuperCallsStatus.HIDDEN_IN_DECLARING_CLASS_ONLY
             }
         }
         return newSymbol

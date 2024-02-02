@@ -146,7 +146,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
     private fun SmartPrinter.printInfo(declaration: FirCallableDeclaration, scope: FirTypeScope, counter: SymbolCounter) {
         val origin = declaration.origin.takeUnless { it == FirDeclarationOrigin.BuiltIns } ?: FirDeclarationOrigin.Library
         print("[$origin]: ")
-        if (declaration.isHiddenEverywhereBesideSuperCalls == true) {
+        if (declaration.isHiddenEverywhereBesideSuperCalls != null) {
             print("/* hidden beside supers */ ")
         } else if (declaration.isHiddenToOvercomeSignatureClash == true) {
             print("/* hidden due to clash */ ")

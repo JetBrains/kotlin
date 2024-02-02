@@ -768,13 +768,13 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
     ): Boolean {
         val isSuperCall = callInfo.callSite.isSuperCall(session)
         if (symbol.fir.dispatchReceiverType == null || symbol !is FirNamedFunctionSymbol) return false
-        if (symbol.isHidden(isSuperCall)) return true
+        if (symbol.isHidden(isSuperCall, isOverridden = false)) return true
 
         val scope = candidate.originScope as? FirTypeScope ?: return false
 
         var result = false
         scope.processOverriddenFunctions(symbol) {
-            if (it.isHidden(isSuperCall)) {
+            if (it.isHidden(isSuperCall, isOverridden = true)) {
                 result = true
                 ProcessorAction.STOP
             } else {
@@ -788,10 +788,6 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
     private fun FirElement.isSuperCall(session: FirSession): Boolean =
         this is FirQualifiedAccessExpression && explicitReceiver?.toReference(session) is FirSuperReference
 
-    private fun FirCallableSymbol<*>.isHidden(isSuperCall: Boolean): Boolean {
-        val fir = fir
-        return !isSuperCall && fir.isHiddenEverywhereBesideSuperCalls == true || fir.isHiddenToOvercomeSignatureClash == true
-    }
 }
 
 private val DYNAMIC_EXTENSION_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(DYNAMIC_EXTENSION_FQ_NAME)

@@ -264,8 +264,8 @@ class FirSyntheticPropertiesScope private constructor(
         var result = Incompatible
 
         val visited = mutableSetOf<MemberWithBaseScope<FirNamedFunctionSymbol>>()
-        fun checkJavaOrigin(symbol: FirNamedFunctionSymbol, scope: FirTypeScope) {
-            if (symbol.fir.isHiddenEverywhereBesideSuperCalls == true) {
+        fun checkJavaOrigin(symbol: FirNamedFunctionSymbol, scope: FirTypeScope, isOverridden: Boolean) {
+            if (symbol.isHidden(isSuperCall = false, isOverridden = isOverridden)) {
                 isHiddenEverywhereBesideSuperCalls = true
             }
 
@@ -286,11 +286,11 @@ class FirSyntheticPropertiesScope private constructor(
 
             overriddenWithScope.forEach {
                 if (!visited.add(it)) return@forEach
-                checkJavaOrigin(it.member, it.baseScope)
+                checkJavaOrigin(it.member, it.baseScope, isOverridden = true)
             }
         }
 
-        checkJavaOrigin(this, baseScope)
+        checkJavaOrigin(this, baseScope, isOverridden = false)
 
         return when {
             isHiddenEverywhereBesideSuperCalls -> Incompatible

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -327,12 +326,25 @@ fun FirBasedSymbol<*>.isDeprecationLevelHidden(languageVersionSettings: Language
 
 private object IsHiddenEverywhereBesideSuperCalls : FirDeclarationDataKey()
 
-var FirCallableDeclaration.isHiddenEverywhereBesideSuperCalls: Boolean? by FirDeclarationDataRegistry.data(
+var FirCallableDeclaration.isHiddenEverywhereBesideSuperCalls: HiddenEverywhereBesideSuperCallsStatus? by FirDeclarationDataRegistry.data(
     IsHiddenEverywhereBesideSuperCalls
 )
+
+enum class HiddenEverywhereBesideSuperCallsStatus(val affectsOverrides: Boolean) {
+    HIDDEN(true), HIDDEN_IN_DECLARING_CLASS_ONLY(false)
+}
 
 private object IsHiddenToOvercomeSignatureClash : FirDeclarationDataKey()
 
 var FirCallableDeclaration.isHiddenToOvercomeSignatureClash: Boolean? by FirDeclarationDataRegistry.data(
     IsHiddenToOvercomeSignatureClash
 )
+
+fun FirCallableSymbol<*>.isHidden(isSuperCall: Boolean, isOverridden: Boolean): Boolean {
+    val fir = fir
+    return when {
+        fir.isHiddenToOvercomeSignatureClash == true -> true
+        !isSuperCall && fir.isHiddenEverywhereBesideSuperCalls?.let { it.affectsOverrides || !isOverridden } == true -> true
+        else -> false
+    }
+}
