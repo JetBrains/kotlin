@@ -36,7 +36,7 @@ FILE: simple.kt
         R|/runComposable|(R|<local>/l1|)
         R|/runComposable|(R|<local>/l2|)
         R|/runComposable|(R|<local>/l3|)
-        R|/runComposable|(<L> = runComposable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/runComposable|(<L> = @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() runComposable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@runComposable Unit
         }
         )

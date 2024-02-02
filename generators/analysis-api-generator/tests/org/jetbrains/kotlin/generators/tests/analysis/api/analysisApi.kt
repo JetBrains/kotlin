@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callRes
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCandidatesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractMultiModuleCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByDelegatedMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByMemberScopeTest
@@ -111,6 +112,10 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
 
         test(AbstractMultiModuleCompilerFacilityTest::class, filter = testModuleKindIs(TestModuleKind.Source)) {
             model("compilationMultiModule", pattern = TestGeneratorUtil.KT)
+        }
+
+        test(AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest::class, filter = testModuleKindIs(TestModuleKind.Source)) {
+            model("firPluginPrototypeMultiModule", pattern = TestGeneratorUtil.KT)
         }
     }
 

@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.ExtensionRegistrarConfigurator
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.PluginAnnotationsProvider
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.fir.plugin.services.ExtensionRegistrarConfigurator
-import org.jetbrains.kotlin.fir.plugin.services.PluginAnnotationsProvider
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.Directive

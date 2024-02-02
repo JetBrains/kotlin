@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -811,11 +812,24 @@ class FirCallCompletionResultsWriterTransformer(
             val kind = expectedType?.functionTypeKind(session)
                 ?: result.typeRef.coneTypeSafe<ConeClassLikeType>()?.functionTypeKind(session)
             result.replaceTypeRef(result.constructFunctionTypeRef(session, kind))
+            result.attachMissingAnnotationFromFunctionType(kind, expectedType)
             session.lookupTracker?.recordTypeResolveAsLookup(result.typeRef, result.source, context.file.source)
         }
         // Have to delay this until the type is written to avoid adding a return if the type is Unit.
         result.addReturnToLastStatementIfNeeded(session)
         return result
+    }
+
+    private fun FirAnonymousFunction.attachMissingAnnotationFromFunctionType(kind: FunctionTypeKind?, expectedType: ConeKotlinType?) {
+        fun FirAnnotation.getClassId() = annotationTypeRef.coneType.classId
+
+        kind?.annotationOnInvokeClassId?.let { classId ->
+            if (annotations.any { it.getClassId() == classId }) return@let
+            val annotation =
+                expectedType?.attributes?.get(CustomAnnotationTypeAttribute::class)?.annotations?.single { it.getClassId() == classId }
+                    ?: return@let
+            replaceAnnotations(annotations + annotation)
+        }
     }
 
     private fun transformImplicitTypeRefInAnonymousFunction(
