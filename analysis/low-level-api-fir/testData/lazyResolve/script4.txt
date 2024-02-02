@@ -72,8 +72,8 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-            public [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
 COMPANION_GENERATION:
@@ -98,8 +98,8 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(COMPANION_GENERATION)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-            public [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
 SUPER_TYPES:
@@ -124,8 +124,8 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(SUPER_TYPES)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-            public [ResolvedTo(SUPER_TYPES)] get(): <implicit>
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
 TYPES:
@@ -150,8 +150,8 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(TYPES)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-            public [ResolvedTo(TYPES)] get(): <implicit>
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
 STATUS:
@@ -176,8 +176,8 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-            public [ResolvedTo(STATUS)] get(): <implicit>
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -202,8 +202,8 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
 CONTRACTS:
@@ -228,8 +228,8 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONTRACTS)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-            public [ResolvedTo(CONTRACTS)] get(): <implicit>
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -238,29 +238,24 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
     SCRIPT: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <script-script4.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] var version: R|kotlin/String| = String()
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Builder] get(): R|kotlin/String|
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Builder] set([ResolvedTo(CONTRACTS)] value: R|kotlin/String|): R|kotlin/Unit|
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun build([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
-            ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            this@R|special/anonymous|.R|/Builder.version| = String(321)
-        }
-        )
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = @R|kotlin/Suppress|[Types](names = vararg(String(abc))) @R|kotlin/Deprecated|[Types](message = String(it is deprecated)) R|/builder|.<Unresolved name: execute>#()
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
 ANNOTATION_ARGUMENTS:
@@ -269,29 +264,24 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
     SCRIPT: [ResolvedTo(ANNOTATION_ARGUMENTS)] <script-script4.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] var version: R|kotlin/String| = String()
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Builder] get(): R|kotlin/String|
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Builder] set([ResolvedTo(CONTRACTS)] value: R|kotlin/String|): R|kotlin/Unit|
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun build([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
-            ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            this@R|special/anonymous|.R|/Builder.version| = String(321)
-        }
-        )
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = @R|kotlin/Suppress|[Types](names = vararg(String(abc))) @R|kotlin/Deprecated|[Types](message = String(it is deprecated)) R|/builder|.<Unresolved name: execute>#()
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Unresolved name: execute>
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
 BODY_RESOLVE:

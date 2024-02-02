@@ -115,7 +115,6 @@ internal fun checkStatementsAreResolved(script: FirScript) {
     }
     for (declaration in script.declarations) {
         if (declaration.isScriptDependentDeclaration) {
-            (declaration as? FirProperty)?.initializer?.let(::checkExpression)
         } else if (declaration is FirAnonymousInitializer) {
             declaration.body?.statements?.filterIsInstance<FirExpression>()?.forEach(::checkExpression)
         }

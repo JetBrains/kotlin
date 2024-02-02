@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClassIdOrNull
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalForLazyResolutionPurposes
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
@@ -72,7 +73,7 @@ internal object PersistenceContextCollector {
     ): CheckerContextForProvider {
         val isLocal = when (declaration) {
             is FirClassLikeDeclaration -> declaration.symbol.classId.isLocal
-            is FirCallableDeclaration -> declaration.symbol.callableId.isLocal
+            is FirCallableDeclaration -> declaration.symbol.isLocalForLazyResolutionPurposes
             is FirDanglingModifierList -> declaration.containingClass()?.classId?.isLocal == true
             is FirAnonymousInitializer -> declaration.containingClassIdOrNull()?.isLocal == true
             is FirScript, is FirCodeFragment -> false

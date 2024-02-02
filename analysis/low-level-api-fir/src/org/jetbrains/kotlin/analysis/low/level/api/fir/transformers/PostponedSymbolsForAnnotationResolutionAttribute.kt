@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalForLazyResolutionPurposes
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -59,7 +59,7 @@ internal var FirCallableDeclaration.postponedSymbolsForAnnotationResolution: Col
  * @return true if this symbol shouldn't be processed as the owner of an annotation call
  */
 internal fun FirBasedSymbol<*>.cannotResolveAnnotationsOnDemand(): Boolean {
-    return this is FirCallableSymbol<*> && callableId.isLocal && fir.origin != FirDeclarationOrigin.ScriptCustomization.ResultProperty
+    return this is FirCallableSymbol<*> && isLocalForLazyResolutionPurposes
 }
 
 /**

@@ -48,7 +48,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <script-scriptStatementLevelAsLastStatement.kts>
+    SCRIPT: [ResolvedTo(TYPES)] <script-scriptStatementLevelAsLastStatement.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

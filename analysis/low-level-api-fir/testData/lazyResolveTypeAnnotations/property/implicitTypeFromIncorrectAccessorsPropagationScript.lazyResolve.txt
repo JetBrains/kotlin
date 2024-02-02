@@ -300,8 +300,8 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
-        public final [ResolvedTo(TYPES)] val $$result: <implicit> = value#
-            public [ResolvedTo(TYPES)] get(): <implicit>
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = value#
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -334,8 +334,8 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
-        public final [ResolvedTo(TYPES)] val $$result: <implicit> = value#
-            public [ResolvedTo(TYPES)] get(): <implicit>
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = value#
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
 ANNOTATION_ARGUMENTS:
@@ -368,8 +368,8 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
-        public final [ResolvedTo(TYPES)] val $$result: <implicit> = value#
-            public [ResolvedTo(TYPES)] get(): <implicit>
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = value#
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
 BODY_RESOLVE:
@@ -402,8 +402,8 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
-        public final [ResolvedTo(TYPES)] val $$result: <implicit> = value#
-            public [ResolvedTo(TYPES)] get(): <implicit>
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = value#
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
 FILE RAW TO BODY:

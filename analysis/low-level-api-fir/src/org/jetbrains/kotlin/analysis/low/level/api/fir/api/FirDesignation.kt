@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.nullableJavaSym
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalForLazyResolutionPurposes
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.unwrapCopy
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
@@ -130,11 +131,12 @@ private fun collectDesignationPath(target: FirElementWithResolveState): List<Fir
         is FirErrorProperty,
         -> {
             requireIsInstance<FirCallableDeclaration>(target)
+
             // We shouldn't try to build a designation path for such fake declarations as they
             // do not depend on outer classes during resolution
             if (target.isCopyCreatedInScope) return emptyList()
 
-            if (target.symbol.callableId.isLocal || target.status.visibility == Visibilities.Local) {
+            if (target.symbol.isLocalForLazyResolutionPurposes) {
                 return null
             }
 

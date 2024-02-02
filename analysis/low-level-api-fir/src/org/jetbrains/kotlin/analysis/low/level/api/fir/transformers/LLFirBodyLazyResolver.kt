@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.codeFragmentScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
@@ -52,7 +51,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
-import org.jetbrains.kotlin.utils.findIsInstanceAnd
 
 internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_RESOLVE) {
     override fun resolve(
@@ -351,22 +349,8 @@ internal object BodyStateKeepers {
         val oldDeclarations = script.declarations
         if (oldDeclarations.none { it.isElementWhichShouldBeResolvedAsPartOfScript }) return@stateKeeper
 
-        val resultProperty = script.findResultProperty()
-        if (resultProperty != null && resultProperty.bodyResolveState != FirPropertyBodyResolveState.ALL_BODIES_RESOLVED) {
-            entity(resultProperty, RESULT_PROPERTY, designation)
-        }
-
         entityList(oldDeclarations.mapNotNull { it as? FirAnonymousInitializer }, ANONYMOUS_INITIALIZER, designation)
         add(FirScript::controlFlowGraphReference, FirScript::replaceControlFlowGraphReference)
-    }
-
-    private val RESULT_PROPERTY: StateKeeper<FirProperty, FirDesignation> = stateKeeper { property, scriptDesignation ->
-        add(FirProperty::bodyResolveState, FirProperty::replaceBodyResolveState)
-        add(FirProperty::returnTypeRef, FirProperty::replaceReturnTypeRef)
-        add(FirProperty::controlFlowGraphReference, FirProperty::replaceControlFlowGraphReference)
-        add(FirProperty::initializer, FirProperty::replaceInitializer) { _ ->
-            FirLazyBodiesCalculator.createResultPropertyInitializer(scriptDesignation, property)
-        }
     }
 
     val CODE_FRAGMENT: StateKeeper<FirCodeFragment, FirDesignation> = stateKeeper { _, _ ->
@@ -481,10 +465,6 @@ private fun StateKeeperScope<FirFunction, FirDesignation>.preserveContractBlock(
             }
         }
     }
-}
-
-private fun FirScript.findResultProperty(): FirProperty? = declarations.findIsInstanceAnd<FirProperty> {
-    it.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty
 }
 
 private val FirFunction.isCertainlyResolved: Boolean

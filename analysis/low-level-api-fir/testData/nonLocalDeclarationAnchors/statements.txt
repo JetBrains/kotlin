@@ -23,5 +23,5 @@ build {
     version = "321"
 }/* <-- */
 
-builder.execute()
+/* anchor --> */builder.execute()/* <-- */
 /* <-- */

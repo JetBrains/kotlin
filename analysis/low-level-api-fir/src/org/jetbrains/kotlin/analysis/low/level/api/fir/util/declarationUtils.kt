@@ -16,17 +16,18 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLoc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
+import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
     firFileBuilder: LLFirFileBuilder,
@@ -122,7 +123,7 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
         is KtProperty,
         is KtNamedFunction,
         is KtConstructor<*>,
-        is KtClassInitializer,
+        is KtAnonymousInitializer,
         is KtTypeAlias,
         is KtDestructuringDeclaration,
         is KtScript,
@@ -231,7 +232,18 @@ internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -
 internal val FirDeclaration.isElementWhichShouldBeResolvedAsPartOfScript: Boolean get() = this is FirAnonymousInitializer || isScriptDependentDeclaration
 
 internal val FirDeclaration.isScriptDependentDeclaration: Boolean
-    get() = origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty
+    get() = false
+
+/**
+ * Some "local" declarations are not local from the lazy resolution perspective.
+ */
+internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
+    get() = when {
+        // We should treat result$$ property as non-local explicitly as its CallableId is local
+        // TODO: can be dropped after KT-65523
+        fir.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> false
+        else -> callableId.isLocal || fir.status.visibility == Visibilities.Local
+    }
 
 internal inline fun FirScript.forEachDependentDeclaration(action: (FirDeclaration) -> Unit) {
     for (declaration in declarations) {

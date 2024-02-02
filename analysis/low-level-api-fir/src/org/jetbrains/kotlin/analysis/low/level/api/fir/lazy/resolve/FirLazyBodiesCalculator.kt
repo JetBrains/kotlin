@@ -86,33 +86,6 @@ internal object FirLazyBodiesCalculator {
         return newAnnotationCall.argumentList
     }
 
-    fun createResultPropertyInitializer(scriptDesignation: FirDesignation, property: FirProperty): FirExpression {
-        val script = scriptDesignation.target
-        requireWithAttachment(script is FirScript, { "${FirScript::class.simpleName} is not found" }) {
-            withFirDesignationEntry("designation", scriptDesignation)
-            withFirEntry("property", property)
-        }
-
-        val propertyDesignation = FirDesignation(path = scriptDesignation.path + script, target = property)
-        val newInitializer = revive<FirAnonymousInitializer>(propertyDesignation)
-        val body = newInitializer.body
-        requireWithAttachment(body != null, { "${FirAnonymousInitializer::class.simpleName} without body" }) {
-            withFirDesignationEntry("designation", propertyDesignation)
-            withFirEntry("initializer", newInitializer)
-        }
-
-        val singleStatement = body.statements.singleOrNull()
-        requireWithAttachment(singleStatement is FirExpression, { "Unexpected body content" }) {
-            withFirDesignationEntry("designation", propertyDesignation)
-            withFirEntry("initializer", newInitializer)
-            singleStatement?.let {
-                withFirEntry("statement", it)
-            }
-        }
-
-        return singleStatement
-    }
-
     fun needCalculatingAnnotationCall(firAnnotationCall: FirAnnotationCall): Boolean =
         firAnnotationCall.argumentList.arguments.any { it is FirLazyExpression }
 }
@@ -220,6 +193,10 @@ private fun calculateLazyBodyForConstructor(designation: FirDesignation) {
 private fun calculateLazyBodyForProperty(designation: FirDesignation) {
     val firProperty = designation.target as FirProperty
     if (!needCalculatingLazyBodyForProperty(firProperty)) return
+    if (firProperty.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
+        calculateLazyBodyForResultProperty(firProperty, designation)
+        return
+    }
 
     val recreatedProperty = revive<FirProperty>(designation, firProperty.unwrapFakeOverridesOrDelegated().psi)
 
@@ -245,6 +222,26 @@ private fun calculateLazyBodyForProperty(designation: FirDesignation) {
         val newBackingField = recreatedProperty.getExplicitBackingField()!!
         replaceLazyInitializer(backingField, newBackingField)
     }
+}
+
+private fun calculateLazyBodyForResultProperty(firProperty: FirProperty, designation: FirDesignation) {
+    val newInitializer = revive<FirAnonymousInitializer>(designation)
+    val body = newInitializer.body
+    requireWithAttachment(body != null, { "${FirAnonymousInitializer::class.simpleName} without body" }) {
+        withFirDesignationEntry("designation", designation)
+        withFirEntry("initializer", newInitializer)
+    }
+
+    val singleStatement = body.statements.singleOrNull()
+    requireWithAttachment(singleStatement is FirExpression, { "Unexpected body content" }) {
+        withFirDesignationEntry("designation", designation)
+        withFirEntry("initializer", newInitializer)
+        singleStatement?.let {
+            withFirEntry("statement", it)
+        }
+    }
+
+    firProperty.replaceInitializer(singleStatement)
 }
 
 /**

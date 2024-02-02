@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
@@ -273,7 +272,7 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
 
 internal fun getNonLocalContainingDeclaration(
     elementsToCheck: Sequence<PsiElement>,
-    predicate: (KtDeclaration) -> Boolean = { true }
+    predicate: (KtDeclaration) -> Boolean = { true },
 ): KtDeclaration? {
     var candidate: KtDeclaration? = null
 
@@ -303,10 +302,15 @@ internal fun getNonLocalContainingDeclaration(
             when (parent) {
                 is KtScript -> propose(parent)
                 is KtDestructuringDeclaration -> propose(parent)
-                is KtAnonymousInitializer -> {
+                is KtScriptInitializer -> {
+                    val blockExpression = parent.parent as? KtBlockExpression
+                    if (blockExpression?.statements?.lastOrNull() == parent && predicate(parent)) {
+                        propose(parent)
+                    }
+                }
+                is KtClassInitializer -> {
                     val container = parent.containingDeclaration
-                    if (container is KtClassOrObject &&
-                        !container.isObjectLiteral() &&
+                    if (!container.isObjectLiteral() &&
                         declarationCanBeLazilyResolved(container) &&
                         predicate(parent)
                     ) {
