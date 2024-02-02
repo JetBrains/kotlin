@@ -314,21 +314,15 @@ class BirCompilation() {
         ): BirCompilationBundle {
             val compiledBir = input.backendContext!!.compiledBir
             val externalBir = input.backendContext.externalModulesBir
+            compiledBir.activateNewRegisteredIndices()
+            externalBir.activateNewRegisteredIndices()
 
-            invokePhaseMeasuringTime("BIR", "applyNewRegisteredIndices") {
-                compiledBir.activateNewRegisteredIndices()
-                externalBir.activateNewRegisteredIndices()
+            invokePhaseMeasuringTime("BIR", "baseline tree traversal") {
+                input.birModule!!.countAllElementsInTree()
             }
-            repeat(1) {
-                invokePhaseMeasuringTime("BIR", "baseline tree traversal") {
-                    input.birModule!!.countAllElementsInTree()
-                }
 
-                invokePhaseMeasuringTime("BIR", "index compiled BIR") {
-                    compiledBir.reindexAllElements()
-                }
-                invokePhaseMeasuringTime("BIR", "index external BIR") {}
-                //Thread.sleep(100)
+            invokePhaseMeasuringTime("BIR", "index compiled BIR") {
+                compiledBir.reindexAllElements()
             }
 
             dumpBirPhase(context, phaseConfig, input, null, "Initial")
