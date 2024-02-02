@@ -27,6 +27,10 @@ class InlineResult private constructor() {
     val reifiedTypeParametersUsages = ReifiedTypeParametersUsages()
 
     fun merge(child: InlineResult) {
+        // KT-65503 merge changedTypes into result so that
+        // the outer anonymous object inliner can inline inner anonymous object correctly
+        changedTypes.putAll(child.changedTypes)
+
         classesToRemove.addAll(child.calcClassesToRemove())
     }
 
