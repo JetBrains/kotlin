@@ -5,4 +5,7 @@
 
 package org.jetbrains.kotlin.kotlinp
 
-class KotlinpException(message: String) : RuntimeException(message)
+data class Settings(
+    val isVerbose: Boolean,
+    val sortDeclarations: Boolean
+)

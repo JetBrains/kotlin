@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.test.KaptMessageCollectorProvider
 import org.jetbrains.kotlin.kapt3.test.kaptOptionsProvider
-import org.jetbrains.kotlin.kotlinp.Kotlinp
-import org.jetbrains.kotlin.kotlinp.KotlinpSettings
+import org.jetbrains.kotlin.kotlinp.Settings
+import org.jetbrains.kotlin.kotlinp.JvmKotlinp
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.Printer
@@ -125,7 +125,7 @@ internal data class Kapt4ContextBinaryArtifact(
 }
 
 private fun Printer.renderMetadata(metadata: Metadata) {
-    val text = Kotlinp(KotlinpSettings(isVerbose = true, sortDeclarations = true)).renderClassFile(KotlinClassMetadata.readLenient(metadata))
+    val text = JvmKotlinp(Settings(isVerbose = true, sortDeclarations = true)).printClassFile(KotlinClassMetadata.readLenient(metadata))
     // "/*" and "*/" delimiters are used in kotlinp, for example to render type parameter names. Replace them with something else
     // to avoid them being interpreted as Java comments.
     val sanitized = text.split('\n')

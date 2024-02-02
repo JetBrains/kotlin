@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.abicmp.tasks
 
-import kotlinx.metadata.ExperimentalContextReceivers
-import kotlinx.metadata.hasConstant
-import kotlinx.metadata.isVar
+import kotlinx.metadata.*
 import kotlinx.metadata.jvm.*
-import kotlinx.metadata.visibility
 import org.jetbrains.kotlin.abicmp.*
 import org.jetbrains.kotlin.abicmp.checkers.*
 import org.jetbrains.kotlin.kotlinp.*
@@ -65,7 +62,7 @@ private val allFunctionMetadataCheckers = listOf(
     functionMetadataPropertyChecker("modifiers") { printFunctionModifiers(it) },
     functionMetadataPropertyChecker("typeParameters") { it.typeParameters.stringifyTypeParameters() },
     functionMetadataPropertyChecker("receiverParameterType") {
-        it.receiverParameterType?.let { type -> printType(type) } ?: PROPERTY_VAL_STUB
+        it.receiverParameterType?.let(::printType) ?: PROPERTY_VAL_STUB
     },
     functionMetadataPropertyChecker("valueParameters") { it.valueParameters.stringifyValueParameters() },
     functionMetadataPropertyChecker("contract") {
@@ -90,13 +87,13 @@ private val allPropertyMetadataCheckers = listOf(
     propertyMetadataPropertyChecker("isVar") { it.isVar.toString() },
     propertyMetadataPropertyChecker("typeParameters") { it.typeParameters.stringifyTypeParameters() },
     propertyMetadataPropertyChecker("receiverParameterType") {
-        it.receiverParameterType?.let { type -> printType(type) } ?: PROPERTY_VAL_STUB
+        it.receiverParameterType?.let(::printType) ?: PROPERTY_VAL_STUB
     },
     propertyMetadataPropertyChecker("returnType") { printType(it.returnType) },
     propertyMetadataPropertyChecker("hasConstant") { it.hasConstant.toString() },
     propertyMetadataPropertyChecker("getterModifiers") { printPropertyAccessorModifiers(it.getter) },
     propertyMetadataPropertyChecker("setterModifiers") {
-        it.setter?.let { setter -> printPropertyAccessorModifiers(setter) } ?: PROPERTY_VAL_STUB
+        it.setter?.let(::printPropertyAccessorModifiers) ?: PROPERTY_VAL_STUB
     },
     propertyMetadataPropertyChecker("setterValueParameter") {
         it.setterParameter?.let { param -> printValueParameter(param) } ?: PROPERTY_VAL_STUB
@@ -134,12 +131,12 @@ private val allClassMetadataCheckers = listOf(
 
     classMetadataPropertyChecker("typeParameters") { it.kmClass.typeParameters.stringifyTypeParameters() },
     classMetadataPropertyChecker("superTypes") {
-        it.kmClass.supertypes.map { type -> printType(type) }.sorted().joinToString(prefix = "[", postfix = "]")
+        it.kmClass.supertypes.map(::printType).sorted().joinToString(prefix = "[", postfix = "]")
     },
     classMetadataPropertyChecker("companionObject") { it.kmClass.companionObject.toString() },
     classMetadataPropertyChecker("inlineClassUnderlyingPropertyName") { it.kmClass.inlineClassUnderlyingPropertyName.toString() },
     classMetadataPropertyChecker("inlineClassUnderlyingType") {
-        it.kmClass.inlineClassUnderlyingType?.let { type -> printType(type) } ?: "---"
+        it.kmClass.inlineClassUnderlyingType?.let(::printType) ?: "---"
     },
     classMetadataPropertyChecker("contextReceiverTypes") {
         @OptIn(ExperimentalContextReceivers::class)
@@ -166,15 +163,7 @@ private val allMultifileClassPartMetadataCheckers = listOf(
 private val allSyntheticClassMetadataCheckers = listOf(
     syntheticClassMetadataPropertyChecker("isLambda") { it.isLambda.toString() },
     syntheticClassMetadataPropertyChecker("function") {
-        it.kmLambda?.function?.let { function ->
-            printFunction(
-                function,
-                KotlinpSettings(
-                    isVerbose = true,
-                    sortDeclarations = true
-                )
-            )
-        } ?: PROPERTY_VAL_STUB
+        it.kmLambda?.function?.let(::printFunction) ?: PROPERTY_VAL_STUB
     }
 )
 
@@ -222,3 +211,38 @@ class CheckerConfiguration(private val enabledExclusively: Set<String>, private 
         return name !in disabled
     }
 }
+
+private val kotlinp = JvmKotlinp(Settings(isVerbose = true, sortDeclarations = true))
+
+private fun renderAnnotation(annotation: KmAnnotation) = printString { kotlinp.renderAnnotation(annotation, this) }
+private fun List<KmAnnotation>.stringifyAnnotations() = joinToString(prefix = "[", postfix = "]", transform = ::renderAnnotation)
+
+private fun printFunction(function: KmFunction) = printString { kotlinp.renderFunction(function, this) }
+
+private fun printConstructorModifiers(constructor: KmConstructor) = printString { kotlinp.renderConstructorModifiers(constructor, this) }
+private fun printFunctionModifiers(function: KmFunction) = printString { kotlinp.renderFunctionModifiers(function, this) }
+private fun printPropertyModifiers(property: KmProperty) = printString { kotlinp.renderPropertyModifiers(property, this) }
+private fun printPropertyAccessorModifiers(accessorAttributes: KmPropertyAccessorAttributes) =
+    printString { kotlinp.renderPropertyAccessorModifiers(accessorAttributes, this) }
+
+private fun printType(type: KmType) = printString { kotlinp.renderType(type, this) }
+private fun List<KmType>.stringifyTypeListSorted() = map(::printType).sorted().joinToString(prefix = "[", postfix = "]")
+
+private fun printTypeParameter(typeParameter: KmTypeParameter) =
+    printString { kotlinp.renderTypeParameter(typeParameter, this) }
+
+private fun List<KmTypeParameter>.stringifyTypeParameters() = joinToString(prefix = "<", postfix = ">", transform = ::printTypeParameter)
+
+private fun printValueParameter(valueParameter: KmValueParameter) = printString { kotlinp.renderValueParameter(valueParameter, this) }
+private fun List<KmValueParameter>.stringifyValueParameters() = joinToString(prefix = "(", postfix = ")", transform = ::printValueParameter)
+
+@OptIn(ExperimentalContracts::class)
+private fun printContract(contract: KmContract) = printString { kotlinp.renderContract(contract, this) }
+
+private fun printVersionRequirement(versionRequirement: KmVersionRequirement) =
+    printString { kotlinp.renderVersionRequirement(versionRequirement, this) }
+
+private fun List<KmVersionRequirement>.stringifyRelevantRequirements() =
+    // older versions of requirements are redundant for compiler with version 1.9 or newer
+    filter { it.version.major >= 2 || (it.version.major == 1 && it.version.minor >= 8) }
+        .map(::printVersionRequirement).sorted().joinToString(prefix = "[", postfix = "]")

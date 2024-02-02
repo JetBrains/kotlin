@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,7 +35,7 @@ object Main {
             }
         }
 
-        val kotlinp = Kotlinp(KotlinpSettings(isVerbose = verbose, sortDeclarations = sort))
+        val kotlinp = JvmKotlinp(Settings(isVerbose = verbose, sortDeclarations = sort))
 
         for (path in paths) {
             val file = File(path)
@@ -43,8 +43,8 @@ object Main {
 
             val text = try {
                 when (file.extension) {
-                    "class" -> kotlinp.renderClassFile(kotlinp.readMetadata(kotlinp.readClassFile(file)))
-                    "kotlin_module" -> @OptIn(UnstableMetadataApi::class) kotlinp.renderModuleFile(kotlinp.readModuleFile(file))
+                    "class" -> kotlinp.printClassFile(readMetadata(readClassFile(file)))
+                    "kotlin_module" -> @OptIn(UnstableMetadataApi::class) kotlinp.printModuleFile(readModuleFile(file))
                     else -> throw KotlinpException("only .class and .kotlin_module files are supported")
                 }
             } catch (e: IOException) {

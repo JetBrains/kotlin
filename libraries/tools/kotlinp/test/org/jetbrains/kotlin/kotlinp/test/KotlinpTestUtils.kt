@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
-import org.jetbrains.kotlin.kotlinp.Kotlinp
-import org.jetbrains.kotlin.kotlinp.KotlinpSettings
+import org.jetbrains.kotlin.kotlinp.Settings
+import org.jetbrains.kotlin.kotlinp.JvmKotlinp
+import org.jetbrains.kotlin.kotlinp.readClassFile
+import org.jetbrains.kotlin.kotlinp.readModuleFile
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -62,24 +64,24 @@ private fun compileAndPrintAllFiles(
     val main = StringBuilder()
     val afterNodes = StringBuilder()
 
-    val kotlinp = Kotlinp(KotlinpSettings(isVerbose = true, sortDeclarations = true))
+    val kotlinp = JvmKotlinp(Settings(isVerbose = true, sortDeclarations = true))
 
     @OptIn(UnstableMetadataApi::class)
     compile(file, disposable, tmpdir, useK2) { outputFile ->
         when (outputFile.extension) {
             "kotlin_module" -> {
-                val moduleFile = kotlinp.readModuleFile(outputFile)!!
+                val moduleFile = readModuleFile(outputFile)!!
                 val transformedWithNodes = KotlinModuleMetadata.read(moduleFile.write())
 
                 for ((sb, moduleFileToRender) in listOf(
                     main to moduleFile, afterNodes to transformedWithNodes
                 )) {
                     sb.appendFileName(outputFile.relativeTo(tmpdir))
-                    sb.append(kotlinp.renderModuleFile(moduleFileToRender))
+                    sb.append(kotlinp.printModuleFile(moduleFileToRender))
                 }
             }
             "class" -> {
-                val metadata = kotlinp.readClassFile(outputFile)
+                val metadata = readClassFile(outputFile)
                 val classFile = KotlinClassMetadata.readStrict(metadata)
                 val classFile2 = KotlinClassMetadata.readStrict(classFile.write())
 
@@ -87,7 +89,7 @@ private fun compileAndPrintAllFiles(
                     main to classFile, afterNodes to classFile2
                 )) {
                     sb.appendFileName(outputFile.relativeTo(tmpdir))
-                    sb.append(kotlinp.renderClassFile(classFileToRender))
+                    sb.append(kotlinp.printClassFile(classFileToRender))
                 }
             }
             else -> fail("Unknown file: $outputFile")
