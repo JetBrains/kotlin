@@ -147,7 +147,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
 
     private fun IrConstructor.makeConstructorAccessor(
         originForConstructorAccessor: IrDeclarationOrigin =
-            JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            IrDeclarationOrigin.SYNTHETIC_ACCESSOR
     ): IrConstructor {
         val source = this
 
@@ -158,8 +158,8 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
         }.also { accessor ->
             accessor.parent = source.parent
 
-            accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.copyTypeParametersFrom(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
             if (source.constructedClass.modality == Modality.SEALED) {
                 for (accessorValueParameter in accessor.valueParameters) {
                     accessorValueParameter.annotations = emptyList()
@@ -198,7 +198,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
         return factory.buildFun {
             startOffset = parent.startOffset
             endOffset = parent.startOffset
-            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = source.accessorName(superQualifierSymbol, scopes)
             visibility = DescriptorVisibilities.PUBLIC
             modality = if (parent is IrClass && parent.isJvmInterface) Modality.OPEN else Modality.FINAL
@@ -206,8 +206,8 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
         }.also { accessor ->
             accessor.parent = parent
             accessor.copyAttributes(source)
-            accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType)
+            accessor.copyTypeParametersFrom(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType)
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.body = context.irFactory.createExpressionBody(
@@ -246,7 +246,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
         context.irFactory.buildFun {
             startOffset = parent.startOffset
             endOffset = parent.startOffset
-            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = fieldSymbol.owner.accessorNameForGetter(superQualifierSymbol)
             visibility = DescriptorVisibilities.PUBLIC
             modality = Modality.FINAL
@@ -257,7 +257,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
             if (!fieldSymbol.owner.isStatic) {
                 // Accessors are always to one's own fields.
                 accessor.addValueParameter(
-                    "\$this", parent.defaultType, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    "\$this", parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
@@ -302,7 +302,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
         context.irFactory.buildFun {
             startOffset = parent.startOffset
             endOffset = parent.startOffset
-            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = fieldSymbol.owner.accessorNameForSetter(superQualifierSymbol)
             visibility = DescriptorVisibilities.PUBLIC
             modality = Modality.FINAL
@@ -313,11 +313,11 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
             if (!fieldSymbol.owner.isStatic) {
                 // Accessors are always to one's own fields.
                 accessor.addValueParameter(
-                    "\$this", parent.defaultType, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    "\$this", parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
-            accessor.addValueParameter("<set-?>", fieldSymbol.owner.type, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.addValueParameter("<set-?>", fieldSymbol.owner.type, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
 
             accessor.body = createAccessorBodyForSetter(fieldSymbol.owner, accessor, superQualifierSymbol)
         }.symbol
@@ -471,7 +471,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
 
     private val IrConstructor.isOrShouldBeHiddenDueToOrigin: Boolean
         get() = !(origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
-                origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
+                origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR ||
                 origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR ||
                 origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
 
