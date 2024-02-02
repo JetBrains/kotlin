@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.types.Variance
 // 2) parents
 // 3) fields
 object BirTree : AbstractTreeBuilder() {
-    private fun symbol(type: TypeRefWithNullability, mutable: Boolean = false): SingleField =
-        field("symbol", type, mutable = mutable, isChild = false)
+    private fun symbol(type: TypeRefWithNullability, mutable: Boolean = false, initializer: SingleField.() -> Unit = {}): SingleField =
+        field("symbol", type, mutable = mutable, isChild = false, initializer = initializer)
 
     override val rootElement: Element by element(Other, name = "Element") {
         parent(type(Packages.tree, "BirElementFacade"))
@@ -480,7 +480,9 @@ object BirTree : AbstractTreeBuilder() {
 
         +field("dispatchReceiver", expression, nullable = true)
         +field("extensionReceiver", expression, nullable = true)
-        +symbol(s)
+        +symbol(s) {
+            trackForwardReferences = true
+        }
         +field("origin", statementOriginType, nullable = true)
         +listField("valueArguments", expression.copy(nullable = true), mutability = Array)
         +listField("typeArguments", irTypeType.copy(nullable = true), mutability = Var)
@@ -729,7 +731,9 @@ object BirTree : AbstractTreeBuilder() {
         parent(expression)
 
         +field("value", expression, nullable = true)
-        +field("returnTargetSymbol", SymbolTypes.returnTarget)
+        +field("returnTargetSymbol", SymbolTypes.returnTarget) {
+            trackForwardReferences = true
+        }
     }
     val stringConcatenation: Element by element(Expression) {
         parent(expression)
@@ -775,7 +779,9 @@ object BirTree : AbstractTreeBuilder() {
     val valueAccessExpression: Element by element(Expression) {
         parent(declarationReference)
 
-        +symbol(valueDeclaration, mutable = true)
+        +symbol(valueDeclaration, mutable = true) {
+            trackForwardReferences = true
+        }
         +field("origin", statementOriginType, nullable = true)
     }
     val getValue: Element by element(Expression) {

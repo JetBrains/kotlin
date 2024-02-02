@@ -24,7 +24,6 @@ class BirExternalPackageFragmentImpl(
     override val owner: BirExternalPackageFragmentImpl
         get() = this
 
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -33,43 +32,11 @@ class BirExternalPackageFragmentImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
-    private var _signature: IdSignature? = signature
-    override var signature: IdSignature?
-        get() {
-            recordPropertyRead()
-            return _signature
-        }
-        set(value) {
-            if (_signature != value) {
-                _signature = value
-                invalidate()
-            }
-        }
+    override var signature: IdSignature? = signature
 
-    private var _packageFqName: FqName = packageFqName
-    override var packageFqName: FqName
-        get() {
-            recordPropertyRead()
-            return _packageFqName
-        }
-        set(value) {
-            if (_packageFqName != value) {
-                _packageFqName = value
-                invalidate()
-            }
-        }
+    override var packageFqName: FqName = packageFqName
 
     override val containerSource: DeserializedContainerSource? = containerSource
 

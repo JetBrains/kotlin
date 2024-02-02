@@ -40,7 +40,6 @@ class BirScriptImpl(
     override val owner: BirScriptImpl
         get() = this
 
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -49,175 +48,51 @@ class BirScriptImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
-    private var _signature: IdSignature? = signature
-    override var signature: IdSignature?
-        get() {
-            recordPropertyRead()
-            return _signature
-        }
-        set(value) {
-            if (_signature != value) {
-                _signature = value
-                invalidate()
-            }
-        }
+    override var signature: IdSignature? = signature
 
-    private var _origin: IrDeclarationOrigin = origin
-    override var origin: IrDeclarationOrigin
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrDeclarationOrigin = origin
 
-    private var _name: Name = name
-    override var name: Name
-        get() {
-            recordPropertyRead()
-            return _name
-        }
-        set(value) {
-            if (_name != value) {
-                _name = value
-                invalidate()
-            }
-        }
+    override var name: Name = name
 
     private var _thisReceiver: BirValueParameter? = thisReceiver
     override var thisReceiver: BirValueParameter?
         get() {
-            recordPropertyRead()
             return _thisReceiver
         }
         set(value) {
             if (_thisReceiver !== value) {
                 childReplaced(_thisReceiver, value)
                 _thisReceiver = value
-                invalidate()
             }
         }
 
-    private var _baseClass: BirType? = baseClass
-    override var baseClass: BirType?
-        get() {
-            recordPropertyRead()
-            return _baseClass
-        }
-        set(value) {
-            if (_baseClass != value) {
-                _baseClass = value
-                invalidate()
-            }
-        }
+    override var baseClass: BirType? = baseClass
 
-    private var _providedProperties: List<BirPropertySymbol> = providedProperties
-    override var providedProperties: List<BirPropertySymbol>
-        get() {
-            recordPropertyRead()
-            return _providedProperties
-        }
-        set(value) {
-            if (_providedProperties != value) {
-                _providedProperties = value
-                invalidate()
-            }
-        }
+    override var providedProperties: List<BirPropertySymbol> = providedProperties
 
-    private var _resultProperty: BirPropertySymbol? = resultProperty
-    override var resultProperty: BirPropertySymbol?
-        get() {
-            recordPropertyRead()
-            return _resultProperty
-        }
-        set(value) {
-            if (_resultProperty != value) {
-                _resultProperty = value
-                invalidate()
-            }
-        }
+    override var resultProperty: BirPropertySymbol? = resultProperty
 
     private var _earlierScriptsParameter: BirValueParameter? = earlierScriptsParameter
     override var earlierScriptsParameter: BirValueParameter?
         get() {
-            recordPropertyRead()
             return _earlierScriptsParameter
         }
         set(value) {
             if (_earlierScriptsParameter !== value) {
                 childReplaced(_earlierScriptsParameter, value)
                 _earlierScriptsParameter = value
-                invalidate()
             }
         }
 
-    private var _importedScripts: List<BirScriptSymbol>? = importedScripts
-    override var importedScripts: List<BirScriptSymbol>?
-        get() {
-            recordPropertyRead()
-            return _importedScripts
-        }
-        set(value) {
-            if (_importedScripts != value) {
-                _importedScripts = value
-                invalidate()
-            }
-        }
+    override var importedScripts: List<BirScriptSymbol>? = importedScripts
 
-    private var _earlierScripts: List<BirScriptSymbol>? = earlierScripts
-    override var earlierScripts: List<BirScriptSymbol>?
-        get() {
-            recordPropertyRead()
-            return _earlierScripts
-        }
-        set(value) {
-            if (_earlierScripts != value) {
-                _earlierScripts = value
-                invalidate()
-            }
-        }
+    override var earlierScripts: List<BirScriptSymbol>? = earlierScripts
 
-    private var _targetClass: BirClassSymbol? = targetClass
-    override var targetClass: BirClassSymbol?
-        get() {
-            recordPropertyRead()
-            return _targetClass
-        }
-        set(value) {
-            if (_targetClass != value) {
-                _targetClass = value
-                invalidate()
-            }
-        }
+    override var targetClass: BirClassSymbol? = targetClass
 
-    private var _constructor: BirConstructor? = constructor
-    override var constructor: BirConstructor?
-        get() {
-            recordPropertyRead()
-            return _constructor
-        }
-        set(value) {
-            if (_constructor !== value) {
-                _constructor = value
-                invalidate()
-            }
-        }
+    override var constructor: BirConstructor? = constructor
 
     override val annotations: BirImplChildElementList<BirConstructorCall> = BirImplChildElementList(this, 1, false)
     override val statements: BirImplChildElementList<BirStatement> = BirImplChildElementList(this, 2, false)

@@ -76,6 +76,7 @@ private fun processFieldOverrides(elements: List<Element>) {
                     if (overriddenField != null) {
                         field.isOverride = true
                         field.optInAnnotation = field.optInAnnotation ?: overriddenField.optInAnnotation
+                        field.trackForwardReferences = field.trackForwardReferences || overriddenField.trackForwardReferences
 
                         fun transformInferredType(type: TypeRef, overriddenType: TypeRef) =
                             type.takeUnless { it is InferredOverriddenType } ?: overriddenType
@@ -105,7 +106,6 @@ private fun computeFieldProperties(elements: List<Element>) {
     for (element in elements) {
         for (field in element.allFields) {
             field.passViaConstructorParameter = !(field is ListField && field.isChild) && !field.initializeToThis
-            field.isReadWriteTrackedProperty = field.isMutable && !(field is ListField && field.isChild)
         }
     }
 }

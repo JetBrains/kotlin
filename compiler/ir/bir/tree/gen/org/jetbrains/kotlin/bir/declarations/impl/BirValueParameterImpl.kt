@@ -34,7 +34,6 @@ class BirValueParameterImpl(
     override val owner: BirValueParameterImpl
         get() = this
 
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -43,123 +42,24 @@ class BirValueParameterImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
-    private var _signature: IdSignature? = signature
-    override var signature: IdSignature?
-        get() {
-            recordPropertyRead()
-            return _signature
-        }
-        set(value) {
-            if (_signature != value) {
-                _signature = value
-                invalidate()
-            }
-        }
+    override var signature: IdSignature? = signature
 
-    private var _origin: IrDeclarationOrigin = origin
-    override var origin: IrDeclarationOrigin
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrDeclarationOrigin = origin
 
-    private var _name: Name = name
-    override var name: Name
-        get() {
-            recordPropertyRead()
-            return _name
-        }
-        set(value) {
-            if (_name != value) {
-                _name = value
-                invalidate()
-            }
-        }
+    override var name: Name = name
 
-    private var _type: BirType = type
-    override var type: BirType
-        get() {
-            recordPropertyRead()
-            return _type
-        }
-        set(value) {
-            if (_type != value) {
-                _type = value
-                invalidate()
-            }
-        }
+    override var type: BirType = type
 
-    private var _index: Int = index
-    override var index: Int
-        get() {
-            recordPropertyRead()
-            return _index
-        }
-        set(value) {
-            if (_index != value) {
-                _index = value
-                invalidate()
-            }
-        }
+    override var index: Int = index
 
-    private var _varargElementType: BirType? = varargElementType
-    override var varargElementType: BirType?
-        get() {
-            recordPropertyRead()
-            return _varargElementType
-        }
-        set(value) {
-            if (_varargElementType != value) {
-                _varargElementType = value
-                invalidate()
-            }
-        }
+    override var varargElementType: BirType? = varargElementType
 
-    private var _isCrossinline: Boolean = isCrossinline
-    override var isCrossinline: Boolean
-        get() {
-            recordPropertyRead()
-            return _isCrossinline
-        }
-        set(value) {
-            if (_isCrossinline != value) {
-                _isCrossinline = value
-                invalidate()
-            }
-        }
+    override var isCrossinline: Boolean = isCrossinline
 
-    private var _isNoinline: Boolean = isNoinline
-    override var isNoinline: Boolean
-        get() {
-            recordPropertyRead()
-            return _isNoinline
-        }
-        set(value) {
-            if (_isNoinline != value) {
-                _isNoinline = value
-                invalidate()
-            }
-        }
+    override var isNoinline: Boolean = isNoinline
 
-    private var _isHidden: Boolean = isHidden
     /**
      * If `true`, the value parameter does not participate in [IdSignature] computation.
      *
@@ -187,42 +87,19 @@ class BirValueParameterImpl(
      *
      * TODO: consider dropping [isHidden] if it isn't used by any known plugin.
      */
-    override var isHidden: Boolean
-        get() {
-            recordPropertyRead()
-            return _isHidden
-        }
-        set(value) {
-            if (_isHidden != value) {
-                _isHidden = value
-                invalidate()
-            }
-        }
+    override var isHidden: Boolean = isHidden
 
-    private var _isAssignable: Boolean = isAssignable
-    override var isAssignable: Boolean
-        get() {
-            recordPropertyRead()
-            return _isAssignable
-        }
-        set(value) {
-            if (_isAssignable != value) {
-                _isAssignable = value
-                invalidate()
-            }
-        }
+    override var isAssignable: Boolean = isAssignable
 
     private var _defaultValue: BirExpressionBody? = defaultValue
     override var defaultValue: BirExpressionBody?
         get() {
-            recordPropertyRead()
             return _defaultValue
         }
         set(value) {
             if (_defaultValue !== value) {
                 childReplaced(_defaultValue, value)
                 _defaultValue = value
-                invalidate()
             }
         }
 

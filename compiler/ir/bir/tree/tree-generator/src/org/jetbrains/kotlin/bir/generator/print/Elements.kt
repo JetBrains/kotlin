@@ -89,7 +89,32 @@ private fun SmartPrinter.printElement(element: Element) {
             print("${element.withArgs().render()}::class.java")
             print(", ${element.classId}")
             print(", ${element.isLeaf}")
-            println(")")
+            print(")")
+
+            val trackedForwardRefs = element.allFieldsRecursively().filter { it.trackForwardReferences }
+            if (trackedForwardRefs.isNotEmpty()) {
+                printBlock {
+                    for (field in trackedForwardRefs) {
+                        print("val ${field.name} = ${type(Packages.tree, "BirElementBackReferencesKey").render()}")
+                        print("<${element.withStarArgs().render()}, _>")
+                        print("{ (it as? ${element.withStarArgs().render()})?.${field.name}")
+
+                        var type: TypeRef = field.typeRef
+                        if (type is TypeVariable) {
+                            type = type.bounds.single()
+                        }
+                        when {
+                            type is ElementOrRef<*> -> {}
+                            type is ClassRef<*> && type.simpleName.endsWith("Symbol") ->
+                                print("?.owner")
+                            else -> error(type)
+                        }
+                        println(" }")
+                    }
+                }
+            } else {
+                println()
+            }
         }
     }.toString()
 

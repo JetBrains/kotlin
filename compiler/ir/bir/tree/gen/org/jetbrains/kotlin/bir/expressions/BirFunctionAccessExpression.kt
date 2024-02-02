@@ -9,11 +9,14 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementBackReferencesKey
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
 
 abstract class BirFunctionAccessExpression(elementClass: BirElementClass<*>) : BirMemberAccessExpression<BirFunctionSymbol>(elementClass), BirElement {
     abstract var contextReceiversCount: Int
 
-    companion object : BirElementClass<BirFunctionAccessExpression>(BirFunctionAccessExpression::class.java, 85, false)
+    companion object : BirElementClass<BirFunctionAccessExpression>(BirFunctionAccessExpression::class.java, 85, false) {
+        val symbol = BirElementBackReferencesKey<BirFunctionAccessExpression, _>{ (it as? BirFunctionAccessExpression)?.symbol?.owner }
+    }
 }

@@ -27,16 +27,15 @@ import org.jetbrains.kotlin.name.Name
 
 context(JvmBirBackendContext)
 class BirInlineCallableReferenceToLambdaLowering : BirLoweringPhase() {
-    private val inlineFunctions = registerIndexKey(BirFunction, true) { it.isInlineFunctionCall() }
-    private val functionAccesses = registerBackReferencesKey_functionSymbol(BirFunctionAccessExpression, BirFunctionAccessExpression::symbol)
-
     override fun lower(module: BirModuleFragment) {
-        getAllElementsWithIndex(inlineFunctions).forEach { function ->
-            val accesses by lazy { function.getBackReferences(functionAccesses) }
-            for (parameter in function.valueParameters) {
-                if (parameter.isInlineParameter()) {
-                    accesses.forEach { access ->
-                        transferInlineArgument(access.valueArguments[parameter.index])
+        getAllElementsOfClass(BirFunction, true).forEach { function ->
+            if (function.isInlineFunctionCall()) {
+                val accesses by lazy { function.getBackReferences(BirFunctionAccessExpression.symbol) }
+                for (parameter in function.valueParameters) {
+                    if (parameter.isInlineParameter()) {
+                        accesses.forEach { access ->
+                            transferInlineArgument(access.valueArguments[parameter.index])
+                        }
                     }
                 }
             }

@@ -130,6 +130,16 @@ class Element(
         }
     }
 
+    fun allFieldsRecursively(): List<Field> {
+        val parentFields = elementParentsRecursively()
+            .reversed()
+            .flatMap { it.element.fields }
+        return (parentFields + fields)
+            .asReversed()
+            .distinctBy { it.name }
+            .asReversed()
+    }
+
     operator fun TypeVariable.unaryPlus() = apply {
         params.add(this)
     }
@@ -150,8 +160,8 @@ sealed class Field(
     var isOverride = false
 
     var passViaConstructorParameter = false
-    var isReadWriteTrackedProperty = false
     var initializeToThis = false
+    var trackForwardReferences = false
 
     val backingFieldName: String
         get() = "_$name"
@@ -183,7 +193,7 @@ sealed class Field(
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
         copy.passViaConstructorParameter = passViaConstructorParameter
-        copy.isReadWriteTrackedProperty = isReadWriteTrackedProperty
+        copy.trackForwardReferences = trackForwardReferences
         copy.initializeToThis = initializeToThis
     }
 

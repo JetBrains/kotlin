@@ -29,7 +29,6 @@ class BirSetFieldImpl(
     origin: IrStatementOrigin?,
     value: BirExpression?,
 ) : BirSetField(BirSetField) {
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -38,108 +37,39 @@ class BirSetFieldImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
-    private var _attributeOwnerId: BirAttributeContainer = this
-    override var attributeOwnerId: BirAttributeContainer
-        get() {
-            recordPropertyRead()
-            return _attributeOwnerId
-        }
-        set(value) {
-            if (_attributeOwnerId !== value) {
-                _attributeOwnerId = value
-                invalidate()
-            }
-        }
+    override var attributeOwnerId: BirAttributeContainer = this
 
-    private var _type: BirType = type
-    override var type: BirType
-        get() {
-            recordPropertyRead()
-            return _type
-        }
-        set(value) {
-            if (_type != value) {
-                _type = value
-                invalidate()
-            }
-        }
+    override var type: BirType = type
 
-    private var _symbol: BirFieldSymbol = symbol
-    override var symbol: BirFieldSymbol
-        get() {
-            recordPropertyRead()
-            return _symbol
-        }
-        set(value) {
-            if (_symbol != value) {
-                _symbol = value
-                invalidate()
-            }
-        }
+    override var symbol: BirFieldSymbol = symbol
 
-    private var _superQualifierSymbol: BirClassSymbol? = superQualifierSymbol
-    override var superQualifierSymbol: BirClassSymbol?
-        get() {
-            recordPropertyRead()
-            return _superQualifierSymbol
-        }
-        set(value) {
-            if (_superQualifierSymbol != value) {
-                _superQualifierSymbol = value
-                invalidate()
-            }
-        }
+    override var superQualifierSymbol: BirClassSymbol? = superQualifierSymbol
 
     private var _receiver: BirExpression? = receiver
     override var receiver: BirExpression?
         get() {
-            recordPropertyRead()
             return _receiver
         }
         set(value) {
             if (_receiver !== value) {
                 childReplaced(_receiver, value)
                 _receiver = value
-                invalidate()
             }
         }
 
-    private var _origin: IrStatementOrigin? = origin
-    override var origin: IrStatementOrigin?
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrStatementOrigin? = origin
 
     private var _value: BirExpression? = value
     override var value: BirExpression?
         get() {
-            recordPropertyRead()
             return _value
         }
         set(value) {
             if (_value !== value) {
                 childReplaced(_value, value)
                 _value = value
-                invalidate()
             }
         }
 

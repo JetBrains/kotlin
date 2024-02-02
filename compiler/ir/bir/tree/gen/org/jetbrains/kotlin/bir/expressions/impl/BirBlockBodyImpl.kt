@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.bir.expressions.BirBlockBody
 class BirBlockBodyImpl(
     sourceSpan: CompressedSourceSpan,
 ) : BirBlockBody(BirBlockBody) {
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -23,17 +22,7 @@ class BirBlockBodyImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
     override val statements: BirImplChildElementList<BirStatement> = BirImplChildElementList(this, 1, false)
 

@@ -24,25 +24,23 @@ context(JvmBirBackendContext)
 class BirJvmNameLowering : BirLoweringPhase() {
     private val JvmNameAnnotation by lz { birBuiltIns.findClass(DescriptorUtils.JVM_NAME) }
 
-    private val jvmNameAnnotations = registerIndexKey(BirConstructorCall, false) {
-        it.constructedClass == JvmNameAnnotation
-    }
-
     override fun lower(module: BirModuleFragment) {
-        getAllElementsWithIndex(jvmNameAnnotations).forEach { annotation ->
-            val function = annotation.parent as? BirFunction ?: return@forEach
+        getAllElementsOfClass(BirConstructorCall, false).forEach { annotation ->
+            if (annotation.constructedClass == JvmNameAnnotation) {
+                val function = annotation.parent as? BirFunction ?: return@forEach
 
-            val const = annotation.valueArguments[0] as? BirConst<*> ?: return@forEach
-            val value = const.value as? String ?: return@forEach
-            val name = when (function.origin) {
-                IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> "$value\$default"
-                JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE,
-                JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE,
-                -> "$value$FOR_INLINE_SUFFIX"
-                else -> value
+                val const = annotation.valueArguments[0] as? BirConst<*> ?: return@forEach
+                val value = const.value as? String ?: return@forEach
+                val name = when (function.origin) {
+                    IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> "$value\$default"
+                    JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE,
+                    JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE,
+                    -> "$value$FOR_INLINE_SUFFIX"
+                    else -> value
+                }
+
+                function[JvmName] = Name.identifier(name)
             }
-
-            function[JvmName] = Name.identifier(name)
         }
     }
 

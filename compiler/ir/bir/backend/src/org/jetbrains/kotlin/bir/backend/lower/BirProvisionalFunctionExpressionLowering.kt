@@ -20,11 +20,9 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 context(JvmBirBackendContext)
 class BirProvisionalFunctionExpressionLowering : BirLoweringPhase() {
-    private val functionExpressions = registerIndexKey(BirFunctionExpression, false)
-
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun lower(module: BirModuleFragment) {
-        getAllElementsWithIndex(functionExpressions).forEach { expression ->
+        getAllElementsOfClass(BirFunctionExpression, false).forEach { expression ->
             replaceFunctionExpression(expression)
         }
     }

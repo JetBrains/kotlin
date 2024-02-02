@@ -63,7 +63,7 @@ private fun SmartPrinter.printElementImpl(element: Element) {
 
             val childrenLists = element.walkableChildren.filterIsInstance<ListField>()
             for (field in allFields.sortedBy { it is ListField && it.isChild }) {
-                if (field.isReadWriteTrackedProperty) {
+                if (field is SingleField && field.isChild) {
                     printPropertyHeader(
                         field.backingFieldName,
                         if (field.isChild) field.typeRef.copy(nullable = true) else field.typeRef,
@@ -81,12 +81,11 @@ private fun SmartPrinter.printElementImpl(element: Element) {
                 )
                 if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
                     print(" = ${childElementListImpl.render()}(this, ${childrenLists.indexOf(field) + 1}, ${(field.baseType as TypeRefWithNullability).nullable})")
-                } else if (field.isReadWriteTrackedProperty) {
+                } else if (field is SingleField && field.isChild) {
                     println()
                     withIndent {
                         print("get()")
                         printBlock {
-                            println("recordPropertyRead()")
                             print("return ${field.backingFieldName}")
                             if (field.isChild && !field.nullable) {
                                 print(" ?: throwChildElementRemoved(\"${field.name}\")")
@@ -101,7 +100,18 @@ private fun SmartPrinter.printElementImpl(element: Element) {
                                     println("childReplaced(${field.backingFieldName}, value)")
                                 }
                                 println("${field.backingFieldName} = value")
-                                println("invalidate()")
+                            }
+                        }
+                    }
+                } else if (field.trackForwardReferences) {
+                    println(" = ${field.name}")
+                    withIndent {
+                        print("set(value)")
+                        printBlock {
+                            print("if (field ${if (field.typeRef is ElementOrRef<*>) "!==" else "!="} value)")
+                            printBlock {
+                                println("field = value")
+                                println("forwardReferencePropertyChanged()")
                             }
                         }
                     }
@@ -194,6 +204,21 @@ private fun SmartPrinter.printElementImpl(element: Element) {
                             println("${index + 1} -> this.${field.name}")
                         }
                         println("else -> throwChildrenListWithIdNotFound(id)")
+                    }
+                }
+            }
+
+            val trackedForwardRefs = allFields.filter { it.trackForwardReferences }
+            if (trackedForwardRefs.isNotEmpty()) {
+                println()
+                printFunctionWithBlockBody(
+                    "getForwardReferences",
+                    parameters = listOf(FunctionParameter("recorder", type(Packages.tree + ".util", "ForwardReferenceRecorder"))),
+                    returnType = StandardTypes.unit,
+                    override = true,
+                ) {
+                    trackedForwardRefs.forEach { field ->
+                        println("recorder.recordReference(${field.name})")
                     }
                 }
             }

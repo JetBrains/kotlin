@@ -6,13 +6,18 @@
 package org.jetbrains.kotlin.bir.util
 
 import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementBackReferenceRecorderScope
 import org.jetbrains.kotlin.bir.BirElementBase
+import org.jetbrains.kotlin.bir.symbols.BirSymbol
 
-internal class ForwardReferenceRecorder : BirElementBackReferenceRecorderScope {
+internal class ForwardReferenceRecorder {
     var recordedRef: BirElementBase? = null
+        private set
 
-    override fun recordReference(forwardRef: BirElement?) {
+    fun recordReference(forwardRef: BirSymbol?) {
+        recordReference(forwardRef?.owner as BirElementBase?)
+    }
+
+    fun recordReference(forwardRef: BirElementBase?) {
         if (forwardRef == null) return
 
         if (recordedRef == null) {

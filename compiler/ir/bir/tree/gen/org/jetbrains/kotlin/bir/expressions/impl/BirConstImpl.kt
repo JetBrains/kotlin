@@ -20,7 +20,6 @@ class BirConstImpl<T>(
     kind: IrConstKind<T>,
     value: T,
 ) : BirConst<T>(BirConst) {
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -29,68 +28,14 @@ class BirConstImpl<T>(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
-    private var _attributeOwnerId: BirAttributeContainer = this
-    override var attributeOwnerId: BirAttributeContainer
-        get() {
-            recordPropertyRead()
-            return _attributeOwnerId
-        }
-        set(value) {
-            if (_attributeOwnerId !== value) {
-                _attributeOwnerId = value
-                invalidate()
-            }
-        }
+    override var attributeOwnerId: BirAttributeContainer = this
 
-    private var _type: BirType = type
-    override var type: BirType
-        get() {
-            recordPropertyRead()
-            return _type
-        }
-        set(value) {
-            if (_type != value) {
-                _type = value
-                invalidate()
-            }
-        }
+    override var type: BirType = type
 
-    private var _kind: IrConstKind<T> = kind
-    override var kind: IrConstKind<T>
-        get() {
-            recordPropertyRead()
-            return _kind
-        }
-        set(value) {
-            if (_kind != value) {
-                _kind = value
-                invalidate()
-            }
-        }
+    override var kind: IrConstKind<T> = kind
 
-    private var _value: T = value
-    override var value: T
-        get() {
-            recordPropertyRead()
-            return _value
-        }
-        set(value) {
-            if (_value != value) {
-                _value = value
-                invalidate()
-            }
-        }
+    override var value: T = value
 
 }

@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementClass
-import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.accept
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.symbols.BirConstructorSymbol
 
 abstract class BirDelegatingConstructorCall(elementClass: BirElementClass<*>) : BirFunctionAccessExpression(elementClass), BirElement {
@@ -23,5 +20,7 @@ abstract class BirDelegatingConstructorCall(elementClass: BirElementClass<*>) : 
         valueArguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass<BirDelegatingConstructorCall>(BirDelegatingConstructorCall::class.java, 18, true)
+    companion object : BirElementClass<BirDelegatingConstructorCall>(BirDelegatingConstructorCall::class.java, 18, true) {
+        val symbol = BirElementBackReferencesKey<BirDelegatingConstructorCall, _>{ (it as? BirDelegatingConstructorCall)?.symbol?.owner }
+    }
 }

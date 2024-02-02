@@ -19,7 +19,6 @@ class BirExpressionBodyImpl(
     sourceSpan: CompressedSourceSpan,
     expression: BirExpression?,
 ) : BirExpressionBody(BirExpressionBody) {
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -28,29 +27,17 @@ class BirExpressionBodyImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
     private var _expression: BirExpression? = expression
     override var expression: BirExpression?
         get() {
-            recordPropertyRead()
             return _expression
         }
         set(value) {
             if (_expression !== value) {
                 childReplaced(_expression, value)
                 _expression = value
-                invalidate()
             }
         }
 

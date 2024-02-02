@@ -20,7 +20,6 @@ class BirElseBranchImpl(
     condition: BirExpression?,
     result: BirExpression?,
 ) : BirElseBranch(BirElseBranch) {
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -29,43 +28,29 @@ class BirElseBranchImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
     private var _condition: BirExpression? = condition
     override var condition: BirExpression?
         get() {
-            recordPropertyRead()
             return _condition
         }
         set(value) {
             if (_condition !== value) {
                 childReplaced(_condition, value)
                 _condition = value
-                invalidate()
             }
         }
 
     private var _result: BirExpression? = result
     override var result: BirExpression?
         get() {
-            recordPropertyRead()
             return _result
         }
         set(value) {
             if (_result !== value) {
                 childReplaced(_result, value)
                 _result = value
-                invalidate()
             }
         }
 

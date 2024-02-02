@@ -16,7 +16,6 @@ class BirSyntheticBodyImpl(
     sourceSpan: CompressedSourceSpan,
     kind: IrSyntheticBodyKind,
 ) : BirSyntheticBody(BirSyntheticBody) {
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -25,29 +24,8 @@ class BirSyntheticBodyImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
-    private var _kind: IrSyntheticBodyKind = kind
-    override var kind: IrSyntheticBodyKind
-        get() {
-            recordPropertyRead()
-            return _kind
-        }
-        set(value) {
-            if (_kind != value) {
-                _kind = value
-                invalidate()
-            }
-        }
+    override var kind: IrSyntheticBodyKind = kind
 
 }

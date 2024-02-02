@@ -23,7 +23,6 @@ class BirDynamicMemberExpressionImpl(
     memberName: String,
     receiver: BirExpression?,
 ) : BirDynamicMemberExpression(BirDynamicMemberExpression) {
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -32,68 +31,23 @@ class BirDynamicMemberExpressionImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
-    private var _attributeOwnerId: BirAttributeContainer = this
-    override var attributeOwnerId: BirAttributeContainer
-        get() {
-            recordPropertyRead()
-            return _attributeOwnerId
-        }
-        set(value) {
-            if (_attributeOwnerId !== value) {
-                _attributeOwnerId = value
-                invalidate()
-            }
-        }
+    override var attributeOwnerId: BirAttributeContainer = this
 
-    private var _type: BirType = type
-    override var type: BirType
-        get() {
-            recordPropertyRead()
-            return _type
-        }
-        set(value) {
-            if (_type != value) {
-                _type = value
-                invalidate()
-            }
-        }
+    override var type: BirType = type
 
-    private var _memberName: String = memberName
-    override var memberName: String
-        get() {
-            recordPropertyRead()
-            return _memberName
-        }
-        set(value) {
-            if (_memberName != value) {
-                _memberName = value
-                invalidate()
-            }
-        }
+    override var memberName: String = memberName
 
     private var _receiver: BirExpression? = receiver
     override var receiver: BirExpression?
         get() {
-            recordPropertyRead()
             return _receiver
         }
         set(value) {
             if (_receiver !== value) {
                 childReplaced(_receiver, value)
                 _receiver = value
-                invalidate()
             }
         }
 

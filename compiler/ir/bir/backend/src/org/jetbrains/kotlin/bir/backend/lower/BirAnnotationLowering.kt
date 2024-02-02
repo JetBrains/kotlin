@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 
 context(JvmBirBackendContext)
 class BirAnnotationLowering : BirLoweringPhase() {
-    private val annotationClasses = registerIndexKey(BirClass,false) { it.kind == ClassKind.ANNOTATION_CLASS }
-
     override fun lower(module: BirModuleFragment) {
-        getAllElementsWithIndex(annotationClasses).forEach { annotationClass ->
-            annotationClass.declarations
-                .filterIsInstance<BirConstructor>()
-                .forEach { it.remove() }
+        getAllElementsOfClass(BirClass, false).forEach { clazz ->
+            if (clazz.kind == ClassKind.ANNOTATION_CLASS) {
+                clazz.declarations
+                    .filterIsInstance<BirConstructor>()
+                    .forEach { it.remove() }
+            }
         }
     }
 }

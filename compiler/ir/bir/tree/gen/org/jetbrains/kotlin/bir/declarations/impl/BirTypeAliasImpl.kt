@@ -30,7 +30,6 @@ class BirTypeAliasImpl(
     override val owner: BirTypeAliasImpl
         get() = this
 
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -39,95 +38,19 @@ class BirTypeAliasImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
-    private var _signature: IdSignature? = signature
-    override var signature: IdSignature?
-        get() {
-            recordPropertyRead()
-            return _signature
-        }
-        set(value) {
-            if (_signature != value) {
-                _signature = value
-                invalidate()
-            }
-        }
+    override var signature: IdSignature? = signature
 
-    private var _origin: IrDeclarationOrigin = origin
-    override var origin: IrDeclarationOrigin
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrDeclarationOrigin = origin
 
-    private var _name: Name = name
-    override var name: Name
-        get() {
-            recordPropertyRead()
-            return _name
-        }
-        set(value) {
-            if (_name != value) {
-                _name = value
-                invalidate()
-            }
-        }
+    override var name: Name = name
 
-    private var _visibility: DescriptorVisibility = visibility
-    override var visibility: DescriptorVisibility
-        get() {
-            recordPropertyRead()
-            return _visibility
-        }
-        set(value) {
-            if (_visibility != value) {
-                _visibility = value
-                invalidate()
-            }
-        }
+    override var visibility: DescriptorVisibility = visibility
 
-    private var _isActual: Boolean = isActual
-    override var isActual: Boolean
-        get() {
-            recordPropertyRead()
-            return _isActual
-        }
-        set(value) {
-            if (_isActual != value) {
-                _isActual = value
-                invalidate()
-            }
-        }
+    override var isActual: Boolean = isActual
 
-    private var _expandedType: BirType = expandedType
-    override var expandedType: BirType
-        get() {
-            recordPropertyRead()
-            return _expandedType
-        }
-        set(value) {
-            if (_expandedType != value) {
-                _expandedType = value
-                invalidate()
-            }
-        }
+    override var expandedType: BirType = expandedType
 
     override val annotations: BirImplChildElementList<BirConstructorCall> = BirImplChildElementList(this, 1, false)
     override val typeParameters: BirImplChildElementList<BirTypeParameter> = BirImplChildElementList(this, 2, false)

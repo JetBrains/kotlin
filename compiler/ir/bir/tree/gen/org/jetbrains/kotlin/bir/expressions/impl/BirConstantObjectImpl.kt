@@ -21,7 +21,6 @@ class BirConstantObjectImpl(
     constructor: BirConstructorSymbol,
     typeArguments: List<BirType>,
 ) : BirConstantObject(BirConstantObject) {
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -30,69 +29,15 @@ class BirConstantObjectImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
-    private var _attributeOwnerId: BirAttributeContainer = this
-    override var attributeOwnerId: BirAttributeContainer
-        get() {
-            recordPropertyRead()
-            return _attributeOwnerId
-        }
-        set(value) {
-            if (_attributeOwnerId !== value) {
-                _attributeOwnerId = value
-                invalidate()
-            }
-        }
+    override var attributeOwnerId: BirAttributeContainer = this
 
-    private var _type: BirType = type
-    override var type: BirType
-        get() {
-            recordPropertyRead()
-            return _type
-        }
-        set(value) {
-            if (_type != value) {
-                _type = value
-                invalidate()
-            }
-        }
+    override var type: BirType = type
 
-    private var _constructor: BirConstructorSymbol = constructor
-    override var constructor: BirConstructorSymbol
-        get() {
-            recordPropertyRead()
-            return _constructor
-        }
-        set(value) {
-            if (_constructor != value) {
-                _constructor = value
-                invalidate()
-            }
-        }
+    override var constructor: BirConstructorSymbol = constructor
 
-    private var _typeArguments: List<BirType> = typeArguments
-    override var typeArguments: List<BirType>
-        get() {
-            recordPropertyRead()
-            return _typeArguments
-        }
-        set(value) {
-            if (_typeArguments != value) {
-                _typeArguments = value
-                invalidate()
-            }
-        }
+    override var typeArguments: List<BirType> = typeArguments
 
     override val valueArguments: BirImplChildElementList<BirConstantValue> = BirImplChildElementList(this, 1, false)
 

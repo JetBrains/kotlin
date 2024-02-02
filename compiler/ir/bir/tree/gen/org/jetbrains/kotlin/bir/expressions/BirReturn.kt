@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementClass
-import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.accept
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.symbols.BirReturnTargetSymbol
 
 abstract class BirReturn(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
@@ -22,5 +19,7 @@ abstract class BirReturn(elementClass: BirElementClass<*>) : BirExpression(eleme
         value?.accept(data, visitor)
     }
 
-    companion object : BirElementClass<BirReturn>(BirReturn::class.java, 47, true)
+    companion object : BirElementClass<BirReturn>(BirReturn::class.java, 47, true) {
+        val returnTargetSymbol = BirElementBackReferencesKey<BirReturn, _>{ (it as? BirReturn)?.returnTargetSymbol?.owner }
+    }
 }

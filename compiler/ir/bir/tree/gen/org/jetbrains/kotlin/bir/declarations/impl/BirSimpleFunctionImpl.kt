@@ -50,7 +50,6 @@ class BirSimpleFunctionImpl(
     override val owner: BirSimpleFunctionImpl
         get() = this
 
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -59,293 +58,79 @@ class BirSimpleFunctionImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
-    private var _signature: IdSignature? = signature
-    override var signature: IdSignature?
-        get() {
-            recordPropertyRead()
-            return _signature
-        }
-        set(value) {
-            if (_signature != value) {
-                _signature = value
-                invalidate()
-            }
-        }
+    override var signature: IdSignature? = signature
 
-    private var _origin: IrDeclarationOrigin = origin
-    override var origin: IrDeclarationOrigin
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrDeclarationOrigin = origin
 
-    private var _name: Name = name
-    override var name: Name
-        get() {
-            recordPropertyRead()
-            return _name
-        }
-        set(value) {
-            if (_name != value) {
-                _name = value
-                invalidate()
-            }
-        }
+    override var name: Name = name
 
-    private var _isExternal: Boolean = isExternal
-    override var isExternal: Boolean
-        get() {
-            recordPropertyRead()
-            return _isExternal
-        }
-        set(value) {
-            if (_isExternal != value) {
-                _isExternal = value
-                invalidate()
-            }
-        }
+    override var isExternal: Boolean = isExternal
 
-    private var _visibility: DescriptorVisibility = visibility
-    override var visibility: DescriptorVisibility
-        get() {
-            recordPropertyRead()
-            return _visibility
-        }
-        set(value) {
-            if (_visibility != value) {
-                _visibility = value
-                invalidate()
-            }
-        }
+    override var visibility: DescriptorVisibility = visibility
 
-    private var _isInline: Boolean = isInline
-    override var isInline: Boolean
-        get() {
-            recordPropertyRead()
-            return _isInline
-        }
-        set(value) {
-            if (_isInline != value) {
-                _isInline = value
-                invalidate()
-            }
-        }
+    override var isInline: Boolean = isInline
 
-    private var _isExpect: Boolean = isExpect
-    override var isExpect: Boolean
-        get() {
-            recordPropertyRead()
-            return _isExpect
-        }
-        set(value) {
-            if (_isExpect != value) {
-                _isExpect = value
-                invalidate()
-            }
-        }
+    override var isExpect: Boolean = isExpect
 
-    private var _returnType: BirType = returnType
-    override var returnType: BirType
-        get() {
-            recordPropertyRead()
-            return _returnType
-        }
-        set(value) {
-            if (_returnType != value) {
-                _returnType = value
-                invalidate()
-            }
-        }
+    override var returnType: BirType = returnType
 
     private var _dispatchReceiverParameter: BirValueParameter? = dispatchReceiverParameter
     override var dispatchReceiverParameter: BirValueParameter?
         get() {
-            recordPropertyRead()
             return _dispatchReceiverParameter
         }
         set(value) {
             if (_dispatchReceiverParameter !== value) {
                 childReplaced(_dispatchReceiverParameter, value)
                 _dispatchReceiverParameter = value
-                invalidate()
             }
         }
 
     private var _extensionReceiverParameter: BirValueParameter? = extensionReceiverParameter
     override var extensionReceiverParameter: BirValueParameter?
         get() {
-            recordPropertyRead()
             return _extensionReceiverParameter
         }
         set(value) {
             if (_extensionReceiverParameter !== value) {
                 childReplaced(_extensionReceiverParameter, value)
                 _extensionReceiverParameter = value
-                invalidate()
             }
         }
 
-    private var _contextReceiverParametersCount: Int = contextReceiverParametersCount
-    override var contextReceiverParametersCount: Int
-        get() {
-            recordPropertyRead()
-            return _contextReceiverParametersCount
-        }
-        set(value) {
-            if (_contextReceiverParametersCount != value) {
-                _contextReceiverParametersCount = value
-                invalidate()
-            }
-        }
+    override var contextReceiverParametersCount: Int = contextReceiverParametersCount
 
     private var _body: BirBody? = body
     override var body: BirBody?
         get() {
-            recordPropertyRead()
             return _body
         }
         set(value) {
             if (_body !== value) {
                 childReplaced(_body, value)
                 _body = value
-                invalidate()
             }
         }
 
-    private var _modality: Modality = modality
-    override var modality: Modality
-        get() {
-            recordPropertyRead()
-            return _modality
-        }
-        set(value) {
-            if (_modality != value) {
-                _modality = value
-                invalidate()
-            }
-        }
+    override var modality: Modality = modality
 
-    private var _attributeOwnerId: BirAttributeContainer = this
-    override var attributeOwnerId: BirAttributeContainer
-        get() {
-            recordPropertyRead()
-            return _attributeOwnerId
-        }
-        set(value) {
-            if (_attributeOwnerId !== value) {
-                _attributeOwnerId = value
-                invalidate()
-            }
-        }
+    override var attributeOwnerId: BirAttributeContainer = this
 
-    private var _isTailrec: Boolean = isTailrec
-    override var isTailrec: Boolean
-        get() {
-            recordPropertyRead()
-            return _isTailrec
-        }
-        set(value) {
-            if (_isTailrec != value) {
-                _isTailrec = value
-                invalidate()
-            }
-        }
+    override var isTailrec: Boolean = isTailrec
 
-    private var _isSuspend: Boolean = isSuspend
-    override var isSuspend: Boolean
-        get() {
-            recordPropertyRead()
-            return _isSuspend
-        }
-        set(value) {
-            if (_isSuspend != value) {
-                _isSuspend = value
-                invalidate()
-            }
-        }
+    override var isSuspend: Boolean = isSuspend
 
-    private var _isFakeOverride: Boolean = isFakeOverride
-    override var isFakeOverride: Boolean
-        get() {
-            recordPropertyRead()
-            return _isFakeOverride
-        }
-        set(value) {
-            if (_isFakeOverride != value) {
-                _isFakeOverride = value
-                invalidate()
-            }
-        }
+    override var isFakeOverride: Boolean = isFakeOverride
 
-    private var _isOperator: Boolean = isOperator
-    override var isOperator: Boolean
-        get() {
-            recordPropertyRead()
-            return _isOperator
-        }
-        set(value) {
-            if (_isOperator != value) {
-                _isOperator = value
-                invalidate()
-            }
-        }
+    override var isOperator: Boolean = isOperator
 
-    private var _isInfix: Boolean = isInfix
-    override var isInfix: Boolean
-        get() {
-            recordPropertyRead()
-            return _isInfix
-        }
-        set(value) {
-            if (_isInfix != value) {
-                _isInfix = value
-                invalidate()
-            }
-        }
+    override var isInfix: Boolean = isInfix
 
-    private var _correspondingPropertySymbol: BirPropertySymbol? = correspondingPropertySymbol
-    override var correspondingPropertySymbol: BirPropertySymbol?
-        get() {
-            recordPropertyRead()
-            return _correspondingPropertySymbol
-        }
-        set(value) {
-            if (_correspondingPropertySymbol != value) {
-                _correspondingPropertySymbol = value
-                invalidate()
-            }
-        }
+    override var correspondingPropertySymbol: BirPropertySymbol? = correspondingPropertySymbol
 
-    private var _overriddenSymbols: List<BirSimpleFunctionSymbol> = overriddenSymbols
-    override var overriddenSymbols: List<BirSimpleFunctionSymbol>
-        get() {
-            recordPropertyRead()
-            return _overriddenSymbols
-        }
-        set(value) {
-            if (_overriddenSymbols != value) {
-                _overriddenSymbols = value
-                invalidate()
-            }
-        }
+    override var overriddenSymbols: List<BirSimpleFunctionSymbol> = overriddenSymbols
 
     override val annotations: BirImplChildElementList<BirConstructorCall> = BirImplChildElementList(this, 1, false)
     override val typeParameters: BirImplChildElementList<BirTypeParameter> = BirImplChildElementList(this, 2, false)

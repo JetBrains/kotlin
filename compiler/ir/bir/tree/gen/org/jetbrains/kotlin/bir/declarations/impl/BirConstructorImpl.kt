@@ -39,7 +39,6 @@ class BirConstructorImpl(
     override val owner: BirConstructorImpl
         get() = this
 
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -48,189 +47,63 @@ class BirConstructorImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
-    private var _signature: IdSignature? = signature
-    override var signature: IdSignature?
-        get() {
-            recordPropertyRead()
-            return _signature
-        }
-        set(value) {
-            if (_signature != value) {
-                _signature = value
-                invalidate()
-            }
-        }
+    override var signature: IdSignature? = signature
 
-    private var _origin: IrDeclarationOrigin = origin
-    override var origin: IrDeclarationOrigin
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrDeclarationOrigin = origin
 
-    private var _name: Name = name
-    override var name: Name
-        get() {
-            recordPropertyRead()
-            return _name
-        }
-        set(value) {
-            if (_name != value) {
-                _name = value
-                invalidate()
-            }
-        }
+    override var name: Name = name
 
-    private var _isExternal: Boolean = isExternal
-    override var isExternal: Boolean
-        get() {
-            recordPropertyRead()
-            return _isExternal
-        }
-        set(value) {
-            if (_isExternal != value) {
-                _isExternal = value
-                invalidate()
-            }
-        }
+    override var isExternal: Boolean = isExternal
 
-    private var _visibility: DescriptorVisibility = visibility
-    override var visibility: DescriptorVisibility
-        get() {
-            recordPropertyRead()
-            return _visibility
-        }
-        set(value) {
-            if (_visibility != value) {
-                _visibility = value
-                invalidate()
-            }
-        }
+    override var visibility: DescriptorVisibility = visibility
 
-    private var _isInline: Boolean = isInline
-    override var isInline: Boolean
-        get() {
-            recordPropertyRead()
-            return _isInline
-        }
-        set(value) {
-            if (_isInline != value) {
-                _isInline = value
-                invalidate()
-            }
-        }
+    override var isInline: Boolean = isInline
 
-    private var _isExpect: Boolean = isExpect
-    override var isExpect: Boolean
-        get() {
-            recordPropertyRead()
-            return _isExpect
-        }
-        set(value) {
-            if (_isExpect != value) {
-                _isExpect = value
-                invalidate()
-            }
-        }
+    override var isExpect: Boolean = isExpect
 
-    private var _returnType: BirType = returnType
-    override var returnType: BirType
-        get() {
-            recordPropertyRead()
-            return _returnType
-        }
-        set(value) {
-            if (_returnType != value) {
-                _returnType = value
-                invalidate()
-            }
-        }
+    override var returnType: BirType = returnType
 
     private var _dispatchReceiverParameter: BirValueParameter? = dispatchReceiverParameter
     override var dispatchReceiverParameter: BirValueParameter?
         get() {
-            recordPropertyRead()
             return _dispatchReceiverParameter
         }
         set(value) {
             if (_dispatchReceiverParameter !== value) {
                 childReplaced(_dispatchReceiverParameter, value)
                 _dispatchReceiverParameter = value
-                invalidate()
             }
         }
 
     private var _extensionReceiverParameter: BirValueParameter? = extensionReceiverParameter
     override var extensionReceiverParameter: BirValueParameter?
         get() {
-            recordPropertyRead()
             return _extensionReceiverParameter
         }
         set(value) {
             if (_extensionReceiverParameter !== value) {
                 childReplaced(_extensionReceiverParameter, value)
                 _extensionReceiverParameter = value
-                invalidate()
             }
         }
 
-    private var _contextReceiverParametersCount: Int = contextReceiverParametersCount
-    override var contextReceiverParametersCount: Int
-        get() {
-            recordPropertyRead()
-            return _contextReceiverParametersCount
-        }
-        set(value) {
-            if (_contextReceiverParametersCount != value) {
-                _contextReceiverParametersCount = value
-                invalidate()
-            }
-        }
+    override var contextReceiverParametersCount: Int = contextReceiverParametersCount
 
     private var _body: BirBody? = body
     override var body: BirBody?
         get() {
-            recordPropertyRead()
             return _body
         }
         set(value) {
             if (_body !== value) {
                 childReplaced(_body, value)
                 _body = value
-                invalidate()
             }
         }
 
-    private var _isPrimary: Boolean = isPrimary
-    override var isPrimary: Boolean
-        get() {
-            recordPropertyRead()
-            return _isPrimary
-        }
-        set(value) {
-            if (_isPrimary != value) {
-                _isPrimary = value
-                invalidate()
-            }
-        }
+    override var isPrimary: Boolean = isPrimary
 
     override val annotations: BirImplChildElementList<BirConstructorCall> = BirImplChildElementList(this, 1, false)
     override val typeParameters: BirImplChildElementList<BirTypeParameter> = BirImplChildElementList(this, 2, false)

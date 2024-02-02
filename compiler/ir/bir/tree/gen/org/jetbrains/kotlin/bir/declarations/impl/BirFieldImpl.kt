@@ -35,7 +35,6 @@ class BirFieldImpl(
     override val owner: BirFieldImpl
         get() = this
 
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -44,148 +43,37 @@ class BirFieldImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
-    private var _signature: IdSignature? = signature
-    override var signature: IdSignature?
-        get() {
-            recordPropertyRead()
-            return _signature
-        }
-        set(value) {
-            if (_signature != value) {
-                _signature = value
-                invalidate()
-            }
-        }
+    override var signature: IdSignature? = signature
 
-    private var _origin: IrDeclarationOrigin = origin
-    override var origin: IrDeclarationOrigin
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrDeclarationOrigin = origin
 
-    private var _name: Name = name
-    override var name: Name
-        get() {
-            recordPropertyRead()
-            return _name
-        }
-        set(value) {
-            if (_name != value) {
-                _name = value
-                invalidate()
-            }
-        }
+    override var name: Name = name
 
-    private var _isExternal: Boolean = isExternal
-    override var isExternal: Boolean
-        get() {
-            recordPropertyRead()
-            return _isExternal
-        }
-        set(value) {
-            if (_isExternal != value) {
-                _isExternal = value
-                invalidate()
-            }
-        }
+    override var isExternal: Boolean = isExternal
 
-    private var _visibility: DescriptorVisibility = visibility
-    override var visibility: DescriptorVisibility
-        get() {
-            recordPropertyRead()
-            return _visibility
-        }
-        set(value) {
-            if (_visibility != value) {
-                _visibility = value
-                invalidate()
-            }
-        }
+    override var visibility: DescriptorVisibility = visibility
 
-    private var _type: BirType = type
-    override var type: BirType
-        get() {
-            recordPropertyRead()
-            return _type
-        }
-        set(value) {
-            if (_type != value) {
-                _type = value
-                invalidate()
-            }
-        }
+    override var type: BirType = type
 
-    private var _isFinal: Boolean = isFinal
-    override var isFinal: Boolean
-        get() {
-            recordPropertyRead()
-            return _isFinal
-        }
-        set(value) {
-            if (_isFinal != value) {
-                _isFinal = value
-                invalidate()
-            }
-        }
+    override var isFinal: Boolean = isFinal
 
-    private var _isStatic: Boolean = isStatic
-    override var isStatic: Boolean
-        get() {
-            recordPropertyRead()
-            return _isStatic
-        }
-        set(value) {
-            if (_isStatic != value) {
-                _isStatic = value
-                invalidate()
-            }
-        }
+    override var isStatic: Boolean = isStatic
 
     private var _initializer: BirExpressionBody? = initializer
     override var initializer: BirExpressionBody?
         get() {
-            recordPropertyRead()
             return _initializer
         }
         set(value) {
             if (_initializer !== value) {
                 childReplaced(_initializer, value)
                 _initializer = value
-                invalidate()
             }
         }
 
-    private var _correspondingPropertySymbol: BirPropertySymbol? = correspondingPropertySymbol
-    override var correspondingPropertySymbol: BirPropertySymbol?
-        get() {
-            recordPropertyRead()
-            return _correspondingPropertySymbol
-        }
-        set(value) {
-            if (_correspondingPropertySymbol != value) {
-                _correspondingPropertySymbol = value
-                invalidate()
-            }
-        }
+    override var correspondingPropertySymbol: BirPropertySymbol? = correspondingPropertySymbol
 
     override val annotations: BirImplChildElementList<BirConstructorCall> = BirImplChildElementList(this, 1, false)
 

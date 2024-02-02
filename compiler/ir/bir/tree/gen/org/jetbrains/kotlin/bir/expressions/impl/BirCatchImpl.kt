@@ -21,7 +21,6 @@ class BirCatchImpl(
     catchParameter: BirVariable?,
     result: BirExpression?,
 ) : BirCatch(BirCatch) {
-    private var _sourceSpan: CompressedSourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
      * in number of characters from the start the source file. If there is no source information for this BIR node,
@@ -30,43 +29,29 @@ class BirCatchImpl(
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    override var sourceSpan: CompressedSourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: CompressedSourceSpan = sourceSpan
 
     private var _catchParameter: BirVariable? = catchParameter
     override var catchParameter: BirVariable?
         get() {
-            recordPropertyRead()
             return _catchParameter
         }
         set(value) {
             if (_catchParameter !== value) {
                 childReplaced(_catchParameter, value)
                 _catchParameter = value
-                invalidate()
             }
         }
 
     private var _result: BirExpression? = result
     override var result: BirExpression?
         get() {
-            recordPropertyRead()
             return _result
         }
         set(value) {
             if (_result !== value) {
                 childReplaced(_result, value)
                 _result = value
-                invalidate()
             }
         }
 

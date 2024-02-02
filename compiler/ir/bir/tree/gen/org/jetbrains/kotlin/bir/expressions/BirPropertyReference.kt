@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementClass
-import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.accept
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.symbols.BirFieldSymbol
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
@@ -28,5 +25,7 @@ abstract class BirPropertyReference(elementClass: BirElementClass<*>) : BirCalla
         valueArguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass<BirPropertyReference>(BirPropertyReference::class.java, 45, true)
+    companion object : BirElementClass<BirPropertyReference>(BirPropertyReference::class.java, 45, true) {
+        val symbol = BirElementBackReferencesKey<BirPropertyReference, _>{ (it as? BirPropertyReference)?.symbol?.owner }
+    }
 }
