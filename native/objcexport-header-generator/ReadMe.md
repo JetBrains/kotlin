@@ -78,12 +78,10 @@ This annotation will
 - Ignore test the test failure for the AA based implementation on the CI
 - Mark the displayName of the test with 'TODO' (e.g. `[AA] myTest // TODO`)
 
-Note: 
-- The test will still fail locally (developer setup, not marked as CI).
-- If the annotation is still present, but the test is successful on CI, then an error is emitted that reminds you about removing the annotation
-
-The behaviour of the CI can be replicated by passing a Gradle property like
+Note:
+- If the annotation is still present, but the test is successful, then an error is emitted that reminds you about removing the annotation
+- To make the tests execute normally (for more convenient local development), Gradle property `kif.local` can be used:
 ```text
-./gradlew :native:objcexport-header-generator:check -Pci
+./gradlew :native:objcexport-header-generator:check -Pkif.local
                                                   //  ^
 ```
