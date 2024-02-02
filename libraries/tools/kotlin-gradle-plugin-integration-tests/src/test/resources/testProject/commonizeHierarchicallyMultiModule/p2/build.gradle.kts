@@ -60,9 +60,9 @@ kotlin {
         }
     }
 
-//    commonMain.dependencies {
-//        implementation(project(":p1"))
-//    }
+    commonMain.dependencies {
+        implementation(project(":p1"))
+    }
 
     sourceSets.all {
         languageSettings.optIn("kotlin.RequiresOptIn")
@@ -74,8 +74,4 @@ kotlin {
             header(file("libs/withPosix.h"))
         }
     }
-}
-
-dependencies {
-    commonMainImplementation(project(":p1"))
 }

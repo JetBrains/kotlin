@@ -95,13 +95,8 @@ fun ClassId.toSymbol(session: FirSession): FirClassifierSymbol<*>? {
 
 val FirSession.symbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor()
 
-const val DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY: String = "DEPENDENCIES_SYMBOL_PROVIDER"
-const val DEPENDS_ON_SYMBOL_PROVIDER_QUALIFIED_KEY: String = "DEPENDS_ON_SYMBOL_PROVIDER"
+const val DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY: String = "org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider"
 
 val FirSession.dependenciesSymbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor(
     DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
-)
-
-val FirSession.dependsOnSymbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor(
-    DEPENDS_ON_SYMBOL_PROVIDER_QUALIFIED_KEY
 )

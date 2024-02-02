@@ -61,7 +61,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
             reporter.reportOn(source, FirErrors.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, context)
         }
 
-        if (isProhibitedPrivateExpectOrActualDeclaration(declaration)) {
+        if (isProhibitedPrivateDeclaration(declaration)) {
             reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_DECLARATION, context)
         }
 
@@ -102,6 +102,10 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         }
     }
 
+    private fun isProhibitedPrivateDeclaration(declaration: FirMemberDeclaration): Boolean {
+        return declaration !is FirConstructor && declaration !is FirPropertyAccessor && Visibilities.isPrivate(declaration.visibility)
+    }
+
     private fun isProhibitedEnumConstructor(declaration: FirMemberDeclaration, lastClass: FirClass?): Boolean {
         return declaration is FirConstructor && lastClass?.classKind == ClassKind.ENUM_CLASS
     }
@@ -117,8 +121,4 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
     private fun isProhibitedEnumEntryWithInitializer(declaration: FirMemberDeclaration): Boolean {
         return declaration is FirEnumEntry && declaration.withNavigator { declaration.hasInitializer() == true }
     }
-}
-
-internal fun isProhibitedPrivateExpectOrActualDeclaration(declaration: FirMemberDeclaration): Boolean {
-    return declaration !is FirConstructor && declaration !is FirPropertyAccessor && Visibilities.isPrivate(declaration.visibility)
 }

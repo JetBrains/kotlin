@@ -470,8 +470,7 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
     declarationConflictingSymbols.getOrPut(declaration) { SmartSet.create() }.add(conflictingSymbol)
 }
 
-internal fun FirBasedSymbol<*>.isTopLevelMainFunction(session: FirSession): Boolean {
-    if (this !is FirNamedFunctionSymbol) return false
+private fun FirNamedFunctionSymbol.representsMainFunctionAllowingConflictingOverloads(session: FirSession): Boolean {
     if (name != StandardNames.MAIN || !callableId.isTopLevel || !hasMainFunctionStatus) return false
     if (receiverParameter != null || typeParameterSymbols.isNotEmpty()) return false
     if (valueParameterSymbols.isEmpty()) return true
@@ -488,8 +487,10 @@ private fun areCompatibleMainFunctions(
     declaration2: FirBasedSymbol<*>, file2: FirFile?,
     session: FirSession,
 ) = file1 != file2
-        && declaration1.isTopLevelMainFunction(session)
-        && declaration2.isTopLevelMainFunction(session)
+        && declaration1 is FirNamedFunctionSymbol
+        && declaration2 is FirNamedFunctionSymbol
+        && declaration1.representsMainFunctionAllowingConflictingOverloads(session)
+        && declaration2.representsMainFunctionAllowingConflictingOverloads(session)
 
 private fun FirDeclarationCollector<*>.areNonConflictingCallables(
     declaration: FirBasedSymbol<*>,

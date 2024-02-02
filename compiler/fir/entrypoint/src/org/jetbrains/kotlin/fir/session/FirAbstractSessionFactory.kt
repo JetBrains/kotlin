@@ -13,17 +13,18 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirCliSession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.providers.*
+import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
+import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirLibrarySessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
@@ -71,9 +72,7 @@ abstract class FirAbstractSessionFactory {
 
             val symbolProvider = FirCachingCompositeSymbolProvider(this, providers)
             register(FirSymbolProvider::class, symbolProvider)
-//            if (!mainModuleName.asString().contains("p2_nativeMain")) {
-                register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
-//            }
+            register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
         }
     }
 
@@ -121,11 +120,7 @@ abstract class FirAbstractSessionFactory {
             }.configure()
             registerCommonComponentsAfterExtensionsAreConfigured()
 
-            // dependsOnDependencies can actualize declarations from their dependencies. Because actual declarations can be more specific
-            // (e.g. have additional supertypes), the modules must be ordered from most specific (i.e. actual) to most generic (i.e. expect)
-            // to prevent false positive resolution errors (see KT-57369 for an example).
-            val dependencyProviders =
-                computeDependencyProviderList(moduleData.dependencies + moduleData.friendDependencies + moduleData.allDependsOnDependencies)
+            val dependencyProviders = computeDependencyProviderList(moduleData)
             val generatedSymbolsProvider = FirSwitchableExtensionDeclarationsSymbolProvider.createIfNeeded(this)
 
             val providers = createProviders(
@@ -146,111 +141,19 @@ abstract class FirAbstractSessionFactory {
 
             generatedSymbolsProvider?.let { register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it) }
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, FirCachingCompositeSymbolProvider(this, dependencyProviders))
-//            val dependsOnProviders = computeDependencyProviderList(moduleData.dependsOnDependencies)
-//            val suka = moduleData.dependsOnDependencies.singleOrNull()
-//                ?.let { sessionProvider.getSession(it) }
-//                ?.symbolProvider
-//                ?.let { it as? FirCachingCompositeSymbolProvider }
-//                ?.providers
-//                ?.joinToString("\n") { it.toString() }
-//            log(
-//                """
-//                    symbolProvider:
-//                    ${suka?.prependIndent("    ")}
-//                """.trimIndent()
-//            )
-//            for (p in dependsOnProviders) {
-//                val classId = ClassId.topLevel(FqName("NativeMain"))
-//                val classLikeSymbolByClassId = p.getClassLikeSymbolByClassId(classId)
-//                //dependsOn provider Module <commonizeHierarchicallyMultiModule:p2_nativeMain>
-//                //    provider: org.jetbrains.kotlin.fir.session.KlibBasedSymbolProvider@73aa1276
-//                //    classId: /NativeMain
-//                //    getClassLikeSymbolByClassId: FirRegularClassSymbol NativeMain
-//                //        module: Module <regular dependencies of <commonizeHierarchicallyMultiModule:p2_nativeMain>>
-//                //dependsOn provider Module <commonizeHierarchicallyMultiModule:p2_nativeMain>
-//                //    provider: org.jetbrains.kotlin.fir.session.NativeForwardDeclarationsSymbolProvider@2aec60ee
-//                //    classId: /NativeMain
-//                //    getClassLikeSymbolByClassId: null
-//                //        module: null
-//                //dependsOn provider Module <commonizeHierarchicallyMultiModule:p2_nativeMain>
-//                //    provider: org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider@407d35ad
-//                //    classId: /NativeMain
-//                //    getClassLikeSymbolByClassId: null
-//                //        module: null
-//                if (p is KlibBasedSymbolProvider) {
-//                    File("/home/bobko/log").appendText(
-//"""
-//dependsOn provider for $moduleData
-//    provider: $p
-//        resolvedLibraries:
-//${p.resolvedLibraries.joinToString("\n") { obj(it.libraryName, it.libraryFile) }.prependIndent("            ")}
-//    classId: $classId
-//    getClassLikeSymbolByClassId: $classLikeSymbolByClassId
-//        module: ${classLikeSymbolByClassId?.moduleData}
-//""".trimIndent() + "\n"
-//                    )
-//                }
-//            }
-//            File("/home/bobko/log").appendText("""
-//factory $moduleData
-//    friendDependencies:
-//${moduleData.friendDependencies.joinToString { listOf(it.name, it.platform, it.unique).joinToString() }.prependIndent("        ")}
-//    dependencies:
-//${moduleData.dependencies.joinToString(separator = "\n") { listOf(it.name, it.platform, it.unique).joinToString() }.prependIndent("        ")}
-//    dependsOnDependencies:
-//${moduleData.dependsOnDependencies.joinToString { listOf(it.name, it.platform, it.unique).joinToString() }.prependIndent("        ")}
-//    allDependsOnDependencies:
-//${moduleData.allDependsOnDependencies.joinToString { listOf(it.name, it.platform, it.unique).joinToString() }.prependIndent("        ")}
-//            """.trimIndent() + "\n")
-
-            val pizda = moduleData.allDependsOnDependencies.mapNotNull { sessionProvider.getSession(it) }
-            val hui = pizda.map { it.firProvider }
-            val sukaProviders = hui.map { it.symbolProvider }
-
-            if (moduleData.name.asString().contains("p2_nativeMain")) {
-                println()
-            }
-
-            sukaProviders.singleOrNull()?.let { it as? FirCachingCompositeSymbolProvider }
-                ?.providers
-                ?.forEach { p ->
-                    val classId = ClassId.topLevel(FqName("NativeMain"))
-                    val classLikeSymbolByClassId = p.getClassLikeSymbolByClassId(classId)
-                    if (p is KlibBasedSymbolProvider) {
-                        java.io.File("/home/bobko/log").appendText(
-//${p.resolvedLibraries.joinToString("\n") { obj(it.libraryName, it.libraryFile) }.prependIndent("            ")}
-                            """
-dependsOn provider for $moduleData
-    provider: $p
-        resolvedLibraries:
-    classId: $classId
-    getClassLikeSymbolByClassId: $classLikeSymbolByClassId
-        module: ${classLikeSymbolByClassId?.moduleData}
-""".trimIndent() + "\n"
-                        )
-                    }
-                }
-
-            register(
-                DEPENDS_ON_SYMBOL_PROVIDER_QUALIFIED_KEY,
-                FirCachingCompositeSymbolProvider(this, sukaProviders)
-            )
         }
     }
 
-    private fun obj(vararg any: Any): String {
-        return any.joinToString(prefix = "{", postfix = "}")
-    }
-
-    private fun FirSession.computeDependencyProviderList(dependencies: List<FirModuleData>): List<FirSymbolProvider> {
-        return dependencies
+    private fun FirSession.computeDependencyProviderList(moduleData: FirModuleData): List<FirSymbolProvider> {
+        // dependsOnDependencies can actualize declarations from their dependencies. Because actual declarations can be more specific
+        // (e.g. have additional supertypes), the modules must be ordered from most specific (i.e. actual) to most generic (i.e. expect)
+        // to prevent false positive resolution errors (see KT-57369 for an example).
+        return (moduleData.dependencies + moduleData.friendDependencies + moduleData.allDependsOnDependencies)
             .mapNotNull { sessionProvider?.getSession(it) }
             .flatMap { it.symbolProvider.flatten() }
             .distinct()
             .sortedBy { it.session.kind }
     }
-
-    private fun log(str: String) = java.io.File("/home/bobko/log").appendText(str + "\n")
 
     /* It eliminates dependency and composite providers since the current dependency provider is composite in fact.
     *  To prevent duplications and resolving errors, library or source providers from other modules should be filtered out during flattening.

@@ -18,9 +18,9 @@ expect class A private constructor() {
 actual class A actual private constructor() {
     private fun <!ACTUAL_MISSING!>foo<!>() {}
     private val <!ACTUAL_MISSING!>bar<!>: String = ""
-    actual <!ACTUAL_PRIVATE_DECLARATION!>private<!> fun Int.memExt(): Any = 0
+    actual private fun Int.memExt(): Any = 0
 
-    actual <!ACTUAL_PRIVATE_DECLARATION!>private<!> class Nested
+    actual private class Nested
 
     actual var baz: Any? = null
         private set

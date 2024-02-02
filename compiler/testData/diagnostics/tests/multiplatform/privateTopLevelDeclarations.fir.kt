@@ -10,8 +10,8 @@
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-<!ACTUAL_PRIVATE_DECLARATION!>private<!> actual fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}
-<!ACTUAL_PRIVATE_DECLARATION!>private<!> actual val <!ACTUAL_WITHOUT_EXPECT!>bar<!>: String = ""
-<!ACTUAL_PRIVATE_DECLARATION!>private<!> actual fun Int.<!ACTUAL_WITHOUT_EXPECT!>memExt<!>(): Any = 0
+private actual fun foo() {}
+private actual val bar: String = ""
+private actual fun Int.memExt(): Any = 0
 
-<!ACTUAL_PRIVATE_DECLARATION!>private<!> actual class Foo
+private actual class Foo

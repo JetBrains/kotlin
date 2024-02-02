@@ -22,7 +22,7 @@ public class C2_J extends B_J {
 }
 
 // FILE: main.kt
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>A<!> = A_J
+actual typealias <!ACTUAL_WITHOUT_EXPECT!>A<!> = A_J
 
 // Indirect subtyping is allowed in K2 KT-59356
 actual class C1 : B_J()

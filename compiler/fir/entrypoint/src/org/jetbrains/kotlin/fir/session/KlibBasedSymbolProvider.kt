@@ -30,7 +30,7 @@ class KlibBasedSymbolProvider(
     session: FirSession,
     moduleDataProvider: ModuleDataProvider,
     kotlinScopeProvider: FirKotlinScopeProvider,
-    val resolvedLibraries: Collection<KotlinLibrary>,
+    private val resolvedLibraries: Collection<KotlinLibrary>,
     defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
 ) : MetadataLibraryBasedSymbolProvider<KotlinLibrary>(
     session,

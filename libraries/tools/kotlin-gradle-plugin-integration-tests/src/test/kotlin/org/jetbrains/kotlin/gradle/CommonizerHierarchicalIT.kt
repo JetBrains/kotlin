@@ -84,7 +84,6 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
     @DisplayName("Commonize hierarchically multi module")
     @GradleTest
     fun testCommonizeHierarchicallyMultiModule(gradleVersion: GradleVersion) {
-        val foo = workingDir
         nativeProject("commonizeHierarchicallyMultiModule", gradleVersion) {
             build("assemble") {
                 assertTasksExecuted(":p1:commonizeCInterop")
