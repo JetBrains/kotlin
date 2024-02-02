@@ -28,20 +28,23 @@ class ArtifactsTest {
     private val expectedRepoPath = Paths.get("repo/artifacts-tests/src/test/resources/org/jetbrains/kotlin")
 
     private val excludedProjects = setOf(
-        "annotation-processor-example",
         "android-test-fixes",
-        "org.jetbrains.kotlin.gradle-subplugin-example.gradle.plugin",
+        "annotation-processor-example",
+        "fus-statistics-gradle-plugin",
         "gradle-warnings-detector",
         "kotlin-compiler-args-properties",
-        "fus-statistics-gradle-plugin",
         "kotlin-gradle-plugin-tcs-android",
         "kotlin-gradle-subplugin-example",
         "kotlin-java-example",
         "kotlin-maven-plugin-test",
+        "kotlin-native",
+        "kotlin-native-compiler-embeddable",
+        "kotlin-native-prebuilt",
+        "org.jetbrains.kotlin.fus-statistics-gradle-plugin.gradle.plugin",
+        "org.jetbrains.kotlin.gradle-subplugin-example.gradle.plugin",
         "org.jetbrains.kotlin.test.fixes.android.gradle.plugin",
         "org.jetbrains.kotlin.test.gradle-warnings-detector.gradle.plugin",
         "org.jetbrains.kotlin.test.kotlin-compiler-args-properties.gradle.plugin",
-        "org.jetbrains.kotlin.fus-statistics-gradle-plugin.gradle.plugin",
     )
 
     @TestFactory
