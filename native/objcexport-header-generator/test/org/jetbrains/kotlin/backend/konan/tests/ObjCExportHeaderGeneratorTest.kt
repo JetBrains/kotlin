@@ -198,6 +198,26 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("manyClassesAndInterfaces"))
     }
 
+    @Test
+    fun `test - classReferencingOtherClassAsReturnType`() {
+        doTest(headersTestDataDir.resolve("classReferencingOtherClassAsReturnType"))
+    }
+
+    @Test
+    fun `test - classReferencingDependencyClassAsReturnType`() {
+        doTest(headersTestDataDir.resolve("classReferencingDependencyClassAsReturnType"))
+    }
+
+    @Test
+    fun `test - interfaceReferencingOtherInterfaceAsReturnType`() {
+        doTest(headersTestDataDir.resolve("interfaceReferencingOtherInterfaceAsReturnType"))
+    }
+
+    @Test
+    fun `test - interfaceImplementingInterfaceOrder`() {
+        doTest(headersTestDataDir.resolve("interfaceImplementingInterfaceOrder"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

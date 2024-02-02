@@ -90,14 +90,21 @@ fun KtFileSymbol.translateToObjCExportStubs(): List<ObjCExportStub> {
 
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtSymbol.translateToObjCExportStubs(): List<ObjCExportStub> {
-    return when {
-        this is KtFileSymbol -> translateToObjCExportStubs()
-        this is KtClassOrObjectSymbol && classKind == INTERFACE -> listOfNotNull(translateToObjCProtocol())
-        this is KtClassOrObjectSymbol && classKind == CLASS -> listOfNotNull(translateToObjCClass())
-        this is KtClassOrObjectSymbol && classKind == OBJECT -> listOfNotNull(translateToObjCObject())
-        this is KtConstructorSymbol -> translateToObjCConstructors()
-        this is KtPropertySymbol -> listOfNotNull(translateToObjCProperty())
-        this is KtFunctionSymbol -> listOfNotNull(translateToObjCMethod())
+    return when (this) {
+        is KtFileSymbol -> translateToObjCExportStubs()
+        is KtClassOrObjectSymbol -> {
+            val symbol = when (classKind) {
+                INTERFACE -> translateToObjCProtocol()
+                CLASS -> translateToObjCClass()
+                OBJECT -> translateToObjCClass()
+                else -> return emptyList()
+            } ?: return emptyList()
+
+            return translateSuperInterfaces() + symbol
+        }
+        is KtConstructorSymbol -> translateToObjCConstructors()
+        is KtPropertySymbol -> listOfNotNull(translateToObjCProperty())
+        is KtFunctionSymbol -> listOfNotNull(translateToObjCMethod())
         else -> emptyList()
     }
 }
