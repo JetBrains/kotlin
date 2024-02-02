@@ -160,8 +160,8 @@ internal abstract class IrConstTransformer(
                 element.acceptChildrenVoid(this)
             }
 
-            private fun report(field: IrField) {
-                inlineConstTracker?.reportOnIr(irFile, field, result)
+            private fun report(field: IrField, property: IrProperty? = null) {
+                inlineConstTracker?.reportOnIr(irFile, field, property, result)
             }
 
             override fun visitGetField(expression: IrGetField) {
@@ -170,21 +170,34 @@ internal abstract class IrConstTransformer(
             }
 
             override fun visitCall(expression: IrCall) {
-                expression.symbol.owner.property?.backingField?.let { backingField -> report(backingField) }
+                val property = expression.symbol.owner.property
+                property?.backingField?.let { backingField -> report(backingField, property) }
                 super.visitCall(expression)
             }
         })
     }
 }
 
-fun InlineConstTracker.reportOnIr(irFile: IrFile, field: IrField, value: IrConst<*>) {
+fun InlineConstTracker.reportOnIr(irFile: IrFile, field:IrField, property: IrProperty?, value: IrConst<*>) {
     val path = irFile.path
     val owner = if (field.parentClassOrNull == null) {
         val fileParent = field.parent
-        val className = if (fileParent is IrFile) {
-           File(fileParent.path).nameWithoutExtension.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } + "Kt"
-        } else ""
-        field.parent.kotlinFqName.asString() + "." + className
+        if (fileParent is IrFile) {
+            val className = File(fileParent.path).nameWithoutExtension.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } + "Kt"
+            field.parent.kotlinFqName.asString() + "." + className
+        } else {
+            // fragment from disk
+            val presentableString = property?.containerSource?.presentableString ?: ""
+            if (presentableString.startsWith("Class ")) {
+                try {
+                    presentableString.split("'")[1]
+                } catch (e: IndexOutOfBoundsException) {
+                    ""
+                }
+            } else {
+                ""
+            }
+        }
     } else {
         field.parentAsClass.classId?.asString()?.replace(".", "$")?.replace("/", ".") ?: return
     }
