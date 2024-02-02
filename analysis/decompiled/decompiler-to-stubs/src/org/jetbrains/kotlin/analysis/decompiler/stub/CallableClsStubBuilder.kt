@@ -462,9 +462,17 @@ private class ConstructorClsStubBuilder(
         // delegated call is not to this (as there is no this keyword) and it has body (while primary does not have one)
         // This info is anyway irrelevant for the purposes these stubs are used
         return if (Flags.IS_SECONDARY.get(constructorProto.flags))
-            KotlinConstructorStubImpl(parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR, name, hasBody = true, isDelegatedCallToThis = false)
+            KotlinConstructorStubImpl(
+                parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR, name, hasBody = true,
+                isDelegatedCallToThis = false,
+                isExplicitDelegationCall = false,
+            )
         else
-            KotlinConstructorStubImpl(parent, KtStubElementTypes.PRIMARY_CONSTRUCTOR, name, hasBody = false, isDelegatedCallToThis = false)
+            KotlinConstructorStubImpl(
+                parent, KtStubElementTypes.PRIMARY_CONSTRUCTOR, name, hasBody = false,
+                isDelegatedCallToThis = false,
+                isExplicitDelegationCall = false,
+            )
     }
 }
 

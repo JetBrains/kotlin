@@ -4,7 +4,7 @@ KotlinStub$PACKAGE_DIRECTIVE
 KotlinStub$IMPORT_LIST
 KotlinStub$CLASS[classId=test/ParameterName, fqName=test.ParameterName, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ParameterName, superNames=[]]
   KotlinStub$MODIFIER_LIST[public final]
-  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=ParameterName]
+  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ParameterName]
     KotlinStub$MODIFIER_LIST[public]
     KotlinStub$VALUE_PARAMETER_LIST
   KotlinStub$CLASS_BODY

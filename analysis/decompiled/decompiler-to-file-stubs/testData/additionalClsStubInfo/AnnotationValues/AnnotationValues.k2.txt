@@ -4,7 +4,7 @@ KotlinStub$PACKAGE_DIRECTIVE
 KotlinStub$IMPORT_LIST
 KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationValues, superNames=[]]
   KotlinStub$MODIFIER_LIST[public final]
-  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=AnnotationValues]
+  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnnotationValues]
     KotlinStub$MODIFIER_LIST[public]
     KotlinStub$VALUE_PARAMETER_LIST
   KotlinStub$CLASS_BODY
@@ -18,7 +18,7 @@ KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, is
                 KotlinStub$USER_TYPE
                   KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=Simple]
-      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithSimple]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=WithSimple]
         KotlinStub$MODIFIER_LIST[public]
         KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$CLASS_BODY
@@ -32,7 +32,7 @@ KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, is
                 KotlinStub$USER_TYPE
                   KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=StringLiteral]
-      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithStringLiteral]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=WithStringLiteral]
         KotlinStub$MODIFIER_LIST[public]
         KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$CLASS_BODY
@@ -46,7 +46,7 @@ KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, is
                 KotlinStub$USER_TYPE
                   KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=EnumLiteral]
-      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithEnumLiteral]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=WithEnumLiteral]
         KotlinStub$MODIFIER_LIST[public]
         KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$CLASS_BODY
@@ -60,7 +60,7 @@ KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, is
                 KotlinStub$USER_TYPE
                   KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=VarArg]
-      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithVarArg]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=WithVarArg]
         KotlinStub$MODIFIER_LIST[public]
         KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$CLASS_BODY
@@ -74,7 +74,7 @@ KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, is
                 KotlinStub$USER_TYPE
                   KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=Arrays]
-      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithArrays]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=WithArrays]
         KotlinStub$MODIFIER_LIST[public]
         KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$CLASS_BODY
@@ -90,7 +90,7 @@ KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, is
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=ClassLiteral]
       KotlinStub$TYPE_PARAMETER_LIST
         KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithClassLiteral]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=WithClassLiteral]
         KotlinStub$MODIFIER_LIST[public]
         KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$CLASS_BODY
@@ -104,7 +104,7 @@ KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, is
                 KotlinStub$USER_TYPE
                   KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=Outer]
-      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithNested]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=WithNested]
         KotlinStub$MODIFIER_LIST[public]
         KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$CLASS_BODY

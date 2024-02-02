@@ -4,7 +4,7 @@ PsiJetFileStubImpl[package=test]
   IMPORT_LIST
   CLASS[classId=test/AnnotatedFlexibleTypes, fqName=test.AnnotatedFlexibleTypes, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotatedFlexibleTypes, superNames=[]]
     MODIFIER_LIST[public final]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=AnnotatedFlexibleTypes]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnnotatedFlexibleTypes]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=javaClass]

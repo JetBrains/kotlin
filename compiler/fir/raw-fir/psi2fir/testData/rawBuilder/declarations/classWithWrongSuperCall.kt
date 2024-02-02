@@ -1,4 +1,3 @@
-// IGNORE_TREE_ACCESS: KT-65268
 open class A(init: A.() -> Unit) {
     val prop: String = ""
 }

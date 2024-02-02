@@ -7,7 +7,7 @@ PsiJetFileStubImpl[package=test]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=E]
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=F]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=InnerTypes]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=InnerTypes]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
@@ -62,7 +62,7 @@ PsiJetFileStubImpl[package=test]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G]
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=H]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=Inner]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Inner]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
@@ -70,7 +70,7 @@ PsiJetFileStubImpl[package=test]
             MODIFIER_LIST[inner public final]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=I]
-            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=Inner3]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Inner3]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             CLASS_BODY
@@ -211,7 +211,7 @@ PsiJetFileStubImpl[package=test]
                     REFERENCE_EXPRESSION[referencedName=Unit]
       CLASS[classId=test/InnerTypes.Inner2, fqName=test.InnerTypes.Inner2, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner2, superNames=[]]
         MODIFIER_LIST[inner public final]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=Inner2]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Inner2]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY

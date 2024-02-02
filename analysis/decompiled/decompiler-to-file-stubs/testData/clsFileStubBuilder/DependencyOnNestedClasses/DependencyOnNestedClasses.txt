@@ -4,7 +4,7 @@ PsiJetFileStubImpl[package=test]
   IMPORT_LIST
   CLASS[classId=test/DependencyOnNestedClasses, fqName=test.DependencyOnNestedClasses, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=DependencyOnNestedClasses, superNames=[Nested]]
     MODIFIER_LIST[public final]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=DependencyOnNestedClasses]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=DependencyOnNestedClasses]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     SUPER_TYPE_LIST

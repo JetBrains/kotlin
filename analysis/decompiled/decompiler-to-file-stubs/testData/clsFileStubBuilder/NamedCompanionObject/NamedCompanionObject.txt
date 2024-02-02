@@ -4,7 +4,7 @@ PsiJetFileStubImpl[package=test]
   IMPORT_LIST
   CLASS[classId=test/NamedCompanionObject, fqName=test.NamedCompanionObject, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=NamedCompanionObject, superNames=[]]
     MODIFIER_LIST[public final]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=NamedCompanionObject]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=NamedCompanionObject]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
@@ -28,13 +28,13 @@ PsiJetFileStubImpl[package=test]
                 REFERENCE_EXPRESSION[referencedName=Int]
           CLASS[classId=test/NamedCompanionObject.Named.A, fqName=test.NamedCompanionObject.Named.A, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
             MODIFIER_LIST[public final]
-            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=A]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=A]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             CLASS_BODY
               CLASS[classId=test/NamedCompanionObject.Named.A.B, fqName=test.NamedCompanionObject.Named.A.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
                 MODIFIER_LIST[public final]
-                PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=B]
+                PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=B]
                   MODIFIER_LIST[public]
                   VALUE_PARAMETER_LIST
                 CLASS_BODY
@@ -70,7 +70,7 @@ PsiJetFileStubImpl[package=test]
             REFERENCE_EXPRESSION[referencedName=Unit]
       CLASS[classId=test/NamedCompanionObject.B, fqName=test.NamedCompanionObject.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
         MODIFIER_LIST[public final]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=B]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=B]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
@@ -79,7 +79,7 @@ PsiJetFileStubImpl[package=test]
             CLASS_BODY
               CLASS[classId=test/NamedCompanionObject.B.NamedInB.C, fqName=test.NamedCompanionObject.B.NamedInB.C, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
                 MODIFIER_LIST[public final]
-                PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=C]
+                PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=C]
                   MODIFIER_LIST[public]
                   VALUE_PARAMETER_LIST
                 CLASS_BODY
@@ -88,7 +88,7 @@ PsiJetFileStubImpl[package=test]
                     CLASS_BODY
                       CLASS[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=D, superNames=[]]
                         MODIFIER_LIST[public final]
-                        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=D]
+                        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=D]
                           MODIFIER_LIST[public]
                           VALUE_PARAMETER_LIST
                         CLASS_BODY
@@ -112,7 +112,7 @@ PsiJetFileStubImpl[package=test]
                                     REFERENCE_EXPRESSION[referencedName=Unit]
                               CLASS[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.Anno, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.Anno, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Anno, superNames=[Annotation]]
                                 MODIFIER_LIST[public final annotation]
-                                PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=Anno]
+                                PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Anno]
                                   MODIFIER_LIST[public]
                                   VALUE_PARAMETER_LIST
                                 SUPER_TYPE_LIST
@@ -125,7 +125,7 @@ PsiJetFileStubImpl[package=test]
                                 CLASS_BODY
                               CLASS[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
                                 MODIFIER_LIST[enum public final]
-                                PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=En]
+                                PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=En]
                                   MODIFIER_LIST[private]
                                   VALUE_PARAMETER_LIST
                                 SUPER_TYPE_LIST

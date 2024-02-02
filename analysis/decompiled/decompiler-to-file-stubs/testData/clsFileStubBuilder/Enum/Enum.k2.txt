@@ -12,7 +12,7 @@ PsiJetFileStubImpl[package=a.b.c.test.enum]
   IMPORT_LIST
   CLASS[classId=a/b/c/test/enum/Enum, fqName=a.b.c.test.enum.Enum, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum, superNames=[Enum]]
     MODIFIER_LIST[enum public final]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=Enum]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Enum]
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
     SUPER_TYPE_LIST
