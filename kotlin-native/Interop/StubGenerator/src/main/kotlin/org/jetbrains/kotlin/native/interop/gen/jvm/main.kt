@@ -85,6 +85,11 @@ class Interop {
             interop(flavor, args, internalInteropOptions, runFromDaemon)
         } catch (prettyException: CInteropPrettyException) {
             prettyException
+        } catch (throwable: Throwable) {
+            // Return Throwable to be printed to logs by invoker, instead of allowing unprettified exception to be thrown through reflection invocation,
+            // which otherwise will be replaced with InvocationTargetException with null error message and huge stacktrace which TeamCity cuts,
+            // so "Caused by:" part is not saved to the log.
+            throwable
         }
     }
 

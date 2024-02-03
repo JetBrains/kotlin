@@ -148,7 +148,7 @@ internal fun invokeCInterop(
         cinteropResult is Exception -> {
             CompilationToolCallResult(
                 exitCode = ExitCode.COMPILATION_ERROR,
-                toolOutput = cinteropResult.message ?: "",
+                toolOutput = cinteropResult.stackTraceToString(),
                 toolOutputHasErrors = true,
                 duration
             )
