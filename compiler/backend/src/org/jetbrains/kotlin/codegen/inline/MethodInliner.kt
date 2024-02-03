@@ -198,7 +198,11 @@ class MethodInliner(
                         // KT-65503 For all changed types, if oldType is a lambda or an anonymous object,
                         // and the newType is a name for an inline call,
                         // it should be added to the remapper to ensure correct inline conversion of nested anonymous objects or lambdas.
-                        if (newType.contains(INLINE_CALL_TRANSFORMATION_SUFFIX) && (oldType.contains("\$lambda") || oldType.contains("\$obj"))) {
+                        if (newType.contains(INLINE_CALL_TRANSFORMATION_SUFFIX) &&
+                            !oldType.contains(INLINE_CALL_TRANSFORMATION_SUFFIX) &&
+                            isAnonymousClass(oldType) &&
+                            !remapper.hasNoAdditionalMapping(oldType)
+                        ) {
                             remapper.addMapping(oldType, newType)
                         }
                     }
