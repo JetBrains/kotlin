@@ -268,7 +268,6 @@ class BirCompilation() {
                 )
 
                 birModule = ir2BirConverter.remapElement<BirModuleFragment>(input)
-                compiledBir.attachRootElement(birModule)
             }
 
             ir2BirConverter.convertImplElementsIntoLazyWhenPossible = true
@@ -314,15 +313,21 @@ class BirCompilation() {
         ): BirCompilationBundle {
             val compiledBir = input.backendContext!!.compiledBir
             val externalBir = input.backendContext.externalModulesBir
-            compiledBir.activateNewRegisteredIndices()
-            externalBir.activateNewRegisteredIndices()
 
             invokePhaseMeasuringTime("BIR", "baseline tree traversal") {
                 input.birModule!!.countAllElementsInTree()
             }
 
-            invokePhaseMeasuringTime("BIR", "index compiled BIR") {
-                compiledBir.reindexAllElements()
+            compiledBir.activateNewRegisteredIndices(true)
+            externalBir.activateNewRegisteredIndices(true)
+            invokePhaseMeasuringTime("BIR", "index BIR one time") {
+                compiledBir.attachRootElement(input.birModule!!)
+            }
+
+            compiledBir.activateNewRegisteredIndices(false)
+            externalBir.activateNewRegisteredIndices(false)
+            invokePhaseMeasuringTime("BIR", "index BIR scalable") {
+                compiledBir.reindexAllElements(true)
             }
 
             dumpBirPhase(context, phaseConfig, input, null, "Initial")
