@@ -70,7 +70,7 @@ internal object BirElementIndexClassifierFunctionGenerator {
     )
 
     fun createClassifierFunction(indexers: List<Indexer>): BirElementIndexClassifier {
-        val matchersMaxIndex = indexers.maxOf { it.index }
+        val matchersMaxIndex = indexers.maxOfOrNull { it.index } ?: -1
         val indexersFunctions = arrayOfNulls<BirElementGeneralIndexer>(matchersMaxIndex + 1)
         for (matcher in indexers) {
             indexersFunctions[matcher.index] = matcher.indexerFunction
@@ -171,72 +171,75 @@ internal object BirElementIndexClassifierFunctionGenerator {
         il.add(InsnNode(Opcodes.ICONST_0))
         il.add(VarInsnNode(Opcodes.ISTORE, resultVarIdx))
 
-        val indexersIndexMin = indexers.minOf { it.index }
-        val indexersIndicesSpan = indexers.maxOf { it.index } - indexersIndexMin + 1
+        if (indexers.isNotEmpty()) {
+            val indexersIndexMin = indexers.minOf { it.index }
+            val indexersIndicesSpan = indexers.maxOf { it.index } - indexersIndexMin + 1
 
-        // Compute a key to the switch table.
-        // key = element.classId * indexersIndicesSpan + (minIndex - indexersIndexMin)
-        il.add(VarInsnNode(Opcodes.ALOAD, elementVarIdx))
-        il.add(
-            MethodInsnNode(
-                Opcodes.INVOKEVIRTUAL,
-                Type.getInternalName(BirElementBase::class.java),
-                BirElementBase::class.java.declaredMethods.single { it.name.startsWith("getElementClassId") }.name,
-                Type.getMethodDescriptor(Type.BYTE_TYPE)
+            // Compute a key to the switch table.
+            // key = element.classId * indexersIndicesSpan + (minIndex - indexersIndexMin)
+            il.add(VarInsnNode(Opcodes.ALOAD, elementVarIdx))
+            il.add(
+                MethodInsnNode(
+                    Opcodes.INVOKEVIRTUAL,
+                    Type.getInternalName(BirElementBase::class.java),
+                    BirElementBase::class.java.declaredMethods.single { it.name.startsWith("getElementClassId") }.name,
+                    Type.getMethodDescriptor(Type.BYTE_TYPE)
+                )
             )
-        )
-        il.add(IntInsnNode(Opcodes.SIPUSH, indexersIndicesSpan))
-        il.add(InsnNode(Opcodes.IMUL))
-        il.add(VarInsnNode(Opcodes.ILOAD, minIndexVarIdx))
-        il.add(IntInsnNode(Opcodes.SIPUSH, indexersIndexMin))
-        il.add(InsnNode(Opcodes.ISUB))
-        il.add(InsnNode(Opcodes.IADD))
+            il.add(IntInsnNode(Opcodes.SIPUSH, indexersIndicesSpan))
+            il.add(InsnNode(Opcodes.IMUL))
+            il.add(VarInsnNode(Opcodes.ILOAD, minIndexVarIdx))
+            il.add(IntInsnNode(Opcodes.SIPUSH, indexersIndexMin))
+            il.add(InsnNode(Opcodes.ISUB))
+            il.add(InsnNode(Opcodes.IADD))
 
-        val switchInstPlaceholder = InsnNode(Opcodes.NOP)
-        il.add(switchInstPlaceholder)
+            val switchInstPlaceholder = InsnNode(Opcodes.NOP)
+            il.add(switchInstPlaceholder)
 
-        val elementSwitchNodes = buildClassMatchingStructure(indexers)
-        val switchCases = mutableListOf<Pair<LabelNode, Int>>()
-        val endLabel = LabelNode()
-        for (node in elementSwitchNodes) {
-            val indexersByIndex = node.indexers.associateBy { it.index }
-            var lastFallthroughLabel: LabelNode? = null
-            for (index in indexersIndexMin..node.indexers.maxOf { it.index }) {
-                val indexer = indexersByIndex[index]
+            val elementSwitchNodes = buildClassMatchingStructure(indexers)
+            val switchCases = mutableListOf<Pair<LabelNode, Int>>()
+            val endLabel = LabelNode()
+            for (node in elementSwitchNodes) {
+                val indexersByIndex = node.indexers.associateBy { it.index }
+                var lastFallthroughLabel: LabelNode? = null
+                for (index in indexersIndexMin..node.indexers.maxOf { it.index }) {
+                    val indexer = indexersByIndex[index]
 
-                val caseLabel = if (indexer == null) {
-                    lastFallthroughLabel ?: LabelNode().also {
-                        il.add(it)
-                        lastFallthroughLabel = it
+                    val caseLabel = if (indexer == null) {
+                        lastFallthroughLabel ?: LabelNode().also {
+                            il.add(it)
+                            lastFallthroughLabel = it
+                        }
+                    } else {
+                        lastFallthroughLabel = null
+                        LabelNode().also { il.add(it) }
                     }
-                } else {
-                    lastFallthroughLabel = null
-                    LabelNode().also { il.add(it) }
+
+                    for (elementClass in node.elementClasses) {
+                        val switchKey = elementClass.id * indexersIndicesSpan + (index - indexersIndexMin)
+                        switchCases += caseLabel to switchKey
+                    }
+
+                    if (indexer != null) {
+                        generateIndexerCase(
+                            il, indexer, capturedIndexerInstances[indexer], clazz,
+                            elementVarIdx, referenceRecorderVarIdx, resultVarIdx
+                        )
+                    }
                 }
 
-                for (elementClass in node.elementClasses) {
-                    val switchKey = elementClass.id * indexersIndicesSpan + (index - indexersIndexMin)
-                    switchCases += caseLabel to switchKey
-                }
-
-                if (indexer != null) {
-                    generateIndexerCase(
-                        il, indexer, capturedIndexerInstances[indexer], clazz,
-                        elementVarIdx, referenceRecorderVarIdx, resultVarIdx
-                    )
-                }
+                il.add(JumpInsnNode(Opcodes.GOTO, endLabel))
             }
 
-            il.add(JumpInsnNode(Opcodes.GOTO, endLabel))
+            switchCases.sortBy { it.second }
+            il.set(
+                switchInstPlaceholder,
+                LookupSwitchInsnNode(endLabel, switchCases.map { it.second }.toIntArray(), switchCases.map { it.first }.toTypedArray())
+            )
+
+            il.add(endLabel)
         }
 
-        switchCases.sortBy { it.second }
-        il.set(
-            switchInstPlaceholder,
-            LookupSwitchInsnNode(endLabel, switchCases.map { it.second }.toIntArray(), switchCases.map { it.first }.toTypedArray())
-        )
-
-        il.add(endLabel)
         il.add(VarInsnNode(Opcodes.ILOAD, resultVarIdx))
         il.add(InsnNode(Opcodes.IRETURN))
 

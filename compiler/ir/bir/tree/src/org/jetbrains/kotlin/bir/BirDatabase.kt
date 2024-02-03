@@ -250,7 +250,8 @@ class BirDatabase : BirElementParent() {
      * @param updateBackReferences Whether to update the list of other elements' back references,
      * based on forward references of this element. Otherwise, just update the index.
      */
-    internal fun indexElement(element: BirElementBase, updateBackReferences: Boolean) {
+    @JvmOverloads
+    internal fun indexElement(element: BirElementBase, updateBackReferences: Boolean, onlyReindexForwardReferences: Boolean = false) {
         val classifier = elementClassifier ?: return
         if (element._containingDatabase !== this) return
 
@@ -275,11 +276,17 @@ class BirDatabase : BirElementParent() {
         val forwardReference = forwardReferenceRecorder?.recordedRef
         if (forwardReference != null) {
             val referenceDatabase = forwardReference._containingDatabase
-            if (referenceDatabase !== this) {
-                maybeAttachReferencedElementToOtherDatabase(forwardReference)
-            }
+            if (onlyReindexForwardReferences) {
+                if (referenceDatabase !== this) {
+                    forwardReference._containingDatabase?.indexElement(forwardReference, false)
+                }
+            } else {
+                if (referenceDatabase !== this) {
+                    maybeAttachReferencedElementToOtherDatabase(forwardReference)
+                }
 
-            forwardReference.registerBackReference(element)
+                forwardReference.registerBackReference(element)
+            }
         }
 
         element.setFlag(BirElementBase.FLAG_INVALIDATED, false)
@@ -399,38 +406,36 @@ class BirDatabase : BirElementParent() {
      *
      * To apply those for all currently stored elements as well, call [reindexAllElements].
      */
-    fun activateNewRegisteredIndices() {
-        if (registeredIndexers.size != elementIndexSlotCount) {
-            val indexers = registeredIndexers.mapIndexed { i, indexerKey ->
-                val index = i + 1
-                when (indexerKey) {
-                    is BirElementsIndexKey<*> -> {
-                        indexerIndexes[indexerKey] = index
-                        val slot = ElementIndexSlot(index, indexerKey.condition)
-                        elementIndexSlots[index] = slot
-                        BirElementIndexClassifierFunctionGenerator.Indexer(
-                            BirElementGeneralIndexer.Kind.IndexMatcher,
-                            indexerKey.condition,
-                            indexerKey.elementType,
-                            null,
-                            index
-                        )
-                    }
-                    is BirElementBackReferencesKey<*, *> -> {
-                        BirElementIndexClassifierFunctionGenerator.Indexer(
-                            BirElementGeneralIndexer.Kind.BackReferenceRecorder,
-                            indexerKey.recorder,
-                            indexerKey.elementType,
-                            indexerKey.forwardReferenceProperty,
-                            index
-                        )
-                    }
+    fun activateNewRegisteredIndices(overheadTestMode: Boolean) {
+        val indexers = registeredIndexers.mapIndexed { i, indexerKey ->
+            val index = i + 1
+            when (indexerKey) {
+                is BirElementsIndexKey<*> -> {
+                    indexerIndexes[indexerKey] = index
+                    val slot = ElementIndexSlot(index, indexerKey.condition)
+                    elementIndexSlots[index] = slot
+                    BirElementIndexClassifierFunctionGenerator.Indexer(
+                        BirElementGeneralIndexer.Kind.IndexMatcher,
+                        indexerKey.condition,
+                        indexerKey.elementType,
+                        null,
+                        index
+                    )
+                }
+                is BirElementBackReferencesKey<*, *> -> {
+                    BirElementIndexClassifierFunctionGenerator.Indexer(
+                        BirElementGeneralIndexer.Kind.BackReferenceRecorder,
+                        indexerKey.recorder,
+                        indexerKey.elementType,
+                        indexerKey.forwardReferenceProperty,
+                        index
+                    )
                 }
             }
+        }.filterNot { overheadTestMode && it.kind == BirElementGeneralIndexer.Kind.IndexMatcher }
 
-            elementClassifier = BirElementIndexClassifierFunctionGenerator.createClassifierFunction(indexers)
-            elementIndexSlotCount = registeredIndexers.size
-        }
+        elementClassifier = BirElementIndexClassifierFunctionGenerator.createClassifierFunction(indexers)
+        elementIndexSlotCount = registeredIndexers.size
     }
 
     /**
@@ -439,13 +444,13 @@ class BirDatabase : BirElementParent() {
      * It is only useful after registering new indices and calling [activateNewRegisteredIndices],
      * otherwise all indices should already be up-to-date.
      */
-    fun reindexAllElements() {
+    fun reindexAllElements(updateBackReferences: Boolean) {
         realizeTreeMovements()
 
         val roots = getRootElements()
         for (root in roots) {
             root.acceptLite { element ->
-                indexElement(element, true)
+                indexElement(element, updateBackReferences, true)
                 element.walkIntoChildren()
             }
         }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.bir.util
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.accept
+import org.jetbrains.kotlin.bir.acceptLite
 
 internal class BirElementAncestorsIterator(
     initial: BirElementBase?,
@@ -41,7 +42,7 @@ fun BirElement.collectAllElementsInTree(): List<BirElement> {
 
 fun BirElement.countAllElementsInTree(): Int {
     var count = 0
-    accept {
+    acceptLite {
         count++
         it.walkIntoChildren()
     }
