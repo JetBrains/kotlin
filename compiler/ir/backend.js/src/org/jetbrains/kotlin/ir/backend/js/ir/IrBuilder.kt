@@ -273,4 +273,5 @@ object JsIrBuilder {
     fun buildString(type: IrType, s: String) = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, s)
     fun buildTry(type: IrType) = IrTryImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type)
     fun buildCatch(ex: IrVariable, block: IrBlockImpl) = IrCatchImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, ex, block)
+    fun buildLong(type: IrType, v: Long) = IrConstImpl.long(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, v)
 }

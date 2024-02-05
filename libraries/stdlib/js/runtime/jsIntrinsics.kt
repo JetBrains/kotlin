@@ -230,3 +230,12 @@ internal fun jsIsEs6(): Boolean
 
 @JsIntrinsic
 internal fun <T> jsYield(suspendFunction: () -> T): T
+
+@JsIntrinsic
+internal fun jsAlignBigInt(value: Long): Long
+
+@JsIntrinsic
+internal fun jsBigInt(value: Any): Long
+
+@JsIntrinsic
+internal fun <T: Number> jsNumber(value: Any): T

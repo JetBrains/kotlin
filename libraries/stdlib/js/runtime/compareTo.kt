@@ -12,11 +12,11 @@ internal fun compareTo(a: dynamic, b: dynamic): Int = when (jsTypeOf(a)) {
     "number" -> when {
         jsTypeOf(b) == "number" ->
             doubleCompareTo(a, b)
-        b is Long ->
-            doubleCompareTo(a, b.toDouble())
         else ->
             primitiveCompareTo(a, b)
     }
+
+    "bigint" -> primitiveCompareTo(a, b)
 
     "string", "boolean" -> primitiveCompareTo(a, b)
 

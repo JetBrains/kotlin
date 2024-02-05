@@ -91,6 +91,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsBitShiftRU = getInternalFunction("jsBitShiftRU")
     val jsBitShiftL = getInternalFunction("jsBitShiftL")
 
+
+    val jsBigIntShiftRightUnsigned = getInternalFunction("shiftRightUnsigned")
+
     // Type checks:
 
     val jsInstanceOf = getInternalFunction("jsInstanceOfIntrinsic")
@@ -103,7 +106,6 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsNumberToDouble = getInternalFunction("numberToDouble")
     val jsNumberToInt = getInternalFunction("numberToInt")
     val jsNumberToShort = getInternalFunction("numberToShort")
-    val jsNumberToLong = getInternalFunction("numberToLong")
     val jsNumberToChar = getInternalFunction("numberToChar")
     val jsToByte = getInternalFunction("toByte")
     val jsToShort = getInternalFunction("toShort")
@@ -165,6 +167,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsEmptyObject = getInternalFunction("emptyObject")
     val jsOpenInitializerBox = getInternalFunction("openInitializerBox")
 
+    val longHashCodeSymbol = getInternalFunction("longHashCode")
+
     val jsImul = getInternalFunction("imul")
 
     val jsUnreachableDeclarationLog = getInternalFunction("unreachableDeclarationLog")
@@ -176,12 +180,18 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val jsNewAnonymousClass = getInternalFunction("jsNewAnonymousClass")
 
+    val doubleToFloat = irBuiltIns.doubleClass.getSimpleFunction("toFloat") ?: error("toFloat should exist inside Double class")
+
     // Coroutines
 
     val jsCoroutineContext
         get() = context.ir.symbols.coroutineContextGetter
 
     val jsYieldFunctionSymbol = getInternalFunction("jsYield")
+
+    val jsNumberSymbol = getInternalFunction("jsNumber")
+    val jsBigIntSymbol = getInternalFunction("jsBigInt")
+    val jsAlignBigIntSymbol = getInternalFunction("jsAlignBigInt")
 
     val jsGetContinuation = getInternalFunction("getContinuation")
     val jsInvokeSuspendSuperType =
@@ -225,17 +235,6 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val promiseClassSymbol: IrClassSymbol by context.lazy2 {
         getInternalClassWithoutPackage("kotlin.js.Promise")
     }
-
-    val longToDouble = context.symbolTable.descriptorExtension.referenceSimpleFunction(
-        context.getClass(FqName("kotlin.Long")).unsubstitutedMemberScope.findSingleFunction(
-            Name.identifier("toDouble")
-        )
-    )
-    val longToFloat = context.symbolTable.descriptorExtension.referenceSimpleFunction(
-        context.getClass(FqName("kotlin.Long")).unsubstitutedMemberScope.findSingleFunction(
-            Name.identifier("toFloat")
-        )
-    )
 
     val longCompareToLong: IrSimpleFunction = longClassSymbol.owner.findDeclaration<IrSimpleFunction> {
         it.name == Name.identifier("compareTo") && it.valueParameters[0].type.isLong()

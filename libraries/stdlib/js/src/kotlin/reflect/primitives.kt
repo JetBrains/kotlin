@@ -30,6 +30,9 @@ internal object PrimitiveClasses {
     @JsName("intClass")
     val intClass = PrimitiveKClassImpl(js("Number").unsafeCast<JsClass<Int>>(), "Int", { it is Int })
 
+    @JsName("longClass")
+    val longClass = PrimitiveKClassImpl(js("BigInt").unsafeCast<JsClass<Long>>(), "Long", { it is Long })
+
     @JsName("floatClass")
     val floatClass = PrimitiveKClassImpl(js("Number").unsafeCast<JsClass<Float>>(), "Float", { it is Float })
 

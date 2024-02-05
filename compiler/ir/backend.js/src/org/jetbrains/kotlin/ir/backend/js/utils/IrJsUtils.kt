@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
@@ -132,3 +133,11 @@ fun JsIrBackendContext.findDefaultConstructorFor(irClass: IrClass): IrFunction? 
 
 val IrClass.primaryConstructorReplacement: IrSimpleFunction?
     get() = findDeclaration<IrSimpleFunction> { it.isEs6PrimaryConstructorReplacement }
+
+
+fun IrSimpleFunctionSymbol.call(vararg arguments: IrExpression) =
+    JsIrBuilder.buildCall(this, owner.returnType).apply {
+        for ((idx, arg) in arguments.withIndex()) {
+            putValueArgument(idx, arg)
+        }
+    }

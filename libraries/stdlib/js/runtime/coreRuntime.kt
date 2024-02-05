@@ -56,7 +56,7 @@ internal fun getBooleanHashCode(value: Boolean): Int {
     return if (value) 1231 else 1237
 }
 
-private fun getBigIntHashCode(value: dynamic): Int {
+internal fun getBigIntHashCode(value: dynamic): Int {
     @Suppress("UNUSED_VARIABLE")
     val shiftNumber = js("BigInt(32)");
     @Suppress("UNUSED_VARIABLE")

@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
+import org.jetbrains.kotlin.ir.backend.js.utils.call
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -25,14 +28,15 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
     private val irBuiltIns = context.irBuiltIns
 
     private fun buildInt(v: Int) = JsIrBuilder.buildInt(irBuiltIns.intType, v)
+    private fun buildBigInt(v: Int) = JsIrBuilder.buildLong(irBuiltIns.longType, v.toLong())
 
     private val memberToTransformer = MemberToTransformer().apply {
 
         val primitiveNumbers =
-            irBuiltIns.run { listOf(intType, shortType, byteType, floatType, doubleType) }
+            irBuiltIns.run { listOf(intType, shortType, byteType, floatType, doubleType, longType) }
 
         for (type in primitiveNumbers) {
-            add(type, OperatorNames.UNARY_PLUS, intrinsics.jsUnaryPlus)
+            add(type, OperatorNames.UNARY_PLUS, ::transformUnaryPlus)
             add(type, OperatorNames.UNARY_MINUS, ::transformUnaryMinus)
         }
 
@@ -79,6 +83,41 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
             add(type, OperatorNames.MOD, withLongCoercion(::transformRem))
             add(type, OperatorNames.REM, withLongCoercion(::transformRem))
         }
+
+        irBuiltIns.longType.let {
+            add(it, OperatorNames.SHL) { call ->
+                irCall(call, intrinsics.jsBitShiftL, receiversAsArguments = true)
+                    .withSecondArgumentAsBigInt()
+                    .alignedWith64Bits()
+            }
+
+            add(it, OperatorNames.SHR) { call ->
+                irCall(call, intrinsics.jsBitShiftR, receiversAsArguments = true)
+                    .withSecondArgumentAsBigInt()
+                    .alignedWith64Bits()
+            }
+            add(it, OperatorNames.AND) { call ->
+                irCall(call, intrinsics.jsBitAnd, receiversAsArguments = true)
+                    .alignedWith64Bits()
+
+            }
+            add(it, OperatorNames.OR) { call ->
+                irCall(call, intrinsics.jsBitOr, receiversAsArguments = true)
+                    .alignedWith64Bits()
+
+            }
+            add(it, OperatorNames.XOR) { call ->
+                irCall(call, intrinsics.jsBitXor, receiversAsArguments = true)
+                    .alignedWith64Bits()
+
+            }
+            add(it, OperatorNames.INV) { call ->
+                irCall(call, intrinsics.jsBitNot, receiversAsArguments = true)
+                    .alignedWith64Bits()
+            }
+
+            add(it, OperatorNames.SHRU, intrinsics.jsBigIntShiftRightUnsigned)
+        }
     }
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
@@ -105,7 +144,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         }
     }
 
-    private fun transformRangeUntil(call: IrFunctionAccessExpression): IrExpression {
+    private fun transformRangeUntil(call: IrFunctionAccessExpression): IrFunctionAccessExpression {
         if (call.valueArgumentsCount != 1) return call
         with(call.symbol.owner) {
             val function = intrinsics.rangeUntilFunctions[dispatchReceiverParameter!!.type to valueParameters[0].type] ?:
@@ -125,6 +164,9 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                 isFloat() || isDouble() ->
                     // TODO introduce doubleToHashCode?
                     irCall(call, intrinsics.jsGetNumberHashCode, receiversAsArguments = true)
+                isLong() ->
+                    irCall(call, intrinsics.longHashCodeSymbol, receiversAsArguments = true)
+
                 else -> call
             }
         }
@@ -134,12 +176,22 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         call: IrFunctionAccessExpression,
         intrinsic: IrSimpleFunctionSymbol,
         toInt32: Boolean = false
-    ): IrExpression {
+    ): IrCall {
         val newCall = irCall(call, intrinsic, receiversAsArguments = true)
         if (toInt32)
             return toInt32(newCall)
         return newCall
     }
+
+    private fun IrFunctionAccessExpression.withSecondArgumentAsBigInt() =
+        apply {
+            val secondArgument =
+                getValueArgument(1) ?: error("Expect to second argument be presented for call of intrinsic `${symbol.owner.name}`")
+            putValueArgument(1, intrinsics.jsBigIntSymbol.call(secondArgument))
+        }
+
+    private fun IrFunctionAccessExpression.alignedWith64Bits() =
+        intrinsics.jsAlignBigIntSymbol.call(this)
 
     class BinaryOp(call: IrFunctionAccessExpression) {
         val function = call.symbol.owner
@@ -187,14 +239,24 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
 
     private fun transformCrement(call: IrFunctionAccessExpression, correspondingBinaryOp: IrSimpleFunctionSymbol): IrExpression {
         val operation = irCall(call, correspondingBinaryOp, receiversAsArguments = true).apply {
-            putValueArgument(1, buildInt(1))
+            putValueArgument(
+                1,
+                if (call.type.isLong()) buildBigInt(1) else buildInt(1)
+            )
         }
 
         return convertResultToPrimitiveType(operation, call.type)
     }
 
+    private fun transformUnaryPlus(call: IrFunctionAccessExpression) =
+        if (call.type.isLong()) call.dispatchReceiver!! else convertResultToPrimitiveType(
+            irCall(call, intrinsics.jsUnaryPlus, receiversAsArguments = true),
+            call.type
+        )
+
     private fun transformUnaryMinus(call: IrFunctionAccessExpression) =
         convertResultToPrimitiveType(
+
             irCall(call, intrinsics.jsUnaryMinus, receiversAsArguments = true),
             call.type
         )
@@ -203,10 +265,11 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         type.isInt() -> toInt32(e)
         type.isByte() -> intrinsics.jsNumberToByte.call(e)
         type.isShort() -> intrinsics.jsNumberToShort.call(e)
+        type.isLong() -> intrinsics.jsAlignBigIntSymbol.call(e)
         else -> e
     }
 
-    private fun withLongCoercion(default: (IrFunctionAccessExpression) -> IrExpression): (IrFunctionAccessExpression) -> IrExpression =
+    private fun withLongCoercion(default: (IrFunctionAccessExpression) -> IrFunctionAccessExpression): (IrFunctionAccessExpression) -> IrFunctionAccessExpression =
         { call ->
             assert(call.valueArgumentsCount == 1)
             val arg = call.getValueArgument(0)!!
@@ -219,42 +282,28 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                 when {
                     // Double OP Long => Double OP Long.toDouble()
                     receiverType.isDouble() -> {
-                        call.putValueArgument(0, IrCallImpl(
-                            call.startOffset,
-                            call.endOffset,
-                            intrinsics.longToDouble.owner.returnType,
-                            intrinsics.longToDouble,
-                            typeArgumentsCount = 0,
-                            valueArgumentsCount = 0
-                        ).apply {
-                            dispatchReceiver = arg
-                        })
+                        call.putValueArgument(0, intrinsics.jsNumberSymbol.call(arg))
                     }
                     // Float OP Long => Float OP Long.toFloat()
                     receiverType.isFloat() -> {
-                        call.putValueArgument(0, IrCallImpl(
-                            call.startOffset,
-                            call.endOffset,
-                            intrinsics.longToFloat.owner.returnType,
-                            intrinsics.longToFloat,
-                            typeArgumentsCount = 0,
-                            valueArgumentsCount = 0
-                        ).apply {
-                            dispatchReceiver = arg
-                        })
+                        call.putValueArgument(
+                            0,
+                            IrCallImpl(
+                                arg.startOffset,
+                                arg.endOffset,
+                                irBuiltIns.floatType,
+                                intrinsics.doubleToFloat,
+                                0,
+                                0
+                            ).apply {
+                                dispatchReceiver = intrinsics.jsNumberSymbol.call(arg)
+                            }
+                        )
                     }
                     // {Byte, Short, Int} OP Long => {Byte, Sort, Int}.toLong() OP Long
                     !receiverType.isLong() -> {
-                        call.dispatchReceiver = IrCallImpl(
-                            call.startOffset,
-                            call.endOffset,
-                            intrinsics.jsNumberToLong.owner.returnType,
-                            intrinsics.jsNumberToLong,
-                            typeArgumentsCount = 0,
-                            valueArgumentsCount = 1
-                        ).apply {
-                            putValueArgument(0, call.dispatchReceiver)
-                        }
+                        call.dispatchReceiver =
+                            intrinsics.jsBigIntSymbol.call(call.dispatchReceiver ?: error("Expect to have dispatchReceiver here"))
 
                         // Replace {Byte, Short, Int}.OP with corresponding Long.OP
                         val declaration = call.symbol.owner as IrSimpleFunction
@@ -270,17 +319,10 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                 }
             }
 
-            if (actualCall.dispatchReceiver!!.type.isLong()) {
-                actualCall
+            if (actualCall.type.isLong()) {
+                intrinsics.jsAlignBigIntSymbol.call(default(actualCall).withSecondArgumentAsBigInt())
             } else {
                 default(actualCall)
-            }
-        }
-
-    fun IrSimpleFunctionSymbol.call(vararg arguments: IrExpression) =
-        JsIrBuilder.buildCall(this, owner.returnType).apply {
-            for ((idx, arg) in arguments.withIndex()) {
-                putValueArgument(idx, arg)
             }
         }
 

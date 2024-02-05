@@ -52,6 +52,7 @@ class ClassReferenceLowering(val context: JsCommonBackendContext) : BodyLowering
             IrType::isInt to "intClass",
             IrType::isFloat to "floatClass",
             IrType::isDouble to "doubleClass",
+            IrType::isLong to "longClass",
             IrType::isArray to "arrayClass",
             IrType::isString to "stringClass",
             IrType::isBooleanArray to "booleanArrayClass",
@@ -61,7 +62,8 @@ class ClassReferenceLowering(val context: JsCommonBackendContext) : BodyLowering
             IrType::isIntArray to "intArrayClass",
             IrType::isLongArray to "longArrayClass",
             IrType::isFloatArray to "floatArrayClass",
-            IrType::isDoubleArray to "doubleArrayClass"
+            IrType::isDoubleArray to "doubleArrayClass",
+
         ).mapValues {
             primitiveClassProperty(it.value)
         }

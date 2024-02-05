@@ -92,6 +92,22 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 JsYield(translateCallArguments(call, context).single())
             }
 
+            add(intrinsics.jsNumberSymbol) { call, context ->
+                JsInvocation(JsNameRef("Number"), translateCallArguments(call, context).single())
+            }
+
+            add(intrinsics.jsBigIntSymbol) { call, context ->
+                JsInvocation(JsNameRef("BigInt"), translateCallArguments(call, context).single())
+            }
+
+            add(intrinsics.jsAlignBigIntSymbol) { call, context ->
+                JsInvocation(
+                    JsNameRef("asIntN", "BigInt"),
+                    JsIntLiteral(64),
+                    translateCallArguments(call, context).single()
+                )
+            }
+
             add(intrinsics.jsObjectCreateSymbol) { call, context ->
                 val classToCreate = call.getTypeArgument(0)!!.classifierOrFail.owner as IrClass
                 val className = classToCreate.getClassRef(context.staticContext)

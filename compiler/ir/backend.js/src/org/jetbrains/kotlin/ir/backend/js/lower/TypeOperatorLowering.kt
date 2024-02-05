@@ -61,6 +61,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val booleanMarker get() = JsIrBuilder.buildString(context.irBuiltIns.stringType, "boolean")
     private val functionMarker get() = JsIrBuilder.buildString(context.irBuiltIns.stringType, "function")
     private val numberMarker get() = JsIrBuilder.buildString(context.irBuiltIns.stringType, "number")
+    private val bigIntMarker get() = JsIrBuilder.buildString(context.irBuiltIns.stringType, "bigint")
 
     private val litTrue: IrExpression get() = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
     private val litFalse: IrExpression get() = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, false)
@@ -166,6 +167,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                         type.isFloat() ||
                         type.isDouble() ||
                         type.isBoolean() ||
+                        type.isLong() ||
                         type.isFunctionOrKFunction() ||
                         type.isString()
 
@@ -324,6 +326,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                     toType.isFunctionOrKFunction() -> functionMarker
                     toType.isBoolean() -> booleanMarker
                     toType.isString() -> stringMarker
+                    toType.isLong() -> bigIntMarker
                     else -> numberMarker
                 }
 
@@ -400,7 +403,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 val casted = when {
                     toType.isByte() -> maskOp(argument(), byteMask, lit24)
                     toType.isShort() -> maskOp(argument(), shortMask, lit16)
-                    toType.isLong() -> JsIrBuilder.buildCall(context.intrinsics.jsToLong).apply {
+                    toType.isLong() -> JsIrBuilder.buildCall(context.intrinsics.jsBigIntSymbol).apply {
                         putValueArgument(0, argument())
                     }
                     else -> compilationException(

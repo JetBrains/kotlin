@@ -58,7 +58,7 @@ fun box(): String {
 
     val longSet = HashSet<Long>()
     longSet.add(1L)
-    assertEquals("object", jsTypeOf (longSet.iterator().next()), "longSet")
+    assertEquals("bigint", jsTypeOf (longSet.iterator().next()), "longSet")
 
     val booleanSet = HashSet<Boolean>()
     booleanSet.add(true)

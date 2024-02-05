@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.js.common.IdentifierPolicyKt;
 import org.jetbrains.kotlin.js.util.TextOutput;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -1757,6 +1758,9 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         if (arg instanceof JsNumberLiteral && (op == JsBinaryOperator.SUB || op == JsUnaryOperator.NEG)) {
             if (arg instanceof JsIntLiteral) {
                 return ((JsIntLiteral) arg).value < 0;
+            }
+            else if (arg instanceof JsBigIntLiteral) {
+                return ((JsBigIntLiteral) arg).getValue().compareTo(BigInteger.ZERO) == -1;
             }
             else {
                 assert arg instanceof JsDoubleLiteral;

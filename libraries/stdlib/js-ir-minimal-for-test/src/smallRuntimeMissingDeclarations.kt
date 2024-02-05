@@ -41,7 +41,7 @@ public actual val Throwable.suppressedExceptions: List<Throwable>
  */
 @SinceKotlin("1.2")
 public fun Long.toString(radix: Int): String =
-    this.toStringImpl(checkRadix(radix))
+    asDynamic().toString(checkRadix(radix))
 
 /**
  * Checks whether the given [radix] is valid radix for string to number and number to string conversion.

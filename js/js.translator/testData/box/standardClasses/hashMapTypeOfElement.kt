@@ -70,7 +70,7 @@ fun box(): String {
 
     val mapWithLongKeys = HashMap<Long, Int>()
     mapWithLongKeys[1L] = 1
-    assertEquals("object", jsTypeOf (mapWithLongKeys.keys.iterator().next()), "mapWithLongKeys")
+    assertEquals("bigint", jsTypeOf (mapWithLongKeys.keys.iterator().next()), "mapWithLongKeys")
 
     val mapWithBooleanKeys = HashMap<Boolean, Int>()
     mapWithBooleanKeys[true] = 1

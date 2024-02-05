@@ -64,6 +64,7 @@ internal data class SimpleMemberKey(val klass: IrType, val name: Name)
 enum class PrimitiveType {
     FLOATING_POINT_NUMBER,
     INTEGER_NUMBER,
+    BIGINT_NUMBER,
     STRING,
     BOOLEAN,
     OTHER
@@ -75,6 +76,7 @@ fun IrType.getPrimitiveType() = makeNotNull().run {
         isByte() || isShort() || isInt() -> PrimitiveType.INTEGER_NUMBER
         isFloat() || isDouble() -> PrimitiveType.FLOATING_POINT_NUMBER
         isString() -> PrimitiveType.STRING
+        isLong() -> PrimitiveType.BIGINT_NUMBER
         else -> PrimitiveType.OTHER
     }
 }

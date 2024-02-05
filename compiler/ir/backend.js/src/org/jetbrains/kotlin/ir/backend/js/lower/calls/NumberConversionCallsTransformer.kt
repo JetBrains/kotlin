@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.ConversionNames
+import org.jetbrains.kotlin.ir.backend.js.utils.call
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.util.irCall
 
 class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTransformer {
     private val intrinsics = context.intrinsics
@@ -25,7 +27,7 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
             add(it, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_INT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_SHORT, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
+            add(it, ConversionNames.TO_LONG, intrinsics.jsBigIntSymbol)
         }
 
         for (type in listOf(irBuiltIns.floatType, irBuiltIns.doubleType)) {
@@ -34,7 +36,7 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
             add(type, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
             add(type, ConversionNames.TO_INT, intrinsics.jsNumberToInt)
             add(type, ConversionNames.TO_SHORT, intrinsics.jsNumberToShort)
-            add(type, ConversionNames.TO_LONG, intrinsics.jsNumberToLong)
+            add(type, ConversionNames.TO_LONG, intrinsics.jsBigIntSymbol)
         }
 
         irBuiltIns.intType.let {
@@ -43,7 +45,7 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
             add(it, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_INT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_SHORT, intrinsics.jsToShort)
-            add(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
+            add(it, ConversionNames.TO_LONG, intrinsics.jsBigIntSymbol)
         }
 
         irBuiltIns.shortType.let {
@@ -52,9 +54,8 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
             add(it, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_INT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_SHORT, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
+            add(it, ConversionNames.TO_LONG, intrinsics.jsBigIntSymbol)
         }
-
 
         irBuiltIns.numberType.let {
             add(it, ConversionNames.TO_BYTE, intrinsics.jsNumberToByte)
@@ -62,10 +63,24 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
             add(it, ConversionNames.TO_FLOAT, intrinsics.jsNumberToDouble)
             add(it, ConversionNames.TO_INT, intrinsics.jsNumberToInt)
             add(it, ConversionNames.TO_SHORT, intrinsics.jsNumberToShort)
-            add(it, ConversionNames.TO_LONG, intrinsics.jsNumberToLong)
+            add(it, ConversionNames.TO_LONG, intrinsics.jsBigIntSymbol)
         }
 
-        for (type in arrayOf(irBuiltIns.byteType, irBuiltIns.shortType, irBuiltIns.intType)) {
+        irBuiltIns.longType.let {
+            add(it, ConversionNames.TO_BYTE) { call ->
+                intrinsics.jsToByte.call(irCall(call, intrinsics.jsNumberSymbol, receiversAsArguments = true))
+            }
+            add(it, ConversionNames.TO_SHORT) { call ->
+                intrinsics.jsToShort.call(irCall(call, intrinsics.jsNumberSymbol, receiversAsArguments = true))
+            }
+            add(it, ConversionNames.TO_INT, intrinsics.jsNumberSymbol)
+            add(it, ConversionNames.TO_LONG, ::useDispatchReceiver)
+
+            add(it, ConversionNames.TO_DOUBLE, intrinsics.jsNumberSymbol)
+            add(it, ConversionNames.TO_FLOAT, intrinsics.jsNumberSymbol)
+        }
+
+        for (type in arrayOf(irBuiltIns.byteType, irBuiltIns.shortType, irBuiltIns.intType, irBuiltIns.longType)) {
             add(type, ConversionNames.TO_CHAR, intrinsics.jsNumberToChar)
         }
 

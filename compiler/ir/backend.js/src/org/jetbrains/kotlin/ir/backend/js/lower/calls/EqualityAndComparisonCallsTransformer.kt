@@ -35,29 +35,10 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
 
             add(irBuiltIns.booleanNotSymbol, intrinsics.jsNot)
 
-            add(irBuiltIns.lessFunByOperandType.filterKeys { it != irBuiltIns.longClass }, intrinsics.jsLt)
-            add(irBuiltIns.lessOrEqualFunByOperandType.filterKeys { it != irBuiltIns.longClass }, intrinsics.jsLtEq)
-            add(irBuiltIns.greaterFunByOperandType.filterKeys { it != irBuiltIns.longClass }, intrinsics.jsGt)
-            add(irBuiltIns.greaterOrEqualFunByOperandType.filterKeys { it != irBuiltIns.longClass }, intrinsics.jsGtEq)
-
-            add(irBuiltIns.lessFunByOperandType[irBuiltIns.longClass]!!, transformLongComparison(intrinsics.jsLt))
-            add(irBuiltIns.lessOrEqualFunByOperandType[irBuiltIns.longClass]!!, transformLongComparison(intrinsics.jsLtEq))
-            add(irBuiltIns.greaterFunByOperandType[irBuiltIns.longClass]!!, transformLongComparison(intrinsics.jsGt))
-            add(irBuiltIns.greaterOrEqualFunByOperandType[irBuiltIns.longClass]!!, transformLongComparison(intrinsics.jsGtEq))
-        }
-    }
-
-    private fun transformLongComparison(comparator: IrSimpleFunctionSymbol): (IrFunctionAccessExpression) -> IrExpression = { call ->
-        IrCallImpl(
-            call.startOffset,
-            call.endOffset,
-            comparator.owner.returnType,
-            comparator,
-            typeArgumentsCount = 0,
-            valueArgumentsCount = 2
-        ).apply {
-            putValueArgument(0, irCall(call, intrinsics.longCompareToLong, argumentsAsReceivers = true))
-            putValueArgument(1, JsIrBuilder.buildInt(irBuiltIns.intType, 0))
+            add(irBuiltIns.lessFunByOperandType, intrinsics.jsLt)
+            add(irBuiltIns.lessOrEqualFunByOperandType, intrinsics.jsLtEq)
+            add(irBuiltIns.greaterFunByOperandType, intrinsics.jsGt)
+            add(irBuiltIns.greaterOrEqualFunByOperandType, intrinsics.jsGtEq)
         }
     }
 
