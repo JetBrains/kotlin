@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTr
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isEffectivelyFinal
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
@@ -439,6 +438,10 @@ private fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(context: Ch
     }
 }
 
+private fun shouldCheckForMultiplatformRedeclaration(dependency: FirBasedSymbol<*>, dependent: FirBasedSymbol<*>): Boolean =
+    dependent.moduleData.allDependsOnDependencies.contains(dependency.moduleData) &&
+            dependency.resolvedStatus?.isExpect != true // ACTUAL_MISSING takes care of this case
+
 private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
     declaration: FirBasedSymbol<*>,
     declarationPresentation: String,
@@ -448,7 +451,11 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
     conflictingFile: FirFile? = null,
 ) {
     conflictingSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
-    if (conflictingSymbol == declaration || declaration.moduleData != conflictingSymbol.moduleData) return
+    if (conflictingSymbol == declaration) return
+    if (
+        declaration.moduleData != conflictingSymbol.moduleData &&
+        !shouldCheckForMultiplatformRedeclaration(declaration, conflictingSymbol)
+    ) return
     val actualConflictingPresentation = conflictingPresentation ?: FirRedeclarationPresenter.represent(conflictingSymbol)
     if (actualConflictingPresentation != declarationPresentation) return
     val actualConflictingFile =
