@@ -6,26 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.commonizer.*
-import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
-import org.jetbrains.kotlin.gradle.internal.PLATFORM_INTEGERS_SUPPORT_LIBRARY
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffectCoroutine
-import org.jetbrains.kotlin.gradle.plugin.sources.*
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
-import org.jetbrains.kotlin.gradle.utils.filesProvider
-import org.jetbrains.kotlin.gradle.utils.konanDistribution
-import java.io.File
 
 /**
  * Function signature needs to be kept stable since this is used during import
