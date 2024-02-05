@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.runners
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
+import org.jetbrains.kotlin.test.backend.handlers.UpdateTestDataHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testRunner
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
@@ -55,6 +56,8 @@ abstract class AbstractKotlinCompilerTest {
         useAdditionalService { createApplicationDisposableProvider() }
         useAdditionalService { createKotlinStandardLibrariesPathProvider() }
         configure(this)
+        // UpdateTestDataHandler should be the last handler, so it's added after the configure call.
+        useAfterAnalysisCheckers(::UpdateTestDataHandler)
     }
 
     abstract fun TestConfigurationBuilder.configuration()
