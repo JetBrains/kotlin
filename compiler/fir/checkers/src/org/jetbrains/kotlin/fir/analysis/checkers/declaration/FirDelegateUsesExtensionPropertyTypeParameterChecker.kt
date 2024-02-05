@@ -27,7 +27,7 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
         val delegate = declaration.delegate ?: return
         val parameters = declaration.typeParameters.mapTo(hashSetOf()) { it.symbol }
 
-        val usedTypeParameterSymbol = delegate.resolvedType.findUsedTypeParameterSymbol(parameters, delegate, context, reporter)
+        val usedTypeParameterSymbol = delegate.resolvedType.findUsedTypeParameterSymbol(parameters, delegate, context)
             ?: return
 
         reporter.reportOn(declaration.source, FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER, usedTypeParameterSymbol, context)
@@ -37,13 +37,12 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
         typeParameterSymbols: HashSet<FirTypeParameterSymbol>,
         delegate: FirExpression,
         context: CheckerContext,
-        reporter: DiagnosticReporter,
     ): FirTypeParameterSymbol? {
         val expandedDelegateClassLikeType =
             delegate.resolvedType.lowerBoundIfFlexible().fullyExpandedType(context.session)
                 .unwrapDefinitelyNotNull() as? ConeClassLikeType ?: return null
         val delegateClassSymbol = expandedDelegateClassLikeType.lookupTag.toSymbol(context.session) as? FirClassSymbol<*> ?: return null
-        val delegateClassScope by lazy { delegateClassSymbol.unsubstitutedScope(context) }
+        val delegateClassScope by lazy(LazyThreadSafetyMode.NONE) { delegateClassSymbol.unsubstitutedScope(context) }
         for (it in typeArguments) {
             val theType = it.type ?: continue
             val argumentAsTypeParameterSymbol = theType.toSymbol(context.session) as? FirTypeParameterSymbol
@@ -59,7 +58,7 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
                     return argumentAsTypeParameterSymbol
                 }
             }
-            val usedTypeParameterSymbol = theType.findUsedTypeParameterSymbol(typeParameterSymbols, delegate, context, reporter)
+            val usedTypeParameterSymbol = theType.findUsedTypeParameterSymbol(typeParameterSymbols, delegate, context)
             if (usedTypeParameterSymbol != null) {
                 return usedTypeParameterSymbol
             }
