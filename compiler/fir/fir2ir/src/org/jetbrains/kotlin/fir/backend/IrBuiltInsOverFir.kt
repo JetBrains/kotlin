@@ -59,7 +59,7 @@ class IrBuiltInsOverFir(
     private val symbolProvider: FirSymbolProvider
         get() = session.symbolProvider
 
-    override val irFactory: IrFactory = components.symbolTable.irFactory
+    override val irFactory: IrFactory = components.irFactory
 
     private val kotlinPackage = StandardClassIds.BASE_KOTLIN_PACKAGE
 
