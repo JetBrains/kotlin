@@ -598,7 +598,7 @@ class Fir2IrDeclarationStorage(
         }
 
         val backingFieldSymbol = runIf(property.delegate != null || property.hasBackingField) {
-            createFieldSymbol(signature = null)
+            createFieldSymbol()
         }
 
         return PropertySymbols(propertySymbol, getterSymbol, setterSymbol, backingFieldSymbol)
@@ -888,8 +888,7 @@ class Fir2IrDeclarationStorage(
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
     ): IrField {
         val containingClassLookupTag = (irParent as IrClass?)?.classId?.toLookupTag()
-        val signature = signatureComposer.composeSignature(field, containingClassLookupTag)
-        val symbol = createFieldSymbol(signature)
+        val symbol = createFieldSymbol()
 
         val irField = callablesGenerator.createIrField(field, irParent, symbol, type, origin)
 
@@ -902,11 +901,8 @@ class Fir2IrDeclarationStorage(
         return irField
     }
 
-    private fun createFieldSymbol(signature: IdSignature?): IrFieldSymbol {
-        return when {
-            signature != null -> symbolTable.referenceField(signature)
-            else -> IrFieldSymbolImpl()
-        }
+    private fun createFieldSymbol(): IrFieldSymbol {
+        return IrFieldSymbolImpl()
     }
 
     // This function returns null if this field/ownerClassId combination does not describe static fake override
@@ -1374,16 +1370,9 @@ class Fir2IrDeclarationStorage(
 
     fun createIrScript(script: FirScript): IrScript {
         getCachedIrScript(script)?.let { error("IrScript already created: ${script.render()}") }
-        val symbol = createScriptSymbol(signatureComposer.composeSignature(script))
+        val symbol = IrScriptSymbolImpl()
         return callablesGenerator.createIrScript(script, symbol).also {
             scriptCache[script] = it
-        }
-    }
-
-    private fun createScriptSymbol(signature: IdSignature?): IrScriptSymbol {
-        return when {
-            signature != null -> symbolTable.referenceScript(signature)
-            else -> IrScriptSymbolImpl()
         }
     }
 

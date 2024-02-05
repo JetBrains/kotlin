@@ -358,7 +358,7 @@ class Fir2IrClassifierStorage(
         } else {
             irParent.origin
         }
-        val symbol = createEnumEntrySymbol(enumEntry)
+        val symbol = IrEnumEntrySymbolImpl()
         return classifiersGenerator.createIrEnumEntry(
             enumEntry,
             irParent = irParent,
@@ -369,31 +369,15 @@ class Fir2IrClassifierStorage(
         }
     }
 
-    private fun createEnumEntrySymbol(enumEntry: FirEnumEntry): IrEnumEntrySymbol {
-        val signature = signatureComposer.composeSignature(enumEntry)
-        return when {
-            signature != null -> symbolTable.referenceEnumEntry(signature)
-            else -> IrEnumEntrySymbolImpl()
-        }
-    }
-
     // ------------------------------------ typealiases ------------------------------------
 
     fun createAndCacheIrTypeAlias(
         typeAlias: FirTypeAlias,
         parent: IrDeclarationParent
     ): IrTypeAlias {
-        val symbol = createTypeAliasSymbol(typeAlias)
+        val symbol = IrTypeAliasSymbolImpl()
         return classifiersGenerator.createIrTypeAlias(typeAlias, parent, symbol).also {
             typeAliasCache[typeAlias] = it
-        }
-    }
-
-    private fun createTypeAliasSymbol(typeAlias: FirTypeAlias): IrTypeAliasSymbol {
-        val signature = signatureComposer.composeSignature(typeAlias)
-        return when {
-            signature != null -> symbolTable.referenceTypeAlias(signature)
-            else -> IrTypeAliasSymbolImpl()
         }
     }
 
@@ -413,7 +397,7 @@ class Fir2IrClassifierStorage(
             firTypeAlias.origin
         )!!
 
-        val symbol = createTypeAliasSymbol(firTypeAlias)
+        val symbol = IrTypeAliasSymbolImpl()
         val irTypeAlias = lazyDeclarationsGenerator.createIrLazyTypeAlias(firTypeAlias, irParent, symbol)
         typeAliasCache[firTypeAlias] = irTypeAlias
         irTypeAlias.prepareTypeParameters()
