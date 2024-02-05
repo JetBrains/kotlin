@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isElementWhichShould
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal object LLFirPhaseUpdater {
@@ -80,8 +79,6 @@ internal object LLFirPhaseUpdater {
 private object PhaseUpdatingTransformer : FirVisitor<Unit, FirResolvePhase>() {
     override fun visitElement(element: FirElement, data: FirResolvePhase) {
         if (element is FirElementWithResolveState) {
-            if (element.resolvePhase >= data && element !is FirDefaultPropertyAccessor) return
-
             @OptIn(ResolveStateAccess::class)
             element.resolveState = data.asResolveState()
         }
