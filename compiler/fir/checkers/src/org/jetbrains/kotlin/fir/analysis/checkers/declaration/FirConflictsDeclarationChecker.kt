@@ -123,7 +123,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
                 conflictingDeclaration.isPrimaryConstructor && symbols.all { it.isPrimaryConstructor }
             ) return@forEach
 
-            if (symbols.singleOrNull()?.let { isExpectAndActual(conflictingDeclaration, it) } == true) {
+            if (symbols.singleOrNull()?.let { isExpectAndActualPair(conflictingDeclaration, it) } == true) {
                 reporter.reportOn(source, FirErrors.EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, conflictingDeclaration, context)
                 return@forEach
             }
