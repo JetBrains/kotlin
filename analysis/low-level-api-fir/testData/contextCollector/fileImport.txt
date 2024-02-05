@@ -16,8 +16,8 @@ Tower Data Context:
                 Is all under: false
 
 FILE: [ResolvedTo(IMPORTS)] fileImport.kt
-    @R|kotlin/annotation/Target|[Types](FILE#) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] constructor(): R|foo/Anno| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 

@@ -335,18 +335,34 @@ private class ContextCollectorVisitor(
         else -> true
     }
 
-    override fun visitScript(script: FirScript) {
-        context.withScript(script, holder) {
-            withInterceptor {
-                super.visitScript(script)
+    override fun visitScript(script: FirScript) = withProcessor(script) {
+        dumpContext(script, ContextKind.SELF)
+
+        processSignatureAnnotations(script)
+
+        onActiveBody {
+            context.withScript(script, holder) {
+                dumpContext(script, ContextKind.BODY)
+
+                onActive {
+                    withInterceptor {
+                        processChildren(script)
+                    }
+                }
             }
         }
     }
 
-    override fun visitFile(file: FirFile) {
+    override fun visitFile(file: FirFile) = withProcessor(file) {
         context.withFile(file, holder) {
-            withInterceptor {
-                super.visitFile(file)
+            dumpContext(file, ContextKind.SELF)
+
+            processFileHeader(file)
+
+            onActive {
+                withInterceptor {
+                    processChildren(file)
+                }
             }
         }
     }
@@ -415,6 +431,13 @@ private class ContextCollectorVisitor(
             processList(regularClass.typeParameters)
             processList(regularClass.superTypeRefs)
         }
+    }
+
+    @OptIn(PrivateForInline::class)
+    private fun Processor.processFileHeader(file: FirFile) {
+        process(file.packageDirective)
+        processList(file.imports)
+        process(file.annotationsContainer)
     }
 
     /**
