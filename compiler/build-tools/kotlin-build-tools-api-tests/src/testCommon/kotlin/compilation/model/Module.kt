@@ -15,11 +15,35 @@ import java.nio.file.Path
 interface Module : Dependency {
     val project: Project
     val moduleName: String
+
+    /**
+     * Compiler arguments in the format of the Kotlin compiler CLI
+     */
     val additionalCompilationArguments: List<String>
+
+    /**
+     * Directory containing all the source (.kt) files of the module
+     */
     val sourcesDirectory: Path
+
+    /**
+     * Directory containing all the files and directories that are produced during the compilation process
+     */
     val buildDirectory: Path
+
+    /**
+     * Directory containing compiler output (e.g. `.class` and `.kotlin_module` files)
+     */
     val outputDirectory: Path
+
+    /**
+     * Directory containing all the files and directories related to incremental compilation
+     */
     val icWorkingDir: Path
+
+    /**
+     * Directory containing caches required for incremental compilation
+     */
     val icCachesDir: Path
 
     fun compile(

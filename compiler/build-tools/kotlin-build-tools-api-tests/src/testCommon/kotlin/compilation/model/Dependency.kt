@@ -7,10 +7,16 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
 import java.nio.file.Path
 
+/**
+ * Represents a cache key used within the scenario DSL to provide initial build cacheability.
+ * Must properly override the [equals] and [hashCode] methods.
+ */
 interface DependencyScenarioDslCacheKey
 
 interface Dependency {
+    /**
+     * File system location that may be used as a part of JVM classpath.
+     */
     val location: Path
-    val snapshotFile: Path
     val scenarioDslCacheKey: DependencyScenarioDslCacheKey
 }

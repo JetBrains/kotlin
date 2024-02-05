@@ -60,9 +60,6 @@ abstract class AbstractModule(
     override val icWorkingDir: Path
         get() = buildDirectory.resolve("ic")
 
-    override val snapshotFile: Path
-        get() = icWorkingDir.resolve("$moduleName.snapshot")
-
     override val icCachesDir: Path
         get() = icWorkingDir.resolve("caches")
 
