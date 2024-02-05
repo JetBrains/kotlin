@@ -608,7 +608,7 @@ konanArtifacts {
 val stdlibTask = tasks.register<Copy>("nativeStdlib") {
     require(::stdlibBuildTask.isInitialized)
 
-    from(stdlibBuildTask.map { it.outputs })
+    from(stdlibBuildTask.map { it.outputs.files })
     into(project.layout.buildDirectory.dir("nativeStdlib"))
 
     eachFile {

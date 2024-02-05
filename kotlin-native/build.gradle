@@ -371,7 +371,7 @@ tasks.register("distStdlib", Copy) {
     from(project(":kotlin-native:runtime")
             .tasks
             .named("nativeStdlib")
-            .map { it.outputs }
+            .map { it.outputs.files }
     )
     destinationDir project.file("$distDir/$stdlib")
 }
