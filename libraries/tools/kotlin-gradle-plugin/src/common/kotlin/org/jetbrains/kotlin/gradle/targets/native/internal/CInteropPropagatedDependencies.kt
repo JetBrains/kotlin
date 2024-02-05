@@ -93,6 +93,6 @@ private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilati
     val cinteropTasks = compilation.cinterops.map { interop -> interop.interopProcessingTaskName }
         .mapNotNull { taskName -> tasks.findByName(taskName) as? CInteropProcess }
 
-    return project.filesProvider { cinteropTasks.map { it.outputFile } }
+    return project.filesProvider { cinteropTasks.map { it.outputFileProvider } }
         .builtBy(*cinteropTasks.toTypedArray())
 }

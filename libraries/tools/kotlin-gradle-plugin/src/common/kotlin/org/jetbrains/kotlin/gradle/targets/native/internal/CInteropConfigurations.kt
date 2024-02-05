@@ -33,7 +33,7 @@ internal fun createCInteropApiElementsKlibArtifact(
     val project = target.project
     val configurationName = cInteropApiElementsConfigurationName(target)
     val configuration = project.configurations.getByName(configurationName)
-    project.artifacts.add(configuration.name, interopTask.map { it.outputFile }) { artifact ->
+    project.artifacts.add(configuration.name, interopTask.flatMap { it.outputFileProvider }) { artifact ->
         artifact.extension = "klib"
         artifact.type = "klib"
         artifact.classifier = "cinterop-${settings.name}"

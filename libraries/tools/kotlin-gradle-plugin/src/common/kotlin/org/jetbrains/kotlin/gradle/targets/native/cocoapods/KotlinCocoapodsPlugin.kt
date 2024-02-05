@@ -390,7 +390,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         val dependencyTaskName = cinterops.getByName(dependencyPod.moduleName).interopProcessingTaskName
         val dependencyTask = project.tasks.named<CInteropProcess>(dependencyTaskName)
 
-        interop.dependencyFiles += project.files(dependencyTask.map { it.outputFile }).builtBy(dependencyTask)
+        interop.dependencyFiles += project.files(dependencyTask.flatMap { it.outputFileProvider }).builtBy(dependencyTask)
 
         dependencyPod.interopBindingDependencies.forEach { transitiveDependency ->
             addPodDependencyToInterop(project, cocoapodsExtension, pod, cinterops, interop, transitiveDependency)

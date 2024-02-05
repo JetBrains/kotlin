@@ -66,7 +66,7 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
                 // Add the interop library in publication.
                 createKlibArtifact(
                     compilation,
-                    artifactFile = interopTask.map { it.outputFile },
+                    artifactFile = interopTask.flatMap { it.outputFileProvider },
                     classifier = "cinterop-${interop.name}",
                     producingTask = interopTask,
                 )

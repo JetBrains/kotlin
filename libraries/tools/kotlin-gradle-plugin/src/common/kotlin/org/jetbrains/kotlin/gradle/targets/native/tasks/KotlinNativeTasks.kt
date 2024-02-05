@@ -1093,6 +1093,10 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:Input
     val moduleName: String = project.klibModuleName(baseKlibName)
 
+    @Deprecated(
+        "Eager outputFile was replaced with lazy outputFileProvider",
+        replaceWith = ReplaceWith("outputFileProvider")
+    )
     @get:Internal
     val outputFile: File
         get() = outputFileProvider.get()
@@ -1201,7 +1205,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
         val args =
             mutableListOf<String>().apply {
-                addArg("-o", outputFile.absolutePath)
+                addArg("-o", outputFileProvider.get().absolutePath)
 
                 addArgIfNotNull("-target", konanTarget.visibleName)
                 if (definitionFile.isPresent) {
@@ -1235,7 +1239,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
             }
         addBuildMetricsForTaskAction(buildMetrics, languageVersion = null) {
-            outputFile.parentFile.mkdirs()
+            outputFileProvider.get().parentFile.mkdirs()
             KotlinNativeCInteropRunner.createExecutionContext(
                 task = this,
                 isInIdeaSync = isInIdeaSync,
