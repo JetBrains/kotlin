@@ -342,7 +342,7 @@ object FirErrors {
     val INAPPLICABLE_INFIX_MODIFIER: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.INFIX_MODIFIER)
     val REPEATED_MODIFIER: KtDiagnosticFactory1<KtModifierKeywordToken> by error1<PsiElement, KtModifierKeywordToken>()
     val REDUNDANT_MODIFIER: KtDiagnosticFactory2<KtModifierKeywordToken, KtModifierKeywordToken> by warning2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
-    val DEPRECATED_MODIFIER: KtDiagnosticFactory2<KtModifierKeywordToken, KtModifierKeywordToken> by warning2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
+    val DEPRECATED_MODIFIER: KtDiagnosticFactory2<KtModifierKeywordToken, KtModifierKeywordToken> by error2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
     val DEPRECATED_MODIFIER_PAIR: KtDiagnosticFactory2<KtModifierKeywordToken, KtModifierKeywordToken> by warning2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
     val DEPRECATED_MODIFIER_FOR_TARGET: KtDiagnosticFactory2<KtModifierKeywordToken, String> by warning2<PsiElement, KtModifierKeywordToken, String>()
     val REDUNDANT_MODIFIER_FOR_TARGET: KtDiagnosticFactory2<KtModifierKeywordToken, String> by warning2<PsiElement, KtModifierKeywordToken, String>()

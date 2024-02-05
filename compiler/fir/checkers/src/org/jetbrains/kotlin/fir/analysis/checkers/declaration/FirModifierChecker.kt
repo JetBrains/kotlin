@@ -133,7 +133,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             }
         }
 
-        val deprecatedModifierReplacement = deprecatedModifierMap[modifierToken]
+        val deprecatedModifierReplacement = deprecatedKmpModifierMap[modifierToken]
         if (deprecatedModifierReplacement != null) {
             reporter.reportOn(
                 modifierSource,

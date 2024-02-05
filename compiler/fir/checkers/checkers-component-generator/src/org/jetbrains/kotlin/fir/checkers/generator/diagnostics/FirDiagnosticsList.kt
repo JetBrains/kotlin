@@ -467,7 +467,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<KtModifierKeywordToken>("redundantModifier")
             parameter<KtModifierKeywordToken>("conflictingModifier")
         }
-        val DEPRECATED_MODIFIER by warning<PsiElement> {
+        val DEPRECATED_MODIFIER by error<PsiElement> {
             parameter<KtModifierKeywordToken>("deprecatedModifier")
             parameter<KtModifierKeywordToken>("actualModifier")
         }
