@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFi
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
@@ -142,15 +141,7 @@ internal class FileStructure private constructor(
 
             override fun visitDeclaration(dcl: KtDeclaration) {
                 val structureElement = getStructureElementFor(dcl)
-
-                // workaround to not duplicate diagnostics in the case of FirAnonymousInitializer in the last position
-                // will be dropped in the context of KT-65344
-                if (dcl !is KtScriptInitializer ||
-                    structureElement is DeclarationBaseStructureElement<*> &&
-                    structureElement.declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty
-                ) {
-                    structureElements += structureElement
-                }
+                structureElements += structureElement
 
                 // Go down only in the case of container declaration
                 val canHaveInnerStructure = dcl is KtClassOrObject || dcl is KtScript

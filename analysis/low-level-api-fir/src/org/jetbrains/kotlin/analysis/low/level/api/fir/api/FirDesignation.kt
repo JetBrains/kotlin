@@ -334,26 +334,12 @@ fun FirElementWithResolveState.tryCollectDesignationWithFile(): FirDesignation? 
     return when (this) {
         is FirSyntheticProperty, is FirSyntheticPropertyAccessor -> unexpectedElementError<FirElementWithResolveState>(this)
         is FirFileAnnotationsContainer, is FirDeclaration -> {
-            val scriptDesignation = (this as? FirDeclaration)?.scriptDesignation()
-            if (scriptDesignation != null) return scriptDesignation
-
             val path = collectDesignationPath(this) ?: return null
             val firFile = path.lastOrNull()?.getContainingFile() ?: getContainingFile() ?: return null
             FirDesignation(path = listOf(firFile) + path, target = this)
         }
 
         else -> unexpectedElementError<FirElementWithResolveState>(this)
-    }
-}
-
-private fun FirDeclaration.scriptDesignation(): FirDesignation? {
-    return when {
-        this is FirAnonymousInitializer -> {
-            val firScriptSymbol = (containingDeclarationSymbol as? FirScriptSymbol) ?: return null
-            val firFile = firScriptSymbol.fir.getContainingFile() ?: return null
-            FirDesignation(path = listOf(firFile), target = firScriptSymbol.fir)
-        }
-        else -> null
     }
 }
 

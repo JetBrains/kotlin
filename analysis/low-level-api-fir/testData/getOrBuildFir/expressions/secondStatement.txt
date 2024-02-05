@@ -10,16 +10,12 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] secondStatement.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-secondStatement.kts>
-        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(TYPES)] <script-secondStatement.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
-            ^foo Int(4)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(BODY_RESOLVE)] init {
-            R|/foo|()
-        }
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
         [ResolvedTo(BODY_RESOLVE)] init {
             R|/bar|()

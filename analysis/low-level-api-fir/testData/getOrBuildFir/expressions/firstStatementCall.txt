@@ -8,8 +8,8 @@ R|/foo|()
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] firstStatementCall.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-firstStatementCall.kts>
-        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(TYPES)] <script-firstStatementCall.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
             ^foo Int(4)
@@ -19,9 +19,6 @@ FILE: [ResolvedTo(IMPORTS)] firstStatementCall.kts
             R|/foo|()
         }
 
-        [ResolvedTo(BODY_RESOLVE)] init {
-            R|/bar|()
-        }
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }

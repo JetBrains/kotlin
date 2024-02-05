@@ -61,7 +61,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, pr
                                 return@findSourceNonLocalFirDeclarationByProvider firScript?.takeIf { it.psi == declaration }
                             }
 
-                            firScript?.declarations?.filterNot { it is FirAnonymousInitializer }
+                            firScript?.declarations
                         } else {
                             firFile.declarations
                         }
@@ -204,7 +204,6 @@ val FirDeclaration.isGeneratedDeclaration
 
 internal inline fun FirScript.forEachDeclaration(action: (FirDeclaration) -> Unit) {
     for (statement in declarations) {
-        if (statement.isElementWhichShouldBeResolvedAsPartOfScript) continue
         action(statement)
     }
 }
@@ -227,8 +226,6 @@ internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -
         else -> errorWithFirSpecificEntries("Unsupported declarations container", fir = this)
     }
 }
-
-internal val FirDeclaration.isElementWhichShouldBeResolvedAsPartOfScript: Boolean get() = this is FirAnonymousInitializer
 
 /**
  * Some "local" declarations are not local from the lazy resolution perspective.

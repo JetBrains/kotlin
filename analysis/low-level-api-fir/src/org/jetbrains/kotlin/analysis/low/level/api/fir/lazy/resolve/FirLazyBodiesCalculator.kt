@@ -867,13 +867,4 @@ private abstract class FirLazyBodiesCalculatorTransformer : FirTransformer<Persi
 
         return codeFragment
     }
-
-    override fun transformScript(script: FirScript, data: PersistentList<FirDeclaration>): FirScript {
-        for (declaration in script.declarations) {
-            if (declaration !is FirAnonymousInitializer) continue
-            declaration.accept(this, data)
-        }
-
-        return script
-    }
 }

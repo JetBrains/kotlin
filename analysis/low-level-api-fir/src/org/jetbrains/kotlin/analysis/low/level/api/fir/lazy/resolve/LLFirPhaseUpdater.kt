@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isElementWhichShouldBeResolvedAsPartOfScript
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
@@ -31,14 +30,7 @@ internal object LLFirPhaseUpdater {
                 }
 
                 is FirAnonymousInitializer -> target.body?.accept(PhaseUpdatingTransformer, newPhase)
-                is FirScript -> {
-                    target.parameters.forEach { it.accept(PhaseUpdatingTransformer, newPhase) }
-                    for (declaration in target.declarations) {
-                        if (!declaration.isElementWhichShouldBeResolvedAsPartOfScript) continue
-                        declaration.accept(PhaseUpdatingTransformer, newPhase)
-                    }
-                }
-
+                is FirScript -> target.parameters.forEach { it.accept(PhaseUpdatingTransformer, newPhase) }
                 is FirCodeFragment -> target.block.accept(PhaseUpdatingTransformer, newPhase)
             }
         }
