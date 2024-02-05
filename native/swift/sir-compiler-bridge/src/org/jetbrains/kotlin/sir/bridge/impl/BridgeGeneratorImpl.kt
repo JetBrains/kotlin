@@ -9,15 +9,15 @@ import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.bridge.*
-import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.*
 
 private const val exportAnnotationFqName = "kotlin.native.internal.ExportedBridge"
 private const val stdintHeader = "stdint.h"
 
 internal class BridgeGeneratorImpl : BridgeGenerator {
     override fun generate(request: BridgeRequest): FunctionBridge {
-        val (kotlinReturnType, cReturnType) = bridgeType(request.function.returnType)
-        val parameterBridges = request.function.parameters.map { bridgeParameter(it) }
+        val (kotlinReturnType, cReturnType) = bridgeType(request.callable.returnType)
+        val parameterBridges = request.callable.allParameters.mapIndexed { index, value -> bridgeParameter(value, index) }
 
         val cDeclaration = createCDeclaration(request.bridgeName, cReturnType, parameterBridges.map { it.c })
         val kotlinBridge = createKotlinBridge(request.bridgeName, request.fqName, kotlinReturnType, parameterBridges.map { it.kotlin })
@@ -71,6 +71,8 @@ private fun createCDeclaration(bridgeName: String, returnType: CType, parameters
 private fun bridgeType(type: SirType): Pair<KotlinType, CType> {
     require(type is SirNominalType)
     return when (type.type) {
+        SirSwiftModule.void -> (KotlinType.Unit to CType.Void)
+
         SirSwiftModule.bool -> (KotlinType.Boolean to CType.Bool)
 
         SirSwiftModule.int8 -> (KotlinType.Byte to CType.Int8)
@@ -87,8 +89,10 @@ private fun bridgeType(type: SirType): Pair<KotlinType, CType> {
     }
 }
 
-private fun bridgeParameter(parameter: SirParameter): BridgeParameter {
-    val bridgeParameterName = parameter.argumentName?.let(::createBridgeParameterName) ?: ""
+private fun bridgeParameter(parameter: SirParameter, index: Int): BridgeParameter {
+    val bridgeParameterName = parameter.name?.let(::createBridgeParameterName) ?: "_$index"
+    // TODO: Remove this check when non-trivial type bridges are supported
+    check(!parameter.type.isVoid) { "The parameter $bridgeParameterName can not have Void type" }
     val (kotlinType, cType) = bridgeType(parameter.type)
     return BridgeParameter(
         KotlinBridgeParameter(bridgeParameterName, kotlinType),
@@ -112,6 +116,8 @@ internal data class CBridgeParameter(
 )
 
 public enum class CType(public val repr: String) {
+    Void("void"),
+
     Bool("_Bool"),
 
     Int8("int8_t"),
@@ -131,6 +137,8 @@ internal data class KotlinBridgeParameter(
 )
 
 internal enum class KotlinType(val repr: String) {
+    Unit("Unit"),
+
     Boolean("Boolean"),
 
     Byte("Byte"),

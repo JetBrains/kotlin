@@ -5,8 +5,14 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.builders
 
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirElement
 import org.jetbrains.kotlin.sir.SirFunction
+import org.jetbrains.kotlin.sir.SirVariable
+import org.jetbrains.kotlin.sir.SirAccessor
+import org.jetbrains.kotlin.sir.SirSetter
+import org.jetbrains.kotlin.sir.SirGetter
+import org.jetbrains.kotlin.sir.util.*
 import org.jetbrains.kotlin.sir.SirKotlinOrigin
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.bridge.BridgeRequest
@@ -35,11 +41,8 @@ private object BridgeGenerationPass : SirPass<SirElement, Nothing?, List<BridgeR
         override fun visitFunction(function: SirFunction) {
             val fqName = (function.origin as? SirKotlinOrigin.Function)?.path
                 ?: return
-            val fqNameForBridge = if (fqName.count() == 1) {
-                listOf("__root__", fqName.first()) // todo: should be changed with correct mangling KT-64970
-            } else {
-                fqName
-            }
+            val fqNameForBridge = fqName.forBridge
+
             val bridgeRequest = BridgeRequest(
                 function,
                 fqNameForBridge.joinToString("_"),
@@ -48,5 +51,33 @@ private object BridgeGenerationPass : SirPass<SirElement, Nothing?, List<BridgeR
             requests += bridgeRequest
             function.body = createFunctionBodyFromRequest(bridgeRequest)
         }
+
+        override fun visitVariable(variable: SirVariable) {
+            val fqName = (variable.origin as? SirKotlinOrigin.Property)?.path?.forBridge
+                ?: return
+            val fqNameForBridge = fqName.forBridge
+
+            variable.accessors.forEach {
+                val suffix = it.bridgeSuffix
+                val request = BridgeRequest(
+                    it,
+                    fqNameForBridge.joinToString("_") + "_$suffix",
+                    fqName
+                )
+                requests += request
+                it.body = createFunctionBodyFromRequest(request)
+            }
+        }
     }
+}
+
+private val SirAccessor.bridgeSuffix: String get() = when(this) {
+    is SirGetter -> "get"
+    is SirSetter -> "set"
+}
+
+private val List<String>.forBridge: List<String> get() = if (this.count() == 1) {
+    listOf("__root__", this.first()) // todo: should be changed with correct mangling KT-64970
+} else {
+    this
 }

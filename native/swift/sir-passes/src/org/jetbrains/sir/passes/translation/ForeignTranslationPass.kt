@@ -7,6 +7,9 @@ package org.jetbrains.sir.passes.translation
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildFunction
+import org.jetbrains.kotlin.sir.builder.buildGetter
+import org.jetbrains.kotlin.sir.builder.buildSetter
+import org.jetbrains.kotlin.sir.builder.buildVariable
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.constants.*
 import org.jetbrains.kotlin.sir.visitors.SirTransformerVoid
@@ -15,13 +18,9 @@ import java.lang.IllegalStateException
 
 
 /**
- * Translates `SirForeignFunction` into `SirFunction`.
- * Works only with Nominal Types and top-level functions, currently.
- * If received `element` of different type than `SirForeignFunction`,
- * or `element` does not contain origin of type `SirOrigin.KotlinEntity.Function`,
- * returns original element.
+ * Translates `SirForeign*` nodes into their regular "native" counterparts.
  */
-public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Nothing?, SirDeclaration> {
+public class ForeignTranslationPass : SirPass<SirElement, Nothing?, SirDeclaration> {
 
     private class Transformer : SirTransformerVoid() {
         override fun <E : SirElement> transformElement(element: E): E {
@@ -29,6 +28,12 @@ public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Nothi
             return element
         }
 
+        /**
+         * Works only with Nominal Types and top-level functions, currently.
+         * If received `element` of different type than `SirForeignFunction`,
+         * or `element` does not contain origin of type `SirOrigin.KotlinEntity.Function`,
+         * returns original element.
+         */
         override fun transformForeignFunction(function: SirForeignFunction): SirDeclaration {
             val kotlinOrigin = function.origin as? SirKotlinOrigin.Function
                 ?: return function
@@ -47,6 +52,26 @@ public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Nothi
                 parent = function.parent
             }
         }
+
+        override fun transformForeignVariable(variable: SirForeignVariable): SirDeclaration {
+            val kotlinOrigin = variable.origin as? SirKotlinOrigin.Property
+                ?: return variable
+
+            return buildVariable {
+                origin = variable.origin
+                visibility = variable.visibility
+
+                isStatic = variable.parent is SirDeclaration
+                name = kotlinOrigin.path.last()
+                type = kotlinOrigin.type.toSir()
+
+                getter = buildGetter {}
+                setter = if (kotlinOrigin.isWriteable) buildSetter {} else null
+            }.also {
+                it.getter.parent = it
+                it.setter?.parent = it
+            }
+        }
     }
 
     override fun run(element: SirElement, data: Nothing?): SirDeclaration = element.transform(Transformer())
@@ -59,6 +84,7 @@ private fun SirKotlinOrigin.Parameter.toSir(): SirParameter = SirParameter(
 
 private fun SirKotlinOrigin.Type.toSir(): SirType = SirNominalType(
     type = when (this.name) {
+        UNIT -> SirSwiftModule.void
         BYTE -> SirSwiftModule.int8
         SHORT -> SirSwiftModule.int16
         INT -> SirSwiftModule.int32

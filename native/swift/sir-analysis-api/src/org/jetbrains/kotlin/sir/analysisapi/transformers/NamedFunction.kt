@@ -44,14 +44,6 @@ private class AAFunction(
         get() = originalFunction.docComment?.let { AADocumentation(it) }
 
 }
-private data class AAParameter(
-    override val name: String,
-    override val type: SirKotlinOrigin.Type
-) : SirKotlinOrigin.Parameter
-
-private data class AAKotlinType(
-    override val name: String
-) : SirKotlinOrigin.Type
 
 private data class AADocumentation(
     private val kdoc: KDoc

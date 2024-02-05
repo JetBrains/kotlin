@@ -19,6 +19,11 @@ sealed interface SirKotlinOrigin : SirOrigin.Foreign {
         val returnType: Type
     }
 
+    interface Property : SirKotlinOrigin {
+        val type: Type
+        val isWriteable: Boolean
+    }
+
     interface Parameter {
         val name: String
         val type: Type

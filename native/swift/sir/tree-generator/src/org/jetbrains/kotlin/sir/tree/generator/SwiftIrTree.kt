@@ -78,9 +78,15 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declaration)
     }
 
+    // Denotes "actual" callable node. (I.e. SirCallable & !SIRForeignDeclaration)
+    // TODO: remove along with foreign declaration (KT-65335); replace usages with just SIRCallable
+    val nativeCallable by sealedElement {
+        parent(callable)
+    }
+
     val function by element {
         customParentInVisitor = callable
-        parent(callable)
+        parent(nativeCallable)
 
         +field("isStatic", boolean) // todo: KT-65046 Method|function distinction in SIR
         +field("name", string)
@@ -97,5 +103,43 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(foreignDeclaration)
 
         visitorParameterName = "function"
+    }
+
+    val accessor by sealedElement {
+        customParentInVisitor = callable
+        parent(nativeCallable)
+
+        +field("body", functionBodyType, nullable = true, mutable = true)
+    }
+
+    val getter by element {
+        parent(accessor)
+    }
+
+    val setter by element {
+        parent(accessor)
+
+        +field("parameterName", string, initializer = {  })
+    }
+
+    val variable by element {
+        customParentInVisitor = declaration
+        parent(declaration)
+        parent(declarationParent)
+
+        +field("name", string)
+        +field("type", typeType)
+
+        +field("getter", getter)
+        +field("setter", setter, nullable = true)
+
+        +field("isStatic", boolean) // todo: KT-65046 Method|function distinction in SIR
+    }
+
+    val foreignVariable by element {
+        customParentInVisitor = declaration
+        parent(foreignDeclaration)
+
+        visitorParameterName = "variable"
     }
 }

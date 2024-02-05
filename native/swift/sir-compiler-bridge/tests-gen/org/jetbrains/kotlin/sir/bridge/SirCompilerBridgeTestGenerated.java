@@ -43,6 +43,12 @@ public class SirCompilerBridgeTestGenerated extends AbstractKotlinSirBridgeTest 
     }
 
     @Test
+    @TestMetadata("property_accessors")
+    public void testProperty_accessors() throws Exception {
+        runTest("native/swift/sir-compiler-bridge/testData/property_accessors/");
+    }
+
+    @Test
     @TestMetadata("smoke0")
     public void testSmoke0() throws Exception {
         runTest("native/swift/sir-compiler-bridge/testData/smoke0/");

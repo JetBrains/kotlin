@@ -35,4 +35,10 @@ public class SwiftExportRunnerTest extends AbstractSwiftRunnerTest {
     public void testSimple() throws Exception {
         runTest("native/swift/swift-export-standalone/testData/simple/");
     }
+
+    @Test
+    @TestMetadata("variables")
+    public void testVariables() throws Exception {
+        runTest("native/swift/swift-export-standalone/testData/variables/");
+    }
 }

@@ -28,11 +28,54 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
         }
     }
 
+    override fun visitVariable(variable: SirVariable): Unit = with(printer) {
+        print(
+            variable.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: "",
+            if (variable.isStatic) "static " else "",
+            "var ",
+            variable.name.swiftIdentifier,
+            ": ",
+            variable.type.swift,
+        )
+        println(" {")
+        withIndent {
+            variable.getter.accept(this@SirAsSwiftSourcesPrinter)
+            variable.setter?.accept(this@SirAsSwiftSourcesPrinter)
+        }
+        println("}")
+    }
+
+    override fun visitSetter(setter: SirSetter): Unit = with(printer) {
+        print("set")
+        setter.body?.let { body ->
+            println(" {")
+            withIndent {
+                printFunctionBody(body).forEach { println(it) }
+            }
+            println("}")
+        } ?: println("")
+    }
+
+    override fun visitGetter(getter: SirGetter): Unit = with(printer) {
+        print("get")
+        getter.body?.let { body ->
+            println(" {")
+            withIndent {
+                printFunctionBody(body).forEach { println(it) }
+            }
+            println("}")
+        } ?: println("")
+    }
+
     override fun visitFunction(function: SirFunction): Unit = with(printer) {
         function.documentation?.let { println(it) }
         print(
             function.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: "",
-            if (function.isStatic) { "static " } else { "" },
+            if (function.isStatic) {
+                "static "
+            } else {
+                ""
+            },
             "func ",
             function.name.swiftIdentifier,
             "("
@@ -57,7 +100,7 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
         )
         println(" {")
         withIndent {
-            printFunctionBody(function).forEach {
+            printFunctionBody(function.body).forEach {
                 println(it)
             }
         }
@@ -72,15 +115,19 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
         println("}")
     }
 
-    override fun visitForeignFunction(function: SirForeignFunction) {} // we do not write foreign nodes
+    // we do not write foreign nodes
+
+    override fun visitForeignFunction(function: SirForeignFunction) {}
+
+    override fun visitForeignVariable(variable: SirForeignVariable) {}
 
     override fun visitElement(element: SirElement): Unit = with(printer) {
         println("/* ERROR: unsupported element type: " + element.javaClass.simpleName + " */")
     }
 }
 
-private fun printFunctionBody(function: SirFunction): List<String> {
-    return function.body?.statements ?: listOf("fatalError()")
+private fun printFunctionBody(body: SirFunctionBody?): List<String> {
+    return body?.statements ?: listOf("fatalError()")
 }
 
 private val SirVisibility.swift

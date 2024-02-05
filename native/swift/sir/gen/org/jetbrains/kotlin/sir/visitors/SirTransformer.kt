@@ -87,6 +87,14 @@ abstract class SirTransformer<in D> : SirVisitor<SirElement, D>() {
         return transformCallable(callable, data)
     }
 
+    open fun transformNativeCallable(nativeCallable: SirNativeCallable, data: D): SirDeclaration {
+        return transformCallable(nativeCallable, data)
+    }
+
+    final override fun visitNativeCallable(nativeCallable: SirNativeCallable, data: D): SirDeclaration {
+        return transformNativeCallable(nativeCallable, data)
+    }
+
     open fun transformFunction(function: SirFunction, data: D): SirDeclaration {
         return transformCallable(function, data)
     }
@@ -101,5 +109,45 @@ abstract class SirTransformer<in D> : SirVisitor<SirElement, D>() {
 
     final override fun visitForeignFunction(function: SirForeignFunction, data: D): SirDeclaration {
         return transformForeignFunction(function, data)
+    }
+
+    open fun transformAccessor(accessor: SirAccessor, data: D): SirDeclaration {
+        return transformCallable(accessor, data)
+    }
+
+    final override fun visitAccessor(accessor: SirAccessor, data: D): SirDeclaration {
+        return transformAccessor(accessor, data)
+    }
+
+    open fun transformGetter(getter: SirGetter, data: D): SirDeclaration {
+        return transformAccessor(getter, data)
+    }
+
+    final override fun visitGetter(getter: SirGetter, data: D): SirDeclaration {
+        return transformGetter(getter, data)
+    }
+
+    open fun transformSetter(setter: SirSetter, data: D): SirDeclaration {
+        return transformAccessor(setter, data)
+    }
+
+    final override fun visitSetter(setter: SirSetter, data: D): SirDeclaration {
+        return transformSetter(setter, data)
+    }
+
+    open fun transformVariable(variable: SirVariable, data: D): SirDeclaration {
+        return transformDeclaration(variable, data)
+    }
+
+    final override fun visitVariable(variable: SirVariable, data: D): SirDeclaration {
+        return transformVariable(variable, data)
+    }
+
+    open fun transformForeignVariable(foreignVariable: SirForeignVariable, data: D): SirDeclaration {
+        return transformDeclaration(foreignVariable, data)
+    }
+
+    final override fun visitForeignVariable(variable: SirForeignVariable, data: D): SirDeclaration {
+        return transformForeignVariable(variable, data)
     }
 }

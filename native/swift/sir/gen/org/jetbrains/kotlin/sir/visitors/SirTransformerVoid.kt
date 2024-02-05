@@ -68,6 +68,12 @@ abstract class SirTransformerVoid : SirTransformer<Nothing?>() {
     final override fun transformCallable(callable: SirCallable, data: Nothing?): SirDeclaration =
         transformCallable(callable)
 
+    open fun transformNativeCallable(nativeCallable: SirNativeCallable): SirDeclaration =
+        transformCallable(nativeCallable)
+
+    final override fun transformNativeCallable(nativeCallable: SirNativeCallable, data: Nothing?): SirDeclaration =
+        transformNativeCallable(nativeCallable)
+
     open fun transformFunction(function: SirFunction): SirDeclaration =
         transformCallable(function)
 
@@ -79,4 +85,34 @@ abstract class SirTransformerVoid : SirTransformer<Nothing?>() {
 
     final override fun transformForeignFunction(function: SirForeignFunction, data: Nothing?): SirDeclaration =
         transformForeignFunction(function)
+
+    open fun transformAccessor(accessor: SirAccessor): SirDeclaration =
+        transformCallable(accessor)
+
+    final override fun transformAccessor(accessor: SirAccessor, data: Nothing?): SirDeclaration =
+        transformAccessor(accessor)
+
+    open fun transformGetter(getter: SirGetter): SirDeclaration =
+        transformAccessor(getter)
+
+    final override fun transformGetter(getter: SirGetter, data: Nothing?): SirDeclaration =
+        transformGetter(getter)
+
+    open fun transformSetter(setter: SirSetter): SirDeclaration =
+        transformAccessor(setter)
+
+    final override fun transformSetter(setter: SirSetter, data: Nothing?): SirDeclaration =
+        transformSetter(setter)
+
+    open fun transformVariable(variable: SirVariable): SirDeclaration =
+        transformDeclaration(variable)
+
+    final override fun transformVariable(variable: SirVariable, data: Nothing?): SirDeclaration =
+        transformVariable(variable)
+
+    open fun transformForeignVariable(variable: SirForeignVariable): SirDeclaration =
+        transformDeclaration(variable)
+
+    final override fun transformForeignVariable(variable: SirForeignVariable, data: Nothing?): SirDeclaration =
+        transformForeignVariable(variable)
 }

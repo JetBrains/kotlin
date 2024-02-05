@@ -41,9 +41,27 @@ abstract class SirVisitor<out R, in D> {
     open fun visitCallable(callable: SirCallable, data: D): R =
         visitDeclaration(callable, data)
 
+    open fun visitNativeCallable(nativeCallable: SirNativeCallable, data: D): R =
+        visitCallable(nativeCallable, data)
+
     open fun visitFunction(function: SirFunction, data: D): R =
         visitCallable(function, data)
 
     open fun visitForeignFunction(function: SirForeignFunction, data: D): R =
         visitCallable(function, data)
+
+    open fun visitAccessor(accessor: SirAccessor, data: D): R =
+        visitCallable(accessor, data)
+
+    open fun visitGetter(getter: SirGetter, data: D): R =
+        visitAccessor(getter, data)
+
+    open fun visitSetter(setter: SirSetter, data: D): R =
+        visitAccessor(setter, data)
+
+    open fun visitVariable(variable: SirVariable, data: D): R =
+        visitDeclaration(variable, data)
+
+    open fun visitForeignVariable(variable: SirForeignVariable, data: D): R =
+        visitDeclaration(variable, data)
 }

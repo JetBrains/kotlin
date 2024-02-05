@@ -5,20 +5,25 @@
 
 package org.jetbrains.kotlin.sir.bridge
 
-import org.jetbrains.kotlin.sir.SirFunction
+import org.jetbrains.kotlin.sir.SirCallable
 import org.jetbrains.kotlin.sir.SirFunctionBody
+import org.jetbrains.kotlin.sir.SirNativeCallable
 import org.jetbrains.kotlin.sir.bridge.impl.BridgeGeneratorImpl
 import org.jetbrains.kotlin.sir.bridge.impl.CBridgePrinter
 import org.jetbrains.kotlin.sir.bridge.impl.KotlinBridgePrinter
+import org.jetbrains.kotlin.sir.util.allParameters
+import org.jetbrains.kotlin.sir.util.isVoid
+import org.jetbrains.kotlin.sir.util.name
+import org.jetbrains.kotlin.sir.util.returnType
 
 /**
  * Description of a Kotlin function for which we are creating the bridge.
  *
- * @param function SIR function we are generating bridge for
+ * @param callable SIR function we are generating bridge for
  * @param bridgeName C name of the bridge
  */
 public class BridgeRequest(
-    public val function: SirFunction,
+    public val callable: SirNativeCallable,
     public val bridgeName: String,
     public val fqName: List<String>,
 )
@@ -31,10 +36,11 @@ public class BridgeRequest(
  */
 public fun createFunctionBodyFromRequest(request: BridgeRequest): SirFunctionBody {
     val callee = request.bridgeName
-    val calleeArguments = request.function.parameters.map { it.argumentName }
+    val calleeArguments = request.callable.allParameters.map { it.name }
     val callSite = "$callee(${calleeArguments.joinToString(separator = ", ")})"
+    val callStatement = if (request.callable.returnType.isVoid) callSite else "return $callSite"
     return SirFunctionBody(
-        listOf("return $callSite")
+        listOf(callStatement)
     )
 }
 
