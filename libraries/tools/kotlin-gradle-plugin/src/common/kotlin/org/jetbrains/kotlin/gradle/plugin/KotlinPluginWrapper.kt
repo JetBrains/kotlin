@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArt
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
 import org.jetbrains.kotlin.gradle.utils.*
@@ -85,6 +87,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         }
 
         BuildMetricsService.registerIfAbsent(project)
+        KotlinNativeBundleBuildService.registerIfAbsent(project)
     }
 
     private fun addKotlinCompilerConfiguration(project: Project) {
@@ -116,19 +119,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
                         }
                         project.configurations.named(classpathConfiguration)
                     }
-                )
-            }
-    }
-
-    private fun addKotlinNativeBundleConfiguration(project: Project) {
-        project.configurations
-            .maybeCreateResolvable(KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME).also { configuration ->
-                configuration.defaultDependencies {
-                    it.add(project.dependencies.create(NativeCompilerDownloader.getCompilerDependencyNotation(project)))
-                }
-                configuration.attributes.setAttribute(
-                    KotlinNativeBundleArtifactFormat.attribute,
-                    KotlinNativeBundleArtifactFormat.KotlinNativeBundleArtifactsTypes.DIRECTORY
                 )
             }
     }

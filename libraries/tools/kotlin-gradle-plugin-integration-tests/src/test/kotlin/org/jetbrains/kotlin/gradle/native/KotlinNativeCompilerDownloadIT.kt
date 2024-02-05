@@ -80,24 +80,22 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("KT-65222: Kotlin Native must be downloaded during even if klib dir exists")
+    @DisplayName(
+        "KT-65222, KT-65347: check that commonize native distribution depends on downloaded k/n bundle " +
+                "and downloaded bundle does not erase installed caches"
+    )
     @GradleTest
-    fun shouldDownloadKotlinNativeWithExistingKlibDir(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
+    fun checkCommonizeNativeDistributionWithPlatform(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
         nativeProject(
-            "native-simple-project",
+            "commonize-native-distribution",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 konanDataDir = konanTemp,
             ),
         ) {
-            build(":commonizeNativeDistribution") {
-                assertDirectoryExists(konanTemp.resolve(STABLE_VERSION_DIR_NAME).resolve("klib"))
-                assertDirectoryDoesNotExist(konanTemp.resolve(STABLE_VERSION_DIR_NAME).resolve("bin"))
-            }
-            build("assemble") {
-                assertOutputDoesNotContain(DOWNLOAD_KONAN_FINISHED_LOG)
-                assertOutputContains(UNPUCK_KONAN_FINISHED_LOG)
-                assertOutputDoesNotContain("Please wait while Kotlin/Native")
+            build(":compileNativeMainKotlinMetadata") {
+                assertDirectoryExists(konanTemp.resolve(STABLE_VERSION_DIR_NAME).resolve("klib").resolve("platform"))
+                assertDirectoryExists(konanTemp.resolve(STABLE_VERSION_DIR_NAME).resolve("bin"))
             }
         }
     }

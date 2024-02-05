@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.buildKotlinNativeBinaryLinkerArgs
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.tasks.KotlinToolTask
 import org.jetbrains.kotlin.gradle.utils.XcodeUtils
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -55,7 +56,8 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     private val projectLayout: ProjectLayout,
 ) : DefaultTask(),
     UsesBuildMetricsService,
-    KotlinToolTask<KotlinCommonCompilerToolOptions> {
+    KotlinToolTask<KotlinCommonCompilerToolOptions>,
+    UsesKotlinNativeBundleBuildService {
 
     @get:Input
     abstract val baseName: Property<String>
@@ -172,7 +174,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
 
     @get:Nested
     internal val kotlinNativeProvider: Provider<KotlinNativeProvider> = project.provider {
-        KotlinNativeProvider(project, konanTarget)
+        KotlinNativeProvider(project, konanTarget, kotlinNativeBundleBuildService)
     }
 
     @Deprecated(

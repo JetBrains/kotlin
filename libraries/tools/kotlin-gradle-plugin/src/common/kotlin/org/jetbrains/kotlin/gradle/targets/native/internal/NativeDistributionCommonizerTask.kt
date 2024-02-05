@@ -14,17 +14,14 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Classpath
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
+import org.jetbrains.kotlin.commonizer.konanTargets
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
@@ -34,6 +31,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
 import org.jetbrains.kotlin.gradle.utils.directoryProperty
 import org.jetbrains.kotlin.gradle.utils.listProperty
@@ -50,7 +49,7 @@ internal abstract class NativeDistributionCommonizerTask
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations,
     private val projectLayout: ProjectLayout,
-) : DefaultTask(), UsesBuildMetricsService {
+) : DefaultTask(), UsesBuildMetricsService, UsesKotlinNativeBundleBuildService {
 
     private val konanHome = project.file(project.konanHome)
 
@@ -104,6 +103,11 @@ internal abstract class NativeDistributionCommonizerTask
     val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
 
+    @get:Nested
+    internal val kotlinNativeProvider: Provider<KotlinNativeProvider> = project.provider {
+        KotlinNativeProvider(project, commonizerTargets.flatMap { target -> target.konanTargets }.toSet(), kotlinNativeBundleBuildService)
+    }
+
     @TaskAction
     protected fun run() {
         val metricsReporter = metrics.get()
@@ -133,6 +137,9 @@ internal abstract class NativeDistributionCommonizerTask
 
     init {
         outputs.upToDateWhen {
+            // upToDateWhen executes after configuration phase, but before inputs are calculated,
+            // that is why we need to get k/n bundle before commonizerCache.isUpToDate here
+            kotlinNativeProvider.get().kotlinNativeBundleVersion.get()
             commonizerCache.isUpToDate(commonizerTargets)
         }
     }

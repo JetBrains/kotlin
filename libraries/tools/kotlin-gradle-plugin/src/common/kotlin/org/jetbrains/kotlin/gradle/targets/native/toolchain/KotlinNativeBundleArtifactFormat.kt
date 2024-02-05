@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.native.toolchain
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributesSchema
+import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
+import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 /**
@@ -53,5 +56,17 @@ internal object KotlinNativeBundleArtifactFormat {
             transform.from.setAttribute(attribute, KotlinNativeBundleArtifactsTypes.ARCHIVE)
             transform.to.setAttribute(attribute, KotlinNativeBundleArtifactsTypes.DIRECTORY)
         }
+    }
+
+    internal fun addKotlinNativeBundleConfiguration(project: Project) {
+        project.configurations
+            .maybeCreateResolvable(KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME).also { configuration ->
+                configuration.defaultDependencies {
+                    it.add(project.dependencies.create(NativeCompilerDownloader.getCompilerDependencyNotation(project)))
+                }
+                if (!configuration.attributes.contains(attribute)) {
+                    configuration.attributes.setAttribute(attribute, KotlinNativeBundleArtifactsTypes.DIRECTORY)
+                }
+            }
     }
 }
