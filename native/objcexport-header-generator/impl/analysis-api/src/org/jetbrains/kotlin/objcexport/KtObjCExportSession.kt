@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.ObjCSymbolsProcessingQueue
+
 interface KtObjCExportSession {
     val configuration: KtObjCExportConfiguration
     val dependencies: KtObjCDependencies
+    val queue: ObjCSymbolsProcessingQueue
 }
 
 inline fun <T> KtObjCExportSession(
@@ -17,5 +20,6 @@ inline fun <T> KtObjCExportSession(
     return object : KtObjCExportSession {
         override val configuration: KtObjCExportConfiguration = configuration
         override val dependencies: KtObjCDependencies = KtObjCDependencies()
+        override val queue: ObjCSymbolsProcessingQueue = ObjCSymbolsProcessingQueue.newQueue()
     }.block()
 }

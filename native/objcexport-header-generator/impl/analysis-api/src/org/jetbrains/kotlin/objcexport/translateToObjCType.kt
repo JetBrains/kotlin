@@ -59,6 +59,9 @@ internal fun KtType.translateToObjCReferenceType(): ObjCReferenceType {
  */
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenceType {
+
+    queue.process(this)
+
     val fullyExpandedType = fullyExpandedType
     val classId = (fullyExpandedType as? KtNonErrorClassType)?.classId
 
@@ -112,6 +115,7 @@ private fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReference
     }
 
     if (fullyExpandedType is KtNonErrorClassType) {
+
         val typeName = typesMap[classId]
             ?: fullyExpandedType.classId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
 
@@ -135,7 +139,7 @@ private fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReference
 
 
 context(KtAnalysisSession, KtObjCExportSession)
-private fun KtType.translateToObjCTypeArguments(): List<ObjCNonNullReferenceType> {
+internal fun KtType.translateToObjCTypeArguments(): List<ObjCNonNullReferenceType> {
     if (this !is KtNonErrorClassType) return emptyList()
 
     /* See special casing below */
