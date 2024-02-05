@@ -76,7 +76,7 @@ class KotlinMetadataTargetConfigurator :
                     // Clear the dependencies of the compilation so that they don't take time resolving during task graph construction:
                     compileDependencyFiles = target.project.files()
                 }
-                compileKotlinTaskProvider.configure { it.onlyIf { isCompatibilityMetadataVariantEnabled } }
+                compileTaskProvider.configure { it.onlyIf { isCompatibilityMetadataVariantEnabled } }
             }
 
             createMetadataCompilationsForCommonSourceSets(target)
@@ -114,7 +114,7 @@ class KotlinMetadataTargetConfigurator :
                 }
                 .onEach { (sourceSet, compilation) ->
                     if (!isMetadataCompilationSupported(sourceSet)) {
-                        compilation.compileKotlinTaskProvider.configure { it.enabled = false }
+                        compilation.compileTaskProvider.configure { it.enabled = false }
                     }
                 }
 
@@ -223,7 +223,7 @@ class KotlinMetadataTargetConfigurator :
             if (isHostSpecific) {
                 if (platformCompilations.filterIsInstance<KotlinNativeCompilation>().none { it.konanTarget.enabledOnCurrentHost }) {
                     // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
-                    compileKotlinTaskProvider.configure { it.enabled = false }
+                    compileTaskProvider.configure { it.enabled = false }
                     // Also clear the dependency files (classpath) of the compilation so that the host-specific dependencies are
                     // not resolved:
                     compileDependencyFiles = project.files()
