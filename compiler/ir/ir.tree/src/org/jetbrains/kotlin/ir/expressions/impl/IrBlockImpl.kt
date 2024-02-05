@@ -16,13 +16,8 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
 class IrBlockImpl(
@@ -51,53 +46,5 @@ fun IrBlockImpl.inlineStatement(statement: IrStatement) {
         statements.addAll(statement.statements)
     } else {
         statements.add(statement)
-    }
-}
-
-class IrReturnableBlockImpl(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-    override val symbol: IrReturnableBlockSymbol,
-    override var origin: IrStatementOrigin? = null,
-) : IrReturnableBlock() {
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: FunctionDescriptor
-        get() = symbol.descriptor
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        symbol: IrReturnableBlockSymbol,
-        origin: IrStatementOrigin?,
-        statements: List<IrStatement>,
-    ) : this(startOffset, endOffset, type, symbol, origin) {
-        this.statements.addAll(statements)
-    }
-
-    init {
-        symbol.bind(this)
-    }
-}
-
-class IrInlinedFunctionBlockImpl(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-    override var inlineCall: IrFunctionAccessExpression,
-    override var inlinedElement: IrElement,
-    override var origin: IrStatementOrigin? = null,
-) : IrInlinedFunctionBlock() {
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        inlineCall: IrFunctionAccessExpression,
-        inlinedElement: IrElement,
-        origin: IrStatementOrigin?,
-        statements: List<IrStatement>,
-    ) : this(startOffset, endOffset, type, inlineCall, inlinedElement, origin) {
-        this.statements.addAll(statements)
     }
 }

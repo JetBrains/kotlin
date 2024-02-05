@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrSuspendableExpression
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 import org.jetbrains.kotlin.ir.types.IrType
 
@@ -20,10 +19,3 @@ class IrSuspensionPointImpl(
     override var resumeResult: IrExpression
 ) : IrSuspensionPoint()
 
-class IrSuspendableExpressionImpl(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-    override var suspensionPointId: IrExpression,
-    override var result: IrExpression
-) : IrSuspendableExpression()

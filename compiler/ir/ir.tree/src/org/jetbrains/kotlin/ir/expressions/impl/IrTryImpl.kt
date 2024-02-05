@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCatch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTry
@@ -46,21 +45,4 @@ class IrTryImpl(
     override val catches: MutableList<IrCatch> = SmartList()
 
     override var finallyExpression: IrExpression? = null
-}
-
-class IrCatchImpl(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var catchParameter: IrVariable,
-) : IrCatch() {
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        catchParameter: IrVariable,
-        result: IrExpression
-    ) : this(startOffset, endOffset, catchParameter) {
-        this.result = result
-    }
-
-    override lateinit var result: IrExpression
 }
