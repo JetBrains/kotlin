@@ -440,6 +440,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
             registerCommonComponents(ProjectStructureProvider.getInstance(project).libraryLanguageVersionSettings)
             registerCommonComponentsAfterExtensionsAreConfigured()
+            registerDefaultComponents()
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
