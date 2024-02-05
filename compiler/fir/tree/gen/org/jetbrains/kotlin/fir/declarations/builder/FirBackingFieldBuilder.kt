@@ -29,31 +29,31 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 @FirBuilderDsl
-class FirBackingFieldBuilder : FirAnnotationContainerBuilder {
+class FirBackingFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    lateinit var moduleData: FirModuleData
-    lateinit var origin: FirDeclarationOrigin
-    var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    lateinit var returnTypeRef: FirTypeRef
-    var receiverParameter: FirReceiverParameter? = null
-    var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
-    var containerSource: DeserializedContainerSource? = null
-    var dispatchReceiverType: ConeSimpleKotlinType? = null
-    val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
-    lateinit var name: Name
-    var delegate: FirExpression? = null
-    var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override lateinit var moduleData: FirModuleData
+    override lateinit var origin: FirDeclarationOrigin
+    override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
+    override lateinit var returnTypeRef: FirTypeRef
+    override var receiverParameter: FirReceiverParameter? = null
+    override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
+    override var containerSource: DeserializedContainerSource? = null
+    override var dispatchReceiverType: ConeSimpleKotlinType? = null
+    override val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
+    override lateinit var name: Name
+    override var delegate: FirExpression? = null
+    override var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var isVal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    var getter: FirPropertyAccessor? = null
-    var setter: FirPropertyAccessor? = null
-    var backingField: FirBackingField? = null
+    override var getter: FirPropertyAccessor? = null
+    override var setter: FirPropertyAccessor? = null
+    override var backingField: FirBackingField? = null
     lateinit var symbol: FirBackingFieldSymbol
     lateinit var propertySymbol: FirPropertySymbol
-    var initializer: FirExpression? = null
+    override var initializer: FirExpression? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
-    lateinit var status: FirDeclarationStatus
+    override lateinit var status: FirDeclarationStatus
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirBackingField {
