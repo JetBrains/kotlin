@@ -1,8 +1,8 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!CONFLICTING_OVERLOADS!>fun foo()<!> {}
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>
+fun foo() {}
+class Foo
 
 open class Base {
     open fun foo() {}

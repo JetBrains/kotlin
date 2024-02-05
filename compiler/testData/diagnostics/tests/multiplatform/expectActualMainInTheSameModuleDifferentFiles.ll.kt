@@ -3,7 +3,7 @@
 expect fun <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>main<!>()
 
 // FILE: common2.kt
-<!CONFLICTING_OVERLOADS!>actual fun <!ACTUAL_WITHOUT_EXPECT!>main<!>()<!> {}
+actual fun <!ACTUAL_WITHOUT_EXPECT, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>main<!>() {}
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
