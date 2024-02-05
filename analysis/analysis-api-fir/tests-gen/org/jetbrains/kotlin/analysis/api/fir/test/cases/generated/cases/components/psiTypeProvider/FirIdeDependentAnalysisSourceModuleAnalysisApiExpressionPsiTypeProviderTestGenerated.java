@@ -65,6 +65,12 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiExpressionPsiTypeProv
     }
 
     @Test
+    @TestMetadata("errorType.kt")
+    public void testErrorType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/errorType.kt");
+    }
+
+    @Test
     @TestMetadata("KTIJ25461.kt")
     public void testKTIJ25461() throws Exception {
         runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/KTIJ25461.kt");
