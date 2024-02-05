@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeElementResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
@@ -50,7 +50,7 @@ internal object LLFirResolveMultiDesignationCollector {
             target is FirBackingField -> getFirDesignationToResolve(target.propertySymbol.fir)
             target is FirTypeParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
             target is FirValueParameter -> getFirDesignationToResolve(target.containingFunctionSymbol.fir)
-            else -> target.tryCollectDesignationWithFile()
+            else -> target.tryCollectDesignation()
         }
     }
 

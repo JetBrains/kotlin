@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
@@ -63,7 +63,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
             if (regularClass.resolvePhase >= resolverPhase) return
 
             symbol.lazyResolveToPhase(resolverPhase.previous)
-            val designation = regularClass.collectDesignationWithFile().asResolveTarget()
+            val designation = regularClass.collectDesignation().asResolveTarget()
             val targetSession = designation.target.llFirSession
             val resolver = LLFirCompilerRequiredAnnotationsTargetResolver(
                 designation,
