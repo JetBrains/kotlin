@@ -21,10 +21,11 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 abstract class AbstractKotlinNativeCompilation internal constructor(
     compilation: KotlinCompilationImpl,
     val konanTarget: KonanTarget
-) : AbstractKotlinCompilation<KotlinCommonOptions>(compilation) {
+) : DeprecatedAbstractKotlinCompilation<KotlinCommonOptions>(compilation) {
 
     @Suppress("DEPRECATION")
     @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
