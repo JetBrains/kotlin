@@ -9,7 +9,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -48,7 +47,6 @@ internal abstract class NativeDistributionCommonizerTask
 @Inject constructor(
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations,
-    private val projectLayout: ProjectLayout,
 ) : DefaultTask(), UsesBuildMetricsService, UsesKotlinNativeBundleBuildService {
 
     private val konanHome = project.file(project.konanHome)
@@ -76,6 +74,7 @@ internal abstract class NativeDistributionCommonizerTask
 
     private val additionalSettings = project.additionalCommonizerSettings
 
+    @Suppress("unused")
     @get:Internal
     @Deprecated("Use lazy replacement", replaceWith = ReplaceWith("rootOutputDirectoryProperty.get().asFile"))
     internal val rootOutputDirectory: File get() = rootOutputDirectoryProperty.asFile.get()
@@ -129,7 +128,11 @@ internal abstract class NativeDistributionCommonizerTask
                 val commonizer = GradleCliCommonizer(commonizerRunner)
                 /* Invoke commonizer with only 'to do' targets */
                 commonizer.commonizeNativeDistribution(
-                    konanHome, rootOutputDirectory, todoOutputTargets, logLevel, additionalSettings
+                    konanHome,
+                    rootOutputDirectoryProperty.get().asFile,
+                    todoOutputTargets,
+                    logLevel,
+                    additionalSettings,
                 )
             }
         }
