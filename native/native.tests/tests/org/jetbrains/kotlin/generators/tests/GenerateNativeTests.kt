@@ -88,7 +88,7 @@ fun main() {
                     xctest(),
                     testTimeout("10m"),
                     disabledWithoutXCTest("**.kt"),
-                    provider<UseExtTestCaseGroupProvider>()
+                    provider<UseEagerTestCaseGroupProvider>()
                 )
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)

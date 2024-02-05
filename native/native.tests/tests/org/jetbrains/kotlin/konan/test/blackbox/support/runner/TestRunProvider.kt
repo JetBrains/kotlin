@@ -190,7 +190,12 @@ internal class TestRunProvider(
 
         assumeTrue(testCaseGroup.isEnabled(testCaseId), "Test case is disabled")
 
-        val testCase = testCaseGroup.getByName(testCaseId) ?: fail { "No test case for $testCaseId" }
+        val testCase = testCaseGroup.getByName(testCaseId) ?: fail { "No test case for $testCaseId was found" }
+
+        val testCaseGroupId = if (testCaseGroup is TestCaseGroup.MetaGroup)
+            testCaseGroup.testCaseGroupId
+        else
+            testCaseId.testCaseGroupId
 
         val testCompilation = when (testCase.kind) {
             TestKind.STANDALONE -> {
@@ -206,7 +211,7 @@ internal class TestRunProvider(
                 val testRunnerType = testCase.extras<WithTestRunnerExtras>().runnerType
                 cachedXCTestCompilations.computeIfAbsent(
                     TestCompilationCacheKey.Grouped(
-                        testCaseGroupId = testCaseId.testCaseGroupId,
+                        testCaseGroupId = testCaseGroupId,
                         freeCompilerArgs = testCase.freeCompilerArgs,
                         sharedModules = testCase.sharedModules,
                         runnerType = testRunnerType
