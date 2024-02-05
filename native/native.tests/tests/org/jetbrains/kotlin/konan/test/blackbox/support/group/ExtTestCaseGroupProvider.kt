@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 
-internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(parentDisposable = null) {
+internal open class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(parentDisposable = null) {
     private val structureFactory = ExtTestDataFileStructureFactory(parentDisposable = this)
     private val sharedModules = ThreadSafeCache<String, TestModule.Shared?>()
 
@@ -73,7 +73,7 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
 
             val excludes: Set<File> = settings.get<DisabledTestDataFiles>().filesAndDirectories
             if (testDataDir in excludes)
-                return@computeIfAbsent TestCaseGroup.ALL_DISABLED
+                return@computeIfAbsent TestCaseGroup.AllDisabled
 
             val (excludedTestDataFiles, testDataFiles) = testDataDir.listFiles()
                 ?.filter { file -> file.isFile && file.extension == "kt" }

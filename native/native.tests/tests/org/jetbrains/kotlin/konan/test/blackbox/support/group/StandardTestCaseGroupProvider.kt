@@ -37,7 +37,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
 
             val excludes: Set<File> = settings.get<DisabledTestDataFiles>().filesAndDirectories
             if (testDataDir in excludes)
-                return@computeIfAbsent TestCaseGroup.ALL_DISABLED
+                return@computeIfAbsent TestCaseGroup.AllDisabled
 
             val (excludedTestDataFiles, includedTestDataFiles) = testDataFiles
                 .filter { file -> file.isFile && file.extension == "kt" }

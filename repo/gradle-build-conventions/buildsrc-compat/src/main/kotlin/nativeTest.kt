@@ -28,6 +28,7 @@ private enum class TestProperty(shortName: String) {
     EXECUTION_TIMEOUT("executionTimeout"),
     SANITIZER("sanitizer"),
     SHARED_TEST_EXECUTION("sharedTestExecution"),
+    EAGER_GROUP_CREATION("eagerGroupCreation"),
     TEAMCITY("teamcity");
 
     val fullName = "kotlin.internal.native.test.$shortName"
@@ -197,6 +198,7 @@ fun Project.nativeTest(
             compute(EXECUTION_TIMEOUT)
             compute(SANITIZER)
             compute(SHARED_TEST_EXECUTION)
+            compute(EAGER_GROUP_CREATION)
 
             // Pass whether tests are running at TeamCity.
             computePrivate(TEAMCITY) { kotlinBuildProperties.isTeamcityBuild.toString() }

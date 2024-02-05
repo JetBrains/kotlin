@@ -38,9 +38,10 @@ internal class TestRunProvider(
      * Produces a single [TestRun] per [TestCase]. So-called "one test case/one test run" mode.
      *
      * If [TestCase] contains multiple functions annotated with [kotlin.test.Test], then all these functions will be executed
-     * in one shot. If either function will fail, the whole JUnit test will be considered as failed.
+     * in one shot. If either function fails, the whole JUnit test will be considered as failed.
      *
      * Example:
+     * ```
      *   //+++ testData file (foo.kt): +++//
      *   @kotlin.test.Test
      *   fun one() { /* ... */ }
@@ -58,6 +59,7 @@ internal class TestRunProvider(
      *           // If either of test functions fails, the whole "testFoo()" JUnit test is marked as failed.
      *       }
      *   }
+     * ```
      */
     fun getSingleTestRun(
         testCaseId: TestCaseId,
@@ -72,10 +74,11 @@ internal class TestRunProvider(
      * If [TestCase] contains multiple functions annotated with [kotlin.test.Test], then a separate [TestRun] will be produced
      * for each such function.
      *
-     * This allows to have a better granularity in tests. So that every individual test method inside [TestCase] will be considered
+     * This allows having a better granularity in tests. So that every test method inside [TestCase] will be considered
      * as an individual JUnit test, and will be presented as a separate row in JUnit test report.
      *
      * Example:
+     * ```
      *   //+++ testData file (foo.kt): +++//
      *   @kotlin.test.Test
      *   fun one() { /* ... */ }
@@ -95,6 +98,7 @@ internal class TestRunProvider(
      *           // in the test report, and "testFoo.two" will be presented as passed.
      *       }
      *   }
+     * ```
      */
     fun getTestRuns(
         testCaseId: TestCaseId,
@@ -129,6 +133,11 @@ internal class TestRunProvider(
 
         val testCase = testCaseGroup.getByName(testCaseId) ?: fail { "No test case for $testCaseId" }
 
+        val testCaseGroupId = if (testCaseGroup is TestCaseGroup.MetaGroup)
+            testCaseGroup.testCaseGroupId
+        else
+            testCaseId.testCaseGroupId
+
         val testCompilation = when (testCase.kind) {
             TestKind.STANDALONE, TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> {
                 // Create a separate compilation for each standalone test case.
@@ -143,7 +152,7 @@ internal class TestRunProvider(
                 val testRunnerType = testCase.extras<WithTestRunnerExtras>().runnerType
                 cachedCompilations.computeIfAbsent(
                     TestCompilationCacheKey.Grouped(
-                        testCaseGroupId = testCaseId.testCaseGroupId,
+                        testCaseGroupId = testCaseGroupId,
                         freeCompilerArgs = testCase.freeCompilerArgs,
                         sharedModules = testCase.sharedModules,
                         runnerType = testRunnerType
