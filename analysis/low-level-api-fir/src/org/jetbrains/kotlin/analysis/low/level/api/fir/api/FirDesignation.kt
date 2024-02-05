@@ -100,6 +100,10 @@ class FirDesignation(
         }
 
     val scriptOrNull: FirScript? get() = path.getOrNull(0) as? FirScript ?: path.getOrNull(1) as? FirScript ?: target as? FirScript
+
+    override fun toString(): String = path.plus(target).joinToString(separator = " -> ") {
+        it::class.simpleName ?: it.toString()
+    }
 }
 
 fun ExceptionAttachmentBuilder.withFirDesignationEntry(name: String, designation: FirDesignation) {
