@@ -19,9 +19,10 @@ class K2HierarchicalMppIT : HierarchicalMppIT() {
     override val defaultBuildOptions: BuildOptions get() = super.defaultBuildOptions.copy(languageVersion = "2.0")
 }
 
-@Ignore
+@MppGradlePluginTests
+@DisplayName("KLibs in K2")
 class K2KlibBasedMppIT : KlibBasedMppIT() {
-    override fun defaultBuildOptions(): BuildOptions = super.defaultBuildOptions().copy(languageVersion = "2.0")
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }
 
 @Ignore

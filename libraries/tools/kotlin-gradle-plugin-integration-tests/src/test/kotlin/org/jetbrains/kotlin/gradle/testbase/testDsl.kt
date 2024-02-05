@@ -397,11 +397,16 @@ class TestProject(
      */
     fun includeOtherProjectAsSubmodule(
         otherProjectName: String,
-        pathPrefix: String,
+        pathPrefix: String = "",
         newSubmoduleName: String = otherProjectName,
         isKts: Boolean = false,
+        localRepoDir: Path? = null,
     ) {
-        val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
+        val otherProjectPath = if (pathPrefix.isEmpty()) {
+            otherProjectName.testProjectPath
+        } else {
+            "$pathPrefix/$otherProjectName".testProjectPath
+        }
         otherProjectPath.copyRecursively(projectPath.resolve(newSubmoduleName))
 
         val gradleSettingToUpdate = if (isKts) settingsGradleKts else settingsGradle
@@ -412,6 +417,8 @@ class TestProject(
             include(":$newSubmoduleName")
             """.trimIndent()
         )
+
+        localRepoDir?.let { subProject(newSubmoduleName).configureLocalRepository(localRepoDir) }
     }
 
     fun includeOtherProjectAsIncludedBuild(
@@ -814,7 +821,7 @@ private fun TestProject.configureSingleNativeTargetInSubFolders(preset: String =
         }
 }
 
-private fun TestProject.configureLocalRepository(localRepoDir: Path) {
+private fun GradleProject.configureLocalRepository(localRepoDir: Path) {
     projectPath.toFile().walkTopDown()
         .filter { it.isFile && it.name in buildFileNames }
         .forEach { file ->
