@@ -24,6 +24,11 @@ mm::ThreadRegistry::Node* mm::ThreadRegistry::RegisterCurrentThread() noexcept {
     Node*& currentDataNode = currentThreadDataNode_;
     RuntimeAssert(!IsCurrentThreadRegistered(), "This thread already had some data assigned to it.");
     currentDataNode = threadDataNode;
+
+    auto fastStorage = currentThreadDataNodeStorage();
+    RuntimeCheck(*fastStorage == nullptr, "Thread data node cache collision");
+    *fastStorage = threadDataNode;
+
     threadDataNode->Get()->gc().onThreadRegistration();
     return threadDataNode;
 }
@@ -51,3 +56,8 @@ mm::ThreadRegistry::~ThreadRegistry() = default;
 
 // static
 THREAD_LOCAL_VARIABLE mm::ThreadRegistry::Node* mm::ThreadRegistry::currentThreadDataNode_ = nullptr;
+
+extern "C" __attribute__((used)) __attribute__((annotate("current_thread_tlv_fast"))) RUNTIME_NOTHROW kotlin::mm::ThreadRegistry::Node* Kotlin_currentThreadDataNodeFast() {
+    return *mm::ThreadRegistry::Instance().currentThreadDataNodeStorage();
+    
+}

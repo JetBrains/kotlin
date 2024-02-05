@@ -59,7 +59,17 @@ public:
         }
     }
 
+//private:
+    Node** currentThreadDataNodeStorage() {
+        std::size_t tid;
+        __asm__("mrs %0, TPIDRRO_EL0" : "=r" (tid));
+        tid >>= 16;
+        tid %= 256;
+        return threadDataNodes_ + tid;
+    }
+
 private:
+
     friend class GlobalData;
 
     ThreadRegistry();
@@ -67,10 +77,14 @@ private:
 
     static THREAD_LOCAL_VARIABLE Node* currentThreadDataNode_ __attribute__((annotate("current_thread_tlv")));
 
+    Node* threadDataNodes_[256]{nullptr};
+
     SingleLockList<ThreadData, Mutex> list_;
 };
 
 } // namespace mm
 } // namespace kotlin
+
+extern "C" RUNTIME_NOTHROW kotlin::mm::ThreadRegistry::Node* Kotlin_currentThreadDataNodeFast();
 
 #endif // RUNTIME_MM_THREAD_REGISTRY_H
