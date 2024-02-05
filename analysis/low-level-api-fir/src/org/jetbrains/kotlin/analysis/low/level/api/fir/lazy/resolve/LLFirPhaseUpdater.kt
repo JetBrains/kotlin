@@ -28,7 +28,7 @@ internal object LLFirPhaseUpdater {
                     target.delegate?.accept(PhaseUpdatingTransformer, newPhase)
                     target.getter?.body?.accept(PhaseUpdatingTransformer, newPhase)
                     target.setter?.body?.accept(PhaseUpdatingTransformer, newPhase)
-                    target.backingField?.accept(PhaseUpdatingTransformer, newPhase)
+                    target.backingField?.initializer?.accept(PhaseUpdatingTransformer, newPhase)
                 }
 
                 is FirAnonymousInitializer -> target.body?.accept(PhaseUpdatingTransformer, newPhase)
