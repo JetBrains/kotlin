@@ -33,18 +33,18 @@ class BuildToolsApiTestSuit(
 
 val testMatrix = listOf(
     BuildToolsApiTestSuit(
-        "testDefaultToDefault",
+        "testSnapshotToSnapshot",
         BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
         BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
         onlyCompatibilityTests = false,
     ),
     BuildToolsApiTestSuit(
-        "test1.9.20ToDefault",
+        "test1.9.20ToSnapshot",
         BuildToolsVersion(KotlinToolingVersion(1, 9, 20, null)),
         BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
     ),
     BuildToolsApiTestSuit(
-        "testDefaultTo1.9.20",
+        "testSnapshotTo1.9.20",
         BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
         BuildToolsVersion(KotlinToolingVersion(1, 9, 20, null)),
     ),
