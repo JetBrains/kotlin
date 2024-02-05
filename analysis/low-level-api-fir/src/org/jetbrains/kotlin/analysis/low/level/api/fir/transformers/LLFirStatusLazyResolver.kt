@@ -188,7 +188,7 @@ private class LLFirStatusTargetResolver(
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {
             is FirRegularClass -> error("should be resolved in doResolveWithoutLock")
-            is FirScript -> {}
+            is FirFile, is FirScript -> {}
             else -> target.transformSingle(transformer, data = null)
         }
     }
