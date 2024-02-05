@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.ContextByDesignationCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClassIdOrNull
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalForLazyResolutionPurposes
@@ -89,7 +89,7 @@ internal object PersistenceContextCollector {
             withFirEntry("declaration", declaration)
         }
 
-        val designation = declaration.collectDesignation(firFile)
+        val designation = declaration.collectDesignationWithFile(firFile)
         designation.path.forEach { firClass ->
             firClass.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         }

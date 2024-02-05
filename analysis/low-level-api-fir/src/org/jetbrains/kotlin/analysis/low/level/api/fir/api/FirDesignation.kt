@@ -30,9 +30,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
@@ -121,6 +119,7 @@ fun FirDesignation.toSequence(includeTarget: Boolean): Sequence<FirElementWithRe
 
 private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWithResolveState): FirDesignation? {
     when (target) {
+        is FirSyntheticProperty, is FirSyntheticPropertyAccessor -> return null
         is FirSimpleFunction,
         is FirProperty,
         is FirField,
@@ -307,33 +306,55 @@ private fun findKotlinStdlibClass(classId: ClassId, target: FirDeclaration): Fir
     return FirElementFinder.findClassifierWithClassId(firFile, classId) as? FirRegularClass
 }
 
-fun FirElementWithResolveState.collectDesignation(firFile: FirFile): FirDesignation =
-    tryCollectDesignation(firFile) ?: errorWithAttachment("No designation of local declaration") {
-        withFirEntry("firFile", firFile)
+/**
+ * Consider using this function only if [collectDesignationWithFile] is not applicable.
+ *
+ * @return [FirDesignation] where [FirDesignation.fileOrNull] can be null or throws an exception.
+ *
+ * @see collectDesignationWithFile
+ * @see tryCollectDesignationWithFile
+ * @see tryCollectDesignation
+ */
+fun FirElementWithResolveState.collectDesignation(providedFile: FirFile? = null): FirDesignation =
+    tryCollectDesignation(providedFile) ?: errorWithAttachment("No designation of local declaration") {
+        providedFile?.let { withFirEntry("firFile", it) }
     }
 
-fun FirElementWithResolveState.collectDesignation(): FirDesignation =
-    tryCollectDesignation()
-        ?: errorWithAttachment("No designation of local declaration") {
-            withFirEntry("FirDeclaration", this@collectDesignation)
-        }
+/**
+ * @return [FirDesignation] where [FirDesignation.fileOrNull] not null or throws an exception.
+ *
+ * @see collectDesignation
+ * @see tryCollectDesignationWithFile
+ * @see tryCollectDesignation
+ */
+fun FirElementWithResolveState.collectDesignationWithFile(providedFile: FirFile? = null): FirDesignation =
+    tryCollectDesignationWithFile(providedFile) ?: errorWithAttachment("No designation of local declaration") {
+        withFirEntry("FirDeclaration", this@collectDesignationWithFile)
+    }
 
-fun FirElementWithResolveState.collectDesignationWithFile(): FirDesignation =
-    tryCollectDesignationWithFile()
-        ?: errorWithAttachment("No designation of local declaration") {
-            withFirEntry("FirDeclaration", this@collectDesignationWithFile)
-        }
+/**
+ * Consider using this function only if [tryCollectDesignationWithFile] is not applicable.
+ *
+ * @return [FirDesignation] where [FirDesignation.fileOrNull] can be null or null.
+ *
+ * @see collectDesignation
+ * @see collectDesignationWithFile
+ * @see tryCollectDesignationWithFile
+ */
+fun FirElementWithResolveState.tryCollectDesignation(providedFile: FirFile? = null): FirDesignation? =
+    tryCollectDesignation(providedFile = providedFile, target = this)
 
-fun FirElementWithResolveState.tryCollectDesignation(firFile: FirFile): FirDesignation? =
-    tryCollectDesignation(providedFile = firFile, target = this)
-
-fun FirElementWithResolveState.tryCollectDesignation(): FirDesignation? =
-    tryCollectDesignation(providedFile = null, target = this)
-
-fun FirElementWithResolveState.tryCollectDesignationWithFile(): FirDesignation? = when (this) {
+/**
+ * @return [FirDesignation] with not-null [FirDesignation.file] or null.
+ *
+ * @see collectDesignationWithFile
+ * @see tryCollectDesignation
+ * @see collectDesignation
+ */
+fun FirElementWithResolveState.tryCollectDesignationWithFile(providedFile: FirFile? = null): FirDesignation? = when (this) {
     is FirSyntheticProperty, is FirSyntheticPropertyAccessor -> unexpectedElementError<FirElementWithResolveState>(this)
     is FirFileAnnotationsContainer, is FirDeclaration -> {
-        val designation = tryCollectDesignation(providedFile = null, target = this)
+        val designation = tryCollectDesignation(providedFile = providedFile, target = this)
         designation?.takeIf { it.fileOrNull != null }
     }
     else -> unexpectedElementError<FirElementWithResolveState>(this)
