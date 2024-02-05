@@ -43,7 +43,7 @@ class AnalysisApiKtModuleProviderImpl(
         require(!this::modulesByName.isInitialized)
 
         this.modulesStructure = modules
-        this.modulesByName = modulesStructure.mainModules.associateByName()
+        this.modulesByName = modulesStructure.mainModules.associateBy { it.testModule.name }
     }
 
     override fun getModuleStructure(): KtTestModuleProjectStructure = modulesStructure
@@ -58,20 +58,3 @@ fun TestServices.allKtFiles(): List<KtFile> = moduleStructure.modules.flatMap(kt
 val TestServices.ktModuleProvider: AnalysisApiKtModuleProvider by TestServices.testServiceAccessor()
 
 fun TestModule.getKtModule(testServices: TestServices): KtModule = testServices.ktModuleProvider.getModule(name)
-
-fun List<KtTestModule>.associateByName(): Map<String, KtTestModule> {
-    return associateBy { ktTestModule ->
-        when (val ktModule = ktTestModule.ktModule) {
-            is KtModuleByCompilerConfiguration -> ktModule.moduleName
-            is KtSourceModule -> ktModule.moduleName
-            is KtLibraryModule -> ktModule.libraryName
-            is KtLibrarySourceModule -> ktModule.libraryName
-            is KtSdkModule -> ktModule.sdkName
-            is KtBuiltinsModule -> "Builtins for ${ktModule.platform}"
-            is KtNotUnderContentRootModule -> ktModule.name
-            is KtScriptModule -> ktModule.file.name
-            is KtDanglingFileModule -> ktModule.file.name
-            else -> error("Unsupported module type: " + ktModule.javaClass.name)
-        }
-    }
-}

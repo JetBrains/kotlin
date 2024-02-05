@@ -49,7 +49,7 @@ object TestModuleStructureFactory {
     ): KtTestModuleProjectStructure {
         val modules = createModules(moduleStructure, testServices, project)
 
-        val modulesByName = modules.associateByName()
+        val modulesByName = modules.associateBy { it.testModule.name }
 
         val libraryCache: LibraryCache = mutableMapOf()
 

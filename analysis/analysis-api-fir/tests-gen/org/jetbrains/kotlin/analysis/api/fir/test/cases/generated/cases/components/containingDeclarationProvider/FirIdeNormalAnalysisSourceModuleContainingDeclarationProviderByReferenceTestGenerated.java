@@ -46,6 +46,24 @@ public class FirIdeNormalAnalysisSourceModuleContainingDeclarationProviderByRefe
   }
 
   @Test
+  @TestMetadata("codeFragmentFromInside.kt")
+  public void testCodeFragmentFromInside() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/codeFragmentFromInside.kt");
+  }
+
+  @Test
+  @TestMetadata("foreignValue.kt")
+  public void testForeignValue() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/foreignValue.kt");
+  }
+
+  @Test
+  @TestMetadata("foreignValueScript.kt")
+  public void testForeignValueScript() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/foreignValueScript.kt");
+  }
+
+  @Test
   @TestMetadata("localFunction.kt")
   public void testLocalFunction() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/localFunction.kt");

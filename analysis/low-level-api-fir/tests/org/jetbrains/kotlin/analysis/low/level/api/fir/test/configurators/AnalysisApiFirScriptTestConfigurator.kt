@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiScriptTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtScriptTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 open class AnalysisApiFirScriptTestConfigurator(analyseInDependentSession: Boolean) :
@@ -21,6 +19,4 @@ open class AnalysisApiFirScriptTestConfigurator(analyseInDependentSession: Boole
             useAdditionalService<KtTestModuleFactory> { KtScriptTestModuleFactory }
         }
     }
-
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> = super.serviceRegistrars + AnalysisApiScriptTestServiceRegistrar
 }
