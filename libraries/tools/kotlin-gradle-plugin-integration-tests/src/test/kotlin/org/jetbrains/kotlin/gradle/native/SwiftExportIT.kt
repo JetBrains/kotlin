@@ -34,6 +34,7 @@ class SwiftExportIT : KGPBaseTest() {
             gradleVersion,
         ) {
             projectPath.enableSwiftExport()
+
             val environmentVariables = EnvironmentalVariables(
                 "CONFIGURATION" to "Debug",
                 "SDK_NAME" to "iphoneos123",

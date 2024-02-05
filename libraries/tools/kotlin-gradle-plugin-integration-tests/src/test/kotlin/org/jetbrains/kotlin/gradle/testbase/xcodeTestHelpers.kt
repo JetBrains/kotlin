@@ -17,7 +17,10 @@ fun TestProject.buildXcodeProject(
     xcodeproj: Path,
     scheme: String = "iosApp",
     configuration: String = "Debug",
-    destination: String = "generic/platform=iOS Simulator"
+    destination: String = "generic/platform=iOS Simulator",
+    sdk: String = "iphonesimulator",
+    test: Boolean = false,
+    extraArguments: List<String> = emptyList(),
 ) {
     prepareForXcodebuild()
 
@@ -25,7 +28,10 @@ fun TestProject.buildXcodeProject(
         xcodeproj = xcodeproj,
         scheme = scheme,
         configuration = configuration,
+        sdk = sdk,
         destination = destination,
+        test = test,
+        extraArguments = extraArguments
     )
 }
 
@@ -38,6 +44,8 @@ fun TestProject.xcodebuild(
     sdk: String? = null,
     arch: String? = null,
     destination: String? = null,
+    test: Boolean = false,
+    extraArguments: List<String> = emptyList(),
     derivedDataPath: Path? = projectPath.resolve("xcodeDerivedData"),
 ) {
     xcodebuild(
@@ -58,6 +66,14 @@ fun TestProject.xcodebuild(
             "-arch" set arch
             "-destination" set destination
             "-derivedDataPath" set derivedDataPath
+
+            extraArguments.forEach {
+                add(it)
+            }
+
+            if (test) {
+                add("test")
+            }
         },
         workingDir,
     )
