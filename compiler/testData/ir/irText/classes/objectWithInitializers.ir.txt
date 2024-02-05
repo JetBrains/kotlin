@@ -20,10 +20,6 @@ FILE fqName:<root> fileName:/objectWithInitializers.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS OBJECT name:Test modality:FINAL visibility:public superTypes:[<root>.Base]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
-    CONSTRUCTOR visibility:private <> () returnType:<root>.Test [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Base'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Test modality:FINAL visibility:public superTypes:[<root>.Base]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -50,6 +46,10 @@ FILE fqName:<root> fileName:/objectWithInitializers.kt
           receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test' type=<root>.Test origin=null
           value: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.Test declared in <root>.Test' type=<root>.Test origin=null
+    CONSTRUCTOR visibility:private <> () returnType:<root>.Test [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Base'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Test modality:FINAL visibility:public superTypes:[<root>.Base]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base

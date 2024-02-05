@@ -1,20 +1,15 @@
 class View {
+  val coefficient: Int
+    field = 42
+    get
+
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val coefficient: Int
-    field = 42
-    get
-
 }
-
-val Int.dp: Int
-  get($context_receiver_0: View): Int {
-    return $context_receiver_0.<get-coefficient>().times(other = <this>)
-  }
 
 fun box(): String {
   with<View, Nothing>(receiver = View(), block = local fun View.<anonymous>(): Nothing {
@@ -30,3 +25,9 @@ fun box(): String {
   }
 )
 }
+
+val Int.dp: Int
+  get($context_receiver_0: View): Int {
+    return $context_receiver_0.<get-coefficient>().times(other = <this>)
+  }
+

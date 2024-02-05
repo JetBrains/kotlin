@@ -1,5 +1,9 @@
 FILE fqName:<root> fileName:/integerLiteralWithExpectedTypealiasType.kt
-  TYPEALIAS name:MyLong visibility:public expandedType:kotlin.Long
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CALL 'public final fun foo (l: kotlin.Long): kotlin.String declared in <root>' type=kotlin.String origin=null
+          l: CONST Long type=kotlin.Long value=0
   FUN name:foo visibility:public modality:FINAL <> (l:kotlin.Long) returnType:kotlin.String
     VALUE_PARAMETER name:l index:0 type:kotlin.Long
     BLOCK_BODY
@@ -13,8 +17,4 @@ FILE fqName:<root> fileName:/integerLiteralWithExpectedTypealiasType.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST String type=kotlin.String value="fail"
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CALL 'public final fun foo (l: kotlin.Long): kotlin.String declared in <root>' type=kotlin.String origin=null
-          l: CONST Long type=kotlin.Long value=0
+  TYPEALIAS name:MyLong visibility:public expandedType:kotlin.Long

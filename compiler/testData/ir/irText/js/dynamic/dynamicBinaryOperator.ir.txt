@@ -1,11 +1,4 @@
 FILE fqName:<root> fileName:/dynamicBinaryOperator.kt
-  FUN name:testBinaryPlus visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic
-    VALUE_PARAMETER name:d index:0 type:dynamic
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testBinaryPlus (d: dynamic): dynamic declared in <root>'
-        DYN_OP operator=BINARY_PLUS type=dynamic
-          receiver: GET_VAR 'd: dynamic declared in <root>.testBinaryPlus' type=dynamic origin=null
-          0: CONST Int type=kotlin.Int value=1
   FUN name:testBinaryMinus visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic
     VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
@@ -13,13 +6,13 @@ FILE fqName:<root> fileName:/dynamicBinaryOperator.kt
         DYN_OP operator=BINARY_MINUS type=dynamic
           receiver: GET_VAR 'd: dynamic declared in <root>.testBinaryMinus' type=dynamic origin=null
           0: CONST Int type=kotlin.Int value=1
-  FUN name:testMul visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic
+  FUN name:testBinaryPlus visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic
     VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testMul (d: dynamic): dynamic declared in <root>'
-        DYN_OP operator=MUL type=dynamic
-          receiver: GET_VAR 'd: dynamic declared in <root>.testMul' type=dynamic origin=null
-          0: CONST Int type=kotlin.Int value=2
+      RETURN type=kotlin.Nothing from='public final fun testBinaryPlus (d: dynamic): dynamic declared in <root>'
+        DYN_OP operator=BINARY_PLUS type=dynamic
+          receiver: GET_VAR 'd: dynamic declared in <root>.testBinaryPlus' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=1
   FUN name:testDiv visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic
     VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
@@ -33,4 +26,11 @@ FILE fqName:<root> fileName:/dynamicBinaryOperator.kt
       RETURN type=kotlin.Nothing from='public final fun testMod (d: dynamic): dynamic declared in <root>'
         DYN_OP operator=MOD type=dynamic
           receiver: GET_VAR 'd: dynamic declared in <root>.testMod' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=2
+  FUN name:testMul visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic
+    VALUE_PARAMETER name:d index:0 type:dynamic
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testMul (d: dynamic): dynamic declared in <root>'
+        DYN_OP operator=MUL type=dynamic
+          receiver: GET_VAR 'd: dynamic declared in <root>.testMul' type=dynamic origin=null
           0: CONST Int type=kotlin.Int value=2

@@ -19,22 +19,6 @@ FILE fqName:kotlin.internal fileName:/annotation.kt
         public open fun toString (): kotlin.String declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
 FILE fqName:<root> fileName:/test.kt
-  FUN name:testInt visibility:public modality:FINAL <> (x:kotlin.UInt) returnType:kotlin.UInt
-    VALUE_PARAMETER name:x index:0 type:kotlin.UInt
-      annotations:
-        ImplicitIntegerCoercion
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testInt (x: kotlin.UInt): kotlin.UInt declared in <root>'
-        TYPE_OP type=kotlin.UInt origin=CAST typeOperand=kotlin.UInt
-          GET_VAR 'x: kotlin.UInt declared in <root>.testInt' type=kotlin.UInt origin=null
-  FUN name:testLong visibility:public modality:FINAL <> (x:kotlin.ULong) returnType:kotlin.ULong
-    VALUE_PARAMETER name:x index:0 type:kotlin.ULong
-      annotations:
-        ImplicitIntegerCoercion
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testLong (x: kotlin.ULong): kotlin.ULong declared in <root>'
-        TYPE_OP type=kotlin.ULong origin=CAST typeOperand=kotlin.ULong
-          GET_VAR 'x: kotlin.ULong declared in <root>.testLong' type=kotlin.ULong origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
@@ -78,3 +62,19 @@ FILE fqName:<root> fileName:/test.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST String type=kotlin.String value="OK"
+  FUN name:testInt visibility:public modality:FINAL <> (x:kotlin.UInt) returnType:kotlin.UInt
+    VALUE_PARAMETER name:x index:0 type:kotlin.UInt
+      annotations:
+        ImplicitIntegerCoercion
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testInt (x: kotlin.UInt): kotlin.UInt declared in <root>'
+        TYPE_OP type=kotlin.UInt origin=CAST typeOperand=kotlin.UInt
+          GET_VAR 'x: kotlin.UInt declared in <root>.testInt' type=kotlin.UInt origin=null
+  FUN name:testLong visibility:public modality:FINAL <> (x:kotlin.ULong) returnType:kotlin.ULong
+    VALUE_PARAMETER name:x index:0 type:kotlin.ULong
+      annotations:
+        ImplicitIntegerCoercion
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testLong (x: kotlin.ULong): kotlin.ULong declared in <root>'
+        TYPE_OP type=kotlin.ULong origin=CAST typeOperand=kotlin.ULong
+          GET_VAR 'x: kotlin.ULong declared in <root>.testLong' type=kotlin.ULong origin=null

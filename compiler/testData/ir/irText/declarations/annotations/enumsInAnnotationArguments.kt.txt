@@ -1,10 +1,17 @@
-enum class En : Enum<En> {
-  private constructor() /* primary */ {
-    super/*Enum*/<En>()
+open annotation class TestAnn : Annotation {
+  val x: En
+    field = x
+    get
+
+  constructor(x: En) /* primary */ {
+    super/*Any*/()
     /* <init>() */
 
   }
 
+}
+
+enum class En : Enum<En> {
   A = En()
 
   B = En()
@@ -13,28 +20,22 @@ enum class En : Enum<En> {
 
   D = En()
 
-  fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
+  private constructor() /* primary */ {
+    super/*Enum*/<En>()
+    /* <init>() */
+
+  }
 
   fun valueOf(value: String): En /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
 
   val entries: EnumEntries<En>
     get(): EnumEntries<En> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
-open annotation class TestAnn : Annotation {
-  constructor(x: En) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val x: En
-    field = x
-    get
-
-}
-
 @TestAnn(x = En.A)
 fun test1() {
 }
+

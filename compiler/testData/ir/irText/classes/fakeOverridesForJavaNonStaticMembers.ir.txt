@@ -14,22 +14,22 @@ FILE fqName:a fileName:/fakeOverridesForJavaNonStaticMembers.kt
       overridden:
         public open fun hashCode (): kotlin.Int declared in a.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:packagePrivateMethod visibility:public/*package*/ modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in a.Base
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:publicMethod visibility:public modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
-      overridden:
-        public open fun publicMethod (): kotlin.Unit declared in a.Base
+        public/*package*/ open fun packagePrivateMethod (): kotlin.Unit declared in a.Base
       $this: VALUE_PARAMETER name:<this> type:a.Base
     FUN FAKE_OVERRIDE name:protectedMethod visibility:protected/*protected and package*/ modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
       overridden:
         protected/*protected and package*/ open fun protectedMethod (): kotlin.Unit declared in a.Base
       $this: VALUE_PARAMETER name:<this> type:a.Base
-    FUN FAKE_OVERRIDE name:packagePrivateMethod visibility:public/*package*/ modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:publicMethod visibility:public modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
       overridden:
-        public/*package*/ open fun packagePrivateMethod (): kotlin.Unit declared in a.Base
+        public open fun publicMethod (): kotlin.Unit declared in a.Base
       $this: VALUE_PARAMETER name:<this> type:a.Base
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in a.Base
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
 FILE fqName:<root> fileName:/fakeOverridesForJavaNonStaticMembers2.kt
   CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[a.Base]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2
@@ -46,15 +46,15 @@ FILE fqName:<root> fileName:/fakeOverridesForJavaNonStaticMembers2.kt
       overridden:
         public open fun hashCode (): kotlin.Int declared in a.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in a.Base
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:publicMethod visibility:public modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
-      overridden:
-        public open fun publicMethod (): kotlin.Unit declared in a.Base
-      $this: VALUE_PARAMETER name:<this> type:a.Base
     FUN FAKE_OVERRIDE name:protectedMethod visibility:protected/*protected and package*/ modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
       overridden:
         protected/*protected and package*/ open fun protectedMethod (): kotlin.Unit declared in a.Base
       $this: VALUE_PARAMETER name:<this> type:a.Base
+    FUN FAKE_OVERRIDE name:publicMethod visibility:public modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun publicMethod (): kotlin.Unit declared in a.Base
+      $this: VALUE_PARAMETER name:<this> type:a.Base
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in a.Base
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any

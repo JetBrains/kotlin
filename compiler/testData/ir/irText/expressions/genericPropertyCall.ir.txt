@@ -1,12 +1,4 @@
 FILE fqName:<root> fileName:/genericPropertyCall.kt
-  PROPERTY name:id visibility:public modality:FINAL [val]
-    FUN name:<get-id> visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-id>) returnType:T of <root>.<get-id>
-      correspondingProperty: PROPERTY name:id visibility:public modality:FINAL [val]
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-id>
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-id> <T> (): T of <root>.<get-id> declared in <root>'
-          GET_VAR '<this>: T of <root>.<get-id> declared in <root>.<get-id>' type=T of <root>.<get-id> origin=null
   PROPERTY name:test visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
@@ -18,3 +10,11 @@ FILE fqName:<root> fileName:/genericPropertyCall.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.String declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
+  PROPERTY name:id visibility:public modality:FINAL [val]
+    FUN name:<get-id> visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-id>) returnType:T of <root>.<get-id>
+      correspondingProperty: PROPERTY name:id visibility:public modality:FINAL [val]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-id>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-id> <T> (): T of <root>.<get-id> declared in <root>'
+          GET_VAR '<this>: T of <root>.<get-id> declared in <root>.<get-id>' type=T of <root>.<get-id> origin=null

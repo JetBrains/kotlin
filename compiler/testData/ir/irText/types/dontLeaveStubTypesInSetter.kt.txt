@@ -1,14 +1,14 @@
 class Foo<T : Any?> {
+  var x: T
+    field = x
+    get
+    set
+
   constructor(x: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  var x: T
-    field = x
-    get
-    set
 
 }
 
@@ -24,3 +24,4 @@ fun runMe() {
   }
 )
 }
+

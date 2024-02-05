@@ -1,3 +1,15 @@
+val test1: Function1<Int, Unit>
+  field = ::topLevel1/*<Int>()*/
+  get
+
+val test2: Function1<List<String>, Unit>
+  field = ::topLevel2/*<String>()*/
+  get
+
+val test3: Function1<Int, Unit>
+  field = Host::objectMember/*<Int>()*/
+  get
+
 object Host {
   private constructor() /* primary */ {
     super/*Any*/()
@@ -16,14 +28,3 @@ inline fun <reified T : Any?> topLevel1(x: T) {
 inline fun <reified T : Any?> topLevel2(x: List<T>) {
 }
 
-val test1: Function1<Int, Unit>
-  field = ::topLevel1/*<Int>()*/
-  get
-
-val test2: Function1<List<String>, Unit>
-  field = ::topLevel2/*<String>()*/
-  get
-
-val test3: Function1<Int, Unit>
-  field = Host::objectMember/*<Int>()*/
-  get

@@ -1,12 +1,6 @@
 FILE fqName:<root> fileName:/primaryCtorProperties.kt
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
-    CONSTRUCTOR visibility:public <> (test1:kotlin.Int, test2:kotlin.Int) returnType:<root>.C [primary]
-      VALUE_PARAMETER name:test1 index:0 type:kotlin.Int
-      VALUE_PARAMETER name:test2 index:1 type:kotlin.Int
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:test1 visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -37,6 +31,12 @@ FILE fqName:<root> fileName:/primaryCtorProperties.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test2>' type=<root>.C origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.C.<set-test2>' type=kotlin.Int origin=null
+    CONSTRUCTOR visibility:public <> (test1:kotlin.Int, test2:kotlin.Int) returnType:<root>.C [primary]
+      VALUE_PARAMETER name:test1 index:0 type:kotlin.Int
+      VALUE_PARAMETER name:test2 index:1 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

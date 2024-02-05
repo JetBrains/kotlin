@@ -1,18 +1,39 @@
 FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
-  FUN name:test1 visibility:public modality:FINAL <T> ($receiver:kotlin.Any) returnType:T of <root>.test1? [inline]
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:true
-    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1 <T> (): T of <root>.test1? declared in <root>'
-        WHEN type=T of <root>.test1? origin=IF
-          BRANCH
-            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T of <root>.test1
-              GET_VAR '<this>: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
-            then: TYPE_OP type=T of <root>.test1 origin=IMPLICIT_CAST typeOperand=T of <root>.test1
-              GET_VAR '<this>: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
-          BRANCH
-            if: CONST Boolean type=kotlin.Boolean value=true
-            then: CONST Null type=kotlin.Nothing? value=null
+  CLASS CLASS name:Bar modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Bar<T of <root>.Bar>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Bar<T of <root>.Bar> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Bar modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:test visibility:public modality:FINAL <> ($this:<root>.Bar<T of <root>.Bar>, arg:kotlin.Any) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.Bar<T of <root>.Bar>
+      VALUE_PARAMETER name:arg index:0 type:kotlin.Any
+      BLOCK_BODY
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          TYPE_OP type=T of <root>.Bar origin=CAST typeOperand=T of <root>.Bar
+            GET_VAR 'arg: kotlin.Any declared in <root>.Bar.test' type=kotlin.Any origin=null
+        CALL 'public final fun useT (t: T of <root>.Bar): kotlin.Unit declared in <root>.Bar' type=kotlin.Unit origin=null
+          $this: GET_VAR '<this>: <root>.Bar<T of <root>.Bar> declared in <root>.Bar.test' type=<root>.Bar<T of <root>.Bar> origin=null
+          t: TYPE_OP type=T of <root>.Bar origin=IMPLICIT_CAST typeOperand=T of <root>.Bar
+            GET_VAR 'arg: kotlin.Any declared in <root>.Bar.test' type=kotlin.Any origin=null
+    FUN name:useT visibility:public modality:FINAL <> ($this:<root>.Bar<T of <root>.Bar>, t:T of <root>.Bar) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.Bar<T of <root>.Bar>
+      VALUE_PARAMETER name:t index:0 type:T of <root>.Bar
+      BLOCK_BODY
   CLASS INTERFACE name:Foo modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo<T of <root>.Foo>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -29,6 +50,20 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:test1 visibility:public modality:FINAL <T> ($receiver:kotlin.Any) returnType:T of <root>.test1? [inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:true
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test1 <T> (): T of <root>.test1? declared in <root>'
+        WHEN type=T of <root>.test1? origin=IF
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T of <root>.test1
+              GET_VAR '<this>: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
+            then: TYPE_OP type=T of <root>.test1 origin=IMPLICIT_CAST typeOperand=T of <root>.test1
+              GET_VAR '<this>: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Null type=kotlin.Nothing? value=null
   PROPERTY name:asT visibility:public modality:FINAL [val]
     FUN name:<get-asT> visibility:public modality:FINAL <T> ($receiver:<root>.Foo<T of <root>.<get-asT>>) returnType:T of <root>.<get-asT>? [inline]
       correspondingProperty: PROPERTY name:asT visibility:public modality:FINAL [val]
@@ -45,38 +80,3 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Null type=kotlin.Nothing? value=null
-  CLASS CLASS name:Bar modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Bar<T of <root>.Bar>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Bar<T of <root>.Bar> [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Bar modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:test visibility:public modality:FINAL <> ($this:<root>.Bar<T of <root>.Bar>, arg:kotlin.Any) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.Bar<T of <root>.Bar>
-      VALUE_PARAMETER name:arg index:0 type:kotlin.Any
-      BLOCK_BODY
-        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-          TYPE_OP type=T of <root>.Bar origin=CAST typeOperand=T of <root>.Bar
-            GET_VAR 'arg: kotlin.Any declared in <root>.Bar.test' type=kotlin.Any origin=null
-        CALL 'public final fun useT (t: T of <root>.Bar): kotlin.Unit declared in <root>.Bar' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.Bar<T of <root>.Bar> declared in <root>.Bar.test' type=<root>.Bar<T of <root>.Bar> origin=null
-          t: TYPE_OP type=T of <root>.Bar origin=IMPLICIT_CAST typeOperand=T of <root>.Bar
-            GET_VAR 'arg: kotlin.Any declared in <root>.Bar.test' type=kotlin.Any origin=null
-    FUN name:useT visibility:public modality:FINAL <> ($this:<root>.Bar<T of <root>.Bar>, t:T of <root>.Bar) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.Bar<T of <root>.Bar>
-      VALUE_PARAMETER name:t index:0 type:T of <root>.Bar
-      BLOCK_BODY
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any

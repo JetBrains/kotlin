@@ -1,31 +1,3 @@
-operator fun Int.compareTo(c: Char): Int {
-  return 0
-}
-
-fun testOverloadedCompareToCall(x: Int, y: Char): Boolean {
-  return less(arg0 = x.compareTo(c = y), arg1 = 0)
-}
-
-fun testOverloadedCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
-  return when {
-    when {
-      x is Int -> y is Char
-      else -> false
-    } -> less(arg0 = x /*as Int */.compareTo(c = y /*as Char */), arg1 = 0)
-    else -> false
-  }
-}
-
-fun testEqualsWithSmartCast(x: Any, y: Any): Boolean {
-  return when {
-    when {
-      x is Int -> y is Char
-      else -> false
-    } -> EQEQ(arg0 = x, arg1 = y)
-    else -> false
-  }
-}
-
 class C {
   constructor() /* primary */ {
     super/*Any*/()
@@ -51,5 +23,33 @@ class C {
     }
   }
 
+}
+
+operator fun Int.compareTo(c: Char): Int {
+  return 0
+}
+
+fun testEqualsWithSmartCast(x: Any, y: Any): Boolean {
+  return when {
+    when {
+      x is Int -> y is Char
+      else -> false
+    } -> EQEQ(arg0 = x, arg1 = y)
+    else -> false
+  }
+}
+
+fun testOverloadedCompareToCall(x: Int, y: Char): Boolean {
+  return less(arg0 = x.compareTo(c = y), arg1 = 0)
+}
+
+fun testOverloadedCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
+  return when {
+    when {
+      x is Int -> y is Char
+      else -> false
+    } -> less(arg0 = x /*as Int */.compareTo(c = y /*as Char */), arg1 = 0)
+    else -> false
+  }
 }
 

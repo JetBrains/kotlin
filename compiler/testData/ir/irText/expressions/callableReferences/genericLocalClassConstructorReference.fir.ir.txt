@@ -2,11 +2,6 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
   CLASS CLASS name:L modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.L<LL of <root>.L>
     TYPE_PARAMETER name:LL index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (ll:LL of <root>.L) returnType:<root>.L<LL of <root>.L> [primary]
-      VALUE_PARAMETER name:ll index:0 type:LL of <root>.L
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:L modality:OPEN visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:ll visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:ll type:LL of <root>.L visibility:private [final]
         EXPRESSION_BODY
@@ -18,6 +13,11 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
           RETURN type=kotlin.Nothing from='public final fun <get-ll> (): LL of <root>.L declared in <root>.L'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ll type:LL of <root>.L visibility:private [final]' type=LL of <root>.L origin=null
               receiver: GET_VAR '<this>: <root>.L<LL of <root>.L> declared in <root>.L.<get-ll>' type=<root>.L<LL of <root>.L> origin=null
+    CONSTRUCTOR visibility:public <> (ll:LL of <root>.L) returnType:<root>.L<LL of <root>.L> [primary]
+      VALUE_PARAMETER name:ll index:0 type:LL of <root>.L
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:L modality:OPEN visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -34,11 +34,6 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
   CLASS CLASS name:Rec modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Rec<T of <root>.Rec>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (rt:T of <root>.Rec) returnType:<root>.Rec<T of <root>.Rec> [primary]
-      VALUE_PARAMETER name:rt index:0 type:T of <root>.Rec
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Rec modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:rt visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:rt type:T of <root>.Rec visibility:private [final]
         EXPRESSION_BODY
@@ -50,6 +45,11 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
           RETURN type=kotlin.Nothing from='public final fun <get-rt> (): T of <root>.Rec declared in <root>.Rec'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:rt type:T of <root>.Rec visibility:private [final]' type=T of <root>.Rec origin=null
               receiver: GET_VAR '<this>: <root>.Rec<T of <root>.Rec> declared in <root>.Rec.<get-rt>' type=<root>.Rec<T of <root>.Rec> origin=null
+    CONSTRUCTOR visibility:public <> (rt:T of <root>.Rec) returnType:<root>.Rec<T of <root>.Rec> [primary]
+      VALUE_PARAMETER name:rt index:0 type:T of <root>.Rec
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Rec modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -63,66 +63,6 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  PROPERTY name:p visibility:public modality:FINAL [val]
-    FUN name:<get-p> visibility:public modality:FINAL <PT> ($receiver:<root>.Rec<PT of <root>.<get-p>>) returnType:<root>.L<PT of <root>.<get-p>>
-      correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val]
-      TYPE_PARAMETER name:PT index:0 variance: superTypes:[kotlin.Any?] reified:false
-      $receiver: VALUE_PARAMETER name:<this> type:<root>.Rec<PT of <root>.<get-p>>
-      BLOCK_BODY
-        CLASS CLASS name:PLocal modality:FINAL visibility:local superTypes:[<root>.L<LT of <root>.<get-p>.PLocal>]
-          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>>
-          TYPE_PARAMETER name:LT index:0 variance: superTypes:[kotlin.Any?] reified:false
-          CONSTRUCTOR visibility:public <> (lt:LT of <root>.<get-p>.PLocal, pt:PT of <root>.<get-p>) returnType:<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>> [primary]
-            VALUE_PARAMETER name:lt index:0 type:LT of <root>.<get-p>.PLocal
-            VALUE_PARAMETER name:pt index:1 type:PT of <root>.<get-p>
-            BLOCK_BODY
-              DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (ll: LL of <root>.L) declared in <root>.L'
-                <LL>: LT of <root>.<get-p>.PLocal
-                ll: GET_VAR 'lt: LT of <root>.<get-p>.PLocal declared in <root>.<get-p>.PLocal.<init>' type=LT of <root>.<get-p>.PLocal origin=null
-              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PLocal modality:FINAL visibility:local superTypes:[<root>.L<LT of <root>.<get-p>.PLocal>]'
-          PROPERTY name:pt visibility:public modality:FINAL [val]
-            FIELD PROPERTY_BACKING_FIELD name:pt type:PT of <root>.<get-p> visibility:private [final]
-              EXPRESSION_BODY
-                GET_VAR 'pt: PT of <root>.<get-p> declared in <root>.<get-p>.PLocal.<init>' type=PT of <root>.<get-p> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-pt> visibility:public modality:FINAL <> ($this:<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>>) returnType:PT of <root>.<get-p>
-              correspondingProperty: PROPERTY name:pt visibility:public modality:FINAL [val]
-              $this: VALUE_PARAMETER name:<this> type:<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>>
-              BLOCK_BODY
-                RETURN type=kotlin.Nothing from='public final fun <get-pt> (): PT of <root>.<get-p> declared in <root>.<get-p>.PLocal'
-                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:pt type:PT of <root>.<get-p> visibility:private [final]' type=PT of <root>.<get-p> origin=null
-                    receiver: GET_VAR '<this>: <root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>> declared in <root>.<get-p>.PLocal.<get-pt>' type=<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>> origin=null
-          PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
-            overridden:
-              public final ll: LL of <root>.L
-            FUN FAKE_OVERRIDE name:<get-ll> visibility:public modality:FINAL <> ($this:<root>.L<LT of <root>.<get-p>.PLocal>) returnType:LT of <root>.<get-p>.PLocal [fake_override]
-              correspondingProperty: PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
-              overridden:
-                public final fun <get-ll> (): LL of <root>.L declared in <root>.L
-              $this: VALUE_PARAMETER name:<this> type:<root>.L<LT of <root>.<get-p>.PLocal>
-          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-            overridden:
-              public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.L
-            $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-            VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-            overridden:
-              public open fun hashCode (): kotlin.Int declared in <root>.L
-            $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-            overridden:
-              public open fun toString (): kotlin.String declared in <root>.L
-            $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        RETURN type=kotlin.Nothing from='public final fun <get-p> <PT> (): <root>.L<PT of <root>.<get-p>> declared in <root>'
-          CALL 'public final fun foo2 <T1, T2, R> (t1: T1 of <root>.foo2, t2: T2 of <root>.foo2, bb: kotlin.Function2<T1 of <root>.foo2, T2 of <root>.foo2, R of <root>.foo2>): R of <root>.foo2 declared in <root>' type=<root>.<get-p>.PLocal<PT of <root>.<get-p>, PT of <root>.<get-p>> origin=null
-            <T1>: PT of <root>.<get-p>
-            <T2>: PT of <root>.<get-p>
-            <R>: <root>.<get-p>.PLocal<PT of <root>.<get-p>, PT of <root>.<get-p>>
-            t1: CALL 'public final fun <get-rt> (): T of <root>.Rec declared in <root>.Rec' type=PT of <root>.<get-p> origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Rec<PT of <root>.<get-p>> declared in <root>.<get-p>' type=<root>.Rec<PT of <root>.<get-p>> origin=null
-            t2: CALL 'public final fun <get-rt> (): T of <root>.Rec declared in <root>.Rec' type=PT of <root>.<get-p> origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Rec<PT of <root>.<get-p>> declared in <root>.<get-p>' type=<root>.Rec<PT of <root>.<get-p>> origin=null
-            bb: FUNCTION_REFERENCE 'public constructor <init> (lt: LT of <root>.<get-p>.PLocal, pt: PT of <root>.<get-p>) declared in <root>.<get-p>.PLocal' type=kotlin.reflect.KFunction2<PT of <root>.<get-p>, PT of <root>.<get-p>, <root>.<get-p>.PLocal<PT of <root>.<get-p>, PT of <root>.<get-p>>> origin=null reflectionTarget=<same>
-              <LT>: PT of <root>.<get-p>
   FUN name:fn visibility:public modality:FINAL <FT> ($receiver:<root>.Rec<FT of <root>.fn>) returnType:<root>.L<FT of <root>.fn>
     TYPE_PARAMETER name:FT index:0 variance: superTypes:[kotlin.Any?] reified:false
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Rec<FT of <root>.fn>
@@ -130,14 +70,6 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
       CLASS CLASS name:FLocal modality:FINAL visibility:local superTypes:[<root>.L<LT of <root>.fn.FLocal>]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.fn.FLocal<LT of <root>.fn.FLocal, FT of <root>.fn>
         TYPE_PARAMETER name:LT index:0 variance: superTypes:[kotlin.Any?] reified:false
-        CONSTRUCTOR visibility:public <> (lt:LT of <root>.fn.FLocal, pt:FT of <root>.fn) returnType:<root>.fn.FLocal<LT of <root>.fn.FLocal, FT of <root>.fn> [primary]
-          VALUE_PARAMETER name:lt index:0 type:LT of <root>.fn.FLocal
-          VALUE_PARAMETER name:pt index:1 type:FT of <root>.fn
-          BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (ll: LL of <root>.L) declared in <root>.L'
-              <LL>: LT of <root>.fn.FLocal
-              ll: GET_VAR 'lt: LT of <root>.fn.FLocal declared in <root>.fn.FLocal.<init>' type=LT of <root>.fn.FLocal origin=null
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FLocal modality:FINAL visibility:local superTypes:[<root>.L<LT of <root>.fn.FLocal>]'
         PROPERTY name:pt visibility:public modality:FINAL [val]
           FIELD PROPERTY_BACKING_FIELD name:pt type:FT of <root>.fn visibility:private [final]
             EXPRESSION_BODY
@@ -149,14 +81,14 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
               RETURN type=kotlin.Nothing from='public final fun <get-pt> (): FT of <root>.fn declared in <root>.fn.FLocal'
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:pt type:FT of <root>.fn visibility:private [final]' type=FT of <root>.fn origin=null
                   receiver: GET_VAR '<this>: <root>.fn.FLocal<LT of <root>.fn.FLocal, FT of <root>.fn> declared in <root>.fn.FLocal.<get-pt>' type=<root>.fn.FLocal<LT of <root>.fn.FLocal, FT of <root>.fn> origin=null
-        PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
-          overridden:
-            public final ll: LL of <root>.L
-          FUN FAKE_OVERRIDE name:<get-ll> visibility:public modality:FINAL <> ($this:<root>.L<LT of <root>.fn.FLocal>) returnType:LT of <root>.fn.FLocal [fake_override]
-            correspondingProperty: PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
-            overridden:
-              public final fun <get-ll> (): LL of <root>.L declared in <root>.L
-            $this: VALUE_PARAMETER name:<this> type:<root>.L<LT of <root>.fn.FLocal>
+        CONSTRUCTOR visibility:public <> (lt:LT of <root>.fn.FLocal, pt:FT of <root>.fn) returnType:<root>.fn.FLocal<LT of <root>.fn.FLocal, FT of <root>.fn> [primary]
+          VALUE_PARAMETER name:lt index:0 type:LT of <root>.fn.FLocal
+          VALUE_PARAMETER name:pt index:1 type:FT of <root>.fn
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (ll: LL of <root>.L) declared in <root>.L'
+              <LL>: LT of <root>.fn.FLocal
+              ll: GET_VAR 'lt: LT of <root>.fn.FLocal declared in <root>.fn.FLocal.<init>' type=LT of <root>.fn.FLocal origin=null
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FLocal modality:FINAL visibility:local superTypes:[<root>.L<LT of <root>.fn.FLocal>]'
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
           overridden:
             public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.L
@@ -170,6 +102,14 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
           overridden:
             public open fun toString (): kotlin.String declared in <root>.L
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final ll: LL of <root>.L
+          FUN FAKE_OVERRIDE name:<get-ll> visibility:public modality:FINAL <> ($this:<root>.L<LT of <root>.fn.FLocal>) returnType:LT of <root>.fn.FLocal [fake_override]
+            correspondingProperty: PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
+            overridden:
+              public final fun <get-ll> (): LL of <root>.L declared in <root>.L
+            $this: VALUE_PARAMETER name:<this> type:<root>.L<LT of <root>.fn.FLocal>
       RETURN type=kotlin.Nothing from='public final fun fn <FT> (): <root>.L<FT of <root>.fn> declared in <root>'
         CALL 'public final fun foo2 <T1, T2, R> (t1: T1 of <root>.foo2, t2: T2 of <root>.foo2, bb: kotlin.Function2<T1 of <root>.foo2, T2 of <root>.foo2, R of <root>.foo2>): R of <root>.foo2 declared in <root>' type=<root>.fn.FLocal<FT of <root>.fn, FT of <root>.fn> origin=null
           <T1>: FT of <root>.fn
@@ -194,3 +134,63 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
           $this: GET_VAR 'bb: kotlin.Function2<T1 of <root>.foo2, T2 of <root>.foo2, R of <root>.foo2> declared in <root>.foo2' type=kotlin.Function2<T1 of <root>.foo2, T2 of <root>.foo2, R of <root>.foo2> origin=VARIABLE_AS_FUNCTION
           p1: GET_VAR 't1: T1 of <root>.foo2 declared in <root>.foo2' type=T1 of <root>.foo2 origin=null
           p2: GET_VAR 't2: T2 of <root>.foo2 declared in <root>.foo2' type=T2 of <root>.foo2 origin=null
+  PROPERTY name:p visibility:public modality:FINAL [val]
+    FUN name:<get-p> visibility:public modality:FINAL <PT> ($receiver:<root>.Rec<PT of <root>.<get-p>>) returnType:<root>.L<PT of <root>.<get-p>>
+      correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val]
+      TYPE_PARAMETER name:PT index:0 variance: superTypes:[kotlin.Any?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Rec<PT of <root>.<get-p>>
+      BLOCK_BODY
+        CLASS CLASS name:PLocal modality:FINAL visibility:local superTypes:[<root>.L<LT of <root>.<get-p>.PLocal>]
+          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>>
+          TYPE_PARAMETER name:LT index:0 variance: superTypes:[kotlin.Any?] reified:false
+          PROPERTY name:pt visibility:public modality:FINAL [val]
+            FIELD PROPERTY_BACKING_FIELD name:pt type:PT of <root>.<get-p> visibility:private [final]
+              EXPRESSION_BODY
+                GET_VAR 'pt: PT of <root>.<get-p> declared in <root>.<get-p>.PLocal.<init>' type=PT of <root>.<get-p> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+            FUN DEFAULT_PROPERTY_ACCESSOR name:<get-pt> visibility:public modality:FINAL <> ($this:<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>>) returnType:PT of <root>.<get-p>
+              correspondingProperty: PROPERTY name:pt visibility:public modality:FINAL [val]
+              $this: VALUE_PARAMETER name:<this> type:<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>>
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='public final fun <get-pt> (): PT of <root>.<get-p> declared in <root>.<get-p>.PLocal'
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:pt type:PT of <root>.<get-p> visibility:private [final]' type=PT of <root>.<get-p> origin=null
+                    receiver: GET_VAR '<this>: <root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>> declared in <root>.<get-p>.PLocal.<get-pt>' type=<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>> origin=null
+          CONSTRUCTOR visibility:public <> (lt:LT of <root>.<get-p>.PLocal, pt:PT of <root>.<get-p>) returnType:<root>.<get-p>.PLocal<LT of <root>.<get-p>.PLocal, PT of <root>.<get-p>> [primary]
+            VALUE_PARAMETER name:lt index:0 type:LT of <root>.<get-p>.PLocal
+            VALUE_PARAMETER name:pt index:1 type:PT of <root>.<get-p>
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (ll: LL of <root>.L) declared in <root>.L'
+                <LL>: LT of <root>.<get-p>.PLocal
+                ll: GET_VAR 'lt: LT of <root>.<get-p>.PLocal declared in <root>.<get-p>.PLocal.<init>' type=LT of <root>.<get-p>.PLocal origin=null
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PLocal modality:FINAL visibility:local superTypes:[<root>.L<LT of <root>.<get-p>.PLocal>]'
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+            overridden:
+              public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.L
+            $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+            VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+            overridden:
+              public open fun hashCode (): kotlin.Int declared in <root>.L
+            $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+            overridden:
+              public open fun toString (): kotlin.String declared in <root>.L
+            $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+          PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
+            overridden:
+              public final ll: LL of <root>.L
+            FUN FAKE_OVERRIDE name:<get-ll> visibility:public modality:FINAL <> ($this:<root>.L<LT of <root>.<get-p>.PLocal>) returnType:LT of <root>.<get-p>.PLocal [fake_override]
+              correspondingProperty: PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
+              overridden:
+                public final fun <get-ll> (): LL of <root>.L declared in <root>.L
+              $this: VALUE_PARAMETER name:<this> type:<root>.L<LT of <root>.<get-p>.PLocal>
+        RETURN type=kotlin.Nothing from='public final fun <get-p> <PT> (): <root>.L<PT of <root>.<get-p>> declared in <root>'
+          CALL 'public final fun foo2 <T1, T2, R> (t1: T1 of <root>.foo2, t2: T2 of <root>.foo2, bb: kotlin.Function2<T1 of <root>.foo2, T2 of <root>.foo2, R of <root>.foo2>): R of <root>.foo2 declared in <root>' type=<root>.<get-p>.PLocal<PT of <root>.<get-p>, PT of <root>.<get-p>> origin=null
+            <T1>: PT of <root>.<get-p>
+            <T2>: PT of <root>.<get-p>
+            <R>: <root>.<get-p>.PLocal<PT of <root>.<get-p>, PT of <root>.<get-p>>
+            t1: CALL 'public final fun <get-rt> (): T of <root>.Rec declared in <root>.Rec' type=PT of <root>.<get-p> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Rec<PT of <root>.<get-p>> declared in <root>.<get-p>' type=<root>.Rec<PT of <root>.<get-p>> origin=null
+            t2: CALL 'public final fun <get-rt> (): T of <root>.Rec declared in <root>.Rec' type=PT of <root>.<get-p> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Rec<PT of <root>.<get-p>> declared in <root>.<get-p>' type=<root>.Rec<PT of <root>.<get-p>> origin=null
+            bb: FUNCTION_REFERENCE 'public constructor <init> (lt: LT of <root>.<get-p>.PLocal, pt: PT of <root>.<get-p>) declared in <root>.<get-p>.PLocal' type=kotlin.reflect.KFunction2<PT of <root>.<get-p>, PT of <root>.<get-p>, <root>.<get-p>.PLocal<PT of <root>.<get-p>, PT of <root>.<get-p>>> origin=null reflectionTarget=<same>
+              <LT>: PT of <root>.<get-p>

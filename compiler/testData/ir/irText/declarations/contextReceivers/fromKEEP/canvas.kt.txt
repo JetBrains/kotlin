@@ -1,14 +1,3 @@
-interface Canvas {
-  abstract val suffix: String
-    abstract get
-
-}
-
-interface Shape {
-  abstract fun draw($context_receiver_0: Canvas): String
-
-}
-
 class Circle : Shape {
   constructor() /* primary */ {
     super/*Any*/()
@@ -22,16 +11,27 @@ class Circle : Shape {
 
 }
 
+interface Canvas {
+  abstract val suffix: String
+    abstract get
+
+}
+
+interface Shape {
+  abstract fun draw($context_receiver_0: Canvas): String
+
+}
+
 object MyCanvas : Canvas {
+  override val suffix: String
+    field = ""
+    override get
+
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  override val suffix: String
-    field = ""
-    override get
 
 }
 
@@ -41,3 +41,4 @@ fun box(): String {
   }
 )
 }
+

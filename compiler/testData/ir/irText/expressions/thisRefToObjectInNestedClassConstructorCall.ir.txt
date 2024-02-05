@@ -1,11 +1,6 @@
 FILE fqName:<root> fileName:/thisRefToObjectInNestedClassConstructorCall.kt
   CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
-    CONSTRUCTOR visibility:public <> (x:kotlin.Any) returnType:<root>.Base [primary]
-      VALUE_PARAMETER name:x index:0 type:kotlin.Any
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any visibility:private [final]
         EXPRESSION_BODY
@@ -17,6 +12,11 @@ FILE fqName:<root> fileName:/thisRefToObjectInNestedClassConstructorCall.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Any declared in <root>.Base'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
               receiver: GET_VAR '<this>: <root>.Base declared in <root>.Base.<get-x>' type=<root>.Base origin=null
+    CONSTRUCTOR visibility:public <> (x:kotlin.Any) returnType:<root>.Base [primary]
+      VALUE_PARAMETER name:x index:0 type:kotlin.Any
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -32,10 +32,6 @@ FILE fqName:<root> fileName:/thisRefToObjectInNestedClassConstructorCall.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
-    CONSTRUCTOR visibility:private <> () returnType:<root>.Host [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[<root>.Base]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host.Derived1
       CONSTRUCTOR visibility:public <> () returnType:<root>.Host.Derived1 [primary]
@@ -43,14 +39,6 @@ FILE fqName:<root> fileName:/thisRefToObjectInNestedClassConstructorCall.kt
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Any) declared in <root>.Base'
             x: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[<root>.Base]'
-      PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
-        overridden:
-          public final x: kotlin.Any
-        FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Any [fake_override]
-          correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
-          overridden:
-            public final fun <get-x> (): kotlin.Any declared in <root>.Base
-          $this: VALUE_PARAMETER name:<this> type:<root>.Base
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
@@ -64,6 +52,14 @@ FILE fqName:<root> fileName:/thisRefToObjectInNestedClassConstructorCall.kt
         overridden:
           public open fun toString (): kotlin.String declared in <root>.Base
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final x: kotlin.Any
+        FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Any [fake_override]
+          correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final fun <get-x> (): kotlin.Any declared in <root>.Base
+          $this: VALUE_PARAMETER name:<this> type:<root>.Base
     CLASS CLASS name:Derived2 modality:FINAL visibility:public superTypes:[<root>.Base]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host.Derived2
       CONSTRUCTOR visibility:public <> () returnType:<root>.Host.Derived2 [primary]
@@ -71,14 +67,6 @@ FILE fqName:<root> fileName:/thisRefToObjectInNestedClassConstructorCall.kt
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Any) declared in <root>.Base'
             x: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived2 modality:FINAL visibility:public superTypes:[<root>.Base]'
-      PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
-        overridden:
-          public final x: kotlin.Any
-        FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Any [fake_override]
-          correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
-          overridden:
-            public final fun <get-x> (): kotlin.Any declared in <root>.Base
-          $this: VALUE_PARAMETER name:<this> type:<root>.Base
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
@@ -92,6 +80,18 @@ FILE fqName:<root> fileName:/thisRefToObjectInNestedClassConstructorCall.kt
         overridden:
           public open fun toString (): kotlin.String declared in <root>.Base
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final x: kotlin.Any
+        FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Any [fake_override]
+          correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final fun <get-x> (): kotlin.Any declared in <root>.Base
+          $this: VALUE_PARAMETER name:<this> type:<root>.Base
+    CONSTRUCTOR visibility:private <> () returnType:<root>.Host [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

@@ -1,11 +1,6 @@
 FILE fqName:<root> fileName:/spreadOperatorInAnnotationArguments.kt
   CLASS ANNOTATION_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
-    CONSTRUCTOR visibility:public <> (xs:kotlin.Array<out kotlin.String>) returnType:<root>.A [primary]
-      VALUE_PARAMETER name:xs index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     PROPERTY name:xs visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out kotlin.String> visibility:private [final]
         EXPRESSION_BODY
@@ -17,6 +12,11 @@ FILE fqName:<root> fileName:/spreadOperatorInAnnotationArguments.kt
           RETURN type=kotlin.Nothing from='public final fun <get-xs> (): kotlin.Array<out kotlin.String> declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out kotlin.String> visibility:private [final]' type=kotlin.Array<out kotlin.String> origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-xs>' type=<root>.A origin=null
+    CONSTRUCTOR visibility:public <> (xs:kotlin.Array<out kotlin.String>) returnType:<root>.A [primary]
+      VALUE_PARAMETER name:xs index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation

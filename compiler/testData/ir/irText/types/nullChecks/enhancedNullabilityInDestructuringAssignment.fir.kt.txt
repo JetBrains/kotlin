@@ -1,13 +1,4 @@
-fun use(x: Any, y: Any) {
-}
-
 class P {
-  constructor(x: Int, y: Int) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: Int
     field = x
     get
@@ -15,6 +6,12 @@ class P {
   val y: Int
     field = y
     get
+
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
   operator fun component1(): Int {
     return <this>.<get-x>()
@@ -27,12 +24,6 @@ class P {
 }
 
 class Q<T1 : Any?, T2 : Any?> {
-  constructor(x: T1, y: T2) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: T1
     field = x
     get
@@ -40,6 +31,12 @@ class Q<T1 : Any?, T2 : Any?> {
   val y: T2
     field = y
     get
+
+  constructor(x: T1, y: T2) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
   operator fun component1(): T1 {
     return <this>.<get-x>()
@@ -84,5 +81,8 @@ fun test4() {
   val x: Int = tmp_3.component1()
   val y: @EnhancedNullability @NotNull P = tmp_3.component2() /*!! @NotNull P */
   use(x = x, y = y)
+}
+
+fun use(x: Any, y: Any) {
 }
 

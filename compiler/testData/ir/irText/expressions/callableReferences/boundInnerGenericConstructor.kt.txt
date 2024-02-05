@@ -1,19 +1,7 @@
 package test
 
 class Foo<T : Any?> {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   inner class Inner<P : Any?> {
-    constructor(a: T, b: P) /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
     val a: T
       field = a
       get
@@ -22,12 +10,20 @@ class Foo<T : Any?> {
       field = b
       get
 
+    constructor(a: T, b: P) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
   }
 
-}
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
 
-inline fun <A : Any?, B : Any?> foo(a: A, b: B, x: Function2<A, B, Inner<B, A>>): Inner<B, A> {
-  return x.invoke(p1 = a, p2 = b)
+  }
+
 }
 
 fun box(): String {
@@ -35,3 +31,8 @@ fun box(): String {
   val foo: Inner<String, String> = foo<String, String>(a = "O", b = "K", x = z::<init>/*<String>()*/)
   return foo.<get-a>().plus(other = foo.<get-b>())
 }
+
+inline fun <A : Any?, B : Any?> foo(a: A, b: B, x: Function2<A, B, Inner<B, A>>): Inner<B, A> {
+  return x.invoke(p1 = a, p2 = b)
+}
+

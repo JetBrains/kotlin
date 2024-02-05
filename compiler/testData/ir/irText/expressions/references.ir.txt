@@ -17,12 +17,6 @@ FILE fqName:<root> fileName:/references.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-ok2> (): kotlin.String declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ok2 type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
-  PROPERTY name:ok3 visibility:public modality:FINAL [val]
-    FUN name:<get-ok3> visibility:public modality:FINAL <> () returnType:kotlin.String
-      correspondingProperty: PROPERTY name:ok3 visibility:public modality:FINAL [val]
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-ok3> (): kotlin.String declared in <root>'
-          CONST String type=kotlin.String value="OK"
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.String declared in <root>'
@@ -42,6 +36,18 @@ FILE fqName:<root> fileName:/references.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (): kotlin.String declared in <root>'
         CALL 'public final fun <get-ok3> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
+  FUN name:test5 visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.String
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test5 (): kotlin.String declared in <root>'
+        CALL 'public final fun <get-okext> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
+          $receiver: GET_VAR '<this>: kotlin.String declared in <root>.test5' type=kotlin.String origin=null
+  PROPERTY name:ok3 visibility:public modality:FINAL [val]
+    FUN name:<get-ok3> visibility:public modality:FINAL <> () returnType:kotlin.String
+      correspondingProperty: PROPERTY name:ok3 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-ok3> (): kotlin.String declared in <root>'
+          CONST String type=kotlin.String value="OK"
   PROPERTY name:okext visibility:public modality:FINAL [val]
     FUN name:<get-okext> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.String
       correspondingProperty: PROPERTY name:okext visibility:public modality:FINAL [val]
@@ -49,9 +55,3 @@ FILE fqName:<root> fileName:/references.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-okext> (): kotlin.String declared in <root>'
           CONST String type=kotlin.String value="OK"
-  FUN name:test5 visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.String
-    $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test5 (): kotlin.String declared in <root>'
-        CALL 'public final fun <get-okext> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
-          $receiver: GET_VAR '<this>: kotlin.String declared in <root>.test5' type=kotlin.String origin=null

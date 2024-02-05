@@ -4,12 +4,6 @@ var topLevelInt: Int
   set
 
 class MyClass {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   var delegatedToTopLevel: Int /* by */
     field = ::topLevelInt
     get(): Int {
@@ -19,4 +13,11 @@ class MyClass {
       return <this>.#delegatedToTopLevel$delegate.setValue<Int>(thisRef = <this>, property = MyClass::delegatedToTopLevel, value = <set-?>)
     }
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+

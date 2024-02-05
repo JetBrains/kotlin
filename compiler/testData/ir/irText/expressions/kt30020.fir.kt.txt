@@ -1,8 +1,34 @@
+abstract class AML : MutableList<Int> {
+  inner class Inner {
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun testOuterThis() {
+      <this>.plusAssign<Int>(element = 300)
+    }
+
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun testExplicitThis() {
+    <this>.plusAssign<Int>(element = 200)
+  }
+
+}
+
 interface X {
+  abstract fun f(): MutableList<Any>
+
   abstract val xs: MutableList<Any>
     abstract get
-
-  abstract fun f(): MutableList<Any>
 
 }
 
@@ -31,28 +57,3 @@ fun MutableList<Any>.testExtensionReceiver() {
   <this>.plusAssign<Int>(element = 100)
 }
 
-abstract class AML : MutableList<Int> {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  fun testExplicitThis() {
-    <this>.plusAssign<Int>(element = 200)
-  }
-
-  inner class Inner {
-    constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    fun testOuterThis() {
-      <this>.plusAssign<Int>(element = 300)
-    }
-
-  }
-
-}

@@ -1,44 +1,13 @@
-interface IrType {
-}
-
-interface TypeRemapper {
-  abstract fun enterScope(irTypeParametersContainer: IrTypeParametersContainer)
-
-  abstract fun remapType(type: IrType): IrType
-
-  abstract fun leaveScope()
-
-}
-
-interface IrTypeParametersContainer : IrDeclaration, IrDeclarationParent {
-  abstract var typeParameters: List<IrTypeParameter>
-    abstract get
-    abstract set
-
-}
-
-interface IrDeclaration {
-}
-
-interface IrTypeParameter : IrDeclaration {
-  abstract val superTypes: MutableList<IrType>
-    abstract get
-
-}
-
-interface IrDeclarationParent {
-}
-
 class DeepCopyIrTreeWithSymbols {
+  private val typeRemapper: TypeRemapper
+    field = typeRemapper
+    private get
+
   constructor(typeRemapper: TypeRemapper) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  private val typeRemapper: TypeRemapper
-    field = typeRemapper
-    private get
 
   private fun copyTypeParameter(declaration: IrTypeParameter): IrTypeParameter {
     return declaration
@@ -70,9 +39,41 @@ class DeepCopyIrTreeWithSymbols {
 
 }
 
+interface IrDeclaration {
+}
+
+interface IrDeclarationParent {
+}
+
+interface IrType {
+}
+
+interface IrTypeParameter : IrDeclaration {
+  abstract val superTypes: MutableList<IrType>
+    abstract get
+
+}
+
+interface IrTypeParametersContainer : IrDeclaration, IrDeclarationParent {
+  abstract var typeParameters: List<IrTypeParameter>
+    abstract get
+    abstract set
+
+}
+
+interface TypeRemapper {
+  abstract fun enterScope(irTypeParametersContainer: IrTypeParametersContainer)
+
+  abstract fun leaveScope()
+
+  abstract fun remapType(type: IrType): IrType
+
+}
+
 inline fun <T : Any?> TypeRemapper.withinScope(irTypeParametersContainer: IrTypeParametersContainer, fn: Function0<T>): T {
   <this>.enterScope(irTypeParametersContainer = irTypeParametersContainer)
   val result: T = fn.invoke()
   <this>.leaveScope()
   return result
 }
+

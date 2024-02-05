@@ -1,11 +1,22 @@
 FILE fqName:<root> fileName:/AllCandidates.kt
-  CLASS CLASS name:ResolvedCall modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ResolvedCall<C of <root>.ResolvedCall>
-    TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> () returnType:<root>.ResolvedCall<C of <root>.ResolvedCall> [primary]
+  CLASS CLASS name:MyCandidate modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyCandidate
+    PROPERTY name:resolvedCall visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:resolvedCall type:<root>.ResolvedCall<*> visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'resolvedCall: <root>.ResolvedCall<*> declared in <root>.MyCandidate.<init>' type=<root>.ResolvedCall<*> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-resolvedCall> visibility:public modality:FINAL <> ($this:<root>.MyCandidate) returnType:<root>.ResolvedCall<*>
+        correspondingProperty: PROPERTY name:resolvedCall visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyCandidate
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-resolvedCall> (): <root>.ResolvedCall<*> declared in <root>.MyCandidate'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:resolvedCall type:<root>.ResolvedCall<*> visibility:private [final]' type=<root>.ResolvedCall<*> origin=null
+              receiver: GET_VAR '<this>: <root>.MyCandidate declared in <root>.MyCandidate.<get-resolvedCall>' type=<root>.MyCandidate origin=null
+    CONSTRUCTOR visibility:public <> (resolvedCall:<root>.ResolvedCall<*>) returnType:<root>.MyCandidate [primary]
+      VALUE_PARAMETER name:resolvedCall index:0 type:<root>.ResolvedCall<*>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ResolvedCall modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyCandidate modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -19,24 +30,13 @@ FILE fqName:<root> fileName:/AllCandidates.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:MyCandidate modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyCandidate
-    CONSTRUCTOR visibility:public <> (resolvedCall:<root>.ResolvedCall<*>) returnType:<root>.MyCandidate [primary]
-      VALUE_PARAMETER name:resolvedCall index:0 type:<root>.ResolvedCall<*>
+  CLASS CLASS name:ResolvedCall modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ResolvedCall<C of <root>.ResolvedCall>
+    TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public <> () returnType:<root>.ResolvedCall<C of <root>.ResolvedCall> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyCandidate modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    PROPERTY name:resolvedCall visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:resolvedCall type:<root>.ResolvedCall<*> visibility:private [final]
-        EXPRESSION_BODY
-          GET_VAR 'resolvedCall: <root>.ResolvedCall<*> declared in <root>.MyCandidate.<init>' type=<root>.ResolvedCall<*> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-resolvedCall> visibility:public modality:FINAL <> ($this:<root>.MyCandidate) returnType:<root>.ResolvedCall<*>
-        correspondingProperty: PROPERTY name:resolvedCall visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.MyCandidate
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-resolvedCall> (): <root>.ResolvedCall<*> declared in <root>.MyCandidate'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:resolvedCall type:<root>.ResolvedCall<*> visibility:private [final]' type=<root>.ResolvedCall<*> origin=null
-              receiver: GET_VAR '<this>: <root>.MyCandidate declared in <root>.MyCandidate.<get-resolvedCall>' type=<root>.MyCandidate origin=null
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ResolvedCall modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

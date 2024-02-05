@@ -1,29 +1,29 @@
 class Test1 {
+  init {
+    println()
+  }
+
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  init {
-    println()
-  }
-
 }
 
 class Test2 {
-  constructor(x: Int) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: Int
     field = x
     get
 
   init {
     println()
+  }
+
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
   }
 
 }
@@ -46,40 +46,41 @@ class Test4 {
     println(message = "1")
   }
 
+  init {
+    println(message = "2")
+  }
+
   constructor() {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  init {
-    println(message = "2")
-  }
-
 }
 
 class Test5 {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   init {
     println(message = "1")
   }
 
   inner class TestInner {
+    init {
+      println(message = "2")
+    }
+
     constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
     }
 
-    init {
-      println(message = "2")
-    }
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
 
   }
 
 }
+

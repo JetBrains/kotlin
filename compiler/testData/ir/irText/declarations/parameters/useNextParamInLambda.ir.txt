@@ -1,24 +1,4 @@
 FILE fqName:<root> fileName:/useNextParamInLambda.kt
-  FUN name:f visibility:public modality:FINAL <> (f1:kotlin.Function0<kotlin.String>, f2:kotlin.Function0<kotlin.String>) returnType:kotlin.String
-    VALUE_PARAMETER name:f1 index:0 type:kotlin.Function0<kotlin.String>
-      EXPRESSION_BODY
-        FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.f'
-                CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String origin=INVOKE
-                  $this: GET_VAR 'f2: kotlin.Function0<kotlin.String> declared in <root>.f' type=kotlin.Function0<kotlin.String> origin=VARIABLE_AS_FUNCTION
-    VALUE_PARAMETER name:f2 index:1 type:kotlin.Function0<kotlin.String>
-      EXPRESSION_BODY
-        FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.f'
-                CONST String type=kotlin.String value="FAIL"
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun f (f1: kotlin.Function0<kotlin.String>, f2: kotlin.Function0<kotlin.String>): kotlin.String declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String origin=INVOKE
-          $this: GET_VAR 'f1: kotlin.Function0<kotlin.String> declared in <root>.f' type=kotlin.Function0<kotlin.String> origin=VARIABLE_AS_FUNCTION
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:result type:kotlin.String [var]
@@ -46,3 +26,23 @@ FILE fqName:<root> fileName:/useNextParamInLambda.kt
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
                     CONST String type=kotlin.String value="K"
+  FUN name:f visibility:public modality:FINAL <> (f1:kotlin.Function0<kotlin.String>, f2:kotlin.Function0<kotlin.String>) returnType:kotlin.String
+    VALUE_PARAMETER name:f1 index:0 type:kotlin.Function0<kotlin.String>
+      EXPRESSION_BODY
+        FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.f'
+                CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String origin=INVOKE
+                  $this: GET_VAR 'f2: kotlin.Function0<kotlin.String> declared in <root>.f' type=kotlin.Function0<kotlin.String> origin=VARIABLE_AS_FUNCTION
+    VALUE_PARAMETER name:f2 index:1 type:kotlin.Function0<kotlin.String>
+      EXPRESSION_BODY
+        FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.f'
+                CONST String type=kotlin.String value="FAIL"
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun f (f1: kotlin.Function0<kotlin.String>, f2: kotlin.Function0<kotlin.String>): kotlin.String declared in <root>'
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String origin=INVOKE
+          $this: GET_VAR 'f1: kotlin.Function0<kotlin.String> declared in <root>.f' type=kotlin.Function0<kotlin.String> origin=VARIABLE_AS_FUNCTION

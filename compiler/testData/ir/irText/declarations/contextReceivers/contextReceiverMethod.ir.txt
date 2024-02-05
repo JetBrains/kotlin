@@ -5,11 +5,6 @@ FILE fqName:<root> fileName:/contextReceiverMethod.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Context modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Context) returnType:kotlin.Int
-      $this: VALUE_PARAMETER name:<this> type:<root>.Context
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>.Context'
-          CONST Int type=kotlin.Int value=1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -23,6 +18,11 @@ FILE fqName:<root> fileName:/contextReceiverMethod.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Context) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:<root>.Context
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>.Context'
+          CONST Int type=kotlin.Int value=1
   CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
     FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Context visibility:private [final]
@@ -34,18 +34,6 @@ FILE fqName:<root> fileName:/contextReceiverMethod.kt
           receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test' type=<root>.Test origin=null
           value: GET_VAR '$context_receiver_0: <root>.Context declared in <root>.Test.<init>' type=<root>.Context origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Test) returnType:kotlin.Int
-      $this: VALUE_PARAMETER name:<this> type:<root>.Test
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>.Test'
-          CONST Int type=kotlin.Int value=2
-    FUN name:bar visibility:public modality:FINAL <> ($this:<root>.Test) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.Test
-      BLOCK_BODY
-        VAR name:x type:kotlin.Int [val]
-          CALL 'public final fun foo (): kotlin.Int declared in <root>.Context' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Context visibility:private [final]' type=<root>.Context origin=null
-              receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.bar' type=<root>.Test origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -59,3 +47,15 @@ FILE fqName:<root> fileName:/contextReceiverMethod.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:bar visibility:public modality:FINAL <> ($this:<root>.Test) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test
+      BLOCK_BODY
+        VAR name:x type:kotlin.Int [val]
+          CALL 'public final fun foo (): kotlin.Int declared in <root>.Context' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Context visibility:private [final]' type=<root>.Context origin=null
+              receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.bar' type=<root>.Test origin=null
+    FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Test) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>.Test'
+          CONST Int type=kotlin.Int value=2

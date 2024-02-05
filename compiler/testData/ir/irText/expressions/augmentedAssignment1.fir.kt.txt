@@ -3,6 +3,14 @@ var p: Int
   get
   set
 
+fun testProperty() {
+  <set-p>(<set-?> = <get-p>().plus(other = 1))
+  <set-p>(<set-?> = <get-p>().minus(other = 2))
+  <set-p>(<set-?> = <get-p>().times(other = 3))
+  <set-p>(<set-?> = <get-p>().div(other = 4))
+  <set-p>(<set-?> = <get-p>().rem(other = 5))
+}
+
 fun testVariable() {
   var x: Int = 0
   x = x.plus(other = 1)
@@ -12,10 +20,3 @@ fun testVariable() {
   x = x.rem(other = 5)
 }
 
-fun testProperty() {
-  <set-p>(<set-?> = <get-p>().plus(other = 1))
-  <set-p>(<set-?> = <get-p>().minus(other = 2))
-  <set-p>(<set-?> = <get-p>().times(other = 3))
-  <set-p>(<set-?> = <get-p>().div(other = 4))
-  <set-p>(<set-?> = <get-p>().rem(other = 5))
-}

@@ -1,10 +1,4 @@
 data class Test<T : Any?> {
-  constructor(x: T, y: String = "") /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: T
     field = x
     get
@@ -12,6 +6,12 @@ data class Test<T : Any?> {
   val y: String
     field = y
     get
+
+  constructor(x: T, y: String = "") /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
   operator fun component1(): T {
     return <this>.#x
@@ -23,19 +23,6 @@ data class Test<T : Any?> {
 
   fun copy(x: T = <this>.#x, y: String = <this>.#y): Test<T> {
     return Test<T>(x = x, y = y)
-  }
-
-  override fun toString(): String {
-    return "Test(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
-  }
-
-  override fun hashCode(): Int {
-    var result: Int = when {
-      EQEQ(arg0 = <this>.#x, arg1 = null) -> 0
-      else -> <this>.#x.hashCode()
-    }
-    result = result.times(other = 31).plus(other = <this>.#y.hashCode())
-    return result
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -55,4 +42,18 @@ data class Test<T : Any?> {
     return true
   }
 
+  override fun hashCode(): Int {
+    var result: Int = when {
+      EQEQ(arg0 = <this>.#x, arg1 = null) -> 0
+      else -> <this>.#x.hashCode()
+    }
+    result = result.times(other = 31).plus(other = <this>.#y.hashCode())
+    return result
+  }
+
+  override fun toString(): String {
+    return "Test(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
+  }
+
 }
+

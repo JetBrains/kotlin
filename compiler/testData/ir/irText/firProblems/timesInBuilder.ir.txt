@@ -1,4 +1,121 @@
 FILE fqName:<root> fileName:/timesInBuilder.kt
+  PROPERTY name:spentTime visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:spentTime type:<root>.Column visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun integer (name: kotlin.String): <root>.Column declared in <root>' type=<root>.Column origin=null
+          name: CONST String type=kotlin.String value="spentTime"
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-spentTime> visibility:public modality:FINAL <> () returnType:<root>.Column
+      correspondingProperty: PROPERTY name:spentTime visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-spentTime> (): <root>.Column declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:spentTime type:<root>.Column visibility:private [final,static]' type=<root>.Column origin=null
+  CLASS CLASS name:ArgumentsBuilder modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArgumentsBuilder
+    PROPERTY name:arguments visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:arguments type:kotlin.collections.MutableList<<root>.Expression> visibility:private [final]
+        EXPRESSION_BODY
+          CALL 'public final fun mutableListOf <T> (): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<<root>.Expression> origin=null
+            <T>: <root>.Expression
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-arguments> visibility:public modality:FINAL <> ($this:<root>.ArgumentsBuilder) returnType:kotlin.collections.MutableList<<root>.Expression>
+        correspondingProperty: PROPERTY name:arguments visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.ArgumentsBuilder
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-arguments> (): kotlin.collections.MutableList<<root>.Expression> declared in <root>.ArgumentsBuilder'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:arguments type:kotlin.collections.MutableList<<root>.Expression> visibility:private [final]' type=kotlin.collections.MutableList<<root>.Expression> origin=null
+              receiver: GET_VAR '<this>: <root>.ArgumentsBuilder declared in <root>.ArgumentsBuilder.<get-arguments>' type=<root>.ArgumentsBuilder origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.ArgumentsBuilder [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ArgumentsBuilder modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:unaryPlus visibility:public modality:FINAL <> ($this:<root>.ArgumentsBuilder, $receiver:<root>.Expression) returnType:kotlin.Unit [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.ArgumentsBuilder
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Expression
+      BLOCK_BODY
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          CALL 'public abstract fun add (element: E of kotlin.collections.MutableList): kotlin.Boolean declared in kotlin.collections.MutableList' type=kotlin.Boolean origin=null
+            $this: CALL 'public final fun <get-arguments> (): kotlin.collections.MutableList<<root>.Expression> declared in <root>.ArgumentsBuilder' type=kotlin.collections.MutableList<<root>.Expression> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.ArgumentsBuilder declared in <root>.ArgumentsBuilder.unaryPlus' type=<root>.ArgumentsBuilder origin=null
+            element: GET_VAR '<this>: <root>.Expression declared in <root>.ArgumentsBuilder.unaryPlus' type=<root>.Expression origin=null
+  CLASS CLASS name:Column modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Column
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Column [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Column modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:Expression modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Expression
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Expression [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Expression modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:countIssues visibility:private modality:FINAL <> (restrictionsBuilder:@[ExtensionFunctionType] kotlin.Function1<<root>.ArgumentsBuilder, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:restrictionsBuilder index:0 type:@[ExtensionFunctionType] kotlin.Function1<<root>.ArgumentsBuilder, kotlin.Unit>
+    BLOCK_BODY
+  FUN name:id visibility:public modality:FINAL <I> (arg:I of <root>.id) returnType:I of <root>.id
+    TYPE_PARAMETER name:I index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:arg index:0 type:I of <root>.id
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun id <I> (arg: I of <root>.id): I of <root>.id declared in <root>'
+        GET_VAR 'arg: I of <root>.id declared in <root>.id' type=I of <root>.id origin=null
+  FUN name:integer visibility:public modality:FINAL <> (name:kotlin.String) returnType:<root>.Column
+    VALUE_PARAMETER name:name index:0 type:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun integer (name: kotlin.String): <root>.Column declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Column' type=<root>.Column origin=null
+  FUN name:lessEq visibility:public modality:FINAL <T> ($receiver:<root>.Column, t:T of <root>.lessEq) returnType:<root>.Expression [infix]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.lessEq>] reified:false
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.Column
+    VALUE_PARAMETER name:t index:0 type:T of <root>.lessEq
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun lessEq <T> (t: T of <root>.lessEq): <root>.Expression declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Expression' type=<root>.Expression origin=null
+  FUN name:select visibility:public modality:FINAL <T> ($receiver:<root>.Column, t:T of <root>.select, r:T of <root>.select) returnType:<root>.Expression
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.select>] reified:false
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.Column
+    VALUE_PARAMETER name:t index:0 type:T of <root>.select
+    VALUE_PARAMETER name:r index:1 type:T of <root>.select
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun select <T> (t: T of <root>.select, r: T of <root>.select): <root>.Expression declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Expression' type=<root>.Expression origin=null
   FUN name:test visibility:private modality:FINAL <> (x:kotlin.Long) returnType:kotlin.Unit
     VALUE_PARAMETER name:x index:0 type:kotlin.Long
     BLOCK_BODY
@@ -36,120 +153,3 @@ FILE fqName:<root> fileName:/timesInBuilder.kt
                         $this: CONST Int type=kotlin.Int value=2
                         other: CONST Int type=kotlin.Int value=60
                     r: GET_VAR 'x: kotlin.Long declared in <root>.test' type=kotlin.Long origin=null
-  PROPERTY name:spentTime visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:spentTime type:<root>.Column visibility:private [final,static]
-      EXPRESSION_BODY
-        CALL 'public final fun integer (name: kotlin.String): <root>.Column declared in <root>' type=<root>.Column origin=null
-          name: CONST String type=kotlin.String value="spentTime"
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-spentTime> visibility:public modality:FINAL <> () returnType:<root>.Column
-      correspondingProperty: PROPERTY name:spentTime visibility:public modality:FINAL [val]
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-spentTime> (): <root>.Column declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:spentTime type:<root>.Column visibility:private [final,static]' type=<root>.Column origin=null
-  FUN name:integer visibility:public modality:FINAL <> (name:kotlin.String) returnType:<root>.Column
-    VALUE_PARAMETER name:name index:0 type:kotlin.String
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun integer (name: kotlin.String): <root>.Column declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Column' type=<root>.Column origin=null
-  FUN name:id visibility:public modality:FINAL <I> (arg:I of <root>.id) returnType:I of <root>.id
-    TYPE_PARAMETER name:I index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:arg index:0 type:I of <root>.id
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun id <I> (arg: I of <root>.id): I of <root>.id declared in <root>'
-        GET_VAR 'arg: I of <root>.id declared in <root>.id' type=I of <root>.id origin=null
-  FUN name:lessEq visibility:public modality:FINAL <T> ($receiver:<root>.Column, t:T of <root>.lessEq) returnType:<root>.Expression [infix]
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.lessEq>] reified:false
-    $receiver: VALUE_PARAMETER name:<this> type:<root>.Column
-    VALUE_PARAMETER name:t index:0 type:T of <root>.lessEq
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun lessEq <T> (t: T of <root>.lessEq): <root>.Expression declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Expression' type=<root>.Expression origin=null
-  FUN name:select visibility:public modality:FINAL <T> ($receiver:<root>.Column, t:T of <root>.select, r:T of <root>.select) returnType:<root>.Expression
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.select>] reified:false
-    $receiver: VALUE_PARAMETER name:<this> type:<root>.Column
-    VALUE_PARAMETER name:t index:0 type:T of <root>.select
-    VALUE_PARAMETER name:r index:1 type:T of <root>.select
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun select <T> (t: T of <root>.select, r: T of <root>.select): <root>.Expression declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Expression' type=<root>.Expression origin=null
-  CLASS CLASS name:Expression modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Expression
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Expression [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Expression modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:Column modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Column
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Column [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Column modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:ArgumentsBuilder modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArgumentsBuilder
-    CONSTRUCTOR visibility:public <> () returnType:<root>.ArgumentsBuilder [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ArgumentsBuilder modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    PROPERTY name:arguments visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:arguments type:kotlin.collections.MutableList<<root>.Expression> visibility:private [final]
-        EXPRESSION_BODY
-          CALL 'public final fun mutableListOf <T> (): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<<root>.Expression> origin=null
-            <T>: <root>.Expression
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-arguments> visibility:public modality:FINAL <> ($this:<root>.ArgumentsBuilder) returnType:kotlin.collections.MutableList<<root>.Expression>
-        correspondingProperty: PROPERTY name:arguments visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ArgumentsBuilder
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-arguments> (): kotlin.collections.MutableList<<root>.Expression> declared in <root>.ArgumentsBuilder'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:arguments type:kotlin.collections.MutableList<<root>.Expression> visibility:private [final]' type=kotlin.collections.MutableList<<root>.Expression> origin=null
-              receiver: GET_VAR '<this>: <root>.ArgumentsBuilder declared in <root>.ArgumentsBuilder.<get-arguments>' type=<root>.ArgumentsBuilder origin=null
-    FUN name:unaryPlus visibility:public modality:FINAL <> ($this:<root>.ArgumentsBuilder, $receiver:<root>.Expression) returnType:kotlin.Unit [operator]
-      $this: VALUE_PARAMETER name:<this> type:<root>.ArgumentsBuilder
-      $receiver: VALUE_PARAMETER name:<this> type:<root>.Expression
-      BLOCK_BODY
-        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-          CALL 'public abstract fun add (element: E of kotlin.collections.MutableList): kotlin.Boolean declared in kotlin.collections.MutableList' type=kotlin.Boolean origin=null
-            $this: CALL 'public final fun <get-arguments> (): kotlin.collections.MutableList<<root>.Expression> declared in <root>.ArgumentsBuilder' type=kotlin.collections.MutableList<<root>.Expression> origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.ArgumentsBuilder declared in <root>.ArgumentsBuilder.unaryPlus' type=<root>.ArgumentsBuilder origin=null
-            element: GET_VAR '<this>: <root>.Expression declared in <root>.ArgumentsBuilder.unaryPlus' type=<root>.Expression origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:countIssues visibility:private modality:FINAL <> (restrictionsBuilder:@[ExtensionFunctionType] kotlin.Function1<<root>.ArgumentsBuilder, kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:restrictionsBuilder index:0 type:@[ExtensionFunctionType] kotlin.Function1<<root>.ArgumentsBuilder, kotlin.Unit>
-    BLOCK_BODY

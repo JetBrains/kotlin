@@ -7,10 +7,6 @@ open class IrElement {
 
 }
 
-fun IrElement.dumpKotlinLike(options: String = ""): String {
-  return "O"
-}
-
 fun IrElement.dump(normalizeNames: Boolean = false, stableOrder: Boolean = false): String {
   return "K"
 }
@@ -33,5 +29,9 @@ fun dump(data: IrElement, dumpStrategy: String): String {
     }
   }
   return dump.invoke(p1 = data)
+}
+
+fun IrElement.dumpKotlinLike(options: String = ""): String {
+  return "O"
 }
 

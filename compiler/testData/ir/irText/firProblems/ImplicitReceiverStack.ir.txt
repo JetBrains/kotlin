@@ -1,112 +1,10 @@
 FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
-  CLASS INTERFACE name:SymbolOwner modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SymbolOwner<E of <root>.SymbolOwner>
-    TYPE_PARAMETER name:E index:0 variance: superTypes:[<root>.SymbolOwner<E of <root>.SymbolOwner>] reified:false
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS INTERFACE name:Symbol modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Symbol<E of <root>.Symbol>
-    TYPE_PARAMETER name:E index:0 variance: superTypes:[<root>.SymbolOwner<E of <root>.Symbol>] reified:false
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS INTERFACE name:ReceiverValue modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ReceiverValue
-    PROPERTY name:type visibility:public modality:ABSTRACT [val]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-type> visibility:public modality:ABSTRACT <> ($this:<root>.ReceiverValue) returnType:kotlin.String
-        correspondingProperty: PROPERTY name:type visibility:public modality:ABSTRACT [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ReceiverValue
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:ImplicitReceiverValue modality:FINAL visibility:public superTypes:[<root>.ReceiverValue]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue>
-    TYPE_PARAMETER name:S index:0 variance: superTypes:[<root>.Symbol<*>] reified:false
-    CONSTRUCTOR visibility:public <> (boundSymbol:S of <root>.ImplicitReceiverValue?, type:kotlin.String) returnType:<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue> [primary]
-      VALUE_PARAMETER name:boundSymbol index:0 type:S of <root>.ImplicitReceiverValue?
-      VALUE_PARAMETER name:type index:1 type:kotlin.String
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ImplicitReceiverValue modality:FINAL visibility:public superTypes:[<root>.ReceiverValue]'
-    PROPERTY name:boundSymbol visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:boundSymbol type:S of <root>.ImplicitReceiverValue? visibility:private [final]
-        EXPRESSION_BODY
-          GET_VAR 'boundSymbol: S of <root>.ImplicitReceiverValue? declared in <root>.ImplicitReceiverValue.<init>' type=S of <root>.ImplicitReceiverValue? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-boundSymbol> visibility:public modality:FINAL <> ($this:<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue>) returnType:S of <root>.ImplicitReceiverValue?
-        correspondingProperty: PROPERTY name:boundSymbol visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue>
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-boundSymbol> (): S of <root>.ImplicitReceiverValue? declared in <root>.ImplicitReceiverValue'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:boundSymbol type:S of <root>.ImplicitReceiverValue? visibility:private [final]' type=S of <root>.ImplicitReceiverValue? origin=null
-              receiver: GET_VAR '<this>: <root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue> declared in <root>.ImplicitReceiverValue.<get-boundSymbol>' type=<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue> origin=null
-    PROPERTY name:type visibility:public modality:OPEN [val]
-      overridden:
-        public abstract type: kotlin.String
-      FIELD PROPERTY_BACKING_FIELD name:type type:kotlin.String visibility:private [final]
-        EXPRESSION_BODY
-          GET_VAR 'type: kotlin.String declared in <root>.ImplicitReceiverValue.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-type> visibility:public modality:OPEN <> ($this:<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue>) returnType:kotlin.String
-        correspondingProperty: PROPERTY name:type visibility:public modality:OPEN [val]
-        overridden:
-          public abstract fun <get-type> (): kotlin.String declared in <root>.ReceiverValue
-        $this: VALUE_PARAMETER name:<this> type:<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue>
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public open fun <get-type> (): kotlin.String declared in <root>.ImplicitReceiverValue'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:type type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: <root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue> declared in <root>.ImplicitReceiverValue.<get-type>' type=<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue> origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ReceiverValue
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.ReceiverValue
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in <root>.ReceiverValue
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:ImplicitReceiverStack modality:ABSTRACT visibility:public superTypes:[kotlin.collections.Iterable<<root>.ImplicitReceiverValue<*>>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ImplicitReceiverStack
     CONSTRUCTOR visibility:public <> () returnType:<root>.ImplicitReceiverStack [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ImplicitReceiverStack modality:ABSTRACT visibility:public superTypes:[kotlin.collections.Iterable<<root>.ImplicitReceiverValue<*>>]'
-    FUN name:get visibility:public modality:ABSTRACT <> ($this:<root>.ImplicitReceiverStack, name:kotlin.String?) returnType:<root>.ImplicitReceiverValue<*>? [operator]
-      $this: VALUE_PARAMETER name:<this> type:<root>.ImplicitReceiverStack
-      VALUE_PARAMETER name:name index:0 type:kotlin.String?
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.Iterable
@@ -133,13 +31,59 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.collections.Iterable
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:get visibility:public modality:ABSTRACT <> ($this:<root>.ImplicitReceiverStack, name:kotlin.String?) returnType:<root>.ImplicitReceiverValue<*>? [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.ImplicitReceiverStack
+      VALUE_PARAMETER name:name index:0 type:kotlin.String?
+  CLASS CLASS name:ImplicitReceiverValue modality:FINAL visibility:public superTypes:[<root>.ReceiverValue]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue>
+    TYPE_PARAMETER name:S index:0 variance: superTypes:[<root>.Symbol<*>] reified:false
+    PROPERTY name:boundSymbol visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:boundSymbol type:S of <root>.ImplicitReceiverValue? visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'boundSymbol: S of <root>.ImplicitReceiverValue? declared in <root>.ImplicitReceiverValue.<init>' type=S of <root>.ImplicitReceiverValue? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-boundSymbol> visibility:public modality:FINAL <> ($this:<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue>) returnType:S of <root>.ImplicitReceiverValue?
+        correspondingProperty: PROPERTY name:boundSymbol visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-boundSymbol> (): S of <root>.ImplicitReceiverValue? declared in <root>.ImplicitReceiverValue'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:boundSymbol type:S of <root>.ImplicitReceiverValue? visibility:private [final]' type=S of <root>.ImplicitReceiverValue? origin=null
+              receiver: GET_VAR '<this>: <root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue> declared in <root>.ImplicitReceiverValue.<get-boundSymbol>' type=<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue> origin=null
+    PROPERTY name:type visibility:public modality:OPEN [val]
+      overridden:
+        public abstract type: kotlin.String
+      FIELD PROPERTY_BACKING_FIELD name:type type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'type: kotlin.String declared in <root>.ImplicitReceiverValue.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-type> visibility:public modality:OPEN <> ($this:<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue>) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:type visibility:public modality:OPEN [val]
+        overridden:
+          public abstract fun <get-type> (): kotlin.String declared in <root>.ReceiverValue
+        $this: VALUE_PARAMETER name:<this> type:<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-type> (): kotlin.String declared in <root>.ImplicitReceiverValue'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:type type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue> declared in <root>.ImplicitReceiverValue.<get-type>' type=<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue> origin=null
+    CONSTRUCTOR visibility:public <> (boundSymbol:S of <root>.ImplicitReceiverValue?, type:kotlin.String) returnType:<root>.ImplicitReceiverValue<S of <root>.ImplicitReceiverValue> [primary]
+      VALUE_PARAMETER name:boundSymbol index:0 type:S of <root>.ImplicitReceiverValue?
+      VALUE_PARAMETER name:type index:1 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ImplicitReceiverValue modality:FINAL visibility:public superTypes:[<root>.ReceiverValue]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ReceiverValue
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.ReceiverValue
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.ReceiverValue
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:PersistentImplicitReceiverStack modality:FINAL visibility:public superTypes:[<root>.ImplicitReceiverStack; kotlin.collections.Iterable<<root>.ImplicitReceiverValue<*>>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PersistentImplicitReceiverStack
-    CONSTRUCTOR visibility:public <> (stack:kotlin.collections.List<<root>.ImplicitReceiverValue<*>>) returnType:<root>.PersistentImplicitReceiverStack [primary]
-      VALUE_PARAMETER name:stack index:0 type:kotlin.collections.List<<root>.ImplicitReceiverValue<*>>
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.ImplicitReceiverStack'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PersistentImplicitReceiverStack modality:FINAL visibility:public superTypes:[<root>.ImplicitReceiverStack; kotlin.collections.Iterable<<root>.ImplicitReceiverValue<*>>]'
     PROPERTY name:stack visibility:private modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:stack type:kotlin.collections.List<<root>.ImplicitReceiverValue<*>> visibility:private [final]
         EXPRESSION_BODY
@@ -151,27 +95,11 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
           RETURN type=kotlin.Nothing from='private final fun <get-stack> (): kotlin.collections.List<<root>.ImplicitReceiverValue<*>> declared in <root>.PersistentImplicitReceiverStack'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:stack type:kotlin.collections.List<<root>.ImplicitReceiverValue<*>> visibility:private [final]' type=kotlin.collections.List<<root>.ImplicitReceiverValue<*>> origin=null
               receiver: GET_VAR '<this>: <root>.PersistentImplicitReceiverStack declared in <root>.PersistentImplicitReceiverStack.<get-stack>' type=<root>.PersistentImplicitReceiverStack origin=null
-    FUN name:iterator visibility:public modality:OPEN <> ($this:<root>.PersistentImplicitReceiverStack) returnType:kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> [operator]
-      overridden:
-        public abstract fun iterator (): kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> declared in <root>.ImplicitReceiverStack
-        public abstract fun iterator (): kotlin.collections.Iterator<T of kotlin.collections.Iterable> declared in kotlin.collections.Iterable
-      $this: VALUE_PARAMETER name:<this> type:<root>.PersistentImplicitReceiverStack
+    CONSTRUCTOR visibility:public <> (stack:kotlin.collections.List<<root>.ImplicitReceiverValue<*>>) returnType:<root>.PersistentImplicitReceiverStack [primary]
+      VALUE_PARAMETER name:stack index:0 type:kotlin.collections.List<<root>.ImplicitReceiverValue<*>>
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> declared in <root>.PersistentImplicitReceiverStack'
-          CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.List> declared in kotlin.collections.List' type=kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> origin=null
-            $this: CALL 'private final fun <get-stack> (): kotlin.collections.List<<root>.ImplicitReceiverValue<*>> declared in <root>.PersistentImplicitReceiverStack' type=kotlin.collections.List<<root>.ImplicitReceiverValue<*>> origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.PersistentImplicitReceiverStack declared in <root>.PersistentImplicitReceiverStack.iterator' type=<root>.PersistentImplicitReceiverStack origin=null
-    FUN name:get visibility:public modality:OPEN <> ($this:<root>.PersistentImplicitReceiverStack, name:kotlin.String?) returnType:<root>.ImplicitReceiverValue<*>? [operator]
-      overridden:
-        public abstract fun get (name: kotlin.String?): <root>.ImplicitReceiverValue<*>? declared in <root>.ImplicitReceiverStack
-      $this: VALUE_PARAMETER name:<this> type:<root>.PersistentImplicitReceiverStack
-      VALUE_PARAMETER name:name index:0 type:kotlin.String?
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun get (name: kotlin.String?): <root>.ImplicitReceiverValue<*>? declared in <root>.PersistentImplicitReceiverStack'
-          CALL 'public final fun lastOrNull <T> (): T of kotlin.collections.lastOrNull? declared in kotlin.collections' type=<root>.ImplicitReceiverValue<*>? origin=null
-            <T>: <root>.ImplicitReceiverValue<*>
-            $receiver: CALL 'private final fun <get-stack> (): kotlin.collections.List<<root>.ImplicitReceiverValue<*>> declared in <root>.PersistentImplicitReceiverStack' type=kotlin.collections.List<<root>.ImplicitReceiverValue<*>> origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.PersistentImplicitReceiverStack declared in <root>.PersistentImplicitReceiverStack.get' type=<root>.PersistentImplicitReceiverStack origin=null
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.ImplicitReceiverStack'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PersistentImplicitReceiverStack modality:FINAL visibility:public superTypes:[<root>.ImplicitReceiverStack; kotlin.collections.Iterable<<root>.ImplicitReceiverValue<*>>]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ImplicitReceiverStack
@@ -199,25 +127,81 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
         public open fun toString (): kotlin.String declared in <root>.ImplicitReceiverStack
         public open fun toString (): kotlin.String declared in kotlin.collections.Iterable
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:get visibility:public modality:OPEN <> ($this:<root>.PersistentImplicitReceiverStack, name:kotlin.String?) returnType:<root>.ImplicitReceiverValue<*>? [operator]
+      overridden:
+        public abstract fun get (name: kotlin.String?): <root>.ImplicitReceiverValue<*>? declared in <root>.ImplicitReceiverStack
+      $this: VALUE_PARAMETER name:<this> type:<root>.PersistentImplicitReceiverStack
+      VALUE_PARAMETER name:name index:0 type:kotlin.String?
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun get (name: kotlin.String?): <root>.ImplicitReceiverValue<*>? declared in <root>.PersistentImplicitReceiverStack'
+          CALL 'public final fun lastOrNull <T> (): T of kotlin.collections.lastOrNull? declared in kotlin.collections' type=<root>.ImplicitReceiverValue<*>? origin=null
+            <T>: <root>.ImplicitReceiverValue<*>
+            $receiver: CALL 'private final fun <get-stack> (): kotlin.collections.List<<root>.ImplicitReceiverValue<*>> declared in <root>.PersistentImplicitReceiverStack' type=kotlin.collections.List<<root>.ImplicitReceiverValue<*>> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.PersistentImplicitReceiverStack declared in <root>.PersistentImplicitReceiverStack.get' type=<root>.PersistentImplicitReceiverStack origin=null
+    FUN name:iterator visibility:public modality:OPEN <> ($this:<root>.PersistentImplicitReceiverStack) returnType:kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> [operator]
+      overridden:
+        public abstract fun iterator (): kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> declared in <root>.ImplicitReceiverStack
+        public abstract fun iterator (): kotlin.collections.Iterator<T of kotlin.collections.Iterable> declared in kotlin.collections.Iterable
+      $this: VALUE_PARAMETER name:<this> type:<root>.PersistentImplicitReceiverStack
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> declared in <root>.PersistentImplicitReceiverStack'
+          CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.List> declared in kotlin.collections.List' type=kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> origin=null
+            $this: CALL 'private final fun <get-stack> (): kotlin.collections.List<<root>.ImplicitReceiverValue<*>> declared in <root>.PersistentImplicitReceiverStack' type=kotlin.collections.List<<root>.ImplicitReceiverValue<*>> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.PersistentImplicitReceiverStack declared in <root>.PersistentImplicitReceiverStack.iterator' type=<root>.PersistentImplicitReceiverStack origin=null
+  CLASS INTERFACE name:ReceiverValue modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ReceiverValue
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY name:type visibility:public modality:ABSTRACT [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-type> visibility:public modality:ABSTRACT <> ($this:<root>.ReceiverValue) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:type visibility:public modality:ABSTRACT [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.ReceiverValue
+  CLASS INTERFACE name:Symbol modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Symbol<E of <root>.Symbol>
+    TYPE_PARAMETER name:E index:0 variance: superTypes:[<root>.SymbolOwner<E of <root>.Symbol>] reified:false
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS INTERFACE name:SymbolOwner modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SymbolOwner<E of <root>.SymbolOwner>
+    TYPE_PARAMETER name:E index:0 variance: superTypes:[<root>.SymbolOwner<E of <root>.SymbolOwner>] reified:false
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:bar visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
     VALUE_PARAMETER name:s index:0 type:kotlin.String
     BLOCK_BODY
-  FUN name:foo visibility:public modality:FINAL <> (stack:<root>.PersistentImplicitReceiverStack) returnType:kotlin.Unit
-    VALUE_PARAMETER name:stack index:0 type:<root>.PersistentImplicitReceiverStack
-    BLOCK_BODY
-      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
-        <T>: <root>.ImplicitReceiverValue<*>
-        $receiver: GET_VAR 'stack: <root>.PersistentImplicitReceiverStack declared in <root>.foo' type=<root>.PersistentImplicitReceiverStack origin=null
-        action: FUN_EXPR type=kotlin.Function1<<root>.ImplicitReceiverValue<*>, kotlin.Unit> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.ImplicitReceiverValue<*>) returnType:kotlin.Unit
-            VALUE_PARAMETER name:it index:0 type:<root>.ImplicitReceiverValue<*>
-            BLOCK_BODY
-              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                CALL 'public final fun <get-boundSymbol> (): S of <root>.ImplicitReceiverValue? declared in <root>.ImplicitReceiverValue' type=<root>.Symbol<*>? origin=GET_PROPERTY
-                  $this: GET_VAR 'it: <root>.ImplicitReceiverValue<*> declared in <root>.foo.<anonymous>' type=<root>.ImplicitReceiverValue<*> origin=null
-              CALL 'public final fun bar (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                s: CALL 'public open fun <get-type> (): kotlin.String declared in <root>.ImplicitReceiverValue' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR 'it: <root>.ImplicitReceiverValue<*> declared in <root>.foo.<anonymous>' type=<root>.ImplicitReceiverValue<*> origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:stack type:<root>.PersistentImplicitReceiverStack [val]
@@ -256,3 +240,19 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public open fun <get-type> (): kotlin.String declared in <root>.ImplicitReceiverValue' type=kotlin.String origin=GET_PROPERTY
                   $this: GET_VAR 'val tmp_0: <root>.ImplicitReceiverValue<*>? declared in <root>.box' type=<root>.ImplicitReceiverValue<*>? origin=null
+  FUN name:foo visibility:public modality:FINAL <> (stack:<root>.PersistentImplicitReceiverStack) returnType:kotlin.Unit
+    VALUE_PARAMETER name:stack index:0 type:<root>.PersistentImplicitReceiverStack
+    BLOCK_BODY
+      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
+        <T>: <root>.ImplicitReceiverValue<*>
+        $receiver: GET_VAR 'stack: <root>.PersistentImplicitReceiverStack declared in <root>.foo' type=<root>.PersistentImplicitReceiverStack origin=null
+        action: FUN_EXPR type=kotlin.Function1<<root>.ImplicitReceiverValue<*>, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.ImplicitReceiverValue<*>) returnType:kotlin.Unit
+            VALUE_PARAMETER name:it index:0 type:<root>.ImplicitReceiverValue<*>
+            BLOCK_BODY
+              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                CALL 'public final fun <get-boundSymbol> (): S of <root>.ImplicitReceiverValue? declared in <root>.ImplicitReceiverValue' type=<root>.Symbol<*>? origin=GET_PROPERTY
+                  $this: GET_VAR 'it: <root>.ImplicitReceiverValue<*> declared in <root>.foo.<anonymous>' type=<root>.ImplicitReceiverValue<*> origin=null
+              CALL 'public final fun bar (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                s: CALL 'public open fun <get-type> (): kotlin.String declared in <root>.ImplicitReceiverValue' type=kotlin.String origin=GET_PROPERTY
+                  $this: GET_VAR 'it: <root>.ImplicitReceiverValue<*> declared in <root>.foo.<anonymous>' type=<root>.ImplicitReceiverValue<*> origin=null

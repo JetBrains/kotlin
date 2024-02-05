@@ -1,13 +1,13 @@
 class C<T : Any?> {
+  val t: T
+    field = t
+    get
+
   constructor(t: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val t: T
-    field = t
-    get
 
   override fun hashCode(): Int {
     return <this>.<get-t>() as Int
@@ -16,26 +16,14 @@ class C<T : Any?> {
 }
 
 value class IC<TT : Any?> {
-  constructor(c: C<TT>) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val c: C<TT>
     field = c
     get
 
-  fun foo(): Int {
-    return <this>.<get-c>().hashCode()
-  }
+  constructor(c: C<TT>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
 
-  override fun toString(): String {
-    return "IC(" + "c=" + <this>.#c + ")"
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#c.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -49,6 +37,18 @@ value class IC<TT : Any?> {
     return true
   }
 
+  override fun hashCode(): Int {
+    return <this>.#c.hashCode()
+  }
+
+  override fun toString(): String {
+    return "IC(" + "c=" + <this>.#c + ")"
+  }
+
+  fun foo(): Int {
+    return <this>.<get-c>().hashCode()
+  }
+
 }
 
 fun box(): String {
@@ -58,3 +58,4 @@ fun box(): String {
   }
   return "OK"
 }
+

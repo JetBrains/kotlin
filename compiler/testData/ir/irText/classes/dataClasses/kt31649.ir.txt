@@ -1,11 +1,6 @@
 FILE fqName:<root> fileName:/kt31649.kt
   CLASS CLASS name:TestData modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestData
-    CONSTRUCTOR visibility:public <> (nn:kotlin.Nothing?) returnType:<root>.TestData [primary]
-      VALUE_PARAMETER name:nn index:0 type:kotlin.Nothing?
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestData modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:nn visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]
         EXPRESSION_BODY
@@ -17,6 +12,11 @@ FILE fqName:<root> fileName:/kt31649.kt
           RETURN type=kotlin.Nothing from='public final fun <get-nn> (): kotlin.Nothing? declared in <root>.TestData'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
               receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.<get-nn>' type=<root>.TestData origin=null
+    CONSTRUCTOR visibility:public <> (nn:kotlin.Nothing?) returnType:<root>.TestData [primary]
+      VALUE_PARAMETER name:nn index:0 type:kotlin.Nothing?
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestData modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.TestData) returnType:kotlin.Nothing? [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.TestData
       BLOCK_BODY
@@ -33,36 +33,6 @@ FILE fqName:<root> fileName:/kt31649.kt
         RETURN type=kotlin.Nothing from='public final fun copy (nn: kotlin.Nothing?): <root>.TestData declared in <root>.TestData'
           CONSTRUCTOR_CALL 'public constructor <init> (nn: kotlin.Nothing?) declared in <root>.TestData' type=<root>.TestData origin=null
             nn: GET_VAR 'nn: kotlin.Nothing? declared in <root>.TestData.copy' type=kotlin.Nothing? origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.TestData) returnType:kotlin.String
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.TestData
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.TestData'
-          STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="TestData("
-            CONST String type=kotlin.String value="nn="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
-              receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.toString' type=<root>.TestData origin=null
-            CONST String type=kotlin.String value=")"
-    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.TestData) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.TestData
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.TestData'
-          WHEN type=kotlin.Int origin=null
-            BRANCH
-              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
-                  receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.hashCode' type=<root>.TestData origin=null
-                arg1: CONST Null type=kotlin.Nothing? value=null
-              then: CONST Int type=kotlin.Int value=0
-            BRANCH
-              if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
-                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
-                  receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.hashCode' type=<root>.TestData origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.TestData, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -97,13 +67,38 @@ FILE fqName:<root> fileName:/kt31649.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.TestData'
           CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.TestData) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.TestData
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.TestData'
+          WHEN type=kotlin.Int origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
+                  receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.hashCode' type=<root>.TestData origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Int type=kotlin.Int value=0
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
+                  receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.hashCode' type=<root>.TestData origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.TestData) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.TestData
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.TestData'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="TestData("
+            CONST String type=kotlin.String value="nn="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
+              receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.toString' type=<root>.TestData origin=null
+            CONST String type=kotlin.String value=")"
   CLASS CLASS name:TestInline modality:FINAL visibility:public [value] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestInline
-    CONSTRUCTOR visibility:public <> (nn:kotlin.Nothing?) returnType:<root>.TestInline [primary]
-      VALUE_PARAMETER name:nn index:0 type:kotlin.Nothing?
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInline modality:FINAL visibility:public [value] superTypes:[kotlin.Any]'
     PROPERTY name:nn visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]
         EXPRESSION_BODY
@@ -115,36 +110,11 @@ FILE fqName:<root> fileName:/kt31649.kt
           RETURN type=kotlin.Nothing from='public final fun <get-nn> (): kotlin.Nothing? declared in <root>.TestInline'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
               receiver: GET_VAR '<this>: <root>.TestInline declared in <root>.TestInline.<get-nn>' type=<root>.TestInline origin=null
-    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.TestInline) returnType:kotlin.String
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.TestInline
+    CONSTRUCTOR visibility:public <> (nn:kotlin.Nothing?) returnType:<root>.TestInline [primary]
+      VALUE_PARAMETER name:nn index:0 type:kotlin.Nothing?
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.TestInline'
-          STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="TestInline("
-            CONST String type=kotlin.String value="nn="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
-              receiver: GET_VAR '<this>: <root>.TestInline declared in <root>.TestInline.toString' type=<root>.TestInline origin=null
-            CONST String type=kotlin.String value=")"
-    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.TestInline) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.TestInline
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.TestInline'
-          WHEN type=kotlin.Int origin=null
-            BRANCH
-              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
-                  receiver: GET_VAR '<this>: <root>.TestInline declared in <root>.TestInline.hashCode' type=<root>.TestInline origin=null
-                arg1: CONST Null type=kotlin.Nothing? value=null
-              then: CONST Int type=kotlin.Int value=0
-            BRANCH
-              if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
-                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
-                  receiver: GET_VAR '<this>: <root>.TestInline declared in <root>.TestInline.hashCode' type=<root>.TestInline origin=null
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInline modality:FINAL visibility:public [value] superTypes:[kotlin.Any]'
     FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.TestInline, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -172,3 +142,33 @@ FILE fqName:<root> fileName:/kt31649.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.TestInline'
           CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.TestInline) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.TestInline
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.TestInline'
+          WHEN type=kotlin.Int origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
+                  receiver: GET_VAR '<this>: <root>.TestInline declared in <root>.TestInline.hashCode' type=<root>.TestInline origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Int type=kotlin.Int value=0
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
+                  receiver: GET_VAR '<this>: <root>.TestInline declared in <root>.TestInline.hashCode' type=<root>.TestInline origin=null
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.TestInline) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.TestInline
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.TestInline'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="TestInline("
+            CONST String type=kotlin.String value="nn="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
+              receiver: GET_VAR '<this>: <root>.TestInline declared in <root>.TestInline.toString' type=<root>.TestInline origin=null
+            CONST String type=kotlin.String value=")"

@@ -20,12 +20,13 @@ class Test {
 
   }
 
-  fun foo(): Int {
-    return 2
-  }
-
   fun bar() {
     val x: Int = <this>.#contextReceiverField0.foo()
   }
 
+  fun foo(): Int {
+    return 2
+  }
+
 }
+

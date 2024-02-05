@@ -1,15 +1,6 @@
 interface Lazy<T : Any?> {
 }
 
-fun test1($context_receiver_0: Lazy<Int>, $context_receiver_1: Lazy<CharSequence>) {
-}
-
-fun <T : Any?> Lazy<Int>.test2($context_receiver_0: Lazy<T>) {
-}
-
-fun <T : Any?> Lazy<Int>.test3($context_receiver_0: Lazy<Lazy<T>>) {
-}
-
 fun <T : Any?> f(lazy1: Lazy<Int>, lazy2: Lazy<CharSequence>, lazyT: Lazy<T>, lazyLazyT: Lazy<Lazy<T>>) {
   with<Lazy<Int>, Unit>(receiver = lazy1, block = local fun Lazy<Int>.<anonymous>() {
     with<Lazy<CharSequence>, Unit>(receiver = lazy2, block = local fun Lazy<CharSequence>.<anonymous>() {
@@ -51,3 +42,13 @@ fun <T : Any?> f(lazy1: Lazy<Int>, lazy2: Lazy<CharSequence>, lazyT: Lazy<T>, la
   }
 )
 }
+
+fun test1($context_receiver_0: Lazy<Int>, $context_receiver_1: Lazy<CharSequence>) {
+}
+
+fun <T : Any?> Lazy<Int>.test2($context_receiver_0: Lazy<T>) {
+}
+
+fun <T : Any?> Lazy<Int>.test3($context_receiver_0: Lazy<Lazy<T>>) {
+}
+

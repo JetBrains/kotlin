@@ -44,6 +44,41 @@ FILE fqName:<root> fileName:/kt28456b.kt
         CONST Int type=kotlin.Int value=42
     VALUE_PARAMETER name:v index:2 type:kotlin.Int
     BLOCK_BODY
+  FUN name:testCompoundAssignment visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:<root>.A
+    BLOCK_BODY
+      BLOCK type=kotlin.Unit origin=PLUSEQ
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.A [val]
+          GET_VAR 'a: <root>.A declared in <root>.testCompoundAssignment' type=<root>.A origin=null
+        VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
+          CONST Int type=kotlin.Int value=1
+        CALL 'public final fun set (i: kotlin.Int, j: kotlin.Int, v: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
+          $receiver: GET_VAR 'val tmp_0: <root>.A declared in <root>.testCompoundAssignment' type=<root>.A origin=null
+          i: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.testCompoundAssignment' type=kotlin.Int origin=null
+          v: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+            $this: CALL 'public final fun get (i: kotlin.Int, a: kotlin.Int, b: kotlin.Int, c: kotlin.Int, d: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
+              $receiver: GET_VAR 'val tmp_0: <root>.A declared in <root>.testCompoundAssignment' type=<root>.A origin=null
+              i: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.testCompoundAssignment' type=kotlin.Int origin=null
+            other: CONST Int type=kotlin.Int value=10
+  FUN name:testPostfixIncrement visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Int
+    VALUE_PARAMETER name:a index:0 type:<root>.A
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testPostfixIncrement (a: <root>.A): kotlin.Int declared in <root>'
+        BLOCK type=kotlin.Int origin=POSTFIX_INCR
+          VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.A [val]
+            GET_VAR 'a: <root>.A declared in <root>.testPostfixIncrement' type=<root>.A origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
+            CONST Int type=kotlin.Int value=1
+          VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [val]
+            CALL 'public final fun get (i: kotlin.Int, a: kotlin.Int, b: kotlin.Int, c: kotlin.Int, d: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
+              $receiver: GET_VAR 'val tmp_2: <root>.A declared in <root>.testPostfixIncrement' type=<root>.A origin=null
+              i: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
+          CALL 'public final fun set (i: kotlin.Int, j: kotlin.Int, v: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
+            $receiver: GET_VAR 'val tmp_2: <root>.A declared in <root>.testPostfixIncrement' type=<root>.A origin=null
+            i: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
+            v: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              $this: GET_VAR 'val tmp_4: kotlin.Int declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_4: kotlin.Int declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
   FUN name:testSimpleAssignment visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     BLOCK_BODY
@@ -51,38 +86,3 @@ FILE fqName:<root> fileName:/kt28456b.kt
         $receiver: GET_VAR 'a: <root>.A declared in <root>.testSimpleAssignment' type=<root>.A origin=null
         i: CONST Int type=kotlin.Int value=1
         v: CONST Int type=kotlin.Int value=0
-  FUN name:testPostfixIncrement visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Int
-    VALUE_PARAMETER name:a index:0 type:<root>.A
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testPostfixIncrement (a: <root>.A): kotlin.Int declared in <root>'
-        BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.A [val]
-            GET_VAR 'a: <root>.A declared in <root>.testPostfixIncrement' type=<root>.A origin=null
-          VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
-            CONST Int type=kotlin.Int value=1
-          VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
-            CALL 'public final fun get (i: kotlin.Int, a: kotlin.Int, b: kotlin.Int, c: kotlin.Int, d: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
-              $receiver: GET_VAR 'val tmp_0: <root>.A declared in <root>.testPostfixIncrement' type=<root>.A origin=null
-              i: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
-          CALL 'public final fun set (i: kotlin.Int, j: kotlin.Int, v: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
-            $receiver: GET_VAR 'val tmp_0: <root>.A declared in <root>.testPostfixIncrement' type=<root>.A origin=null
-            i: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
-            v: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp_2: kotlin.Int declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_2: kotlin.Int declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
-  FUN name:testCompoundAssignment visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:<root>.A
-    BLOCK_BODY
-      BLOCK type=kotlin.Unit origin=PLUSEQ
-        VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:<root>.A [val]
-          GET_VAR 'a: <root>.A declared in <root>.testCompoundAssignment' type=<root>.A origin=null
-        VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [val]
-          CONST Int type=kotlin.Int value=1
-        CALL 'public final fun set (i: kotlin.Int, j: kotlin.Int, v: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
-          $receiver: GET_VAR 'val tmp_3: <root>.A declared in <root>.testCompoundAssignment' type=<root>.A origin=null
-          i: GET_VAR 'val tmp_4: kotlin.Int declared in <root>.testCompoundAssignment' type=kotlin.Int origin=null
-          v: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-            $this: CALL 'public final fun get (i: kotlin.Int, a: kotlin.Int, b: kotlin.Int, c: kotlin.Int, d: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
-              $receiver: GET_VAR 'val tmp_3: <root>.A declared in <root>.testCompoundAssignment' type=<root>.A origin=null
-              i: GET_VAR 'val tmp_4: kotlin.Int declared in <root>.testCompoundAssignment' type=kotlin.Int origin=null
-            other: CONST Int type=kotlin.Int value=10

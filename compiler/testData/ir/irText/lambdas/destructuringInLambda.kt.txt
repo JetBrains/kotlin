@@ -1,10 +1,13 @@
-data class A {
-  constructor(x: Int, y: Int) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
+var fn: Function1<A, Int>
+  field = local fun <anonymous>(<name for destructuring parameter 0>: A): Int {
+    val y: Int = <name for destructuring parameter 0>.component2()
+    return 42.plus(other = y)
   }
 
+  get
+  set
+
+data class A {
   val x: Int
     field = x
     get
@@ -12,6 +15,12 @@ data class A {
   val y: Int
     field = y
     get
+
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
   operator fun component1(): Int {
     return <this>.#x
@@ -23,16 +32,6 @@ data class A {
 
   fun copy(x: Int = <this>.#x, y: Int = <this>.#y): A {
     return A(x = x, y = y)
-  }
-
-  override fun toString(): String {
-    return "A(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
-  }
-
-  override fun hashCode(): Int {
-    var result: Int = <this>.#x.hashCode()
-    result = result.times(other = 31).plus(other = <this>.#y.hashCode())
-    return result
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -52,13 +51,15 @@ data class A {
     return true
   }
 
-}
-
-var fn: Function1<A, Int>
-  field = local fun <anonymous>(<name for destructuring parameter 0>: A): Int {
-    val y: Int = <name for destructuring parameter 0>.component2()
-    return 42.plus(other = y)
+  override fun hashCode(): Int {
+    var result: Int = <this>.#x.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#y.hashCode())
+    return result
   }
 
-  get
-  set
+  override fun toString(): String {
+    return "A(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
+  }
+
+}
+

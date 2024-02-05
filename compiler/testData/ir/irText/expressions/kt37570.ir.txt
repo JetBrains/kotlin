@@ -1,14 +1,6 @@
 FILE fqName:<root> fileName:/kt37570.kt
-  FUN name:a visibility:public modality:FINAL <> () returnType:kotlin.String
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun a (): kotlin.String declared in <root>'
-        CONST String type=kotlin.String value="string"
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
-    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:b visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.String visibility:private [final]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.String
@@ -31,6 +23,10 @@ FILE fqName:<root> fileName:/kt37570.kt
                   SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.String visibility:private [final]' type=kotlin.Unit origin=null
                     receiver: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
                     value: GET_VAR '$this$apply: kotlin.String declared in <root>.A.<anonymous>' type=kotlin.String origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -44,3 +40,7 @@ FILE fqName:<root> fileName:/kt37570.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:a visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun a (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="string"

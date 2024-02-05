@@ -1,16 +1,17 @@
 open annotation class TestAnn : Annotation {
+  val x: Int
+    field = x
+    get
+
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: Int
-    field = x
-    get
-
 }
 
 @TestAnn(x = 42)
 fun testSimpleFunction() {
 }
+

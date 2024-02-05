@@ -1,23 +1,3 @@
-class A<T : Any?> {
-  constructor(value: T) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  private val value: T
-    field = value
-    private get
-
-  operator fun get(i: Int): T {
-    return <this>.<get-value>()
-  }
-
-  operator fun set(i: Int, v: T) {
-  }
-
-}
-
 val aFloat: A<Float>
   field = A<Float>(value = 0.0F)
   get
@@ -31,3 +11,24 @@ val aInt: Float
     tmp_2
   }
   get
+
+class A<T : Any?> {
+  private val value: T
+    field = value
+    private get
+
+  constructor(value: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun get(i: Int): T {
+    return <this>.<get-value>()
+  }
+
+  operator fun set(i: Int, v: T) {
+  }
+
+}
+

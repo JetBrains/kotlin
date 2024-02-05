@@ -1,8 +1,6 @@
 FILE fqName:<root> fileName:/suspendConversionWithFunInterfaces.kt
   CLASS INTERFACE name:SuspendRunnable modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SuspendRunnable
-    FUN name:invoke visibility:public modality:ABSTRACT <> ($this:<root>.SuspendRunnable) returnType:kotlin.Unit [suspend]
-      $this: VALUE_PARAMETER name:<this> type:<root>.SuspendRunnable
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -16,9 +14,8 @@ FILE fqName:<root> fileName:/suspendConversionWithFunInterfaces.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:foo1 visibility:public modality:FINAL <> (s:<root>.SuspendRunnable) returnType:kotlin.Unit
-    VALUE_PARAMETER name:s index:0 type:<root>.SuspendRunnable
-    BLOCK_BODY
+    FUN name:invoke visibility:public modality:ABSTRACT <> ($this:<root>.SuspendRunnable) returnType:kotlin.Unit [suspend]
+      $this: VALUE_PARAMETER name:<this> type:<root>.SuspendRunnable
   FUN name:bar1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
   FUN name:bar2 visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Int
@@ -61,3 +58,6 @@ FILE fqName:<root> fileName:/suspendConversionWithFunInterfaces.kt
               CALL 'public final fun bar3 (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
           TYPE_OP type=<root>.SuspendRunnable origin=SAM_CONVERSION typeOperand=<root>.SuspendRunnable
             FUNCTION_REFERENCE 'local final fun bar3 (): kotlin.Unit declared in <root>.box' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun bar3 (): kotlin.Unit declared in <root>
+  FUN name:foo1 visibility:public modality:FINAL <> (s:<root>.SuspendRunnable) returnType:kotlin.Unit
+    VALUE_PARAMETER name:s index:0 type:<root>.SuspendRunnable
+    BLOCK_BODY

@@ -1,10 +1,4 @@
 data class Some {
-  constructor(a: String, b: dynamic) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val a: String
     field = a
     get
@@ -12,6 +6,12 @@ data class Some {
   val b: dynamic
     field = b
     get
+
+  constructor(a: String, b: dynamic) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
   operator fun component1(): String {
     return <this>.#a
@@ -23,19 +23,6 @@ data class Some {
 
   fun copy(a: String = <this>.#a, b: dynamic = <this>.#b): Some {
     return Some(a = a, b = b)
-  }
-
-  override fun toString(): String {
-    return "Some(" + "a=" + <this>.#a + ", " + "b=" + <this>.#b + ")"
-  }
-
-  override fun hashCode(): Int {
-    var result: Int = <this>.#a.hashCode()
-    result = result.times(other = 31).plus(other = when {
-      EQEQ(arg0 = <this>.#b, arg1 = null) -> 0
-      else -> <this>.#b /*~> Any */.hashCode()
-    })
-    return result
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -55,6 +42,19 @@ data class Some {
     return true
   }
 
+  override fun hashCode(): Int {
+    var result: Int = <this>.#a.hashCode()
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#b, arg1 = null) -> 0
+      else -> <this>.#b /*~> Any */.hashCode()
+    })
+    return result
+  }
+
+  override fun toString(): String {
+    return "Some(" + "a=" + <this>.#a + ", " + "b=" + <this>.#b + ")"
+  }
+
 }
 
 fun box(): String {
@@ -62,3 +62,4 @@ fun box(): String {
   event.hashCode() /*~> Unit */
   return "OK"
 }
+

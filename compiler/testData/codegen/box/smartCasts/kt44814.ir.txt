@@ -1,10 +1,10 @@
 FILE fqName:<root> fileName:/kt44814.kt
-  CLASS CLASS name:FlyweightCapableTreeStructure modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FlyweightCapableTreeStructure
-    CONSTRUCTOR visibility:public <> () returnType:<root>.FlyweightCapableTreeStructure [primary]
+  CLASS CLASS name:ASTNode modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ASTNode
+    CONSTRUCTOR visibility:public <> () returnType:<root>.ASTNode [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FlyweightCapableTreeStructure modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ASTNode modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -17,108 +17,9 @@ FILE fqName:<root> fileName:/kt44814.kt
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:FirSourceElement modality:SEALED visibility:public superTypes:[kotlin.Any]
-    sealedSubclasses:
-      CLASS CLASS name:FirLightSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]
-      CLASS CLASS name:FirPsiSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirSourceElement
-    CONSTRUCTOR visibility:protected <> () returnType:<root>.FirSourceElement [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirSourceElement modality:SEALED visibility:public superTypes:[kotlin.Any]'
-    PROPERTY name:lighterASTNode visibility:public modality:ABSTRACT [val]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lighterASTNode> visibility:public modality:ABSTRACT <> ($this:<root>.FirSourceElement) returnType:<root>.LighterASTNode
-        correspondingProperty: PROPERTY name:lighterASTNode visibility:public modality:ABSTRACT [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.FirSourceElement
-    PROPERTY name:treeStructure visibility:public modality:ABSTRACT [val]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-treeStructure> visibility:public modality:ABSTRACT <> ($this:<root>.FirSourceElement) returnType:<root>.FlyweightCapableTreeStructure
-        correspondingProperty: PROPERTY name:treeStructure visibility:public modality:ABSTRACT [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.FirSourceElement
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:FirPsiSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirPsiSourceElement
-    CONSTRUCTOR visibility:public <> (psi:<root>.PsiElement, lighterASTNode:<root>.LighterASTNode, treeStructure:<root>.FlyweightCapableTreeStructure) returnType:<root>.FirPsiSourceElement [primary]
-      VALUE_PARAMETER name:psi index:0 type:<root>.PsiElement
-      VALUE_PARAMETER name:lighterASTNode index:1 type:<root>.LighterASTNode
-      VALUE_PARAMETER name:treeStructure index:2 type:<root>.FlyweightCapableTreeStructure
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.FirSourceElement'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirPsiSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]'
-    PROPERTY name:psi visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:psi type:<root>.PsiElement visibility:private [final]
-        EXPRESSION_BODY
-          GET_VAR 'psi: <root>.PsiElement declared in <root>.FirPsiSourceElement.<init>' type=<root>.PsiElement origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-psi> visibility:public modality:FINAL <> ($this:<root>.FirPsiSourceElement) returnType:<root>.PsiElement
-        correspondingProperty: PROPERTY name:psi visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.FirPsiSourceElement
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-psi> (): <root>.PsiElement declared in <root>.FirPsiSourceElement'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:psi type:<root>.PsiElement visibility:private [final]' type=<root>.PsiElement origin=null
-              receiver: GET_VAR '<this>: <root>.FirPsiSourceElement declared in <root>.FirPsiSourceElement.<get-psi>' type=<root>.FirPsiSourceElement origin=null
-    PROPERTY name:lighterASTNode visibility:public modality:OPEN [val]
-      overridden:
-        public abstract lighterASTNode: <root>.LighterASTNode
-      FIELD PROPERTY_BACKING_FIELD name:lighterASTNode type:<root>.LighterASTNode visibility:private [final]
-        EXPRESSION_BODY
-          GET_VAR 'lighterASTNode: <root>.LighterASTNode declared in <root>.FirPsiSourceElement.<init>' type=<root>.LighterASTNode origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lighterASTNode> visibility:public modality:OPEN <> ($this:<root>.FirPsiSourceElement) returnType:<root>.LighterASTNode
-        correspondingProperty: PROPERTY name:lighterASTNode visibility:public modality:OPEN [val]
-        overridden:
-          public abstract fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirSourceElement
-        $this: VALUE_PARAMETER name:<this> type:<root>.FirPsiSourceElement
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public open fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirPsiSourceElement'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lighterASTNode type:<root>.LighterASTNode visibility:private [final]' type=<root>.LighterASTNode origin=null
-              receiver: GET_VAR '<this>: <root>.FirPsiSourceElement declared in <root>.FirPsiSourceElement.<get-lighterASTNode>' type=<root>.FirPsiSourceElement origin=null
-    PROPERTY name:treeStructure visibility:public modality:OPEN [val]
-      overridden:
-        public abstract treeStructure: <root>.FlyweightCapableTreeStructure
-      FIELD PROPERTY_BACKING_FIELD name:treeStructure type:<root>.FlyweightCapableTreeStructure visibility:private [final]
-        EXPRESSION_BODY
-          GET_VAR 'treeStructure: <root>.FlyweightCapableTreeStructure declared in <root>.FirPsiSourceElement.<init>' type=<root>.FlyweightCapableTreeStructure origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-treeStructure> visibility:public modality:OPEN <> ($this:<root>.FirPsiSourceElement) returnType:<root>.FlyweightCapableTreeStructure
-        correspondingProperty: PROPERTY name:treeStructure visibility:public modality:OPEN [val]
-        overridden:
-          public abstract fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirSourceElement
-        $this: VALUE_PARAMETER name:<this> type:<root>.FirPsiSourceElement
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public open fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirPsiSourceElement'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:treeStructure type:<root>.FlyweightCapableTreeStructure visibility:private [final]' type=<root>.FlyweightCapableTreeStructure origin=null
-              receiver: GET_VAR '<this>: <root>.FirPsiSourceElement declared in <root>.FirPsiSourceElement.<get-treeStructure>' type=<root>.FirPsiSourceElement origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirSourceElement
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.FirSourceElement
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in <root>.FirSourceElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:FirLightSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirLightSourceElement
-    CONSTRUCTOR visibility:public <> (lighterASTNode:<root>.LighterASTNode, treeStructure:<root>.FlyweightCapableTreeStructure) returnType:<root>.FirLightSourceElement [primary]
-      VALUE_PARAMETER name:lighterASTNode index:0 type:<root>.LighterASTNode
-      VALUE_PARAMETER name:treeStructure index:1 type:<root>.FlyweightCapableTreeStructure
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.FirSourceElement'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirLightSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]'
     PROPERTY name:lighterASTNode visibility:public modality:OPEN [val]
       overridden:
         public abstract lighterASTNode: <root>.LighterASTNode
@@ -149,6 +50,12 @@ FILE fqName:<root> fileName:/kt44814.kt
           RETURN type=kotlin.Nothing from='public open fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirLightSourceElement'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:treeStructure type:<root>.FlyweightCapableTreeStructure visibility:private [final]' type=<root>.FlyweightCapableTreeStructure origin=null
               receiver: GET_VAR '<this>: <root>.FirLightSourceElement declared in <root>.FirLightSourceElement.<get-treeStructure>' type=<root>.FirLightSourceElement origin=null
+    CONSTRUCTOR visibility:public <> (lighterASTNode:<root>.LighterASTNode, treeStructure:<root>.FlyweightCapableTreeStructure) returnType:<root>.FirLightSourceElement [primary]
+      VALUE_PARAMETER name:lighterASTNode index:0 type:<root>.LighterASTNode
+      VALUE_PARAMETER name:treeStructure index:1 type:<root>.FlyweightCapableTreeStructure
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.FirSourceElement'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirLightSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirSourceElement
@@ -162,226 +69,12 @@ FILE fqName:<root> fileName:/kt44814.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.FirSourceElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:PsiElement modality:OPEN visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PsiElement
-    CONSTRUCTOR visibility:public <> () returnType:<root>.PsiElement [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PsiElement modality:OPEN visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:ASTNode modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ASTNode
-    CONSTRUCTOR visibility:public <> () returnType:<root>.ASTNode [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ASTNode modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:LighterASTNode modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.LighterASTNode
-    CONSTRUCTOR visibility:public <> (_children:kotlin.collections.List<<root>.LighterASTNode?>) returnType:<root>.LighterASTNode [primary]
-      VALUE_PARAMETER name:_children index:0 type:kotlin.collections.List<<root>.LighterASTNode?>
-        EXPRESSION_BODY
-          CALL 'public final fun emptyList <T> (): kotlin.collections.List<T of kotlin.collections.emptyList> declared in kotlin.collections' type=kotlin.collections.List<<root>.LighterASTNode?> origin=null
-            <T>: <root>.LighterASTNode?
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LighterASTNode modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    PROPERTY name:_children visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:_children type:kotlin.collections.List<<root>.LighterASTNode?> visibility:private [final]
-        EXPRESSION_BODY
-          GET_VAR '_children: kotlin.collections.List<<root>.LighterASTNode?> declared in <root>.LighterASTNode.<init>' type=kotlin.collections.List<<root>.LighterASTNode?> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_children> visibility:public modality:FINAL <> ($this:<root>.LighterASTNode) returnType:kotlin.collections.List<<root>.LighterASTNode?>
-        correspondingProperty: PROPERTY name:_children visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.LighterASTNode
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-_children> (): kotlin.collections.List<<root>.LighterASTNode?> declared in <root>.LighterASTNode'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:_children type:kotlin.collections.List<<root>.LighterASTNode?> visibility:private [final]' type=kotlin.collections.List<<root>.LighterASTNode?> origin=null
-              receiver: GET_VAR '<this>: <root>.LighterASTNode declared in <root>.LighterASTNode.<get-_children>' type=<root>.LighterASTNode origin=null
-    FUN name:getChildren visibility:public modality:FINAL <> ($this:<root>.LighterASTNode, treeStructure:<root>.FlyweightCapableTreeStructure) returnType:kotlin.collections.List<<root>.LighterASTNode?>
-      $this: VALUE_PARAMETER name:<this> type:<root>.LighterASTNode
-      VALUE_PARAMETER name:treeStructure index:0 type:<root>.FlyweightCapableTreeStructure
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun getChildren (treeStructure: <root>.FlyweightCapableTreeStructure): kotlin.collections.List<<root>.LighterASTNode?> declared in <root>.LighterASTNode'
-          CALL 'public final fun <get-_children> (): kotlin.collections.List<<root>.LighterASTNode?> declared in <root>.LighterASTNode' type=kotlin.collections.List<<root>.LighterASTNode?> origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.LighterASTNode declared in <root>.LighterASTNode.getChildren' type=<root>.LighterASTNode origin=null
-    PROPERTY name:tokenType visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:tokenType type:<root>.TokenType visibility:private [final]
-        EXPRESSION_BODY
-          CALL 'public final fun <get-MODIFIER_LIST> (): <root>.TokenType declared in <root>.TokenType.Companion' type=<root>.TokenType origin=GET_PROPERTY
-            $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.TokenType.Companion
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-tokenType> visibility:public modality:FINAL <> ($this:<root>.LighterASTNode) returnType:<root>.TokenType
-        correspondingProperty: PROPERTY name:tokenType visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.LighterASTNode
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-tokenType> (): <root>.TokenType declared in <root>.LighterASTNode'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:tokenType type:<root>.TokenType visibility:private [final]' type=<root>.TokenType origin=null
-              receiver: GET_VAR '<this>: <root>.LighterASTNode declared in <root>.LighterASTNode.<get-tokenType>' type=<root>.LighterASTNode origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:TokenType modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TokenType
-    CONSTRUCTOR visibility:public <> () returnType:<root>.TokenType [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenType modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TokenType.Companion
-      CONSTRUCTOR visibility:private <> () returnType:<root>.TokenType.Companion [primary]
-        BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]'
-      PROPERTY name:MODIFIER_LIST visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:MODIFIER_LIST type:<root>.TokenType visibility:private [final]
-          EXPRESSION_BODY
-            CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.TokenType' type=<root>.TokenType origin=null
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-MODIFIER_LIST> visibility:public modality:FINAL <> ($this:<root>.TokenType.Companion) returnType:<root>.TokenType
-          correspondingProperty: PROPERTY name:MODIFIER_LIST visibility:public modality:FINAL [val]
-          $this: VALUE_PARAMETER name:<this> type:<root>.TokenType.Companion
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-MODIFIER_LIST> (): <root>.TokenType declared in <root>.TokenType.Companion'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:MODIFIER_LIST type:<root>.TokenType visibility:private [final]' type=<root>.TokenType origin=null
-                receiver: GET_VAR '<this>: <root>.TokenType.Companion declared in <root>.TokenType.Companion.<get-MODIFIER_LIST>' type=<root>.TokenType.Companion origin=null
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-        overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-        overridden:
-          public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-        overridden:
-          public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:KtModifierKeywordToken modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KtModifierKeywordToken
-    CONSTRUCTOR visibility:public <> () returnType:<root>.KtModifierKeywordToken [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtModifierKeywordToken modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:KtModifierList modality:FINAL visibility:public superTypes:[<root>.PsiElement]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KtModifierList
-    CONSTRUCTOR visibility:public <> () returnType:<root>.KtModifierList [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.PsiElement'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtModifierList modality:FINAL visibility:public superTypes:[<root>.PsiElement]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.PsiElement
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.PsiElement
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in <root>.PsiElement
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:KtModifierListOwner modality:FINAL visibility:public superTypes:[<root>.PsiElement]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KtModifierListOwner
-    CONSTRUCTOR visibility:public <> () returnType:<root>.KtModifierListOwner [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.PsiElement'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtModifierListOwner modality:FINAL visibility:public superTypes:[<root>.PsiElement]'
-    PROPERTY name:modifierList visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:modifierList type:<root>.KtModifierList visibility:private [final]
-        EXPRESSION_BODY
-          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.KtModifierList' type=<root>.KtModifierList origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-modifierList> visibility:public modality:FINAL <> ($this:<root>.KtModifierListOwner) returnType:<root>.KtModifierList
-        correspondingProperty: PROPERTY name:modifierList visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.KtModifierListOwner
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-modifierList> (): <root>.KtModifierList declared in <root>.KtModifierListOwner'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:modifierList type:<root>.KtModifierList visibility:private [final]' type=<root>.KtModifierList origin=null
-              receiver: GET_VAR '<this>: <root>.KtModifierListOwner declared in <root>.KtModifierListOwner.<get-modifierList>' type=<root>.KtModifierListOwner origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.PsiElement
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.PsiElement
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in <root>.PsiElement
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:FirModifier modality:SEALED visibility:internal superTypes:[kotlin.Any]
     sealedSubclasses:
       CLASS CLASS name:FirLightModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.LighterASTNode>]
       CLASS CLASS name:FirPsiModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.ASTNode>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifier<Node of <root>.FirModifier>
     TYPE_PARAMETER name:Node index:0 variance: superTypes:[kotlin.Any] reified:false
-    CONSTRUCTOR visibility:protected <> (node:Node of <root>.FirModifier, token:<root>.KtModifierKeywordToken) returnType:<root>.FirModifier<Node of <root>.FirModifier> [primary]
-      VALUE_PARAMETER name:node index:0 type:Node of <root>.FirModifier
-      VALUE_PARAMETER name:token index:1 type:<root>.KtModifierKeywordToken
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirModifier modality:SEALED visibility:internal superTypes:[kotlin.Any]'
     PROPERTY name:node visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:node type:Node of <root>.FirModifier visibility:private [final]
         EXPRESSION_BODY
@@ -404,33 +97,29 @@ FILE fqName:<root> fileName:/kt44814.kt
           RETURN type=kotlin.Nothing from='public final fun <get-token> (): <root>.KtModifierKeywordToken declared in <root>.FirModifier'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:token type:<root>.KtModifierKeywordToken visibility:private [final]' type=<root>.KtModifierKeywordToken origin=null
               receiver: GET_VAR '<this>: <root>.FirModifier<Node of <root>.FirModifier> declared in <root>.FirModifier.<get-token>' type=<root>.FirModifier<Node of <root>.FirModifier> origin=null
-    CLASS CLASS name:FirPsiModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.ASTNode>]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifier.FirPsiModifier
-      CONSTRUCTOR visibility:public <> (node:<root>.ASTNode, token:<root>.KtModifierKeywordToken) returnType:<root>.FirModifier.FirPsiModifier [primary]
-        VALUE_PARAMETER name:node index:0 type:<root>.ASTNode
+    CLASS CLASS name:FirLightModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.LighterASTNode>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifier.FirLightModifier
+      PROPERTY name:tree visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:tree type:<root>.FlyweightCapableTreeStructure visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'tree: <root>.FlyweightCapableTreeStructure declared in <root>.FirModifier.FirLightModifier.<init>' type=<root>.FlyweightCapableTreeStructure origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-tree> visibility:public modality:FINAL <> ($this:<root>.FirModifier.FirLightModifier) returnType:<root>.FlyweightCapableTreeStructure
+          correspondingProperty: PROPERTY name:tree visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier.FirLightModifier
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-tree> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirModifier.FirLightModifier'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:tree type:<root>.FlyweightCapableTreeStructure visibility:private [final]' type=<root>.FlyweightCapableTreeStructure origin=null
+                receiver: GET_VAR '<this>: <root>.FirModifier.FirLightModifier declared in <root>.FirModifier.FirLightModifier.<get-tree>' type=<root>.FirModifier.FirLightModifier origin=null
+      CONSTRUCTOR visibility:public <> (node:<root>.LighterASTNode, token:<root>.KtModifierKeywordToken, tree:<root>.FlyweightCapableTreeStructure) returnType:<root>.FirModifier.FirLightModifier [primary]
+        VALUE_PARAMETER name:node index:0 type:<root>.LighterASTNode
         VALUE_PARAMETER name:token index:1 type:<root>.KtModifierKeywordToken
+        VALUE_PARAMETER name:tree index:2 type:<root>.FlyweightCapableTreeStructure
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> (node: Node of <root>.FirModifier, token: <root>.KtModifierKeywordToken) declared in <root>.FirModifier'
-            <Node>: <root>.ASTNode
-            node: GET_VAR 'node: <root>.ASTNode declared in <root>.FirModifier.FirPsiModifier.<init>' type=<root>.ASTNode origin=null
-            token: GET_VAR 'token: <root>.KtModifierKeywordToken declared in <root>.FirModifier.FirPsiModifier.<init>' type=<root>.KtModifierKeywordToken origin=null
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirPsiModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.ASTNode>]'
-      PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
-        overridden:
-          public final node: Node of <root>.FirModifier
-        FUN FAKE_OVERRIDE name:<get-node> visibility:public modality:FINAL <> ($this:<root>.FirModifier<<root>.ASTNode>) returnType:<root>.ASTNode [fake_override]
-          correspondingProperty: PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
-          overridden:
-            public final fun <get-node> (): Node of <root>.FirModifier declared in <root>.FirModifier
-          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<<root>.ASTNode>
-      PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
-        overridden:
-          public final token: <root>.KtModifierKeywordToken
-        FUN FAKE_OVERRIDE name:<get-token> visibility:public modality:FINAL <> ($this:<root>.FirModifier<<root>.ASTNode>) returnType:<root>.KtModifierKeywordToken [fake_override]
-          correspondingProperty: PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
-          overridden:
-            public final fun <get-token> (): <root>.KtModifierKeywordToken declared in <root>.FirModifier
-          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<<root>.ASTNode>
+            <Node>: <root>.LighterASTNode
+            node: GET_VAR 'node: <root>.LighterASTNode declared in <root>.FirModifier.FirLightModifier.<init>' type=<root>.LighterASTNode origin=null
+            token: GET_VAR 'token: <root>.KtModifierKeywordToken declared in <root>.FirModifier.FirLightModifier.<init>' type=<root>.KtModifierKeywordToken origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirLightModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.LighterASTNode>]'
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirModifier
@@ -444,29 +133,6 @@ FILE fqName:<root> fileName:/kt44814.kt
         overridden:
           public open fun toString (): kotlin.String declared in <root>.FirModifier
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    CLASS CLASS name:FirLightModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.LighterASTNode>]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifier.FirLightModifier
-      CONSTRUCTOR visibility:public <> (node:<root>.LighterASTNode, token:<root>.KtModifierKeywordToken, tree:<root>.FlyweightCapableTreeStructure) returnType:<root>.FirModifier.FirLightModifier [primary]
-        VALUE_PARAMETER name:node index:0 type:<root>.LighterASTNode
-        VALUE_PARAMETER name:token index:1 type:<root>.KtModifierKeywordToken
-        VALUE_PARAMETER name:tree index:2 type:<root>.FlyweightCapableTreeStructure
-        BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> (node: Node of <root>.FirModifier, token: <root>.KtModifierKeywordToken) declared in <root>.FirModifier'
-            <Node>: <root>.LighterASTNode
-            node: GET_VAR 'node: <root>.LighterASTNode declared in <root>.FirModifier.FirLightModifier.<init>' type=<root>.LighterASTNode origin=null
-            token: GET_VAR 'token: <root>.KtModifierKeywordToken declared in <root>.FirModifier.FirLightModifier.<init>' type=<root>.KtModifierKeywordToken origin=null
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirLightModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.LighterASTNode>]'
-      PROPERTY name:tree visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:tree type:<root>.FlyweightCapableTreeStructure visibility:private [final]
-          EXPRESSION_BODY
-            GET_VAR 'tree: <root>.FlyweightCapableTreeStructure declared in <root>.FirModifier.FirLightModifier.<init>' type=<root>.FlyweightCapableTreeStructure origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-tree> visibility:public modality:FINAL <> ($this:<root>.FirModifier.FirLightModifier) returnType:<root>.FlyweightCapableTreeStructure
-          correspondingProperty: PROPERTY name:tree visibility:public modality:FINAL [val]
-          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier.FirLightModifier
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-tree> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirModifier.FirLightModifier'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:tree type:<root>.FlyweightCapableTreeStructure visibility:private [final]' type=<root>.FlyweightCapableTreeStructure origin=null
-                receiver: GET_VAR '<this>: <root>.FirModifier.FirLightModifier declared in <root>.FirModifier.FirLightModifier.<get-tree>' type=<root>.FirModifier.FirLightModifier origin=null
       PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final node: Node of <root>.FirModifier
@@ -483,6 +149,17 @@ FILE fqName:<root> fileName:/kt44814.kt
           overridden:
             public final fun <get-token> (): <root>.KtModifierKeywordToken declared in <root>.FirModifier
           $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<<root>.LighterASTNode>
+    CLASS CLASS name:FirPsiModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.ASTNode>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifier.FirPsiModifier
+      CONSTRUCTOR visibility:public <> (node:<root>.ASTNode, token:<root>.KtModifierKeywordToken) returnType:<root>.FirModifier.FirPsiModifier [primary]
+        VALUE_PARAMETER name:node index:0 type:<root>.ASTNode
+        VALUE_PARAMETER name:token index:1 type:<root>.KtModifierKeywordToken
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> (node: Node of <root>.FirModifier, token: <root>.KtModifierKeywordToken) declared in <root>.FirModifier'
+            <Node>: <root>.ASTNode
+            node: GET_VAR 'node: <root>.ASTNode declared in <root>.FirModifier.FirPsiModifier.<init>' type=<root>.ASTNode origin=null
+            token: GET_VAR 'token: <root>.KtModifierKeywordToken declared in <root>.FirModifier.FirPsiModifier.<init>' type=<root>.KtModifierKeywordToken origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirPsiModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.ASTNode>]'
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirModifier
@@ -496,6 +173,28 @@ FILE fqName:<root> fileName:/kt44814.kt
         overridden:
           public open fun toString (): kotlin.String declared in <root>.FirModifier
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final node: Node of <root>.FirModifier
+        FUN FAKE_OVERRIDE name:<get-node> visibility:public modality:FINAL <> ($this:<root>.FirModifier<<root>.ASTNode>) returnType:<root>.ASTNode [fake_override]
+          correspondingProperty: PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final fun <get-node> (): Node of <root>.FirModifier declared in <root>.FirModifier
+          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<<root>.ASTNode>
+      PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final token: <root>.KtModifierKeywordToken
+        FUN FAKE_OVERRIDE name:<get-token> visibility:public modality:FINAL <> ($this:<root>.FirModifier<<root>.ASTNode>) returnType:<root>.KtModifierKeywordToken [fake_override]
+          correspondingProperty: PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final fun <get-token> (): <root>.KtModifierKeywordToken declared in <root>.FirModifier
+          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<<root>.ASTNode>
+    CONSTRUCTOR visibility:protected <> (node:Node of <root>.FirModifier, token:<root>.KtModifierKeywordToken) returnType:<root>.FirModifier<Node of <root>.FirModifier> [primary]
+      VALUE_PARAMETER name:node index:0 type:Node of <root>.FirModifier
+      VALUE_PARAMETER name:token index:1 type:<root>.KtModifierKeywordToken
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirModifier modality:SEALED visibility:internal superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -514,10 +213,6 @@ FILE fqName:<root> fileName:/kt44814.kt
       CLASS CLASS name:FirLightModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]
       CLASS CLASS name:FirPsiModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifierList
-    CONSTRUCTOR visibility:protected <> () returnType:<root>.FirModifierList [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirModifierList modality:SEALED visibility:internal superTypes:[kotlin.Any]'
     PROPERTY name:modifiers visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:modifiers type:kotlin.collections.List<<root>.FirModifier<*>> visibility:private [final]
         EXPRESSION_BODY
@@ -530,53 +225,8 @@ FILE fqName:<root> fileName:/kt44814.kt
           RETURN type=kotlin.Nothing from='public final fun <get-modifiers> (): kotlin.collections.List<<root>.FirModifier<*>> declared in <root>.FirModifierList'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:modifiers type:kotlin.collections.List<<root>.FirModifier<*>> visibility:private [final]' type=kotlin.collections.List<<root>.FirModifier<*>> origin=null
               receiver: GET_VAR '<this>: <root>.FirModifierList declared in <root>.FirModifierList.<get-modifiers>' type=<root>.FirModifierList origin=null
-    CLASS CLASS name:FirPsiModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifierList.FirPsiModifierList
-      CONSTRUCTOR visibility:public <> (modifierList:<root>.KtModifierList) returnType:<root>.FirModifierList.FirPsiModifierList [primary]
-        VALUE_PARAMETER name:modifierList index:0 type:<root>.KtModifierList
-        BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.FirModifierList'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirPsiModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]'
-      PROPERTY name:modifierList visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:modifierList type:<root>.KtModifierList visibility:private [final]
-          EXPRESSION_BODY
-            GET_VAR 'modifierList: <root>.KtModifierList declared in <root>.FirModifierList.FirPsiModifierList.<init>' type=<root>.KtModifierList origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-modifierList> visibility:public modality:FINAL <> ($this:<root>.FirModifierList.FirPsiModifierList) returnType:<root>.KtModifierList
-          correspondingProperty: PROPERTY name:modifierList visibility:public modality:FINAL [val]
-          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifierList.FirPsiModifierList
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-modifierList> (): <root>.KtModifierList declared in <root>.FirModifierList.FirPsiModifierList'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:modifierList type:<root>.KtModifierList visibility:private [final]' type=<root>.KtModifierList origin=null
-                receiver: GET_VAR '<this>: <root>.FirModifierList.FirPsiModifierList declared in <root>.FirModifierList.FirPsiModifierList.<get-modifierList>' type=<root>.FirModifierList.FirPsiModifierList origin=null
-      PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
-        overridden:
-          public final modifiers: kotlin.collections.List<<root>.FirModifier<*>>
-        FUN FAKE_OVERRIDE name:<get-modifiers> visibility:public modality:FINAL <> ($this:<root>.FirModifierList) returnType:kotlin.collections.List<<root>.FirModifier<*>> [fake_override]
-          correspondingProperty: PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
-          overridden:
-            public final fun <get-modifiers> (): kotlin.collections.List<<root>.FirModifier<*>> declared in <root>.FirModifierList
-          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifierList
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-        overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirModifierList
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-        overridden:
-          public open fun hashCode (): kotlin.Int declared in <root>.FirModifierList
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-        overridden:
-          public open fun toString (): kotlin.String declared in <root>.FirModifierList
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     CLASS CLASS name:FirLightModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifierList.FirLightModifierList
-      CONSTRUCTOR visibility:public <> (modifierList:<root>.LighterASTNode, tree:<root>.FlyweightCapableTreeStructure) returnType:<root>.FirModifierList.FirLightModifierList [primary]
-        VALUE_PARAMETER name:modifierList index:0 type:<root>.LighterASTNode
-        VALUE_PARAMETER name:tree index:1 type:<root>.FlyweightCapableTreeStructure
-        BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.FirModifierList'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirLightModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]'
       PROPERTY name:modifierList visibility:public modality:FINAL [val]
         FIELD PROPERTY_BACKING_FIELD name:modifierList type:<root>.LighterASTNode visibility:private [final]
           EXPRESSION_BODY
@@ -599,14 +249,12 @@ FILE fqName:<root> fileName:/kt44814.kt
             RETURN type=kotlin.Nothing from='public final fun <get-tree> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirModifierList.FirLightModifierList'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:tree type:<root>.FlyweightCapableTreeStructure visibility:private [final]' type=<root>.FlyweightCapableTreeStructure origin=null
                 receiver: GET_VAR '<this>: <root>.FirModifierList.FirLightModifierList declared in <root>.FirModifierList.FirLightModifierList.<get-tree>' type=<root>.FirModifierList.FirLightModifierList origin=null
-      PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
-        overridden:
-          public final modifiers: kotlin.collections.List<<root>.FirModifier<*>>
-        FUN FAKE_OVERRIDE name:<get-modifiers> visibility:public modality:FINAL <> ($this:<root>.FirModifierList) returnType:kotlin.collections.List<<root>.FirModifier<*>> [fake_override]
-          correspondingProperty: PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
-          overridden:
-            public final fun <get-modifiers> (): kotlin.collections.List<<root>.FirModifier<*>> declared in <root>.FirModifierList
-          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifierList
+      CONSTRUCTOR visibility:public <> (modifierList:<root>.LighterASTNode, tree:<root>.FlyweightCapableTreeStructure) returnType:<root>.FirModifierList.FirLightModifierList [primary]
+        VALUE_PARAMETER name:modifierList index:0 type:<root>.LighterASTNode
+        VALUE_PARAMETER name:tree index:1 type:<root>.FlyweightCapableTreeStructure
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.FirModifierList'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirLightModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]'
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirModifierList
@@ -620,12 +268,95 @@ FILE fqName:<root> fileName:/kt44814.kt
         overridden:
           public open fun toString (): kotlin.String declared in <root>.FirModifierList
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final modifiers: kotlin.collections.List<<root>.FirModifier<*>>
+        FUN FAKE_OVERRIDE name:<get-modifiers> visibility:public modality:FINAL <> ($this:<root>.FirModifierList) returnType:kotlin.collections.List<<root>.FirModifier<*>> [fake_override]
+          correspondingProperty: PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final fun <get-modifiers> (): kotlin.collections.List<<root>.FirModifier<*>> declared in <root>.FirModifierList
+          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifierList
+    CLASS CLASS name:FirPsiModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifierList.FirPsiModifierList
+      PROPERTY name:modifierList visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:modifierList type:<root>.KtModifierList visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'modifierList: <root>.KtModifierList declared in <root>.FirModifierList.FirPsiModifierList.<init>' type=<root>.KtModifierList origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-modifierList> visibility:public modality:FINAL <> ($this:<root>.FirModifierList.FirPsiModifierList) returnType:<root>.KtModifierList
+          correspondingProperty: PROPERTY name:modifierList visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifierList.FirPsiModifierList
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-modifierList> (): <root>.KtModifierList declared in <root>.FirModifierList.FirPsiModifierList'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:modifierList type:<root>.KtModifierList visibility:private [final]' type=<root>.KtModifierList origin=null
+                receiver: GET_VAR '<this>: <root>.FirModifierList.FirPsiModifierList declared in <root>.FirModifierList.FirPsiModifierList.<get-modifierList>' type=<root>.FirModifierList.FirPsiModifierList origin=null
+      CONSTRUCTOR visibility:public <> (modifierList:<root>.KtModifierList) returnType:<root>.FirModifierList.FirPsiModifierList [primary]
+        VALUE_PARAMETER name:modifierList index:0 type:<root>.KtModifierList
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.FirModifierList'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirPsiModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]'
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirModifierList
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in <root>.FirModifierList
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+        overridden:
+          public open fun toString (): kotlin.String declared in <root>.FirModifierList
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final modifiers: kotlin.collections.List<<root>.FirModifier<*>>
+        FUN FAKE_OVERRIDE name:<get-modifiers> visibility:public modality:FINAL <> ($this:<root>.FirModifierList) returnType:kotlin.collections.List<<root>.FirModifier<*>> [fake_override]
+          correspondingProperty: PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final fun <get-modifiers> (): kotlin.collections.List<<root>.FirModifier<*>> declared in <root>.FirModifierList
+          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifierList
     CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifierList.Companion
       CONSTRUCTOR visibility:private <> () returnType:<root>.FirModifierList.Companion [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]'
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN name:boxImpl visibility:public modality:FINAL <> ($this:<root>.FirModifierList.Companion) returnType:kotlin.String
+        $this: VALUE_PARAMETER name:<this> type:<root>.FirModifierList.Companion
+        BLOCK_BODY
+          VAR name:sourceElement type:<root>.FirSourceElement? [val]
+            CONSTRUCTOR_CALL 'public constructor <init> (lighterASTNode: <root>.LighterASTNode, treeStructure: <root>.FlyweightCapableTreeStructure) declared in <root>.FirLightSourceElement' type=<root>.FirLightSourceElement origin=null
+              lighterASTNode: CONSTRUCTOR_CALL 'public constructor <init> (_children: kotlin.collections.List<<root>.LighterASTNode?>) declared in <root>.LighterASTNode' type=<root>.LighterASTNode origin=null
+                _children: CALL 'public final fun listOf <T> (element: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<<root>.LighterASTNode> origin=null
+                  <T>: <root>.LighterASTNode
+                  element: CONSTRUCTOR_CALL 'public constructor <init> (_children: kotlin.collections.List<<root>.LighterASTNode?>) declared in <root>.LighterASTNode' type=<root>.LighterASTNode origin=null
+              treeStructure: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.FlyweightCapableTreeStructure' type=<root>.FlyweightCapableTreeStructure origin=null
+          VAR name:result type:<root>.FirModifierList? [val]
+            CALL 'public final fun getModifierList (): <root>.FirModifierList? declared in <root>.FirModifierList.Companion' type=<root>.FirModifierList? origin=null
+              $this: GET_VAR '<this>: <root>.FirModifierList.Companion declared in <root>.FirModifierList.Companion.boxImpl' type=<root>.FirModifierList.Companion origin=null
+              $receiver: GET_VAR 'val sourceElement: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.boxImpl' type=<root>.FirSourceElement? origin=null
+          RETURN type=kotlin.Nothing from='public final fun boxImpl (): kotlin.String declared in <root>.FirModifierList.Companion'
+            WHEN type=kotlin.String origin=IF
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.FirModifierList.FirLightModifierList
+                  GET_VAR 'val result: <root>.FirModifierList? declared in <root>.FirModifierList.Companion.boxImpl' type=<root>.FirModifierList? origin=null
+                then: CONST String type=kotlin.String value="OK"
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST String type=kotlin.String value="Fail"
       FUN name:getModifierList visibility:public modality:FINAL <> ($this:<root>.FirModifierList.Companion, $receiver:<root>.FirSourceElement?) returnType:<root>.FirModifierList?
         $this: VALUE_PARAMETER name:<this> type:<root>.FirModifierList.Companion
         $receiver: VALUE_PARAMETER name:<this> type:<root>.FirSourceElement?
@@ -732,29 +463,294 @@ FILE fqName:<root> fileName:/kt44814.kt
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'public final fun noWhenBranchMatchedException (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=null
-      FUN name:boxImpl visibility:public modality:FINAL <> ($this:<root>.FirModifierList.Companion) returnType:kotlin.String
-        $this: VALUE_PARAMETER name:<this> type:<root>.FirModifierList.Companion
+    CONSTRUCTOR visibility:protected <> () returnType:<root>.FirModifierList [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirModifierList modality:SEALED visibility:internal superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:FirPsiSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirPsiSourceElement
+    PROPERTY name:psi visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:psi type:<root>.PsiElement visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'psi: <root>.PsiElement declared in <root>.FirPsiSourceElement.<init>' type=<root>.PsiElement origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-psi> visibility:public modality:FINAL <> ($this:<root>.FirPsiSourceElement) returnType:<root>.PsiElement
+        correspondingProperty: PROPERTY name:psi visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.FirPsiSourceElement
         BLOCK_BODY
-          VAR name:sourceElement type:<root>.FirSourceElement? [val]
-            CONSTRUCTOR_CALL 'public constructor <init> (lighterASTNode: <root>.LighterASTNode, treeStructure: <root>.FlyweightCapableTreeStructure) declared in <root>.FirLightSourceElement' type=<root>.FirLightSourceElement origin=null
-              lighterASTNode: CONSTRUCTOR_CALL 'public constructor <init> (_children: kotlin.collections.List<<root>.LighterASTNode?>) declared in <root>.LighterASTNode' type=<root>.LighterASTNode origin=null
-                _children: CALL 'public final fun listOf <T> (element: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<<root>.LighterASTNode> origin=null
-                  <T>: <root>.LighterASTNode
-                  element: CONSTRUCTOR_CALL 'public constructor <init> (_children: kotlin.collections.List<<root>.LighterASTNode?>) declared in <root>.LighterASTNode' type=<root>.LighterASTNode origin=null
-              treeStructure: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.FlyweightCapableTreeStructure' type=<root>.FlyweightCapableTreeStructure origin=null
-          VAR name:result type:<root>.FirModifierList? [val]
-            CALL 'public final fun getModifierList (): <root>.FirModifierList? declared in <root>.FirModifierList.Companion' type=<root>.FirModifierList? origin=null
-              $this: GET_VAR '<this>: <root>.FirModifierList.Companion declared in <root>.FirModifierList.Companion.boxImpl' type=<root>.FirModifierList.Companion origin=null
-              $receiver: GET_VAR 'val sourceElement: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.boxImpl' type=<root>.FirSourceElement? origin=null
-          RETURN type=kotlin.Nothing from='public final fun boxImpl (): kotlin.String declared in <root>.FirModifierList.Companion'
-            WHEN type=kotlin.String origin=IF
-              BRANCH
-                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.FirModifierList.FirLightModifierList
-                  GET_VAR 'val result: <root>.FirModifierList? declared in <root>.FirModifierList.Companion.boxImpl' type=<root>.FirModifierList? origin=null
-                then: CONST String type=kotlin.String value="OK"
-              BRANCH
-                if: CONST Boolean type=kotlin.Boolean value=true
-                then: CONST String type=kotlin.String value="Fail"
+          RETURN type=kotlin.Nothing from='public final fun <get-psi> (): <root>.PsiElement declared in <root>.FirPsiSourceElement'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:psi type:<root>.PsiElement visibility:private [final]' type=<root>.PsiElement origin=null
+              receiver: GET_VAR '<this>: <root>.FirPsiSourceElement declared in <root>.FirPsiSourceElement.<get-psi>' type=<root>.FirPsiSourceElement origin=null
+    PROPERTY name:lighterASTNode visibility:public modality:OPEN [val]
+      overridden:
+        public abstract lighterASTNode: <root>.LighterASTNode
+      FIELD PROPERTY_BACKING_FIELD name:lighterASTNode type:<root>.LighterASTNode visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'lighterASTNode: <root>.LighterASTNode declared in <root>.FirPsiSourceElement.<init>' type=<root>.LighterASTNode origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lighterASTNode> visibility:public modality:OPEN <> ($this:<root>.FirPsiSourceElement) returnType:<root>.LighterASTNode
+        correspondingProperty: PROPERTY name:lighterASTNode visibility:public modality:OPEN [val]
+        overridden:
+          public abstract fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirSourceElement
+        $this: VALUE_PARAMETER name:<this> type:<root>.FirPsiSourceElement
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirPsiSourceElement'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lighterASTNode type:<root>.LighterASTNode visibility:private [final]' type=<root>.LighterASTNode origin=null
+              receiver: GET_VAR '<this>: <root>.FirPsiSourceElement declared in <root>.FirPsiSourceElement.<get-lighterASTNode>' type=<root>.FirPsiSourceElement origin=null
+    PROPERTY name:treeStructure visibility:public modality:OPEN [val]
+      overridden:
+        public abstract treeStructure: <root>.FlyweightCapableTreeStructure
+      FIELD PROPERTY_BACKING_FIELD name:treeStructure type:<root>.FlyweightCapableTreeStructure visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'treeStructure: <root>.FlyweightCapableTreeStructure declared in <root>.FirPsiSourceElement.<init>' type=<root>.FlyweightCapableTreeStructure origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-treeStructure> visibility:public modality:OPEN <> ($this:<root>.FirPsiSourceElement) returnType:<root>.FlyweightCapableTreeStructure
+        correspondingProperty: PROPERTY name:treeStructure visibility:public modality:OPEN [val]
+        overridden:
+          public abstract fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirSourceElement
+        $this: VALUE_PARAMETER name:<this> type:<root>.FirPsiSourceElement
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirPsiSourceElement'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:treeStructure type:<root>.FlyweightCapableTreeStructure visibility:private [final]' type=<root>.FlyweightCapableTreeStructure origin=null
+              receiver: GET_VAR '<this>: <root>.FirPsiSourceElement declared in <root>.FirPsiSourceElement.<get-treeStructure>' type=<root>.FirPsiSourceElement origin=null
+    CONSTRUCTOR visibility:public <> (psi:<root>.PsiElement, lighterASTNode:<root>.LighterASTNode, treeStructure:<root>.FlyweightCapableTreeStructure) returnType:<root>.FirPsiSourceElement [primary]
+      VALUE_PARAMETER name:psi index:0 type:<root>.PsiElement
+      VALUE_PARAMETER name:lighterASTNode index:1 type:<root>.LighterASTNode
+      VALUE_PARAMETER name:treeStructure index:2 type:<root>.FlyweightCapableTreeStructure
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.FirSourceElement'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirPsiSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirSourceElement
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.FirSourceElement
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.FirSourceElement
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:FirSourceElement modality:SEALED visibility:public superTypes:[kotlin.Any]
+    sealedSubclasses:
+      CLASS CLASS name:FirLightSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]
+      CLASS CLASS name:FirPsiSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirSourceElement
+    CONSTRUCTOR visibility:protected <> () returnType:<root>.FirSourceElement [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirSourceElement modality:SEALED visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY name:lighterASTNode visibility:public modality:ABSTRACT [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lighterASTNode> visibility:public modality:ABSTRACT <> ($this:<root>.FirSourceElement) returnType:<root>.LighterASTNode
+        correspondingProperty: PROPERTY name:lighterASTNode visibility:public modality:ABSTRACT [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.FirSourceElement
+    PROPERTY name:treeStructure visibility:public modality:ABSTRACT [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-treeStructure> visibility:public modality:ABSTRACT <> ($this:<root>.FirSourceElement) returnType:<root>.FlyweightCapableTreeStructure
+        correspondingProperty: PROPERTY name:treeStructure visibility:public modality:ABSTRACT [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.FirSourceElement
+  CLASS CLASS name:FlyweightCapableTreeStructure modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FlyweightCapableTreeStructure
+    CONSTRUCTOR visibility:public <> () returnType:<root>.FlyweightCapableTreeStructure [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FlyweightCapableTreeStructure modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:KtModifierKeywordToken modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KtModifierKeywordToken
+    CONSTRUCTOR visibility:public <> () returnType:<root>.KtModifierKeywordToken [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtModifierKeywordToken modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:KtModifierList modality:FINAL visibility:public superTypes:[<root>.PsiElement]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KtModifierList
+    CONSTRUCTOR visibility:public <> () returnType:<root>.KtModifierList [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.PsiElement'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtModifierList modality:FINAL visibility:public superTypes:[<root>.PsiElement]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.PsiElement
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.PsiElement
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.PsiElement
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:KtModifierListOwner modality:FINAL visibility:public superTypes:[<root>.PsiElement]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KtModifierListOwner
+    PROPERTY name:modifierList visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:modifierList type:<root>.KtModifierList visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.KtModifierList' type=<root>.KtModifierList origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-modifierList> visibility:public modality:FINAL <> ($this:<root>.KtModifierListOwner) returnType:<root>.KtModifierList
+        correspondingProperty: PROPERTY name:modifierList visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.KtModifierListOwner
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-modifierList> (): <root>.KtModifierList declared in <root>.KtModifierListOwner'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:modifierList type:<root>.KtModifierList visibility:private [final]' type=<root>.KtModifierList origin=null
+              receiver: GET_VAR '<this>: <root>.KtModifierListOwner declared in <root>.KtModifierListOwner.<get-modifierList>' type=<root>.KtModifierListOwner origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.KtModifierListOwner [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.PsiElement'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtModifierListOwner modality:FINAL visibility:public superTypes:[<root>.PsiElement]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.PsiElement
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.PsiElement
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.PsiElement
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:LighterASTNode modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.LighterASTNode
+    PROPERTY name:_children visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:_children type:kotlin.collections.List<<root>.LighterASTNode?> visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR '_children: kotlin.collections.List<<root>.LighterASTNode?> declared in <root>.LighterASTNode.<init>' type=kotlin.collections.List<<root>.LighterASTNode?> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_children> visibility:public modality:FINAL <> ($this:<root>.LighterASTNode) returnType:kotlin.collections.List<<root>.LighterASTNode?>
+        correspondingProperty: PROPERTY name:_children visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.LighterASTNode
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-_children> (): kotlin.collections.List<<root>.LighterASTNode?> declared in <root>.LighterASTNode'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:_children type:kotlin.collections.List<<root>.LighterASTNode?> visibility:private [final]' type=kotlin.collections.List<<root>.LighterASTNode?> origin=null
+              receiver: GET_VAR '<this>: <root>.LighterASTNode declared in <root>.LighterASTNode.<get-_children>' type=<root>.LighterASTNode origin=null
+    PROPERTY name:tokenType visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:tokenType type:<root>.TokenType visibility:private [final]
+        EXPRESSION_BODY
+          CALL 'public final fun <get-MODIFIER_LIST> (): <root>.TokenType declared in <root>.TokenType.Companion' type=<root>.TokenType origin=GET_PROPERTY
+            $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.TokenType.Companion
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-tokenType> visibility:public modality:FINAL <> ($this:<root>.LighterASTNode) returnType:<root>.TokenType
+        correspondingProperty: PROPERTY name:tokenType visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.LighterASTNode
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-tokenType> (): <root>.TokenType declared in <root>.LighterASTNode'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:tokenType type:<root>.TokenType visibility:private [final]' type=<root>.TokenType origin=null
+              receiver: GET_VAR '<this>: <root>.LighterASTNode declared in <root>.LighterASTNode.<get-tokenType>' type=<root>.LighterASTNode origin=null
+    CONSTRUCTOR visibility:public <> (_children:kotlin.collections.List<<root>.LighterASTNode?>) returnType:<root>.LighterASTNode [primary]
+      VALUE_PARAMETER name:_children index:0 type:kotlin.collections.List<<root>.LighterASTNode?>
+        EXPRESSION_BODY
+          CALL 'public final fun emptyList <T> (): kotlin.collections.List<T of kotlin.collections.emptyList> declared in kotlin.collections' type=kotlin.collections.List<<root>.LighterASTNode?> origin=null
+            <T>: <root>.LighterASTNode?
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LighterASTNode modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:getChildren visibility:public modality:FINAL <> ($this:<root>.LighterASTNode, treeStructure:<root>.FlyweightCapableTreeStructure) returnType:kotlin.collections.List<<root>.LighterASTNode?>
+      $this: VALUE_PARAMETER name:<this> type:<root>.LighterASTNode
+      VALUE_PARAMETER name:treeStructure index:0 type:<root>.FlyweightCapableTreeStructure
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun getChildren (treeStructure: <root>.FlyweightCapableTreeStructure): kotlin.collections.List<<root>.LighterASTNode?> declared in <root>.LighterASTNode'
+          CALL 'public final fun <get-_children> (): kotlin.collections.List<<root>.LighterASTNode?> declared in <root>.LighterASTNode' type=kotlin.collections.List<<root>.LighterASTNode?> origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.LighterASTNode declared in <root>.LighterASTNode.getChildren' type=<root>.LighterASTNode origin=null
+  CLASS CLASS name:PsiElement modality:OPEN visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PsiElement
+    CONSTRUCTOR visibility:public <> () returnType:<root>.PsiElement [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PsiElement modality:OPEN visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:TokenType modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TokenType
+    CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TokenType.Companion
+      PROPERTY name:MODIFIER_LIST visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:MODIFIER_LIST type:<root>.TokenType visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.TokenType' type=<root>.TokenType origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-MODIFIER_LIST> visibility:public modality:FINAL <> ($this:<root>.TokenType.Companion) returnType:<root>.TokenType
+          correspondingProperty: PROPERTY name:MODIFIER_LIST visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.TokenType.Companion
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-MODIFIER_LIST> (): <root>.TokenType declared in <root>.TokenType.Companion'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:MODIFIER_LIST type:<root>.TokenType visibility:private [final]' type=<root>.TokenType origin=null
+                receiver: GET_VAR '<this>: <root>.TokenType.Companion declared in <root>.TokenType.Companion.<get-MODIFIER_LIST>' type=<root>.TokenType.Companion origin=null
+      CONSTRUCTOR visibility:private <> () returnType:<root>.TokenType.Companion [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]'
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -768,6 +764,10 @@ FILE fqName:<root> fileName:/kt44814.kt
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    CONSTRUCTOR visibility:public <> () returnType:<root>.TokenType [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenType modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

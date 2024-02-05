@@ -1,25 +1,7 @@
 FILE fqName:<root> fileName:/samConversionInGenericConstructorCall.kt
-  FUN name:test3 visibility:public modality:FINAL <> (f1:kotlin.Function1<kotlin.String, kotlin.String>, f2:kotlin.Function1<kotlin.Int, kotlin.String>) returnType:<root>.C.D<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?>
-    VALUE_PARAMETER name:f1 index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
-    VALUE_PARAMETER name:f2 index:1 type:kotlin.Function1<kotlin.Int, kotlin.String>
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test3 (f1: kotlin.Function1<kotlin.String, kotlin.String>, f2: kotlin.Function1<kotlin.Int, kotlin.String>): <root>.C.D<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?> declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> (jxy: @[FlexibleNullability] <root>.J<@[FlexibleNullability] X of <root>.C?, @[FlexibleNullability] Y of <root>.C.D?>?) declared in <root>.C.D' type=<root>.C.D<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?> origin=null
-          <class: Y>: @[FlexibleNullability] kotlin.Int?
-          $outer: CONSTRUCTOR_CALL 'public constructor <init> (jxx: @[FlexibleNullability] <root>.J<@[FlexibleNullability] X of <root>.C?, @[FlexibleNullability] X of <root>.C?>?) declared in <root>.C' type=<root>.C<@[FlexibleNullability] kotlin.String?> origin=null
-            <class: X>: @[FlexibleNullability] kotlin.String?
-            jxx: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>?
-              GET_VAR 'f1: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test3' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
-          jxy: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.Int?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.Int?>?
-            GET_VAR 'f2: kotlin.Function1<kotlin.Int, kotlin.String> declared in <root>.test3' type=kotlin.Function1<kotlin.Int, kotlin.String> origin=null
   CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer<T1 of <root>.Outer>
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (j11:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer>) returnType:<root>.Outer<T1 of <root>.Outer> [primary]
-      VALUE_PARAMETER name:j11 index:0 type:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer>
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:j11 visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:j11 type:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer> visibility:private [final]
         EXPRESSION_BODY
@@ -34,12 +16,6 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall.kt
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer>
       TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?] reified:false
-      CONSTRUCTOR visibility:public <> ($this:<root>.Outer<T1 of <root>.Outer>, j12:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner>) returnType:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer> [primary]
-        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer<T1 of <root>.Outer>
-        VALUE_PARAMETER name:j12 index:0 type:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner>
-        BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
       PROPERTY name:j12 visibility:public modality:FINAL [val]
         FIELD PROPERTY_BACKING_FIELD name:j12 type:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> visibility:private [final]
           EXPRESSION_BODY
@@ -51,6 +27,12 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall.kt
             RETURN type=kotlin.Nothing from='public final fun <get-j12> (): <root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> declared in <root>.Outer.Inner'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j12 type:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> visibility:private [final]' type=<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> origin=null
                 receiver: GET_VAR '<this>: <root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer> declared in <root>.Outer.Inner.<get-j12>' type=<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer> origin=null
+      CONSTRUCTOR visibility:public <> ($this:<root>.Outer<T1 of <root>.Outer>, j12:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner>) returnType:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer> [primary]
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer<T1 of <root>.Outer>
+        VALUE_PARAMETER name:j12 index:0 type:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -64,6 +46,11 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall.kt
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    CONSTRUCTOR visibility:public <> (j11:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer>) returnType:<root>.Outer<T1 of <root>.Outer> [primary]
+      VALUE_PARAMETER name:j11 index:0 type:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer>
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -77,6 +64,19 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:test3 visibility:public modality:FINAL <> (f1:kotlin.Function1<kotlin.String, kotlin.String>, f2:kotlin.Function1<kotlin.Int, kotlin.String>) returnType:<root>.C.D<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?>
+    VALUE_PARAMETER name:f1 index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
+    VALUE_PARAMETER name:f2 index:1 type:kotlin.Function1<kotlin.Int, kotlin.String>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test3 (f1: kotlin.Function1<kotlin.String, kotlin.String>, f2: kotlin.Function1<kotlin.Int, kotlin.String>): <root>.C.D<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> (jxy: @[FlexibleNullability] <root>.J<@[FlexibleNullability] X of <root>.C?, @[FlexibleNullability] Y of <root>.C.D?>?) declared in <root>.C.D' type=<root>.C.D<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?> origin=null
+          <class: Y>: @[FlexibleNullability] kotlin.Int?
+          $outer: CONSTRUCTOR_CALL 'public constructor <init> (jxx: @[FlexibleNullability] <root>.J<@[FlexibleNullability] X of <root>.C?, @[FlexibleNullability] X of <root>.C?>?) declared in <root>.C' type=<root>.C<@[FlexibleNullability] kotlin.String?> origin=null
+            <class: X>: @[FlexibleNullability] kotlin.String?
+            jxx: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>?
+              GET_VAR 'f1: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test3' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
+          jxy: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.Int?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.Int?>?
+            GET_VAR 'f2: kotlin.Function1<kotlin.Int, kotlin.String> declared in <root>.test3' type=kotlin.Function1<kotlin.Int, kotlin.String> origin=null
   FUN name:test4 visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.String>, g:kotlin.Function1<kotlin.Any, kotlin.String>) returnType:<root>.Outer.Inner<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.String?>
     VALUE_PARAMETER name:f index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
     VALUE_PARAMETER name:g index:1 type:kotlin.Function1<kotlin.Any, kotlin.String>

@@ -11,10 +11,6 @@ var d2: dynamic
   get
   set
 
-fun withDynamic(d: dynamic): dynamic {
-  return d
-}
-
 fun test1(s: String) {
   withDynamic(d = s)
 }
@@ -38,5 +34,9 @@ fun test5(a: Any, s: String, na: Any?) {
   <set-d2>(<set-?> = a)
   <set-d2>(<set-?> = na)
   <set-d2>(<set-?> = s)
+}
+
+fun withDynamic(d: dynamic): dynamic {
+  return d
 }
 

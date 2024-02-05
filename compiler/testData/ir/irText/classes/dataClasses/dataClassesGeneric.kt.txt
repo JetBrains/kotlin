@@ -1,13 +1,13 @@
 data class Test1<T : Any?> {
+  val x: T
+    field = x
+    get
+
   constructor(x: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val x: T
-    field = x
-    get
 
   operator fun component1(): T {
     return <this>.#x
@@ -15,17 +15,6 @@ data class Test1<T : Any?> {
 
   fun copy(x: T = <this>.#x): Test1<T> {
     return Test1<T>(x = x)
-  }
-
-  override fun toString(): String {
-    return "Test1(" + "x=" + <this>.#x + ")"
-  }
-
-  override fun hashCode(): Int {
-    return when {
-      EQEQ(arg0 = <this>.#x, arg1 = null) -> 0
-      else -> <this>.#x.hashCode()
-    }
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -42,18 +31,29 @@ data class Test1<T : Any?> {
     return true
   }
 
+  override fun hashCode(): Int {
+    return when {
+      EQEQ(arg0 = <this>.#x, arg1 = null) -> 0
+      else -> <this>.#x.hashCode()
+    }
+  }
+
+  override fun toString(): String {
+    return "Test1(" + "x=" + <this>.#x + ")"
+  }
+
 }
 
 data class Test2<T : Number> {
+  val x: T
+    field = x
+    get
+
   constructor(x: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val x: T
-    field = x
-    get
 
   operator fun component1(): T {
     return <this>.#x
@@ -61,14 +61,6 @@ data class Test2<T : Number> {
 
   fun copy(x: T = <this>.#x): Test2<T> {
     return Test2<T>(x = x)
-  }
-
-  override fun toString(): String {
-    return "Test2(" + "x=" + <this>.#x + ")"
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#x.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -85,18 +77,26 @@ data class Test2<T : Number> {
     return true
   }
 
+  override fun hashCode(): Int {
+    return <this>.#x.hashCode()
+  }
+
+  override fun toString(): String {
+    return "Test2(" + "x=" + <this>.#x + ")"
+  }
+
 }
 
 data class Test3<T : Any?> {
+  val x: List<T>
+    field = x
+    get
+
   constructor(x: List<T>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val x: List<T>
-    field = x
-    get
 
   operator fun component1(): List<T> {
     return <this>.#x
@@ -104,14 +104,6 @@ data class Test3<T : Any?> {
 
   fun copy(x: List<T> = <this>.#x): Test3<T> {
     return Test3<T>(x = x)
-  }
-
-  override fun toString(): String {
-    return "Test3(" + "x=" + <this>.#x + ")"
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#x.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -128,18 +120,26 @@ data class Test3<T : Any?> {
     return true
   }
 
+  override fun hashCode(): Int {
+    return <this>.#x.hashCode()
+  }
+
+  override fun toString(): String {
+    return "Test3(" + "x=" + <this>.#x + ")"
+  }
+
 }
 
 data class Test4 {
+  val x: List<String>
+    field = x
+    get
+
   constructor(x: List<String>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val x: List<String>
-    field = x
-    get
 
   operator fun component1(): List<String> {
     return <this>.#x
@@ -147,14 +147,6 @@ data class Test4 {
 
   fun copy(x: List<String> = <this>.#x): Test4 {
     return Test4(x = x)
-  }
-
-  override fun toString(): String {
-    return "Test4(" + "x=" + <this>.#x + ")"
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#x.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -171,4 +163,13 @@ data class Test4 {
     return true
   }
 
+  override fun hashCode(): Int {
+    return <this>.#x.hashCode()
+  }
+
+  override fun toString(): String {
+    return "Test4(" + "x=" + <this>.#x + ")"
+  }
+
 }
+

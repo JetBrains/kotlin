@@ -1,10 +1,4 @@
 class XAlign {
-  constructor(bits: Long) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val bits: Long
     field = bits
     get
@@ -13,4 +7,11 @@ class XAlign {
     this/*XAlign*/(bits = 1.shl(bitCount = 1).toLong())
   }
 
+  constructor(bits: Long) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+

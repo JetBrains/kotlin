@@ -1,10 +1,19 @@
-expect sealed class Ops {
-  protected expect constructor() /* primary */
+expect class Add : Ops {
+  expect constructor() /* primary */
 
 }
 
-expect class Add : Ops {
-  expect constructor() /* primary */
+class Add : Ops {
+  constructor() /* primary */ {
+    super/*Ops*/()
+    /* <init>() */
+
+  }
+
+}
+
+expect sealed class Ops {
+  protected expect constructor() /* primary */
 
 }
 
@@ -17,11 +26,3 @@ sealed class Ops {
 
 }
 
-class Add : Ops {
-  constructor() /* primary */ {
-    super/*Ops*/()
-    /* <init>() */
-
-  }
-
-}

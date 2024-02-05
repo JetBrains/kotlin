@@ -1,12 +1,3 @@
-interface II {
-  fun foo() {
-  }
-
-}
-
-interface I : II {
-}
-
 abstract class C : I {
   constructor() /* primary */ {
     super/*Any*/()
@@ -39,6 +30,16 @@ class E : D {
 
 }
 
+interface I : II {
+}
+
+interface II {
+  fun foo() {
+  }
+
+}
+
 fun foo(x: I) {
   x.foo()
 }
+

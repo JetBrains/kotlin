@@ -5,10 +5,6 @@ FILE fqName:<root> fileName:/kt45853.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
-    PROPERTY name:a visibility:public modality:ABSTRACT [val]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.A) returnType:<root>.A?
-        correspondingProperty: PROPERTY name:a visibility:public modality:ABSTRACT [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.A
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -22,20 +18,16 @@ FILE fqName:<root> fileName:/kt45853.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY name:a visibility:public modality:ABSTRACT [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.A) returnType:<root>.A?
+        correspondingProperty: PROPERTY name:a visibility:public modality:ABSTRACT [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.AX]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.AX'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.AX]'
-    FUN name:getA visibility:public modality:OPEN <> ($this:<root>.B) returnType:<root>.X?
-      overridden:
-        public abstract fun getA (): @[FlexibleNullability] <root>.X? declared in <root>.AX
-      $this: VALUE_PARAMETER name:<this> type:<root>.B
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun getA (): <root>.X? declared in <root>.B'
-          CALL 'public open fun <get-a> (): @[EnhancedNullability] <root>.AX? declared in <root>.AX' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:AX modality:ABSTRACT visibility:public superTypes:[<root>.A; <root>.X]' type=@[EnhancedNullability] <root>.AX? origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.B declared in <root>.B.getA' type=<root>.B origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.AX
@@ -49,6 +41,14 @@ FILE fqName:<root> fileName:/kt45853.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.AX
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:getA visibility:public modality:OPEN <> ($this:<root>.B) returnType:<root>.X?
+      overridden:
+        public abstract fun getA (): @[FlexibleNullability] <root>.X? declared in <root>.AX
+      $this: VALUE_PARAMETER name:<this> type:<root>.B
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun getA (): <root>.X? declared in <root>.B'
+          CALL 'public open fun <get-a> (): @[EnhancedNullability] <root>.AX? declared in <root>.AX' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:AX modality:ABSTRACT visibility:public superTypes:[<root>.A; <root>.X]' type=@[EnhancedNullability] <root>.AX? origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.B declared in <root>.B.getA' type=<root>.B origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open a: @[EnhancedNullability] <root>.AX?

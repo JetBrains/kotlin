@@ -1,21 +1,17 @@
+val equals: KFunction2<Z, @ParameterName(name = "other") Any?, Boolean>
+  field = Z::equals
+  get
+
 @JvmInline
 value class Z {
-  constructor(s: String) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val s: String
     field = s
     get
 
-  override fun toString(): String {
-    return "Z(" + "s=" + <this>.#s + ")"
-  }
+  constructor(s: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
 
-  override fun hashCode(): Int {
-    return <this>.#s.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -29,8 +25,13 @@ value class Z {
     return true
   }
 
+  override fun hashCode(): Int {
+    return <this>.#s.hashCode()
+  }
+
+  override fun toString(): String {
+    return "Z(" + "s=" + <this>.#s + ")"
+  }
+
 }
 
-val equals: KFunction2<Z, @ParameterName(name = "other") Any?, Boolean>
-  field = Z::equals
-  get

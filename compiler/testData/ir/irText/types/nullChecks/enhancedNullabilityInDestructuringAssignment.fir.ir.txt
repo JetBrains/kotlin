@@ -1,16 +1,6 @@
 FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
-  FUN name:use visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:kotlin.Unit
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any
-    VALUE_PARAMETER name:y index:1 type:kotlin.Any
-    BLOCK_BODY
   CLASS CLASS name:P modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.P
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.Int) returnType:<root>.P [primary]
-      VALUE_PARAMETER name:x index:0 type:kotlin.Int
-      VALUE_PARAMETER name:y index:1 type:kotlin.Int
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:P modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -33,18 +23,12 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.P'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.P declared in <root>.P.<get-y>' type=<root>.P origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int [operator]
-      $this: VALUE_PARAMETER name:<this> type:<root>.P
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.Int) returnType:<root>.P [primary]
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+      VALUE_PARAMETER name:y index:1 type:kotlin.Int
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.P'
-          CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.P declared in <root>.P.component1' type=<root>.P origin=null
-    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int [operator]
-      $this: VALUE_PARAMETER name:<this> type:<root>.P
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int declared in <root>.P'
-          CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.P declared in <root>.P.component2' type=<root>.P origin=null
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:P modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -58,16 +42,22 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.P
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.P'
+          CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.P declared in <root>.P.component1' type=<root>.P origin=null
+    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.P
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int declared in <root>.P'
+          CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.P declared in <root>.P.component2' type=<root>.P origin=null
   CLASS CLASS name:Q modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:false
     TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (x:T1 of <root>.Q, y:T2 of <root>.Q) returnType:<root>.Q<T1 of <root>.Q, T2 of <root>.Q> [primary]
-      VALUE_PARAMETER name:x index:0 type:T1 of <root>.Q
-      VALUE_PARAMETER name:y index:1 type:T2 of <root>.Q
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Q modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:T1 of <root>.Q visibility:private [final]
         EXPRESSION_BODY
@@ -90,18 +80,12 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): T2 of <root>.Q declared in <root>.Q'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:T2 of <root>.Q visibility:private [final]' type=T2 of <root>.Q origin=null
               receiver: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.<get-y>' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>) returnType:T1 of <root>.Q [operator]
-      $this: VALUE_PARAMETER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
+    CONSTRUCTOR visibility:public <> (x:T1 of <root>.Q, y:T2 of <root>.Q) returnType:<root>.Q<T1 of <root>.Q, T2 of <root>.Q> [primary]
+      VALUE_PARAMETER name:x index:0 type:T1 of <root>.Q
+      VALUE_PARAMETER name:y index:1 type:T2 of <root>.Q
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component1 (): T1 of <root>.Q declared in <root>.Q'
-          CALL 'public final fun <get-x> (): T1 of <root>.Q declared in <root>.Q' type=T1 of <root>.Q origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.component1' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=null
-    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>) returnType:T2 of <root>.Q [operator]
-      $this: VALUE_PARAMETER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component2 (): T2 of <root>.Q declared in <root>.Q'
-          CALL 'public final fun <get-y> (): T2 of <root>.Q declared in <root>.Q' type=T2 of <root>.Q origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.component2' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=null
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Q modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -115,6 +99,18 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>) returnType:T1 of <root>.Q [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): T1 of <root>.Q declared in <root>.Q'
+          CALL 'public final fun <get-x> (): T1 of <root>.Q declared in <root>.Q' type=T1 of <root>.Q origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.component1' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=null
+    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>) returnType:T2 of <root>.Q [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component2 (): T2 of <root>.Q declared in <root>.Q'
+          CALL 'public final fun <get-y> (): T2 of <root>.Q declared in <root>.Q' type=T2 of <root>.Q origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.component2' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=null
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.P [val]
@@ -194,3 +190,7 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
       CALL 'public final fun use (x: kotlin.Any, y: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         x: GET_VAR 'val x: kotlin.Int declared in <root>.test4' type=kotlin.Int origin=null
         y: GET_VAR 'val y: @[EnhancedNullability] @[NotNull(value = <null>)] <root>.P declared in <root>.test4' type=@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P origin=null
+  FUN name:use visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:kotlin.Unit
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any
+    BLOCK_BODY

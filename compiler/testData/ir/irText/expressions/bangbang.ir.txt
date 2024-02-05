@@ -33,9 +33,6 @@ FILE fqName:<root> fileName:/bangbang.kt
         CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=X of <root>.test3 origin=EXCLEXCL
           <T0>: X of <root>.test3
           arg0: GET_VAR 'a: X of <root>.test3 declared in <root>.test3' type=X of <root>.test3 origin=null
-  FUN name:useString visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
-    VALUE_PARAMETER name:s index:0 type:kotlin.String
-    BLOCK_BODY
   FUN name:test4 visibility:public modality:FINAL <X> (a:X of <root>.test4) returnType:kotlin.Unit
     TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:a index:0 type:X of <root>.test4
@@ -57,3 +54,6 @@ FILE fqName:<root> fileName:/bangbang.kt
               CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=X of <root>.test4 origin=EXCLEXCL
                 <T0>: X of <root>.test4
                 arg0: GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null
+  FUN name:useString visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
+    VALUE_PARAMETER name:s index:0 type:kotlin.String
+    BLOCK_BODY

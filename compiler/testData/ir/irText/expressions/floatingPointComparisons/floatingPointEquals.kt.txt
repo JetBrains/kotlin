@@ -2,21 +2,67 @@ fun test1d(x: Double, y: Double): Boolean {
   return x.equals(other = y)
 }
 
+fun test1f(x: Float, y: Float): Boolean {
+  return x.equals(other = y)
+}
+
+fun Float.test1fr(x: Float): Boolean {
+  return <this>.equals(other = x)
+}
+
 fun test2d(x: Double, y: Double?): Boolean {
   return x.equals(other = y)
+}
+
+fun test2f(x: Float, y: Float?): Boolean {
+  return x.equals(other = y)
+}
+
+fun Float.test2fr(x: Float?): Boolean {
+  return <this>.equals(other = x)
 }
 
 fun test3d(x: Double, y: Any): Boolean {
   return x.equals(other = y)
 }
 
+fun test3f(x: Float, y: Any): Boolean {
+  return x.equals(other = y)
+}
+
+fun Float.test3fr(x: Any): Boolean {
+  return <this>.equals(other = x)
+}
+
 fun test4d(x: Double, y: Number): Boolean {
   return x.equals(other = y)
+}
+
+fun test4f(x: Float, y: Number): Boolean {
+  return x.equals(other = y)
+}
+
+fun Float.test4fr(x: Number): Boolean {
+  return <this>.equals(other = x)
 }
 
 fun test5d(x: Double, y: Any): Boolean {
   return when {
     y is Double -> x.equals(other = y)
+    else -> false
+  }
+}
+
+fun test5f(x: Float, y: Any): Boolean {
+  return when {
+    y is Float -> x.equals(other = y)
+    else -> false
+  }
+}
+
+fun Float.test5fr(x: Any): Boolean {
+  return when {
+    x is Float -> <this>.equals(other = x)
     else -> false
   }
 }
@@ -31,33 +77,27 @@ fun test6d(x: Any, y: Any): Boolean {
   }
 }
 
-fun test1f(x: Float, y: Float): Boolean {
-  return x.equals(other = y)
-}
-
-fun test2f(x: Float, y: Float?): Boolean {
-  return x.equals(other = y)
-}
-
-fun test3f(x: Float, y: Any): Boolean {
-  return x.equals(other = y)
-}
-
-fun test4f(x: Float, y: Number): Boolean {
-  return x.equals(other = y)
-}
-
-fun test5f(x: Float, y: Any): Boolean {
-  return when {
-    y is Float -> x.equals(other = y)
-    else -> false
-  }
-}
-
 fun test6f(x: Any, y: Any): Boolean {
   return when {
     when {
       x is Float -> y is Float
+      else -> false
+    } -> x.equals(other = y)
+    else -> false
+  }
+}
+
+fun Float.test6fr(x: Any): Boolean {
+  return when {
+    x is Double -> <this>.equals(other = x)
+    else -> false
+  }
+}
+
+fun testDF(x: Any, y: Any): Boolean {
+  return when {
+    when {
+      x is Double -> y is Float
       else -> false
     } -> x.equals(other = y)
     else -> false
@@ -74,42 +114,3 @@ fun testFD(x: Any, y: Any): Boolean {
   }
 }
 
-fun testDF(x: Any, y: Any): Boolean {
-  return when {
-    when {
-      x is Double -> y is Float
-      else -> false
-    } -> x.equals(other = y)
-    else -> false
-  }
-}
-
-fun Float.test1fr(x: Float): Boolean {
-  return <this>.equals(other = x)
-}
-
-fun Float.test2fr(x: Float?): Boolean {
-  return <this>.equals(other = x)
-}
-
-fun Float.test3fr(x: Any): Boolean {
-  return <this>.equals(other = x)
-}
-
-fun Float.test4fr(x: Number): Boolean {
-  return <this>.equals(other = x)
-}
-
-fun Float.test5fr(x: Any): Boolean {
-  return when {
-    x is Float -> <this>.equals(other = x)
-    else -> false
-  }
-}
-
-fun Float.test6fr(x: Any): Boolean {
-  return when {
-    x is Double -> <this>.equals(other = x)
-    else -> false
-  }
-}

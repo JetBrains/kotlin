@@ -1,4 +1,37 @@
 FILE fqName:<root> fileName:/funWithDefaultParametersAsKCallableStar.kt
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'x: kotlin.String declared in <root>.C.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.String declared in <root>.C'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-x>' type=<root>.C origin=null
+    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:<root>.C [primary]
+      VALUE_PARAMETER name:x index:0 type:kotlin.String
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value=""
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:defaultsOnly visibility:public modality:FINAL <> (x:kotlin.String) returnType:kotlin.Int
     VALUE_PARAMETER name:x index:0 type:kotlin.String
       EXPRESSION_BODY
@@ -14,47 +47,10 @@ FILE fqName:<root> fileName:/funWithDefaultParametersAsKCallableStar.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun regularAndDefaults (x1: kotlin.String, x2: kotlin.String): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=1
-  FUN name:varargs visibility:public modality:FINAL <> (xs:kotlin.Array<out kotlin.String>) returnType:kotlin.Int
-    VALUE_PARAMETER name:xs index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]
+  FUN name:testCtorStar visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun varargs (vararg xs: kotlin.String): kotlin.Int declared in <root>'
-        CONST Int type=kotlin.Int value=1
-  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
-    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:<root>.C [primary]
-      VALUE_PARAMETER name:x index:0 type:kotlin.String
-        EXPRESSION_BODY
-          CONST String type=kotlin.String value=""
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]
-        EXPRESSION_BODY
-          GET_VAR 'x: kotlin.String declared in <root>.C.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.String
-        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.C
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.String declared in <root>.C'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-x>' type=<root>.C origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:useKCallableStar visibility:public modality:FINAL <> (fn:kotlin.reflect.KCallable<*>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:fn index:0 type:kotlin.reflect.KCallable<*>
-    BLOCK_BODY
+      CALL 'public final fun useKCallableStar (fn: kotlin.reflect.KCallable<*>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        fn: FUNCTION_REFERENCE 'public constructor <init> (x: kotlin.String) declared in <root>.C' type=kotlin.reflect.KFunction1<kotlin.String, <root>.C> origin=null reflectionTarget=<same>
   FUN name:testDefaultsOnlyStar visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useKCallableStar (fn: kotlin.reflect.KCallable<*>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -67,7 +63,11 @@ FILE fqName:<root> fileName:/funWithDefaultParametersAsKCallableStar.kt
     BLOCK_BODY
       CALL 'public final fun useKCallableStar (fn: kotlin.reflect.KCallable<*>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         fn: FUNCTION_REFERENCE 'public final fun varargs (vararg xs: kotlin.String): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Array<out kotlin.String>, kotlin.Int> origin=null reflectionTarget=<same>
-  FUN name:testCtorStar visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:useKCallableStar visibility:public modality:FINAL <> (fn:kotlin.reflect.KCallable<*>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:kotlin.reflect.KCallable<*>
     BLOCK_BODY
-      CALL 'public final fun useKCallableStar (fn: kotlin.reflect.KCallable<*>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        fn: FUNCTION_REFERENCE 'public constructor <init> (x: kotlin.String) declared in <root>.C' type=kotlin.reflect.KFunction1<kotlin.String, <root>.C> origin=null reflectionTarget=<same>
+  FUN name:varargs visibility:public modality:FINAL <> (xs:kotlin.Array<out kotlin.String>) returnType:kotlin.Int
+    VALUE_PARAMETER name:xs index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun varargs (vararg xs: kotlin.String): kotlin.Int declared in <root>'
+        CONST Int type=kotlin.Int value=1

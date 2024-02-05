@@ -1,17 +1,4 @@
 FILE fqName:<root> fileName:/contextualFunctionConversion.kt
-  FUN name:withContext visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.String>) returnType:kotlin.String
-    VALUE_PARAMETER name:f index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun withContext (f: kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in <root>'
-        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.String origin=INVOKE
-          $this: GET_VAR 'f: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.withContext' type=kotlin.Function1<kotlin.String, kotlin.String> origin=VARIABLE_AS_FUNCTION
-          p1: CONST String type=kotlin.String value="OK"
-  FUN name:callWithContext visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.String>) returnType:kotlin.String
-    VALUE_PARAMETER name:f index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun callWithContext (f: kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in <root>'
-        CALL 'public final fun withContext (f: kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
-          f: GET_VAR 'f: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.callWithContext' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
@@ -22,3 +9,16 @@ FILE fqName:<root> fileName:/contextualFunctionConversion.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (s: kotlin.String): kotlin.String declared in <root>.box'
                   GET_VAR 's: kotlin.String declared in <root>.box.<anonymous>' type=kotlin.String origin=null
+  FUN name:callWithContext visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.String>) returnType:kotlin.String
+    VALUE_PARAMETER name:f index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun callWithContext (f: kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in <root>'
+        CALL 'public final fun withContext (f: kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          f: GET_VAR 'f: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.callWithContext' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
+  FUN name:withContext visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.String>) returnType:kotlin.String
+    VALUE_PARAMETER name:f index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun withContext (f: kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in <root>'
+        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.String origin=INVOKE
+          $this: GET_VAR 'f: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.withContext' type=kotlin.Function1<kotlin.String, kotlin.String> origin=VARIABLE_AS_FUNCTION
+          p1: CONST String type=kotlin.String value="OK"

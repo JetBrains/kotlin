@@ -1,21 +1,4 @@
 FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
-  FUN name:useSuspend visibility:public modality:FINAL <> (sfn:kotlin.coroutines.SuspendFunction0<kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:sfn index:0 type:kotlin.coroutines.SuspendFunction0<kotlin.Unit>
-    BLOCK_BODY
-  FUN name:useSuspendExt visibility:public modality:FINAL <> (sfn:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:sfn index:0 type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>
-    BLOCK_BODY
-  FUN name:useSuspendArg visibility:public modality:FINAL <> (sfn:kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:sfn index:0 type:kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>
-    BLOCK_BODY
-  FUN name:useSuspendArgT visibility:public modality:FINAL <T> (sfn:kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit>) returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:sfn index:0 type:kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit>
-    BLOCK_BODY
-  FUN name:useSuspendExtT visibility:public modality:FINAL <T> (sfn:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit>) returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:sfn index:0 type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit>
-    BLOCK_BODY
   FUN name:produceFun visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun produceFun (): kotlin.Function0<kotlin.Unit> declared in <root>'
@@ -24,29 +7,6 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.produceFun'
                 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-  FUN name:testSimple visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Unit>
-    BLOCK_BODY
-      CALL 'public final fun useSuspend (sfn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        sfn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION
-          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [suspend]
-            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<kotlin.Unit>
-            BLOCK_BODY
-              CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
-                $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.testSimple.suspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit declared in <root>.testSimple' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
-            $receiver: GET_VAR 'fn: kotlin.Function0<kotlin.Unit> declared in <root>.testSimple' type=kotlin.Function0<kotlin.Unit> origin=null
-  FUN name:testSimpleNonVal visibility:public modality:FINAL <> () returnType:kotlin.Unit
-    BLOCK_BODY
-      CALL 'public final fun useSuspend (sfn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        sfn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION
-          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [suspend]
-            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<kotlin.Unit>
-            BLOCK_BODY
-              CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
-                $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.testSimpleNonVal.suspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit declared in <root>.testSimpleNonVal' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
-            $receiver: CALL 'public final fun produceFun (): kotlin.Function0<kotlin.Unit> declared in <root>' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:testExtAsExt visibility:public modality:FINAL <> (fn:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>
     BLOCK_BODY
@@ -61,79 +21,6 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
                 p1: GET_VAR 'p0: kotlin.Int declared in <root>.testExtAsExt.suspendConversion' type=kotlin.Int origin=null
           FUNCTION_REFERENCE 'local final fun suspendConversion (p0: kotlin.Int): kotlin.Unit declared in <root>.testExtAsExt' type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
             $receiver: GET_VAR 'fn: @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsExt' type=@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-  FUN name:testExtAsSimple visibility:public modality:FINAL <> (fn:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:fn index:0 type:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>
-    BLOCK_BODY
-      CALL 'public final fun useSuspendArg (sfn: kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        sfn: BLOCK type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION
-          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>, p0:kotlin.Int) returnType:kotlin.Unit [suspend]
-            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:kotlin.Int
-            BLOCK_BODY
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
-                $this: GET_VAR 'callee: @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsSimple.suspendConversion' type=@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-                p1: GET_VAR 'p0: kotlin.Int declared in <root>.testExtAsSimple.suspendConversion' type=kotlin.Int origin=null
-          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: kotlin.Int): kotlin.Unit declared in <root>.testExtAsSimple' type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
-            $receiver: GET_VAR 'fn: @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsSimple' type=@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-  FUN name:testSimpleAsExt visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
-    BLOCK_BODY
-      CALL 'public final fun useSuspendExt (sfn: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        sfn: BLOCK type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION
-          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function1<kotlin.Int, kotlin.Unit>, p0:kotlin.Int) returnType:kotlin.Unit [suspend]
-            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function1<kotlin.Int, kotlin.Unit>
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:kotlin.Int
-            BLOCK_BODY
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
-                $this: GET_VAR 'callee: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsExt.suspendConversion' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-                p1: GET_VAR 'p0: kotlin.Int declared in <root>.testSimpleAsExt.suspendConversion' type=kotlin.Int origin=null
-          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: kotlin.Int): kotlin.Unit declared in <root>.testSimpleAsExt' type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
-            $receiver: GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsExt' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-  FUN name:testSimpleAsSimpleT visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
-    BLOCK_BODY
-      CALL 'public final fun useSuspendArgT <T> (sfn: kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        <T>: kotlin.Int
-        sfn: BLOCK type=kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit> origin=SUSPEND_CONVERSION
-          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function1<kotlin.Int, kotlin.Unit>, p0:T of <root>.useSuspendArgT) returnType:kotlin.Unit [suspend]
-            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function1<kotlin.Int, kotlin.Unit>
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:T of <root>.useSuspendArgT
-            BLOCK_BODY
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
-                $this: GET_VAR 'callee: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsSimpleT.suspendConversion' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-                p1: GET_VAR 'p0: T of <root>.useSuspendArgT declared in <root>.testSimpleAsSimpleT.suspendConversion' type=T of <root>.useSuspendArgT origin=null
-          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: T of <root>.useSuspendArgT): kotlin.Unit declared in <root>.testSimpleAsSimpleT' type=kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
-            $receiver: GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsSimpleT' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-  FUN name:testSimpleAsExtT visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
-    BLOCK_BODY
-      CALL 'public final fun useSuspendExtT <T> (sfn: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        <T>: kotlin.Int
-        sfn: BLOCK type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
-          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function1<kotlin.Int, kotlin.Unit>, p0:T of <root>.useSuspendExtT) returnType:kotlin.Unit [suspend]
-            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function1<kotlin.Int, kotlin.Unit>
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:T of <root>.useSuspendExtT
-            BLOCK_BODY
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
-                $this: GET_VAR 'callee: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsExtT.suspendConversion' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-                p1: GET_VAR 'p0: T of <root>.useSuspendExtT declared in <root>.testSimpleAsExtT.suspendConversion' type=T of <root>.useSuspendExtT origin=null
-          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: T of <root>.useSuspendExtT): kotlin.Unit declared in <root>.testSimpleAsExtT' type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
-            $receiver: GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsExtT' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-  FUN name:testExtAsSimpleT visibility:public modality:FINAL <> (fn:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:fn index:0 type:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>
-    BLOCK_BODY
-      CALL 'public final fun useSuspendArgT <T> (sfn: kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        <T>: kotlin.Int
-        sfn: BLOCK type=kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit> origin=SUSPEND_CONVERSION
-          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>, p0:T of <root>.useSuspendArgT) returnType:kotlin.Unit [suspend]
-            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:T of <root>.useSuspendArgT
-            BLOCK_BODY
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
-                $this: GET_VAR 'callee: @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsSimpleT.suspendConversion' type=@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-                p1: GET_VAR 'p0: T of <root>.useSuspendArgT declared in <root>.testExtAsSimpleT.suspendConversion' type=T of <root>.useSuspendArgT origin=null
-          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: T of <root>.useSuspendArgT): kotlin.Unit declared in <root>.testExtAsSimpleT' type=kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
-            $receiver: GET_VAR 'fn: @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsSimpleT' type=@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
   FUN name:testExtAsExtT visibility:public modality:FINAL <> (fn:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>
     BLOCK_BODY
@@ -149,54 +36,35 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
                 p1: GET_VAR 'p0: T of <root>.useSuspendExtT declared in <root>.testExtAsExtT.suspendConversion' type=T of <root>.useSuspendExtT origin=null
           FUNCTION_REFERENCE 'local final fun suspendConversion (p0: T of <root>.useSuspendExtT): kotlin.Unit declared in <root>.testExtAsExtT' type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
             $receiver: GET_VAR 'fn: @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsExtT' type=@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-  FUN name:testSimpleSAsSimpleT visibility:public modality:FINAL <S> (fn:kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit>) returnType:kotlin.Unit
-    TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit>
+  FUN name:testExtAsSimple visibility:public modality:FINAL <> (fn:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>
+    BLOCK_BODY
+      CALL 'public final fun useSuspendArg (sfn: kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        sfn: BLOCK type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>, p0:kotlin.Int) returnType:kotlin.Unit [suspend]
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:kotlin.Int
+            BLOCK_BODY
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+                $this: GET_VAR 'callee: @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsSimple.suspendConversion' type=@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+                p1: GET_VAR 'p0: kotlin.Int declared in <root>.testExtAsSimple.suspendConversion' type=kotlin.Int origin=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: kotlin.Int): kotlin.Unit declared in <root>.testExtAsSimple' type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            $receiver: GET_VAR 'fn: @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsSimple' type=@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+  FUN name:testExtAsSimpleT visibility:public modality:FINAL <> (fn:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>
     BLOCK_BODY
       CALL 'public final fun useSuspendArgT <T> (sfn: kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        <T>: S of <root>.testSimpleSAsSimpleT
+        <T>: kotlin.Int
         sfn: BLOCK type=kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit> origin=SUSPEND_CONVERSION
-          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit>, p0:T of <root>.useSuspendArgT) returnType:kotlin.Unit [suspend]
-            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit>
+          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>, p0:T of <root>.useSuspendArgT) returnType:kotlin.Unit [suspend]
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:T of <root>.useSuspendArgT
             BLOCK_BODY
               CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
-                $this: GET_VAR 'callee: kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit> declared in <root>.testSimpleSAsSimpleT.suspendConversion' type=kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit> origin=null
-                p1: GET_VAR 'p0: T of <root>.useSuspendArgT declared in <root>.testSimpleSAsSimpleT.suspendConversion' type=T of <root>.useSuspendArgT origin=null
-          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: T of <root>.useSuspendArgT): kotlin.Unit declared in <root>.testSimpleSAsSimpleT' type=kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
-            $receiver: GET_VAR 'fn: kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit> declared in <root>.testSimpleSAsSimpleT' type=kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit> origin=null
-  FUN name:testSimpleSAsExtT visibility:public modality:FINAL <S> (fn:kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit>) returnType:kotlin.Unit
-    TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit>
-    BLOCK_BODY
-      CALL 'public final fun useSuspendExtT <T> (sfn: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        <T>: S of <root>.testSimpleSAsExtT
-        sfn: BLOCK type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
-          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit>, p0:T of <root>.useSuspendExtT) returnType:kotlin.Unit [suspend]
-            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit>
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:T of <root>.useSuspendExtT
-            BLOCK_BODY
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
-                $this: GET_VAR 'callee: kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit> declared in <root>.testSimpleSAsExtT.suspendConversion' type=kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit> origin=null
-                p1: GET_VAR 'p0: T of <root>.useSuspendExtT declared in <root>.testSimpleSAsExtT.suspendConversion' type=T of <root>.useSuspendExtT origin=null
-          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: T of <root>.useSuspendExtT): kotlin.Unit declared in <root>.testSimpleSAsExtT' type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
-            $receiver: GET_VAR 'fn: kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit> declared in <root>.testSimpleSAsExtT' type=kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit> origin=null
-  FUN name:testExtSAsSimpleT visibility:public modality:FINAL <S> (fn:@[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit>) returnType:kotlin.Unit
-    TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:fn index:0 type:@[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit>
-    BLOCK_BODY
-      CALL 'public final fun useSuspendArgT <T> (sfn: kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        <T>: S of <root>.testExtSAsSimpleT
-        sfn: BLOCK type=kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit> origin=SUSPEND_CONVERSION
-          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:@[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit>, p0:T of <root>.useSuspendArgT) returnType:kotlin.Unit [suspend]
-            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:@[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit>
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:T of <root>.useSuspendArgT
-            BLOCK_BODY
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
-                $this: GET_VAR 'callee: @[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit> declared in <root>.testExtSAsSimpleT.suspendConversion' type=@[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit> origin=null
-                p1: GET_VAR 'p0: T of <root>.useSuspendArgT declared in <root>.testExtSAsSimpleT.suspendConversion' type=T of <root>.useSuspendArgT origin=null
-          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: T of <root>.useSuspendArgT): kotlin.Unit declared in <root>.testExtSAsSimpleT' type=kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
-            $receiver: GET_VAR 'fn: @[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit> declared in <root>.testExtSAsSimpleT' type=@[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit> origin=null
+                $this: GET_VAR 'callee: @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsSimpleT.suspendConversion' type=@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+                p1: GET_VAR 'p0: T of <root>.useSuspendArgT declared in <root>.testExtAsSimpleT.suspendConversion' type=T of <root>.useSuspendArgT origin=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: T of <root>.useSuspendArgT): kotlin.Unit declared in <root>.testExtAsSimpleT' type=kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            $receiver: GET_VAR 'fn: @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsSimpleT' type=@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
   FUN name:testExtSAsExtT visibility:public modality:FINAL <S> (fn:@[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsExtT, kotlin.Unit>) returnType:kotlin.Unit
     TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:fn index:0 type:@[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsExtT, kotlin.Unit>
@@ -213,22 +81,138 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
                 p1: GET_VAR 'p0: T of <root>.useSuspendExtT declared in <root>.testExtSAsExtT.suspendConversion' type=T of <root>.useSuspendExtT origin=null
           FUNCTION_REFERENCE 'local final fun suspendConversion (p0: T of <root>.useSuspendExtT): kotlin.Unit declared in <root>.testExtSAsExtT' type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
             $receiver: GET_VAR 'fn: @[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsExtT, kotlin.Unit> declared in <root>.testExtSAsExtT' type=@[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsExtT, kotlin.Unit> origin=null
-  FUN name:testSmartCastWithSuspendConversion visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any
+  FUN name:testExtSAsSimpleT visibility:public modality:FINAL <S> (fn:@[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:fn index:0 type:@[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit>
     BLOCK_BODY
-      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
-          GET_VAR 'a: kotlin.Any declared in <root>.testSmartCastWithSuspendConversion' type=kotlin.Any origin=null
+      CALL 'public final fun useSuspendArgT <T> (sfn: kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        <T>: S of <root>.testExtSAsSimpleT
+        sfn: BLOCK type=kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:@[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit>, p0:T of <root>.useSuspendArgT) returnType:kotlin.Unit [suspend]
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:@[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:T of <root>.useSuspendArgT
+            BLOCK_BODY
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+                $this: GET_VAR 'callee: @[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit> declared in <root>.testExtSAsSimpleT.suspendConversion' type=@[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit> origin=null
+                p1: GET_VAR 'p0: T of <root>.useSuspendArgT declared in <root>.testExtSAsSimpleT.suspendConversion' type=T of <root>.useSuspendArgT origin=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: T of <root>.useSuspendArgT): kotlin.Unit declared in <root>.testExtSAsSimpleT' type=kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            $receiver: GET_VAR 'fn: @[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit> declared in <root>.testExtSAsSimpleT' type=@[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit> origin=null
+  FUN name:testIntersectionVsSuspendConversion visibility:public modality:FINAL <T> (x:T of <root>.testIntersectionVsSuspendConversion) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Function0<kotlin.Unit>; kotlin.coroutines.SuspendFunction0<kotlin.Unit>] reified:false
+    VALUE_PARAMETER name:x index:0 type:T of <root>.testIntersectionVsSuspendConversion
+    BLOCK_BODY
+      CALL 'public final fun useSuspend (sfn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        sfn: GET_VAR 'x: T of <root>.testIntersectionVsSuspendConversion declared in <root>.testIntersectionVsSuspendConversion' type=T of <root>.testIntersectionVsSuspendConversion origin=null
+  FUN name:testSimple visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Unit>
+    BLOCK_BODY
       CALL 'public final fun useSuspend (sfn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         sfn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION
           FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [suspend]
             $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<kotlin.Unit>
             BLOCK_BODY
               CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
-                $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.testSmartCastWithSuspendConversion.suspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit declared in <root>.testSmartCastWithSuspendConversion' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
-            $receiver: TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
-              GET_VAR 'a: kotlin.Any declared in <root>.testSmartCastWithSuspendConversion' type=kotlin.Any origin=null
+                $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.testSimple.suspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit declared in <root>.testSimple' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            $receiver: GET_VAR 'fn: kotlin.Function0<kotlin.Unit> declared in <root>.testSimple' type=kotlin.Function0<kotlin.Unit> origin=null
+  FUN name:testSimpleAsExt visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
+    BLOCK_BODY
+      CALL 'public final fun useSuspendExt (sfn: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        sfn: BLOCK type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function1<kotlin.Int, kotlin.Unit>, p0:kotlin.Int) returnType:kotlin.Unit [suspend]
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function1<kotlin.Int, kotlin.Unit>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:kotlin.Int
+            BLOCK_BODY
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+                $this: GET_VAR 'callee: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsExt.suspendConversion' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+                p1: GET_VAR 'p0: kotlin.Int declared in <root>.testSimpleAsExt.suspendConversion' type=kotlin.Int origin=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: kotlin.Int): kotlin.Unit declared in <root>.testSimpleAsExt' type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            $receiver: GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsExt' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+  FUN name:testSimpleAsExtT visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
+    BLOCK_BODY
+      CALL 'public final fun useSuspendExtT <T> (sfn: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        <T>: kotlin.Int
+        sfn: BLOCK type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function1<kotlin.Int, kotlin.Unit>, p0:T of <root>.useSuspendExtT) returnType:kotlin.Unit [suspend]
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function1<kotlin.Int, kotlin.Unit>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:T of <root>.useSuspendExtT
+            BLOCK_BODY
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+                $this: GET_VAR 'callee: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsExtT.suspendConversion' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+                p1: GET_VAR 'p0: T of <root>.useSuspendExtT declared in <root>.testSimpleAsExtT.suspendConversion' type=T of <root>.useSuspendExtT origin=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: T of <root>.useSuspendExtT): kotlin.Unit declared in <root>.testSimpleAsExtT' type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            $receiver: GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsExtT' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+  FUN name:testSimpleAsSimpleT visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
+    BLOCK_BODY
+      CALL 'public final fun useSuspendArgT <T> (sfn: kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        <T>: kotlin.Int
+        sfn: BLOCK type=kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function1<kotlin.Int, kotlin.Unit>, p0:T of <root>.useSuspendArgT) returnType:kotlin.Unit [suspend]
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function1<kotlin.Int, kotlin.Unit>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:T of <root>.useSuspendArgT
+            BLOCK_BODY
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+                $this: GET_VAR 'callee: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsSimpleT.suspendConversion' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+                p1: GET_VAR 'p0: T of <root>.useSuspendArgT declared in <root>.testSimpleAsSimpleT.suspendConversion' type=T of <root>.useSuspendArgT origin=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: T of <root>.useSuspendArgT): kotlin.Unit declared in <root>.testSimpleAsSimpleT' type=kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            $receiver: GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsSimpleT' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+  FUN name:testSimpleNonVal visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun useSuspend (sfn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        sfn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [suspend]
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<kotlin.Unit>
+            BLOCK_BODY
+              CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
+                $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.testSimpleNonVal.suspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit declared in <root>.testSimpleNonVal' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            $receiver: CALL 'public final fun produceFun (): kotlin.Function0<kotlin.Unit> declared in <root>' type=kotlin.Function0<kotlin.Unit> origin=null
+  FUN name:testSimpleSAsExtT visibility:public modality:FINAL <S> (fn:kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit>
+    BLOCK_BODY
+      CALL 'public final fun useSuspendExtT <T> (sfn: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        <T>: S of <root>.testSimpleSAsExtT
+        sfn: BLOCK type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit>, p0:T of <root>.useSuspendExtT) returnType:kotlin.Unit [suspend]
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:T of <root>.useSuspendExtT
+            BLOCK_BODY
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+                $this: GET_VAR 'callee: kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit> declared in <root>.testSimpleSAsExtT.suspendConversion' type=kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit> origin=null
+                p1: GET_VAR 'p0: T of <root>.useSuspendExtT declared in <root>.testSimpleSAsExtT.suspendConversion' type=T of <root>.useSuspendExtT origin=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: T of <root>.useSuspendExtT): kotlin.Unit declared in <root>.testSimpleSAsExtT' type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            $receiver: GET_VAR 'fn: kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit> declared in <root>.testSimpleSAsExtT' type=kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit> origin=null
+  FUN name:testSimpleSAsSimpleT visibility:public modality:FINAL <S> (fn:kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit>
+    BLOCK_BODY
+      CALL 'public final fun useSuspendArgT <T> (sfn: kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        <T>: S of <root>.testSimpleSAsSimpleT
+        sfn: BLOCK type=kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit>, p0:T of <root>.useSuspendArgT) returnType:kotlin.Unit [suspend]
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:T of <root>.useSuspendArgT
+            BLOCK_BODY
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+                $this: GET_VAR 'callee: kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit> declared in <root>.testSimpleSAsSimpleT.suspendConversion' type=kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit> origin=null
+                p1: GET_VAR 'p0: T of <root>.useSuspendArgT declared in <root>.testSimpleSAsSimpleT.suspendConversion' type=T of <root>.useSuspendArgT origin=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion (p0: T of <root>.useSuspendArgT): kotlin.Unit declared in <root>.testSimpleSAsSimpleT' type=kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            $receiver: GET_VAR 'fn: kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit> declared in <root>.testSimpleSAsSimpleT' type=kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit> origin=null
+  FUN name:testSmartCastOnVarVsSuspendConversion visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
+    BLOCK_BODY
+      VAR name:b type:kotlin.Function0<kotlin.Unit> [var]
+        GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.testSmartCastOnVarVsSuspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=CAST typeOperand=kotlin.coroutines.SuspendFunction0<kotlin.Unit>
+          GET_VAR 'var b: kotlin.Function0<kotlin.Unit> declared in <root>.testSmartCastOnVarVsSuspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
+      CALL 'public final fun useSuspend (sfn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        sfn: TYPE_OP type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.coroutines.SuspendFunction0<kotlin.Unit>
+          GET_VAR 'var b: kotlin.Function0<kotlin.Unit> declared in <root>.testSmartCastOnVarVsSuspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:testSmartCastOnVarWithSuspendConversion visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
@@ -256,20 +240,36 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
       CALL 'public final fun useSuspend (sfn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         sfn: TYPE_OP type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.coroutines.SuspendFunction0<kotlin.Unit>
           GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.testSmartCastVsSuspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
-  FUN name:testSmartCastOnVarVsSuspendConversion visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
+  FUN name:testSmartCastWithSuspendConversion visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      VAR name:b type:kotlin.Function0<kotlin.Unit> [var]
-        GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.testSmartCastOnVarVsSuspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        TYPE_OP type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=CAST typeOperand=kotlin.coroutines.SuspendFunction0<kotlin.Unit>
-          GET_VAR 'var b: kotlin.Function0<kotlin.Unit> declared in <root>.testSmartCastOnVarVsSuspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
+        TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
+          GET_VAR 'a: kotlin.Any declared in <root>.testSmartCastWithSuspendConversion' type=kotlin.Any origin=null
       CALL 'public final fun useSuspend (sfn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        sfn: TYPE_OP type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.coroutines.SuspendFunction0<kotlin.Unit>
-          GET_VAR 'var b: kotlin.Function0<kotlin.Unit> declared in <root>.testSmartCastOnVarVsSuspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
-  FUN name:testIntersectionVsSuspendConversion visibility:public modality:FINAL <T> (x:T of <root>.testIntersectionVsSuspendConversion) returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Function0<kotlin.Unit>; kotlin.coroutines.SuspendFunction0<kotlin.Unit>] reified:false
-    VALUE_PARAMETER name:x index:0 type:T of <root>.testIntersectionVsSuspendConversion
+        sfn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [suspend]
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<kotlin.Unit>
+            BLOCK_BODY
+              CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
+                $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.testSmartCastWithSuspendConversion.suspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit declared in <root>.testSmartCastWithSuspendConversion' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            $receiver: TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
+              GET_VAR 'a: kotlin.Any declared in <root>.testSmartCastWithSuspendConversion' type=kotlin.Any origin=null
+  FUN name:useSuspend visibility:public modality:FINAL <> (sfn:kotlin.coroutines.SuspendFunction0<kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:sfn index:0 type:kotlin.coroutines.SuspendFunction0<kotlin.Unit>
     BLOCK_BODY
-      CALL 'public final fun useSuspend (sfn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        sfn: GET_VAR 'x: T of <root>.testIntersectionVsSuspendConversion declared in <root>.testIntersectionVsSuspendConversion' type=T of <root>.testIntersectionVsSuspendConversion origin=null
+  FUN name:useSuspendArg visibility:public modality:FINAL <> (sfn:kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:sfn index:0 type:kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>
+    BLOCK_BODY
+  FUN name:useSuspendArgT visibility:public modality:FINAL <T> (sfn:kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:sfn index:0 type:kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendArgT, kotlin.Unit>
+    BLOCK_BODY
+  FUN name:useSuspendExt visibility:public modality:FINAL <> (sfn:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:sfn index:0 type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>
+    BLOCK_BODY
+  FUN name:useSuspendExtT visibility:public modality:FINAL <T> (sfn:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:sfn index:0 type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit>
+    BLOCK_BODY

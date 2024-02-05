@@ -1,14 +1,14 @@
 data class MyContainer {
+  var s: String
+    field = s
+    get
+    set
+
   constructor(s: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  var s: String
-    field = s
-    get
-    set
 
   operator fun component1(): String {
     return <this>.#s
@@ -16,14 +16,6 @@ data class MyContainer {
 
   fun copy(s: String = <this>.#s): MyContainer {
     return MyContainer(s = s)
-  }
-
-  override fun toString(): String {
-    return "MyContainer(" + "s=" + <this>.#s + ")"
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#s.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -40,6 +32,29 @@ data class MyContainer {
     return true
   }
 
+  override fun hashCode(): Int {
+    return <this>.#s.hashCode()
+  }
+
+  override fun toString(): String {
+    return "MyContainer(" + "s=" + <this>.#s + ")"
+  }
+
+}
+
+fun box(): String {
+  return with<Int, String>(receiver = 42, block = local fun Int.<anonymous>(): String {
+    val myContainer: MyContainer = MyContainer(s = "fail")
+    myContainer.set($context_receiver_0 = $this$with, index = 0, value = "OK")
+    return { // BLOCK
+      val tmp_1: String? = myContainer.get($context_receiver_0 = $this$with, index = 0)
+      when {
+        EQEQ(arg0 = tmp_1, arg1 = null) -> "fail"
+        else -> tmp_1
+      }
+    }
+  }
+)
 }
 
 operator fun MyContainer.get($context_receiver_0: Int, index: Int): String? {
@@ -62,17 +77,3 @@ operator fun MyContainer.set($context_receiver_0: Int, index: Int, value: String
   <this>.<set-s>(<set-?> = value)
 }
 
-fun box(): String {
-  return with<Int, String>(receiver = 42, block = local fun Int.<anonymous>(): String {
-    val myContainer: MyContainer = MyContainer(s = "fail")
-    myContainer.set($context_receiver_0 = $this$with, index = 0, value = "OK")
-    return { // BLOCK
-      val tmp_1: String? = myContainer.get($context_receiver_0 = $this$with, index = 0)
-      when {
-        EQEQ(arg0 = tmp_1, arg1 = null) -> "fail"
-        else -> tmp_1
-      }
-    }
-  }
-)
-}

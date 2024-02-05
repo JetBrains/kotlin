@@ -1,17 +1,5 @@
 class A {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   private abstract class B {
-    constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
     val s: Any
       field = { // BLOCK
         local class <no name provided> {
@@ -27,6 +15,12 @@ class A {
       }
       get
 
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
   }
 
   private class C : B {
@@ -38,4 +32,11 @@ class A {
 
   }
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+

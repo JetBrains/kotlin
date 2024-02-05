@@ -1,4 +1,8 @@
-class Param {
+class K {
+  val k: String
+    field = "K"
+    get
+
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -8,33 +12,25 @@ class Param {
 }
 
 class O {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val o: String
     field = "O"
     get
 
-}
-
-class K {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val k: String
-    field = "K"
-    get
-
 }
 
-fun <T : Any?> K.f($context_receiver_0: O, g: @ExtensionFunctionType Function3<O, K, Param, T>): T {
-  return g.invoke(p1 = $context_receiver_0, p2 = <this>, p3 = Param())
+class Param {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
 
 fun box(): String {
@@ -46,3 +42,8 @@ fun box(): String {
   }
 )
 }
+
+fun <T : Any?> K.f($context_receiver_0: O, g: @ExtensionFunctionType Function3<O, K, Param, T>): T {
+  return g.invoke(p1 = $context_receiver_0, p2 = <this>, p3 = Param())
+}
+

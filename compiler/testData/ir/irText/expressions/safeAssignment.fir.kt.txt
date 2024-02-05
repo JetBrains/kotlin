@@ -1,14 +1,14 @@
 class C {
+  var x: Int
+    field = x
+    get
+    set
+
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  var x: Int
-    field = x
-    get
-    set
 
 }
 
@@ -21,3 +21,4 @@ fun test(nc: C?) {
     }
   } /*~> Unit */
 }
+

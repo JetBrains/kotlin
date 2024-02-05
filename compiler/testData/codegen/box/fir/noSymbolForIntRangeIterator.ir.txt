@@ -14,6 +14,21 @@ FILE fqName:<root> fileName:/noSymbolForIntRangeIterator.kt
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-result>' type=kotlin.Int origin=null
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'public final fun test (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        WHEN type=kotlin.String origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: CALL 'public final fun <get-result> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+              arg1: CONST Int type=kotlin.Int value=3025
+            then: CONST String type=kotlin.String value="OK"
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: STRING_CONCATENATION type=kotlin.String
+              CONST String type=kotlin.String value="Fail: "
+              CALL 'public final fun <get-result> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
   FUN name:takeString visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
     VALUE_PARAMETER name:s index:0 type:kotlin.String
     BLOCK_BODY
@@ -96,18 +111,3 @@ FILE fqName:<root> fileName:/noSymbolForIntRangeIterator.kt
                   CALL 'public final fun takeString (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                     s: GET_VAR 'val s: kotlin.String declared in <root>.test.localFunc' type=kotlin.String origin=null
       CALL 'local final fun localFunc (): kotlin.Unit declared in <root>.test' type=kotlin.Unit origin=null
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
-    BLOCK_BODY
-      CALL 'public final fun test (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        WHEN type=kotlin.String origin=IF
-          BRANCH
-            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: CALL 'public final fun <get-result> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-              arg1: CONST Int type=kotlin.Int value=3025
-            then: CONST String type=kotlin.String value="OK"
-          BRANCH
-            if: CONST Boolean type=kotlin.Boolean value=true
-            then: STRING_CONCATENATION type=kotlin.String
-              CONST String type=kotlin.String value="Fail: "
-              CALL 'public final fun <get-result> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY

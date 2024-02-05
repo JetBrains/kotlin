@@ -1,9 +1,4 @@
 FILE fqName:<root> fileName:/kt27005.kt
-  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit [suspend]
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Unit declared in <root>'
-        CALL 'public final fun baz <T> (): T of <root>.baz declared in <root>' type=kotlin.Unit origin=null
-          <T>: kotlin.Unit
   FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any [suspend]
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun bar (): kotlin.Any declared in <root>'
@@ -13,3 +8,8 @@ FILE fqName:<root> fileName:/kt27005.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     BLOCK_BODY
       CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit [suspend]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Unit declared in <root>'
+        CALL 'public final fun baz <T> (): T of <root>.baz declared in <root>' type=kotlin.Unit origin=null
+          <T>: kotlin.Unit

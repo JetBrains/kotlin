@@ -19,14 +19,6 @@ FILE fqName:<root> fileName:/definitelyNotNullWithIntersection1.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:select visibility:public modality:FINAL <S> (x:S of <root>.select, y:S of <root>.select, z:S of <root>.select) returnType:S of <root>.select
-    TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:x index:0 type:S of <root>.select
-    VALUE_PARAMETER name:y index:1 type:S of <root>.select
-    VALUE_PARAMETER name:z index:2 type:S of <root>.select
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun select <S> (x: S of <root>.select, y: S of <root>.select, z: S of <root>.select): S of <root>.select declared in <root>'
-        GET_VAR 'x: S of <root>.select declared in <root>.select' type=S of <root>.select origin=null
   FUN name:foo visibility:public modality:FINAL <T> (a:kotlin.Array<<root>.In<{T of <root>.foo & Any}>>, b:kotlin.Array<<root>.In<kotlin.String>>, c:kotlin.Array<<root>.In<T of <root>.foo>>) returnType:kotlin.Boolean
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:a index:0 type:kotlin.Array<<root>.In<{T of <root>.foo & Any}>>
@@ -52,6 +44,14 @@ FILE fqName:<root> fileName:/definitelyNotNullWithIntersection1.kt
       RETURN type=kotlin.Nothing from='public final fun ofType <K> (y: kotlin.Any?): kotlin.Boolean declared in <root>'
         TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=K of <root>.ofType
           GET_VAR 'y: kotlin.Any? declared in <root>.ofType' type=kotlin.Any? origin=null
+  FUN name:select visibility:public modality:FINAL <S> (x:S of <root>.select, y:S of <root>.select, z:S of <root>.select) returnType:S of <root>.select
+    TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:x index:0 type:S of <root>.select
+    VALUE_PARAMETER name:y index:1 type:S of <root>.select
+    VALUE_PARAMETER name:z index:2 type:S of <root>.select
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun select <S> (x: S of <root>.select, y: S of <root>.select, z: S of <root>.select): S of <root>.select declared in <root>'
+        GET_VAR 'x: S of <root>.select declared in <root>.select' type=S of <root>.select origin=null
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:a1 type:kotlin.Array<<root>.In<kotlin.Int>> [val]

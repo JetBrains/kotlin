@@ -1,9 +1,4 @@
 FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
-  FUN name:foo visibility:public modality:FINAL <> (block:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [inline]
-    VALUE_PARAMETER name:block index:0 type:kotlin.Function0<kotlin.Unit>
-    BLOCK_BODY
-      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
-        $this: GET_VAR 'block: kotlin.Function0<kotlin.Unit> declared in <root>.foo' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
   FUN name:bar visibility:public modality:FINAL <> (block1:kotlin.Function0<kotlin.Unit>, block2:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [inline]
     VALUE_PARAMETER name:block1 index:0 type:kotlin.Function0<kotlin.Unit>
     VALUE_PARAMETER name:block2 index:1 type:kotlin.Function0<kotlin.Unit> [noinline]
@@ -17,6 +12,11 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
     BLOCK_BODY
       CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
         $this: GET_VAR 'block: kotlin.Function0<kotlin.Unit> declared in <root>.baz' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+  FUN name:foo visibility:public modality:FINAL <> (block:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [inline]
+    VALUE_PARAMETER name:block index:0 type:kotlin.Function0<kotlin.Unit>
+    BLOCK_BODY
+      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+        $this: GET_VAR 'block: kotlin.Function0<kotlin.Unit> declared in <root>.foo' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
   FUN name:myForEach visibility:public modality:FINAL <T> ($receiver:kotlin.collections.Iterable<T of <root>.myForEach>, action:kotlin.Function1<T of <root>.myForEach, kotlin.Unit>) returnType:kotlin.Unit [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.Iterable<T of <root>.myForEach>

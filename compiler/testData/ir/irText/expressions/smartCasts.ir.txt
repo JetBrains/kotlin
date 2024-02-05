@@ -1,9 +1,9 @@
 FILE fqName:<root> fileName:/smartCasts.kt
-  FUN name:expectsString visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
-    VALUE_PARAMETER name:s index:0 type:kotlin.String
-    BLOCK_BODY
   FUN name:expectsInt visibility:public modality:FINAL <> (i:kotlin.Int) returnType:kotlin.Unit
     VALUE_PARAMETER name:i index:0 type:kotlin.Int
+    BLOCK_BODY
+  FUN name:expectsString visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
+    VALUE_PARAMETER name:s index:0 type:kotlin.String
     BLOCK_BODY
   FUN name:overloaded visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.String
     VALUE_PARAMETER name:s index:0 type:kotlin.String

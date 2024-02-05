@@ -1,10 +1,6 @@
 FILE fqName:<root> fileName:/javaInnerClass.kt
   CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.J]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Test1 [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.J]'
     PROPERTY name:test visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:test type:<root>.J.JInner visibility:private [final]
         EXPRESSION_BODY
@@ -17,6 +13,10 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
           RETURN type=kotlin.Nothing from='public final fun <get-test> (): <root>.J.JInner declared in <root>.Test1'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:<root>.J.JInner visibility:private [final]' type=<root>.J.JInner origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-test>' type=<root>.Test1 origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Test1 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.J]'
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.J) returnType:kotlin.Unit [fake_override]
       overridden:
         public open fun bar (): kotlin.Unit declared in <root>.J

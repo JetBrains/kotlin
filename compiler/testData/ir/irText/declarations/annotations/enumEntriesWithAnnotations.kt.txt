@@ -1,23 +1,17 @@
 open annotation class TestAnn : Annotation {
+  val x: String
+    field = x
+    get
+
   constructor(x: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: String
-    field = x
-    get
-
 }
 
 open enum class TestEnum : Enum<TestEnum> {
-  private constructor() /* primary */ {
-    super/*Enum*/<TestEnum>()
-    /* <init>() */
-
-  }
-
   @TestAnn(x = "ENTRY1")
   ENTRY1 = TestEnum()
 
@@ -25,23 +19,30 @@ open enum class TestEnum : Enum<TestEnum> {
   ENTRY2 = ENTRY2()
   @TestAnn(x = "ENTRY2")
   private enum entry class ENTRY2 : TestEnum {
+    val x: Int
+      field = 42
+      get
+
     private constructor() /* primary */ {
       super/*TestEnum*/() /*~> Unit */
       /* <init>() */
 
     }
 
-    val x: Int
-      field = 42
-      get
+  }
+
+  private constructor() /* primary */ {
+    super/*Enum*/<TestEnum>()
+    /* <init>() */
 
   }
 
-  fun values(): Array<TestEnum> /* Synthetic body for ENUM_VALUES */
-
   fun valueOf(value: String): TestEnum /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<TestEnum> /* Synthetic body for ENUM_VALUES */
 
   val entries: EnumEntries<TestEnum>
     get(): EnumEntries<TestEnum> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

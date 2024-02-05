@@ -1,14 +1,274 @@
 FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
+  PROPERTY name:additionalText visibility:public modality:FINAL [delegated,val]
+    FIELD PROPERTY_DELEGATE name:additionalText$delegate type:<root>.additionalText$delegate.<no name provided><kotlin.Any?> visibility:private [final,static]
+      EXPRESSION_BODY
+        BLOCK type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=OBJECT_LITERAL
+          CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IDelegate1<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, <root>.P<kotlin.Any?, kotlin.Any?>>]
+            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.additionalText$delegate.<no name provided><kotlin.Any?>
+            PROPERTY name:deepO visibility:private modality:FINAL [delegated,val]
+              FIELD PROPERTY_DELEGATE name:deepO$delegate type:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?> visibility:private [final]
+                EXPRESSION_BODY
+                  BLOCK type=<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?> origin=OBJECT_LITERAL
+                    CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IDelegate1<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, kotlin.Any?>]
+                      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>
+                      CONSTRUCTOR visibility:public <> () returnType:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?> [primary]
+                        BLOCK_BODY
+                          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+                          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IDelegate1<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, kotlin.Any?>]'
+                      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+                        overridden:
+                          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IDelegate1
+                        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+                      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+                        overridden:
+                          public open fun hashCode (): kotlin.Int declared in <root>.IDelegate1
+                        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+                        overridden:
+                          public open fun toString (): kotlin.String declared in <root>.IDelegate1
+                        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                      FUN name:getValue visibility:public modality:OPEN <> ($this:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>, t:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p:kotlin.reflect.KProperty<*>) returnType:kotlin.Any? [operator]
+                        overridden:
+                          public abstract fun getValue (t: T1 of <root>.IDelegate1, p: kotlin.reflect.KProperty<*>): R1 of <root>.IDelegate1 declared in <root>.IDelegate1
+                        $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>
+                        VALUE_PARAMETER name:t index:0 type:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>
+                        VALUE_PARAMETER name:p index:1 type:kotlin.reflect.KProperty<*>
+                        BLOCK_BODY
+                          RETURN type=kotlin.Nothing from='public open fun getValue (t: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p: kotlin.reflect.KProperty<*>): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>'
+                            TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+                              CALL 'public final fun <get-value1> (): T of <root>.Value declared in <root>.Value' type=kotlin.Any? origin=GET_PROPERTY
+                                $this: GET_VAR 't: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.getValue' type=<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> origin=null
+                      FUN name:qux21 visibility:public modality:FINAL <F21T> ($this:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>, t:F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21) returnType:F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21
+                        TYPE_PARAMETER name:F21T index:0 variance: superTypes:[kotlin.Any?] reified:false
+                        $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>
+                        VALUE_PARAMETER name:t index:0 type:F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21
+                        BLOCK_BODY
+                          RETURN type=kotlin.Nothing from='public final fun qux21 <F21T> (t: F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21): F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21 declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>'
+                            GET_VAR 't: F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21 declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21' type=F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21 origin=null
+                      FUN name:qux22 visibility:public modality:FINAL <F22T> ($this:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>, t:F22T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux22) returnType:kotlin.Any?
+                        TYPE_PARAMETER name:F22T index:0 variance: superTypes:[<root>.IR<kotlin.Any?>] reified:false
+                        $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>
+                        VALUE_PARAMETER name:t index:0 type:F22T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux22
+                        BLOCK_BODY
+                          RETURN type=kotlin.Nothing from='public final fun qux22 <F22T> (t: F22T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux22): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>'
+                            TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+                              CALL 'public abstract fun foo (): R of <root>.IR declared in <root>.IR' type=kotlin.Any? origin=null
+                                $this: GET_VAR 't: F22T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux22 declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux22' type=F22T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux22 origin=null
+                    CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>' type=<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?> origin=OBJECT_LITERAL
+              FUN DELEGATED_PROPERTY_ACCESSOR name:<get-deepO> visibility:private modality:FINAL <> ($this:<root>.additionalText$delegate.<no name provided><kotlin.Any?>, $receiver:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>) returnType:kotlin.Any?
+                correspondingProperty: PROPERTY name:deepO visibility:private modality:FINAL [delegated,val]
+                $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided><kotlin.Any?>
+                $receiver: VALUE_PARAMETER name:<this> type:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='private final fun <get-deepO> (): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>'
+                    TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+                      CALL 'public open fun getValue (t: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p: kotlin.reflect.KProperty<*>): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>' type=kotlin.Any? origin=null
+                        $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:deepO$delegate type:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?> visibility:private [final]' type=<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?> origin=null
+                          receiver: GET_VAR '<this>: <root>.additionalText$delegate.<no name provided><kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>.<get-deepO>' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=null
+                        t: GET_VAR '<this>: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> declared in <root>.additionalText$delegate.<no name provided>.<get-deepO>' type=<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> origin=null
+                        p: PROPERTY_REFERENCE 'private final deepO: kotlin.Any?' field=null getter='private final fun <get-deepO> (): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>' setter=null type=kotlin.reflect.KProperty2<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, <root>.additionalText$delegate.<no name provided><kotlin.Any?>, kotlin.Any?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            PROPERTY name:deepK visibility:private modality:FINAL [delegated,val]
+              FIELD PROPERTY_DELEGATE name:deepK$delegate type:<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?> visibility:private [final]
+                EXPRESSION_BODY
+                  BLOCK type=<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?> origin=OBJECT_LITERAL
+                    CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IDelegate1<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, kotlin.Any?>]
+                      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?>
+                      CONSTRUCTOR visibility:public <> () returnType:<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?> [primary]
+                        BLOCK_BODY
+                          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+                          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IDelegate1<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, kotlin.Any?>]'
+                      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+                        overridden:
+                          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IDelegate1
+                        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+                      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+                        overridden:
+                          public open fun hashCode (): kotlin.Int declared in <root>.IDelegate1
+                        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+                        overridden:
+                          public open fun toString (): kotlin.String declared in <root>.IDelegate1
+                        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                      FUN name:getValue visibility:public modality:OPEN <> ($this:<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?>, t:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p:kotlin.reflect.KProperty<*>) returnType:kotlin.Any? [operator]
+                        overridden:
+                          public abstract fun getValue (t: T1 of <root>.IDelegate1, p: kotlin.reflect.KProperty<*>): R1 of <root>.IDelegate1 declared in <root>.IDelegate1
+                        $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?>
+                        VALUE_PARAMETER name:t index:0 type:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>
+                        VALUE_PARAMETER name:p index:1 type:kotlin.reflect.KProperty<*>
+                        BLOCK_BODY
+                          RETURN type=kotlin.Nothing from='public open fun getValue (t: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p: kotlin.reflect.KProperty<*>): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided>'
+                            TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+                              CALL 'public open fun foo (): R of <root>.CR declared in <root>.CR' type=kotlin.Any? origin=null
+                                $this: CALL 'public final fun <get-value2> (): IT of <root>.Value declared in <root>.Value' type=<root>.CR<kotlin.Any?> origin=GET_PROPERTY
+                                  $this: GET_VAR 't: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> declared in <root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided>.getValue' type=<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> origin=null
+                    CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided>' type=<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?> origin=OBJECT_LITERAL
+              FUN DELEGATED_PROPERTY_ACCESSOR name:<get-deepK> visibility:private modality:FINAL <> ($this:<root>.additionalText$delegate.<no name provided><kotlin.Any?>, $receiver:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>) returnType:kotlin.Any?
+                correspondingProperty: PROPERTY name:deepK visibility:private modality:FINAL [delegated,val]
+                $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided><kotlin.Any?>
+                $receiver: VALUE_PARAMETER name:<this> type:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='private final fun <get-deepK> (): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>'
+                    TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+                      CALL 'public open fun getValue (t: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p: kotlin.reflect.KProperty<*>): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided>' type=kotlin.Any? origin=null
+                        $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:deepK$delegate type:<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?> visibility:private [final]' type=<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?> origin=null
+                          receiver: GET_VAR '<this>: <root>.additionalText$delegate.<no name provided><kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>.<get-deepK>' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=null
+                        t: GET_VAR '<this>: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> declared in <root>.additionalText$delegate.<no name provided>.<get-deepK>' type=<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> origin=null
+                        p: PROPERTY_REFERENCE 'private final deepK: kotlin.Any?' field=null getter='private final fun <get-deepK> (): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>' setter=null type=kotlin.reflect.KProperty2<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, <root>.additionalText$delegate.<no name provided><kotlin.Any?>, kotlin.Any?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            CONSTRUCTOR visibility:public <> () returnType:<root>.additionalText$delegate.<no name provided><kotlin.Any?> [primary]
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IDelegate1<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, <root>.P<kotlin.Any?, kotlin.Any?>>]'
+            FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+              overridden:
+                public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IDelegate1
+              $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+              VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+            FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+              overridden:
+                public open fun hashCode (): kotlin.Int declared in <root>.IDelegate1
+              $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+            FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+              overridden:
+                public open fun toString (): kotlin.String declared in <root>.IDelegate1
+              $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+            FUN name:getValue visibility:public modality:OPEN <> ($this:<root>.additionalText$delegate.<no name provided><kotlin.Any?>, t:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p:kotlin.reflect.KProperty<*>) returnType:<root>.P<kotlin.Any?, kotlin.Any?> [operator]
+              overridden:
+                public abstract fun getValue (t: T1 of <root>.IDelegate1, p: kotlin.reflect.KProperty<*>): R1 of <root>.IDelegate1 declared in <root>.IDelegate1
+              $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided><kotlin.Any?>
+              VALUE_PARAMETER name:t index:0 type:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>
+              VALUE_PARAMETER name:p index:1 type:kotlin.reflect.KProperty<*>
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='public open fun getValue (t: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p: kotlin.reflect.KProperty<*>): <root>.P<kotlin.Any?, kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>'
+                  CONSTRUCTOR_CALL 'public constructor <init> (p1: P1 of <root>.P, p2: P2 of <root>.P) declared in <root>.P' type=<root>.P<kotlin.Any?, kotlin.Any?> origin=null
+                    <class: P1>: kotlin.Any?
+                    <class: P2>: kotlin.Any?
+                    p1: TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+                      CALL 'private final fun <get-deepO> (): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>' type=kotlin.Any? origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: <root>.additionalText$delegate.<no name provided><kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>.getValue' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=null
+                        $receiver: GET_VAR 't: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> declared in <root>.additionalText$delegate.<no name provided>.getValue' type=<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> origin=null
+                    p2: TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+                      CALL 'private final fun <get-deepK> (): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>' type=kotlin.Any? origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: <root>.additionalText$delegate.<no name provided><kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>.getValue' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=null
+                        $receiver: GET_VAR 't: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> declared in <root>.additionalText$delegate.<no name provided>.getValue' type=<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> origin=null
+            FUN name:qux11 visibility:public modality:FINAL <F11T> ($this:<root>.additionalText$delegate.<no name provided><kotlin.Any?>, t:F11T of <root>.additionalText$delegate.<no name provided>.qux11) returnType:F11T of <root>.additionalText$delegate.<no name provided>.qux11
+              TYPE_PARAMETER name:F11T index:0 variance: superTypes:[kotlin.Any?] reified:false
+              $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided><kotlin.Any?>
+              VALUE_PARAMETER name:t index:0 type:F11T of <root>.additionalText$delegate.<no name provided>.qux11
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='public final fun qux11 <F11T> (t: F11T of <root>.additionalText$delegate.<no name provided>.qux11): F11T of <root>.additionalText$delegate.<no name provided>.qux11 declared in <root>.additionalText$delegate.<no name provided>'
+                  GET_VAR 't: F11T of <root>.additionalText$delegate.<no name provided>.qux11 declared in <root>.additionalText$delegate.<no name provided>.qux11' type=F11T of <root>.additionalText$delegate.<no name provided>.qux11 origin=null
+            FUN name:qux12 visibility:public modality:FINAL <F12T> ($this:<root>.additionalText$delegate.<no name provided><kotlin.Any?>, t:F12T of <root>.additionalText$delegate.<no name provided>.qux12) returnType:kotlin.Any?
+              TYPE_PARAMETER name:F12T index:0 variance: superTypes:[<root>.IR<kotlin.Any?>] reified:false
+              $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided><kotlin.Any?>
+              VALUE_PARAMETER name:t index:0 type:F12T of <root>.additionalText$delegate.<no name provided>.qux12
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='public final fun qux12 <F12T> (t: F12T of <root>.additionalText$delegate.<no name provided>.qux12): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>'
+                  TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+                    CALL 'public abstract fun foo (): R of <root>.IR declared in <root>.IR' type=kotlin.Any? origin=null
+                      $this: GET_VAR 't: F12T of <root>.additionalText$delegate.<no name provided>.qux12 declared in <root>.additionalText$delegate.<no name provided>.qux12' type=F12T of <root>.additionalText$delegate.<no name provided>.qux12 origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.additionalText$delegate.<no name provided>' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=OBJECT_LITERAL
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalText> visibility:public modality:FINAL <T> ($receiver:<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>) returnType:<root>.P<T of <root>.<get-additionalText>, T of <root>.<get-additionalText>>
+      correspondingProperty: PROPERTY name:additionalText visibility:public modality:FINAL [delegated,val]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-additionalText> <T> (): <root>.P<T of <root>.<get-additionalText>, T of <root>.<get-additionalText>> declared in <root>'
+          CALL 'public open fun getValue (t: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p: kotlin.reflect.KProperty<*>): <root>.P<kotlin.Any?, kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>' type=<root>.P<T of <root>.<get-additionalText>, T of <root>.<get-additionalText>> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalText$delegate type:<root>.additionalText$delegate.<no name provided><kotlin.Any?> visibility:private [final,static]' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=null
+            t: GET_VAR '<this>: <root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>> declared in <root>.<get-additionalText>' type=<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>> origin=null
+            p: PROPERTY_REFERENCE 'public final additionalText: <root>.P<T of <root>.<get-additionalText>, T of <root>.<get-additionalText>>' field=null getter='public final fun <get-additionalText> <T> (): <root>.P<T of <root>.<get-additionalText>, T of <root>.<get-additionalText>> declared in <root>' setter=null type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>, <root>.P<T of <root>.<get-additionalText>, T of <root>.<get-additionalText>>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              <1>: T of <root>.<get-additionalText>
+  CLASS CLASS name:CR modality:FINAL visibility:public superTypes:[<root>.IR<R of <root>.CR>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CR<R of <root>.CR>
+    TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY name:r visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:r type:R of <root>.CR visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'r: R of <root>.CR declared in <root>.CR.<init>' type=R of <root>.CR origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-r> visibility:public modality:FINAL <> ($this:<root>.CR<R of <root>.CR>) returnType:R of <root>.CR
+        correspondingProperty: PROPERTY name:r visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.CR<R of <root>.CR>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-r> (): R of <root>.CR declared in <root>.CR'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:r type:R of <root>.CR visibility:private [final]' type=R of <root>.CR origin=null
+              receiver: GET_VAR '<this>: <root>.CR<R of <root>.CR> declared in <root>.CR.<get-r>' type=<root>.CR<R of <root>.CR> origin=null
+    CONSTRUCTOR visibility:public <> (r:R of <root>.CR) returnType:<root>.CR<R of <root>.CR> [primary]
+      VALUE_PARAMETER name:r index:0 type:R of <root>.CR
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CR modality:FINAL visibility:public superTypes:[<root>.IR<R of <root>.CR>]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IR
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.IR
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.IR
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.CR<R of <root>.CR>) returnType:R of <root>.CR
+      overridden:
+        public abstract fun foo (): R of <root>.IR declared in <root>.IR
+      $this: VALUE_PARAMETER name:<this> type:<root>.CR<R of <root>.CR>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun foo (): R of <root>.CR declared in <root>.CR'
+          CALL 'public final fun <get-r> (): R of <root>.CR declared in <root>.CR' type=R of <root>.CR origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.CR<R of <root>.CR> declared in <root>.CR.foo' type=<root>.CR<R of <root>.CR> origin=null
+  CLASS CLASS name:P modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.P<P1 of <root>.P, P2 of <root>.P>
+    TYPE_PARAMETER name:P1 index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:P2 index:1 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY name:p1 visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:p1 type:P1 of <root>.P visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'p1: P1 of <root>.P declared in <root>.P.<init>' type=P1 of <root>.P origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p1> visibility:public modality:FINAL <> ($this:<root>.P<P1 of <root>.P, P2 of <root>.P>) returnType:P1 of <root>.P
+        correspondingProperty: PROPERTY name:p1 visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.P<P1 of <root>.P, P2 of <root>.P>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-p1> (): P1 of <root>.P declared in <root>.P'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p1 type:P1 of <root>.P visibility:private [final]' type=P1 of <root>.P origin=null
+              receiver: GET_VAR '<this>: <root>.P<P1 of <root>.P, P2 of <root>.P> declared in <root>.P.<get-p1>' type=<root>.P<P1 of <root>.P, P2 of <root>.P> origin=null
+    PROPERTY name:p2 visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:p2 type:P2 of <root>.P visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'p2: P2 of <root>.P declared in <root>.P.<init>' type=P2 of <root>.P origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p2> visibility:public modality:FINAL <> ($this:<root>.P<P1 of <root>.P, P2 of <root>.P>) returnType:P2 of <root>.P
+        correspondingProperty: PROPERTY name:p2 visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.P<P1 of <root>.P, P2 of <root>.P>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-p2> (): P2 of <root>.P declared in <root>.P'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p2 type:P2 of <root>.P visibility:private [final]' type=P2 of <root>.P origin=null
+              receiver: GET_VAR '<this>: <root>.P<P1 of <root>.P, P2 of <root>.P> declared in <root>.P.<get-p2>' type=<root>.P<P1 of <root>.P, P2 of <root>.P> origin=null
+    CONSTRUCTOR visibility:public <> (p1:P1 of <root>.P, p2:P2 of <root>.P) returnType:<root>.P<P1 of <root>.P, P2 of <root>.P> [primary]
+      VALUE_PARAMETER name:p1 index:0 type:P1 of <root>.P
+      VALUE_PARAMETER name:p2 index:1 type:P2 of <root>.P
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:P modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Value modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Value<T of <root>.Value, IT of <root>.Value>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     TYPE_PARAMETER name:IT index:1 variance: superTypes:[<root>.IR<T of <root>.Value>] reified:false
-    CONSTRUCTOR visibility:public <> (value1:T of <root>.Value, value2:IT of <root>.Value) returnType:<root>.Value<T of <root>.Value, IT of <root>.Value> [primary]
-      VALUE_PARAMETER name:value1 index:0 type:T of <root>.Value
-      VALUE_PARAMETER name:value2 index:1 type:IT of <root>.Value
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Value modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value1 visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:value1 type:T of <root>.Value visibility:private
         EXPRESSION_BODY
@@ -39,6 +299,12 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
           RETURN type=kotlin.Nothing from='public final fun <get-value2> (): IT of <root>.Value declared in <root>.Value'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:IT of <root>.Value visibility:private [final]' type=IT of <root>.Value origin=null
               receiver: GET_VAR '<this>: <root>.Value<T of <root>.Value, IT of <root>.Value> declared in <root>.Value.<get-value2>' type=<root>.Value<T of <root>.Value, IT of <root>.Value> origin=null
+    CONSTRUCTOR visibility:public <> (value1:T of <root>.Value, value2:IT of <root>.Value) returnType:<root>.Value<T of <root>.Value, IT of <root>.Value> [primary]
+      VALUE_PARAMETER name:value1 index:0 type:T of <root>.Value
+      VALUE_PARAMETER name:value2 index:1 type:IT of <root>.Value
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Value modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -56,325 +322,59 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IDelegate1<T1 of <root>.IDelegate1, R1 of <root>.IDelegate1>
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:false
     TYPE_PARAMETER name:R1 index:1 variance: superTypes:[kotlin.Any?] reified:false
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:getValue visibility:public modality:ABSTRACT <> ($this:<root>.IDelegate1<T1 of <root>.IDelegate1, R1 of <root>.IDelegate1>, t:T1 of <root>.IDelegate1, p:kotlin.reflect.KProperty<*>) returnType:R1 of <root>.IDelegate1 [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.IDelegate1<T1 of <root>.IDelegate1, R1 of <root>.IDelegate1>
       VALUE_PARAMETER name:t index:0 type:T1 of <root>.IDelegate1
       VALUE_PARAMETER name:p index:1 type:kotlin.reflect.KProperty<*>
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IDelegate2 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IDelegate2<T2 of <root>.IDelegate2, R2 of <root>.IDelegate2>
     TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?] reified:false
     TYPE_PARAMETER name:R2 index:1 variance: superTypes:[kotlin.Any?] reified:false
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:getValue visibility:public modality:ABSTRACT <> ($this:<root>.IDelegate2<T2 of <root>.IDelegate2, R2 of <root>.IDelegate2>, t:T2 of <root>.IDelegate2, p:kotlin.reflect.KProperty<*>) returnType:R2 of <root>.IDelegate2 [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.IDelegate2<T2 of <root>.IDelegate2, R2 of <root>.IDelegate2>
       VALUE_PARAMETER name:t index:0 type:T2 of <root>.IDelegate2
       VALUE_PARAMETER name:p index:1 type:kotlin.reflect.KProperty<*>
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IR modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IR<R of <root>.IR>
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IR<R of <root>.IR>) returnType:R of <root>.IR
       $this: VALUE_PARAMETER name:<this> type:<root>.IR<R of <root>.IR>
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:CR modality:FINAL visibility:public superTypes:[<root>.IR<R of <root>.CR>]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CR<R of <root>.CR>
-    TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (r:R of <root>.CR) returnType:<root>.CR<R of <root>.CR> [primary]
-      VALUE_PARAMETER name:r index:0 type:R of <root>.CR
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CR modality:FINAL visibility:public superTypes:[<root>.IR<R of <root>.CR>]'
-    PROPERTY name:r visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:r type:R of <root>.CR visibility:private [final]
-        EXPRESSION_BODY
-          GET_VAR 'r: R of <root>.CR declared in <root>.CR.<init>' type=R of <root>.CR origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-r> visibility:public modality:FINAL <> ($this:<root>.CR<R of <root>.CR>) returnType:R of <root>.CR
-        correspondingProperty: PROPERTY name:r visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.CR<R of <root>.CR>
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-r> (): R of <root>.CR declared in <root>.CR'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:r type:R of <root>.CR visibility:private [final]' type=R of <root>.CR origin=null
-              receiver: GET_VAR '<this>: <root>.CR<R of <root>.CR> declared in <root>.CR.<get-r>' type=<root>.CR<R of <root>.CR> origin=null
-    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.CR<R of <root>.CR>) returnType:R of <root>.CR
-      overridden:
-        public abstract fun foo (): R of <root>.IR declared in <root>.IR
-      $this: VALUE_PARAMETER name:<this> type:<root>.CR<R of <root>.CR>
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun foo (): R of <root>.CR declared in <root>.CR'
-          CALL 'public final fun <get-r> (): R of <root>.CR declared in <root>.CR' type=R of <root>.CR origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.CR<R of <root>.CR> declared in <root>.CR.foo' type=<root>.CR<R of <root>.CR> origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IR
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.IR
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in <root>.IR
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:P modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.P<P1 of <root>.P, P2 of <root>.P>
-    TYPE_PARAMETER name:P1 index:0 variance: superTypes:[kotlin.Any?] reified:false
-    TYPE_PARAMETER name:P2 index:1 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (p1:P1 of <root>.P, p2:P2 of <root>.P) returnType:<root>.P<P1 of <root>.P, P2 of <root>.P> [primary]
-      VALUE_PARAMETER name:p1 index:0 type:P1 of <root>.P
-      VALUE_PARAMETER name:p2 index:1 type:P2 of <root>.P
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:P modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    PROPERTY name:p1 visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:p1 type:P1 of <root>.P visibility:private [final]
-        EXPRESSION_BODY
-          GET_VAR 'p1: P1 of <root>.P declared in <root>.P.<init>' type=P1 of <root>.P origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p1> visibility:public modality:FINAL <> ($this:<root>.P<P1 of <root>.P, P2 of <root>.P>) returnType:P1 of <root>.P
-        correspondingProperty: PROPERTY name:p1 visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.P<P1 of <root>.P, P2 of <root>.P>
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-p1> (): P1 of <root>.P declared in <root>.P'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p1 type:P1 of <root>.P visibility:private [final]' type=P1 of <root>.P origin=null
-              receiver: GET_VAR '<this>: <root>.P<P1 of <root>.P, P2 of <root>.P> declared in <root>.P.<get-p1>' type=<root>.P<P1 of <root>.P, P2 of <root>.P> origin=null
-    PROPERTY name:p2 visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:p2 type:P2 of <root>.P visibility:private [final]
-        EXPRESSION_BODY
-          GET_VAR 'p2: P2 of <root>.P declared in <root>.P.<init>' type=P2 of <root>.P origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p2> visibility:public modality:FINAL <> ($this:<root>.P<P1 of <root>.P, P2 of <root>.P>) returnType:P2 of <root>.P
-        correspondingProperty: PROPERTY name:p2 visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.P<P1 of <root>.P, P2 of <root>.P>
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-p2> (): P2 of <root>.P declared in <root>.P'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p2 type:P2 of <root>.P visibility:private [final]' type=P2 of <root>.P origin=null
-              receiver: GET_VAR '<this>: <root>.P<P1 of <root>.P, P2 of <root>.P> declared in <root>.P.<get-p2>' type=<root>.P<P1 of <root>.P, P2 of <root>.P> origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  PROPERTY name:additionalText visibility:public modality:FINAL [delegated,val]
-    FIELD PROPERTY_DELEGATE name:additionalText$delegate type:<root>.additionalText$delegate.<no name provided><kotlin.Any?> visibility:private [final,static]
-      EXPRESSION_BODY
-        BLOCK type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=OBJECT_LITERAL
-          CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IDelegate1<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, <root>.P<kotlin.Any?, kotlin.Any?>>]
-            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.additionalText$delegate.<no name provided><kotlin.Any?>
-            CONSTRUCTOR visibility:public <> () returnType:<root>.additionalText$delegate.<no name provided><kotlin.Any?> [primary]
-              BLOCK_BODY
-                DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IDelegate1<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, <root>.P<kotlin.Any?, kotlin.Any?>>]'
-            FUN name:qux11 visibility:public modality:FINAL <F11T> ($this:<root>.additionalText$delegate.<no name provided><kotlin.Any?>, t:F11T of <root>.additionalText$delegate.<no name provided>.qux11) returnType:F11T of <root>.additionalText$delegate.<no name provided>.qux11
-              TYPE_PARAMETER name:F11T index:0 variance: superTypes:[kotlin.Any?] reified:false
-              $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided><kotlin.Any?>
-              VALUE_PARAMETER name:t index:0 type:F11T of <root>.additionalText$delegate.<no name provided>.qux11
-              BLOCK_BODY
-                RETURN type=kotlin.Nothing from='public final fun qux11 <F11T> (t: F11T of <root>.additionalText$delegate.<no name provided>.qux11): F11T of <root>.additionalText$delegate.<no name provided>.qux11 declared in <root>.additionalText$delegate.<no name provided>'
-                  GET_VAR 't: F11T of <root>.additionalText$delegate.<no name provided>.qux11 declared in <root>.additionalText$delegate.<no name provided>.qux11' type=F11T of <root>.additionalText$delegate.<no name provided>.qux11 origin=null
-            FUN name:qux12 visibility:public modality:FINAL <F12T> ($this:<root>.additionalText$delegate.<no name provided><kotlin.Any?>, t:F12T of <root>.additionalText$delegate.<no name provided>.qux12) returnType:kotlin.Any?
-              TYPE_PARAMETER name:F12T index:0 variance: superTypes:[<root>.IR<kotlin.Any?>] reified:false
-              $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided><kotlin.Any?>
-              VALUE_PARAMETER name:t index:0 type:F12T of <root>.additionalText$delegate.<no name provided>.qux12
-              BLOCK_BODY
-                RETURN type=kotlin.Nothing from='public final fun qux12 <F12T> (t: F12T of <root>.additionalText$delegate.<no name provided>.qux12): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>'
-                  TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
-                    CALL 'public abstract fun foo (): R of <root>.IR declared in <root>.IR' type=kotlin.Any? origin=null
-                      $this: GET_VAR 't: F12T of <root>.additionalText$delegate.<no name provided>.qux12 declared in <root>.additionalText$delegate.<no name provided>.qux12' type=F12T of <root>.additionalText$delegate.<no name provided>.qux12 origin=null
-            PROPERTY name:deepO visibility:private modality:FINAL [delegated,val]
-              FIELD PROPERTY_DELEGATE name:deepO$delegate type:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?> visibility:private [final]
-                EXPRESSION_BODY
-                  BLOCK type=<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?> origin=OBJECT_LITERAL
-                    CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IDelegate1<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, kotlin.Any?>]
-                      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>
-                      CONSTRUCTOR visibility:public <> () returnType:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?> [primary]
-                        BLOCK_BODY
-                          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-                          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IDelegate1<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, kotlin.Any?>]'
-                      FUN name:getValue visibility:public modality:OPEN <> ($this:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>, t:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p:kotlin.reflect.KProperty<*>) returnType:kotlin.Any? [operator]
-                        overridden:
-                          public abstract fun getValue (t: T1 of <root>.IDelegate1, p: kotlin.reflect.KProperty<*>): R1 of <root>.IDelegate1 declared in <root>.IDelegate1
-                        $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>
-                        VALUE_PARAMETER name:t index:0 type:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>
-                        VALUE_PARAMETER name:p index:1 type:kotlin.reflect.KProperty<*>
-                        BLOCK_BODY
-                          RETURN type=kotlin.Nothing from='public open fun getValue (t: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p: kotlin.reflect.KProperty<*>): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>'
-                            TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
-                              CALL 'public final fun <get-value1> (): T of <root>.Value declared in <root>.Value' type=kotlin.Any? origin=GET_PROPERTY
-                                $this: GET_VAR 't: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.getValue' type=<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> origin=null
-                      FUN name:qux21 visibility:public modality:FINAL <F21T> ($this:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>, t:F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21) returnType:F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21
-                        TYPE_PARAMETER name:F21T index:0 variance: superTypes:[kotlin.Any?] reified:false
-                        $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>
-                        VALUE_PARAMETER name:t index:0 type:F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21
-                        BLOCK_BODY
-                          RETURN type=kotlin.Nothing from='public final fun qux21 <F21T> (t: F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21): F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21 declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>'
-                            GET_VAR 't: F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21 declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21' type=F21T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux21 origin=null
-                      FUN name:qux22 visibility:public modality:FINAL <F22T> ($this:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>, t:F22T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux22) returnType:kotlin.Any?
-                        TYPE_PARAMETER name:F22T index:0 variance: superTypes:[<root>.IR<kotlin.Any?>] reified:false
-                        $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?>
-                        VALUE_PARAMETER name:t index:0 type:F22T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux22
-                        BLOCK_BODY
-                          RETURN type=kotlin.Nothing from='public final fun qux22 <F22T> (t: F22T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux22): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>'
-                            TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
-                              CALL 'public abstract fun foo (): R of <root>.IR declared in <root>.IR' type=kotlin.Any? origin=null
-                                $this: GET_VAR 't: F22T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux22 declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux22' type=F22T of <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>.qux22 origin=null
-                      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-                        overridden:
-                          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IDelegate1
-                        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-                      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-                        overridden:
-                          public open fun hashCode (): kotlin.Int declared in <root>.IDelegate1
-                        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-                        overridden:
-                          public open fun toString (): kotlin.String declared in <root>.IDelegate1
-                        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                    CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>' type=<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?> origin=OBJECT_LITERAL
-              FUN DELEGATED_PROPERTY_ACCESSOR name:<get-deepO> visibility:private modality:FINAL <> ($this:<root>.additionalText$delegate.<no name provided><kotlin.Any?>, $receiver:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>) returnType:kotlin.Any?
-                correspondingProperty: PROPERTY name:deepO visibility:private modality:FINAL [delegated,val]
-                $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided><kotlin.Any?>
-                $receiver: VALUE_PARAMETER name:<this> type:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>
-                BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='private final fun <get-deepO> (): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>'
-                    TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
-                      CALL 'public open fun getValue (t: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p: kotlin.reflect.KProperty<*>): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>' type=kotlin.Any? origin=null
-                        $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:deepO$delegate type:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?> visibility:private [final]' type=<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><kotlin.Any?> origin=null
-                          receiver: GET_VAR '<this>: <root>.additionalText$delegate.<no name provided><kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>.<get-deepO>' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=null
-                        t: GET_VAR '<this>: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> declared in <root>.additionalText$delegate.<no name provided>.<get-deepO>' type=<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> origin=null
-                        p: PROPERTY_REFERENCE 'private final deepO: kotlin.Any?' field=null getter='private final fun <get-deepO> (): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>' setter=null type=kotlin.reflect.KProperty2<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, <root>.additionalText$delegate.<no name provided><kotlin.Any?>, kotlin.Any?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-            PROPERTY name:deepK visibility:private modality:FINAL [delegated,val]
-              FIELD PROPERTY_DELEGATE name:deepK$delegate type:<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?> visibility:private [final]
-                EXPRESSION_BODY
-                  BLOCK type=<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?> origin=OBJECT_LITERAL
-                    CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IDelegate1<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, kotlin.Any?>]
-                      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?>
-                      CONSTRUCTOR visibility:public <> () returnType:<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?> [primary]
-                        BLOCK_BODY
-                          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-                          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IDelegate1<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, kotlin.Any?>]'
-                      FUN name:getValue visibility:public modality:OPEN <> ($this:<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?>, t:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p:kotlin.reflect.KProperty<*>) returnType:kotlin.Any? [operator]
-                        overridden:
-                          public abstract fun getValue (t: T1 of <root>.IDelegate1, p: kotlin.reflect.KProperty<*>): R1 of <root>.IDelegate1 declared in <root>.IDelegate1
-                        $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?>
-                        VALUE_PARAMETER name:t index:0 type:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>
-                        VALUE_PARAMETER name:p index:1 type:kotlin.reflect.KProperty<*>
-                        BLOCK_BODY
-                          RETURN type=kotlin.Nothing from='public open fun getValue (t: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p: kotlin.reflect.KProperty<*>): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided>'
-                            TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
-                              CALL 'public open fun foo (): R of <root>.CR declared in <root>.CR' type=kotlin.Any? origin=null
-                                $this: CALL 'public final fun <get-value2> (): IT of <root>.Value declared in <root>.Value' type=<root>.CR<kotlin.Any?> origin=GET_PROPERTY
-                                  $this: GET_VAR 't: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> declared in <root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided>.getValue' type=<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> origin=null
-                      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-                        overridden:
-                          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IDelegate1
-                        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-                      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-                        overridden:
-                          public open fun hashCode (): kotlin.Int declared in <root>.IDelegate1
-                        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-                        overridden:
-                          public open fun toString (): kotlin.String declared in <root>.IDelegate1
-                        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                    CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided>' type=<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?> origin=OBJECT_LITERAL
-              FUN DELEGATED_PROPERTY_ACCESSOR name:<get-deepK> visibility:private modality:FINAL <> ($this:<root>.additionalText$delegate.<no name provided><kotlin.Any?>, $receiver:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>) returnType:kotlin.Any?
-                correspondingProperty: PROPERTY name:deepK visibility:private modality:FINAL [delegated,val]
-                $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided><kotlin.Any?>
-                $receiver: VALUE_PARAMETER name:<this> type:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>
-                BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='private final fun <get-deepK> (): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>'
-                    TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
-                      CALL 'public open fun getValue (t: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p: kotlin.reflect.KProperty<*>): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided>' type=kotlin.Any? origin=null
-                        $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:deepK$delegate type:<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?> visibility:private [final]' type=<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><kotlin.Any?> origin=null
-                          receiver: GET_VAR '<this>: <root>.additionalText$delegate.<no name provided><kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>.<get-deepK>' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=null
-                        t: GET_VAR '<this>: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> declared in <root>.additionalText$delegate.<no name provided>.<get-deepK>' type=<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> origin=null
-                        p: PROPERTY_REFERENCE 'private final deepK: kotlin.Any?' field=null getter='private final fun <get-deepK> (): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>' setter=null type=kotlin.reflect.KProperty2<<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, <root>.additionalText$delegate.<no name provided><kotlin.Any?>, kotlin.Any?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-            FUN name:getValue visibility:public modality:OPEN <> ($this:<root>.additionalText$delegate.<no name provided><kotlin.Any?>, t:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p:kotlin.reflect.KProperty<*>) returnType:<root>.P<kotlin.Any?, kotlin.Any?> [operator]
-              overridden:
-                public abstract fun getValue (t: T1 of <root>.IDelegate1, p: kotlin.reflect.KProperty<*>): R1 of <root>.IDelegate1 declared in <root>.IDelegate1
-              $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided><kotlin.Any?>
-              VALUE_PARAMETER name:t index:0 type:<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>
-              VALUE_PARAMETER name:p index:1 type:kotlin.reflect.KProperty<*>
-              BLOCK_BODY
-                RETURN type=kotlin.Nothing from='public open fun getValue (t: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p: kotlin.reflect.KProperty<*>): <root>.P<kotlin.Any?, kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>'
-                  CONSTRUCTOR_CALL 'public constructor <init> (p1: P1 of <root>.P, p2: P2 of <root>.P) declared in <root>.P' type=<root>.P<kotlin.Any?, kotlin.Any?> origin=null
-                    <class: P1>: kotlin.Any?
-                    <class: P2>: kotlin.Any?
-                    p1: TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
-                      CALL 'private final fun <get-deepO> (): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>' type=kotlin.Any? origin=GET_PROPERTY
-                        $this: GET_VAR '<this>: <root>.additionalText$delegate.<no name provided><kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>.getValue' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=null
-                        $receiver: GET_VAR 't: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> declared in <root>.additionalText$delegate.<no name provided>.getValue' type=<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> origin=null
-                    p2: TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
-                      CALL 'private final fun <get-deepK> (): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>' type=kotlin.Any? origin=GET_PROPERTY
-                        $this: GET_VAR '<this>: <root>.additionalText$delegate.<no name provided><kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>.getValue' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=null
-                        $receiver: GET_VAR 't: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> declared in <root>.additionalText$delegate.<no name provided>.getValue' type=<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> origin=null
-            FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-              overridden:
-                public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IDelegate1
-              $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-              VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-            FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-              overridden:
-                public open fun hashCode (): kotlin.Int declared in <root>.IDelegate1
-              $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-            FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-              overridden:
-                public open fun toString (): kotlin.String declared in <root>.IDelegate1
-              $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.additionalText$delegate.<no name provided>' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=OBJECT_LITERAL
-    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalText> visibility:public modality:FINAL <T> ($receiver:<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>) returnType:<root>.P<T of <root>.<get-additionalText>, T of <root>.<get-additionalText>>
-      correspondingProperty: PROPERTY name:additionalText visibility:public modality:FINAL [delegated,val]
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-      $receiver: VALUE_PARAMETER name:<this> type:<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-additionalText> <T> (): <root>.P<T of <root>.<get-additionalText>, T of <root>.<get-additionalText>> declared in <root>'
-          CALL 'public open fun getValue (t: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>>, p: kotlin.reflect.KProperty<*>): <root>.P<kotlin.Any?, kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>' type=<root>.P<T of <root>.<get-additionalText>, T of <root>.<get-additionalText>> origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalText$delegate type:<root>.additionalText$delegate.<no name provided><kotlin.Any?> visibility:private [final,static]' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=null
-            t: GET_VAR '<this>: <root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>> declared in <root>.<get-additionalText>' type=<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>> origin=null
-            p: PROPERTY_REFERENCE 'public final additionalText: <root>.P<T of <root>.<get-additionalText>, T of <root>.<get-additionalText>>' field=null getter='public final fun <get-additionalText> <T> (): <root>.P<T of <root>.<get-additionalText>, T of <root>.<get-additionalText>> declared in <root>' setter=null type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>, <root>.P<T of <root>.<get-additionalText>, T of <root>.<get-additionalText>>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-              <1>: T of <root>.<get-additionalText>

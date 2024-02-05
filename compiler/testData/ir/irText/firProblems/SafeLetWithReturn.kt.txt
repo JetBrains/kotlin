@@ -1,10 +1,19 @@
-fun foo(s: String?): String {
+fun bar(s: String?, t: String?): String {
   { // BLOCK
     val tmp_0: String? = s
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> null
-      else -> tmp_0.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
-        return it
+      else -> tmp_0.let<String, Nothing?>(block = local fun <anonymous>(it: String): Nothing? {
+        return { // BLOCK
+          val tmp_1: String? = t
+          when {
+            EQEQ(arg0 = tmp_1, arg1 = null) -> null
+            else -> tmp_1.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
+              return it
+            }
+)
+          }
+        }
       }
 )
     }
@@ -12,22 +21,13 @@ fun foo(s: String?): String {
   return ""
 }
 
-fun bar(s: String?, t: String?): String {
+fun foo(s: String?): String {
   { // BLOCK
-    val tmp_1: String? = s
+    val tmp_2: String? = s
     when {
-      EQEQ(arg0 = tmp_1, arg1 = null) -> null
-      else -> tmp_1.let<String, Nothing?>(block = local fun <anonymous>(it: String): Nothing? {
-        return { // BLOCK
-          val tmp_2: String? = t
-          when {
-            EQEQ(arg0 = tmp_2, arg1 = null) -> null
-            else -> tmp_2.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
-              return it
-            }
-)
-          }
-        }
+      EQEQ(arg0 = tmp_2, arg1 = null) -> null
+      else -> tmp_2.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
+        return it
       }
 )
     }
@@ -49,3 +49,4 @@ val String?.baz: String
     } /*~> Unit */
     return ""
   }
+

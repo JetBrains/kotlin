@@ -1,20 +1,6 @@
 FILE fqName:<root> fileName:/kt37131.kt
-  FUN name:foo visibility:public modality:FINAL <> (x:kotlin.String) returnType:kotlin.String
-    VALUE_PARAMETER name:x index:0 type:kotlin.String
-      EXPRESSION_BODY
-        CONST String type=kotlin.String value=""
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo (x: kotlin.String): kotlin.String declared in <root>'
-        GET_VAR 'x: kotlin.String declared in <root>.foo' type=kotlin.String origin=null
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
-    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:<root>.C [primary]
-      VALUE_PARAMETER name:x index:0 type:kotlin.String
-        EXPRESSION_BODY
-          CONST String type=kotlin.String value=""
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
@@ -26,6 +12,13 @@ FILE fqName:<root> fileName:/kt37131.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.String declared in <root>.C'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-x>' type=<root>.C origin=null
+    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:<root>.C [primary]
+      VALUE_PARAMETER name:x index:0 type:kotlin.String
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value=""
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -39,22 +32,13 @@ FILE fqName:<root> fileName:/kt37131.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:use visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Any>) returnType:kotlin.Any
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Any>
+  FUN name:foo visibility:public modality:FINAL <> (x:kotlin.String) returnType:kotlin.String
+    VALUE_PARAMETER name:x index:0 type:kotlin.String
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value=""
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun use (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Any origin=INVOKE
-          $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any> declared in <root>.use' type=kotlin.Function0<kotlin.Any> origin=VARIABLE_AS_FUNCTION
-  FUN name:testFn visibility:public modality:FINAL <> () returnType:kotlin.Any
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testFn (): kotlin.Any declared in <root>'
-        CALL 'public final fun use (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-          fn: BLOCK type=kotlin.Function0<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
-            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo visibility:local modality:FINAL <> () returnType:kotlin.String
-              BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun foo (): kotlin.String declared in <root>.testFn'
-                  CALL 'public final fun foo (x: kotlin.String): kotlin.String declared in <root>' type=kotlin.String origin=null
-            FUNCTION_REFERENCE 'local final fun foo (): kotlin.String declared in <root>.testFn' type=kotlin.Function0<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun foo (x: kotlin.String): kotlin.String declared in <root>
+      RETURN type=kotlin.Nothing from='public final fun foo (x: kotlin.String): kotlin.String declared in <root>'
+        GET_VAR 'x: kotlin.String declared in <root>.foo' type=kotlin.String origin=null
   FUN name:testCtor visibility:public modality:FINAL <> () returnType:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testCtor (): kotlin.Any declared in <root>'
@@ -65,3 +49,19 @@ FILE fqName:<root> fileName:/kt37131.kt
                 RETURN type=kotlin.Nothing from='local final fun <init> (): <root>.C declared in <root>.testCtor'
                   CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.String) declared in <root>.C' type=<root>.C origin=null
             FUNCTION_REFERENCE 'local final fun <init> (): <root>.C declared in <root>.testCtor' type=kotlin.Function0<<root>.C> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public constructor <init> (x: kotlin.String) declared in <root>.C
+  FUN name:testFn visibility:public modality:FINAL <> () returnType:kotlin.Any
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testFn (): kotlin.Any declared in <root>'
+        CALL 'public final fun use (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
+          fn: BLOCK type=kotlin.Function0<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo visibility:local modality:FINAL <> () returnType:kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun foo (): kotlin.String declared in <root>.testFn'
+                  CALL 'public final fun foo (x: kotlin.String): kotlin.String declared in <root>' type=kotlin.String origin=null
+            FUNCTION_REFERENCE 'local final fun foo (): kotlin.String declared in <root>.testFn' type=kotlin.Function0<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun foo (x: kotlin.String): kotlin.String declared in <root>
+  FUN name:use visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Any>) returnType:kotlin.Any
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Any>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun use (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>'
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Any origin=INVOKE
+          $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any> declared in <root>.use' type=kotlin.Function0<kotlin.Any> origin=VARIABLE_AS_FUNCTION

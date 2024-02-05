@@ -1,7 +1,4 @@
 FILE fqName:<root> fileName:/abbreviatedTypes.kt
-  TYPEALIAS name:I visibility:public expandedType:kotlin.Int
-  TYPEALIAS name:L visibility:public expandedType:kotlin.collections.List<T of <root>.L>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
   FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.collections.List<kotlin.Int>) returnType:kotlin.collections.List<kotlin.Int>
     VALUE_PARAMETER name:x index:0 type:kotlin.collections.List<kotlin.Int>
     BLOCK_BODY
@@ -22,3 +19,6 @@ FILE fqName:<root> fileName:/abbreviatedTypes.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (x: kotlin.collections.List<kotlin.collections.List<kotlin.Int>>): kotlin.collections.List<kotlin.collections.List<kotlin.Int>> declared in <root>'
         GET_VAR 'x: kotlin.collections.List<kotlin.collections.List<kotlin.Int>> declared in <root>.test4' type=kotlin.collections.List<kotlin.collections.List<kotlin.Int>> origin=null
+  TYPEALIAS name:I visibility:public expandedType:kotlin.Int
+  TYPEALIAS name:L visibility:public expandedType:kotlin.collections.List<T of <root>.L>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false

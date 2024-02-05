@@ -1,57 +1,8 @@
 object Z {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   var counter: Int
     field = 0
     get
     set
-
-  fun foo() {
-  }
-
-  fun bar() {
-    <this>.<set-counter>(<set-?> = 1)
-    <this>.foo()
-    Z.<set-counter>(<set-?> = 1)
-    Z.foo()
-  }
-
-  class Nested {
-    constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    init {
-      Z.<set-counter>(<set-?> = 1)
-      Z.foo()
-      Z.<set-counter>(<set-?> = 1)
-      Z.foo()
-    }
-
-    fun test() {
-      Z.<set-counter>(<set-?> = 1)
-      Z.foo()
-      Z.<set-counter>(<set-?> = 1)
-      Z.foo()
-    }
-
-  }
-
-  fun aFun() {
-    withLambda(f = local fun <anonymous>() {
-      Z.<set-counter>(<set-?> = 1)
-      Z.foo()
-      Z.<set-counter>(<set-?> = 1)
-      Z.foo()
-    }
-)
-  }
 
   val aLambda: Function0<Unit>
     field = local fun <anonymous>() {
@@ -66,17 +17,17 @@ object Z {
   val anObject: Any
     field = { // BLOCK
       local class <no name provided> {
-        constructor() /* primary */ {
-          super/*Any*/()
-          /* <init>() */
-
-        }
-
         init {
           Z.<set-counter>(<set-?> = 1)
           Z.foo()
           Z.<set-counter>(<set-?> = 1)
           Z.foo()
+        }
+
+        constructor() /* primary */ {
+          super/*Any*/()
+          /* <init>() */
+
         }
 
         fun test() {
@@ -91,6 +42,55 @@ object Z {
       <no name provided>()
     }
     get
+
+  class Nested {
+    init {
+      Z.<set-counter>(<set-?> = 1)
+      Z.foo()
+      Z.<set-counter>(<set-?> = 1)
+      Z.foo()
+    }
+
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun test() {
+      Z.<set-counter>(<set-?> = 1)
+      Z.foo()
+      Z.<set-counter>(<set-?> = 1)
+      Z.foo()
+    }
+
+  }
+
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun aFun() {
+    withLambda(f = local fun <anonymous>() {
+      Z.<set-counter>(<set-?> = 1)
+      Z.foo()
+      Z.<set-counter>(<set-?> = 1)
+      Z.foo()
+    }
+)
+  }
+
+  fun bar() {
+    <this>.<set-counter>(<set-?> = 1)
+    <this>.foo()
+    Z.<set-counter>(<set-?> = 1)
+    Z.foo()
+  }
+
+  fun foo() {
+  }
 
 }
 

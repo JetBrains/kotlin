@@ -1,4 +1,18 @@
 FILE fqName:<root> fileName:/asOnPlatformType.kt
+  FUN name:foo visibility:public modality:FINAL <T> ($receiver:T of <root>.foo) returnType:T of <root>.foo [inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true
+    $receiver: VALUE_PARAMETER name:<this> type:T of <root>.foo
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo <T> (): T of <root>.foo declared in <root>'
+        TYPE_OP type=T of <root>.foo origin=CAST typeOperand=T of <root>.foo
+          GET_VAR '<this>: T of <root>.foo declared in <root>.foo' type=T of <root>.foo origin=null
+  FUN name:fooN visibility:public modality:FINAL <T> ($receiver:T of <root>.fooN) returnType:T of <root>.fooN? [inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true
+    $receiver: VALUE_PARAMETER name:<this> type:T of <root>.fooN
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun fooN <T> (): T of <root>.fooN? declared in <root>'
+        TYPE_OP type=T of <root>.fooN? origin=CAST typeOperand=T of <root>.fooN?
+          GET_VAR '<this>: T of <root>.fooN declared in <root>.fooN' type=T of <root>.fooN origin=null
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:nullStr type:@[FlexibleNullability] kotlin.String? [val]
@@ -21,17 +35,3 @@ FILE fqName:<root> fileName:/asOnPlatformType.kt
         CALL 'public final fun fooN <T> (): T of <root>.fooN? declared in <root>' type=kotlin.String? origin=null
           <T>: @[FlexibleNullability] kotlin.String?
           $receiver: GET_VAR 'val nonnullStr: @[FlexibleNullability] kotlin.String? declared in <root>.test' type=@[FlexibleNullability] kotlin.String? origin=null
-  FUN name:foo visibility:public modality:FINAL <T> ($receiver:T of <root>.foo) returnType:T of <root>.foo [inline]
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true
-    $receiver: VALUE_PARAMETER name:<this> type:T of <root>.foo
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo <T> (): T of <root>.foo declared in <root>'
-        TYPE_OP type=T of <root>.foo origin=CAST typeOperand=T of <root>.foo
-          GET_VAR '<this>: T of <root>.foo declared in <root>.foo' type=T of <root>.foo origin=null
-  FUN name:fooN visibility:public modality:FINAL <T> ($receiver:T of <root>.fooN) returnType:T of <root>.fooN? [inline]
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true
-    $receiver: VALUE_PARAMETER name:<this> type:T of <root>.fooN
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun fooN <T> (): T of <root>.fooN? declared in <root>'
-        TYPE_OP type=T of <root>.fooN? origin=CAST typeOperand=T of <root>.fooN?
-          GET_VAR '<this>: T of <root>.fooN declared in <root>.fooN' type=T of <root>.fooN origin=null

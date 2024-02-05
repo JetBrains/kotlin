@@ -1,10 +1,4 @@
 data class Pair<A : Any?, B : Any?> {
-  constructor(first: A, second: B) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val first: A
     field = first
     get
@@ -12,6 +6,12 @@ data class Pair<A : Any?, B : Any?> {
   val second: B
     field = second
     get
+
+  constructor(first: A, second: B) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
   operator fun component1(): A {
     return <this>.#first
@@ -23,22 +23,6 @@ data class Pair<A : Any?, B : Any?> {
 
   fun copy(first: A = <this>.#first, second: B = <this>.#second): Pair<A, B> {
     return Pair<A, B>(first = first, second = second)
-  }
-
-  override fun toString(): String {
-    return "Pair(" + "first=" + <this>.#first + ", " + "second=" + <this>.#second + ")"
-  }
-
-  override fun hashCode(): Int {
-    var result: Int = when {
-      EQEQ(arg0 = <this>.#first, arg1 = null) -> 0
-      else -> <this>.#first.hashCode()
-    }
-    result = result.times(other = 31).plus(other = when {
-      EQEQ(arg0 = <this>.#second, arg1 = null) -> 0
-      else -> <this>.#second.hashCode()
-    })
-    return result
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -58,19 +42,23 @@ data class Pair<A : Any?, B : Any?> {
     return true
   }
 
-}
-
-infix operator fun <T : Any?> T.compareTo($context_receiver_0: Comparator<T>, other: T): Int {
-  return $context_receiver_0.compare(p0 = <this>, p1 = other)
-}
-
-val <T : Any?> Pair<T, T>.min: T
-  get($context_receiver_0: Comparator<T>): T {
-    return when {
-      less(arg0 = <this>.<get-first>().compareTo<T>($context_receiver_0 = $context_receiver_0, other = <this>.<get-second>()), arg1 = 0) -> <this>.<get-first>()
-      else -> <this>.<get-second>()
+  override fun hashCode(): Int {
+    var result: Int = when {
+      EQEQ(arg0 = <this>.#first, arg1 = null) -> 0
+      else -> <this>.#first.hashCode()
     }
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#second, arg1 = null) -> 0
+      else -> <this>.#second.hashCode()
+    })
+    return result
   }
+
+  override fun toString(): String {
+    return "Pair(" + "first=" + <this>.#first + ", " + "second=" + <this>.#second + ")"
+  }
+
+}
 
 fun box(): String {
   val comparator: Comparator<String> = local fun <anonymous>(a: @FlexibleNullability String?, b: @FlexibleNullability String?): Int {
@@ -88,4 +76,16 @@ fun box(): String {
   }
 )
 }
+
+infix operator fun <T : Any?> T.compareTo($context_receiver_0: Comparator<T>, other: T): Int {
+  return $context_receiver_0.compare(p0 = <this>, p1 = other)
+}
+
+val <T : Any?> Pair<T, T>.min: T
+  get($context_receiver_0: Comparator<T>): T {
+    return when {
+      less(arg0 = <this>.<get-first>().compareTo<T>($context_receiver_0 = $context_receiver_0, other = <this>.<get-second>()), arg1 = 0) -> <this>.<get-first>()
+      else -> <this>.<get-second>()
+    }
+  }
 

@@ -4,21 +4,10 @@ package test
 @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
 class Some {
   @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
-  constructor(@AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK") x: Int) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
   val x: Int
     field = x
     @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
     get
-
-  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
-  fun foo() {
-  }
 
   @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
   class Derived {
@@ -29,6 +18,17 @@ class Some {
 
     }
 
+  }
+
+  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
+  constructor(@AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK") x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
+  fun foo() {
   }
 
 }

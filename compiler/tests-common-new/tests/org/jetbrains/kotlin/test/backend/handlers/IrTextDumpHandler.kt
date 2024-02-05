@@ -94,7 +94,8 @@ class IrTextDumpHandler(
             // PSI2IR assigns field `abbreviation` with type abbreviation. It serves only debugging purposes, and no compiler functionality relies on it.
             // FIR2IR does not initialize field `abbreviation` at all.
             printTypeAbbreviations = false,
-            isHiddenDeclaration = { isHiddenDeclaration(it, irBuiltins) }
+            isHiddenDeclaration = { isHiddenDeclaration(it, irBuiltins) },
+            stableOrder = true,
         )
 
         val builder = baseDumper.builderForModule(module.name)

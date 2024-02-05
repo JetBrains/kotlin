@@ -1,10 +1,4 @@
 open class Base {
-  constructor(x: Int, y: Int) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: Int
     field = x
     get
@@ -12,6 +6,12 @@ open class Base {
   val y: Int
     field = y
     get
+
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
@@ -36,3 +36,4 @@ class Test2 : Base {
   }
 
 }
+

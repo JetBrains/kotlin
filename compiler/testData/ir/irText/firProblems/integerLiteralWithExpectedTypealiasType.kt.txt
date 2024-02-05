@@ -1,4 +1,7 @@
-typealias MyLong = Long
+fun box(): String {
+  return foo(l = 0L)
+}
+
 fun foo(l: Long): String {
   return when {
     EQEQ(arg0 = l, arg1 = 0L) -> "OK"
@@ -6,6 +9,4 @@ fun foo(l: Long): String {
   }
 }
 
-fun box(): String {
-  return foo(l = 0L)
-}
+typealias MyLong = Long

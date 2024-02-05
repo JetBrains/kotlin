@@ -6,19 +6,19 @@ FILE fqName:<root> fileName:/dynamicBinaryEqualityOperator.kt
         DYN_OP operator=EQEQ type=kotlin.Boolean
           receiver: GET_VAR 'd: dynamic declared in <root>.testEqeq' type=dynamic origin=null
           0: CONST Int type=kotlin.Int value=3
-  FUN name:testExclEq visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean
-    VALUE_PARAMETER name:d index:0 type:dynamic
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testExclEq (d: dynamic): kotlin.Boolean declared in <root>'
-        DYN_OP operator=EXCLEQ type=kotlin.Boolean
-          receiver: GET_VAR 'd: dynamic declared in <root>.testExclEq' type=dynamic origin=null
-          0: CONST Int type=kotlin.Int value=3
   FUN name:testEqeqeq visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean
     VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testEqeqeq (d: dynamic): kotlin.Boolean declared in <root>'
         DYN_OP operator=EQEQEQ type=kotlin.Boolean
           receiver: GET_VAR 'd: dynamic declared in <root>.testEqeqeq' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=3
+  FUN name:testExclEq visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:d index:0 type:dynamic
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testExclEq (d: dynamic): kotlin.Boolean declared in <root>'
+        DYN_OP operator=EXCLEQ type=kotlin.Boolean
+          receiver: GET_VAR 'd: dynamic declared in <root>.testExclEq' type=dynamic origin=null
           0: CONST Int type=kotlin.Int value=3
   FUN name:testExclEqeq visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean
     VALUE_PARAMETER name:d index:0 type:dynamic

@@ -4,12 +4,6 @@ fun <T : Comparable<T>> arrayData(vararg values: T, toArray: @ExtensionFunctionT
 fun <T : Long> arrayLongInheritedData(vararg values: T, toArray: @ExtensionFunctionType Function1<Array<T>, Unit>) {
 }
 
-fun longArrayData(vararg values: Long, toArray: @ExtensionFunctionType Function1<LongArray, Unit>) {
-}
-
-fun shortArrayData(vararg values: Short, toArray: @ExtensionFunctionType Function1<ShortArray, Unit>) {
-}
-
 fun arrayOfLongData(vararg values: Long, toArray: @ExtensionFunctionType Function1<Array<Long>, Unit>) {
 }
 
@@ -43,3 +37,10 @@ fun box(): String {
 )
   return "OK"
 }
+
+fun longArrayData(vararg values: Long, toArray: @ExtensionFunctionType Function1<LongArray, Unit>) {
+}
+
+fun shortArrayData(vararg values: Short, toArray: @ExtensionFunctionType Function1<ShortArray, Unit>) {
+}
+

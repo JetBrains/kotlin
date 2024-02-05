@@ -1,10 +1,6 @@
 FILE fqName:<root> fileName:/Derived.kt
   CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.BaseJava]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Derived [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.BaseJava'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.BaseJava]'
     PROPERTY name:a visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:private
         EXPRESSION_BODY
@@ -24,6 +20,10 @@ FILE fqName:<root> fileName:/Derived.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<set-a>' type=<root>.Derived origin=null
             value: GET_VAR '<set-?>: kotlin.String declared in <root>.Derived.<set-a>' type=kotlin.String origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Derived [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.BaseJava'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.BaseJava]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.BaseJava

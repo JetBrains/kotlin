@@ -1,10 +1,4 @@
 class C {
-  constructor(x: Any?) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val s: String?
     get
 
@@ -18,4 +12,11 @@ class C {
     }
   }
 
+  constructor(x: Any?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+

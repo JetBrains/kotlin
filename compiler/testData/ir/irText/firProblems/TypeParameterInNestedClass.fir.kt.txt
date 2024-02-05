@@ -1,20 +1,20 @@
 object Retry {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   class Builder<B : Any?> {
+    private val action: SuspendFunction0<B>
+      field = action
+      private get
+
     constructor(action: SuspendFunction0<B>) /* primary */ {
       super/*Any*/()
       /* <init>() */
 
     }
 
-    private val action: SuspendFunction0<B>
-      field = action
-      private get
+  }
+
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
 
   }
 
@@ -29,3 +29,4 @@ object Retry {
   }
 
 }
+

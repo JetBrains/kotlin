@@ -1,22 +1,12 @@
-interface K {
-  abstract fun kf1(): Collection<out CharSequence>
-
-  abstract fun kf2(): Collection<CharSequence>
-
-  abstract fun kg1(c: Collection<out CharSequence>)
-
-  abstract fun kg2(c: Collection<CharSequence>)
-
-}
-
 class C : J, K {
+  private /* final field */ val $$delegate_0: J = j
+  private /* final field */ val $$delegate_1: K = k
   constructor(j: J, k: K) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  private /* final field */ val $$delegate_0: J = j
   override fun jf1(): @FlexibleNullability @FlexibleMutability MutableCollection<out @FlexibleNullability CharSequence?>? {
     return <this>.#$$delegate_0.jf1()
   }
@@ -33,7 +23,6 @@ class C : J, K {
     <this>.#$$delegate_0.jg2(c = c)
   }
 
-  private /* final field */ val $$delegate_1: K = k
   override fun kf1(): Collection<out CharSequence> {
     return <this>.#$$delegate_1.kf1()
   }
@@ -51,3 +40,15 @@ class C : J, K {
   }
 
 }
+
+interface K {
+  abstract fun kf1(): Collection<out CharSequence>
+
+  abstract fun kf2(): Collection<CharSequence>
+
+  abstract fun kg1(c: Collection<out CharSequence>)
+
+  abstract fun kg2(c: Collection<CharSequence>)
+
+}
+

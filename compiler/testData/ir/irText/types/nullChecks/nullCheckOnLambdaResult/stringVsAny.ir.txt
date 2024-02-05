@@ -1,10 +1,4 @@
 FILE fqName:<root> fileName:/stringVsAny.kt
-  FUN name:useAny visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Any>) returnType:kotlin.Any
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Any>
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun useAny (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Any origin=INVOKE
-          $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any> declared in <root>.useAny' type=kotlin.Function0<kotlin.Any> origin=VARIABLE_AS_FUNCTION
   FUN name:testNullCheck visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
@@ -15,3 +9,9 @@ FILE fqName:<root> fileName:/stringVsAny.kt
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.testNullCheck'
                   TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
                     CALL 'public open fun string (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
+  FUN name:useAny visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Any>) returnType:kotlin.Any
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Any>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun useAny (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>'
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Any origin=INVOKE
+          $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any> declared in <root>.useAny' type=kotlin.Function0<kotlin.Any> origin=VARIABLE_AS_FUNCTION

@@ -1,32 +1,4 @@
 FILE fqName:<root> fileName:/nullCheckOnLambdaReturn.kt
-  FUN name:checkAny visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Any>) returnType:kotlin.Any
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Any>
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun checkAny (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Any origin=INVOKE
-          $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any> declared in <root>.checkAny' type=kotlin.Function0<kotlin.Any> origin=VARIABLE_AS_FUNCTION
-  FUN name:checkAnyN visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Any?>) returnType:kotlin.Any?
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Any?>
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun checkAnyN (fn: kotlin.Function0<kotlin.Any?>): kotlin.Any? declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Any? origin=INVOKE
-          $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any?> declared in <root>.checkAnyN' type=kotlin.Function0<kotlin.Any?> origin=VARIABLE_AS_FUNCTION
-  FUN name:id visibility:public modality:FINAL <T> (x:T of <root>.id) returnType:T of <root>.id
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:x index:0 type:T of <root>.id
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun id <T> (x: T of <root>.id): T of <root>.id declared in <root>'
-        GET_VAR 'x: T of <root>.id declared in <root>.id' type=T of <root>.id origin=null
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Any
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.Any declared in <root>'
-        CALL 'public final fun checkAny (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-          fn: FUN_EXPR type=kotlin.Function0<kotlin.Any> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any
-              BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.test1'
-                  TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-                    CALL 'public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function0<kotlin.Any> visibility:private [final,static]
       EXPRESSION_BODY
@@ -70,6 +42,34 @@ FILE fqName:<root> fileName:/nullCheckOnLambdaReturn.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Function0<kotlin.Any> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Function0<kotlin.Any> visibility:private [final,static]' type=kotlin.Function0<kotlin.Any> origin=null
+  FUN name:checkAny visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Any>) returnType:kotlin.Any
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Any>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkAny (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>'
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Any origin=INVOKE
+          $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any> declared in <root>.checkAny' type=kotlin.Function0<kotlin.Any> origin=VARIABLE_AS_FUNCTION
+  FUN name:checkAnyN visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Any?>) returnType:kotlin.Any?
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Any?>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkAnyN (fn: kotlin.Function0<kotlin.Any?>): kotlin.Any? declared in <root>'
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Any? origin=INVOKE
+          $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any?> declared in <root>.checkAnyN' type=kotlin.Function0<kotlin.Any?> origin=VARIABLE_AS_FUNCTION
+  FUN name:id visibility:public modality:FINAL <T> (x:T of <root>.id) returnType:T of <root>.id
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:x index:0 type:T of <root>.id
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun id <T> (x: T of <root>.id): T of <root>.id declared in <root>'
+        GET_VAR 'x: T of <root>.id declared in <root>.id' type=T of <root>.id origin=null
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Any
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.Any declared in <root>'
+        CALL 'public final fun checkAny (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
+          fn: FUN_EXPR type=kotlin.Function0<kotlin.Any> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.test1'
+                  TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+                    CALL 'public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
   FUN name:test5 visibility:public modality:FINAL <> () returnType:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test5 (): kotlin.Any? declared in <root>'

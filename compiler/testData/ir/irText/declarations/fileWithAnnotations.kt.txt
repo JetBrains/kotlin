@@ -1,8 +1,9 @@
 @file:JvmName(name = "FileWithAnnotations")
 
-fun foo() {
-}
-
 val bar: Int
   field = 42
   get
+
+fun foo() {
+}
+

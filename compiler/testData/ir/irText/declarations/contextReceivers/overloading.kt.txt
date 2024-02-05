@@ -1,8 +1,8 @@
-fun foo($context_receiver_0: Int, $context_receiver_1: String): Int {
+fun foo($context_receiver_0: Int): Int {
   return $context_receiver_0.plus(other = 42)
 }
 
-fun foo($context_receiver_0: Int): Int {
+fun foo($context_receiver_0: Int, $context_receiver_1: String): Int {
   return $context_receiver_0.plus(other = 42)
 }
 
@@ -12,3 +12,4 @@ fun test() {
   }
 ) /*~> Unit */
 }
+

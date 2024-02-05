@@ -1,3 +1,11 @@
+val test1: Function1<Int, C>
+  field = C::<init>
+  get
+
+val test2: Function1<Int, Nested>
+  field = Nested::<init>
+  get
+
 class C {
   constructor(x: Int) /* primary */ {
     super/*Any*/()
@@ -7,14 +15,7 @@ class C {
 
 }
 
-typealias CA = C
 object Host {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   class Nested {
     constructor(x: Int) /* primary */ {
       super/*Any*/()
@@ -24,13 +25,13 @@ object Host {
 
   }
 
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
 
+typealias CA = C
 typealias NA = Nested
-val test1: Function1<Int, C>
-  field = C::<init>
-  get
-
-val test2: Function1<Int, Nested>
-  field = Nested::<init>
-  get

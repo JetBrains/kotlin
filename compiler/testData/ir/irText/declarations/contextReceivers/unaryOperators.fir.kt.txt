@@ -1,13 +1,18 @@
+var operationScore: Int
+  field = 0
+  get
+  set
+
 data class Result {
+  val i: Int
+    field = i
+    get
+
   constructor(i: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val i: Int
-    field = i
-    get
 
   operator fun component1(): Int {
     return <this>.#i
@@ -15,14 +20,6 @@ data class Result {
 
   fun copy(i: Int = <this>.#i): Result {
     return Result(i = i)
-  }
-
-  override fun toString(): String {
-    return "Result(" + "i=" + <this>.#i + ")"
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#i.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -39,34 +36,14 @@ data class Result {
     return true
   }
 
-}
+  override fun hashCode(): Int {
+    return <this>.#i.hashCode()
+  }
 
-var operationScore: Int
-  field = 0
-  get
-  set
+  override fun toString(): String {
+    return "Result(" + "i=" + <this>.#i + ")"
+  }
 
-operator fun Result.unaryMinus($context_receiver_0: Int): Result {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
-  return Result(i = <this>.<get-i>().unaryMinus())
-}
-
-operator fun Result.unaryPlus($context_receiver_0: Int): Result {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
-  return Result(i = when {
-    less(arg0 = <this>.<get-i>(), arg1 = 0) -> <this>.<get-i>().unaryMinus()
-    else -> <this>.<get-i>()
-  })
-}
-
-operator fun Result.inc($context_receiver_0: Int): Result {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
-  return Result(i = <this>.<get-i>().plus(other = 1))
-}
-
-operator fun Result.dec($context_receiver_0: Int): Result {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
-  return Result(i = <this>.<get-i>().minus(other = 1))
 }
 
 fun box(): String {
@@ -98,5 +75,28 @@ fun box(): String {
     } -> "OK"
     else -> "fail"
   }
+}
+
+operator fun Result.dec($context_receiver_0: Int): Result {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
+  return Result(i = <this>.<get-i>().minus(other = 1))
+}
+
+operator fun Result.inc($context_receiver_0: Int): Result {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
+  return Result(i = <this>.<get-i>().plus(other = 1))
+}
+
+operator fun Result.unaryMinus($context_receiver_0: Int): Result {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
+  return Result(i = <this>.<get-i>().unaryMinus())
+}
+
+operator fun Result.unaryPlus($context_receiver_0: Int): Result {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
+  return Result(i = when {
+    less(arg0 = <this>.<get-i>(), arg1 = 0) -> <this>.<get-i>().unaryMinus()
+    else -> <this>.<get-i>()
+  })
 }
 

@@ -1,11 +1,6 @@
 FILE fqName:<root> fileName:/localDifferentReceivers.kt
   CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyClass
-    CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:<root>.MyClass [primary]
-      VALUE_PARAMETER name:value index:0 type:kotlin.String
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
@@ -17,6 +12,11 @@ FILE fqName:<root> fileName:/localDifferentReceivers.kt
           RETURN type=kotlin.Nothing from='public final fun <get-value> (): kotlin.String declared in <root>.MyClass'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-value>' type=<root>.MyClass origin=null
+    CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:<root>.MyClass [primary]
+      VALUE_PARAMETER name:value index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -30,21 +30,6 @@ FILE fqName:<root> fileName:/localDifferentReceivers.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:provideDelegate visibility:public modality:FINAL <> ($receiver:<root>.MyClass, host:kotlin.Any?, p:kotlin.Any) returnType:kotlin.String [operator]
-    $receiver: VALUE_PARAMETER name:<this> type:<root>.MyClass
-    VALUE_PARAMETER name:host index:0 type:kotlin.Any?
-    VALUE_PARAMETER name:p index:1 type:kotlin.Any
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>'
-        CALL 'public final fun <get-value> (): kotlin.String declared in <root>.MyClass' type=kotlin.String origin=GET_PROPERTY
-          $this: GET_VAR '<this>: <root>.MyClass declared in <root>.provideDelegate' type=<root>.MyClass origin=null
-  FUN name:getValue visibility:public modality:FINAL <> ($receiver:kotlin.String, receiver:kotlin.Any?, p:kotlin.Any) returnType:kotlin.String [operator]
-    $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
-    VALUE_PARAMETER name:receiver index:0 type:kotlin.Any?
-    VALUE_PARAMETER name:p index:1 type:kotlin.Any
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>'
-        GET_VAR '<this>: kotlin.String declared in <root>.getValue' type=kotlin.String origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       LOCAL_DELEGATED_PROPERTY name:testO type:kotlin.String flags:val
@@ -77,3 +62,18 @@ FILE fqName:<root> fileName:/localDifferentReceivers.kt
           other: CALL 'local final fun <get-testK> (): kotlin.String declared in <root>.box' type=kotlin.String origin=GET_LOCAL_PROPERTY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         GET_VAR 'val testOK: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+  FUN name:getValue visibility:public modality:FINAL <> ($receiver:kotlin.String, receiver:kotlin.Any?, p:kotlin.Any) returnType:kotlin.String [operator]
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
+    VALUE_PARAMETER name:receiver index:0 type:kotlin.Any?
+    VALUE_PARAMETER name:p index:1 type:kotlin.Any
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>'
+        GET_VAR '<this>: kotlin.String declared in <root>.getValue' type=kotlin.String origin=null
+  FUN name:provideDelegate visibility:public modality:FINAL <> ($receiver:<root>.MyClass, host:kotlin.Any?, p:kotlin.Any) returnType:kotlin.String [operator]
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.MyClass
+    VALUE_PARAMETER name:host index:0 type:kotlin.Any?
+    VALUE_PARAMETER name:p index:1 type:kotlin.Any
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>'
+        CALL 'public final fun <get-value> (): kotlin.String declared in <root>.MyClass' type=kotlin.String origin=GET_PROPERTY
+          $this: GET_VAR '<this>: <root>.MyClass declared in <root>.provideDelegate' type=<root>.MyClass origin=null

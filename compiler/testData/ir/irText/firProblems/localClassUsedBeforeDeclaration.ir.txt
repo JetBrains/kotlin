@@ -7,10 +7,6 @@ FILE fqName:<root> fileName:/localClassUsedBeforeDeclaration.kt
             $this: BLOCK type=<root>.box.<no name provided> origin=OBJECT_LITERAL
               CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
                 $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>
-                CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
-                  BLOCK_BODY
-                    DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
                 PROPERTY name:a visibility:public modality:FINAL [val]
                   FIELD PROPERTY_BACKING_FIELD name:a type:<root>.box.<no name provided>.A visibility:private [final]
                     EXPRESSION_BODY
@@ -26,12 +22,6 @@ FILE fqName:<root> fileName:/localClassUsedBeforeDeclaration.kt
                           receiver: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>.<get-a>' type=<root>.box.<no name provided> origin=null
                 CLASS CLASS name:A modality:FINAL visibility:local [inner] superTypes:[kotlin.Any]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<no name provided>.A
-                  CONSTRUCTOR visibility:public <> ($this:<root>.box.<no name provided>, ok:kotlin.String) returnType:<root>.box.<no name provided>.A [primary]
-                    $outer: VALUE_PARAMETER name:<this> type:<root>.box.<no name provided>
-                    VALUE_PARAMETER name:ok index:0 type:kotlin.String
-                    BLOCK_BODY
-                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:local [inner] superTypes:[kotlin.Any]'
                   PROPERTY name:ok visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:private [final]
                       EXPRESSION_BODY
@@ -43,6 +33,12 @@ FILE fqName:<root> fileName:/localClassUsedBeforeDeclaration.kt
                         RETURN type=kotlin.Nothing from='public final fun <get-ok> (): kotlin.String declared in <root>.box.<no name provided>.A'
                           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
                             receiver: GET_VAR '<this>: <root>.box.<no name provided>.A declared in <root>.box.<no name provided>.A.<get-ok>' type=<root>.box.<no name provided>.A origin=null
+                  CONSTRUCTOR visibility:public <> ($this:<root>.box.<no name provided>, ok:kotlin.String) returnType:<root>.box.<no name provided>.A [primary]
+                    $outer: VALUE_PARAMETER name:<this> type:<root>.box.<no name provided>
+                    VALUE_PARAMETER name:ok index:0 type:kotlin.String
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:local [inner] superTypes:[kotlin.Any]'
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
                       public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -56,6 +52,10 @@ FILE fqName:<root> fileName:/localClassUsedBeforeDeclaration.kt
                     overridden:
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
+                  BLOCK_BODY
+                    DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
                 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                   overridden:
                     public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

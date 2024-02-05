@@ -4,16 +4,16 @@ var operationScore: Int
   set
 
 class Delegate {
+  var delegateValue: String
+    field = "fail"
+    get
+    set
+
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  var delegateValue: String
-    field = "fail"
-    get
-    set
 
   operator fun getValue($context_receiver_0: Int, thisRef: Any?, property: KProperty<*>): String {
     { // BLOCK
@@ -33,13 +33,6 @@ class Delegate {
 
 class Result {
   private /* final field */ val contextReceiverField0: Int
-  constructor($context_receiver_0: Int) /* primary */ {
-    super/*Any*/()
-    <this>.#contextReceiverField0 = $context_receiver_0
-    /* <init>() */
-
-  }
-
   var s: String /* by */
     field = Delegate()
     get(): String {
@@ -48,6 +41,13 @@ class Result {
     set(<set-?>: String) {
       return <this>.#s$delegate.setValue($context_receiver_0 = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s, value = <set-?>)
     }
+
+  constructor($context_receiver_0: Int) /* primary */ {
+    super/*Any*/()
+    <this>.#contextReceiverField0 = $context_receiver_0
+    /* <init>() */
+
+  }
 
 }
 
@@ -63,3 +63,4 @@ fun box(): String {
     else -> "fail"
   }
 }
+

@@ -1,12 +1,4 @@
 FILE fqName:<root> fileName:/stringVsTXString.kt
-  FUN name:useTX visibility:public modality:FINAL <T> (x:T of <root>.useTX, fn:kotlin.Function0<T of <root>.useTX>) returnType:T of <root>.useTX
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:x index:0 type:T of <root>.useTX
-    VALUE_PARAMETER name:fn index:1 type:kotlin.Function0<T of <root>.useTX>
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun useTX <T> (x: T of <root>.useTX, fn: kotlin.Function0<T of <root>.useTX>): T of <root>.useTX declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.useTX origin=INVOKE
-          $this: GET_VAR 'fn: kotlin.Function0<T of <root>.useTX> declared in <root>.useTX' type=kotlin.Function0<T of <root>.useTX> origin=VARIABLE_AS_FUNCTION
   FUN name:testNoNullCheck visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
@@ -18,3 +10,11 @@ FILE fqName:<root> fileName:/stringVsTXString.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): @[FlexibleNullability] kotlin.String? declared in <root>.testNoNullCheck'
                   CALL 'public open fun string (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
+  FUN name:useTX visibility:public modality:FINAL <T> (x:T of <root>.useTX, fn:kotlin.Function0<T of <root>.useTX>) returnType:T of <root>.useTX
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:x index:0 type:T of <root>.useTX
+    VALUE_PARAMETER name:fn index:1 type:kotlin.Function0<T of <root>.useTX>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun useTX <T> (x: T of <root>.useTX, fn: kotlin.Function0<T of <root>.useTX>): T of <root>.useTX declared in <root>'
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.useTX origin=INVOKE
+          $this: GET_VAR 'fn: kotlin.Function0<T of <root>.useTX> declared in <root>.useTX' type=kotlin.Function0<T of <root>.useTX> origin=VARIABLE_AS_FUNCTION

@@ -1,21 +1,11 @@
 FILE fqName:<root> fileName:/protectedJavaFieldRef.kt
   CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[p.Base]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Derived [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in p.Base'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[p.Base]'
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/' type=kotlin.Unit origin=EQ
           receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=null
           value: CONST String type=kotlin.String value=""
-    FUN name:set visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.Derived
-      BLOCK_BODY
-        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/' type=kotlin.Unit origin=EQ
-          receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.set' type=<root>.Derived origin=null
-          value: CONST String type=kotlin.String value="OK"
     PROPERTY name:ref visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:ref type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final]
         EXPRESSION_BODY
@@ -28,6 +18,10 @@ FILE fqName:<root> fileName:/protectedJavaFieldRef.kt
           RETURN type=kotlin.Nothing from='public final fun <get-ref> (): kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> declared in <root>.Derived'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ref type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final]' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
               receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-ref>' type=<root>.Derived origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Derived [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in p.Base'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[p.Base]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in p.Base
@@ -41,3 +35,9 @@ FILE fqName:<root> fileName:/protectedJavaFieldRef.kt
       overridden:
         public open fun toString (): kotlin.String declared in p.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:set visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+      BLOCK_BODY
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/' type=kotlin.Unit origin=EQ
+          receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.set' type=<root>.Derived origin=null
+          value: CONST String type=kotlin.String value="OK"

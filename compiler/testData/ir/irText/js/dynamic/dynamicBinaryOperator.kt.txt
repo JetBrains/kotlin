@@ -1,13 +1,9 @@
-fun testBinaryPlus(d: dynamic): dynamic {
-  return d + 1
-}
-
 fun testBinaryMinus(d: dynamic): dynamic {
   return d - 1
 }
 
-fun testMul(d: dynamic): dynamic {
-  return d * 2
+fun testBinaryPlus(d: dynamic): dynamic {
+  return d + 1
 }
 
 fun testDiv(d: dynamic): dynamic {
@@ -16,5 +12,9 @@ fun testDiv(d: dynamic): dynamic {
 
 fun testMod(d: dynamic): dynamic {
   return d % 2
+}
+
+fun testMul(d: dynamic): dynamic {
+  return d * 2
 }
 

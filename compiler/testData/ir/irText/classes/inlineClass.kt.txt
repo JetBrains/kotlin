@@ -1,20 +1,12 @@
 value class Test {
-  constructor(x: Int) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: Int
     field = x
     get
 
-  override fun toString(): String {
-    return "Test(" + "x=" + <this>.#x + ")"
-  }
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
 
-  override fun hashCode(): Int {
-    return <this>.#x.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -28,4 +20,13 @@ value class Test {
     return true
   }
 
+  override fun hashCode(): Int {
+    return <this>.#x.hashCode()
+  }
+
+  override fun toString(): String {
+    return "Test(" + "x=" + <this>.#x + ")"
+  }
+
 }
+

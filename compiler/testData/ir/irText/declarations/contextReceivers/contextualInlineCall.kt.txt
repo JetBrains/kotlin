@@ -1,3 +1,16 @@
+class A {
+  val a: Any?
+    field = a
+    get
+
+  constructor(a: Any?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
 class Context {
   constructor() /* primary */ {
     super/*Any*/()
@@ -9,42 +22,6 @@ class Context {
     return 1
   }
 
-}
-
-inline fun testInline($context_receiver_0: Context): Int {
-  return $context_receiver_0.c()
-}
-
-inline fun testInlineWithArg($context_receiver_0: Context, i: Int): Int {
-  return i.plus(other = $context_receiver_0.c())
-}
-
-inline fun Int.testInlineWithExtensionAndArg($context_receiver_0: Context, i: Int): Int {
-  return <this>.plus(other = i).plus(other = $context_receiver_0.c())
-}
-
-inline fun Int.testInlineWithExtensionAndMultipleArgs($context_receiver_0: Context, i1: Int, i2: Int): Int {
-  return <this>.plus(other = i1).plus(other = i2).plus(other = $context_receiver_0.c())
-}
-
-class A {
-  constructor(a: Any?) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val a: Any?
-    field = a
-    get
-
-}
-
-inline fun Int.testInlineWithExtensionAndMultipleContextsAndArgs($context_receiver_0: Context, $context_receiver_1: A, i1: Int = 1, i2: Int = 2): Int {
-  return <this>.plus(other = i1).plus(other = i2).plus(other = $context_receiver_0.c()).plus(other = when {
-    EQEQ(arg0 = $context_receiver_1.<get-a>(), arg1 = null) -> 0
-    else -> 1
-  })
 }
 
 fun box(): String {
@@ -66,3 +43,27 @@ fun box(): String {
   }
 )
 }
+
+inline fun testInline($context_receiver_0: Context): Int {
+  return $context_receiver_0.c()
+}
+
+inline fun testInlineWithArg($context_receiver_0: Context, i: Int): Int {
+  return i.plus(other = $context_receiver_0.c())
+}
+
+inline fun Int.testInlineWithExtensionAndArg($context_receiver_0: Context, i: Int): Int {
+  return <this>.plus(other = i).plus(other = $context_receiver_0.c())
+}
+
+inline fun Int.testInlineWithExtensionAndMultipleArgs($context_receiver_0: Context, i1: Int, i2: Int): Int {
+  return <this>.plus(other = i1).plus(other = i2).plus(other = $context_receiver_0.c())
+}
+
+inline fun Int.testInlineWithExtensionAndMultipleContextsAndArgs($context_receiver_0: Context, $context_receiver_1: A, i1: Int = 1, i2: Int = 2): Int {
+  return <this>.plus(other = i1).plus(other = i2).plus(other = $context_receiver_0.c()).plus(other = when {
+    EQEQ(arg0 = $context_receiver_1.<get-a>(), arg1 = null) -> 0
+    else -> 1
+  })
+}
+

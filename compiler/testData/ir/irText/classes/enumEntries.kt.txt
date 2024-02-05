@@ -1,17 +1,17 @@
 enum class MyEnum : Enum<MyEnum> {
+  Ok = MyEnum()
+
+  Nope = MyEnum()
+
   private constructor() /* primary */ {
     super/*Enum*/<MyEnum>()
     /* <init>() */
 
   }
 
-  Ok = MyEnum()
-
-  Nope = MyEnum()
+  fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
 
   fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
-
-  fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
 
   val entries: EnumEntries<MyEnum>
     get(): EnumEntries<MyEnum> /* Synthetic body for ENUM_ENTRIES */
@@ -21,3 +21,4 @@ enum class MyEnum : Enum<MyEnum> {
 fun box(): EnumEntries<MyEnum> {
   return <get-entries>()
 }
+

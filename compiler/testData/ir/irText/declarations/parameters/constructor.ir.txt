@@ -3,12 +3,6 @@ FILE fqName:<root> fileName:/constructor.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1<T1 of <root>.Test1, T2 of <root>.Test1>
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:false
     TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (x:T1 of <root>.Test1, y:T2 of <root>.Test1) returnType:<root>.Test1<T1 of <root>.Test1, T2 of <root>.Test1> [primary]
-      VALUE_PARAMETER name:x index:0 type:T1 of <root>.Test1
-      VALUE_PARAMETER name:y index:1 type:T2 of <root>.Test1
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:T1 of <root>.Test1 visibility:private [final]
         EXPRESSION_BODY
@@ -31,6 +25,12 @@ FILE fqName:<root> fileName:/constructor.kt
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): T2 of <root>.Test1 declared in <root>.Test1'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:T2 of <root>.Test1 visibility:private [final]' type=T2 of <root>.Test1 origin=null
               receiver: GET_VAR '<this>: <root>.Test1<T1 of <root>.Test1, T2 of <root>.Test1> declared in <root>.Test1.<get-y>' type=<root>.Test1<T1 of <root>.Test1, T2 of <root>.Test1> origin=null
+    CONSTRUCTOR visibility:public <> (x:T1 of <root>.Test1, y:T2 of <root>.Test1) returnType:<root>.Test1<T1 of <root>.Test1, T2 of <root>.Test1> [primary]
+      VALUE_PARAMETER name:x index:0 type:T1 of <root>.Test1
+      VALUE_PARAMETER name:y index:1 type:T2 of <root>.Test1
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -46,12 +46,6 @@ FILE fqName:<root> fileName:/constructor.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String) returnType:<root>.Test2 [primary]
-      VALUE_PARAMETER name:x index:0 type:kotlin.Int
-      VALUE_PARAMETER name:y index:1 type:kotlin.String
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:y visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
@@ -66,12 +60,6 @@ FILE fqName:<root> fileName:/constructor.kt
     CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2.TestInner<Z of <root>.Test2.TestInner>
       TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?] reified:false
-      CONSTRUCTOR visibility:public <> ($this:<root>.Test2, z:Z of <root>.Test2.TestInner) returnType:<root>.Test2.TestInner<Z of <root>.Test2.TestInner> [primary]
-        $outer: VALUE_PARAMETER name:<this> type:<root>.Test2
-        VALUE_PARAMETER name:z index:0 type:Z of <root>.Test2.TestInner
-        BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
       PROPERTY name:z visibility:public modality:FINAL [val]
         FIELD PROPERTY_BACKING_FIELD name:z type:Z of <root>.Test2.TestInner visibility:private [final]
           EXPRESSION_BODY
@@ -83,6 +71,12 @@ FILE fqName:<root> fileName:/constructor.kt
             RETURN type=kotlin.Nothing from='public final fun <get-z> (): Z of <root>.Test2.TestInner declared in <root>.Test2.TestInner'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:Z of <root>.Test2.TestInner visibility:private [final]' type=Z of <root>.Test2.TestInner origin=null
                 receiver: GET_VAR '<this>: <root>.Test2.TestInner<Z of <root>.Test2.TestInner> declared in <root>.Test2.TestInner.<get-z>' type=<root>.Test2.TestInner<Z of <root>.Test2.TestInner> origin=null
+      CONSTRUCTOR visibility:public <> ($this:<root>.Test2, z:Z of <root>.Test2.TestInner) returnType:<root>.Test2.TestInner<Z of <root>.Test2.TestInner> [primary]
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Test2
+        VALUE_PARAMETER name:z index:0 type:Z of <root>.Test2.TestInner
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
       CONSTRUCTOR visibility:public <> ($this:<root>.Test2, z:Z of <root>.Test2.TestInner, i:kotlin.Int) returnType:<root>.Test2.TestInner<Z of <root>.Test2.TestInner>
         $outer: VALUE_PARAMETER name:<this> type:<root>.Test2
         VALUE_PARAMETER name:z index:0 type:Z of <root>.Test2.TestInner
@@ -105,6 +99,12 @@ FILE fqName:<root> fileName:/constructor.kt
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String) returnType:<root>.Test2 [primary]
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+      VALUE_PARAMETER name:y index:1 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -120,14 +120,6 @@ FILE fqName:<root> fileName:/constructor.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Test3 modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test3
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String) returnType:<root>.Test3 [primary]
-      VALUE_PARAMETER name:x index:0 type:kotlin.Int
-      VALUE_PARAMETER name:y index:1 type:kotlin.String
-        EXPRESSION_BODY
-          CONST String type=kotlin.String value=""
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test3 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -150,6 +142,14 @@ FILE fqName:<root> fileName:/constructor.kt
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.String declared in <root>.Test3'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.<get-y>' type=<root>.Test3 origin=null
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String) returnType:<root>.Test3 [primary]
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+      VALUE_PARAMETER name:y index:1 type:kotlin.String
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value=""
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test3 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -166,11 +166,6 @@ FILE fqName:<root> fileName:/constructor.kt
   CLASS CLASS name:Test4 modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test4<T of <root>.Test4>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test4<T of <root>.Test4> [primary]
-      VALUE_PARAMETER name:x index:0 type:kotlin.Int
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test4 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -182,6 +177,11 @@ FILE fqName:<root> fileName:/constructor.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test4'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test4<T of <root>.Test4> declared in <root>.Test4.<get-x>' type=<root>.Test4<T of <root>.Test4> origin=null
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test4<T of <root>.Test4> [primary]
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test4 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.Int) returnType:<root>.Test4<T of <root>.Test4>
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       VALUE_PARAMETER name:y index:1 type:kotlin.Int

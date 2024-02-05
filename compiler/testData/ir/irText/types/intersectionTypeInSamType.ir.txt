@@ -1,6 +1,11 @@
 FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
-  CLASS INTERFACE name:X modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X
+  CLASS CLASS name:G1 modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G1<T of <root>.G1>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X] reified:false
+    CONSTRUCTOR visibility:public <> () returnType:<root>.G1<T of <root>.G1> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -14,8 +19,17 @@ FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS INTERFACE name:Z modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z
+    FUN name:checkFoo visibility:public modality:FINAL <> ($this:<root>.G1<T of <root>.G1>, x:<root>.IFoo<in T of <root>.G1>) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.G1<T of <root>.G1>
+      VALUE_PARAMETER name:x index:0 type:<root>.IFoo<in T of <root>.G1>
+      BLOCK_BODY
+  CLASS CLASS name:G2 modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G2<T of <root>.G2>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X; <root>.Z] reified:false
+    CONSTRUCTOR visibility:public <> () returnType:<root>.G2<T of <root>.G2> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G2 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -29,6 +43,18 @@ FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:checkBar1 visibility:public modality:FINAL <> ($this:<root>.G2<T of <root>.G2>, x:<root>.IBar1<in T of <root>.G2>) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.G2<T of <root>.G2>
+      VALUE_PARAMETER name:x index:0 type:<root>.IBar1<in T of <root>.G2>
+      BLOCK_BODY
+    FUN name:checkBar2 visibility:public modality:FINAL <> ($this:<root>.G2<T of <root>.G2>, x:<root>.IBar2<in T of <root>.G2>) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.G2<T of <root>.G2>
+      VALUE_PARAMETER name:x index:0 type:<root>.IBar2<in T of <root>.G2>
+      BLOCK_BODY
+    FUN name:checkFoo visibility:public modality:FINAL <> ($this:<root>.G2<T of <root>.G2>, x:<root>.IFoo<in T of <root>.G2>) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.G2<T of <root>.G2>
+      VALUE_PARAMETER name:x index:0 type:<root>.IFoo<in T of <root>.G2>
+      BLOCK_BODY
   CLASS INTERFACE name:A modality:ABSTRACT visibility:public superTypes:[<root>.X; <root>.Z]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -65,31 +91,9 @@ FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
         public open fun toString (): kotlin.String declared in <root>.X
         public open fun toString (): kotlin.String declared in <root>.Z
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IFoo<T of <root>.IFoo>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X] reified:false
-    FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IFoo<T of <root>.IFoo>, t:T of <root>.IFoo) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.IFoo<T of <root>.IFoo>
-      VALUE_PARAMETER name:t index:0 type:T of <root>.IFoo
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IBar1 modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IBar1<T of <root>.IBar1>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X; <root>.Z] reified:false
-    FUN name:bar visibility:public modality:ABSTRACT <> ($this:<root>.IBar1<T of <root>.IBar1>, t:T of <root>.IBar1) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.IBar1<T of <root>.IBar1>
-      VALUE_PARAMETER name:t index:0 type:T of <root>.IBar1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -103,12 +107,64 @@ FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:bar visibility:public modality:ABSTRACT <> ($this:<root>.IBar1<T of <root>.IBar1>, t:T of <root>.IBar1) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.IBar1<T of <root>.IBar1>
+      VALUE_PARAMETER name:t index:0 type:T of <root>.IBar1
   CLASS INTERFACE name:IBar2 modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IBar2<T of <root>.IBar2>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X; <root>.Z] reified:false
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:bar visibility:public modality:ABSTRACT <> ($this:<root>.IBar2<T of <root>.IBar2>, t:T of <root>.IBar2) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.IBar2<T of <root>.IBar2>
       VALUE_PARAMETER name:t index:0 type:T of <root>.IBar2
+  CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IFoo<T of <root>.IFoo>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X] reified:false
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IFoo<T of <root>.IFoo>, t:T of <root>.IFoo) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.IFoo<T of <root>.IFoo>
+      VALUE_PARAMETER name:t index:0 type:T of <root>.IFoo
+  CLASS INTERFACE name:X modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS INTERFACE name:Z modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -129,62 +185,6 @@ FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun sel <T> (x: T of <root>.sel, y: T of <root>.sel): T of <root>.sel declared in <root>'
         GET_VAR 'x: T of <root>.sel declared in <root>.sel' type=T of <root>.sel origin=null
-  CLASS CLASS name:G1 modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G1<T of <root>.G1>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X] reified:false
-    CONSTRUCTOR visibility:public <> () returnType:<root>.G1<T of <root>.G1> [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:checkFoo visibility:public modality:FINAL <> ($this:<root>.G1<T of <root>.G1>, x:<root>.IFoo<in T of <root>.G1>) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.G1<T of <root>.G1>
-      VALUE_PARAMETER name:x index:0 type:<root>.IFoo<in T of <root>.G1>
-      BLOCK_BODY
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:G2 modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G2<T of <root>.G2>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.X; <root>.Z] reified:false
-    CONSTRUCTOR visibility:public <> () returnType:<root>.G2<T of <root>.G2> [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G2 modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:checkFoo visibility:public modality:FINAL <> ($this:<root>.G2<T of <root>.G2>, x:<root>.IFoo<in T of <root>.G2>) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.G2<T of <root>.G2>
-      VALUE_PARAMETER name:x index:0 type:<root>.IFoo<in T of <root>.G2>
-      BLOCK_BODY
-    FUN name:checkBar1 visibility:public modality:FINAL <> ($this:<root>.G2<T of <root>.G2>, x:<root>.IBar1<in T of <root>.G2>) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.G2<T of <root>.G2>
-      VALUE_PARAMETER name:x index:0 type:<root>.IBar1<in T of <root>.G2>
-      BLOCK_BODY
-    FUN name:checkBar2 visibility:public modality:FINAL <> ($this:<root>.G2<T of <root>.G2>, x:<root>.IBar2<in T of <root>.G2>) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.G2<T of <root>.G2>
-      VALUE_PARAMETER name:x index:0 type:<root>.IBar2<in T of <root>.G2>
-      BLOCK_BODY
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:g type:<root>.G1<*> [val]

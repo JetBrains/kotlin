@@ -1,14 +1,14 @@
 FILE fqName:<root> fileName:/lambdaInCAO.kt
-  FUN name:plusAssign visibility:public modality:FINAL <> ($receiver:kotlin.Any, lambda:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [operator]
-    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
-    VALUE_PARAMETER name:lambda index:0 type:kotlin.Function0<kotlin.Unit>
-    BLOCK_BODY
   FUN name:get visibility:public modality:FINAL <> ($receiver:kotlin.Any, index:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Int [operator]
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
     VALUE_PARAMETER name:index index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun get (index: kotlin.Function0<kotlin.Unit>): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=42
+  FUN name:plusAssign visibility:public modality:FINAL <> ($receiver:kotlin.Any, lambda:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [operator]
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
+    VALUE_PARAMETER name:lambda index:0 type:kotlin.Function0<kotlin.Unit>
+    BLOCK_BODY
   FUN name:set visibility:public modality:FINAL <> ($receiver:kotlin.Any, index:kotlin.Function0<kotlin.Unit>, value:kotlin.Int) returnType:kotlin.Unit [operator]
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
     VALUE_PARAMETER name:index index:0 type:kotlin.Function0<kotlin.Unit>

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface IBase<T> {
     fun foo(x: Int)
     val bar: Int

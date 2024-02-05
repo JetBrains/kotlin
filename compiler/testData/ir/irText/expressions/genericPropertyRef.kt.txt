@@ -1,22 +1,3 @@
-class Value<T : Any?> {
-  constructor(value: T = null as T, text: String? = null) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  var value: T
-    field = value
-    get
-    set
-
-  var text: String?
-    field = text
-    get
-    set
-
-}
-
 val <T : Any?> Value<T>.additionalText: Int /* by */
   field = DVal(kmember = Value::text)
   get(): Int {
@@ -29,23 +10,6 @@ val <T : Any?> Value<T>.additionalValue: Int /* by */
     return #additionalValue$delegate.getValue(t = <this>, p = ::additionalValue/*<T>()*/)
   }
 
-class DVal {
-  constructor(kmember: Any) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val kmember: Any
-    field = kmember
-    get
-
-  operator fun getValue(t: Any?, p: Any): Int {
-    return 42
-  }
-
-}
-
 var recivier: Any?
   field = "fail"
   get
@@ -56,6 +20,46 @@ var value2: Any?
   get
   set
 
+val barRef: KMutableProperty1<String?, String?>
+  field = ::bar/*<String?>()*/
+  get
+
+class DVal {
+  val kmember: Any
+    field = kmember
+    get
+
+  constructor(kmember: Any) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun getValue(t: Any?, p: Any): Int {
+    return 42
+  }
+
+}
+
+class Value<T : Any?> {
+  var value: T
+    field = value
+    get
+    set
+
+  var text: String?
+    field = text
+    get
+    set
+
+  constructor(value: T = null as T, text: String? = null) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
 var <T : Any?> T.bar: T
   get(): T {
     return <this>
@@ -65,6 +69,3 @@ var <T : Any?> T.bar: T
     <set-value2>(<set-?> = value)
   }
 
-val barRef: KMutableProperty1<String?, String?>
-  field = ::bar/*<String?>()*/
-  get

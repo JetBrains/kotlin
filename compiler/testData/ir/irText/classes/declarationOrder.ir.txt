@@ -1,20 +1,6 @@
 FILE fqName:test fileName:/declarationOrder.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
-    CONSTRUCTOR visibility:public <> () returnType:test.A [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:test.A
-      VALUE_PARAMETER name:x index:0 type:kotlin.Int
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in test.A'
-    FUN name:b visibility:public modality:FINAL <> ($this:test.A) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:test.A
-      BLOCK_BODY
-    FUN name:a visibility:public modality:FINAL <> ($this:test.A) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:test.A
-      BLOCK_BODY
     PROPERTY name:b visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -37,36 +23,20 @@ FILE fqName:test fileName:/declarationOrder.kt
           RETURN type=kotlin.Nothing from='public final fun <get-a> (): kotlin.Int declared in test.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: test.A declared in test.A.<get-a>' type=test.A origin=null
-    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:test.A
-      VALUE_PARAMETER name:x index:0 type:kotlin.String
+    CONSTRUCTOR visibility:public <> () returnType:test.A [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in test.A'
-    PROPERTY name:b visibility:public modality:FINAL [val]
-      FUN name:<get-b> visibility:public modality:FINAL <> ($this:test.A, $receiver:kotlin.Int) returnType:kotlin.String
-        correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:test.A
-        $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-b> (): kotlin.String declared in test.A'
-            CONST String type=kotlin.String value="b"
-    FUN name:b visibility:public modality:FINAL <> ($this:test.A, $receiver:kotlin.String) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:test.A
-      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
-      BLOCK_BODY
-    PROPERTY name:a visibility:public modality:FINAL [val]
-      FUN name:<get-a> visibility:public modality:FINAL <> ($this:test.A, $receiver:kotlin.Int) returnType:kotlin.String
-        correspondingProperty: PROPERTY name:a visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:test.A
-        $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-a> (): kotlin.String declared in test.A'
-            CONST String type=kotlin.String value="a"
-    FUN name:a visibility:public modality:FINAL <> ($this:test.A, $receiver:kotlin.String) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:test.A
-      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
-      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CONSTRUCTOR visibility:public <> (x:kotlin.Double) returnType:test.A
       VALUE_PARAMETER name:x index:0 type:kotlin.Double
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in test.A'
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:test.A
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in test.A'
+    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:test.A
+      VALUE_PARAMETER name:x index:0 type:kotlin.String
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in test.A'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -82,3 +52,33 @@ FILE fqName:test fileName:/declarationOrder.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:a visibility:public modality:FINAL <> ($this:test.A) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:test.A
+      BLOCK_BODY
+    FUN name:a visibility:public modality:FINAL <> ($this:test.A, $receiver:kotlin.String) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:test.A
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
+      BLOCK_BODY
+    FUN name:b visibility:public modality:FINAL <> ($this:test.A) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:test.A
+      BLOCK_BODY
+    FUN name:b visibility:public modality:FINAL <> ($this:test.A, $receiver:kotlin.String) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:test.A
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
+      BLOCK_BODY
+    PROPERTY name:a visibility:public modality:FINAL [val]
+      FUN name:<get-a> visibility:public modality:FINAL <> ($this:test.A, $receiver:kotlin.Int) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:a visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:test.A
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-a> (): kotlin.String declared in test.A'
+            CONST String type=kotlin.String value="a"
+    PROPERTY name:b visibility:public modality:FINAL [val]
+      FUN name:<get-b> visibility:public modality:FINAL <> ($this:test.A, $receiver:kotlin.Int) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:test.A
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-b> (): kotlin.String declared in test.A'
+            CONST String type=kotlin.String value="b"

@@ -1,7 +1,4 @@
 FILE fqName:<root> fileName:/whenReturnUnit.kt
-  FUN name:run visibility:public modality:FINAL <> (block:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:block index:0 type:kotlin.Function0<kotlin.Unit>
-    BLOCK_BODY
   FUN name:branch visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.Unit
     VALUE_PARAMETER name:x index:0 type:kotlin.Int
     BLOCK_BODY
@@ -26,3 +23,6 @@ FILE fqName:<root> fileName:/whenReturnUnit.kt
                         arg1: CONST Int type=kotlin.Int value=2
                       then: CALL 'public final fun TODO (reason: kotlin.String): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
                         reason: CONST String type=kotlin.String value="2"
+  FUN name:run visibility:public modality:FINAL <> (block:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:block index:0 type:kotlin.Function0<kotlin.Unit>
+    BLOCK_BODY

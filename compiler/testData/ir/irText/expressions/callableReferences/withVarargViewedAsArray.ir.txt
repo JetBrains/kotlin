@@ -1,4 +1,23 @@
 FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
+  FUN name:nsum visibility:public modality:FINAL <> (args:kotlin.Array<out kotlin.Number>) returnType:kotlin.Int
+    VALUE_PARAMETER name:args index:0 type:kotlin.Array<out kotlin.Number> varargElementType:kotlin.Number [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun nsum (vararg args: kotlin.Number): kotlin.Int declared in <root>'
+        CALL 'public final fun sum (vararg args: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+          args: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+            SPREAD_ELEMENT
+              CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int, init: kotlin.Function1<kotlin.Int, kotlin.Int>) declared in kotlin.IntArray' type=kotlin.IntArray origin=null
+                size: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
+                  $this: GET_VAR 'args: kotlin.Array<out kotlin.Number> declared in <root>.nsum' type=kotlin.Array<out kotlin.Number> origin=null
+                init: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Int
+                    VALUE_PARAMETER name:it index:0 type:kotlin.Int
+                    BLOCK_BODY
+                      RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Int declared in <root>.nsum'
+                        CALL 'public abstract fun toInt (): kotlin.Int declared in kotlin.Number' type=kotlin.Int origin=null
+                          $this: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Number origin=GET_ARRAY_ELEMENT
+                            $this: GET_VAR 'args: kotlin.Array<out kotlin.Number> declared in <root>.nsum' type=kotlin.Array<out kotlin.Number> origin=null
+                            index: GET_VAR 'it: kotlin.Int declared in <root>.nsum.<anonymous>' type=kotlin.Int origin=null
   FUN name:sum visibility:public modality:FINAL <> (args:kotlin.IntArray) returnType:kotlin.Int
     VALUE_PARAMETER name:args index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
     BLOCK_BODY
@@ -21,43 +40,22 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
                 other: GET_VAR 'val arg: kotlin.Int declared in <root>.sum' type=kotlin.Int origin=null
       RETURN type=kotlin.Nothing from='public final fun sum (vararg args: kotlin.Int): kotlin.Int declared in <root>'
         GET_VAR 'var result: kotlin.Int declared in <root>.sum' type=kotlin.Int origin=null
-  FUN name:nsum visibility:public modality:FINAL <> (args:kotlin.Array<out kotlin.Number>) returnType:kotlin.Int
-    VALUE_PARAMETER name:args index:0 type:kotlin.Array<out kotlin.Number> varargElementType:kotlin.Number [vararg]
+  FUN name:testArrayAndDefaults visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun nsum (vararg args: kotlin.Number): kotlin.Int declared in <root>'
-        CALL 'public final fun sum (vararg args: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          args: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-            SPREAD_ELEMENT
-              CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int, init: kotlin.Function1<kotlin.Int, kotlin.Int>) declared in kotlin.IntArray' type=kotlin.IntArray origin=null
-                size: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
-                  $this: GET_VAR 'args: kotlin.Array<out kotlin.Number> declared in <root>.nsum' type=kotlin.Array<out kotlin.Number> origin=null
-                init: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
-                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Int
-                    VALUE_PARAMETER name:it index:0 type:kotlin.Int
-                    BLOCK_BODY
-                      RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Int declared in <root>.nsum'
-                        CALL 'public abstract fun toInt (): kotlin.Int declared in kotlin.Number' type=kotlin.Int origin=null
-                          $this: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Number origin=GET_ARRAY_ELEMENT
-                            $this: GET_VAR 'args: kotlin.Array<out kotlin.Number> declared in <root>.nsum' type=kotlin.Array<out kotlin.Number> origin=null
-                            index: GET_VAR 'it: kotlin.Int declared in <root>.nsum.<anonymous>' type=kotlin.Int origin=null
-  FUN name:zap visibility:public modality:FINAL <> (b:kotlin.Array<out kotlin.String>, k:kotlin.Int) returnType:kotlin.Unit
-    VALUE_PARAMETER name:b index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]
-    VALUE_PARAMETER name:k index:1 type:kotlin.Int
-      EXPRESSION_BODY
-        CONST Int type=kotlin.Int value=42
+      CALL 'public final fun useStringArray (fn: kotlin.Function1<kotlin.Array<kotlin.String>, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        fn: BLOCK type=kotlin.Function1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:zap visibility:local modality:FINAL <> (p0:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Array<out kotlin.String>
+            BLOCK_BODY
+              CALL 'public final fun zap (vararg b: kotlin.String, k: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                b: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+                  SPREAD_ELEMENT
+                    GET_VAR 'p0: kotlin.Array<out kotlin.String> declared in <root>.testArrayAndDefaults.zap' type=kotlin.Array<out kotlin.String> origin=null
+          FUNCTION_REFERENCE 'local final fun zap (p0: kotlin.Array<out kotlin.String>): kotlin.Unit declared in <root>.testArrayAndDefaults' type=kotlin.Function1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun zap (vararg b: kotlin.String, k: kotlin.Int): kotlin.Unit declared in <root>
+  FUN name:testArrayAsVararg visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-  FUN name:usePlainArgs visibility:public modality:FINAL <> (fn:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int>
-    BLOCK_BODY
-  FUN name:usePrimitiveArray visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.IntArray, kotlin.Int>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.IntArray, kotlin.Int>
-    BLOCK_BODY
-  FUN name:useArray visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Array<kotlin.Int>, kotlin.Int>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Array<kotlin.Int>, kotlin.Int>
-    BLOCK_BODY
-  FUN name:useStringArray visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Array<kotlin.String>, kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Array<kotlin.String>, kotlin.Unit>
-    BLOCK_BODY
+      CALL 'public final fun useArray (fn: kotlin.Function1<kotlin.Array<kotlin.Int>, kotlin.Int>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        fn: FUNCTION_REFERENCE 'public final fun nsum (vararg args: kotlin.Number): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Array<out kotlin.Number>, kotlin.Int> origin=null reflectionTarget=<same>
   FUN name:testPlainArgs visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun usePlainArgs (fn: kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -76,19 +74,21 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
     BLOCK_BODY
       CALL 'public final fun usePrimitiveArray (fn: kotlin.Function1<kotlin.IntArray, kotlin.Int>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         fn: FUNCTION_REFERENCE 'public final fun sum (vararg args: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
-  FUN name:testArrayAsVararg visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:useArray visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Array<kotlin.Int>, kotlin.Int>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Array<kotlin.Int>, kotlin.Int>
     BLOCK_BODY
-      CALL 'public final fun useArray (fn: kotlin.Function1<kotlin.Array<kotlin.Int>, kotlin.Int>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        fn: FUNCTION_REFERENCE 'public final fun nsum (vararg args: kotlin.Number): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Array<out kotlin.Number>, kotlin.Int> origin=null reflectionTarget=<same>
-  FUN name:testArrayAndDefaults visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:usePlainArgs visibility:public modality:FINAL <> (fn:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int>
     BLOCK_BODY
-      CALL 'public final fun useStringArray (fn: kotlin.Function1<kotlin.Array<kotlin.String>, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        fn: BLOCK type=kotlin.Function1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:zap visibility:local modality:FINAL <> (p0:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Array<out kotlin.String>
-            BLOCK_BODY
-              CALL 'public final fun zap (vararg b: kotlin.String, k: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                b: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-                  SPREAD_ELEMENT
-                    GET_VAR 'p0: kotlin.Array<out kotlin.String> declared in <root>.testArrayAndDefaults.zap' type=kotlin.Array<out kotlin.String> origin=null
-          FUNCTION_REFERENCE 'local final fun zap (p0: kotlin.Array<out kotlin.String>): kotlin.Unit declared in <root>.testArrayAndDefaults' type=kotlin.Function1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun zap (vararg b: kotlin.String, k: kotlin.Int): kotlin.Unit declared in <root>
+  FUN name:usePrimitiveArray visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.IntArray, kotlin.Int>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.IntArray, kotlin.Int>
+    BLOCK_BODY
+  FUN name:useStringArray visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Array<kotlin.String>, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Array<kotlin.String>, kotlin.Unit>
+    BLOCK_BODY
+  FUN name:zap visibility:public modality:FINAL <> (b:kotlin.Array<out kotlin.String>, k:kotlin.Int) returnType:kotlin.Unit
+    VALUE_PARAMETER name:b index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]
+    VALUE_PARAMETER name:k index:1 type:kotlin.Int
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=42
+    BLOCK_BODY

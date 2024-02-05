@@ -1,10 +1,4 @@
 abstract class A {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: B
     field = B()
     get
@@ -13,6 +7,12 @@ abstract class A {
     field = 0
     get
     set
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
@@ -40,14 +40,15 @@ class Test1 : A {
 }
 
 class Test2 : J {
+  init {
+    <this>.#field = 42
+  }
+
   constructor() /* primary */ {
     super/*J*/()
     /* <init>() */
 
   }
 
-  init {
-    <this>.#field = 42
-  }
-
 }
+

@@ -15,23 +15,6 @@ FILE fqName:<root> fileName:/lazy.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:test1 visibility:public modality:FINAL <> ($context_receiver_0:<root>.Lazy<kotlin.Int>, $context_receiver_1:<root>.Lazy<kotlin.CharSequence>) returnType:kotlin.Unit
-    contextReceiverParametersCount: 2
-    VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.Lazy<kotlin.Int>
-    VALUE_PARAMETER name:$context_receiver_1 index:1 type:<root>.Lazy<kotlin.CharSequence>
-    BLOCK_BODY
-  FUN name:test2 visibility:public modality:FINAL <T> ($receiver:<root>.Lazy<kotlin.Int>, $context_receiver_0:<root>.Lazy<T of <root>.test2>) returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    contextReceiverParametersCount: 1
-    $receiver: VALUE_PARAMETER name:<this> type:<root>.Lazy<kotlin.Int>
-    VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.Lazy<T of <root>.test2>
-    BLOCK_BODY
-  FUN name:test3 visibility:public modality:FINAL <T> ($receiver:<root>.Lazy<kotlin.Int>, $context_receiver_0:<root>.Lazy<<root>.Lazy<T of <root>.test3>>) returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    contextReceiverParametersCount: 1
-    $receiver: VALUE_PARAMETER name:<this> type:<root>.Lazy<kotlin.Int>
-    VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.Lazy<<root>.Lazy<T of <root>.test3>>
-    BLOCK_BODY
   FUN name:f visibility:public modality:FINAL <T> (lazy1:<root>.Lazy<kotlin.Int>, lazy2:<root>.Lazy<kotlin.CharSequence>, lazyT:<root>.Lazy<T of <root>.f>, lazyLazyT:<root>.Lazy<<root>.Lazy<T of <root>.f>>) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:lazy1 index:0 type:<root>.Lazy<kotlin.Int>
@@ -153,3 +136,20 @@ FILE fqName:<root> fileName:/lazy.kt
                         <T>: T of <root>.f
                         $receiver: GET_VAR '$this$with: <root>.Lazy<kotlin.Int> declared in <root>.f.<anonymous>' type=<root>.Lazy<kotlin.Int> origin=null
                         $context_receiver_0: GET_VAR '$this$with: <root>.Lazy<<root>.Lazy<T of <root>.f>> declared in <root>.f.<anonymous>.<anonymous>' type=<root>.Lazy<<root>.Lazy<T of <root>.f>> origin=null
+  FUN name:test1 visibility:public modality:FINAL <> ($context_receiver_0:<root>.Lazy<kotlin.Int>, $context_receiver_1:<root>.Lazy<kotlin.CharSequence>) returnType:kotlin.Unit
+    contextReceiverParametersCount: 2
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.Lazy<kotlin.Int>
+    VALUE_PARAMETER name:$context_receiver_1 index:1 type:<root>.Lazy<kotlin.CharSequence>
+    BLOCK_BODY
+  FUN name:test2 visibility:public modality:FINAL <T> ($receiver:<root>.Lazy<kotlin.Int>, $context_receiver_0:<root>.Lazy<T of <root>.test2>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    contextReceiverParametersCount: 1
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.Lazy<kotlin.Int>
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.Lazy<T of <root>.test2>
+    BLOCK_BODY
+  FUN name:test3 visibility:public modality:FINAL <T> ($receiver:<root>.Lazy<kotlin.Int>, $context_receiver_0:<root>.Lazy<<root>.Lazy<T of <root>.test3>>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    contextReceiverParametersCount: 1
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.Lazy<kotlin.Int>
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.Lazy<<root>.Lazy<T of <root>.test3>>
+    BLOCK_BODY

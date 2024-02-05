@@ -1,32 +1,13 @@
-interface I<T : Any?> {
-  abstract fun input(t: T)
-
-  abstract fun output(): T
-
-}
-
-fun <T : Any?> foo(i: I<(T & Any)>) {
-  i.input(t = i.output())
-}
-
-fun <T : Any?> bar(i: I<out (T & Any)>): (T & Any) {
-  return i.output()
-}
-
-fun <T : Any?> qux(t: T, i: I<in (T & Any)>) {
-  i.input(t = CHECK_NOT_NULL<T>(arg0 = t))
-}
-
 class C<TT : Any?> : I<(TT & Any)> {
+  val t: TT
+    field = t
+    get
+
   constructor(t: TT) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val t: TT
-    field = t
-    get
 
   override fun input(t: (TT & Any)) {
   }
@@ -37,6 +18,26 @@ class C<TT : Any?> : I<(TT & Any)> {
 
 }
 
+interface I<T : Any?> {
+  abstract fun input(t: T)
+
+  abstract fun output(): T
+
+}
+
+fun <T : Any?> bar(i: I<out (T & Any)>): (T & Any) {
+  return i.output()
+}
+
+fun <T : Any?> foo(i: I<(T & Any)>) {
+  i.input(t = i.output())
+}
+
 fun <T1 : Any?, T2 : I<(T1 & Any)>> foo2(p1: T1, p2: T2) {
   p2 /*as I<(T1 & Any)> */.input(t = CHECK_NOT_NULL<T1>(arg0 = p1))
 }
+
+fun <T : Any?> qux(t: T, i: I<in (T & Any)>) {
+  i.input(t = CHECK_NOT_NULL<T>(arg0 = t))
+}
+

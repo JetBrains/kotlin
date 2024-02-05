@@ -1,11 +1,6 @@
 FILE fqName:<root> fileName:/VarInInit.kt
   CLASS CLASS name:Some modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Some
-    CONSTRUCTOR visibility:public <> (foo:kotlin.Int) returnType:<root>.Some [primary]
-      VALUE_PARAMETER name:foo index:0 type:kotlin.Int
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Some modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:foo visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:foo type:kotlin.Int visibility:private
         EXPRESSION_BODY
@@ -37,6 +32,11 @@ FILE fqName:<root> fileName:/VarInInit.kt
               CALL 'public final fun <set-foo> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Some' type=kotlin.Unit origin=EQ
                 $this: GET_VAR '<this>: <root>.Some declared in <root>.Some' type=<root>.Some origin=null
                 <set-?>: CONST Int type=kotlin.Int value=0
+    CONSTRUCTOR visibility:public <> (foo:kotlin.Int) returnType:<root>.Some [primary]
+      VALUE_PARAMETER name:foo index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Some modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

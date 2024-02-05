@@ -1,15 +1,55 @@
 FILE fqName:<root> fileName:/kt47527.kt
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:result type:kotlin.String [var]
+        CONST String type=kotlin.String value=""
+      SET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.Unit origin=EQ
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+          $this: GET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+          other: BLOCK type=kotlin.String origin=ELVIS
+            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.String? [val]
+              CALL 'public final fun test_1 (value: kotlin.Any?): kotlin.String? declared in <root>' type=kotlin.String? origin=null
+                value: CONST Int type=kotlin.Int value=1
+            WHEN type=kotlin.String origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  arg0: GET_VAR 'val tmp_0: kotlin.String? declared in <root>.box' type=kotlin.String? origin=null
+                  arg1: CONST Null type=kotlin.Nothing? value=null
+                then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+                  CONST String type=kotlin.String value="fail 1"
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: GET_VAR 'val tmp_0: kotlin.String? declared in <root>.box' type=kotlin.String? origin=null
+      SET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.Unit origin=EQ
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+          $this: GET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+          other: BLOCK type=kotlin.String origin=ELVIS
+            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.String? [val]
+              CALL 'public final fun test_2 (value: kotlin.Any?): kotlin.String? declared in <root>' type=kotlin.String? origin=null
+                value: CONST Int type=kotlin.Int value=1
+            WHEN type=kotlin.String origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  arg0: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.box' type=kotlin.String? origin=null
+                  arg1: CONST Null type=kotlin.Nothing? value=null
+                then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+                  CONST String type=kotlin.String value="fail 2"
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.box' type=kotlin.String? origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        GET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.String origin=null
   FUN name:test_1 visibility:public modality:FINAL <> (value:kotlin.Any?) returnType:kotlin.String?
     VALUE_PARAMETER name:value index:0 type:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test_1 (value: kotlin.Any?): kotlin.String? declared in <root>'
         BLOCK type=kotlin.Nothing? origin=SAFE_CALL
-          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Any? [val]
+          VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Any? [val]
             GET_VAR 'value: kotlin.Any? declared in <root>.test_1' type=kotlin.Any? origin=null
           WHEN type=kotlin.Nothing? origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.test_1' type=kotlin.Any? origin=null
+                arg0: GET_VAR 'val tmp_2: kotlin.Any? declared in <root>.test_1' type=kotlin.Any? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
@@ -17,7 +57,7 @@ FILE fqName:<root> fileName:/kt47527.kt
               then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
                 <T>: kotlin.Any
                 <R>: kotlin.Nothing
-                $receiver: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.test_1' type=kotlin.Any? origin=null
+                $receiver: GET_VAR 'val tmp_2: kotlin.Any? declared in <root>.test_1' type=kotlin.Any? origin=null
                 block: FUN_EXPR type=kotlin.Function1<kotlin.Any, kotlin.Nothing> origin=LAMBDA
                   FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Any) returnType:kotlin.Nothing
                     VALUE_PARAMETER name:it index:0 type:kotlin.Any
@@ -35,12 +75,12 @@ FILE fqName:<root> fileName:/kt47527.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String? declared in <root>.test_2'
                   BLOCK type=kotlin.Nothing? origin=SAFE_CALL
-                    VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any? [val]
+                    VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Any? [val]
                       GET_VAR 'value: kotlin.Any? declared in <root>.test_2' type=kotlin.Any? origin=null
                     WHEN type=kotlin.Nothing? origin=null
                       BRANCH
                         if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                          arg0: GET_VAR 'val tmp_1: kotlin.Any? declared in <root>.test_2.<anonymous>' type=kotlin.Any? origin=null
+                          arg0: GET_VAR 'val tmp_3: kotlin.Any? declared in <root>.test_2.<anonymous>' type=kotlin.Any? origin=null
                           arg1: CONST Null type=kotlin.Nothing? value=null
                         then: CONST Null type=kotlin.Nothing? value=null
                       BRANCH
@@ -48,50 +88,10 @@ FILE fqName:<root> fileName:/kt47527.kt
                         then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
                           <T>: kotlin.Any
                           <R>: kotlin.Nothing
-                          $receiver: GET_VAR 'val tmp_1: kotlin.Any? declared in <root>.test_2.<anonymous>' type=kotlin.Any? origin=null
+                          $receiver: GET_VAR 'val tmp_3: kotlin.Any? declared in <root>.test_2.<anonymous>' type=kotlin.Any? origin=null
                           block: FUN_EXPR type=kotlin.Function1<kotlin.Any, kotlin.Nothing> origin=LAMBDA
                             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Any) returnType:kotlin.Nothing
                               VALUE_PARAMETER name:it index:0 type:kotlin.Any
                               BLOCK_BODY
                                 RETURN type=kotlin.Nothing from='public final fun test_2 (value: kotlin.Any?): kotlin.String? declared in <root>'
                                   CONST String type=kotlin.String value="K"
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
-    BLOCK_BODY
-      VAR name:result type:kotlin.String [var]
-        CONST String type=kotlin.String value=""
-      SET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.Unit origin=EQ
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
-          $this: GET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.String origin=null
-          other: BLOCK type=kotlin.String origin=ELVIS
-            VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.String? [val]
-              CALL 'public final fun test_1 (value: kotlin.Any?): kotlin.String? declared in <root>' type=kotlin.String? origin=null
-                value: CONST Int type=kotlin.Int value=1
-            WHEN type=kotlin.String origin=null
-              BRANCH
-                if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                  arg0: GET_VAR 'val tmp_2: kotlin.String? declared in <root>.box' type=kotlin.String? origin=null
-                  arg1: CONST Null type=kotlin.Nothing? value=null
-                then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-                  CONST String type=kotlin.String value="fail 1"
-              BRANCH
-                if: CONST Boolean type=kotlin.Boolean value=true
-                then: GET_VAR 'val tmp_2: kotlin.String? declared in <root>.box' type=kotlin.String? origin=null
-      SET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.Unit origin=EQ
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
-          $this: GET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.String origin=null
-          other: BLOCK type=kotlin.String origin=ELVIS
-            VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.String? [val]
-              CALL 'public final fun test_2 (value: kotlin.Any?): kotlin.String? declared in <root>' type=kotlin.String? origin=null
-                value: CONST Int type=kotlin.Int value=1
-            WHEN type=kotlin.String origin=null
-              BRANCH
-                if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                  arg0: GET_VAR 'val tmp_3: kotlin.String? declared in <root>.box' type=kotlin.String? origin=null
-                  arg1: CONST Null type=kotlin.Nothing? value=null
-                then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-                  CONST String type=kotlin.String value="fail 2"
-              BRANCH
-                if: CONST Boolean type=kotlin.Boolean value=true
-                then: GET_VAR 'val tmp_3: kotlin.String? declared in <root>.box' type=kotlin.String? origin=null
-      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        GET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.String origin=null

@@ -1,14 +1,4 @@
 class Z {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  fun test2() {
-    Companion.test()
-  }
-
   companion object Companion {
     private constructor() /* primary */ {
       super/*Any*/()
@@ -21,4 +11,15 @@ class Z {
 
   }
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun test2() {
+    Companion.test()
+  }
+
 }
+

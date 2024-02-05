@@ -11,9 +11,6 @@ open class Base {
 
 }
 
-interface I {
-}
-
 class Child1 : Base, I {
   constructor() /* primary */ {
     super/*Base*/()
@@ -23,7 +20,7 @@ class Child1 : Base, I {
 
 }
 
-class Child2 : I, Base {
+class Child2 : Base, I {
   constructor() /* primary */ {
     super/*Base*/()
     /* <init>() */
@@ -31,3 +28,7 @@ class Child2 : I, Base {
   }
 
 }
+
+interface I {
+}
+

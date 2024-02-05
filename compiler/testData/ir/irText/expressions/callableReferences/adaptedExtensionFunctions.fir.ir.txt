@@ -1,7 +1,4 @@
 FILE fqName:<root> fileName:/adaptedExtensionFunctions.kt
-  FUN name:use visibility:public modality:FINAL <> (f:@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:f index:0 type:@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>
-    BLOCK_BODY
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -21,18 +18,6 @@ FILE fqName:<root> fileName:/adaptedExtensionFunctions.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:extensionVararg visibility:public modality:FINAL <> ($receiver:<root>.C, i:kotlin.Int, s:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit
-    $receiver: VALUE_PARAMETER name:<this> type:<root>.C
-    VALUE_PARAMETER name:i index:0 type:kotlin.Int
-    VALUE_PARAMETER name:s index:1 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]
-    BLOCK_BODY
-  FUN name:extensionDefault visibility:public modality:FINAL <> ($receiver:<root>.C, i:kotlin.Int, s:kotlin.String) returnType:kotlin.Unit
-    $receiver: VALUE_PARAMETER name:<this> type:<root>.C
-    VALUE_PARAMETER name:i index:0 type:kotlin.Int
-    VALUE_PARAMETER name:s index:1 type:kotlin.String
-      EXPRESSION_BODY
-        CONST String type=kotlin.String value=""
-    BLOCK_BODY
   FUN name:extensionBoth visibility:public modality:FINAL <> ($receiver:<root>.C, i:kotlin.Int, s:kotlin.String, t:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:<root>.C
     VALUE_PARAMETER name:i index:0 type:kotlin.Int
@@ -41,30 +26,18 @@ FILE fqName:<root> fileName:/adaptedExtensionFunctions.kt
         CONST String type=kotlin.String value=""
     VALUE_PARAMETER name:t index:2 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]
     BLOCK_BODY
-  FUN name:testExtensionVararg visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:extensionDefault visibility:public modality:FINAL <> ($receiver:<root>.C, i:kotlin.Int, s:kotlin.String) returnType:kotlin.Unit
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.C
+    VALUE_PARAMETER name:i index:0 type:kotlin.Int
+    VALUE_PARAMETER name:s index:1 type:kotlin.String
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value=""
     BLOCK_BODY
-      CALL 'public final fun use (f: @[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        f: BLOCK type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:extensionVararg visibility:local modality:FINAL <> (p0:<root>.C, p1:kotlin.Int) returnType:kotlin.Unit
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:<root>.C
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p1 index:1 type:kotlin.Int
-            BLOCK_BODY
-              CALL 'public final fun extensionVararg (i: kotlin.Int, vararg s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                $receiver: GET_VAR 'p0: <root>.C declared in <root>.testExtensionVararg.extensionVararg' type=<root>.C origin=null
-                i: GET_VAR 'p1: kotlin.Int declared in <root>.testExtensionVararg.extensionVararg' type=kotlin.Int origin=null
-          FUNCTION_REFERENCE 'local final fun extensionVararg (p0: <root>.C, p1: kotlin.Int): kotlin.Unit declared in <root>.testExtensionVararg' type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun extensionVararg (i: kotlin.Int, vararg s: kotlin.String): kotlin.Unit declared in <root>
-  FUN name:testExtensionDefault visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:extensionVararg visibility:public modality:FINAL <> ($receiver:<root>.C, i:kotlin.Int, s:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.C
+    VALUE_PARAMETER name:i index:0 type:kotlin.Int
+    VALUE_PARAMETER name:s index:1 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]
     BLOCK_BODY
-      CALL 'public final fun use (f: @[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        f: BLOCK type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:extensionDefault visibility:local modality:FINAL <> (p0:<root>.C, p1:kotlin.Int) returnType:kotlin.Unit
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:<root>.C
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p1 index:1 type:kotlin.Int
-            BLOCK_BODY
-              CALL 'public final fun extensionDefault (i: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                $receiver: GET_VAR 'p0: <root>.C declared in <root>.testExtensionDefault.extensionDefault' type=<root>.C origin=null
-                i: GET_VAR 'p1: kotlin.Int declared in <root>.testExtensionDefault.extensionDefault' type=kotlin.Int origin=null
-          FUNCTION_REFERENCE 'local final fun extensionDefault (p0: <root>.C, p1: kotlin.Int): kotlin.Unit declared in <root>.testExtensionDefault' type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun extensionDefault (i: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>
   FUN name:testExtensionBoth visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use (f: @[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -77,3 +50,30 @@ FILE fqName:<root> fileName:/adaptedExtensionFunctions.kt
                 $receiver: GET_VAR 'p0: <root>.C declared in <root>.testExtensionBoth.extensionBoth' type=<root>.C origin=null
                 i: GET_VAR 'p1: kotlin.Int declared in <root>.testExtensionBoth.extensionBoth' type=kotlin.Int origin=null
           FUNCTION_REFERENCE 'local final fun extensionBoth (p0: <root>.C, p1: kotlin.Int): kotlin.Unit declared in <root>.testExtensionBoth' type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun extensionBoth (i: kotlin.Int, s: kotlin.String, vararg t: kotlin.String): kotlin.Unit declared in <root>
+  FUN name:testExtensionDefault visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun use (f: @[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        f: BLOCK type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:extensionDefault visibility:local modality:FINAL <> (p0:<root>.C, p1:kotlin.Int) returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:<root>.C
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p1 index:1 type:kotlin.Int
+            BLOCK_BODY
+              CALL 'public final fun extensionDefault (i: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                $receiver: GET_VAR 'p0: <root>.C declared in <root>.testExtensionDefault.extensionDefault' type=<root>.C origin=null
+                i: GET_VAR 'p1: kotlin.Int declared in <root>.testExtensionDefault.extensionDefault' type=kotlin.Int origin=null
+          FUNCTION_REFERENCE 'local final fun extensionDefault (p0: <root>.C, p1: kotlin.Int): kotlin.Unit declared in <root>.testExtensionDefault' type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun extensionDefault (i: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>
+  FUN name:testExtensionVararg visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun use (f: @[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        f: BLOCK type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:extensionVararg visibility:local modality:FINAL <> (p0:<root>.C, p1:kotlin.Int) returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:<root>.C
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p1 index:1 type:kotlin.Int
+            BLOCK_BODY
+              CALL 'public final fun extensionVararg (i: kotlin.Int, vararg s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                $receiver: GET_VAR 'p0: <root>.C declared in <root>.testExtensionVararg.extensionVararg' type=<root>.C origin=null
+                i: GET_VAR 'p1: kotlin.Int declared in <root>.testExtensionVararg.extensionVararg' type=kotlin.Int origin=null
+          FUNCTION_REFERENCE 'local final fun extensionVararg (p0: <root>.C, p1: kotlin.Int): kotlin.Unit declared in <root>.testExtensionVararg' type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun extensionVararg (i: kotlin.Int, vararg s: kotlin.String): kotlin.Unit declared in <root>
+  FUN name:use visibility:public modality:FINAL <> (f:@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:f index:0 type:@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>
+    BLOCK_BODY

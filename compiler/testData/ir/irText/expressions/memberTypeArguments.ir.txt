@@ -2,11 +2,6 @@ FILE fqName:<root> fileName:/memberTypeArguments.kt
   CLASS CLASS name:GenericClass modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GenericClass<T of <root>.GenericClass>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (value:T of <root>.GenericClass) returnType:<root>.GenericClass<T of <root>.GenericClass> [primary]
-      VALUE_PARAMETER name:value index:0 type:T of <root>.GenericClass
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:GenericClass modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.GenericClass visibility:private [final]
         EXPRESSION_BODY
@@ -18,14 +13,11 @@ FILE fqName:<root> fileName:/memberTypeArguments.kt
           RETURN type=kotlin.Nothing from='public final fun <get-value> (): T of <root>.GenericClass declared in <root>.GenericClass'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.GenericClass visibility:private [final]' type=T of <root>.GenericClass origin=null
               receiver: GET_VAR '<this>: <root>.GenericClass<T of <root>.GenericClass> declared in <root>.GenericClass.<get-value>' type=<root>.GenericClass<T of <root>.GenericClass> origin=null
-    FUN name:withNewValue visibility:public modality:FINAL <> ($this:<root>.GenericClass<T of <root>.GenericClass>, newValue:T of <root>.GenericClass) returnType:<root>.GenericClass<T of <root>.GenericClass>
-      $this: VALUE_PARAMETER name:<this> type:<root>.GenericClass<T of <root>.GenericClass>
-      VALUE_PARAMETER name:newValue index:0 type:T of <root>.GenericClass
+    CONSTRUCTOR visibility:public <> (value:T of <root>.GenericClass) returnType:<root>.GenericClass<T of <root>.GenericClass> [primary]
+      VALUE_PARAMETER name:value index:0 type:T of <root>.GenericClass
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun withNewValue (newValue: T of <root>.GenericClass): <root>.GenericClass<T of <root>.GenericClass> declared in <root>.GenericClass'
-          CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.GenericClass) declared in <root>.GenericClass' type=<root>.GenericClass<T of <root>.GenericClass> origin=null
-            <class: T>: T of <root>.GenericClass
-            value: GET_VAR 'newValue: T of <root>.GenericClass declared in <root>.GenericClass.withNewValue' type=T of <root>.GenericClass origin=null
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:GenericClass modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -39,3 +31,11 @@ FILE fqName:<root> fileName:/memberTypeArguments.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:withNewValue visibility:public modality:FINAL <> ($this:<root>.GenericClass<T of <root>.GenericClass>, newValue:T of <root>.GenericClass) returnType:<root>.GenericClass<T of <root>.GenericClass>
+      $this: VALUE_PARAMETER name:<this> type:<root>.GenericClass<T of <root>.GenericClass>
+      VALUE_PARAMETER name:newValue index:0 type:T of <root>.GenericClass
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun withNewValue (newValue: T of <root>.GenericClass): <root>.GenericClass<T of <root>.GenericClass> declared in <root>.GenericClass'
+          CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.GenericClass) declared in <root>.GenericClass' type=<root>.GenericClass<T of <root>.GenericClass> origin=null
+            <class: T>: T of <root>.GenericClass
+            value: GET_VAR 'newValue: T of <root>.GenericClass declared in <root>.GenericClass.withNewValue' type=T of <root>.GenericClass origin=null

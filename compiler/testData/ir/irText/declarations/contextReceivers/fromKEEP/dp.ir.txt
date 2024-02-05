@@ -1,10 +1,6 @@
 FILE fqName:<root> fileName:/dp.kt
   CLASS CLASS name:View modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.View
-    CONSTRUCTOR visibility:public <> () returnType:<root>.View [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:View modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:coefficient visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:coefficient type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -16,6 +12,10 @@ FILE fqName:<root> fileName:/dp.kt
           RETURN type=kotlin.Nothing from='public final fun <get-coefficient> (): kotlin.Int declared in <root>.View'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:coefficient type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.View declared in <root>.View.<get-coefficient>' type=<root>.View origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.View [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:View modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -29,18 +29,6 @@ FILE fqName:<root> fileName:/dp.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  PROPERTY name:dp visibility:public modality:FINAL [val]
-    FUN name:<get-dp> visibility:public modality:FINAL <> ($receiver:kotlin.Int, $context_receiver_0:<root>.View) returnType:kotlin.Int
-      correspondingProperty: PROPERTY name:dp visibility:public modality:FINAL [val]
-      contextReceiverParametersCount: 1
-      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
-      VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.View
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-dp> ($context_receiver_0: <root>.View): kotlin.Int declared in <root>'
-          CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
-            $this: CALL 'public final fun <get-coefficient> (): kotlin.Int declared in <root>.View' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '$context_receiver_0: <root>.View declared in <root>.<get-dp>' type=<root>.View origin=null
-            other: GET_VAR '<this>: kotlin.Int declared in <root>.<get-dp>' type=kotlin.Int origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Nothing origin=null
@@ -82,3 +70,15 @@ FILE fqName:<root> fileName:/dp.kt
                       CONST String type=kotlin.String value="OK"
               RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
                 CONST String type=kotlin.String value="fail"
+  PROPERTY name:dp visibility:public modality:FINAL [val]
+    FUN name:<get-dp> visibility:public modality:FINAL <> ($receiver:kotlin.Int, $context_receiver_0:<root>.View) returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:dp visibility:public modality:FINAL [val]
+      contextReceiverParametersCount: 1
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
+      VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.View
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-dp> ($context_receiver_0: <root>.View): kotlin.Int declared in <root>'
+          CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+            $this: CALL 'public final fun <get-coefficient> (): kotlin.Int declared in <root>.View' type=kotlin.Int origin=GET_PROPERTY
+              $this: GET_VAR '$context_receiver_0: <root>.View declared in <root>.<get-dp>' type=<root>.View origin=null
+            other: GET_VAR '<this>: kotlin.Int declared in <root>.<get-dp>' type=kotlin.Int origin=null

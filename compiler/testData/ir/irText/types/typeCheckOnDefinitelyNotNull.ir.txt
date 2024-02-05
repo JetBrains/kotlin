@@ -6,13 +6,6 @@ FILE fqName:<root> fileName:/typeCheckOnDefinitelyNotNull.kt
       RETURN type=kotlin.Nothing from='public final fun asFoo <T> (t: T of <root>.asFoo): {T of <root>.asFoo & Any} declared in <root>'
         TYPE_OP type={T of <root>.asFoo & Any} origin=CAST typeOperand={T of <root>.asFoo & Any}
           GET_VAR 't: T of <root>.asFoo declared in <root>.asFoo' type=T of <root>.asFoo origin=null
-  FUN name:safeAsFoo visibility:public modality:FINAL <T> (t:T of <root>.safeAsFoo) returnType:T of <root>.safeAsFoo?
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:t index:0 type:T of <root>.safeAsFoo
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun safeAsFoo <T> (t: T of <root>.safeAsFoo): T of <root>.safeAsFoo? declared in <root>'
-        TYPE_OP type=T of <root>.safeAsFoo? origin=SAFE_CAST typeOperand={T of <root>.safeAsFoo & Any}
-          GET_VAR 't: T of <root>.safeAsFoo declared in <root>.safeAsFoo' type=T of <root>.safeAsFoo origin=null
   FUN name:implicitAsFoo visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:kotlin.Int [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence?] reified:true
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
@@ -28,3 +21,10 @@ FILE fqName:<root> fileName:/typeCheckOnDefinitelyNotNull.kt
             then: CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=GET_PROPERTY
               $this: TYPE_OP type={T of <root>.implicitAsFoo & Any} origin=IMPLICIT_CAST typeOperand={T of <root>.implicitAsFoo & Any}
                 GET_VAR 'x: kotlin.Any declared in <root>.implicitAsFoo' type=kotlin.Any origin=null
+  FUN name:safeAsFoo visibility:public modality:FINAL <T> (t:T of <root>.safeAsFoo) returnType:T of <root>.safeAsFoo?
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:t index:0 type:T of <root>.safeAsFoo
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun safeAsFoo <T> (t: T of <root>.safeAsFoo): T of <root>.safeAsFoo? declared in <root>'
+        TYPE_OP type=T of <root>.safeAsFoo? origin=SAFE_CAST typeOperand={T of <root>.safeAsFoo & Any}
+          GET_VAR 't: T of <root>.safeAsFoo declared in <root>.safeAsFoo' type=T of <root>.safeAsFoo origin=null

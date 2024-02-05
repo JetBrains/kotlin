@@ -1,10 +1,4 @@
 class Flaf {
-  constructor(javaName: String) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val javaName: String
     field = javaName
     get
@@ -12,6 +6,12 @@ class Flaf {
   private val INSTANCES: MutableMap<String, Flaf>
     field = mutableMapOf<String, Flaf>()
     private get
+
+  constructor(javaName: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
   fun forJavaName(javaName: String): Flaf {
     var result: Flaf? = <this>.<get-INSTANCES>().get(key = javaName)
@@ -30,3 +30,4 @@ class Flaf {
   }
 
 }
+
