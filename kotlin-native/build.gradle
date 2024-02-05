@@ -546,10 +546,6 @@ configure([bundleRegular, bundlePrebuilt]) {
     dependsOn("crossDistStdlibCache")
     dependsOn("distSources")
     dependsOn("distDef")
-    from(project.projectDir) {
-        include 'RELEASE_NOTES.md'
-        into "${archiveBaseName.get()}-${archiveVersion.get()}"
-    }
 
     destinationDirectory.set(file('.'))
 
