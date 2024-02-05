@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
 sealed class ObjCType {
@@ -25,7 +26,9 @@ data class ObjCRawType(
     override fun render(attrsAndName: String): String = rawText.withAttrsAndName(attrsAndName)
 }
 
-sealed class ObjCReferenceType : ObjCType()
+sealed class ObjCReferenceType : ObjCType() {
+    var classId: ClassId? = null
+}
 
 sealed class ObjCNonNullReferenceType : ObjCReferenceType()
 

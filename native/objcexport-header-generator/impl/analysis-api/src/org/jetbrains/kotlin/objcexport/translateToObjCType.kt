@@ -116,7 +116,9 @@ private fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReference
             ?: fullyExpandedType.classId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
 
         val typeArguments = translateToObjCTypeArguments()
-        return ObjCClassType(typeName, typeArguments)
+        return ObjCClassType(typeName, typeArguments).apply {
+            this.classId = classId
+        }
     }
 
     if (fullyExpandedType is KtTypeParameterType) {

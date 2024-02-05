@@ -92,6 +92,15 @@ fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
             ObjCClassForwardDeclaration(clazz.name)
         }.toSet()
 
+    collectDependencies(translatedObjCExportStubs).forEach { stub ->
+        translatedObjCExportStubs.add(stub)
+        if (stub is ObjCProtocol) {
+            protocolForwardDeclarations.add(stub.name)
+        } else if (stub is ObjCClass) {
+            classForwardDeclarations.add(ObjCClassForwardDeclaration(stub.name))
+        }
+    }
+
     return ObjCHeader(
         stubs = translatedObjCExportStubs.toList(),
         classForwardDeclarations = classForwardDeclarations,
