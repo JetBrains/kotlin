@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLoc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
-import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
@@ -229,10 +228,7 @@ internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -
     }
 }
 
-internal val FirDeclaration.isElementWhichShouldBeResolvedAsPartOfScript: Boolean get() = this is FirAnonymousInitializer || isScriptDependentDeclaration
-
-internal val FirDeclaration.isScriptDependentDeclaration: Boolean
-    get() = false
+internal val FirDeclaration.isElementWhichShouldBeResolvedAsPartOfScript: Boolean get() = this is FirAnonymousInitializer
 
 /**
  * Some "local" declarations are not local from the lazy resolution perspective.
@@ -245,11 +241,8 @@ internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
         else -> callableId.isLocal || fir.status.visibility == Visibilities.Local
     }
 
-internal inline fun FirScript.forEachDependentDeclaration(action: (FirDeclaration) -> Unit) {
-    for (declaration in declarations) {
-        if (declaration is FirAnonymousInitializer || !declaration.isScriptDependentDeclaration) continue
-        action(declaration)
-    }
+internal inline fun FirScript.forEachDependentDeclaration(@Suppress("unused") action: (FirDeclaration) -> Unit) {
+
 }
 
 val PsiElement.parentsWithSelfCodeFragmentAware: Sequence<PsiElement>

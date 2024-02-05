@@ -11,14 +11,12 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalForLazyResolutionPurposes
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.unwrapCopy
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -354,11 +352,6 @@ private fun FirDeclaration.scriptDesignation(): FirDesignation? {
             val firScriptSymbol = (containingDeclarationSymbol as? FirScriptSymbol) ?: return null
             val firFile = firScriptSymbol.fir.getContainingFile() ?: return null
             FirDesignation(path = listOf(firFile), target = firScriptSymbol.fir)
-        }
-        isScriptDependentDeclaration -> {
-            val firFile = getContainingFile() ?: return null
-            val firScript = firFile.declarations.singleOrNull() as? FirScript ?: return null
-            FirDesignation(path = listOf(firFile), target = firScript)
         }
         else -> null
     }

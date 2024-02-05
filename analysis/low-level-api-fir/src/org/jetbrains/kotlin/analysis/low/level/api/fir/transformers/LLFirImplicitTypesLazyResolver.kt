@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockPro
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
@@ -199,12 +198,6 @@ internal class LLFirImplicitBodyTargetResolver(
                 }
             }
 
-            target is FirScript -> {
-                if (target.declarations.any { it.isScriptDependentDeclaration }) {
-                    resolve(target, BodyStateKeepers.SCRIPT)
-                }
-            }
-
             target is FirRegularClass ||
                     target is FirTypeAlias ||
                     target is FirFile ||
@@ -213,7 +206,8 @@ internal class LLFirImplicitBodyTargetResolver(
                     target is FirDanglingModifierList ||
                     target is FirFileAnnotationsContainer ||
                     target is FirEnumEntry ||
-                    target is FirErrorProperty
+                    target is FirErrorProperty ||
+                    target is FirScript
             -> {
                 // No implicit bodies here
             }

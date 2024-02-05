@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isElementWhichShouldBeResolvedAsPartOfScript
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
@@ -81,10 +80,7 @@ internal object LLFirPhaseUpdater {
 private object PhaseUpdatingTransformer : FirVisitor<Unit, FirResolvePhase>() {
     override fun visitElement(element: FirElement, data: FirResolvePhase) {
         if (element is FirElementWithResolveState) {
-            if (element.resolvePhase >= data &&
-                element !is FirDefaultPropertyAccessor &&
-                !(element is FirDeclaration && element.isScriptDependentDeclaration)
-            ) return
+            if (element.resolvePhase >= data && element !is FirDefaultPropertyAccessor) return
 
             @OptIn(ResolveStateAccess::class)
             element.resolveState = data.asResolveState()

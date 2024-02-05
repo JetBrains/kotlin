@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodie
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeprecationProviderIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -318,8 +317,6 @@ private fun FirAnnotationContainer.hasAnnotationsToResolve(): Boolean {
         is FirProperty -> this.getter?.hasAnnotationsToResolve() == true ||
                 this.setter?.hasAnnotationsToResolve() == true ||
                 this.backingField?.hasAnnotationsToResolve() == true
-
-        is FirScript -> declarations.any { it.isScriptDependentDeclaration && it.hasAnnotationsToResolve() }
         else -> false
     }
 }
