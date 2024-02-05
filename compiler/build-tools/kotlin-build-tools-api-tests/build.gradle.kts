@@ -129,7 +129,7 @@ testing {
                         ensureExecutedAgainstExpectedBuildToolsImplVersion(suitConfig.implVersion)
                         useJUnitPlatform {
                             if (suitConfig.onlyCompatibilityTests) {
-                                includeTags("CompatibilityTest")
+                                includeTags("CompatibilityTests")
                             }
                         }
                         systemProperty("kotlin.build-tools-api.log.level", "DEBUG")

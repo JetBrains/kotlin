@@ -10,4 +10,4 @@ import org.junit.jupiter.api.Tag
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("CompatibilityTest")
-annotation class CompatibilityTest
+annotation class CompatibilityTests
