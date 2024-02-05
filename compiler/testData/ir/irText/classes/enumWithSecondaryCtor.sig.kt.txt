@@ -18,6 +18,11 @@ enum class Test0 : Enum<Test0> {
     get
 
   // CHECK:
+  //   Mangled name: Test0.ZERO
+  //   Public signature: /Test0.ZERO|null[0]
+  ZERO
+
+  // CHECK:
   //   Mangled name: Test0#<init>(){}
   //   Public signature: /Test0.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
@@ -28,11 +33,6 @@ enum class Test0 : Enum<Test0> {
   //   Public signature: /Test0.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   private constructor(x: Int) /* primary */
-
-  // CHECK:
-  //   Mangled name: Test0.ZERO
-  //   Public signature: /Test0.ZERO|null[0]
-  ZERO
 
   // CHECK JVM_IR:
   //   Mangled name: Test0#valueOf#static(kotlin.String){}Test0
@@ -161,6 +161,16 @@ enum class Test1 : Enum<Test1> {
     get
 
   // CHECK:
+  //   Mangled name: Test1.ZERO
+  //   Public signature: /Test1.ZERO|null[0]
+  ZERO
+
+  // CHECK:
+  //   Mangled name: Test1.ONE
+  //   Public signature: /Test1.ONE|null[0]
+  ONE
+
+  // CHECK:
   //   Mangled name: Test1#<init>(){}
   //   Public signature: /Test1.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
@@ -171,16 +181,6 @@ enum class Test1 : Enum<Test1> {
   //   Public signature: /Test1.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   private constructor(x: Int) /* primary */
-
-  // CHECK:
-  //   Mangled name: Test1.ONE
-  //   Public signature: /Test1.ONE|null[0]
-  ONE
-
-  // CHECK:
-  //   Mangled name: Test1.ZERO
-  //   Public signature: /Test1.ZERO|null[0]
-  ZERO
 
   // CHECK JVM_IR:
   //   Mangled name: Test1#valueOf#static(kotlin.String){}Test1
@@ -309,16 +309,112 @@ abstract enum class Test2 : Enum<Test2> {
     get
 
   // CHECK:
-  //   Mangled name: Test2#<init>(){}
-  //   Public signature: /Test2.<init>|-5645683436151566731[0]
-  //   Public signature debug description: <init>(){}
-  private constructor()
+  //   Mangled name: Test2.ZERO
+  //   Public signature: /Test2.ZERO|null[0]
 
+  ZERO
   // CHECK:
-  //   Mangled name: Test2#<init>(kotlin.Int){}
-  //   Public signature: /Test2.<init>|-5182794243525578284[0]
-  //   Public signature debug description: <init>(kotlin.Int){}
-  private constructor(x: Int) /* primary */
+  //   Mangled name: Test2.ZERO
+  //   Public signature: /Test2.ZERO.<EEC>|null[0]
+  private enum entry class ZERO : Test2 {
+    // CHECK:
+    //   Mangled name: Test2.ZERO#<init>(){}
+    //   Public signature: /Test2.ZERO.<EEC>.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
+    private constructor() /* primary */
+
+    // CHECK JVM_IR:
+    //   Mangled name: Test2.ZERO#compareTo(Test2){}kotlin.Int
+    //   Public signature: /Test2.ZERO.<EEC>.compareTo|-4058923296557042542[0]
+    //   Public signature debug description: compareTo(Test2){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test2.ZERO#compareTo(Test2){}
+    //   Public signature: /Test2.ZERO.<EEC>.compareTo|8648216442001158564[0]
+    //   Public signature debug description: compareTo(Test2){}
+    /* fake */ override operator fun compareTo(other: Test2): Int
+
+    // CHECK JVM_IR:
+    //   Mangled name: Test2.ZERO#equals(kotlin.Any?){}kotlin.Boolean
+    //   Public signature: /Test2.ZERO.<EEC>.equals|722809408929142791[0]
+    //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test2.ZERO#equals(kotlin.Any?){}
+    //   Public signature: /Test2.ZERO.<EEC>.equals|4638265728071529943[0]
+    //   Public signature debug description: equals(kotlin.Any?){}
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    // CHECK JVM_IR:
+    //   Mangled name: Test2.ZERO#hashCode(){}kotlin.Int
+    //   Public signature: /Test2.ZERO.<EEC>.hashCode|-8048879360829830756[0]
+    //   Public signature debug description: hashCode(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test2.ZERO#hashCode(){}
+    //   Public signature: /Test2.ZERO.<EEC>.hashCode|3409210261493131192[0]
+    //   Public signature debug description: hashCode(){}
+    /* fake */ override fun hashCode(): Int
+
+    // CHECK JVM_IR:
+    //   Mangled name: Test2.ZERO#toString(){}kotlin.String
+    //   Public signature: /Test2.ZERO.<EEC>.toString|6958853723545266802[0]
+    //   Public signature debug description: toString(){}kotlin.String
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test2.ZERO#toString(){}
+    //   Public signature: /Test2.ZERO.<EEC>.toString|-1522858123163872138[0]
+    //   Public signature debug description: toString(){}
+    /* fake */ override fun toString(): String
+
+    // CHECK:
+    //   Mangled name: Test2.ZERO#foo(){}
+    //   Public signature: /Test2.ZERO.<EEC>.foo|-1041209573719867811[0]
+    //   Public signature debug description: foo(){}
+    override fun foo(): Unit
+
+    // CHECK:
+    //   Mangled name: Test2.ZERO{}name
+    //   Public signature: /Test2.ZERO.<EEC>.name|4231860309499509769[0]
+    //   Public signature debug description: {}name
+    /* fake */ override val name: String
+      // CHECK JVM_IR:
+      //   Mangled name: Test2.ZERO#<get-name>(){}kotlin.String
+      //   Public signature: /Test2.ZERO.<EEC>.name.<get-name>|-8006111524522882650[0]
+      //   Public signature debug description: <get-name>(){}kotlin.String
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: Test2.ZERO#<get-name>(){}
+      //   Public signature: /Test2.ZERO.<EEC>.name.<get-name>|5879344792307730109[0]
+      //   Public signature debug description: <get-name>(){}
+      /* fake */ override get(): String
+
+    // CHECK:
+    //   Mangled name: Test2.ZERO{}ordinal
+    //   Public signature: /Test2.ZERO.<EEC>.ordinal|1912745122988592376[0]
+    //   Public signature debug description: {}ordinal
+    /* fake */ override val ordinal: Int
+      // CHECK JVM_IR:
+      //   Mangled name: Test2.ZERO#<get-ordinal>(){}kotlin.Int
+      //   Public signature: /Test2.ZERO.<EEC>.ordinal.<get-ordinal>|-6902664390061762634[0]
+      //   Public signature debug description: <get-ordinal>(){}kotlin.Int
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: Test2.ZERO#<get-ordinal>(){}
+      //   Public signature: /Test2.ZERO.<EEC>.ordinal.<get-ordinal>|8409904226035914023[0]
+      //   Public signature debug description: <get-ordinal>(){}
+      /* fake */ override get(): Int
+
+    // CHECK:
+    //   Mangled name: Test2.ZERO{}x
+    //   Public signature: /Test2.ZERO.<EEC>.x|-8060530855978347579[0]
+    //   Public signature debug description: {}x
+    /* fake */ override val x: Int
+      // CHECK JVM_IR:
+      //   Mangled name: Test2.ZERO#<get-x>(){}kotlin.Int
+      //   Public signature: /Test2.ZERO.<EEC>.x.<get-x>|4966956098150895696[0]
+      //   Public signature debug description: <get-x>(){}kotlin.Int
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: Test2.ZERO#<get-x>(){}
+      //   Public signature: /Test2.ZERO.<EEC>.x.<get-x>|1482705010654679335[0]
+      //   Public signature debug description: <get-x>(){}
+      /* fake */ override get(): Int
+
+  }
 
   // CHECK:
   //   Mangled name: Test2.ONE
@@ -429,112 +525,16 @@ abstract enum class Test2 : Enum<Test2> {
   }
 
   // CHECK:
-  //   Mangled name: Test2.ZERO
-  //   Public signature: /Test2.ZERO|null[0]
+  //   Mangled name: Test2#<init>(){}
+  //   Public signature: /Test2.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor()
 
-  ZERO
   // CHECK:
-  //   Mangled name: Test2.ZERO
-  //   Public signature: /Test2.ZERO.<EEC>|null[0]
-  private enum entry class ZERO : Test2 {
-    // CHECK:
-    //   Mangled name: Test2.ZERO#<init>(){}
-    //   Public signature: /Test2.ZERO.<EEC>.<init>|-5645683436151566731[0]
-    //   Public signature debug description: <init>(){}
-    private constructor() /* primary */
-
-    // CHECK JVM_IR:
-    //   Mangled name: Test2.ZERO#compareTo(Test2){}kotlin.Int
-    //   Public signature: /Test2.ZERO.<EEC>.compareTo|-4058923296557042542[0]
-    //   Public signature debug description: compareTo(Test2){}kotlin.Int
-    // CHECK JS_IR NATIVE:
-    //   Mangled name: Test2.ZERO#compareTo(Test2){}
-    //   Public signature: /Test2.ZERO.<EEC>.compareTo|8648216442001158564[0]
-    //   Public signature debug description: compareTo(Test2){}
-    /* fake */ override operator fun compareTo(other: Test2): Int
-
-    // CHECK JVM_IR:
-    //   Mangled name: Test2.ZERO#equals(kotlin.Any?){}kotlin.Boolean
-    //   Public signature: /Test2.ZERO.<EEC>.equals|722809408929142791[0]
-    //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-    // CHECK JS_IR NATIVE:
-    //   Mangled name: Test2.ZERO#equals(kotlin.Any?){}
-    //   Public signature: /Test2.ZERO.<EEC>.equals|4638265728071529943[0]
-    //   Public signature debug description: equals(kotlin.Any?){}
-    /* fake */ override operator fun equals(other: Any?): Boolean
-
-    // CHECK JVM_IR:
-    //   Mangled name: Test2.ZERO#hashCode(){}kotlin.Int
-    //   Public signature: /Test2.ZERO.<EEC>.hashCode|-8048879360829830756[0]
-    //   Public signature debug description: hashCode(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
-    //   Mangled name: Test2.ZERO#hashCode(){}
-    //   Public signature: /Test2.ZERO.<EEC>.hashCode|3409210261493131192[0]
-    //   Public signature debug description: hashCode(){}
-    /* fake */ override fun hashCode(): Int
-
-    // CHECK JVM_IR:
-    //   Mangled name: Test2.ZERO#toString(){}kotlin.String
-    //   Public signature: /Test2.ZERO.<EEC>.toString|6958853723545266802[0]
-    //   Public signature debug description: toString(){}kotlin.String
-    // CHECK JS_IR NATIVE:
-    //   Mangled name: Test2.ZERO#toString(){}
-    //   Public signature: /Test2.ZERO.<EEC>.toString|-1522858123163872138[0]
-    //   Public signature debug description: toString(){}
-    /* fake */ override fun toString(): String
-
-    // CHECK:
-    //   Mangled name: Test2.ZERO#foo(){}
-    //   Public signature: /Test2.ZERO.<EEC>.foo|-1041209573719867811[0]
-    //   Public signature debug description: foo(){}
-    override fun foo(): Unit
-
-    // CHECK:
-    //   Mangled name: Test2.ZERO{}name
-    //   Public signature: /Test2.ZERO.<EEC>.name|4231860309499509769[0]
-    //   Public signature debug description: {}name
-    /* fake */ override val name: String
-      // CHECK JVM_IR:
-      //   Mangled name: Test2.ZERO#<get-name>(){}kotlin.String
-      //   Public signature: /Test2.ZERO.<EEC>.name.<get-name>|-8006111524522882650[0]
-      //   Public signature debug description: <get-name>(){}kotlin.String
-      // CHECK JS_IR NATIVE:
-      //   Mangled name: Test2.ZERO#<get-name>(){}
-      //   Public signature: /Test2.ZERO.<EEC>.name.<get-name>|5879344792307730109[0]
-      //   Public signature debug description: <get-name>(){}
-      /* fake */ override get(): String
-
-    // CHECK:
-    //   Mangled name: Test2.ZERO{}ordinal
-    //   Public signature: /Test2.ZERO.<EEC>.ordinal|1912745122988592376[0]
-    //   Public signature debug description: {}ordinal
-    /* fake */ override val ordinal: Int
-      // CHECK JVM_IR:
-      //   Mangled name: Test2.ZERO#<get-ordinal>(){}kotlin.Int
-      //   Public signature: /Test2.ZERO.<EEC>.ordinal.<get-ordinal>|-6902664390061762634[0]
-      //   Public signature debug description: <get-ordinal>(){}kotlin.Int
-      // CHECK JS_IR NATIVE:
-      //   Mangled name: Test2.ZERO#<get-ordinal>(){}
-      //   Public signature: /Test2.ZERO.<EEC>.ordinal.<get-ordinal>|8409904226035914023[0]
-      //   Public signature debug description: <get-ordinal>(){}
-      /* fake */ override get(): Int
-
-    // CHECK:
-    //   Mangled name: Test2.ZERO{}x
-    //   Public signature: /Test2.ZERO.<EEC>.x|-8060530855978347579[0]
-    //   Public signature debug description: {}x
-    /* fake */ override val x: Int
-      // CHECK JVM_IR:
-      //   Mangled name: Test2.ZERO#<get-x>(){}kotlin.Int
-      //   Public signature: /Test2.ZERO.<EEC>.x.<get-x>|4966956098150895696[0]
-      //   Public signature debug description: <get-x>(){}kotlin.Int
-      // CHECK JS_IR NATIVE:
-      //   Mangled name: Test2.ZERO#<get-x>(){}
-      //   Public signature: /Test2.ZERO.<EEC>.x.<get-x>|1482705010654679335[0]
-      //   Public signature debug description: <get-x>(){}
-      /* fake */ override get(): Int
-
-  }
+  //   Mangled name: Test2#<init>(kotlin.Int){}
+  //   Public signature: /Test2.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  private constructor(x: Int) /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: Test2#valueOf#static(kotlin.String){}Test2

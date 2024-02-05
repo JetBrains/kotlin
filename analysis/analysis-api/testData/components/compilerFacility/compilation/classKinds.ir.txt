@@ -210,14 +210,6 @@ MODULE_FRAGMENT
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     CLASS ENUM_CLASS name:Direction modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Direction>]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Direction
-      CONSTRUCTOR visibility:private <> () returnType:<root>.Direction [primary]
-        BLOCK_BODY
-          ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
-            <E>: <root>.Direction
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Direction modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Direction>]'
-      ENUM_ENTRY name:EAST
-        init: EXPRESSION_BODY
-          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Direction'
       ENUM_ENTRY name:NORTH
         init: EXPRESSION_BODY
           ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Direction'
@@ -227,6 +219,14 @@ MODULE_FRAGMENT
       ENUM_ENTRY name:WEST
         init: EXPRESSION_BODY
           ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Direction'
+      ENUM_ENTRY name:EAST
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Direction'
+      CONSTRUCTOR visibility:private <> () returnType:<root>.Direction [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
+            <E>: <root>.Direction
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Direction modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Direction>]'
       FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.Direction
         VALUE_PARAMETER name:value index:0 type:kotlin.String
         SYNTHETIC_BODY kind=ENUM_VALUEOF

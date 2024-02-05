@@ -3,15 +3,15 @@
 //   Public signature: /A|null[0]
 enum class A : Enum<A> {
   // CHECK:
+  //   Mangled name: A.V1
+  //   Public signature: /A.V1|null[0]
+  V1
+
+  // CHECK:
   //   Mangled name: A#<init>(){}
   //   Public signature: /A.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   private constructor() /* primary */
-
-  // CHECK:
-  //   Mangled name: A.V1
-  //   Public signature: /A.V1|null[0]
-  V1
 
   // CHECK JVM_IR:
   //   Mangled name: A#valueOf#static(kotlin.String){}A

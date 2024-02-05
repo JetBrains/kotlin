@@ -3,14 +3,14 @@
 //   Public signature: /MyEnum|null[1]
 expect enum class MyEnum : Enum<MyEnum> {
   // CHECK:
-  //   Mangled name: MyEnum.BAR
-  //   Public signature: /MyEnum.BAR|null[1]
-  BAR
-
-  // CHECK:
   //   Mangled name: MyEnum.FOO
   //   Public signature: /MyEnum.FOO|null[1]
   FOO
+
+  // CHECK:
+  //   Mangled name: MyEnum.BAR
+  //   Public signature: /MyEnum.BAR|null[1]
+  BAR
 
   // CHECK JVM_IR:
   //   Mangled name: MyEnum#valueOf#static(kotlin.String){}MyEnum
@@ -124,10 +124,9 @@ expect enum class MyEnum : Enum<MyEnum> {
 //   Public signature: /MyEnum|null[0]
 enum class MyEnum : Enum<MyEnum> {
   // CHECK:
-  //   Mangled name: MyEnum#<init>(){}
-  //   Public signature: /MyEnum.<init>|-5645683436151566731[0]
-  //   Public signature debug description: <init>(){}
-  private constructor() /* primary */
+  //   Mangled name: MyEnum.FOO
+  //   Public signature: /MyEnum.FOO|null[0]
+  FOO
 
   // CHECK:
   //   Mangled name: MyEnum.BAR
@@ -140,9 +139,10 @@ enum class MyEnum : Enum<MyEnum> {
   BAZ
 
   // CHECK:
-  //   Mangled name: MyEnum.FOO
-  //   Public signature: /MyEnum.FOO|null[0]
-  FOO
+  //   Mangled name: MyEnum#<init>(){}
+  //   Public signature: /MyEnum.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: MyEnum#valueOf#static(kotlin.String){}MyEnum

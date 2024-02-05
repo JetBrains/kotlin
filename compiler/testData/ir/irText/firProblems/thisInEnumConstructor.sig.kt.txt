@@ -18,15 +18,15 @@ enum class EE : Enum<EE> {
     get
 
   // CHECK:
+  //   Mangled name: EE.ENTRY
+  //   Public signature: /EE.ENTRY|null[0]
+  ENTRY
+
+  // CHECK:
   //   Mangled name: EE#<init>(kotlin.String){}
   //   Public signature: /EE.<init>|1280618353163213788[0]
   //   Public signature debug description: <init>(kotlin.String){}
   private constructor(myName: String) /* primary */
-
-  // CHECK:
-  //   Mangled name: EE.ENTRY
-  //   Public signature: /EE.ENTRY|null[0]
-  ENTRY
 
   // CHECK JVM_IR:
   //   Mangled name: EE#valueOf#static(kotlin.String){}EE

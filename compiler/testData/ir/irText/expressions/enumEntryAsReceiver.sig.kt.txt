@@ -3,12 +3,6 @@
 //   Public signature: /X|null[0]
 abstract enum class X : Enum<X> {
   // CHECK:
-  //   Mangled name: X#<init>(){}
-  //   Public signature: /X.<init>|-5645683436151566731[0]
-  //   Public signature debug description: <init>(){}
-  private constructor() /* primary */
-
-  // CHECK:
   //   Mangled name: X.B
   //   Public signature: /X.B|null[0]
 
@@ -124,6 +118,12 @@ abstract enum class X : Enum<X> {
       /* fake */ override get(): Int
 
   }
+
+  // CHECK:
+  //   Mangled name: X#<init>(){}
+  //   Public signature: /X.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: X#valueOf#static(kotlin.String){}X

@@ -30,12 +30,6 @@ open annotation class TestAnn : Annotation {
 //   Public signature: /TestEnum|null[0]
 open enum class TestEnum : Enum<TestEnum> {
   // CHECK:
-  //   Mangled name: TestEnum#<init>(){}
-  //   Public signature: /TestEnum.<init>|-5645683436151566731[0]
-  //   Public signature debug description: <init>(){}
-  private constructor() /* primary */
-
-  // CHECK:
   //   Mangled name: TestEnum.ENTRY1
   //   Public signature: /TestEnum.ENTRY1|null[0]
   @TestAnn(x = "ENTRY1")
@@ -144,6 +138,12 @@ open enum class TestEnum : Enum<TestEnum> {
 
   }
 
+  // CHECK:
+  //   Mangled name: TestEnum#<init>(){}
+  //   Public signature: /TestEnum.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor() /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: TestEnum#valueOf#static(kotlin.String){}TestEnum
   //   Public signature: /TestEnum.valueOf|1811575739170804829[0]
@@ -250,3 +250,4 @@ open enum class TestEnum : Enum<TestEnum> {
     /* fake */ override get(): Int
 
 }
+

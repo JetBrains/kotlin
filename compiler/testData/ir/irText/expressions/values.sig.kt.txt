@@ -42,15 +42,15 @@ class Z {
 //   Public signature: /Enum|null[0]
 enum class Enum : Enum<Enum> {
   // CHECK:
+  //   Mangled name: Enum.A
+  //   Public signature: /Enum.A|null[0]
+  A
+
+  // CHECK:
   //   Mangled name: Enum#<init>(){}
   //   Public signature: /Enum.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   private constructor() /* primary */
-
-  // CHECK:
-  //   Mangled name: Enum.A
-  //   Public signature: /Enum.A|null[0]
-  A
 
   // CHECK JVM_IR:
   //   Mangled name: Enum#valueOf#static(kotlin.String){}Enum

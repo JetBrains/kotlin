@@ -33,12 +33,6 @@ open external class internal {
   //   Public signature: events/internal.NestedExternalEnum|null[0]
   external enum class NestedExternalEnum : Enum<NestedExternalEnum> {
     // CHECK:
-    //   Mangled name: events.internal.NestedExternalEnum#<init>(){}
-    //   Public signature: events/internal.NestedExternalEnum.<init>|-5645683436151566731[0]
-    //   Public signature debug description: <init>(){}
-    private external constructor() /* primary */
-
-    // CHECK:
     //   Mangled name: events.internal.NestedExternalEnum.A
     //   Public signature: events/internal.NestedExternalEnum.A|null[0]
     A
@@ -47,6 +41,12 @@ open external class internal {
     //   Mangled name: events.internal.NestedExternalEnum.B
     //   Public signature: events/internal.NestedExternalEnum.B|null[0]
     B
+
+    // CHECK:
+    //   Mangled name: events.internal.NestedExternalEnum#<init>(){}
+    //   Public signature: events/internal.NestedExternalEnum.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
+    private external constructor() /* primary */
 
     // CHECK JS_IR NATIVE:
     //   Mangled name: events.internal.NestedExternalEnum#valueOf#static(kotlin.String){}
@@ -144,4 +144,3 @@ open external class internal {
   external constructor() /* primary */
 
 }
-

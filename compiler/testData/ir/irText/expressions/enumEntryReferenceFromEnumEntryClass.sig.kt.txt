@@ -3,12 +3,6 @@
 //   Public signature: /MyEnum|null[0]
 open enum class MyEnum : Enum<MyEnum> {
   // CHECK:
-  //   Mangled name: MyEnum#<init>(){}
-  //   Public signature: /MyEnum.<init>|-5645683436151566731[0]
-  //   Public signature debug description: <init>(){}
-  private constructor() /* primary */
-
-  // CHECK:
   //   Mangled name: MyEnum.Z
   //   Public signature: /MyEnum.Z|null[0]
 
@@ -157,6 +151,12 @@ open enum class MyEnum : Enum<MyEnum> {
 
   }
 
+  // CHECK:
+  //   Mangled name: MyEnum#<init>(){}
+  //   Public signature: /MyEnum.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor() /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: MyEnum#valueOf#static(kotlin.String){}MyEnum
   //   Public signature: /MyEnum.valueOf|4316550590519800984[0]
@@ -263,3 +263,4 @@ open enum class MyEnum : Enum<MyEnum> {
     /* fake */ override get(): Int
 
 }
+

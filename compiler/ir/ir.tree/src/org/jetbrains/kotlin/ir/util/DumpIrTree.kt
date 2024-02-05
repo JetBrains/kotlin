@@ -75,7 +75,11 @@ private fun IrFile.shouldSkipDump(): Boolean {
 /**
  * Sorts the declarations in the list using the result of [IrDeclaration.render] as the sorting key.
  *
- * The exception is properties with backing fields and [IrAnonymousInitializer]s: their relative order is preserved.
+ * The exceptions for which relative order is preserved as it matters for code generation:
+ *  * Properties with backing field
+ *  * Anonymous initializers
+ *  * Enum entries
+ *  * Fields
  */
 internal fun List<IrDeclaration>.stableOrdered(): List<IrDeclaration> {
     val strictOrder = hashMapOf<IrDeclaration, Int>()
@@ -83,10 +87,12 @@ internal fun List<IrDeclaration>.stableOrdered(): List<IrDeclaration> {
     var idx = 0
 
     forEach {
-        if (it is IrProperty && it.backingField != null && !it.isConst) {
-            strictOrder[it] = idx++
+        val shouldPreserveRelativeOrder = when (it) {
+            is IrProperty -> it.backingField != null && !it.isConst
+            is IrAnonymousInitializer, is IrEnumEntry, is IrField -> true
+            else -> false
         }
-        if (it is IrAnonymousInitializer) {
+        if (shouldPreserveRelativeOrder) {
             strictOrder[it] = idx++
         }
     }
