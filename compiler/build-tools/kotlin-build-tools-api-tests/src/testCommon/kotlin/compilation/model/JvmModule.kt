@@ -6,13 +6,9 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.CompilationService
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
-import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
-import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.*
 import org.jetbrains.kotlin.buildtools.api.tests.buildToolsVersion
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -83,6 +79,7 @@ class JvmModule(
         forceOutput: LogLevel?,
         forceNonIncrementalCompilation: Boolean,
         compilationConfigAction: (JvmCompilationConfiguration) -> Unit,
+        incrementalCompilationConfigAction: (IncrementalJvmCompilationConfiguration<*>) -> Unit,
         assertions: context(Module) CompilationOutcome.() -> Unit,
     ): CompilationResult {
         return compile(strategyConfig, forceOutput, { compilationConfig ->
@@ -108,12 +105,15 @@ class JvmModule(
                 options.forceNonIncrementalMode()
             }
 
+            incrementalCompilationConfigAction(options)
+
             compilationConfig.useIncrementalCompilation(
                 icCachesDir.toFile(),
                 sourcesChanges,
                 params,
                 options,
             )
+            compilationConfigAction(compilationConfig)
         }, assertions)
     }
 }

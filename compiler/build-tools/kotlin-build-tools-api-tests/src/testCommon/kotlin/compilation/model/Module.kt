@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import java.nio.file.Path
 
@@ -34,6 +35,7 @@ interface Module : Dependency {
         forceOutput: LogLevel? = null,
         forceNonIncrementalCompilation: Boolean = false,
         compilationConfigAction: (JvmCompilationConfiguration) -> Unit = {},
+        incrementalCompilationConfigAction: (IncrementalJvmCompilationConfiguration<*>) -> Unit = {},
         assertions: context(Module) CompilationOutcome.() -> Unit = {},
     ): CompilationResult
 }

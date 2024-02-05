@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.*
 import java.nio.file.Files
@@ -18,6 +20,8 @@ private class ScenarioModuleImpl(
     val module: Module,
     val outputs: MutableSet<String>,
     private val strategyConfig: CompilerExecutionStrategyConfiguration,
+    private val compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
+    private val incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
 ) : ScenarioModule {
     override fun changeFile(
         fileName: String,
@@ -61,12 +65,17 @@ private class ScenarioModuleImpl(
         forceOutput: LogLevel?,
         assertions: context(Module) CompilationOutcome.() -> Unit,
     ) {
-        module.compileIncrementally(strategyConfig, sourcesChanges, forceOutput, assertions = {
-            assertions(module, this)
-            assertOutputs(outputs)
-        })
+        module.compileIncrementally(
+            strategyConfig,
+            sourcesChanges,
+            forceOutput,
+            compilationConfigAction = { compilationOptionsModifier?.invoke(it) },
+            incrementalCompilationConfigAction = { incrementalCompilationOptionsModifier?.invoke(it) },
+            assertions = {
+                assertions(module, this)
+                assertOutputs(outputs)
+            })
     }
-
 }
 
 private class ScenarioDsl(
@@ -78,11 +87,13 @@ private class ScenarioDsl(
         moduleName: String,
         dependencies: List<ScenarioModule>,
         additionalCompilationArguments: List<String>,
+        compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
+        incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as ScenarioModuleImpl).module }
         val module = project.module(moduleName, transformedDependencies, additionalCompilationArguments)
-        return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig)
-            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig)
+        return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
     }
 }
 
@@ -90,20 +101,45 @@ fun BaseCompilationTest.scenario(strategyConfig: CompilerExecutionStrategyConfig
     action(ScenarioDsl(Project(workingDirectory), strategyConfig))
 }
 
+private data class GlobalCompiledProjectsCacheKey(
+    val moduleKey: DependencyScenarioDslCacheKey,
+    val compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
+    val incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+)
+
 private object GlobalCompiledProjectsCache {
     private val globalTempDirectory = Files.createTempDirectory("compiled-test-projects-cache").apply {
         toFile().deleteOnExit()
     }
-    private val compiledProjectsCache = mutableMapOf<DependencyScenarioDslCacheKey, Pair<MutableSet<String>, Path>>()
+    private val compiledProjectsCache = mutableMapOf<GlobalCompiledProjectsCacheKey, Pair<MutableSet<String>, Path>>()
 
-    fun getProjectFromCache(module: Module, strategyConfig: CompilerExecutionStrategyConfiguration): ScenarioModuleImpl? {
-        val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[module.scenarioDslCacheKey] ?: return null
+    fun getProjectFromCache(
+        module: Module,
+        strategyConfig: CompilerExecutionStrategyConfiguration,
+        compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
+        incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+    ): ScenarioModuleImpl? {
+        val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[GlobalCompiledProjectsCacheKey(
+            module.scenarioDslCacheKey,
+            compilationOptionsModifier,
+            incrementalCompilationOptionsModifier
+        )] ?: return null
         cachedBuildDirPath.copyToRecursively(module.buildDirectory, followLinks = false, overwrite = true)
-        return ScenarioModuleImpl(module, initialOutputs, strategyConfig)
+        return ScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
     }
 
-    fun putProjectIntoCache(module: Module, strategyConfig: CompilerExecutionStrategyConfiguration): ScenarioModuleImpl {
-        module.compileIncrementally(strategyConfig, SourcesChanges.Unknown)
+    fun putProjectIntoCache(
+        module: Module,
+        strategyConfig: CompilerExecutionStrategyConfiguration,
+        compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
+        incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+    ): ScenarioModuleImpl {
+        module.compileIncrementally(
+            strategyConfig,
+            SourcesChanges.Unknown,
+            compilationConfigAction = { compilationOptionsModifier?.invoke(it) },
+            incrementalCompilationConfigAction = { incrementalCompilationOptionsModifier?.invoke(it) }
+        )
         val initialOutputs = mutableSetOf<String>()
         for (file in module.outputDirectory.walk()) {
             if (!file.isRegularFile()) continue
@@ -111,7 +147,11 @@ private object GlobalCompiledProjectsCache {
         }
         val moduleCacheDirectory = globalTempDirectory.resolve(UUID.randomUUID().toString())
         module.buildDirectory.copyToRecursively(moduleCacheDirectory, followLinks = false, overwrite = false)
-        compiledProjectsCache[module.scenarioDslCacheKey] = Pair(initialOutputs, moduleCacheDirectory)
-        return ScenarioModuleImpl(module, initialOutputs, strategyConfig)
+        compiledProjectsCache[GlobalCompiledProjectsCacheKey(
+            module.scenarioDslCacheKey,
+            compilationOptionsModifier,
+            incrementalCompilationOptionsModifier
+        )] = Pair(initialOutputs, moduleCacheDirectory)
+        return ScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
     }
 }
