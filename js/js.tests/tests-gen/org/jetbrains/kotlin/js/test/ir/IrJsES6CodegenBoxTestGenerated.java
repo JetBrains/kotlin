@@ -6982,6 +6982,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         }
 
         @Test
+        @TestMetadata("tryCatchReifiedType.kt")
+        public void testTryCatchReifiedType() throws Exception {
+            runTest("compiler/testData/codegen/box/controlStructures/tryCatchReifiedType.kt");
+        }
+
+        @Test
         @TestMetadata("tryFinally.kt")
         public void testTryFinally() throws Exception {
             runTest("compiler/testData/codegen/box/controlStructures/tryFinally.kt");

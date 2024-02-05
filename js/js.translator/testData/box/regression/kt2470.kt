@@ -7,8 +7,8 @@ public inline fun <reified T : Throwable> failsWith(block: () -> Any): T {
     try {
         block()
     }
-    catch (e: Throwable) {
-        if (e is T) return e
+    catch (e: T) {
+        return e
     }
 
     throw Exception("Should have failed")
