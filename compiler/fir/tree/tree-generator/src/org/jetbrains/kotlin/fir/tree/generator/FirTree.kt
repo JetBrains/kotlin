@@ -632,7 +632,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)) {
             withBindThis = false
         }
-        generateBooleanFields("crossinline", "noinline", "vararg")
+        generateBooleanFields("crossinline", "noinline", "vararg", "dataArgument", "sealedArgument")
         +field("valueParameterKind", valueParameterKindType)
     }
 

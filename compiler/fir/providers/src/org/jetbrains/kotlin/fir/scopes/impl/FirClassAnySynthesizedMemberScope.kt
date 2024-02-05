@@ -157,6 +157,8 @@ class FirClassAnySynthesizedMemberScope(
                     isCrossinline = false
                     isNoinline = false
                     isVararg = false
+                    isDataArgument = false
+                    isSealedArgument = false
                 }
             )
         }

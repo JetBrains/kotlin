@@ -41,6 +41,8 @@ internal class FirDefaultSetterValueParameter(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirValueParameterSymbol,
     override val containingDeclarationSymbol: FirBasedSymbol<*>,
+    override val isDataArgument: Boolean,
+    override val isSealedArgument: Boolean,
 ) : FirValueParameter() {
     override val typeParameters: List<FirTypeParameterRef>
         get() = emptyList()

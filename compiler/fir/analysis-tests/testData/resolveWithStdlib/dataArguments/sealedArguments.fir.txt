@@ -1,0 +1,63 @@
+FILE: sealedArguments.kt
+    @R|kotlin/SealedArgument|() public sealed interface Argument : R|kotlin/Any| {
+    }
+    @R|kotlin/jvm/JvmInline|() public final value class Number : R|Argument| {
+        public constructor(n: R|kotlin/Int|): R|Number| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val n: R|kotlin/Int| = R|<local>/n|
+            public get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/jvm/JvmInline|() public final value class String : R|Argument| {
+        public constructor(s: R|kotlin/String|): R|String| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+    }
+    public final fun foo(arg: R|Argument|, other: R|kotlin/Boolean|): R|kotlin/Unit| {
+    }
+    public final fun bar(arg: R|Argument|): R|kotlin/Unit| {
+        ^bar R|/foo|(*R|<local>/arg|, Boolean(true))
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/foo|(Int(1), Boolean(false))
+        R|/foo|(String(Hello), Boolean(false))
+        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(Boolean(true), Boolean(false))
+        R|/foo|(*R|/Number.Number|(Int(2)), Boolean(false))
+        R|/foo<None of the following candidates is applicable because of receiver type mismatch: [/foo]>#|(*Int(3), Boolean(false))
+    }
+    @R|kotlin/SealedArgument|() public sealed interface IncorrectArgument : R|kotlin/Any| {
+    }
+    public final data class OneNumber : R|IncorrectArgument| {
+        public constructor(n: R|kotlin/Int|): R|OneNumber| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val n: R|kotlin/Int| = R|<local>/n|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(n: R|kotlin/Int| = this@R|/OneNumber|.R|/OneNumber.n|): R|OneNumber|
+
+    }
+    public final data class OtherNumber : R|IncorrectArgument| {
+        public constructor(m: R|kotlin/Int|): R|OtherNumber| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val m: R|kotlin/Int| = R|<local>/m|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(m: R|kotlin/Int| = this@R|/OtherNumber|.R|/OtherNumber.m|): R|OtherNumber|
+
+    }
+    public final fun bar(arg: R|kotlin/Int|): R|kotlin/Unit| {
+    }

@@ -115,7 +115,9 @@ object CheckExtensionReceiver : ResolutionStage() {
             context = context,
             isReceiver = true,
             isDispatch = false,
-            sourceForReceiver = candidate.callInfo.callSite.source
+            sourceForReceiver = candidate.callInfo.callSite.source,
+            isDataArgument = false,
+            isSealedArgument = false
         )
 
         // TODO: store atoms for receivers in candidate

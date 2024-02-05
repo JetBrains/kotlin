@@ -8325,6 +8325,28 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/dataArguments")
+    @TestDataPath("$PROJECT_ROOT")
+    public class DataArguments {
+      @Test
+      public void testAllFilesPresentInDataArguments() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/dataArguments"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("dataArguments.kt")
+      public void testDataArguments() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/dataArguments/dataArguments.kt");
+      }
+
+      @Test
+      @TestMetadata("sealedArguments.kt")
+      public void testSealedArguments() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/dataArguments/sealedArguments.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates")
     @TestDataPath("$PROJECT_ROOT")
     public class Delegates {

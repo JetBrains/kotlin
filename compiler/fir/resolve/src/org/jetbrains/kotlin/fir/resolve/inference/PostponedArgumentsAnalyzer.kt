@@ -161,6 +161,8 @@ class PostponedArgumentsAnalyzer(
                 context = resolutionContext,
                 isReceiver = false,
                 isDispatch = false,
+                isDataArgument = false,
+                isSealedArgument = false,
             )
         }
     }
@@ -191,6 +193,8 @@ class PostponedArgumentsAnalyzer(
             context = resolutionContext,
             isReceiver = false,
             isDispatch = false,
+            isDataArgument = false,
+            isSealedArgument = false,
         )
 
         return true
@@ -342,6 +346,8 @@ class PostponedArgumentsAnalyzer(
                     context = resolutionContext,
                     isReceiver = false,
                     isDispatch = false,
+                    isDataArgument = false,
+                    isSealedArgument = false,
                     anonymousFunctionIfReturnExpression = lambda.anonymousFunction,
                 )
             }

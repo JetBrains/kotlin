@@ -155,6 +155,12 @@ class FirValueParameterSymbol(name: Name) : FirVariableSymbol<FirValueParameter>
     val isVararg: Boolean
         get() = fir.isVararg
 
+    val isDataArgument: Boolean
+        get() = fir.isDataArgument
+
+    val isSealedArgument: Boolean
+        get() = fir.isSealedArgument
+
     val containingDeclarationSymbol: FirBasedSymbol<*>
         get() = fir.containingDeclarationSymbol
 }

@@ -476,7 +476,7 @@ class DescriptorSerializer private constructor(
         val declaresDefaultValue = descriptor.declaresDefaultValue() || descriptor.isActualParameterWithAnyExpectedDefault
 
         val flags = Flags.getValueParameterFlags(
-            hasAnnotations(descriptor), declaresDefaultValue, descriptor.isCrossinline, descriptor.isNoinline
+            hasAnnotations(descriptor), declaresDefaultValue, descriptor.isCrossinline, descriptor.isNoinline, false, false
         )
         if (flags != builder.flags) {
             builder.flags = flags

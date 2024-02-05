@@ -197,6 +197,9 @@ object StandardClassIds {
         val ConsistentCopyVisibility = "ConsistentCopyVisibility".baseId()
         val ExposedCopyVisibility = "ExposedCopyVisibility".baseId()
 
+        val DataArgument = "DataArgument".baseId()
+        val SealedArgument = "SealedArgument".baseId()
+
         val HidesMembers = "HidesMembers".internalId()
         val DynamicExtension = "DynamicExtension".internalId()
         val IntrinsicConstEvaluation = "IntrinsicConstEvaluation".internalId()

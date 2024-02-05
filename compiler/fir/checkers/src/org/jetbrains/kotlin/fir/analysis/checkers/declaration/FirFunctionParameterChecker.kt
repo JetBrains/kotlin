@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
@@ -22,10 +23,12 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -91,6 +94,34 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
                     varargParameter.source, FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE,
                     varargParameterType
                 )
+            }
+        }
+
+        val dataParameters = function.valueParameters.filter { it.isDataArgument }
+        if (dataParameters.size > 1) {
+            for (parameter in dataParameters) {
+                reporter.reportOn(parameter.source, FirErrors.MULTIPLE_DATAARG_PARAMETERS)
+            }
+        }
+
+        if (varargParameters.isNotEmpty() && dataParameters.isNotEmpty() && varargParameters.size + dataParameters.size > 1) {
+            for (parameter in varargParameters) {
+                reporter.reportOn(parameter.source, FirErrors.VARARG_DATA_ARGUMENT)
+            }
+        }
+
+        for (dataParameter in dataParameters) {
+            val dataParameterType = dataParameter.returnTypeRef.coneType.toRegularClassSymbol(context.session)
+            if (dataParameterType == null || !dataParameterType.hasAnnotation(StandardClassIds.Annotations.DataArgument, context.session)) {
+                reporter.reportOn(dataParameter.source, FirErrors.DATAARG_PARAMETER_WRONG_CLASS)
+            }
+        }
+
+        val sealedParameters = function.valueParameters.filter { it.isSealedArgument }
+        for (sealedParameter in sealedParameters) {
+            val sealedParameterType = sealedParameter.returnTypeRef.coneType.toRegularClassSymbol(context.session)
+            if (sealedParameterType == null || !sealedParameterType.hasAnnotation(StandardClassIds.Annotations.SealedArgument, context.session)) {
+                reporter.reportOn(sealedParameter.source, FirErrors.SEALEDARG_PARAMETER_WRONG_CLASS)
             }
         }
     }

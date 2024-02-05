@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.diagnostics
 
+import org.jetbrains.kotlin.lexer.KtTokens
+
 object SourceElementPositioningStrategies {
     val DEFAULT = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DEFAULT,
@@ -167,8 +169,18 @@ object SourceElementPositioningStrategies {
     )
 
     val PARAMETER_VARARG_MODIFIER = SourceElementPositioningStrategy(
-        LightTreePositioningStrategies.PARAMETER_VARARG_MODIFIER,
-        PositioningStrategies.PARAMETER_VARARG_MODIFIER
+        LightTreePositioningStrategies.PARAMETER_MODIFIER(KtTokens.VARARG_KEYWORD),
+        PositioningStrategies.PARAMETER_MODIFIER(KtTokens.VARARG_KEYWORD)
+    )
+
+    val PARAMETER_DATAARG_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PARAMETER_MODIFIER(KtTokens.DATA_KEYWORD),
+        PositioningStrategies.PARAMETER_MODIFIER(KtTokens.DATA_KEYWORD)
+    )
+
+    val PARAMETER_SEALEDARG_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PARAMETER_MODIFIER(KtTokens.SEALED_KEYWORD),
+        PositioningStrategies.PARAMETER_MODIFIER(KtTokens.SEALED_KEYWORD)
     )
 
     val NAME_OF_NAMED_ARGUMENT = SourceElementPositioningStrategy(

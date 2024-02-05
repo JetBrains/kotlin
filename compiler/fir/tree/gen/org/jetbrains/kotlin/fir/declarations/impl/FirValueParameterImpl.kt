@@ -46,6 +46,8 @@ internal class FirValueParameterImpl(
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean,
     override val isVararg: Boolean,
+    override val isDataArgument: Boolean,
+    override val isSealedArgument: Boolean,
     override val valueParameterKind: FirValueParameterKind,
 ) : FirValueParameter() {
     override val typeParameters: List<FirTypeParameterRef>

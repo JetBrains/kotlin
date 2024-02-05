@@ -313,6 +313,8 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                     isCrossinline = false
                     isNoinline = true
                     isVararg = false
+                    isDataArgument = false
+                    isSealedArgument = false
                     resolvePhase = FirResolvePhase.BODY_RESOLVE
                     containingDeclarationSymbol = this@buildSimpleFunction.symbol
                     defaultValue = it.getParameterDefaultValueFromProperty()

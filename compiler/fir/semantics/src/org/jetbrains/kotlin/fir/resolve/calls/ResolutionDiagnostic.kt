@@ -59,6 +59,24 @@ class ArgumentPassedTwice(
     override val argument: FirNamedArgumentExpression,
 ) : InapplicableArgumentDiagnostic()
 
+class ValueDataArgumentConflict(
+    override val argument: FirNamedArgumentExpression,
+) : InapplicableArgumentDiagnostic()
+
+class DataArgumentWithoutSpread(
+    override val argument: FirExpression,
+    val valueParameter: FirValueParameter
+) : InapplicableArgumentDiagnostic()
+
+class DataArgumentSpreadAndNonSpread(
+    override val argument: FirExpression,
+    val valueParameter: FirValueParameter
+) : InapplicableArgumentDiagnostic()
+
+class SealedArgumentNoConstructor(
+    override val argument: FirExpression,
+) : InapplicableArgumentDiagnostic()
+
 class VarargArgumentOutsideParentheses(
     override val argument: FirExpression,
     val valueParameter: FirValueParameter

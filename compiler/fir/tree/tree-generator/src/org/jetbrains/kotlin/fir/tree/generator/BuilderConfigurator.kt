@@ -337,7 +337,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         builder(valueParameter, type = "FirValueParameterImpl") {
             openBuilder()
             withCopy()
-            defaultFalse("isCrossinline", "isNoinline", "isVararg")
+            defaultFalse("isCrossinline", "isNoinline", "isVararg", "isDataArgument", "isSealedArgument")
             default("valueParameterKind", "FirValueParameterKind.Regular")
         }
 

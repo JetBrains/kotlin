@@ -1,0 +1,45 @@
+FILE: dataArguments.kt
+    @R|kotlin/DataArgument|() public final class Arguments : R|kotlin/Any| {
+        public constructor(enabled: R|kotlin/Boolean| = Boolean(true), size: R|kotlin/Int| = Int(10)): R|Arguments| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val enabled: R|kotlin/Boolean| = R|<local>/enabled|
+            public get(): R|kotlin/Boolean|
+
+        public final val size: R|kotlin/Int| = R|<local>/size|
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun button(text: R|kotlin/String|, arguments: R|Arguments|): R|kotlin/Unit| {
+    }
+    public final fun helloButton(arguments: R|Arguments|): R|kotlin/Unit| {
+        ^helloButton R|/button|(String(Hello), *R|<local>/arguments|)
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/button|(String(Hello), Boolean(true), Int(2))
+        R|/button|(String(Hello), Int(2), Boolean(true))
+        R|/button|(String(Hello), Boolean(true))
+        R|/button|(String(Hello))
+        R|/button<Inapplicable(INAPPLICABLE): /button>#|(String(Hello), Boolean(true), Boolean(false))
+        R|/button<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /button>#|(String(Hello), Int(3))
+        R|/button<Inapplicable(INAPPLICABLE): /button>#|(String(Hello), Int(3))
+        lval arguments: R|Arguments| = R|/Arguments.Arguments|(Boolean(true), Int(2))
+        R|/button|(String(Hello), *R|<local>/arguments|)
+        R|/button<Inapplicable(INAPPLICABLE): /button>#|(String(Hello), R|<local>/arguments|)
+        R|/button<Inapplicable(INAPPLICABLE): /button>#|(String(Hello), *R|<local>/arguments|, Boolean(true))
+    }
+    @R|kotlin/DataArgument|() public final class WrongDataArgument : R|kotlin/Any| {
+        public constructor(enabled: R|kotlin/Boolean|, size: R|kotlin/Int| = Int(10)): R|WrongDataArgument| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val enabled: R|kotlin/Boolean| = R|<local>/enabled|
+            public get(): R|kotlin/Boolean|
+
+        public final val size: R|kotlin/Int| = R|<local>/size|
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun strange(text: R|kotlin/String|, arguments: R|kotlin/Int|): R|kotlin/Unit| {
+    }

@@ -42,6 +42,8 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     open var isCrossinline: Boolean = false
     open var isNoinline: Boolean = false
     open var isVararg: Boolean = false
+    open var isDataArgument: Boolean = false
+    open var isSealedArgument: Boolean = false
     open var valueParameterKind: FirValueParameterKind = FirValueParameterKind.Regular
 
     override fun build(): FirValueParameter {
@@ -61,6 +63,8 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
             isCrossinline,
             isNoinline,
             isVararg,
+            isDataArgument,
+            isSealedArgument,
             valueParameterKind,
         )
     }
@@ -95,6 +99,8 @@ inline fun buildValueParameterCopy(original: FirValueParameter, init: FirValuePa
     copyBuilder.isCrossinline = original.isCrossinline
     copyBuilder.isNoinline = original.isNoinline
     copyBuilder.isVararg = original.isVararg
+    copyBuilder.isDataArgument = original.isDataArgument
+    copyBuilder.isSealedArgument = original.isSealedArgument
     copyBuilder.valueParameterKind = original.valueParameterKind
     return copyBuilder.apply(init).build()
 }

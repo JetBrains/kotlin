@@ -82,7 +82,9 @@ internal object CheckArguments : ResolutionStage() {
             sink,
             context,
             isReceiver,
-            false
+            false,
+            parameter?.isDataArgument ?: false,
+            parameter?.isSealedArgument ?: false
         )
     }
 }

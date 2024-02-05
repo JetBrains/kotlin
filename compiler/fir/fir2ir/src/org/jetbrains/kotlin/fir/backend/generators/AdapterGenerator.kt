@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -370,6 +370,22 @@ class AdapterGenerator(
                         adaptedValueArgument
                     }
                     irCall.arguments[index + parameterShift] = valueArgument
+                }
+                is ResolvedCallArgument.DataArgument -> {
+                    irCall.arguments[index + parameterShift] = IrErrorExpressionImpl(
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        valueParameter.returnTypeRef.toIrType(),
+                        "class argument constructor"
+                    )
+                }
+                is ResolvedCallArgument.SealedArgument -> {
+                    irCall.arguments[index + parameterShift] = IrErrorExpressionImpl(
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        valueParameter.returnTypeRef.toIrType(),
+                        "sealed argument constructor"
+                    )
                 }
                 ResolvedCallArgument.DefaultArgument -> {
                     irCall.arguments[index + parameterShift] = null

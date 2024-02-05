@@ -745,6 +745,8 @@ open class PsiRawFirBuilder(
                 } else null
                 isCrossinline = hasModifier(CROSSINLINE_KEYWORD)
                 isNoinline = hasModifier(NOINLINE_KEYWORD)
+                isDataArgument = hasModifier(DATA_KEYWORD)
+                isSealedArgument = hasModifier(SEALED_KEYWORD)
                 valueParameterKind = if (valueParameterDeclaration == ValueParameterDeclaration.CONTEXT_PARAMETER) {
                     FirValueParameterKind.ContextParameter
                 } else {
@@ -2128,6 +2130,8 @@ open class PsiRawFirBuilder(
                             isCrossinline = false
                             isNoinline = false
                             isVararg = false
+                            isDataArgument = false
+                            isSealedArgument = false
                         }
                         addDestructuringVariables(
                             destructuringVariables,

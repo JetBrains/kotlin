@@ -35,6 +35,8 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var symbol: FirValueParameterSymbol
     lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
+    var isDataArgument: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    var isSealedArgument: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
     override fun build(): FirValueParameter {
         return FirDefaultSetterValueParameter(
@@ -48,6 +50,8 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
             annotations.toMutableOrEmpty(),
             symbol,
             containingDeclarationSymbol,
+            isDataArgument,
+            isSealedArgument,
         )
     }
 

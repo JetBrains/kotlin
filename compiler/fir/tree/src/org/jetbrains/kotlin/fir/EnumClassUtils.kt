@@ -173,7 +173,8 @@ fun generateValueOfFunction(
             isCrossinline = false
             isNoinline = false
             isVararg = false
-            resolvePhase = classResolvePhase
+            isDataArgument = false
+            isSealedArgument = false
         }
         resolvePhase = classResolvePhase
         body = buildEmptyExpressionBlock().also {
