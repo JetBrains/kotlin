@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalForLazyResolutionPurposes
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
-import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -70,9 +68,6 @@ internal fun FirBasedSymbol<*>.cannotResolveAnnotationsOnDemand(): Boolean {
 internal fun FirDeclaration.forEachDeclarationWhichCanHavePostponedSymbols(action: (FirCallableDeclaration) -> Unit) {
     when (this) {
         is FirCallableDeclaration -> action(this)
-        is FirScript -> forEachDependentDeclaration {
-            it.forEachDeclarationWhichCanHavePostponedSymbols(action)
-        }
         else -> {}
     }
 }

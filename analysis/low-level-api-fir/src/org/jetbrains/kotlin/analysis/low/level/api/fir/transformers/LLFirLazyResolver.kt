@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -54,7 +53,6 @@ internal abstract class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
         checkFunctionParametersAreResolved(target)
         checkVariableSubDeclarationsAreResolved(target)
         checkTypeParametersAreResolved(target)
-        checkScriptDependentDeclarationsAreResolved(target)
     }
 
     private fun checkVariableSubDeclarationsAreResolved(declaration: FirDeclaration) {
@@ -80,11 +78,5 @@ internal abstract class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
             if (parameter !is FirTypeParameter) continue
             checkIsResolved(parameter)
         }
-    }
-
-    private fun checkScriptDependentDeclarationsAreResolved(declaration: FirDeclaration) {
-        if (declaration !is FirScript) return
-
-        declaration.forEachDependentDeclaration(::checkIsResolved)
     }
 }

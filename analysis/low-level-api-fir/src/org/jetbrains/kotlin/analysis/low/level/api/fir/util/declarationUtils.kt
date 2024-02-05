@@ -241,10 +241,6 @@ internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
         else -> callableId.isLocal || fir.status.visibility == Visibilities.Local
     }
 
-internal inline fun FirScript.forEachDependentDeclaration(@Suppress("unused") action: (FirDeclaration) -> Unit) {
-
-}
-
 val PsiElement.parentsWithSelfCodeFragmentAware: Sequence<PsiElement>
     get() = generateSequence(this) { element ->
         when (element) {

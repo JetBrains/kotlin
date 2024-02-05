@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockPro
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeprecationProviderIsResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -244,8 +243,6 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
                     target.setter?.let(::publishResult)
                     target.backingField?.let(::publishResult)
                 }
-
-                is FirScript -> target.forEachDependentDeclaration(::publishResult)
             }
         }
     }
@@ -267,10 +264,6 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
                 getter?.annotationsForTransformationTo(map)
                 setter?.annotationsForTransformationTo(map)
                 backingField?.annotationsForTransformationTo(map)
-            }
-
-            is FirScript -> {
-                forEachDependentDeclaration { it.annotationsForTransformationTo(map) }
             }
         }
 

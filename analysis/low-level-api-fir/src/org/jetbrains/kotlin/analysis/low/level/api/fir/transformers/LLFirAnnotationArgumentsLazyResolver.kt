@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodie
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.AnnotationVisitorVoid
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationsAreResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -193,16 +192,7 @@ private class LLFirAnnotationArgumentsTargetResolver(
                 }
             }
 
-            target is FirScript -> {
-                target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
-                transformer.declarationsTransformer.withScript(target) {
-                    target.forEachDependentDeclaration {
-                        it.transformSingle(transformer, ResolutionMode.ContextIndependent)
-                    }
-
-                    target
-                }
-            }
+            target is FirScript -> target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
             target.isRegularDeclarationWithAnnotation -> target.transformSingle(transformer, ResolutionMode.ContextIndependent)
             target is FirCodeFragment || target is FirFile -> {}
             else -> throwUnexpectedFirElementError(target)

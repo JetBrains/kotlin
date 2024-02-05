@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isElementWhichShouldBeResolvedAsPartOfScript
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -64,7 +63,6 @@ internal object LLFirPhaseUpdater {
         }
 
         when (element) {
-            is FirScript -> element.forEachDependentDeclaration { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
             is FirFunction -> element.valueParameters.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
             is FirProperty -> {
                 element.getter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
