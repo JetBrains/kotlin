@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTr
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isEffectivelyFinal
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
@@ -93,11 +92,20 @@ private val FirBasedSymbol<*>.resolvedStatus
         else -> null
     }
 
-internal fun isExpectAndActual(declaration1: FirBasedSymbol<*>, declaration2: FirBasedSymbol<*>): Boolean {
+internal fun isExpectAndActualPair(declaration1: FirBasedSymbol<*>, declaration2: FirBasedSymbol<*>): Boolean {
     val status1 = declaration1.resolvedStatus ?: return false
     val status2 = declaration2.resolvedStatus ?: return false
     return (status1.isExpect && status2.isActual) || (status1.isActual && status2.isExpect)
 }
+
+private fun FirBasedSymbol<*>.isExpectOrActual(): Boolean =
+    resolvedStatus?.let { it.isActual || it.isExpect } == true
+
+private val FirBasedSymbol<*>.isExpectSymbol: Boolean
+    get() = resolvedStatus?.isExpect == true
+
+private val FirBasedSymbol<*>.isActualSymbol: Boolean
+    get() = resolvedStatus?.isActual == true
 
 private class DeclarationBuckets {
     val simpleFunctions = mutableListOf<Pair<FirNamedFunctionSymbol, String>>()
@@ -439,6 +447,10 @@ private fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(context: Ch
     }
 }
 
+private fun shouldCheckForMultiplatformRedeclaration(dependency: FirBasedSymbol<*>, dependent: FirBasedSymbol<*>): Boolean =
+    dependent.moduleData.allDependsOnDependencies.contains(dependency.moduleData) &&
+            dependency.resolvedStatus?.isExpect != true // ACTUAL_MISSING takes care of this case
+
 private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
     declaration: FirBasedSymbol<*>,
     declarationPresentation: String,
@@ -448,7 +460,11 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
     conflictingFile: FirFile? = null,
 ) {
     conflictingSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
-    if (conflictingSymbol == declaration || declaration.moduleData != conflictingSymbol.moduleData) return
+    if (conflictingSymbol == declaration) return
+    if (
+        declaration.moduleData != conflictingSymbol.moduleData &&
+        !shouldCheckForMultiplatformRedeclaration(declaration, conflictingSymbol)
+    ) return
     val actualConflictingPresentation = conflictingPresentation ?: FirRedeclarationPresenter.represent(conflictingSymbol)
     if (actualConflictingPresentation != declarationPresentation) return
     val actualConflictingFile =
@@ -496,7 +512,7 @@ private fun FirDeclarationCollector<*>.areNonConflictingCallables(
     declaration: FirBasedSymbol<*>,
     conflicting: FirBasedSymbol<*>,
 ): Boolean {
-    if (isExpectAndActual(declaration, conflicting) && declaration.moduleData != conflicting.moduleData) return true
+    if (isExpectAndActualPair(declaration, conflicting) && declaration.moduleData != conflicting.moduleData) return true
 
     val declarationIsLowPriority = hasLowPriorityAnnotation(declaration.annotations)
     val conflictingIsLowPriority = hasLowPriorityAnnotation(conflicting.annotations)
