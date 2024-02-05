@@ -28,15 +28,15 @@ internal object FirElementFinder {
         expectedDeclarationAcceptor = { it is FirClassLikeDeclaration && it.symbol.name == classId.shortClassName },
     )?.target?.let { it as FirClassLikeDeclaration }
 
-    fun findClassPathToDeclaration(
+    fun collectDesignationPath(
         firFile: FirFile,
         declarationContainerClassId: ClassId?,
         targetMemberDeclaration: FirDeclaration,
-    ): List<FirDeclaration>? = collectDesignationPath(
+    ): FirDesignation? = collectDesignationPath(
         firFile = firFile,
         containerClassId = declarationContainerClassId,
         expectedDeclarationAcceptor = { it == targetMemberDeclaration },
-    )?.path
+    )
 
     fun findDeclaration(firFile: FirFile, nonLocalDeclaration: KtDeclaration): FirDeclaration? = collectDesignationPath(
         firFile = firFile,
@@ -90,7 +90,7 @@ internal object FirElementFinder {
         }
 
         val classIdPathSegment = containerClassId?.relativeClassName?.pathSegments().orEmpty()
-        val path = ArrayList<FirDeclaration>(classIdPathSegment.size + 1)
+        val path = ArrayList<FirDeclaration>(classIdPathSegment.size + 2)
         var result: FirDeclaration? = null
 
         fun find(declarations: Iterable<FirDeclaration>, classIdPathIndex: Int): Boolean {
@@ -136,6 +136,7 @@ internal object FirElementFinder {
             return false
         }
 
+        path += firFile
         find(firFile.declarations, classIdPathIndex = 0)
 
         if (result == null) {

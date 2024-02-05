@@ -47,8 +47,8 @@ Tower Data Context:
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] statement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] <script-statement.kts>
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class ScriptClass : R|kotlin/Any| {
@@ -61,9 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun scriptFunction(): R|kotlin/Int| {
-            ^scriptFunction Int(42)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun scriptFunction(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] fun unusedScriptFunction([ResolvedTo(RAW_FIR)] p: String): <implicit> { LAZY_BLOCK }
 
