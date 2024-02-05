@@ -472,8 +472,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(File(tmpdir, "library.jar")))
     }
 
-    // KT-60792 K2 can resolve FQ type name to a nested classifier even in presence of a parent package
-    fun testInnerClassPackageConflict2() = muteForK2 {
+    fun testInnerClassPackageConflict2() {
         val library1 = compileLibrary("library1", destination = File(tmpdir, "library1"))
         val library2 = compileLibrary("library2", destination = File(tmpdir, "library2"))
 
