@@ -8,11 +8,7 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.CompilationOutcome
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Project
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.*
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
@@ -98,10 +94,10 @@ private object GlobalCompiledProjectsCache {
     private val globalTempDirectory = Files.createTempDirectory("compiled-test-projects-cache").apply {
         toFile().deleteOnExit()
     }
-    private val compiledProjectsCache = mutableMapOf<Module, Pair<MutableSet<String>, Path>>()
+    private val compiledProjectsCache = mutableMapOf<DependencyScenarioDslCacheKey, Pair<MutableSet<String>, Path>>()
 
     fun getProjectFromCache(module: Module, strategyConfig: CompilerExecutionStrategyConfiguration): ScenarioModuleImpl? {
-        val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[module] ?: return null
+        val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[module.scenarioDslCacheKey] ?: return null
         cachedBuildDirPath.copyToRecursively(module.buildDirectory, followLinks = false, overwrite = true)
         return ScenarioModuleImpl(module, initialOutputs, strategyConfig)
     }
@@ -115,7 +111,7 @@ private object GlobalCompiledProjectsCache {
         }
         val moduleCacheDirectory = globalTempDirectory.resolve(UUID.randomUUID().toString())
         module.buildDirectory.copyToRecursively(moduleCacheDirectory, followLinks = false, overwrite = false)
-        compiledProjectsCache[module] = Pair(initialOutputs, moduleCacheDirectory)
+        compiledProjectsCache[module.scenarioDslCacheKey] = Pair(initialOutputs, moduleCacheDirectory)
         return ScenarioModuleImpl(module, initialOutputs, strategyConfig)
     }
 }

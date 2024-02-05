@@ -32,12 +32,18 @@ private class CompilationOutcomeImpl(
     }
 }
 
+data class AbstractModuleCacheKey(
+    val moduleName: String,
+    val dependencies: List<DependencyScenarioDslCacheKey>,
+    val additionalCompilationArguments: List<String>,
+) : DependencyScenarioDslCacheKey
+
 abstract class AbstractModule(
     override val project: Project,
-    override val moduleName: String,
+    final override val moduleName: String,
     val moduleDirectory: Path,
     val dependencies: List<Dependency>,
-    override val additionalCompilationArguments: List<String> = emptyList(),
+    final override val additionalCompilationArguments: List<String> = emptyList(),
 ) : Module {
     override val sourcesDirectory: Path
         get() = moduleDirectory.resolve("src")
@@ -59,6 +65,8 @@ abstract class AbstractModule(
 
     override val icCachesDir: Path
         get() = icWorkingDir.resolve("caches")
+
+    override val scenarioDslCacheKey = AbstractModuleCacheKey(moduleName, dependencies.map { it.scenarioDslCacheKey }, additionalCompilationArguments)
 
     override fun compile(
         strategyConfig: CompilerExecutionStrategyConfiguration,
@@ -96,23 +104,4 @@ abstract class AbstractModule(
     ): CompilationResult
 
     override fun toString() = moduleName
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is AbstractModule) return false
-
-        if (moduleName != other.moduleName) return false
-        if (dependencies != other.dependencies) return false
-        if (additionalCompilationArguments != other.additionalCompilationArguments) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = moduleName.hashCode()
-        result = 31 * result + dependencies.hashCode()
-        result = 31 * result + additionalCompilationArguments.hashCode()
-        return result
-    }
-
-
 }

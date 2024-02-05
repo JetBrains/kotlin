@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
 import java.nio.file.Path
 
+interface DependencyScenarioDslCacheKey
+
 interface Dependency {
     val location: Path
     val snapshotFile: Path
+    val scenarioDslCacheKey: DependencyScenarioDslCacheKey
 }
