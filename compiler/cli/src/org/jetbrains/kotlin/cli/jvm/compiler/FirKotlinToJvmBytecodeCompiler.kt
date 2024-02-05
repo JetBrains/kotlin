@@ -214,6 +214,7 @@ object FirKotlinToJvmBytecodeCompiler {
             ktFiles, configuration, projectEnvironment, Name.special("<$rootModuleName>"),
             extensionRegistrars, librariesScope, libraryList,
             isCommonSource = { it.isCommonSource == true },
+            isScript = { it.isScript() },
             fileBelongsToModule = { file, moduleName -> file.hmppModuleName == moduleName },
             createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
         )

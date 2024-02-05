@@ -296,6 +296,7 @@ fun compileModuleToAnalyzedFir(
         allSources, moduleConfiguration, projectEnvironment, Name.special("<$rootModuleName>"),
         extensionRegistrars, librariesScope, libraryList,
         isCommonSource = input.groupedSources.isCommonSourceForLt,
+        isScript = { false },
         fileBelongsToModule = input.groupedSources.fileBelongsToModuleForLt,
         createProviderAndScopeForIncrementalCompilation = { files ->
             val scope = projectEnvironment.getSearchScopeBySourceFiles(files)
