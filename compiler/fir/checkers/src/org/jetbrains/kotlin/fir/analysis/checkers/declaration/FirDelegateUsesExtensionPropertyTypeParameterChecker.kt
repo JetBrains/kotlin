@@ -12,17 +12,19 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.declarations.utils.isExtension
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        val delegate = declaration.delegate as? FirFunctionCall ?: return
+        if (!declaration.isExtension) return
+        val delegate = declaration.delegate ?: return
         val parameters = declaration.typeParameters.mapTo(hashSetOf()) { it.symbol }
 
         val usedTypeParameterSymbol = delegate.resolvedType.findUsedTypeParameterSymbol(parameters, delegate, context, reporter)
@@ -33,14 +35,14 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
 
     private fun ConeKotlinType.findUsedTypeParameterSymbol(
         typeParameterSymbols: HashSet<FirTypeParameterSymbol>,
-        delegate: FirFunctionCall,
+        delegate: FirExpression,
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ): FirTypeParameterSymbol? {
         val expandedDelegateClassLikeType =
             delegate.resolvedType.lowerBoundIfFlexible().fullyExpandedType(context.session)
                 .unwrapDefinitelyNotNull() as? ConeClassLikeType ?: return null
-        val delegateClassSymbol = expandedDelegateClassLikeType.lookupTag.toSymbol(context.session) as? FirRegularClassSymbol ?: return null
+        val delegateClassSymbol = expandedDelegateClassLikeType.lookupTag.toSymbol(context.session) as? FirClassSymbol<*> ?: return null
         val delegateClassScope by lazy { delegateClassSymbol.unsubstitutedScope(context) }
         for (it in typeArguments) {
             val theType = it.type ?: continue

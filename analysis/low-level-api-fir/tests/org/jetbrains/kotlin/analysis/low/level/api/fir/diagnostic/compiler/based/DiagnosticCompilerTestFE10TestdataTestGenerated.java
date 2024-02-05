@@ -10571,6 +10571,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("useTypeParameterOfExtensionProperty3.kt")
+            public void testUseTypeParameterOfExtensionProperty3() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegatedProperty/useTypeParameterOfExtensionProperty3.kt");
+            }
+
+            @Test
             @TestMetadata("useTypeParameterOfExtensionProperty_Disabled.kt")
             public void testUseTypeParameterOfExtensionProperty_Disabled() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegatedProperty/useTypeParameterOfExtensionProperty_Disabled.kt");
