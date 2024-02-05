@@ -1759,9 +1759,27 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("commonIntermediateRedeclaration.kt")
+        public void testCommonIntermediateRedeclaration() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/commonIntermediateRedeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("commonPlatformRedeclaration.kt")
+        public void testCommonPlatformRedeclaration() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/commonPlatformRedeclaration.kt");
+        }
+
+        @Test
         @TestMetadata("intermediateActualHasAdditionalSupertypes.kt")
         public void testIntermediateActualHasAdditionalSupertypes() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/intermediateActualHasAdditionalSupertypes.kt");
+        }
+
+        @Test
+        @TestMetadata("intermediatePlatformRedeclaration.kt")
+        public void testIntermediatePlatformRedeclaration() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/intermediatePlatformRedeclaration.kt");
         }
 
         @Test
