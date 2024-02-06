@@ -286,13 +286,17 @@ class JvmMappedScope(
             newReturnType = substitutor.substituteOrSelf(oldFunction.returnTypeRef.coneType),
             newSource = oldFunction.source,
         ).apply {
-            if (jdkMemberStatus == JDKMemberStatus.HIDDEN) {
-                isHiddenEverywhereBesideSuperCalls = HiddenEverywhereBesideSuperCallsStatus.HIDDEN
-            } else if (jdkMemberStatus == JDKMemberStatus.HIDDEN_IN_DECLARING_CLASS_ONLY) {
-                isHiddenEverywhereBesideSuperCalls = HiddenEverywhereBesideSuperCallsStatus.HIDDEN_IN_DECLARING_CLASS_ONLY
-            }
+            setHiddenAttributeIfNecessary(jdkMemberStatus)
         }
         return newSymbol
+    }
+
+    private fun FirCallableDeclaration.setHiddenAttributeIfNecessary(jdkMemberStatus: JDKMemberStatus) {
+        if (jdkMemberStatus == JDKMemberStatus.HIDDEN) {
+            isHiddenEverywhereBesideSuperCalls = HiddenEverywhereBesideSuperCallsStatus.HIDDEN
+        } else if (jdkMemberStatus == JDKMemberStatus.HIDDEN_IN_DECLARING_CLASS_ONLY) {
+            isHiddenEverywhereBesideSuperCalls = HiddenEverywhereBesideSuperCallsStatus.HIDDEN_IN_DECLARING_CLASS_ONLY
+        }
     }
 
     override fun processDirectOverriddenFunctionsWithBaseScope(
@@ -334,7 +338,13 @@ class JvmMappedScope(
             if (javaCtor.isTrivialCopyConstructor()) return@processor
             if (firKotlinClassConstructors.any { javaCtor.isShadowedBy(it) }) return@processor
 
-            val newSymbol = mappedSymbolCache.mappedConstructors.getValue(javaCtorSymbol, this)
+            val jvmDescriptor = javaCtorSymbol.fir.computeJvmDescriptor()
+            val jdkMemberStatus = getJdkMethodStatus(jvmDescriptor)
+
+            if (jdkMemberStatus == JDKMemberStatus.DROP) return@processor
+
+            val newSymbol = mappedSymbolCache.mappedConstructors.getValue(javaCtorSymbol, this to jdkMemberStatus)
+
             processor(newSymbol)
         }
 
@@ -343,7 +353,7 @@ class JvmMappedScope(
 
     private fun FirDeclaration.isDeprecated(): Boolean = symbol.getDeprecation(session, callSite = null) != null
 
-    private fun createMappedConstructor(symbol: FirConstructorSymbol): FirConstructorSymbol {
+    private fun createMappedConstructor(symbol: FirConstructorSymbol, jdkMemberStatus: JDKMemberStatus): FirConstructorSymbol {
         val oldConstructor = symbol.fir
         val classId = firKotlinClass.classId
         val newSymbol = FirConstructorSymbol(CallableId(classId, classId.shortClassName))
@@ -361,7 +371,9 @@ class JvmMappedScope(
             isExpect = false,
             deferredReturnTypeCalculation = null,
             newSource = oldConstructor.source,
-        )
+        ).apply {
+            setHiddenAttributeIfNecessary(jdkMemberStatus)
+        }
         return newSymbol
     }
 
@@ -398,9 +410,9 @@ class JvmMappedScope(
                     scope.createHiddenFakeFunction(name)
                 }
 
-            val mappedConstructors: FirCache<FirConstructorSymbol, FirConstructorSymbol, JvmMappedScope> =
-                cachesFactory.createCache { symbol, scope ->
-                    scope.createMappedConstructor(symbol)
+            val mappedConstructors: FirCache<FirConstructorSymbol, FirConstructorSymbol, Pair<JvmMappedScope, JDKMemberStatus>> =
+                cachesFactory.createCache { symbol, (scope, jdkMemberStatus) ->
+                    scope.createMappedConstructor(symbol, jdkMemberStatus)
                 }
         }
     }

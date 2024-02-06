@@ -774,9 +774,9 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
             sink.reportDiagnostic(CallToDeprecatedOverrideOfHidden)
         }
 
-        if (symbol.fir.dispatchReceiverType == null || symbol !is FirNamedFunctionSymbol) return false
         val isSuperCall = callInfo.callSite.isSuperCall(session)
         if (symbol.isHidden(isSuperCall, isOverridden = false) == CallToPotentiallyHiddenSymbolResult.Hidden) return true
+        if (symbol.fir.dispatchReceiverType == null || symbol !is FirNamedFunctionSymbol) return false
 
         val scope = candidate.originScope as? FirTypeScope ?: return false
 
