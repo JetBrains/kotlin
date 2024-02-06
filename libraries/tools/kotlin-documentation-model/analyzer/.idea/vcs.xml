@@ -12,8 +12,5 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/dokka-integration-tests/gradle/projects/coroutines/kotlinx-coroutines" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/dokka-integration-tests/gradle/projects/serialization/kotlinx-serialization" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/dokka-integration-tests/maven/projects/biojava/biojava" vcs="Git" />
   </component>
 </project>

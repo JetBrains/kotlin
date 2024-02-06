@@ -21,6 +21,8 @@ dependencies {
     implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:$expectedKotlinDslPluginsVersion")
     implementation(libs.gradlePlugin.gradlePublish)
 
+    implementation(libs.eclipse.jgit)
+
     // workaround for accessing version-catalog in convention plugins
     // https://github.com/gradle/gradle/issues/15383#issuecomment-779893192
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
