@@ -553,6 +553,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
         }
 
         @Test
+        @TestMetadata("kt65273.kt")
+        public void testKt65273() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/kt65273.kt");
+        }
+
+        @Test
         @TestMetadata("kt65432.kt")
         public void testKt65432() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/kt65432.kt");

@@ -481,6 +481,12 @@ public class ClassicNativeIrTextTestGenerated extends AbstractClassicNativeIrTex
         }
 
         @Test
+        @TestMetadata("kt65273.kt")
+        public void testKt65273() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/kt65273.kt");
+        }
+
+        @Test
         @TestMetadata("localClassWithOverrides.kt")
         public void testLocalClassWithOverrides() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/localClassWithOverrides.kt");

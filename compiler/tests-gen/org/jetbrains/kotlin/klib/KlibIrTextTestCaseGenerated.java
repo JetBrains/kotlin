@@ -423,6 +423,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/declarations/kt52677.kt");
         }
 
+        @TestMetadata("kt65273.kt")
+        public void testKt65273() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/kt65273.kt");
+        }
+
         @TestMetadata("localClassWithOverrides.kt")
         public void testLocalClassWithOverrides() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/localClassWithOverrides.kt");

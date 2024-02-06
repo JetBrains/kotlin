@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.ir.overrides
 
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
-import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -98,6 +99,17 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
         private val typeArguments: Map<IrTypeParameterSymbol, IrType>,
         descriptorsRemapper: DescriptorsRemapper
     ) : DeepCopySymbolRemapper(descriptorsRemapper) {
+
+        // We need to avoid visiting parts of the tree that would not be visited by [FakeOverrideCopier]
+        // Otherwise, we can record symbols inside them for rebinding, but would not actually copy them.
+        // Normally, this is not important, as these local symbols would not be used anyway
+        // But they can be used in return values of functions/accessors if it is effectively a private declaration,
+        // e.g. public declaration inside a private class.
+
+        override fun visitField(declaration: IrField) {} // don't visit property backing field
+        override fun visitBlockBody(body: IrBlockBody) {} // don't visit function body and parameter default values
+        override fun visitExpressionBody(body: IrExpressionBody) {} // don't visit function body and parameter default values
+
         override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol {
             val result = super.getReferencedClassifier(symbol)
             if (result !is IrTypeParameterSymbol)

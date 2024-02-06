@@ -1,0 +1,41 @@
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  private abstract class B {
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    val s: <no name provided>
+      field = { // BLOCK
+        local class <no name provided> {
+          constructor() /* primary */ {
+            super/*Any*/()
+            /* <init>() */
+
+          }
+
+        }
+
+        <no name provided>()
+      }
+      get
+
+  }
+
+  private class C : B {
+    constructor() /* primary */ {
+      super/*B*/()
+      /* <init>() */
+
+    }
+
+  }
+
+}

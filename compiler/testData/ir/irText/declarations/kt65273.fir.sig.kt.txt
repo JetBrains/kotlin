@@ -1,0 +1,68 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A {
+  // CHECK:
+  //   Mangled name: A.B
+  //   Public signature: /A.B|null[0]
+  private abstract class B {
+    // CHECK:
+    //   Mangled name: A.B{}s
+    //   Public signature: /A.B.s|7217541905509134881[0]
+    //   Public signature debug description: {}s
+    val s: <no name provided>
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: A.B#<get-s>(){}
+      //   Public signature: /A.B.s.<get-s>|-1662172381559511151[0]
+      //   Public signature debug description: <get-s>(){}
+      // CHECK JVM_IR:
+      //   Mangled name (compatible mode: false): A.B#<get-s>(){}A.B{}s.<no name provided>
+      //   Mangled name (compatible mode: true):  A.B#<get-s>(){}A.B.s.<no name provided>
+      //   Public signature: /A.B.s.<get-s>|769786868112455262[0]
+      //   Public signature debug description: <get-s>(){}A.B{}s.<no name provided>
+      get
+
+    // CHECK:
+    //   Mangled name: A.B#<init>(){}
+    //   Public signature: /A.B.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
+    constructor() /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: A.C
+  //   Public signature: /A.C|null[0]
+  private class C : B {
+    // CHECK:
+    //   Mangled name: A.C#<init>(){}
+    //   Public signature: /A.C.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
+    constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: A.C{}s
+    //   Public signature: /A.C.s|7217541905509134881[0]
+    //   Public signature debug description: {}s
+    /* fake */ override val s: <no name provided>
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: A.C#<get-s>(){}
+      //   Public signature: /A.C.s.<get-s>|-1662172381559511151[0]
+      //   Public signature debug description: <get-s>(){}
+      // CHECK JVM_IR:
+      //   Mangled name (compatible mode: false): A.C#<get-s>(){}A.B{}s.<no name provided>
+      //   Mangled name (compatible mode: true):  A.C#<get-s>(){}A.B.s.<no name provided>
+      //   Public signature: /A.C.s.<get-s>|769786868112455262[0]
+      //   Public signature debug description: <get-s>(){}A.B{}s.<no name provided>
+      /* fake */ override get(): <no name provided>
+
+  }
+
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
