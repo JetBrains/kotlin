@@ -614,7 +614,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 this.executionTimeout.set(
                     (project.findProperty("gtest_timeout") as? String)?.let {
                         Duration.parse("PT${it}")
-                    } ?: Duration.ofMinutes(30)) // The tests binaries are big.
+                    } ?: Duration.ofMinutes(5))
 
                 usesService(runGTestSemaphore)
             }
