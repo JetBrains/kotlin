@@ -12,24 +12,25 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirDeprecationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.Experimentality
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
-import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.overridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.CallToPotentiallyHiddenSymbolResult.VisibleWithDeprecation
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.retrieveDirectOverriddenOf
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -40,6 +41,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 
@@ -221,7 +224,8 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
     private fun FirCallableSymbol<*>.checkDeprecation(
         reporter: DiagnosticReporter,
         overriddenSymbols: List<FirCallableSymbol<*>>,
-        context: CheckerContext
+        context: CheckerContext,
+        firTypeScope: FirTypeScope,
     ) {
         val ownDeprecation = this.getDeprecation(context.session.languageVersionSettings)
         if (ownDeprecation == null || ownDeprecation.isNotEmpty()) return
@@ -233,6 +237,24 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
                 ?: continue
             reporter.reportOn(source, FirErrors.OVERRIDE_DEPRECATION, overriddenSymbol, deprecationFromOverriddenSymbol, context)
             return
+        }
+
+        if (this is FirNamedFunctionSymbol) {
+            val callableName = this.name.asString()
+
+            if (callableName in FirDeprecationChecker.DeprecatedOverrideOfHiddenReplacements) {
+                firTypeScope.processOverriddenFunctions(this) {
+                    if (it.isHidden(isSuperCall = false, isOverridden = true) == VisibleWithDeprecation) {
+                        val message = FirDeprecationChecker.getDeprecatedOverrideOfHiddenMessage(callableName)
+                        val deprecationInfo =
+                            SimpleDeprecationInfo(DeprecationLevelValue.WARNING, propagatesToOverrides = false, message)
+                        reporter.reportOn(source, FirErrors.OVERRIDE_DEPRECATION, it, deprecationInfo, context)
+                        return@processOverriddenFunctions ProcessorAction.STOP
+                    }
+
+                    ProcessorAction.NEXT
+                }
+            }
         }
     }
 
@@ -342,7 +364,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
 
         member.checkVisibility(containingClass, reporter, overriddenMemberSymbols, context)
 
-        member.checkDeprecation(reporter, overriddenMemberSymbols, context)
+        member.checkDeprecation(reporter, overriddenMemberSymbols, context, firTypeScope)
 
         if (member is FirFunctionSymbol) {
             member.checkDefaultValues(reporter, context)

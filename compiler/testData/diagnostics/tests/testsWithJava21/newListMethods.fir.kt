@@ -10,8 +10,8 @@ class A<T> : ArrayList<T>() {
         super.addLast(t)
     }
 
-    override fun getFirst(): T = super.<!DEPRECATION!>getFirst<!>()
-    override fun getLast(): T = super.<!DEPRECATION!>getLast<!>()
+    override fun <!OVERRIDE_DEPRECATION!>getFirst<!>(): T = super.<!DEPRECATION!>getFirst<!>()
+    override fun <!OVERRIDE_DEPRECATION!>getLast<!>(): T = super.<!DEPRECATION!>getLast<!>()
 
     override fun removeFirst(): T = super.removeFirst()
     override fun removeLast(): T = super.removeLast()

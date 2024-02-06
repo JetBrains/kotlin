@@ -1,4 +1,8 @@
+/newListMethods.fir.kt:(231,239): warning: This declaration overrides a deprecated member but is not marked as deprecated itself. Please add the '@Deprecated' annotation or suppress the diagnostic.
+
 /newListMethods.fir.kt:(253,261): warning: 'fun getFirst(): T!' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'first()' stdlib extension if the collection supports fast random access.
+
+/newListMethods.fir.kt:(281,288): warning: This declaration overrides a deprecated member but is not marked as deprecated itself. Please add the '@Deprecated' annotation or suppress the diagnostic.
 
 /newListMethods.fir.kt:(302,309): warning: 'fun getLast(): T!' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'last()' stdlib extension if the collection supports fast random access.
 
