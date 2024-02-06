@@ -1,3 +1,7 @@
+/newListMethods.fir.kt:(253,261): warning: 'fun getFirst(): T!' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'first()' stdlib extension if the collection supports fast random access.
+
+/newListMethods.fir.kt:(302,309): warning: 'fun getLast(): T!' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'last()' stdlib extension if the collection supports fast random access.
+
 /newListMethods.fir.kt:(596,604): error: Unresolved reference 'getFirst'.
 
 /newListMethods.fir.kt:(613,618): error: Function invocation 'first()' expected.
@@ -5,3 +9,19 @@
 /newListMethods.fir.kt:(704,711): error: Unresolved reference 'getLast'.
 
 /newListMethods.fir.kt:(720,724): error: Function invocation 'last()' expected.
+
+/newListMethods.fir.kt:(838,846): warning: 'fun getFirst(): String!' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'first()' stdlib extension if the collection supports fast random access.
+
+/newListMethods.fir.kt:(855,860): warning: 'val first: String!' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'first()' stdlib extension if the collection supports fast random access.
+
+/newListMethods.fir.kt:(881,888): warning: 'fun getLast(): String!' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'last()' stdlib extension if the collection supports fast random access.
+
+/newListMethods.fir.kt:(897,901): warning: 'val last: String!' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'last()' stdlib extension if the collection supports fast random access.
+
+/newListMethods.fir.kt:(1015,1023): warning: 'fun getFirst(): String' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'first()' stdlib extension if the collection supports fast random access.
+
+/newListMethods.fir.kt:(1032,1037): warning: 'val first: String' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'first()' stdlib extension if the collection supports fast random access.
+
+/newListMethods.fir.kt:(1058,1065): warning: 'fun getLast(): String' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'last()' stdlib extension if the collection supports fast random access.
+
+/newListMethods.fir.kt:(1074,1078): warning: 'val last: String' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'last()' stdlib extension if the collection supports fast random access.

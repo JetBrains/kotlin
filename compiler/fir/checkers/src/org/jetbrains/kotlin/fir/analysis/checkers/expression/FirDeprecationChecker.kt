@@ -20,19 +20,15 @@ import org.jetbrains.kotlin.fir.declarations.FutureApiDeprecationInfo
 import org.jetbrains.kotlin.fir.declarations.RequireKotlinDeprecationInfo
 import org.jetbrains.kotlin.fir.declarations.getDeprecation
 import org.jetbrains.kotlin.fir.declarations.getOwnDeprecation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.toReference
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.resolved
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCallToDeprecatedOverrideOfHidden
 import org.jetbrains.kotlin.fir.resolve.firClassLike
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
@@ -68,6 +64,39 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
             )
         } else {
             reportApiStatusIfNeeded(source, referencedSymbol, context, reporter, callSite = expression)
+        }
+
+        reportCallToDeprecatedOverrideOfHidden(expression, source, referencedSymbol, reporter, context)
+    }
+
+    private fun reportCallToDeprecatedOverrideOfHidden(
+        expression: FirStatement,
+        source: KtSourceElement?,
+        referencedSymbol: FirBasedSymbol<*>,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    ) {
+        if (expression !is FirQualifiedAccessExpression) return
+        if (ConeCallToDeprecatedOverrideOfHidden in expression.nonFatalDiagnostics) {
+            val unwrappedSymbol = (referencedSymbol as? FirSyntheticPropertySymbol)?.getterSymbol?.delegateFunctionSymbol
+                ?: referencedSymbol as? FirCallableSymbol
+            val callableName = unwrappedSymbol?.callableId?.callableName?.asString()
+            val message = getDeprecatedOverrideOfHiddenMessage(callableName)
+            reporter.reportOn(source, FirErrors.DEPRECATION, referencedSymbol, message, context)
+        }
+    }
+
+    internal val DeprecatedOverrideOfHiddenReplacements = mapOf(
+        "getFirst" to "first()",
+        "getLast" to "last()",
+    )
+
+    internal fun getDeprecatedOverrideOfHiddenMessage(callableName: String?): String {
+        val getFirstOrLastReplacement = DeprecatedOverrideOfHiddenReplacements[callableName]
+        return if (getFirstOrLastReplacement != null) {
+            "This declaration will be renamed in a future version of Kotlin. Please consider using the '$getFirstOrLastReplacement' stdlib extension if the collection supports fast random access."
+        } else {
+            "This declaration is redundant in Kotlin and might be removed soon."
         }
     }
 

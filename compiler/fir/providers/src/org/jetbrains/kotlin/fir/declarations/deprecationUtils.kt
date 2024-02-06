@@ -330,8 +330,8 @@ var FirCallableDeclaration.isHiddenEverywhereBesideSuperCalls: HiddenEverywhereB
     IsHiddenEverywhereBesideSuperCalls
 )
 
-enum class HiddenEverywhereBesideSuperCallsStatus(val affectsOverrides: Boolean) {
-    HIDDEN(true), HIDDEN_IN_DECLARING_CLASS_ONLY(false)
+enum class HiddenEverywhereBesideSuperCallsStatus {
+    HIDDEN, HIDDEN_IN_DECLARING_CLASS_ONLY
 }
 
 private object IsHiddenToOvercomeSignatureClash : FirDeclarationDataKey()
@@ -340,11 +340,25 @@ var FirCallableDeclaration.isHiddenToOvercomeSignatureClash: Boolean? by FirDecl
     IsHiddenToOvercomeSignatureClash
 )
 
-fun FirCallableSymbol<*>.isHidden(isSuperCall: Boolean, isOverridden: Boolean): Boolean {
+enum class CallToPotentiallyHiddenSymbolResult {
+    Hidden, Visible, VisibleWithDeprecation,
+}
+
+fun FirCallableSymbol<*>.isHidden(isSuperCall: Boolean, isOverridden: Boolean): CallToPotentiallyHiddenSymbolResult {
     val fir = fir
-    return when {
-        fir.isHiddenToOvercomeSignatureClash == true -> true
-        !isSuperCall && fir.isHiddenEverywhereBesideSuperCalls?.let { it.affectsOverrides || !isOverridden } == true -> true
-        else -> false
+    if (fir.isHiddenToOvercomeSignatureClash == true) {
+        return CallToPotentiallyHiddenSymbolResult.Hidden
+    }
+
+    val status = fir.isHiddenEverywhereBesideSuperCalls ?: return CallToPotentiallyHiddenSymbolResult.Visible
+
+    return when (status) {
+        // If the declaration is HIDDEN, we don't need a deprecation on supercalls because what are we warning the user about?
+        // The declaration can't get any more hidden.
+        HiddenEverywhereBesideSuperCallsStatus.HIDDEN -> if (isSuperCall) CallToPotentiallyHiddenSymbolResult.Visible else CallToPotentiallyHiddenSymbolResult.Hidden
+        // However, on HIDDEN_IN_DECLARING_CLASS_ONLY,
+        // we report a deprecation warning on super calls because we might want to rename the method in the future
+        // (getFirst -> first).
+        HiddenEverywhereBesideSuperCallsStatus.HIDDEN_IN_DECLARING_CLASS_ONLY -> if (isSuperCall || isOverridden) CallToPotentiallyHiddenSymbolResult.VisibleWithDeprecation else CallToPotentiallyHiddenSymbolResult.Hidden
     }
 }

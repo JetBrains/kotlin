@@ -755,7 +755,7 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
         /** Actual declarations are checked by [FirDeprecationChecker] */
         if (symbol.isActual) return
         val deprecation = symbol.getDeprecation(context.session, callInfo.callSite)
-        if (deprecation?.deprecationLevel == DeprecationLevelValue.HIDDEN || isHiddenForThisCallSite(symbol, callInfo, candidate, context.session)) {
+        if (deprecation?.deprecationLevel == DeprecationLevelValue.HIDDEN || isHiddenForThisCallSite(symbol, callInfo, candidate, context.session, sink)) {
             sink.yieldDiagnostic(HiddenCandidate)
         }
     }
@@ -764,25 +764,43 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
         symbol: FirCallableSymbol<*>,
         callInfo: CallInfo,
         candidate: Candidate,
-        session: FirSession
+        session: FirSession,
+        sink: CheckerSink,
     ): Boolean {
-        val isSuperCall = callInfo.callSite.isSuperCall(session)
+        /**
+         * The logic for synthetic properties itself is in [FirSyntheticPropertiesScope.computeGetterCompatibility].
+         */
+        if (symbol is FirSimpleSyntheticPropertySymbol && symbol.deprecatedOverrideOfHidden) {
+            sink.reportDiagnostic(CallToDeprecatedOverrideOfHidden)
+        }
+
         if (symbol.fir.dispatchReceiverType == null || symbol !is FirNamedFunctionSymbol) return false
-        if (symbol.isHidden(isSuperCall, isOverridden = false)) return true
+        val isSuperCall = callInfo.callSite.isSuperCall(session)
+        if (symbol.isHidden(isSuperCall, isOverridden = false) == CallToPotentiallyHiddenSymbolResult.Hidden) return true
 
         val scope = candidate.originScope as? FirTypeScope ?: return false
 
-        var result = false
+        var hidden = false
+        var deprecated = false
         scope.processOverriddenFunctions(symbol) {
-            if (it.isHidden(isSuperCall, isOverridden = true)) {
-                result = true
+            val result = it.isHidden(isSuperCall, isOverridden = true)
+            if (result != CallToPotentiallyHiddenSymbolResult.Visible) {
+                if (result == CallToPotentiallyHiddenSymbolResult.Hidden) {
+                    hidden = true
+                } else if (result == CallToPotentiallyHiddenSymbolResult.VisibleWithDeprecation) {
+                    deprecated = true
+                }
                 ProcessorAction.STOP
             } else {
                 ProcessorAction.NEXT
             }
         }
 
-        return result
+        if (deprecated) {
+            sink.reportDiagnostic(CallToDeprecatedOverrideOfHidden)
+        }
+
+        return hidden
     }
 
     private fun FirElement.isSuperCall(session: FirSession): Boolean =
