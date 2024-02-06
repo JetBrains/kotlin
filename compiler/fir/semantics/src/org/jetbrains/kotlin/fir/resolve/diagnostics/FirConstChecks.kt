@@ -65,7 +65,42 @@ enum class ConstantArgumentKind {
 }
 
 private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor<ConstantArgumentKind, Nothing?>() {
+    companion object {
+        /**
+         * During constant evaluation, we can go from kotlin world to java world and back (see the example)
+         *
+         * Java constants are evaluated using PSI evaluator, which knows nothing about this particular class and no context is provided
+         *   to its entrypoint. So we should somehow track cases of recursion without any context
+         *
+         * Since [FirConstCheckVisitor] should be side-effect free, we can't write anything directly in the tree, so it was decided
+         *   to collect the list of properties which were already checked on the constant evaluator path in the thread-local list.
+         *   So when the execution comes back to kotlin after java, this context will be preserved
+         * ```
+         * // FILE: Bar.java
+         * public class Bar {
+         *     public static final int BAR = TestKt.recursion2 + 1;
+         * }
+         *
+         * // FILE: Test.kt
+         * const val a = recursion1 + 1
+         *
+         * const val recursion1 = Bar.BAR + 1
+         * const val recursion2 = recursion1 + 1
+         * ```
+         */
+        private val propertyStack: ThreadLocal<MutableList<FirCallableSymbol<*>>> = ThreadLocal.withInitial { mutableListOf() }
+    }
+
     private val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
+
+    private fun <T> FirCallableSymbol<*>.visit(block: () -> T?): T? {
+        propertyStack.get() += this
+        try {
+            return block()
+        } finally {
+            propertyStack.get().removeLast()
+        }
+    }
 
     private val compileTimeFunctions = setOf(
         *OperatorNameConventions.BINARY_OPERATION_NAMES.toTypedArray(), *OperatorNameConventions.UNARY_OPERATION_NAMES.toTypedArray(),
@@ -227,6 +262,7 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
         propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?
     ): ConstantArgumentKind {
         val propertySymbol = propertyAccessExpression.toReference(session)?.toResolvedCallableSymbol(discardErrorReference = true)
+        if (propertySymbol in propertyStack.get()) return ConstantArgumentKind.NOT_CONST
         when (propertySymbol) {
             // Null symbol means some error occurred.
             // We use the same logic as in `visitErrorExpression`.
@@ -246,12 +282,19 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
                     }
                     propertySymbol.isLocal -> return ConstantArgumentKind.NOT_CONST
                     propertyAccessExpression.getExpandedType().classId == StandardClassIds.KClass -> return ConstantArgumentKind.NOT_KCLASS_LITERAL
-                    propertySymbol.isConst -> return ConstantArgumentKind.VALID_CONST
                 }
 
-                // Ok, because we only look at the structure, not resolution-dependent properties.
+                // OK, because:
+                // 1. if const property => we should've resolved its initializer at this point;
+                // 2. if not const => we are going to look only at the structure, not resolution-dependent properties.
                 @OptIn(SymbolInternals::class)
-                return when (propertySymbol.fir.initializer) {
+                val initializer = propertySymbol.fir.initializer
+
+                if (propertySymbol.isConst) {
+                    return propertySymbol.visit { initializer?.accept(this, data) } ?: ConstantArgumentKind.RESOLUTION_ERROR
+                }
+
+                return when (initializer) {
                     is FirLiteralExpression<*> -> when {
                         propertySymbol.isVal -> ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION
                         else -> ConstantArgumentKind.NOT_CONST
