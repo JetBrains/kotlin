@@ -59,17 +59,43 @@ internal sealed interface XCTestBundle {
         override fun cleanup() {
             xcodeProject?.path?.deleteRecursively()
         }
+
+
+        /**
+         * Used to pass [args] to the XCTest-runner using Info.plist file.
+         * See also `NativeTestRunner` for details of argument processing.
+         */
+        private fun File.writeTestArguments(args: List<String>) {
+            val infoPlist = walk()
+                .firstOrNull { it.name == "Info.plist" }
+                ?.absolutePath
+                ?: error("Info.plist of xctest-bundle wasn't found. Check the bundle contents and location")
+
+            // TODO: Consider also check for other incorrect symbols and escaping them or use CDATA section.
+            check(args.all { !it.contains(" ") }) {
+                """
+            Provided arguments contain spaces that not supported as arguments: 
+            ${args.joinToString()}
+            """.trimIndent()
+            }
+
+            val writeArgsRequest = ExecuteRequest(
+                executableAbsolutePath = "/usr/libexec/PlistBuddy",
+                args = mutableListOf("-c", "Add :KotlinNativeTestArgs string ${args.joinToString(" ")}", infoPlist)
+            )
+            HostExecutor().execute(writeArgsRequest).assertSuccess()
+        }
     }
 
     /**
      * Standalone test bundle ready for execution by `xctest` utility on the host or simulator
      */
-    class Standalone(private var originalBundle: Path, override val args: List<String>) : XCTestBundle {
+    class Standalone(private val originalBundle: Path, override val args: List<String>) : XCTestBundle {
         private var path: Path = originalBundle
 
         override fun prepareToRun(workingDirectory: Path): Path {
-            path = if (args.isNotEmpty()) {
-                // Copy the bundle to a temp dir
+            path = if (workingDirectory != path.parent) {
+                // Copy the bundle to a temp subdir of working directory
                 val dir = Files.createTempDirectory(workingDirectory, "tmp-xctest-runner")
                 val newBundleFile = originalBundle.copyRecursivelyTo(dir)
 
@@ -78,8 +104,6 @@ internal sealed interface XCTestBundle {
                 if (dSYM.exists()) {
                     dSYM.copyRecursivelyTo(dir)
                 }
-
-                newBundleFile.writeTestArguments(args)
 
                 newBundleFile.toPath()
             } else {
@@ -110,29 +134,4 @@ internal sealed interface XCTestBundle {
             }
         }
     }
-}
-
-/**
- * Used to pass [args] to the XCTest-runner using Info.plist file.
- * See also `NativeTestRunner` for details of argument processing.
- */
-private fun File.writeTestArguments(args: List<String>) {
-    val infoPlist = walk()
-        .firstOrNull { it.name == "Info.plist" }
-        ?.absolutePath
-        ?: error("Info.plist of xctest-bundle wasn't found. Check the bundle contents and location")
-
-    // TODO: Consider also check for other incorrect symbols and escaping them or use CDATA section.
-    check(args.all { !it.contains(" ") }) {
-        """
-            Provided arguments contain spaces that not supported as arguments: 
-            ${args.joinToString()}
-            """.trimIndent()
-    }
-
-    val writeArgsRequest = ExecuteRequest(
-        executableAbsolutePath = "/usr/libexec/PlistBuddy",
-        args = mutableListOf("-c", "Add :KotlinNativeTestArgs string ${args.joinToString(" ")}", infoPlist)
-    )
-    HostExecutor().execute(writeArgsRequest).assertSuccess()
 }

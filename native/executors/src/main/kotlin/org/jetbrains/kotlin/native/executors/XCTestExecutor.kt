@@ -68,6 +68,7 @@ abstract class AbstractXCTestExecutor(
         val response = executor.execute(
             request.copying {
                 environment["DYLD_FRAMEWORK_PATH"] = frameworkPath
+                environment["KotlinNativeTestArgs"] = bundle.args.joinToString(" ")
                 executableAbsolutePath = xcTestExecutablePath
                 args.clear()
                 args.add(path.absolutePathString())
