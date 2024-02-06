@@ -140,9 +140,7 @@ class Fir2IrImplicitCastInserter(
 
     override fun visitWhenBranch(whenBranch: FirWhenBranch, data: IrElement): IrBranch {
         val irBranch = data as IrBranch
-        (irBranch.result as? IrContainerExpression)?.let {
-            irBranch.result = it.insertImplicitCasts()
-        }
+        (irBranch.result as? IrContainerExpression)?.insertImplicitCasts()
         return data
     }
 
@@ -153,17 +151,13 @@ class Fir2IrImplicitCastInserter(
 
     override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: IrElement): IrElement {
         val loop = data as IrDoWhileLoop
-        (loop.body as? IrContainerExpression)?.let {
-            loop.body = it.insertImplicitCasts(coerceLastExpressionToUnit = true)
-        }
+        (loop.body as? IrContainerExpression)?.insertImplicitCasts(coerceLastExpressionToUnit = true)
         return data
     }
 
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: IrElement): IrElement {
         val loop = data as IrWhileLoop
-        (loop.body as? IrContainerExpression)?.let {
-            loop.body = it.insertImplicitCasts(coerceLastExpressionToUnit = true)
-        }
+        (loop.body as? IrContainerExpression)?.insertImplicitCasts(coerceLastExpressionToUnit = true)
         return data
     }
 
@@ -176,17 +170,11 @@ class Fir2IrImplicitCastInserter(
     override fun visitTryExpression(tryExpression: FirTryExpression, data: IrElement): IrElement {
         val irTry = data as IrTry
 
-        (irTry.tryResult as? IrContainerExpression)?.let {
-            irTry.tryResult = it.insertImplicitCasts()
-        }
+        (irTry.tryResult as? IrContainerExpression)?.insertImplicitCasts()
         for (catch in irTry.catches) {
-            (catch.result as? IrContainerExpression)?.let {
-                catch.result = it.insertImplicitCasts()
-            }
+            (catch.result as? IrContainerExpression)?.insertImplicitCasts()
         }
-        (irTry.finallyExpression as? IrContainerExpression)?.let {
-            irTry.finallyExpression = it.insertImplicitCasts(coerceLastExpressionToUnit = true)
-        }
+        (irTry.finallyExpression as? IrContainerExpression)?.insertImplicitCasts(coerceLastExpressionToUnit = true)
         return data
     }
 
