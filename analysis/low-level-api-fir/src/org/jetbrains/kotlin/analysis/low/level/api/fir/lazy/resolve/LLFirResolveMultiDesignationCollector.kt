@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
@@ -23,8 +24,7 @@ import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 internal object LLFirResolveMultiDesignationCollector {
     fun getDesignationsToResolve(target: FirElementWithResolveState): List<LLFirResolveTarget> = when (target) {
         is FirFile -> listOf(FirDesignation(target).asResolveTarget())
-        is FirSyntheticPropertyAccessor -> getDesignationsToResolve(target.delegate)
-        is FirSyntheticProperty -> getDesignationsToResolve(target.getter) + target.setter?.let(::getDesignationsToResolve).orEmpty()
+        is FirSyntheticPropertyAccessor, is FirSyntheticProperty -> errorWithFirSpecificEntries("Unsupported element", fir = target)
         else -> listOfNotNull(getMainDesignationToResolve(target))
     }
 

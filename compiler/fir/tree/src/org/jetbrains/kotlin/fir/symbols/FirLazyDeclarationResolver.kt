@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 /**
@@ -95,7 +97,14 @@ fun FirBasedSymbol<*>.lazyResolveToPhase(toPhase: FirResolvePhase) {
  * @see lazyResolveToPhase
  */
 fun FirElementWithResolveState.lazyResolveToPhase(toPhase: FirResolvePhase) {
-    lazyDeclarationResolver.lazyResolveToPhase(this, toPhase)
+    when (this) {
+        is FirSyntheticPropertyAccessor -> delegate.lazyResolveToPhase(toPhase)
+        is FirSyntheticProperty -> {
+            getter.lazyResolveToPhase(toPhase)
+            setter?.lazyResolveToPhase(toPhase)
+        }
+        else -> lazyDeclarationResolver.lazyResolveToPhase(this, toPhase)
+    }
 }
 
 /**
