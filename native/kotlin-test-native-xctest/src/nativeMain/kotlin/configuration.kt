@@ -8,6 +8,7 @@ import kotlinx.cinterop.*
 import kotlin.native.internal.test.*
 import platform.Foundation.NSInvocation
 import platform.Foundation.NSBundle
+import platform.Foundation.NSProcessInfo
 import platform.Foundation.NSStringFromSelector
 import platform.XCTest.*
 import platform.objc.*
@@ -47,7 +48,7 @@ internal fun setupXCTestSuite(): XCTestSuite {
     // Set test observer that will log test execution
     XCTestObservationCenter.sharedTestObservationCenter.addTestObserver(NativeTestObserver(testSettings))
 
-    if (testSettings.runTests == true) {
+    if (testSettings.runTests) {
         // Generate and add tests to the main suite
         testSettings.testSuites.generate().forEach {
             nativeTestSuite.addTest(it)
@@ -68,15 +69,25 @@ internal fun setupXCTestSuite(): XCTestSuite {
  *
  * @param key a key used in the `Info.plist` file to pass test arguments
  */
+@Suppress("UNCHECKED_CAST")
 private fun testArguments(key: String): Array<String> {
     // As we don't know which bundle we are, iterate through all of them
-    val plistTestArgs = NSBundle.allBundles
-            .mapNotNull {
-                (it as? NSBundle)?.infoDictionary?.get(key)
-            }.singleOrNull() as? String
-    return plistTestArgs?.split(" ")
-            ?.toTypedArray()
-            ?: emptyArray<String>()
+    NSBundle.allBundles
+        .mapNotNull { (it as? NSBundle)?.infoDictionary?.get(key) as? String }
+        .singleOrNull()
+        ?.let {
+            return it.split(" ").toTypedArray()
+        }
+
+    (NSProcessInfo.processInfo.environment[key] as? String)?.let {
+        return it.split(" ").toTypedArray()
+    }
+
+    (NSProcessInfo.processInfo.arguments as? List<String>)?.let {
+        return it.toTypedArray()
+    }
+
+    return emptyArray()
 }
 
 internal val testMethodsNames: List<String>
