@@ -619,7 +619,16 @@ public inline fun String.intern(): String = (this as java.lang.String).intern()
  *
  * @sample samples.text.Strings.stringIsBlank
  */
-public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
+public actual fun CharSequence.isBlank(): Boolean {
+    for (i in 0 until length - 1) {
+        val c = this[i]
+        if (!Character.isWhitespace(c) &&
+            c != '\u00a0' && c != '\u2007' && c != '\u202f') {
+            return false
+        }
+    }
+    return true
+}
 
 /**
  * Returns the index within this string that is offset from the given [index] by [codePointOffset] code points.
