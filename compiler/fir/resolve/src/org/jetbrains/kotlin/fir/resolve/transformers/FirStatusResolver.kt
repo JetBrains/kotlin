@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
@@ -271,7 +268,7 @@ class FirStatusResolver(
             } else {
                 it
             }
-        } ?: resolveModality(declaration, containingClass)
+        } ?: resolveModality(declaration, containingProperty, containingClass)
         if (overriddenStatuses.isNotEmpty()) {
             for (modifier in MODIFIERS_FROM_OVERRIDDEN) {
                 status[modifier] = status[modifier] || overriddenStatuses.fold(false) { acc, overriddenStatus ->
@@ -437,11 +434,13 @@ class FirStatusResolver(
 
     private fun resolveModality(
         declaration: FirDeclaration,
+        containingProperty: FirProperty?,
         containingClass: FirClass?,
     ): Modality {
         return when (declaration) {
             is FirRegularClass -> if (declaration.classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
             is FirCallableDeclaration -> {
+                val containingPropertyModality = containingProperty?.modality
                 when {
                     containingClass == null -> Modality.FINAL
                     containingClass.classKind == ClassKind.INTERFACE -> {
@@ -451,6 +450,7 @@ class FirStatusResolver(
                             else -> Modality.OPEN
                         }
                     }
+                    declaration is FirPropertyAccessor && containingPropertyModality != null -> containingPropertyModality
                     declaration.isOverride -> Modality.OPEN
                     else -> Modality.FINAL
                 }
