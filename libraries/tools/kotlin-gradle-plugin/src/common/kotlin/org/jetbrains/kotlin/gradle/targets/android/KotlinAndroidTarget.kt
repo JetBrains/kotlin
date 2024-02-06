@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.HasConfigurableCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.internal.attributesConfigurationHelper
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesPublication
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
@@ -181,6 +181,13 @@ abstract class KotlinAndroidTarget @Inject constructor(
                     compilation = compilation,
                     isSingleBuildType = publishableVariants.filter(::isVariantPublished).map(::getBuildTypeName).distinct().size == 1,
                 )
+                // FIXME: publishLibraryVariantsGroupedByFlavor?
+                project.launch {
+                    setUpResourcesPublication(
+                        compilation,
+                        androidVariantName,
+                    )
+                }
 
                 createKotlinVariant(
                     lowerCamelCaseName(compilation.target.name, *flavorGroupNameParts.toTypedArray()),
@@ -216,6 +223,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
         compilation: KotlinCompilation<*>,
         isSingleBuildType: Boolean,
     ): Set<DefaultKotlinUsageContext> {
+        // FIXME: Возможно нужно прикрепить сюда ресурсы
         val flavorNames = getFlavorNames(variant)
         val buildTypeName = getBuildTypeName(variant)
         val artifactClassifier = buildTypeName.takeIf { it != "release" && publishLibraryVariantsGroupedByFlavor }

@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 
+import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -198,6 +200,24 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         description = "Kotlin compiler plugins for $compilation"
     }
 
+    val resourcesConfiguration = target.project.configurations.maybeCreate(
+        lowerCamelCaseName(
+            target.disambiguationClassifier, "ResourcesPath"
+        )
+    ).apply {
+        // FIXME: Wasm passes self-classes directory in compileDependencyConfiguration
+//        extendsFrom(compileDependencyConfiguration)
+        extendsFrom(implementationConfiguration)
+        usesPlatformOf(target)
+        isVisible = false
+        isCanBeConsumed = false
+
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_RUNTIME))
+        attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.objects.named(Category.LIBRARY))
+        attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, target.project.objects.named(KotlinUsages.KOTLIN_RESOURCES))
+        attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, target.project.attributeValueByName(Bundling.EXTERNAL))
+    }
+
     return DefaultKotlinCompilationConfigurationsContainer(
         deprecatedCompileConfiguration = deprecatedCompileConfiguration,
         deprecatedRuntimeConfiguration = deprecatedRuntimeConfiguration,
@@ -208,6 +228,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         compileDependencyConfiguration = compileDependencyConfiguration,
         runtimeDependencyConfiguration = runtimeDependencyConfiguration,
         hostSpecificMetadataConfiguration = hostSpecificMetadataConfiguration,
-        pluginConfiguration = pluginConfiguration
+        pluginConfiguration = pluginConfiguration,
+        resourcesConfiguration = resourcesConfiguration,
     )
 }

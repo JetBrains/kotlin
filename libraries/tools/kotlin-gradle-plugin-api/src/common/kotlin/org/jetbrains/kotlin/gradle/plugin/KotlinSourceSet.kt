@@ -19,6 +19,9 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
 
     val resources: SourceDirectorySet
 
+    // Extension.relocatedResources -> Map<KotlinSourceSet, List<|>>
+//    val relocatedResource: List<(AbsolutePathToTake, RelativePathToPublish)>
+
     val languageSettings: LanguageSettingsBuilder
     fun languageSettings(configure: LanguageSettingsBuilder.() -> Unit): LanguageSettingsBuilder
     fun languageSettings(configure: Action<LanguageSettingsBuilder>): LanguageSettingsBuilder

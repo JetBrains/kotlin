@@ -41,6 +41,7 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     val apiElementsConfigurationName: String
     val runtimeElementsConfigurationName: String
     val sourcesElementsConfigurationName: String
+    val resourcesElementsConfigurationName: String
 
     val publishable: Boolean
 

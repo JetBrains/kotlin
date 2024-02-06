@@ -69,6 +69,15 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         project.launch { isCanBeConsumed = target.internal.isSourcesPublishableFuture.await() }
     }
 
+    configurations.maybeCreate(target.resourcesElementsConfigurationName).apply {
+        description = "Resource files of main compilation of ${target.name}."
+        isVisible = false
+        isCanBeResolved = false
+        isCanBeConsumed = true
+
+        configureResourcesPublicationAttributes(target)
+    }
+
     if (target !is KotlinMetadataTarget) {
         val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         val compileTestsConfiguration = testCompilation.internal.configurations.deprecatedCompileConfiguration

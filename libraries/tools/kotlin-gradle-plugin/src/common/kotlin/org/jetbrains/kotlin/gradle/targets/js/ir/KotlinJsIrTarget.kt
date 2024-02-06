@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTestRunFactory
@@ -88,6 +89,11 @@ constructor(
                 componentName = componentName,
                 artifactNameAppendix = wasmDecamelizedDefaultNameOrNull() ?: dashSeparatedName(targetName.toLowerCaseAsciiOnly())
             )
+        )
+
+        usageContexts.add(
+            // FIXME: Are all js/wasm targets published in these components?
+            setUpResourcesVariant(mainCompilation)
         )
 
         val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
