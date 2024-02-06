@@ -35265,6 +35265,12 @@ public class FirLightTreeBlackBoxCodegenWithIrFakeOverrideGeneratorTestGenerated
             }
 
             @Test
+            @TestMetadata("expectAnnotationAsTypeAlias.kt")
+            public void testExpectAnnotationAsTypeAlias() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/expectAnnotationAsTypeAlias.kt");
+            }
+
+            @Test
             @TestMetadata("expectValInInlineClass.kt")
             public void testExpectValInInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/k2/expectValInInlineClass.kt");
