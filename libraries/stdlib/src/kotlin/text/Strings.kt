@@ -303,9 +303,12 @@ public inline fun CharSequence.isEmpty(): Boolean = length == 0
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.isNotEmpty(): Boolean = length > 0
 
-// implemented differently in JVM and JS
-//public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
-
+/**
+ * Returns `true` if this char sequence is empty or consists solely of whitespace characters.
+ *
+ * @sample samples.text.Strings.stringIsBlank
+ */
+public fun CharSequence.isBlank(): Boolean = all { it.isWhitespace() }
 
 /**
  * Returns `true` if this char sequence is not empty and contains some characters except whitespace characters.

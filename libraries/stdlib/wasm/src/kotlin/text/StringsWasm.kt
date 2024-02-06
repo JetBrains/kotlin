@@ -500,13 +500,6 @@ public actual fun String.endsWith(suffix: String, ignoreCase: Boolean = false): 
 // From stringsCode.kt
 
 /**
- * Returns `true` if this string is empty or consists solely of whitespace characters.
- *
- * @sample samples.text.Strings.stringIsBlank
- */
-public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
-
-/**
  * Returns `true` if the specified range in this char sequence is equal to the specified range in another char sequence.
  * @param thisOffset the start offset in this char sequence of the substring to compare.
  * @param other the string against a substring of which the comparison is performed.

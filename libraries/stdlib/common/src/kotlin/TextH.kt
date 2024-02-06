@@ -421,7 +421,6 @@ public expect fun String.endsWith(suffix: String, ignoreCase: Boolean = false): 
 internal expect fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
 internal expect fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int
 
-public expect fun CharSequence.isBlank(): Boolean
 /**
  * Returns `true` if the specified range in this char sequence is equal to the specified range in another char sequence.
  * @param thisOffset the start offset in this char sequence of the substring to compare.

@@ -55,13 +55,6 @@ public fun String.matches(regex: String): Boolean {
 }
 
 /**
- * Returns `true` if this string is empty or consists solely of whitespace characters.
- *
- * @sample samples.text.Strings.stringIsBlank
- */
-public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
-
-/**
  * Returns `true` if this string is equal to [other], optionally ignoring character case.
  *
  * Two strings are considered to be equal if they have the same length and the same character at the same index.
