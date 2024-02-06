@@ -114,6 +114,7 @@ constructor(
         project.getKonanCacheKind(konanTarget)
     }
 
+    @Suppress("unused")
     @get:Input
     internal val useEmbeddableCompilerJar: Boolean = project.nativeUseEmbeddableCompilerJar
 
@@ -203,7 +204,10 @@ constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val xcodeVersion = objectFactory.fileProperty()
 
-    private val externalDependenciesArgs by lazy { ExternalDependenciesBuilder(project, compilation).buildCompilerArgs() }
+    private val externalDependenciesArgs by lazy {
+        @Suppress("DEPRECATION")
+        ExternalDependenciesBuilder(project, compilation).buildCompilerArgs()
+    }
 
     private val cacheBuilderSettings by lazy {
         CacheBuilder.Settings.createWithProject(
