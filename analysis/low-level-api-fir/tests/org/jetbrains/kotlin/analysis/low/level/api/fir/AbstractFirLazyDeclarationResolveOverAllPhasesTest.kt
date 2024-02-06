@@ -41,8 +41,8 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
                 testServices.allKtFiles().map(firResolveSession::getOrBuildFirFile)
             } else {
                 val firFile = firResolveSession.getOrBuildFirFile(ktFile)
-                val designations = LLFirResolveMultiDesignationCollector.getDesignationsToResolve(elementToResolve)
-                listOf(firFile).plus(designations.mapNotNull { it.firFile }).distinct()
+                val designation = LLFirResolveMultiDesignationCollector.getDesignationToResolve(elementToResolve)
+                listOfNotNull(firFile, designation?.firFile).distinct()
             }
 
             val basePhase = elementToResolve.resolvePhase

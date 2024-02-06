@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassWithAllCallablesResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeElementResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
@@ -22,41 +20,37 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAcces
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 
 internal object LLFirResolveMultiDesignationCollector {
-    fun getDesignationsToResolve(target: FirElementWithResolveState): List<LLFirResolveTarget> = when (target) {
-        is FirFile -> listOf(FirDesignation(target).asResolveTarget())
-        is FirSyntheticPropertyAccessor, is FirSyntheticProperty -> errorWithFirSpecificEntries("Unsupported element", fir = target)
-        else -> listOfNotNull(getMainDesignationToResolve(target))
+    fun getDesignationToResolve(target: FirElementWithResolveState): LLFirResolveTarget? {
+        return getDesignationToResolve(target, FirDesignation::asResolveTarget)
     }
 
-    fun getDesignationsToResolveWithCallableMembers(target: FirRegularClass): List<LLFirResolveTarget> {
-        val designation = target.tryCollectDesignationWithFile() ?: return emptyList()
-        val resolveTarget = LLFirClassWithAllCallablesResolveTarget(designation)
-        return listOf(resolveTarget)
+    fun getDesignationToResolveWithCallableMembers(target: FirRegularClass): LLFirResolveTarget? {
+        return getDesignationToResolve(target, ::LLFirClassWithAllCallablesResolveTarget)
     }
 
-    fun getDesignationsToResolveRecursively(target: FirElementWithResolveState): List<LLFirResolveTarget> {
-        if (target is FirFile) return listOf(LLFirWholeElementResolveTarget(FirDesignation(target)))
-
-        if (!target.shouldBeResolved()) return emptyList()
-        if (target is FirCallableDeclaration && target.isCopyCreatedInScope) {
-            return listOf(FirDesignation(target).asResolveTarget())
-        }
-
-        val designation = target.tryCollectDesignationWithFile() ?: return emptyList()
-        val resolveTarget = LLFirWholeElementResolveTarget(designation)
-        return listOf(resolveTarget)
+    fun getDesignationToResolveRecursively(target: FirElementWithResolveState): LLFirResolveTarget? {
+        return getDesignationToResolve(target, ::LLFirWholeElementResolveTarget)
     }
 
-    private fun getMainDesignationToResolve(target: FirElementWithResolveState): LLFirSingleResolveTarget? {
-        require(target !is FirFile)
+    private fun getDesignationToResolve(
+        target: FirElementWithResolveState,
+        resolveTarget: (FirDesignation) -> LLFirResolveTarget,
+    ): LLFirResolveTarget? {
+        val designation = getFirDesignationToResolve(target) ?: return null
+        val llResolveTarget = resolveTarget(designation)
+        return llResolveTarget
+    }
+
+    private fun getFirDesignationToResolve(target: FirElementWithResolveState): FirDesignation? {
         if (!target.shouldBeResolved()) return null
+
         return when {
-            target is FirPropertyAccessor -> getMainDesignationToResolve(target.propertySymbol.fir)
-            target is FirBackingField -> getMainDesignationToResolve(target.propertySymbol.fir)
-            target is FirTypeParameter -> getMainDesignationToResolve(target.containingDeclarationSymbol.fir)
-            target is FirValueParameter -> getMainDesignationToResolve(target.containingFunctionSymbol.fir)
-            target is FirCallableDeclaration && target.isCopyCreatedInScope -> FirDesignation(target).asResolveTarget()
-            else -> target.tryCollectDesignationWithFile()?.asResolveTarget()
+            target is FirFile || target is FirCallableDeclaration && target.isCopyCreatedInScope -> FirDesignation(target)
+            target is FirPropertyAccessor -> getFirDesignationToResolve(target.propertySymbol.fir)
+            target is FirBackingField -> getFirDesignationToResolve(target.propertySymbol.fir)
+            target is FirTypeParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
+            target is FirValueParameter -> getFirDesignationToResolve(target.containingFunctionSymbol.fir)
+            else -> target.tryCollectDesignationWithFile()
         }
     }
 
