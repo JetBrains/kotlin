@@ -111,13 +111,13 @@ private fun JavaType?.toConeTypeProjection(
             val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, lowerBound)
 
             val finalLowerBound = when (lowerBound) {
-                is ConeTypeParameterType ->
-                    ConeDefinitelyNotNullType.create(
-                        lowerBound, session.typeContext,
-                        // Upper bounds might be not initialized properly yet, so we force creating DefinitelyNotNullType
-                        // It should not affect semantics, since it would be still a valid type anyway
-                        avoidComprehensiveCheck = true,
-                    ) ?: lowerBound
+//                is ConeTypeParameterType ->
+//                    ConeDefinitelyNotNullType.create(
+//                        lowerBound, session.typeContext,
+//                        // Upper bounds might be not initialized properly yet, so we force creating DefinitelyNotNullType
+//                        // It should not affect semantics, since it would be still a valid type anyway
+//                        avoidComprehensiveCheck = true,
+//                    ) ?: lowerBound
 
                 else -> lowerBound
             }
