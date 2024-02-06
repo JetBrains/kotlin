@@ -60,12 +60,12 @@ internal object KotlinNativeBundleArtifactFormat {
 
     internal fun addKotlinNativeBundleConfiguration(project: Project) {
         project.configurations
-            .maybeCreateResolvable(KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME).also { configuration ->
-                configuration.defaultDependencies {
+            .maybeCreateResolvable(KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME) {
+                defaultDependencies {
                     it.add(project.dependencies.create(NativeCompilerDownloader.getCompilerDependencyNotation(project)))
                 }
-                if (!configuration.attributes.contains(attribute)) {
-                    configuration.attributes.setAttribute(attribute, KotlinNativeBundleArtifactsTypes.DIRECTORY)
+                if (!attributes.contains(attribute)) {
+                    attributes.setAttribute(attribute, KotlinNativeBundleArtifactsTypes.DIRECTORY)
                 }
             }
     }
