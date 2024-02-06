@@ -284,12 +284,12 @@ abstract class AbstractTypeApproximator(
     }
 
     private fun approximateCapturedType(
-        type: CapturedTypeMarker,
+        capturedType: CapturedTypeMarker,
         conf: TypeApproximatorConfiguration,
         toSuper: Boolean,
         depth: Int
     ): KotlinTypeMarker? {
-        val supertypes = type.typeConstructor().supertypes()
+        val supertypes = capturedType.typeConstructor().supertypes()
         val baseSuperType = when (supertypes.size) {
             0 -> nullableAnyType() // Let C = in Int, then superType for C and C? is Any?
             1 -> supertypes.single()
@@ -312,12 +312,12 @@ abstract class AbstractTypeApproximator(
             // Once NI will be more stabilized, we'll use more specific type
 
             else -> {
-                val projection = type.typeConstructorProjection()
+                val projection = capturedType.typeConstructorProjection()
                 if (projection.isStarProjection()) intersectTypes(supertypes.toList())
                 else projection.getType()
             }
         }
-        val baseSubType = type.lowerType() ?: nothingType()
+        val baseSubType = capturedType.lowerType() ?: nothingType()
         // This replacement is important for resolving the code like below in K2.
         //     fun bar(y: FieldOrRef<*>) = y.field
         //     interface FieldOrRef<FF : AbstractField<FF>> { val field: FF }
@@ -333,11 +333,11 @@ abstract class AbstractTypeApproximator(
         // and builds AbstractField<AbstractField<AbstractField<Any?>>>.
         // The check it == type here is intended to find a recursion inside a captured type.
         // A similar replacement for baseSubType looks unnecessary, no hits in the tests.
-        val replacedSuperType = if (isK2 && toSuper && baseSuperType.getArguments().any { it == type }) {
+        val replacedSuperType = if (isK2 && toSuper && baseSuperType.getArguments().any { it == capturedType }) {
             baseSuperType.replaceArguments {
                 // It's possible to use the stub here, because K2 star projection is an object and
                 // in fact this parameter is never used
-                if (it != type) it else createStarProjection(TypeParameterMarkerStubForK2StarProjection)
+                if (it != capturedType) it else createStarProjection(TypeParameterMarkerStubForK2StarProjection)
             }
         } else baseSuperType
 
@@ -346,7 +346,7 @@ abstract class AbstractTypeApproximator(
         }
         val approximatedSubType by lazy(LazyThreadSafetyMode.NONE) { approximateToSubType(baseSubType, conf, depth) }
 
-        if (!conf.capturedType(ctx, type)) {
+        if (!conf.capturedType(ctx, capturedType)) {
             /**
              * Here everything is ok if bounds for this captured type should not be approximated.
              * But. If such bounds contains some unauthorized types, then we cannot leave this captured type "as is".
@@ -365,8 +365,8 @@ abstract class AbstractTypeApproximator(
         // C = in Int, Int <: C => Int? <: C?
         // C = out Number, C <: Number => C? <: Number?
         return when {
-            type.isMarkedNullable() -> baseResult.withNullability(true)
-            type.isProjectionNotNull() -> baseResult.withNullability(false)
+            capturedType.isMarkedNullable() -> baseResult.withNullability(true)
+            capturedType.isProjectionNotNull() -> baseResult.withNullability(false)
             else -> baseResult
         }.let {
             when {
