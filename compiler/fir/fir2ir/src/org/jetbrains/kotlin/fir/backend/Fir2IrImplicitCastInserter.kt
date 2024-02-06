@@ -175,6 +175,15 @@ class Fir2IrImplicitCastInserter(
 
     override fun visitTryExpression(tryExpression: FirTryExpression, data: IrElement): IrElement {
         val irTry = data as IrTry
+
+        (irTry.tryResult as? IrContainerExpression)?.let {
+            irTry.tryResult = it.insertImplicitCasts()
+        }
+        for (catch in irTry.catches) {
+            (catch.result as? IrContainerExpression)?.let {
+                catch.result = it.insertImplicitCasts()
+            }
+        }
         (irTry.finallyExpression as? IrContainerExpression)?.let {
             irTry.finallyExpression = it.insertImplicitCasts(coerceLastExpressionToUnit = true)
         }
