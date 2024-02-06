@@ -38708,6 +38708,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava17"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
 
+            @Test
+            @TestMetadata("newListMethods.kt")
+            public void testNewListMethods() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithJava17/newListMethods.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord")
             @TestDataPath("$PROJECT_ROOT")

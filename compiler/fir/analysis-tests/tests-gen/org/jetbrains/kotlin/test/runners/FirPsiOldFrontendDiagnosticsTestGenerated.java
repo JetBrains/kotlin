@@ -36460,6 +36460,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava17"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
             }
 
+            @Test
+            @TestMetadata("newListMethods.kt")
+            public void testNewListMethods() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithJava17/newListMethods.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord")
             @TestDataPath("$PROJECT_ROOT")

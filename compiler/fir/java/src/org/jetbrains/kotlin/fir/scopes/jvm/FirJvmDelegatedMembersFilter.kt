@@ -28,7 +28,7 @@ class FirJvmDelegatedMembersFilter(private val session: FirSession) : FirDelegat
 
     override fun shouldNotGenerateDelegatedMember(memberSymbolFromSuperInterface: FirCallableSymbol<*>): Boolean {
         val original = memberSymbolFromSuperInterface.unwrapFakeOverrides()
-        return original.isNonAbstractJavaMethod() || original.hasJvmDefaultAnnotation() || original.isBuiltInMemberMappedToJavaDefault()
+        return original.isNonAbstractJavaMethod() || original.hasJvmDefaultAnnotation() || original.isBuiltInMemberMappedToJavaDefault() || original.origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk
     }
 
     // If java interface method is not abstract, then it's a default method.

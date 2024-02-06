@@ -7,11 +7,17 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
@@ -26,6 +32,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
@@ -36,6 +44,7 @@ import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
  * @param firKotlinClass Kotlin version of built-in class mapped to some JDK class (e.g. kotlin.collections.List)
@@ -75,8 +84,10 @@ class JvmMappedScope(
         }
     }
 
+    private val isList: Boolean = firKotlinClass.classId == StandardClassIds.List
+
     // It's ok to have a super set of actually available member names
-    private val myCallableNames by lazy {
+    private val myCallableNames: Set<Name> by lazy {
         if (firKotlinClass.isFinal) {
             // For final classes we don't need to load HIDDEN members at all because they might not be overridden
             val signaturePrefix = firJavaClass.symbol.classId.toString()
@@ -91,6 +102,13 @@ class JvmMappedScope(
             declaredMemberScope.getCallableNames() + names
         } else {
             declaredMemberScope.getCallableNames() + javaMappedClassUseSiteScope.getCallableNames()
+        }.let {
+            // If getFirst/getLast don't exist, we need to add them so that we can mark overrides as deprecated (KT-65440)
+            if (isList && (GET_FIRST_NAME !in it || GET_LAST_NAME !in it)) {
+                it + listOf(GET_FIRST_NAME, GET_LAST_NAME)
+            } else {
+                it
+            }
         }
     }
 
@@ -111,6 +129,8 @@ class JvmMappedScope(
                 }
             }
         }
+
+        var needsHiddenFake = isList && (name == GET_FIRST_NAME || name == GET_LAST_NAME)
 
         javaMappedClassUseSiteScope.processFunctionsByName(name) processor@{ symbol ->
             if (!symbol.isDeclaredInMappedJavaClass() || !(symbol.fir.status as FirResolvedDeclarationStatus).visibility.isPublicAPI) {
@@ -137,8 +157,46 @@ class JvmMappedScope(
             if ((jdkMemberStatus == JDKMemberStatus.HIDDEN || jdkMemberStatus == JDKMemberStatus.HIDDEN_IN_DECLARING_CLASS_ONLY) && firKotlinClass.isFinal) return@processor
 
             val newSymbol = mappedSymbolCache.mappedFunctions.getValue(symbol, this to jdkMemberStatus)
+
+            if (needsHiddenFake &&
+                allJavaMappedSuperClassIds.any {
+                    SignatureBuildingComponents.signature(it, jvmDescriptor) in JvmBuiltInsSignatures.DEPRECATED_LIST_METHODS
+                }
+            ) {
+                needsHiddenFake = false
+            }
+
             processor(newSymbol)
         }
+
+        if (needsHiddenFake) {
+            // We're in JDK < 21, i.e., getFirst/getLast don't exist in the List interface yet.
+            // We create a fake version of them for the sole purpose of reporting deprecations on to-become-overrides like in LinkedList.
+            // This is because we want to rename these two methods in the future,
+            // and we want to warn users of older JDKs of a potential breaking change caused by upgrading to JDK >= 21.
+            // See KT-65440.
+            val fakeSymbol = mappedSymbolCache.hiddenFakeFunctions.getValue(name, this)
+            processor(fakeSymbol)
+        }
+    }
+
+    private fun createHiddenFakeFunction(name: Name): FirNamedFunctionSymbol {
+        return buildSimpleFunction {
+            moduleData = firKotlinClass.moduleData
+            origin = FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk
+            status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.OPEN, EffectiveVisibility.Public)
+            returnTypeRef = buildResolvedTypeRef {
+                type = firKotlinClass.typeParameters.firstOrNull()
+                    ?.let { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isNullable = false) }
+                    ?: ConeErrorType(ConeSimpleDiagnostic("No type parameter found on '${firKotlinClass.classKind}'"))
+            }
+            this.name = name
+            dispatchReceiverType = firKotlinClass.defaultType()
+            symbol = FirNamedFunctionSymbol(CallableId(firKotlinClass.classId, name))
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
+        }.apply {
+            isHiddenEverywhereBesideSuperCalls = HiddenEverywhereBesideSuperCallsStatus.HIDDEN_FAKE
+        }.symbol
     }
 
     private fun isOverrideOfKotlinDeclaredFunction(symbol: FirNamedFunctionSymbol) =
@@ -335,6 +393,11 @@ class JvmMappedScope(
                     scope.createMappedFunction(symbol, jdkMemberStatus)
                 }
 
+            val hiddenFakeFunctions: FirCache<Name, FirNamedFunctionSymbol, JvmMappedScope> =
+                cachesFactory.createCache { name, scope ->
+                    scope.createHiddenFakeFunction(name)
+                }
+
             val mappedConstructors: FirCache<FirConstructorSymbol, FirConstructorSymbol, JvmMappedScope> =
                 cachesFactory.createCache { symbol, scope ->
                     scope.createMappedConstructor(symbol)
@@ -357,6 +420,9 @@ class JvmMappedScope(
                 },
                 session
             )
+
+        private val GET_FIRST_NAME = Name.identifier("getFirst")
+        private val GET_LAST_NAME = Name.identifier("getLast")
     }
 
     override fun toString(): String {

@@ -331,7 +331,7 @@ var FirCallableDeclaration.isHiddenEverywhereBesideSuperCalls: HiddenEverywhereB
 )
 
 enum class HiddenEverywhereBesideSuperCallsStatus {
-    HIDDEN, HIDDEN_IN_DECLARING_CLASS_ONLY
+    HIDDEN, HIDDEN_IN_DECLARING_CLASS_ONLY, HIDDEN_FAKE,
 }
 
 private object IsHiddenToOvercomeSignatureClash : FirDeclarationDataKey()
@@ -360,5 +360,7 @@ fun FirCallableSymbol<*>.isHidden(isSuperCall: Boolean, isOverridden: Boolean): 
         // we report a deprecation warning on super calls because we might want to rename the method in the future
         // (getFirst -> first).
         HiddenEverywhereBesideSuperCallsStatus.HIDDEN_IN_DECLARING_CLASS_ONLY -> if (isSuperCall || isOverridden) CallToPotentiallyHiddenSymbolResult.VisibleWithDeprecation else CallToPotentiallyHiddenSymbolResult.Hidden
+        // HIDDEN_FAKE is always hidden (even for super calls), unless overridden.
+        HiddenEverywhereBesideSuperCallsStatus.HIDDEN_FAKE -> if (isOverridden) CallToPotentiallyHiddenSymbolResult.VisibleWithDeprecation else CallToPotentiallyHiddenSymbolResult.Hidden
     }
 }

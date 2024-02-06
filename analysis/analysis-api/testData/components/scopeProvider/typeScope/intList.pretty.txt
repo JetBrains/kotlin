@@ -13,6 +13,8 @@ val size: kotlin.Int
 fun equals(other: kotlin.Any?): kotlin.Boolean
 fun hashCode(): kotlin.Int
 fun toString(): kotlin.String
+fun getFirst(): kotlin.Int
+fun getLast(): kotlin.Int
 
 
 Declaration Scope:
@@ -30,3 +32,6 @@ val size: kotlin.Int
 fun equals(other: kotlin.Any?): kotlin.Boolean
 fun hashCode(): kotlin.Int
 fun toString(): kotlin.String
+fun getFirst(): E
+fun getLast(): E
+
