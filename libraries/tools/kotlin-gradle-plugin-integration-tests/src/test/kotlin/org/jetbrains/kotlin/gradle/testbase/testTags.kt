@@ -56,6 +56,18 @@ annotation class JsGradlePluginTests
 annotation class NativeGradlePluginTests
 
 /**
+ * Add it to tests covering Swift Export Kotlin Gradle Plugin/Native platform.
+ *
+ * You could add tag onto test suite once, but then all tests
+ * in test suite should be for the related tag.
+ * Preferably add tag for each test.
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+@Tag("SwiftExportKGP")
+annotation class SwiftExportGradlePluginTests
+
+/**
  * Add it to tests covering Kotlin Multiplatform Gradle plugin.
  *
  * You could add tag onto test suite once, but then all tests

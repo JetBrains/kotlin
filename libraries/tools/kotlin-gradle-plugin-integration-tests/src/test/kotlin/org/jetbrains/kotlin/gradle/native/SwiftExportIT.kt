@@ -17,7 +17,7 @@ import kotlin.io.path.exists
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Swift Export")
-@NativeGradlePluginTests
+@SwiftExportGradlePluginTests
 @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
 @OptIn(EnvironmentalVariablesOverride::class)
 class SwiftExportIT : KGPBaseTest() {

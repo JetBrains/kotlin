@@ -17,7 +17,7 @@ import java.nio.file.Path
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for running Swift Export XCTests")
-@NativeGradlePluginTests
+@SwiftExportGradlePluginTests
 @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
 class SwiftExportXCIT : KGPBaseTest() {
 
