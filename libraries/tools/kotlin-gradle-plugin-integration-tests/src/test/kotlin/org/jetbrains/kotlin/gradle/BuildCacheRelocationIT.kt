@@ -221,18 +221,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = buildOptionsBeforeCaching,
             localRepoDir = localRepoDir
-        ) {
-            it.subProject("build-cache-app").buildGradleKts.append(
-                """
-                
-                repositories {
-                    maven {
-                        setUrl("$localRepoDir")
-                    }
-                }
-                """.trimIndent()
-            )
-        }
+        )
 
         checkBuildCacheRelocation(
             firstProject,
