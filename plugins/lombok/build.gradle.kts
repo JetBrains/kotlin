@@ -60,10 +60,9 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
     workingDir = rootDir
 
+    val testRuntimeClasspathFiles: FileCollection = configurations.testRuntimeClasspath.get()
     doFirst {
-        project.configurations
-            .testRuntimeClasspath.get()
-            .files
+        testRuntimeClasspathFiles
             .find { "guava" in it.name }
             ?.absolutePath
             ?.let { systemProperty("org.jetbrains.kotlin.test.guava-location", it) }
