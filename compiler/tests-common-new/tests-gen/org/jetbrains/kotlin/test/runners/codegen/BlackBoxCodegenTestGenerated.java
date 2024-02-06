@@ -2612,6 +2612,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("pclaRootIsTrySyntheticCallWithDelegate.kt")
+        public void testPclaRootIsTrySyntheticCallWithDelegate() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/pclaRootIsTrySyntheticCallWithDelegate.kt");
+        }
+
+        @Test
         @TestMetadata("posptonedPCLACallInsideStringInterpolation.kt")
         public void testPosptonedPCLACallInsideStringInterpolation() throws Exception {
             runTest("compiler/testData/codegen/box/builderInference/posptonedPCLACallInsideStringInterpolation.kt");

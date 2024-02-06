@@ -2433,6 +2433,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/builderInference/pclaRootIsTrySyntheticCall.kt");
         }
 
+        @TestMetadata("pclaRootIsTrySyntheticCallWithDelegate.kt")
+        public void testPclaRootIsTrySyntheticCallWithDelegate() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/pclaRootIsTrySyntheticCallWithDelegate.kt");
+        }
+
         @TestMetadata("posptonedPCLACallInsideStringInterpolation.kt")
         public void testPosptonedPCLACallInsideStringInterpolation() throws Exception {
             runTest("compiler/testData/codegen/box/builderInference/posptonedPCLACallInsideStringInterpolation.kt");
