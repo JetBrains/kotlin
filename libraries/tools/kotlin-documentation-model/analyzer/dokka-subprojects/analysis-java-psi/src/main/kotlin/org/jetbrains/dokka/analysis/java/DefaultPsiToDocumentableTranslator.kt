@@ -48,7 +48,7 @@ internal class DefaultPsiToDocumentableTranslator : AsyncSourceToDocumentableTra
 
             DModule(
                 name = context.configuration.moduleName,
-                packages = psiFiles.parallelMapNotNull { it }.groupBy { it.packageName }.toList()
+                packages = psiFiles.groupBy { it.packageName }.toList()
                     .parallelMap { (packageName: String, psiFiles: List<PsiJavaFile>) ->
                         docParser.parsePackage(packageName, psiFiles)
                     },
