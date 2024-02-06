@@ -9,3 +9,9 @@ MODULE main
 						<set-?>: kotlin/Int
 					K2
 						value: kotlin/Int
+	MODULE METADATA
+		Property: module.metadata.optionalAnnotations
+			K1
+				[Anno]
+			K2
+				[]

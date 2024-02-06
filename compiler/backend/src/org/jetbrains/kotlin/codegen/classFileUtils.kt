@@ -25,6 +25,14 @@ fun ClassFileFactory.getClassFiles(): Iterable<OutputFile> {
     return asList().filterClassFiles()
 }
 
+fun ClassFileFactory.getKotlinModuleFile(): OutputFile? = asList().filter { it.relativePath.endsWith(".kotlin_module") }.run {
+    when (size) {
+        0 -> null
+        1 -> single()
+        else -> error("Module has non-unique .kotlin_metadata file")
+    }
+}
+
 fun List<OutputFile>.filterClassFiles(): List<OutputFile> {
     return filter { it.relativePath.endsWith(".class") }
 }
