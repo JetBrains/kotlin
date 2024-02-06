@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-59138
 // SKIP_TXT
 // FILE: JavaClass.java

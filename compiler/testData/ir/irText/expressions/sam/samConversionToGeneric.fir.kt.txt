@@ -1,8 +1,8 @@
-fun test1(): J<String> {
+fun test1(): J<@FlexibleNullability String?> {
   return local fun <anonymous>(x: @FlexibleNullability String?): @FlexibleNullability String? {
     return x
   }
- /*-> J<String> */
+ /*-> J<@FlexibleNullability String?> */
 }
 
 fun test10(fn: Function1<Int, String>) {
@@ -49,4 +49,3 @@ fun test8(efn: @ExtensionFunctionType Function1<String, String>): J<@FlexibleNul
 fun test9(efn: @ExtensionFunctionType Function1<String, String>) {
   bar<@FlexibleNullability String?>(j = efn /*-> J<@FlexibleNullability String?> */)
 }
-

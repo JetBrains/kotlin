@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-58933
 // FILE: J.java
 public interface J<T> {

@@ -6,12 +6,12 @@ import java.util.stream.Collectors
 
 fun foo(){
     listOf("").stream().collect(
-        Collectors.groupingBy(
+        <!ARGUMENT_TYPE_MISMATCH, NEW_INFERENCE_ERROR!>Collectors.groupingBy(
             { it },
             Collectors.collectingAndThen(
                 Collectors.counting<String>(),
                 Long::toInt
             )
-        )
+        )<!>
     )
 }

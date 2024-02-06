@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParamete
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -55,7 +56,11 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             when (val typeArgument = candidate.typeArgumentMapping[index]) {
                 is FirTypeProjectionWithVariance -> csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
-                    typeArgument.typeRef.coneType.fullyExpandedType(context.session),
+                    getTypePreservingFlexibilityWrtTypeVariable(
+                        typeArgument.typeRef.coneType,
+                        typeParameter,
+                        context.session
+                    ).fullyExpandedType(context.session),
                     ConeExplicitTypeParameterConstraintPosition(typeArgument)
                 )
                 is FirStarProjection -> csBuilder.addEqualityConstraint(
@@ -74,6 +79,28 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 sink.reportDiagnostic(InferenceError(error))
             }
             sink.yieldIfNeed()
+        }
+    }
+
+    private fun getTypePreservingFlexibilityWrtTypeVariable(
+        type: ConeKotlinType,
+        typeParameter: FirTypeParameterRef,
+        session: FirSession,
+    ): ConeKotlinType {
+        return if (typeParameter.shouldBeFlexible(session.typeContext)) {
+            val notNullType = type.withNullability(ConeNullability.NOT_NULL, session.typeContext) as ConeSimpleKotlinType
+            ConeFlexibleType(notNullType, notNullType.withNullability(ConeNullability.NULLABLE, session.typeContext))
+        } else {
+            type
+        }
+    }
+
+    private fun FirTypeParameterRef.shouldBeFlexible(context: ConeTypeContext): Boolean {
+        return symbol.resolvedBounds.any {
+            val type = it.coneType
+            type is ConeFlexibleType || with(context) {
+                (type.typeConstructor() as? ConeTypeParameterLookupTag)?.symbol?.fir?.shouldBeFlexible(context) ?: false
+            }
         }
     }
 }

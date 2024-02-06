@@ -587,7 +587,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return intersectionType.withAlternative(secondCandidate)
     }
 
-    override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean = true
+    override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean = false
 
     override fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker {
         require(this is ConeKotlinType)

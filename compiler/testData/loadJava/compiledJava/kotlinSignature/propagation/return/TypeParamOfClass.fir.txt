@@ -1,5 +1,5 @@
 public abstract interface TypeParamOfClass : R|kotlin/Any| {
-    public abstract interface Sub<T : R|kotlin/Any!|> : R|test/TypeParamOfClass.Super<ft<T & Any, T?>>| {
+    public abstract interface Sub<T : R|kotlin/Any!|> : R|test/TypeParamOfClass.Super<T!>| {
         public abstract fun foo(): R|@EnhancedNullability T & Any|
 
     }

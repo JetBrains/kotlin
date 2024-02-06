@@ -5,8 +5,8 @@ FILE: concurrentMapOfAliases.kt
             super<R|kotlin/Any|>()
         }
 
-        private final val foo: R|java/util/concurrent/ConcurrentHashMap<kotlin/String, kotlin/CharSequence>| = Q|java/util/concurrent|.R|java/util/concurrent/ConcurrentHashMap.ConcurrentHashMap|<R|kotlin/String|, R|kotlin/CharSequence|>()
-            private get(): R|java/util/concurrent/ConcurrentHashMap<kotlin/String, kotlin/CharSequence>|
+        private final val foo: R|java/util/concurrent/ConcurrentHashMap<kotlin/String!, kotlin/CharSequence!>| = Q|java/util/concurrent|.R|java/util/concurrent/ConcurrentHashMap.ConcurrentHashMap|<R|kotlin/String!|, R|kotlin/CharSequence!|>()
+            private get(): R|java/util/concurrent/ConcurrentHashMap<kotlin/String!, kotlin/CharSequence!>|
 
         private final fun bar(): R|kotlin/Unit| {
             this@R|/A|.R|/A.foo|.R|SubstitutionOverride<java/util/concurrent/ConcurrentHashMap.get: R|@EnhancedNullability kotlin/CharSequence?|>|(String(dd))?.{ (this@R|/A|, $subj$).R|/A.baz|() }
