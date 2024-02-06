@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
-// WITH_STDLIB
+
+fun println() {}
 
 fun test1() {
     try {

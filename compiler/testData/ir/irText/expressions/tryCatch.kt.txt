@@ -1,3 +1,6 @@
+fun println() {
+}
+
 fun test1() {
   try { // BLOCK
     println()
