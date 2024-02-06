@@ -9,9 +9,19 @@ import kotlinx.validation.api.*
 import kotlinx.validation.api.buildGradleKts
 import kotlinx.validation.api.resolve
 import kotlinx.validation.api.test
+import org.gradle.testkit.runner.GradleRunner
+import org.junit.Assume
 import org.junit.Test
 
 class JavaVersionsCompatibilityTest : BaseKotlinGradleTest() {
+    private fun skipInDebug(runner: GradleRunner) {
+        Assume.assumeFalse(
+            "The test requires a separate Gradle process as it uses a different JVM version, " +
+                    "so it could not be executed with debug turned on.",
+            runner.isDebug
+        )
+    }
+
     private fun checkCompatibility(useMaxVersion: Boolean) {
         val runner = test(gradleVersion = "8.5", injectPluginClasspath = false) {
             buildGradleKts {
@@ -32,6 +42,8 @@ class JavaVersionsCompatibilityTest : BaseKotlinGradleTest() {
                 arguments.add(":apiCheck")
             }
         }
+
+        skipInDebug(runner)
 
         runner.build().apply {
             assertTaskSuccess(":apiCheck")
@@ -58,6 +70,8 @@ class JavaVersionsCompatibilityTest : BaseKotlinGradleTest() {
                 arguments.add(":apiCheck")
             }
         }
+
+        skipInDebug(runner)
 
         runner.build().apply {
             assertTaskSuccess(":apiCheck")
