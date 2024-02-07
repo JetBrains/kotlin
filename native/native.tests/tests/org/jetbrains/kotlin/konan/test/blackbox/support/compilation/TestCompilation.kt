@@ -491,6 +491,7 @@ internal class SwiftCompilation(
 
 internal abstract class FinalBinaryCompilation<A : TestCompilationArtifact>(
     settings: Settings,
+    cacheMode: CacheMode,
     freeCompilerArgs: TestCompilerArgs,
     sourceModules: Collection<TestModule>,
     dependencies: Iterable<TestCompilationDependency<*>>,
@@ -508,7 +509,7 @@ internal abstract class FinalBinaryCompilation<A : TestCompilationArtifact>(
     gcScheduler = settings.get(),
     allocator = settings.get(),
     pipelineType = settings.getStageDependentPipelineType(),
-    cacheMode = settings.get(),
+    cacheMode = cacheMode,
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
     sourceModules = sourceModules,
@@ -534,6 +535,7 @@ internal class ExecutableCompilation(
     tryPassSystemCacheDirectory: Boolean = true,
 ) : FinalBinaryCompilation<Executable>(
     settings = settings,
+    cacheMode = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     sourceModules = sourceModules,
     dependencies = dependencies,
@@ -692,14 +694,13 @@ internal class TestBundleCompilation(
     tryPassSystemCacheDirectory: Boolean = true,
 ) : FinalBinaryCompilation<XCTestBundle>(
     settings,
+    CacheMode.WithoutCache,  // TODO: investigate why enabling caches lead to link failure "Undefined symbols"
     freeCompilerArgs,
     sourceModules,
     dependencies,
     expectedArtifact,
     tryPassSystemCacheDirectory
 ) {
-    // TODO: Enabling caches lead to link failure "Undefined symbols for architecture"
-//    override val cacheMode: CacheMode = CacheMode.WithoutCache
     override val binaryOptions = BinaryOptions.RuntimeAssertionsMode.chooseFor(cacheMode, optimizationMode, freeCompilerArgs.assertionsMode)
 
     private val partialLinkageConfig: UsedPartialLinkageConfig = settings.get()
