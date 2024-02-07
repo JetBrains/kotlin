@@ -94,6 +94,15 @@ internal fun getGroovyRepositoryBlock(
     |        mavenCentral()
     |        google()
     |        ivy {
+    |            url = "https://download.jetbrains.com/kotlin/native/builds/releases"
+    |            patternLayout {
+    |                artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
+    |            }
+    |            metadataSources {
+    |                artifact()
+    |            }
+    |        }
+    |        ivy {
     |            url = "https://download.jetbrains.com/kotlin/native/builds/dev"
     |            patternLayout {
     |                artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
@@ -164,6 +173,9 @@ internal fun getGroovyRepositoryBlock(
     |            content { 
     |                includeModule("google.d8", "v8") 
     |            }
+    |        }
+    |        maven {
+    |            url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/"
     |        }
     |        ${additionalDependencyRepositories.map { repo -> "maven{ url = \"$repo\" }" }.joinToString("\n")}
     |        ${localRepo?.absolutePathString()?.let { repo -> "maven{ url = \"${repo.replace("\\", "\\\\")}\" }" } ?: ""}
@@ -255,6 +267,15 @@ internal fun getKotlinRepositoryBlock(
     |        mavenLocal()
     |        mavenCentral()
     |        google()
+    |        ivy {
+    |            url = uri("https://download.jetbrains.com/kotlin/native/builds/releases")
+    |            patternLayout {
+    |                artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
+    |            }
+    |            metadataSources {
+    |                artifact()
+    |            }
+    |        }
     |        ivy {
     |            url = uri("https://download.jetbrains.com/kotlin/native/builds/dev")
     |            patternLayout {
