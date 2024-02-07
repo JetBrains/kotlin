@@ -12,6 +12,8 @@ import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetWithPublishableMultiplatformResources
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetWithResolvableMultiplatformResources
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -36,6 +38,8 @@ abstract class KotlinNativeTarget @Inject constructor(
     project: Project,
     val konanTarget: KonanTarget,
 ) : HasConfigurableCompilerOptions<KotlinNativeCompilerOptions>,
+    KotlinTargetWithPublishableMultiplatformResources,
+    KotlinTargetWithResolvableMultiplatformResources,
     KotlinTargetWithBinaries<KotlinNativeCompilation, KotlinNativeBinaryContainer>(
     project,
     KotlinPlatformType.native

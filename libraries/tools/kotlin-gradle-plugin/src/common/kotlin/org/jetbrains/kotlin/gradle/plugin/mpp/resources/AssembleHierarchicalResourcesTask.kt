@@ -97,7 +97,7 @@ internal abstract class AssembleHierarchicalResourcesTask : DefaultTask() {
 
         // FIXME: ???
         if (outputDirectoryFile.listFiles()?.isEmpty() != false) {
-            // Output an empty directory for the zip task
+            // Output an empty directory for the zip task because otherwise Component publication breaks
             // FIXME: zipTree doesn't get copied if the zip is empty
             outputDirectoryFile.resolve(relativeResourcePlacement.get()).mkdirs()
         }

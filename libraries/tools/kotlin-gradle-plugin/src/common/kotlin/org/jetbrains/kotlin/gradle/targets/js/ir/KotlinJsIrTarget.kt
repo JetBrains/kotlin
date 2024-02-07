@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetWithPublishableMultiplatformResources
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetWithResolvableMultiplatformResources
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
@@ -52,7 +54,9 @@ constructor(
     KotlinWasmJsTargetDsl,
     KotlinWasmWasiTargetDsl,
     KotlinJsSubTargetContainerDsl,
-    KotlinWasmSubTargetContainerDsl {
+    KotlinWasmSubTargetContainerDsl,
+    KotlinTargetWithPublishableMultiplatformResources,
+    KotlinTargetWithResolvableMultiplatformResources {
 
     private val propertiesProvider = PropertiesProvider(project)
 

@@ -36,9 +36,6 @@ internal abstract class ResolveResourcesFromDependenciesTask : DefaultTask() {
                 copy.from(archiveOperations.zipTree(it))
             }
             copy.into(outputDirectory)
-            // Copy empty directories for a target without resources, but with resources publication
-            // FIXME: This doesn't work
-            // copy.includeEmptyDirs = true
             copy.duplicatesStrategy = DuplicatesStrategy.FAIL
         }
     }

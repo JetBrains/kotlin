@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.HasConfigurableCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetWithPublishableMultiplatformResources
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesAndAssetsPublication
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.utils.*
@@ -30,6 +31,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
     final override val targetName: String,
     project: Project,
 ) : AbstractKotlinTarget(project),
+    KotlinTargetWithPublishableMultiplatformResources,
     HasConfigurableCompilerOptions<KotlinJvmCompilerOptions> {
 
     final override val disambiguationClassifier: String = targetName

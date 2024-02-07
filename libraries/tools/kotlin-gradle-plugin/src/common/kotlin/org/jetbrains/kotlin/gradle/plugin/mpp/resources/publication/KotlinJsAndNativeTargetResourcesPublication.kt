@@ -7,17 +7,18 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication
 
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.bundling.Zip
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetWithPublishableMultiplatformResources
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.registerAssembleHierarchicalResourcesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 
-internal fun AbstractKotlinTarget.setUpResourcesVariant(compilation: KotlinCompilation<*>): DefaultKotlinUsageContext {
+internal fun <T> T.setUpResourcesVariant(compilation: KotlinCompilation<*>): DefaultKotlinUsageContext
+where T : AbstractKotlinTarget, T : KotlinTargetWithPublishableMultiplatformResources {
     var targetRegistersResourcesForPublication = false
     val resourcesVariant = DefaultKotlinUsageContext(
         compilation = compilation,
@@ -29,7 +30,7 @@ internal fun AbstractKotlinTarget.setUpResourcesVariant(compilation: KotlinCompi
         }
     )
 
-    project.multiplatformExtension.resourcesPublicationExtension.subscribeOnPublishResources(this) { resources ->
+    resourcesPublicationExtension.subscribeOnPublishResources { resources ->
         // FIXME: Is this logic single-threaded?
         targetRegistersResourcesForPublication = true
         project.launch {
@@ -38,7 +39,7 @@ internal fun AbstractKotlinTarget.setUpResourcesVariant(compilation: KotlinCompi
                 resources,
             )
             val zippedResourcesDirectory = project.layout.buildDirectory.dir(
-                "${KotlinTargetResourcesPublication.MULTIPLATFORM_RESOURCES_DIRECTORY}/zip-for-publication/${targetName}"
+                "${KotlinTargetResourcesPublicationImpl.MULTIPLATFORM_RESOURCES_DIRECTORY}/zip-for-publication/${targetName}"
             )
             val zipResourcesForPublication = project.registerTask<Zip>(
                 "${targetName}ZipMultiplatformResourcesForPublication"

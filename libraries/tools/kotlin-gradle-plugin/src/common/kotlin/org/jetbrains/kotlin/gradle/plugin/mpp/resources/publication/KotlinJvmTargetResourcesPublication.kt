@@ -25,9 +25,7 @@ internal val SetUpMultiplatformJvmResourcesPublicationAction = KotlinProjectSetu
 }
 
 private suspend fun KotlinJvmTarget.setUpResourcesAndAssetsPublication() {
-    project.multiplatformExtension.resourcesPublicationExtension.subscribeOnPublishResources(
-        this
-    ) { resources ->
+    resourcesPublicationExtension.subscribeOnPublishResources { resources ->
         val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
         project.launch {
             val copyResourcesTask = mainCompilation.registerAssembleHierarchicalResourcesTask(

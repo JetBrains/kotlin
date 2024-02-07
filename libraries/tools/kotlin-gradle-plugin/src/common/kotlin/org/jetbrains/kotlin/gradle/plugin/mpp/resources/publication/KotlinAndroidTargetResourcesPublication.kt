@@ -12,7 +12,6 @@ import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
@@ -20,9 +19,9 @@ import org.jetbrains.kotlin.gradle.plugin.isAtLeast
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.androidResourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.registerAssembleHierarchicalResourcesTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfo
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.androidExtension
@@ -94,18 +93,19 @@ internal class KotlinAndroidTargetResourcesPublication {
     ) {
         val variantName = newAgpVariant.name
         if (copyTaskFromVariantName[variantName] != null) {
-            error("Setting up multiple copy tasks for variant ${variantName}")
+            error("Assets copy tasks for android variant ${variantName} already exists")
         }
-        // Prepare these copy tasks in advance because it is not possible to con
+        // Prepare these copy tasks in advance because of AGP lifecycle and configure their inputs only when KGP executes
         val copyTask = project.registerTask<AssetsCopyForAGPTask>("${variantName}AssetsCopyForAGP") {
             // FIXME: Specify output just in case?
             it.outputDirectory.set(
                 project.layout.buildDirectory.dir(
-                    "${KotlinTargetResourcesPublication.MULTIPLATFORM_RESOURCES_DIRECTORY}/assemble-hierarchically/${variantName}-tmp-for-agp"
+                    "${KotlinTargetResourcesPublicationImpl.MULTIPLATFORM_RESOURCES_DIRECTORY}/assemble-hierarchically/${variantName}-tmp-for-agp"
                 )
             )
         }
 
+        // FIXME: Why are assets nullable?
         newAgpVariant.sources.assets?.addGeneratedSourceDirectory(
             taskProvider = copyTask,
             wiredWith = { task -> task.outputDirectory }
@@ -131,7 +131,7 @@ internal suspend fun KotlinAndroidTarget.setUpResourcesAndAssetsPublication(
     compilation: KotlinCompilation<*>,
     variant: String,
 ) {
-    project.multiplatformExtension.resourcesPublicationExtension.subscribeOnPublishResources(this) { resources ->
+    androidResourcesPublicationExtension.subscribeOnPublishResources { resources ->
         project.launch {
             val copyResourcesTask = compilation.registerAssembleHierarchicalResourcesTask(
                 disambiguateName("${variant}Resources"),
@@ -143,7 +143,7 @@ internal suspend fun KotlinAndroidTarget.setUpResourcesAndAssetsPublication(
         }
     }
 
-    project.multiplatformExtension.resourcesPublicationExtension.subscribeOnAndroidPublishAssets(this) { assets ->
+    androidResourcesPublicationExtension.subscribeOnAndroidPublishAssets { assets ->
         project.kotlinMultiplatformAndroidResourcesPublication.subscribeOnCopyTaskForVariant(variant) { copyTaskForAgp ->
             project.launch {
                 val assetsVariantName = disambiguateName("${variant}Assets")

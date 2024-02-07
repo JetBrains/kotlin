@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 
 internal suspend fun KotlinCompilation<*>.registerAssembleHierarchicalResourcesTask(
     targetNamePrefix: String,
-    resources: KotlinTargetResourcesPublication.TargetResources,
+    resources: KotlinTargetResourcesPublicationImpl.TargetResources,
 ): Provider<Directory> {
     KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges.await()
 
@@ -23,7 +23,7 @@ internal suspend fun KotlinCompilation<*>.registerAssembleHierarchicalResourcesT
         rootSourceSets = kotlinSourceSets.toList(),
     )
     val outputDirectory = project.layout.buildDirectory.dir(
-        "${KotlinTargetResourcesPublication.MULTIPLATFORM_RESOURCES_DIRECTORY}/assemble-hierarchically/${targetNamePrefix}"
+        "${KotlinTargetResourcesPublicationImpl.MULTIPLATFORM_RESOURCES_DIRECTORY}/assemble-hierarchically/${targetNamePrefix}"
     )
 
     var isAlreadyConfigured = false
@@ -58,7 +58,7 @@ internal suspend fun KotlinCompilation<*>.registerAssembleHierarchicalResourcesT
 }
 
 private fun splitResourceDirectoriesBySourceSetLevel(
-    resources: KotlinTargetResourcesPublication.TargetResources,
+    resources: KotlinTargetResourcesPublicationImpl.TargetResources,
     rootSourceSets: List<KotlinSourceSet>,
 ): List<List<KotlinTargetResourcesPublication.ResourceDescriptor>> {
     val resourceDirectoriesToProcess: MutableList<MutableList<KotlinTargetResourcesPublication.ResourceDescriptor>> = mutableListOf()

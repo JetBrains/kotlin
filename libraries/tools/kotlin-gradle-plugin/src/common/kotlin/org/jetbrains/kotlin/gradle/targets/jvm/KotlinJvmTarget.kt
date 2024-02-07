@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.SourceSetCompatibilityHelper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetWithPublishableMultiplatformResources
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmRunDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmRunDslImpl
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.registerMainRunTask
@@ -48,6 +49,7 @@ abstract class KotlinJvmTarget @Inject constructor(
     project: Project,
 ) : KotlinOnlyTarget<KotlinJvmCompilation>(project, KotlinPlatformType.jvm),
     HasConfigurableCompilerOptions<KotlinJvmCompilerOptions>,
+    KotlinTargetWithPublishableMultiplatformResources,
     KotlinTargetWithTests<JvmClasspathTestRunSource, KotlinJvmTestRun> {
 
     override val testRuns: NamedDomainObjectContainer<KotlinJvmTestRun> by lazy {
