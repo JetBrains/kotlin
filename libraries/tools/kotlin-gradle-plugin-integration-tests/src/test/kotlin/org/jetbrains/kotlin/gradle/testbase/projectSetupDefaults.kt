@@ -89,8 +89,14 @@ internal fun getGroovyDependencyManagementBlock(
                     artifact()
                 }
             }
-            maven {
-                url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/"
+            ivy {
+                url = "https://download.jetbrains.com/kotlin/native/builds/releases"
+                patternLayout {
+                    artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
+                }
+                metadataSources {
+                    artifact()
+                }
             }
             ivy {
                 url = "https://github.com/yarnpkg/yarn/releases/download"
@@ -117,6 +123,9 @@ internal fun getGroovyDependencyManagementBlock(
                 content { 
                     includeModule("org.nodejs", "node") 
                 }
+            }
+            maven {
+                url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/"
             }
             ${additionalDependencyRepositories.map { repo -> "maven{ url = \"$repo\" }" }.joinToString("\n")}
             ${localRepo?.absolutePathString()?.let { repo -> "maven{ url = \"${repo.replace("\\", "\\\\")}\" }" } ?: ""}
@@ -199,6 +208,15 @@ internal fun getKotlinDependencyManagementBlock(
             google()
             ivy {
                 url = uri("https://download.jetbrains.com/kotlin/native/builds/dev")
+                patternLayout {
+                    artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
+                }
+                metadataSources {
+                    artifact()
+                }
+            }
+            ivy {
+                url = uri("https://download.jetbrains.com/kotlin/native/builds/releases")
                 patternLayout {
                     artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
                 }
