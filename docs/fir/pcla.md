@@ -72,29 +72,29 @@ happens, and describing it is actually a goal of the following parts document.
 
 ## Algorithm backbone
 
-The basic idea is that we mostly run regular lambda body analysis, with special treatment for all calls inside PCLA lambda 
-- use *shared CS*: adding their new variables there and constraints related to both *outer CS* and their own variables
-- are not being fully completed during lambda body resolution, thus should be postponed
+The basic idea is that we mostly run regular lambda body analysis, with special treatment for all calls inside. Namely,
+- They use **shared CS**: adding their new variables there and constraints related to both *outer CS* and their own variables
+- They are not being fully completed (leaving them postponed)
 
-After that, the whole *shared CS* is added to the CS of the *main candidate*, the resulting CS should be resolved as usual, and after that
-at completion results writing phase all type variables are replaced with their result types.
+After lambda's body traversal, the whole **shared CS** is added to the CS of the *main candidate*, the resulting CS should be resolved 
+as usual, and after that at completion results writing phase all type variables are replaced with their result types.
 
 ### More details
 
-* NB: There are no any stub types, just regular TV everywhere
+* NB: This algorithm doesn't use any stub types just regular type variables everywhere
 * Once we see a need to start PCLA (`FULL` completion mode no other sources of information left), we create
     * `FirPCLAInferenceSession`
     * Shared CS (see above)
 * After that, we run analysis inside the lambda
     * For nested candidates that are really trivial (no receivers with TV, no lambdas, no value arguments using outer CS), we just regularly complete them
     * For other calls
-        * Instead of empty initial CS, we supply an **outer CS**
+        * Instead of empty initial CS, we supply a **shared CS**
         * So, before introducing its own TVs, CS already contains of outer TV
         * Run candidate resolution within this CS
-        * Do not run full completion, just gather all the constraints and variable back to the **outer CS**
+        * Do not run full completion, just gather all the constraints and variable back to the **shared CS**
 
 * In the end, the **root CS** (aka CS for the Main candidate) contains TVs for all incomplete nested candidates.
-* And may just continue `FULL` completion process on the Main, i.e. fixing variables for which we now have new proper constraints, 
+* And may just continue `FULL` completion process on the Main, i.e., fixing variables for which we now have new proper constraints, 
   and analyze other lambdas.
 * In the end, beside completion results writing for the main call, we also write results (inferred type arguments/expression type update) 
   for all incomplete/postponed calls (see `FirCallCompletionResultsWriterTransformer.runPCLARelatedTasksForCandidate`).
@@ -110,30 +110,29 @@ fun main() {
         foo() // Irrelevant call that doesn't refer PCLA variables, might be fully completed
         
         // Uses outer CS
-        // Adds String <: E constraint
-        // Pushes all constraints back to the outer CS
+        // Adds String <: Ev constraint
+        // Pushes all constraints back to the shared CS
         add("") // Postponed nested call
         
-        // Uses outer CS
-        // Adds T, R, C type variables
+        // Uses shared CS
+        // Adds Tv, Rv, Cv type variables
         // And constraints
-        // String <: T [from List<String> <: Iterable<T>]
-        // MutableList<E> <: C
-        // R <: E [incorporation from MutableList<E> <: MutableCollection<in R> 
-        // Fixing T := String
+        // String <: Tv [from List<String> <: Iterable<Tv>]
+        // MutableList<Ev> <: Cv
+        // Rv <: Ev [incorporation from MutableList<Ev> <: MutableCollection<in Rv> 
+        // Fixing Tv := String
         // Starting lamda analysis
         // Having 
-        // R <: String constraint
+        // Rv <: String constraint
         // 
-        // Then add all the new constraints to the common outer CS
+        // Then add all the new constraints to the shared CS
         x.mapTo(this) { it } // Postponed nested call
     }
  
     // And start looking for CS solution that would be sound
-    // E := String
-    // R := String
-    // C := MutableList<String>
-}
+    // Ev := String
+    // Rv := String
+    // Cv := MutableList<String>
 ```
 
 ### Shared CS definition
@@ -164,23 +163,43 @@ Being called after the single successful candidate is chosen just before the com
 
 Currently, it returns `PCLA_POSTPONED_CALL` if the candidate is *postponed*.
 
-See more details on `PCLA_POSTPONED_CALL` completion mode in the section below (TODO).
+See more details on `PCLA_POSTPONED_CALL` completion mode in the [section](#pclapostponedcall-completion-mode) below.
 
 ### processPartiallyResolvedCall
 
-This callback is assumed to be called after PARTIAL or PCLA_POSTPONED_CALL completion terminates.
+This callback is assumed to be called after `PARTIAL` or `PCLA_POSTPONED_CALL` completion terminates.
 
 Mostly, it collects all *postponed* candidates and integrates their CS content into the shared CS.
 
-Also, here it substitutes a type of that given call expression with substitutor replacing fixed TVs with their result types.
+Also, here we substitute the type of that given call expression with substitutor replacing already fixed type variables
+with their result types.
+Otherwise, using fixed TVs as expression types further might lead to `TypeCheckerStateForConstraintInjector.fixedTypeVariable` 
+throwing an exception.
 
-Otherwise, using fixed TVs further might lead to `TypeCheckerStateForConstraintInjector.fixedTypeVariable` throws an exception.
+```kotlin
+fun <S> id(e: S) = e
 
-Note that this is not relevant outside PCLA context because
+fun main() {
+  buildList {
+    // `id(this.size) ` type is `Sv`.
+    // But we actually fixed `Sv` to Int because it's resolved in independent context and `Sv` is not related
+    // to the outer CS.
+    //
+    // But since we don't run completion writing results, no one would replace the expression type of the call
+    // with new resulting type.
+    // So, we do it at `processPartiallyResolvedCall`
+    val x = id(this.size)
+
+    add(x)
+  }
+}
+```
+
+Note that this situation with fixed TVs can't happen outside PCLA context because
 - For partial completion, we avoid fixing TVs that are used inside return types
 - For FULL completion, we would run completion results writing, so there would be no candidates and type variables inside return types.
 
-And the last part is fixing TVs for receiver (TODO)
+And the last part is fixing TVs for receiver (see the relevant [section](#on-demand-variable-fixation) for details).
 
 ### runLambdaCompletion
 
@@ -222,8 +241,7 @@ TODO: Mostly, the idea as the same as for lambdas, but for callable references
 
 ## PCLA_POSTPONED_CALL completion mode
 
-As it's said above, this mode is assumed to be used for postponed nested calls inside PCLA lambdas instead of FULL mode
-(i.e., mostly for top-level calls).
+This mode is assumed to be used for postponed nested calls inside PCLA lambdas instead of FULL mode (i.e., mostly for top-level calls).
 
 The set of the type variables that might be considered for fixation are obtained from the call tree of the supplied nested call itself,
 i.e., it would be a set of fresh type variables of the candidate itself, type variable of its arguments and from the return statements
@@ -301,10 +319,10 @@ It's crucial because otherwise, contract-affecting information gained would stop
 For lambdas, there might be three kinds of situations:
 - There's some lambda which input types do not contain any not fixed type variables => might be analyzed in a regular way
 - For some lambda, some of the input types satisfy PCLA requirement (see [Entry-point to PCLA](#Entry-point-to-PCLA)) 
-    => might be analyzed in recursive PCLA mode
+    => might be analyzed in recursive PCLA mode (see [Nested PCLA](#nested-pcla))
 - For all lambdas, all the input types are either proper or a top-level type variable (most complicated).
 
-In the third (and sometimes in the second) situation, we still start lambda analysis, but with the following modifications:
+In the third (and sometimes in the second) situation, we start regular lambda analysis, but with the following modifications:
 - If the lambda parameter has a type of some not fixed TV, we just leave it there.
 - If the receiver type of lambda is some type variable [on demand](#on-demand-variable-fixation). One of the options would be just leaving TV
 not fixed as for value parameter, but that seems meaningless because almost any call inside the lambda might require the member scope
@@ -391,7 +409,7 @@ In general, such a problem existed and be resolved before PCLA:
   - Substituting all TVs with special stub types
   - Compute CST with those substituted types
     - For those stub types, there’s effectively a rule that for any type `Tv` and stub `XStub`: `CST(Tv, XStub) = Tv`
-- Intuitively, such approach seems to be correct because it just chooses some result and incorporates it with other TVs, at least not hiding any contradictions
+- Intuitively, such an approach seems correct because it just chooses some result and incorporates it with other TVs, at least not hiding any contradictions
   - In the example above, we would get `Sv := MutableList<String>` and during incorporation we would assert the subtyping `Collection<S> <: Collection<String>`, thus having constraint `S <: String` making the whole CS sound
 
 But unlike a non-PCLA case, our TV might have a single constraint containing a reference to some other (outer) TV, so we need to make 
@@ -413,7 +431,7 @@ buildList {
 }
 ```
 
-For nested PCLA lambdas, everything works pretty straight-forward:
+For nested PCLA lambdas, everything works pretty straightforward:
 - We create own `FirPCLAInferenceSession` for it
 - Run analysis of the nested lambda with that session just the same way as for an outer
   - But the main candidate for `l2` automatically uses the shared CS for `l1` (thus, it's used as an outer CS for `l2`)
