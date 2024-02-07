@@ -222,12 +222,19 @@ class ResultTypeResolver(
                     !lowerType.contains { it.asSimpleType()?.isStubTypeForVariableInSubtyping() == true }
                 }
 
-                if (typesWithoutStubs.isNotEmpty()) {
-                    commonSuperType = computeCommonSuperType(typesWithoutStubs)
-                } else if (outerSystemVariablesPrefixSize > 0) {
-                    // outerSystemVariablesPrefixSize > 0 only for PCLA (K2)
-                    @OptIn(K2Only::class)
-                    commonSuperType = createSubstitutionFromSubtypingStubTypesToTypeVariables().safeSubstitute(commonSuperType)
+                when {
+                    typesWithoutStubs.isNotEmpty() -> {
+                        commonSuperType = computeCommonSuperType(typesWithoutStubs)
+                    }
+                    // `typesWithoutStubs.isEmpty()` means that there are no lower constraints without type variables.
+                    // It's only possible for the PCLA case, because otherwise none of the constraints would be considered as proper.
+                    // So, we just get currently computed `commonSuperType` and substitute all local stub types
+                    // with corresponding type variables.
+                    outerSystemVariablesPrefixSize > 0 -> {
+                        // outerSystemVariablesPrefixSize > 0 only for PCLA (K2)
+                        @OptIn(K2Only::class)
+                        commonSuperType = createSubstitutionFromSubtypingStubTypesToTypeVariables().safeSubstitute(commonSuperType)
+                    }
                 }
             }
 
