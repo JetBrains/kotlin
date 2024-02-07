@@ -194,7 +194,7 @@ class FirCallCompletionResultsWriterTransformer(
             postponedCall.transformSingle(this, null)
         }
 
-        for (callback in candidate.onCompletionResultsWritingCallbacks) {
+        for (callback in candidate.onPCLACompletionResultsWritingCallbacks) {
             callback(finalSubstitutor)
         }
 

@@ -115,9 +115,14 @@ class Candidate(
     var functionTypesOfSamConversions: HashMap<FirExpression, ConeKotlinType>? = null
     lateinit var typeArgumentMapping: TypeArgumentMapping
     val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
+
+    // PCLA-related parts
     val postponedPCLACalls = mutableListOf<FirStatement>()
     val lambdasAnalyzedWithPCLA = mutableListOf<FirAnonymousFunction>()
-    val onCompletionResultsWritingCallbacks = mutableListOf<(ConeSubstitutor) -> Unit>()
+
+    // Currently, it's only about completion results writing for property delegation inference info
+    // See the call sites of [FirDelegatedPropertyInferenceSession.completeSessionOrPostponeIfNonRoot]
+    val onPCLACompletionResultsWritingCallbacks = mutableListOf<(ConeSubstitutor) -> Unit>()
 
     var currentApplicability = CandidateApplicability.RESOLVED
         private set
