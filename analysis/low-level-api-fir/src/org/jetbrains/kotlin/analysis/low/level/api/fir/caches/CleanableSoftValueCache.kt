@@ -61,8 +61,12 @@ class CleanableSoftValueCache<K : Any, V : Any>(
             @Suppress("UNCHECKED_CAST")
             ref as SoftReferenceWithCleanup<K, V>
 
-            backingMap.remove(ref.key, ref)
-            ref.performCleanup()
+            val wasRemoved = backingMap.remove(ref.key, ref)
+
+            // If `ref` already wasn't part of the map, it will have been cleaned up by a deterministic removal operation.
+            if (wasRemoved) {
+                ref.performCleanup()
+            }
         }
     }
 
