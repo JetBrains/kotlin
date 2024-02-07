@@ -327,17 +327,21 @@ abstract class AbstractTypeApproximator(
         // Thanks to it, K1 builds the star projection type as AbstractField<*> and no other approximation is needed.
         //
         // In turn, K2 never makes such a thing (K2 star projection has no associated type).
-        // Instead, it resolves y.field as CapturedType(*) C (see usage one line below                      v ),
-        // and the constructor of this captured type has a star projection and a supertype of AbstractField(C)
+        // Instead, it resolves y.field as CapturedType(*) C (see usage one line below),
+        // and the constructor of this captured type has a star projection and a supertype of `AbstractField<C>`.
+        //
         // Without this replacement, the type approximator currently cannot handle such a situation properly
         // and builds AbstractField<AbstractField<AbstractField<Any?>>>.
         // The check it == type here is intended to find a recursion inside a captured type.
         // A similar replacement for baseSubType looks unnecessary, no hits in the tests.
         val replacedSuperType = if (isK2 && toSuper && baseSuperType.getArguments().any { it == capturedType }) {
             baseSuperType.replaceArguments {
-                // It's possible to use the stub here, because K2 star projection is an object and
-                // in fact this parameter is never used
-                if (it != capturedType) it else createStarProjection(TypeParameterMarkerStubForK2StarProjection)
+                when {
+                    it != capturedType -> it
+                    // It's possible to use the stub here, because K2 star projection is an object and
+                    // in fact this parameter is never used
+                    else -> createStarProjection(TypeParameterMarkerStubForK2StarProjection)
+                }
             }
         } else baseSuperType
 
