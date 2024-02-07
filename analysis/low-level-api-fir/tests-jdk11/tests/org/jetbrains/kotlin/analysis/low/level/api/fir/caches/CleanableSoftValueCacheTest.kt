@@ -197,35 +197,6 @@ class CleanableSoftValueCacheTest {
         assertTrue(value3.isCleanedUp)
     }
 
-    class ValueWithCleanup(val name: String) {
-        val cleanupMarker: CleanupMarker = CleanupMarker()
-
-        val isCleanedUp: Boolean get() = cleanupMarker.isCleanedUp
-
-        // This equality implementation is needed as we want to check that `compute` doesn't clean up a replaced value that is referentially
-        // equal to the new value, but does clean up a replaced value that is only equal to the new value by `equals`, not reference.
-        override fun equals(other: Any?): Boolean = (other as? ValueWithCleanup)?.name == name
-
-        override fun hashCode(): Int = name.hashCode()
-
-        override fun toString(): String = "ValueWithCleanup:$name"
-    }
-
-    /**
-     * [ValueWithCleanup] shouldn't be referenced from its [SoftValueCleaner], because this would make the value strongly reachable from the
-     * reference held by [CleanableSoftValueCache]. Instead, we need to keep [isCleanedUp] in this separate class.
-     *
-     * We cannot check the cleanup count in this test because `CleanableSoftValueCache` does not guarantee any specific number of cleanup
-     * calls.
-     */
-    class CleanupMarker : SoftValueCleaner<ValueWithCleanup> {
-        var isCleanedUp: Boolean = false
-
-        override fun cleanUp(value: ValueWithCleanup?) {
-            isCleanedUp = true
-        }
-    }
-
     private fun createCache(): CleanableSoftValueCache<String, ValueWithCleanup> = CleanableSoftValueCache { it.cleanupMarker }
 
     private fun setUpCache(vararg values: ValueWithCleanup): CleanableSoftValueCache<String, ValueWithCleanup> {
