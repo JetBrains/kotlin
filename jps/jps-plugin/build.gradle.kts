@@ -13,7 +13,7 @@ val compilerModules: Array<String> by rootProject.extra
 val generateTests by generator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsKt") {
     javaLauncher.set(
         javaToolchains.launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(11))
+            languageVersion.set(JavaLanguageVersion.of(17))
         }
     )
 }
