@@ -16354,6 +16354,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
                 public void testDirect() throws Exception {
                     runTest("compiler/testData/codegen/box/fileCheck/cinterop/direct.kt");
                 }
+
+                @Test
+                @TestMetadata("signext_zeroext_interop.kt")
+                public void testSignext_zeroext_interop() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/cinterop/signext_zeroext_interop.kt");
+                }
             }
 
             @Nested
