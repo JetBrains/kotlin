@@ -13,9 +13,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.navigationTargetsProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtModuleStructureInternals
-import org.jetbrains.kotlin.psi.KtFile
 
 interface KtFirReference : KtReference, KtSymbolBasedReference {
     fun getResolvedToPsi(analysisSession: KtAnalysisSession, referenceTargetSymbols: Collection<KtSymbol>): Collection<PsiElement> =
@@ -33,18 +30,18 @@ interface KtFirReference : KtReference, KtSymbolBasedReference {
             getResolvedToPsi(analysisSession, resolveToSymbols())
         }
 
-    private fun KtAnalysisSession.getPsiDeclarations(symbol: KtFirSymbol<*>): Collection<PsiElement> {
-        val intersectionOverriddenSymbolsOrSingle = when {
-            symbol.origin == KtSymbolOrigin.INTERSECTION_OVERRIDE && symbol is KtCallableSymbol -> symbol.getIntersectionOverriddenSymbols()
-            else -> listOf(symbol)
-        }
-        return intersectionOverriddenSymbolsOrSingle.mapNotNull { it.findPsiForReferenceResolve() }
-    }
-
-    private fun KtSymbol.findPsiForReferenceResolve(): PsiElement? {
-        require(this is KtFirSymbol<*>)
-        return firSymbol.fir.findReferencePsi()
-    }
-
     override val resolver get() = KtFirReferenceResolver
+}
+
+internal fun KtAnalysisSession.getPsiDeclarations(symbol: KtFirSymbol<*>): Collection<PsiElement> {
+    val intersectionOverriddenSymbolsOrSingle = when {
+        symbol.origin == KtSymbolOrigin.INTERSECTION_OVERRIDE && symbol is KtCallableSymbol -> symbol.getIntersectionOverriddenSymbols()
+        else -> listOf(symbol)
+    }
+    return intersectionOverriddenSymbolsOrSingle.mapNotNull { it.findPsiForReferenceResolve() }
+}
+
+private fun KtSymbol.findPsiForReferenceResolve(): PsiElement? {
+    require(this is KtFirSymbol<*>)
+    return firSymbol.fir.findReferencePsi()
 }
