@@ -347,3 +347,6 @@
 -keepclassmembers class com.intellij.lang.jvm.JvmParameter {
     com.intellij.lang.jvm.types.JvmType getType();
 }
+-keepclassmembers class com.intellij.util.containers.ContainerUtil {
+    public static java.util.concurrent.ConcurrentMap createConcurrentSoftMap();
+}
