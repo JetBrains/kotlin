@@ -6,8 +6,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrProtocolName
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getSuperClassSymbolNotAny
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 context(KtAnalysisSession, KtObjCExportSession)
@@ -15,9 +13,6 @@ fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
     require(classKind == KtClassKind.OBJECT)
     if (!isVisibleInObjC()) return null
 
-    val superClass = getSuperClassSymbolNotAny()
-    val kotlinAnyName = getDefaultSuperClassOrProtocolName()
-    val superName = if (superClass == null) kotlinAnyName else throw RuntimeException("Super class translation isn't implemented yet")
     val enumKind = this.classKind == KtClassKind.ENUM_CLASS
     val final = if (this is KtSymbolWithModality) this.modality == Modality.FINAL else false
     val attributes = if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()
@@ -28,8 +23,9 @@ fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
     val superProtocols: List<String> = superProtocols()
     val categoryName: String? = null
     val generics: List<ObjCGenericTypeDeclaration> = emptyList()
-    val superClassGenerics: List<ObjCNonNullReferenceType> = emptyList()
     val objectMembers = getDefaultMembers()
+
+    val superClass = translateSuperClass()
 
     getMemberScope().getCallableSymbols()
         .sortedWith(StableCallableOrder)
@@ -37,16 +33,16 @@ fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
         .forEach { objectMembers.add(it) }
 
     return ObjCInterfaceImpl(
-        name.objCName,
-        comment,
-        origin,
-        attributes,
-        superProtocols,
-        objectMembers,
-        categoryName,
-        generics,
-        superName.objCName,
-        superClassGenerics
+        name = name.objCName,
+        comment = comment,
+        origin = origin,
+        attributes = attributes,
+        superProtocols = superProtocols,
+        members = objectMembers,
+        categoryName = categoryName,
+        generics = generics,
+        superClass = superClass.superClassName.objCName,
+        superClassGenerics = superClass.superClassGenerics
     )
 }
 

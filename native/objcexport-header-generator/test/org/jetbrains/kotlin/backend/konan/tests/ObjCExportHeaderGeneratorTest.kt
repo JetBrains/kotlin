@@ -233,6 +233,21 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("extensionFunctions"))
     }
 
+    @Test
+    fun `test - classWithGenerics`() {
+        doTest(headersTestDataDir.resolve("classWithGenerics"))
+    }
+
+    /**
+     * - init method missing
+     * - 'new constructor' missing
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - objectWithGenericSuperclass`() {
+        doTest(headersTestDataDir.resolve("objectWithGenericSuperclass"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

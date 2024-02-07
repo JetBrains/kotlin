@@ -60,7 +60,7 @@ internal fun KtType.translateToObjCReferenceType(): ObjCReferenceType {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceTypeIgnoringNullability]
  */
 context(KtAnalysisSession, KtObjCExportSession)
-private fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenceType {
+internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenceType {
     val fullyExpandedType = fullyExpandedType
     val classId = (fullyExpandedType as? KtNonErrorClassType)?.classId
 

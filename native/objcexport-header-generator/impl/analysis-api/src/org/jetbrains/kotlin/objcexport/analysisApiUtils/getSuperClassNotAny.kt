@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
-import org.jetbrains.kotlin.analysis.api.types.KtClassType
-import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 
 /**
  * Tries to find the superclass [KtClassOrObjectSymbol] symbol which is *not* kotlin.Any
@@ -28,20 +26,32 @@ import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
  */
 context(KtAnalysisSession)
 internal fun KtClassOrObjectSymbol.getSuperClassSymbolNotAny(): KtClassOrObjectSymbol? {
+    return getSuperClassTypeNotAny()?.expandedClassSymbol
+}
+
+/**
+ * Tries to find the supertype of this [KtClassOrObjectSymbol] which is a superclass (not Any)
+ * ```kotlin
+ * abstract class A
+ *
+ * class B: A
+ *
+ * fun example() {
+ *     val symbolOfB = // ...
+ *     val typeRepresentingA = symbolOfB.getSuperClassTypeNotAny()
+ * }
+ * ```
+ */
+context(KtAnalysisSession)
+internal fun KtClassOrObjectSymbol.getSuperClassTypeNotAny(): KtNonErrorClassType? {
     return superTypes.firstNotNullOfOrNull find@{ superType ->
-        if (superType.isAny) return@find null
-        if (superType.isError && superType is KtClassErrorType) {
-            //Header should have just a Base type in case unresolved super type
-            return@find null
-        }
-        if (superType is KtClassType) {
-            val classifier = superType.qualifiers.firstNotNullOfOrNull { qualifier ->
-                (qualifier as? KtClassTypeQualifier.KtResolvedClassTypeQualifier)?.symbol
+        if (superType.isAny || superType.isError) return@find null
+        if (superType is KtNonErrorClassType) {
+            val classSymbol = superType.expandedClassSymbol ?: return@find null
+            if (classSymbol.classKind.isClass) {
+                return superType
             }
-
-            if (classifier is KtClassOrObjectSymbol && classifier.classKind.isClass) return@find classifier
         }
-
         null
     }
 }

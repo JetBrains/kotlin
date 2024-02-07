@@ -47,7 +47,6 @@ fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
 
                 /* Add the classId to already processed classIds and do not redo if already processed */
                 val stub = translatedClassifiers.getOrPut(classId) {
-
                     val translatedObjCClassOrProtocol = when (symbol.classKind) {
                         KtClassKind.INTERFACE -> symbol.translateToObjCProtocol()
                         KtClassKind.CLASS -> symbol.translateToObjCClass()
@@ -56,7 +55,11 @@ fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
                     } ?: return result
 
                     symbol.getDeclaredSuperInterfaceSymbols().forEach { superInterfaceSymbol ->
-                        result.addAll(process(superInterfaceSymbol))
+                        result.addAll(process(superInterfaceSymbol, true))
+                    }
+
+                    symbol.getSuperClassSymbolNotAny()?.let { superClassSymbol ->
+                        process(superClassSymbol, true)
                     }
 
                     result.add(translatedObjCClassOrProtocol)
@@ -122,10 +125,6 @@ fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
         stubs.add(errorInterface)
         classForwardDeclarations.add(errorForwardClass)
     }
-
-    protocolForwardDeclarations += stubs
-        .filterIsInstance<ObjCClass>()
-        .flatMap { it.superProtocols }
 
     return ObjCHeader(
         stubs = stubs,

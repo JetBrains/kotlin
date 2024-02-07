@@ -63,7 +63,7 @@ class ForwardedClassesAndProtocolsDependenciesTest(
             fun getInterface(): InterfaceB = error("error")
             """,
             protocols = setOf("InterfaceB", "InterfaceA"),
-            classes = setOf("ClassB")
+            classes = setOf("ClassB", "ClassA")
         )
     }
 
