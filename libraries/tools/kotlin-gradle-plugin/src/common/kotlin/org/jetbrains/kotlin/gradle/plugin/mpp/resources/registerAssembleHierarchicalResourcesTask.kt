@@ -23,7 +23,7 @@ internal suspend fun KotlinCompilation<*>.registerAssembleHierarchicalResourcesT
         rootSourceSets = kotlinSourceSets.toList(),
     )
     val outputDirectory = project.layout.buildDirectory.dir(
-        "${KotlinTargetResourcesPublication.MULTIPLATFORM_RESOURCES_DIRECTORY}/assemble-hierarchically/${targetNamePrefix}"
+        "${KotlinTargetResourcesPublicationImpl.MULTIPLATFORM_RESOURCES_DIRECTORY}/assemble-hierarchically/${targetNamePrefix}"
     )
 
     var isAlreadyConfigured = false
@@ -60,8 +60,8 @@ internal suspend fun KotlinCompilation<*>.registerAssembleHierarchicalResourcesT
 private fun splitResourceDirectoriesBySourceSetLevel(
     resources: KotlinTargetResourcesPublication.TargetResources,
     rootSourceSets: List<KotlinSourceSet>,
-): List<List<KotlinTargetResourcesPublication.ResourceDescriptor>> {
-    val resourceDirectoriesToProcess: MutableList<MutableList<KotlinTargetResourcesPublication.ResourceDescriptor>> = mutableListOf()
+): List<List<KotlinTargetResourcesPublication.ResourceRoot>> {
+    val resourceDirectoriesToProcess: MutableList<MutableList<KotlinTargetResourcesPublication.ResourceRoot>> = mutableListOf()
     val visitedSourceSets: MutableSet<KotlinSourceSet> = mutableSetOf()
 
     var sourceSetsAtThisLevel: MutableList<KotlinSourceSet> = rootSourceSets.toMutableList()

@@ -7,16 +7,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.resources
 
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.utils.getOrPut
 
-internal val KotlinMultiplatformExtension.resourcesPublicationExtension: KotlinTargetResourcesPublication
+internal val KotlinMultiplatformExtension.resourcesPublicationExtension: KotlinTargetResourcesPublicationImpl
     get() {
         (this as ExtensionAware)
-        if (extensions.findByName(KotlinTargetResourcesPublication.EXTENSION_NAME) == null) {
-            extensions.add(
-                Any::class.java,
-                KotlinTargetResourcesPublication.EXTENSION_NAME,
-                project.objects.newInstance(KotlinTargetResourcesPublication::class.java, project)
-            )
+        return this.extraProperties.getOrPut(KotlinTargetResourcesPublication.EXTENSION_NAME) {
+            project.objects.newInstance(KotlinTargetResourcesPublicationImpl::class.java, project)
         }
-        return extensions.getByName(KotlinTargetResourcesPublication.EXTENSION_NAME) as KotlinTargetResourcesPublication
     }

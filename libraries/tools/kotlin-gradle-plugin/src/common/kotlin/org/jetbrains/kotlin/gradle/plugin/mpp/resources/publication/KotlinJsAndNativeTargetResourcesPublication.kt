@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.registerAssembleHierarchicalResourcesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -38,7 +38,7 @@ internal fun AbstractKotlinTarget.setUpResourcesVariant(compilation: KotlinCompi
                 resources,
             )
             val zippedResourcesDirectory = project.layout.buildDirectory.dir(
-                "${KotlinTargetResourcesPublication.MULTIPLATFORM_RESOURCES_DIRECTORY}/zip-for-publication/${targetName}"
+                "${KotlinTargetResourcesPublicationImpl.MULTIPLATFORM_RESOURCES_DIRECTORY}/zip-for-publication/${targetName}"
             )
             val zipResourcesForPublication = project.registerTask<Zip>(
                 "${targetName}ZipMultiplatformResourcesForPublication"

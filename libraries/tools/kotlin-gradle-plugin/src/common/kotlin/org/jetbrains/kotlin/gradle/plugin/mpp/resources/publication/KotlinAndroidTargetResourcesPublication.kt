@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.isAtLeast
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.registerAssembleHierarchicalResourcesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfo
@@ -101,7 +101,7 @@ internal class KotlinAndroidTargetResourcesPublication {
             // FIXME: Specify output just in case?
             it.outputDirectory.set(
                 project.layout.buildDirectory.dir(
-                    "${KotlinTargetResourcesPublication.MULTIPLATFORM_RESOURCES_DIRECTORY}/assemble-hierarchically/${variantName}-tmp-for-agp"
+                    "${KotlinTargetResourcesPublicationImpl.MULTIPLATFORM_RESOURCES_DIRECTORY}/assemble-hierarchically/${variantName}-tmp-for-agp"
                 )
             )
         }
