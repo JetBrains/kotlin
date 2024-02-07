@@ -20,13 +20,13 @@ internal object TestRunners {
             val executor = executorCache.computeIfAbsent(testTarget) {
                 val configurables = configurables
 
-                if (settings.get<XCTestRunner>().isEnabled) {
+                if (get<XCTestRunner>().isEnabled) {
                     // Forcibly run tests with XCTest
                     check(configurables is AppleConfigurables) {
                         "Running tests with XCTest is not supported on non-Apple $configurables"
                     }
                     when (configurables.target) {
-                        is KonanTarget.IOS_ARM64 -> FirebaseCloudExecutor(configurables)
+                        is KonanTarget.IOS_ARM64 -> FirebaseCloudXCTestExecutor(configurables)
                         hostTarget -> XCTestHostExecutor(configurables)
                         is KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> XCTestSimulatorExecutor(configurables)
                         else -> runningOnUnsupportedTarget("Target is not supported running with XCTest")

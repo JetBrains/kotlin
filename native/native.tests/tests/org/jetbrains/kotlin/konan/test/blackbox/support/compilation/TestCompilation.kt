@@ -678,7 +678,7 @@ internal class StaticCacheCompilation(
     }
 
     override fun postCompileCheck() {
-        (options as? Options.ForIncludedLibraryWithTests)?.expectedExecutableArtifact?.assertTestDumpFileNotEmptyIfExists()
+        (options as? Options.ForIncludedLibraryWithTests)?.expectedExecutableArtifact?.testDumpFile?.assertTestDumpFileNotEmptyIfExists()
     }
 }
 
