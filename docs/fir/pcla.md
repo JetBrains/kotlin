@@ -31,8 +31,7 @@ uninferred TVs.
 
 **PCLA (Partially Constrained Lambda Analysis)**
 
-PCLA is the way of lambda analysis during call completion that happens when some input types are not properly inferred, but no other 
-sources of constraints present.
+PCLA is the way of lambda analysis during call completion that happens when some input types are not properly inferred, and there are no other sources of constraints.
 
 **PCLA lambda** = lambda analyzed with PCLA
 
@@ -55,7 +54,7 @@ The conditions to run a lambda resolution in PCLA mode is the following:
 - There are no other ways to infer some new constraints for any type variable.
 - There is some lambda that among its input types has at least one with a not fixed TV being used as type argument
     - So, if one of the input types is `MutableList<Ev>` that lambda suits for PCLA
-    - But if it has TVs as top-level types (like `Ev` or `Ev?`), it doesn't suit
+    - But if some of the input types are proper and other are top-level type variables (`Tv`, `Tv?`, `Tv & Any`, etc.), it doesn't suit
 
 **References in code:**
 - `ConstraintSystemCompleter.tryToCompleteWithPCLA`
@@ -75,7 +74,7 @@ happens, and describing it is actually a goal of the following parts document.
 
 The basic idea is that all non-trivial calls inside PCLA lambda 
 - use *shared CS*: adding their new variables there and constraints related to both *outer CS* and their own variables
-- should not be completed during lambda body resolution, thus should be postponed
+- are not being fully completed during lambda body resolution, thus should be postponed
 
 After that, the whole *shared CS* is added to the CS of the *main candidate*, the resulting CS should be resolved as usual, and after that
 at completion results writing phase all type variables are replaced with their result types.
