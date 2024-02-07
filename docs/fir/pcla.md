@@ -72,7 +72,7 @@ happens, and describing it is actually a goal of the following parts document.
 
 ## Algorithm backbone
 
-The basic idea is that all non-trivial calls inside PCLA lambda 
+The basic idea is that we mostly run regular lambda body analysis, with special treatment for all calls inside PCLA lambda 
 - use *shared CS*: adding their new variables there and constraints related to both *outer CS* and their own variables
 - are not being fully completed during lambda body resolution, thus should be postponed
 
