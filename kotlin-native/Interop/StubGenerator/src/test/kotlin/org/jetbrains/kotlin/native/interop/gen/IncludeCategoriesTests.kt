@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.native.interop.indexer.IndexerResult
+import org.jetbrains.kotlin.native.interop.indexer.ObjCObjectPointer
 import org.junit.Assume
 import kotlin.test.*
 
@@ -70,5 +71,21 @@ class IncludeCategoriesTests : InteropTestsBase() {
         val index = buildNativeIndex("IncludeCategories", "includeCategory2.def", mockImports(dependencyIndex))
         val category = index.getObjCCategory("ChildCategory")
         assertFalse(category in category.clazz.includedCategories)
+    }
+
+    @Test
+    fun `class added by macro does not crash but does not get categories either`() {
+        val dependencyIndex = buildNativeIndex("IncludeCategories", "includeCategory0.def")
+        val index = buildNativeIndex("IncludeCategories", "includeCategory3.def", mockImports(dependencyIndex))
+
+        val nilMyClass = index.index.wrappedMacros.find { it.name == "nilMyClass" }
+        assertNotNull(nilMyClass)
+
+        val type = nilMyClass.type
+        assertTrue(type is ObjCObjectPointer)
+        val clazz = type.def
+
+        assertEquals("MyClass", clazz.name)
+        assertTrue(clazz.includedCategories.isEmpty())
     }
 }

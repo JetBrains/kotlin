@@ -68,9 +68,10 @@ private class ObjCClassImpl(
 }
 
 private class ObjCCategoryImpl(
-        name: String, clazz: ObjCClass,
+        name: String,
+        override val clazz: ObjCClassImpl,
         override val location: Location
-) : ObjCCategory(name, clazz), ObjCContainerImpl {
+) : ObjCCategory(name), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
     override val properties = mutableListOf<ObjCProperty>()
@@ -352,23 +353,6 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         return EnumDefImpl(typeSpelling, baseType, getLocation(cursor))
     }
 
-    private fun getObjCCategoryClassCursor(cursor: CValue<CXCursor>): CValue<CXCursor> {
-        assert(cursor.kind == CXCursorKind.CXCursor_ObjCCategoryDecl)
-        var classRef: CValue<CXCursor>? = null
-        visitChildren(cursor) { child, _ ->
-            if (child.kind == CXCursorKind.CXCursor_ObjCClassRef) {
-                classRef = child
-                CXChildVisitResult.CXChildVisit_Break
-            } else {
-                CXChildVisitResult.CXChildVisit_Continue
-            }
-        }
-
-        return clang_getCursorReferenced(classRef!!).apply {
-            assert(this.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl)
-        }
-    }
-
     private fun isObjCInterfaceDeclForward(cursor: CValue<CXCursor>): Boolean {
         assert(cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { cursor.kind }
 
@@ -398,45 +382,34 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         }) { objcClass ->
             addChildrenToObjCContainer(cursor, objcClass)
             if (name in this.library.objCClassesIncludingCategories) {
-                // We don't include methods from categories to class during indexing
-                // because indexing does not care about how class is represented in Kotlin.
-                // Instead, it should be done during StubIR construction.
-                objcClass.includedCategories += collectClassCategories(cursor, name).mapNotNull { getObjCCategoryAt(it) }
+                objCClassCursorsToIncludeCategories += cursor
             }
         }
     }
 
     /**
-     * Find all categories for a class that is pointed by [classCursor] in the same file.
-     * NB: Current implementation is rather slow as it walks the whole translation unit.
+     * NB: currently this class doesn't really keep references to anything else that can be invalidated.
+     * Resource handling around this property is a mess. It is important that it gets cleared before translation unit
+     * and index are disposed.
      */
-    private fun collectClassCategories(classCursor: CValue<CXCursor>, className: String): List<CValue<CXCursor>> {
-        assert(classCursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { classCursor.kind }
-        val classFile = getContainingFile(classCursor)
-        val result = mutableListOf<CValue<CXCursor>>()
-        // Accessing the whole translation unit (TU) is overkill, but it is the simplest solution which is doable
-        // since we use this function for a narrow set of cases.
-        // Possible improvements:
-        // 1. Find/create a function that returns a file scope. `clang_findReferencesInFile` does not seem to work because for categories
-        // it returns `CXCursor_ObjCClassRef` (@interface >CLASS_REFERENCE<(CategoryName)) and there is no easy way to access category from
-        // there.
-        // 2. Extract categories collection into a separate TU pass and create Class -> [Category] mapping. This way we can avoid visiting
-        // TU for every class.
-        val translationUnit = clang_getCursorLexicalParent(classCursor)
-        visitChildren(translationUnit) { childCursor, _ ->
-            if (childCursor.kind == CXCursorKind.CXCursor_ObjCCategoryDecl) {
-                val categoryClassCursor = getObjCCategoryClassCursor(childCursor)
-                val categoryClassName = clang_getCursorDisplayName(categoryClassCursor).convertAndDispose()
-                if (className == categoryClassName) {
-                    val categoryFile = getContainingFile(childCursor)
-                    if (clang_File_isEqual(categoryFile, classFile) != 0) {
-                        result += childCursor
-                    }
-                }
-            }
-            CXChildVisitResult.CXChildVisit_Continue
+    private val objCClassCursorsToIncludeCategories = mutableListOf<CValue<CXCursor>>()
+
+    /**
+     * Find all categories for classes pointed by [objCClassCursorsToIncludeCategories],
+     * located in the same files as their classes.
+     * NB: Current implementation is rather slow as it walks all the enclosing translation units.
+     */
+    internal fun includeCategoriesToObjCClasses() {
+        val categoryCursors = findObjCCategoriesInSameFilesAsClasses(objCClassCursorsToIncludeCategories)
+        objCClassCursorsToIncludeCategories.clear()
+
+        for (cursor in categoryCursors) {
+            val category = getObjCCategoryAt(cursor) ?: continue
+            // We don't include methods from categories to class during indexing
+            // because indexing does not care about how class is represented in Kotlin.
+            // Instead, it should be done during StubIR construction.
+            category.clazz.includedCategories += category
         }
-        return result
     }
 
     private fun getObjCProtocolAt(cursor: CValue<CXCursor>): ObjCProtocolImpl {
@@ -1317,7 +1290,16 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                     }
                 }
 
+                nativeIndex.includeCategoriesToObjCClasses()
+                // includeCategoriesToObjCClasses should go before findMacros.
+                // The reason is: the former traverses translation units of the encountered Objective-C classes.
+                // But the latter creates and disposes TUs and can even encounter new Objective-C classes in them.
+                // So if the order got reversed, includeCategoriesToObjCClasses would try to traverse a disposed TU.
+                // See e.g. the "class added by macro does not crash but does not get categories either" test.
+                // As a side effect, includeCategoriesToObjCClasses doesn't process such new classes.
+                // This shouldn't have any meaningful effect in practice.
                 findMacros(nativeIndex, compilation, unitsToProcess, ownHeaders)
+
                 return compilation
             }
         } finally {

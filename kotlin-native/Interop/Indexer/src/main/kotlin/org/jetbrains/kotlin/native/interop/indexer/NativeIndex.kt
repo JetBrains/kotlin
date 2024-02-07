@@ -309,7 +309,9 @@ abstract class ObjCClass(name: String) : ObjCClassOrProtocol(name) {
 }
 abstract class ObjCProtocol(name: String) : ObjCClassOrProtocol(name)
 
-abstract class ObjCCategory(val name: String, val clazz: ObjCClass) : ObjCContainer(), LocatableDeclaration
+abstract class ObjCCategory(val name: String) : ObjCContainer(), LocatableDeclaration {
+    abstract val clazz: ObjCClass
+}
 
 /**
  * C function parameter.

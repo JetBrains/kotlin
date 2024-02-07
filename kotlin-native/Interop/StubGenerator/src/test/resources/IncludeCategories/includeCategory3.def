@@ -1,0 +1,4 @@
+language = Objective-C
+headers = header3.h
+
+objcClassesIncludingCategories = MyClass
