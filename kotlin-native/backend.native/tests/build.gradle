@@ -1022,22 +1022,6 @@ createInterop("leakMemoryWithRunningThread") {
     it.extraOpts "-Xcompile-source", "$projectDir/interop/leakMemoryWithRunningThread/leakMemory.cpp"
 }
 
-createInterop("cppClass") {
-    it.defFile 'interop/cpp/cppClass.def'
-}
-
-createInterop("cppTypes") {
-    it.defFile 'interop/cpp/types.def'
-}
-
-createInterop("cppSkia") {
-    it.defFile 'interop/cpp/skia.def'
-}
-
-createInterop("cppSkiaSignature") {
-    it.defFile 'interop/cpp/skiaSignature.def'
-}
-
 createInterop("workerSignals") {
     it.defFile "interop/workerSignals/workerSignals.def"
     it.headers "$projectDir/interop/workerSignals/workerSignals.h"
@@ -1223,34 +1207,6 @@ interopTest("interop_leakMemoryWithRunningThreadChecked") {
     source = "interop/leakMemoryWithRunningThread/checked.kt"
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> s.contains("Cannot run checkers when there are 1 alive runtimes at the shutdown") }
-}
-
-interopTest("interop_cppClass") {
-    disabled = PlatformInfo.isAppleTarget(project) // KT-58422
-    source = "interop/cpp/cppClass.kt"
-    interop = 'cppClass'
-}
-
-interopTest("interop_cppTypes") {
-    disabled = PlatformInfo.isAppleTarget(project) // KT-58422
-    source = "interop/cpp/types.kt"
-    interop = 'cppTypes'
-}
-
-interopTest("interop_cppSkia") {
-    disabled = true // KT-58422
-    source = "interop/cpp/skia.kt"
-    interop = 'cppSkia'
-    useGoldenData = true
-    UtilsKt.dependsOnPlatformLibs(it)
-}
-
-interopTest("interop_cppSkiaSignature") {
-    disabled = PlatformInfo.isAppleTarget(project) // KT-58422
-    source = "interop/cpp/skiaSignature.kt"
-    interop = "cppSkiaSignature"
-    useGoldenData = true
-    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 interopTest("interop_workerSignals") {
