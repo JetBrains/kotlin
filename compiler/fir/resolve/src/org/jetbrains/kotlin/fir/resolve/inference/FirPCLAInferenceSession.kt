@@ -123,7 +123,7 @@ class FirPCLAInferenceSession(
     ) {
         outerCandidate.postponedPCLACalls += childCalls
         currentCommonSystem.addOtherSystem(childStorage)
-        outerCandidate.onCompletionResultsWritingCallbacks += onCompletionResultsWriting
+        outerCandidate.onPCLACompletionResultsWritingCallbacks += onCompletionResultsWriting
     }
 
     private fun FirExpression.updateReturnTypeWithCurrentSubstitutor(
