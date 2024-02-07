@@ -77,7 +77,7 @@ private class ObjCCategoryImpl(
     override val properties = mutableListOf<ObjCProperty>()
 }
 
-public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean = false) : NativeIndex() {
+public open class NativeIndexer(val library: NativeLibrary, val verbose: Boolean = false) {
 
     private sealed class DeclarationID {
         data class USR(val usr: String) : DeclarationID()
@@ -121,39 +121,41 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         return Location(headerId)
     }
 
-    override val structs: List<StructDecl> get() = structRegistry.included
     private val structRegistry = LocatableDeclarationRegistry<StructDeclImpl>()
 
-    override val enums: List<EnumDef> get() = enumRegistry.included
     private val enumRegistry = LocatableDeclarationRegistry<EnumDefImpl>()
 
-    override val objCClasses: List<ObjCClass> get() = objCClassRegistry.included
     private val objCClassRegistry = LocatableDeclarationRegistry<ObjCClassImpl>()
 
-    override val objCProtocols: List<ObjCProtocol> get() = objCProtocolRegistry.included
     private val objCProtocolRegistry = LocatableDeclarationRegistry<ObjCProtocolImpl>()
 
-    override val objCCategories: Collection<ObjCCategory> get() = objCCategoryById.included
     private val objCCategoryById = LocatableDeclarationRegistry<ObjCCategoryImpl>()
 
-    override val typedefs get() = typedefRegistry.included
     private val typedefRegistry = LocatableDeclarationRegistry<TypedefDef>()
 
 
     private val functionById = mutableMapOf<DeclarationID, FunctionDecl?>()
 
-    override val functions: Collection<FunctionDecl>
-        get() = functionById.values.filterNotNull()
-
-    override val macroConstants = mutableListOf<ConstantDef>()
-    override val wrappedMacros = mutableListOf<WrappedMacroDef>()
+    val macroConstants = mutableListOf<ConstantDef>()
+    val wrappedMacros = mutableListOf<WrappedMacroDef>()
 
     private val globalById = mutableMapOf<DeclarationID, GlobalDecl>()
 
-    override val globals: Collection<GlobalDecl>
-        get() = globalById.values
+    lateinit var includedHeaders: List<HeaderId>
 
-    override lateinit var includedHeaders: List<HeaderId>
+    fun build() = NativeIndex(
+            structs = structRegistry.included,
+            enums = enumRegistry.included,
+            objCClasses = objCClassRegistry.included,
+            objCProtocols = objCProtocolRegistry.included,
+            objCCategories = objCCategoryById.included,
+            typedefs = typedefRegistry.included,
+            functions = functionById.values.filterNotNull(),
+            macroConstants = macroConstants,
+            wrappedMacros = wrappedMacros,
+            globals = globalById.values,
+            includedHeaders = includedHeaders
+    )
 
     internal fun log(message: String) {
         if (verbose) {
@@ -1202,16 +1204,16 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 }
 
 fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean): IndexerResult {
-    val result = NativeIndexImpl(library, verbose)
-    return buildNativeIndexImpl(result)
+    val indexer = NativeIndexer(library, verbose)
+    return buildNativeIndexImpl(indexer)
 }
 
-fun buildNativeIndexImpl(index: NativeIndexImpl): IndexerResult {
-    val compilation = indexDeclarations(index)
-    return IndexerResult(index, compilation)
+fun buildNativeIndexImpl(indexer: NativeIndexer): IndexerResult {
+    val compilation = indexDeclarations(indexer)
+    return IndexerResult(indexer.build(), compilation)
 }
 
-private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH {
+private fun indexDeclarations(nativeIndex: NativeIndexer): CompilationWithPCH {
     // Below, declarations from PCH should be excluded to restrict `visitChildren` to visit local declarations only
     withIndex(excludeDeclarationsFromPCH = true) { index ->
         val errors = mutableListOf<Diagnostic>()

@@ -9,11 +9,11 @@ import kotlinx.cinterop.CValue
 import org.jetbrains.kotlin.native.interop.indexer.*
 
 fun buildSkiaNativeIndexImpl(library: NativeLibrary, verbose: Boolean): IndexerResult {
-    val result = SkiaNativeIndexImpl(library, verbose)
-    return buildNativeIndexImpl(result)
+    val indexer = SkiaNativeIndexer(library, verbose)
+    return buildNativeIndexImpl(indexer)
 }
 
-class SkiaNativeIndexImpl(library: NativeLibrary, verbose: Boolean) : NativeIndexImpl(library, verbose) {
+class SkiaNativeIndexer(library: NativeLibrary, verbose: Boolean) : NativeIndexer(library, verbose) {
     override fun convertType(type: CValue<CXType>, typeAttributes: CValue<CXTypeAttributes>?): Type {
         if (type.kind == CXTypeKind.CXType_Record) {
             val decl: StructDecl = getStructDeclAt(clang_getTypeDeclaration(type))
