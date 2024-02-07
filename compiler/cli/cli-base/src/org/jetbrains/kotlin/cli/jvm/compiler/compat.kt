@@ -19,6 +19,7 @@ object IdeaStandaloneExecutionSetup {
         System.getProperties().setProperty("project.structure.add.tools.jar.to.new.jdk", "false")
         System.getProperties().setProperty("psi.track.invalidation", "true")
         System.getProperties().setProperty("psi.incremental.reparse.depth.limit", "1000")
+        System.getProperties().setProperty("psi.sleep.in.validity.check", "false")
         System.getProperties().setProperty("ide.hide.excluded.files", "false")
         System.getProperties().setProperty("ast.loading.filter", "false")
         System.getProperties().setProperty("idea.ignore.disabled.plugins", "true")
