@@ -58,6 +58,11 @@ class FirDelegatedPropertyInferenceSession(
 
     private var wasCompletionRun = false
 
+    override fun baseConstraintStorageForCandidate(candidate: Candidate): ConstraintStorage? {
+        if (wasCompletionRun || !candidate.callInfo.callSite.isAnyOfDelegateOperators()) return null
+        return currentConstraintStorage
+    }
+
     override fun customCompletionModeInsteadOfFull(call: FirResolvable): ConstraintSystemCompletionMode? = when {
         call.isAnyOfDelegateOperators() && !wasCompletionRun -> ConstraintSystemCompletionMode.PARTIAL
         else -> null
@@ -92,11 +97,6 @@ class FirDelegatedPropertyInferenceSession(
 
     private fun <T> T.isProvideDelegate() where T : FirResolvable, T : FirStatement =
         isAnyOfDelegateOperators() && (this as FirResolvable).candidate()?.callInfo?.name == OperatorNameConventions.PROVIDE_DELEGATE
-
-    override fun baseConstraintStorageForCandidate(candidate: Candidate): ConstraintStorage? {
-        if (wasCompletionRun || !candidate.callInfo.callSite.isAnyOfDelegateOperators()) return null
-        return currentConstraintStorage
-    }
 
     fun completeSessionOrPostponeIfNonRoot(onCompletionResultsWriting: (ConeSubstitutor) -> Unit) {
         check(!wasCompletionRun)
