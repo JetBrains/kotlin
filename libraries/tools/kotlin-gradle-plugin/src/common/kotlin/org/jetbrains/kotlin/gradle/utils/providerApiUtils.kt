@@ -16,6 +16,13 @@ import org.gradle.api.provider.*
 import java.io.File
 import kotlin.reflect.KProperty
 
+// Workaround for https://github.com/gradle/gradle/issues/12388
+// which should be fixed via https://github.com/gradle/gradle/issues/24767
+internal fun <IN : Any, OUT> Provider<IN>.mapOrNull(
+    providerFactory: ProviderFactory,
+    block: (IN) -> OUT?
+): Provider<OUT> = flatMap { providerFactory.provider { (block(it)) } }
+
 internal operator fun <T> Provider<T>.getValue(thisRef: Any?, property: KProperty<*>) = get()
 
 internal operator fun <T> Property<T>.setValue(thisRef: Any?, property: KProperty<*>, value: T) {
