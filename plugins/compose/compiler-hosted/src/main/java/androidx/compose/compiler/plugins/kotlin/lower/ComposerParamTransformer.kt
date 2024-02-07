@@ -315,7 +315,7 @@ class ComposerParamTransformer(
                 this
             )
         } else {
-            val ctor = classSymbol!!.constructors.first()
+            val ctor = classSymbol!!.constructors.first { it.owner.isPrimary }
             val underlyingType = getInlineClassUnderlyingType(classSymbol.owner)
 
             // TODO(lmr): We should not be calling the constructor here, but this seems like a
@@ -425,7 +425,10 @@ class ComposerParamTransformer(
                 // the names here to ensure that dex is always safe.
                 val newName = dexSafeName(param.name)
 
-                val newType = defaultParameterType(param).remapTypeParameters()
+                val newType = defaultParameterType(
+                    param,
+                    this.hasDefaultExpressionDefinedForValueParameter(param.index)
+                ).remapTypeParameters()
                 param.copyTo(
                     fn,
                     name = newName,
@@ -483,7 +486,11 @@ class ComposerParamTransformer(
         }
 
         return overriddenSymbols.any {
-            it.owner.hasDefaultExpressionDefinedForValueParameter(index)
+            // ComposableFunInterfaceLowering copies extension receiver as a value
+            // parameter, which breaks indices for overrides. fun interface cannot
+            // have parameters defaults, however, so we can skip here if mismatch is detected.
+            it.owner.valueParameters.size == valueParameters.size &&
+                it.owner.hasDefaultExpressionDefinedForValueParameter(index)
         }
     }
 
@@ -618,9 +625,12 @@ class ComposerParamTransformer(
         }
     }
 
-    private fun defaultParameterType(param: IrValueParameter): IrType {
+    private fun defaultParameterType(
+        param: IrValueParameter,
+        hasDefaultValue: Boolean
+    ): IrType {
         val type = param.type
-        if (param.defaultValue == null) return type
+        if (!hasDefaultValue) return type
         val constructorAccessible = !type.isPrimitiveType() &&
             type.classOrNull?.owner?.primaryConstructor != null
         return when {
