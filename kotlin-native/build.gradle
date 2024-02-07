@@ -397,11 +397,10 @@ targetList.each { target ->
             }
         }.files
 
-        destinationDir project.file("$distDir/konan/targets/")
+        destinationDir project.file("$distDir/konan/targets/$target/native")
 
         from(bitcodeFiles) {
             include("*.bc")
-            into("$target/native")
         }
     }
 
