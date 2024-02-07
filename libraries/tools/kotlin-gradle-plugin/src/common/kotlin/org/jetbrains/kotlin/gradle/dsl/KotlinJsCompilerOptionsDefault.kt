@@ -15,11 +15,19 @@ internal abstract class KotlinJsCompilerOptionsDefault @javax.inject.Inject cons
     override val main: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode> =
         objectFactory.property(org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode::class.java).convention(org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode.CALL)
 
+    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.WARNING)
+    override val metaInfo: org.gradle.api.provider.Property<kotlin.Boolean> =
+        objectFactory.property(kotlin.Boolean::class.java).convention(true)
+
     override val moduleKind: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JsModuleKind> =
         objectFactory.property(org.jetbrains.kotlin.gradle.dsl.JsModuleKind::class.java).convention(org.jetbrains.kotlin.gradle.dsl.JsModuleKind.MODULE_PLAIN)
 
     override val moduleName: org.gradle.api.provider.Property<kotlin.String> =
         objectFactory.property(kotlin.String::class.java)
+
+    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.WARNING)
+    override val noStdlib: org.gradle.api.provider.Property<kotlin.Boolean> =
+        objectFactory.property(kotlin.Boolean::class.java).convention(true)
 
     override val sourceMap: org.gradle.api.provider.Property<kotlin.Boolean> =
         objectFactory.property(kotlin.Boolean::class.java).convention(false)

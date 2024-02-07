@@ -43,6 +43,23 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @GradleOption(
+        value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
+    )
+    @GradleDeprecatedOption(
+        message = "Only for legacy backend.",
+        level = DeprecationLevel.WARNING,
+        removeAfter = "2.0.0"
+    )
+    @Argument(value = "-no-stdlib", description = "Don't automatically include the default Kotlin/JS stdlib in compilation dependencies.")
+    var noStdlib = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(
             value = "-libraries",
             valueDescription = "<path>",
@@ -126,6 +143,16 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @GradleOption(
+        value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
+    )
+    @GradleDeprecatedOption(
+        message = "Only for legacy backend.",
+        level = DeprecationLevel.WARNING,
+        removeAfter = "2.0.0"
+    )
     @Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
     @Argument(value = "-meta-info", description = "Generate .meta.js and .kjsm files with metadata. Use this to create a library.")
     var metaInfo = false
