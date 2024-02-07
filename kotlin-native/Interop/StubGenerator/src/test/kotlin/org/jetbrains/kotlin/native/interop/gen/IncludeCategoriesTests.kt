@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.native.interop.indexer.IndexerResult
+import org.jetbrains.kotlin.native.interop.indexer.ObjCObjectPointer
 import org.junit.Assume
 import kotlin.test.*
 
@@ -70,5 +71,37 @@ class IncludeCategoriesTests : InteropTestsBase() {
         val index = buildNativeIndex("IncludeCategories", "includeCategory2.def", mockImports(dependencyIndex))
         val category = index.getObjCCategory("ChildCategory")
         assertFalse(category in category.clazz.includedCategories)
+    }
+
+    @Test
+    fun `class added by macro does not crash but does not get categories either`() {
+        val dependencyIndex = buildNativeIndex("IncludeCategories", "includeCategory0.def")
+        val index = buildNativeIndex("IncludeCategories", "includeCategory3.def", mockImports(dependencyIndex))
+
+        val nilMyClass = index.index.wrappedMacros.find { it.name == "nilMyClass" }
+        assertNotNull(nilMyClass)
+
+        val type = nilMyClass.type
+        assertTrue(type is ObjCObjectPointer)
+        val clazz = type.def
+
+        assertEquals("MyClass", clazz.name)
+
+        // Currently, macro support in indexer parses and reparses some temporary translation units, applying some
+        // optimizations in the way.
+        // One of the optimizations (withIndex(excludeDeclarationsFromPCH = true)) makes our categories search
+        // machinery unable to locate categories:
+        assertTrue(clazz.includedCategories.isEmpty())
+        // On the other hand, this case is tricky enough, because of the temporary TUs disposed before the indexer
+        // finishes its job.
+        // So this test simply checks that at least it doesn't crash (which did happen with other approaches to
+        // implementation).
+        //
+        // It seems that this peculiarity can't really lead to any problems in practice:
+        // Since the first reference to the class is in the macro, it is not defined in that "NativeLibrary".
+        // So, either it is excluded intentionally through headerFilter (so including categories shouldn't really
+        // matter), or it is imported from a dependency. In the latter case, the dependency should have got the proper
+        // included categories generated into Kotlin representation, and included categories here only matter for the
+        // subclasses (which we don't have, since the first reference is in the macro).
     }
 }
