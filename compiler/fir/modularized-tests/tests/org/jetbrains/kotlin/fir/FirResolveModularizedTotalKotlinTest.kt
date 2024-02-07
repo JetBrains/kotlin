@@ -98,7 +98,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
         val scopeSession = ScopeSession()
         val processors = createAllCompilerResolveProcessors(session, scopeSession).let {
             if (RUN_CHECKERS) {
-                it + FirCheckersResolveProcessor(session, scopeSession)
+                it + FirCheckersResolveProcessor(session, scopeSession, MppCheckerKind.Common)
             } else {
                 it
             }
@@ -270,7 +270,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
 class FirCheckersResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession,
-    mppCheckerKind: MppCheckerKind = TODO()
+    mppCheckerKind: MppCheckerKind
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, phase = null) {
     val diagnosticCollector: AbstractDiagnosticCollector = DiagnosticComponentsFactory.create(session, scopeSession, mppCheckerKind)
 
