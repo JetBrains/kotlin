@@ -9,9 +9,5 @@ package kotlin.enums
 @ExperimentalStdlibApi
 @PublishedApi
 internal actual inline fun <reified T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T> {
-    /*
-     * Implementation note: this body will be replaced with `throw NotImplementedException()` the moment
-     * all backends starts intrinsifying this call.
-     */
-    return enumEntries(enumValues<T>())
+    throw NotImplementedError() // implemented as intrinsic
 }
