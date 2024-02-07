@@ -2016,12 +2016,6 @@ Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
     }
 }
 
-fileCheckTest("filecheck_signext_zeroext_objc_export") {
-    annotatedSource = project.file('filecheck/signext_zeroext_objc_export.kt')
-    generateFramework = true
-    enabled = target.family.appleFamily
-}
-
 dependencies {
     nopPluginApi kotlinCompilerModule
     nopPluginApi project(":native:kotlin-native-utils")

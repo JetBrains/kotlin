@@ -7,19 +7,12 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtilRt.convertLineSeparators
-import org.jetbrains.kotlin.konan.target.Architecture
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.needSmallBinary
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExecutionTimeout
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExitCode
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestReport
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.junit.jupiter.api.Assumptions
 import java.io.File
 
@@ -85,57 +78,16 @@ internal class ResultHandler(
                         }
                     }
                     is TestRunCheck.FileCheckMatcher -> {
-                        val fileCheckExecutable = check.settings.configurables.absoluteLlvmHome + File.separator + "bin" + File.separator +
-                                if (SystemInfo.isWindows) "FileCheck.exe" else "FileCheck"
-                        require(File(fileCheckExecutable).exists()) {
-                            "$fileCheckExecutable does not exist. Make sure Distribution for `settings.configurables` " +
-                                    "was created using `propertyOverrides` to specify development variant of LLVM instead of user variant."
-                        }
                         val fileCheckDump = runResult.testExecutable.executable.fileCheckDump!!
-                        val fileCheckOut = File(fileCheckDump.absolutePath + ".out")
-                        val fileCheckErr = File(fileCheckDump.absolutePath + ".err")
-
-                        val testTarget = check.settings.get<KotlinNativeTargets>().testTarget
-                        val checkPrefixes = buildList {
-                            add("CHECK")
-                            add("CHECK-${testTarget.abiInfoString}")
-                            add("CHECK-${testTarget.name.toUpperCaseAsciiOnly()}")
-                            if (testTarget.family.isAppleFamily) {
-                                add("CHECK-APPLE")
-                            }
-                            if (testTarget.needSmallBinary()) {
-                                add("CHECK-SMALLBINARY")
-                            } else {
-                                add("CHECK-BIGBINARY")
-                            }
-                        }
-                        val optimizationMode = check.settings.get<OptimizationMode>().name
-                        val checkPrefixesWithOptMode = checkPrefixes.map { "$it-$optimizationMode" }
-                        val cacheMode = check.settings.get<CacheMode>().alias
-                        val checkPrefixesWithCacheMode = checkPrefixes.map { "$it-CACHE_$cacheMode" }
-                        val commaSeparatedCheckPrefixes = (checkPrefixes + checkPrefixesWithOptMode + checkPrefixesWithCacheMode).joinToString(",")
-
-                        val result = ProcessBuilder(
-                            fileCheckExecutable,
-                            check.testDataFile.absolutePath,
-                            "--input-file",
-                            fileCheckDump.absolutePath,
-                            "--check-prefixes", commaSeparatedCheckPrefixes,
-                            "--allow-deprecated-dag-overlap" // TODO specify it via new test directive for `function_attributes_at_callsite.kt`
-                        ).redirectOutput(fileCheckOut)
-                            .redirectError(fileCheckErr)
-                            .start()
-                            .waitFor()
-                        val errText = fileCheckErr.readText()
-                        val outText = fileCheckOut.readText()
-                        if(!(result == 0 && errText.isEmpty() && outText.isEmpty())) {
+                        val (result, outText, errText) = doFileCheck(check, fileCheckDump)
+                        if (!(result == 0 && errText.isEmpty() && outText.isEmpty())) {
                             val shortOutText = outText.lines().take(100)
                             val shortErrText = errText.lines().take(100)
                             add("FileCheck matching of ${fileCheckDump.absolutePath}\n" +
-                                    "with '--check-prefixes $commaSeparatedCheckPrefixes'\n" +
-                                    "failed with result=$result:\n" +
-                                    shortOutText.joinToString("\n") + "\n" +
-                                    shortErrText.joinToString("\n")
+                                        "with '--check-prefixes ${check.prefixes}'\n" +
+                                        "failed with result=$result:\n" +
+                                        shortOutText.joinToString("\n") + "\n" +
+                                        shortErrText.joinToString("\n")
                             )
                         }
                     }
@@ -195,10 +147,29 @@ internal class ResultHandler(
     }
 }
 
-// Shameless borrowing `val KonanTarget.abiInfo` from module `:kotlin-native:backend.native`, which cannot be imported here for now.
-private val KonanTarget.abiInfoString: String
-    get() = when {
-        this == KonanTarget.MINGW_X64 -> "WINDOWSX64"
-        !family.isAppleFamily && architecture == Architecture.ARM64 -> "AAPCS"
-        else -> "DEFAULTABI"
+internal fun doFileCheck(check: TestRunCheck.FileCheckMatcher, fileCheckDump: File): Triple<Int, String, String> {
+    val fileCheckExecutable = check.settings.configurables.absoluteLlvmHome + File.separator + "bin" + File.separator +
+            if (SystemInfo.isWindows) "FileCheck.exe" else "FileCheck"
+    require(File(fileCheckExecutable).exists()) {
+        "$fileCheckExecutable does not exist. Make sure Distribution for `settings.configurables` " +
+                "was created using `propertyOverrides` to specify development variant of LLVM instead of user variant."
     }
+    val fileCheckOut = File(fileCheckDump.absolutePath + ".out")
+    val fileCheckErr = File(fileCheckDump.absolutePath + ".err")
+
+    val result = ProcessBuilder(
+        fileCheckExecutable,
+        check.testDataFile.absolutePath,
+        "--input-file",
+        fileCheckDump.absolutePath,
+        "--check-prefixes", check.prefixes,
+        "--allow-deprecated-dag-overlap" // TODO specify it via new test directive for `function_attributes_at_callsite.kt`
+    ).redirectOutput(fileCheckOut)
+        .redirectError(fileCheckErr)
+        .start()
+        .waitFor()
+    val outText = fileCheckOut.readText()
+    val errText = fileCheckErr.readText()
+
+    return Triple(result, outText, errText)
+}
