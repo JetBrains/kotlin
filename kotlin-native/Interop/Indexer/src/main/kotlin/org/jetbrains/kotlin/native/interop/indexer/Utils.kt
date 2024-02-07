@@ -105,15 +105,26 @@ internal fun CValue<CXType>.getSize(): Long {
     return size
 }
 
+internal fun createIndex(
+        excludeDeclarationsFromPCH: Boolean, // disables visitChildren to visit declarations from imported translation units
+        displayDiagnostics: Boolean = false
+): CPointer<out CPointed> {
+    val index = clang_createIndex(
+            excludeDeclarationsFromPCH = if (excludeDeclarationsFromPCH) 1 else 0,
+            displayDiagnostics = if (displayDiagnostics) 1 else 0
+    )!!
+    return index
+}
+
 internal inline fun <R> withIndex(
         excludeDeclarationsFromPCH: Boolean, // disables visitChildren to visit declarations from imported translation units
         displayDiagnostics: Boolean = false,
         block: (index: CXIndex) -> R
 ): R {
-    val index = clang_createIndex(
-            excludeDeclarationsFromPCH = if (excludeDeclarationsFromPCH) 1 else 0,
-            displayDiagnostics = if (displayDiagnostics) 1 else 0
-    )!!
+    val index = createIndex(
+            excludeDeclarationsFromPCH = excludeDeclarationsFromPCH,
+            displayDiagnostics = displayDiagnostics
+    )
 
     return try {
         block(index)
