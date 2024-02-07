@@ -23,6 +23,7 @@ object IdeaStandaloneExecutionSetup {
         System.getProperties().setProperty("ide.hide.excluded.files", "false")
         System.getProperties().setProperty("ast.loading.filter", "false")
         System.getProperties().setProperty("idea.ignore.disabled.plugins", "true")
+        System.getProperties().setProperty("platform.random.idempotence.check.rate", "1000")
         workaroundEarlyAccessRegistryQueryProblem()
         // Setting the build number explicitly avoids the command-line compiler
         // reading /tmp/build.txt in an attempt to get a build number from there.
