@@ -569,7 +569,11 @@ fun extractArgumentsTypeRefAndSource(typeRef: FirTypeRef?): List<FirTypeRefSourc
     return result
 }
 
-data class FirTypeRefSource(val typeRef: FirTypeRef?, val source: KtSourceElement?)
+data class FirTypeRefSource(val typeRef: FirTypeRef?, val source: KtSourceElement?) {
+    override fun toString(): String {
+        return "FirTypeRefSource(typeRef=${typeRef?.render()}, source=${source?.kind?.javaClass?.simpleName})"
+    }
+}
 
 val FirClassLikeSymbol<*>.classKind: ClassKind?
     get() = (this as? FirClassSymbol<*>)?.classKind
