@@ -76,7 +76,23 @@ private class ObjCCategoryImpl(
     override val properties = mutableListOf<ObjCProperty>()
 }
 
-public open class NativeIndexer(val library: NativeLibrary, val verbose: Boolean = false) {
+public open class NativeIndexer(val library: NativeLibrary, val verbose: Boolean = false) : Disposable {
+    private val arena = Arena()
+
+    private inline fun <T> T.toBeDisposedWith(crossinline block: (T) -> Unit): T = apply {
+        arena.defer { block(this) }
+    }
+
+    override fun dispose() {
+        arena.clear()
+    }
+
+    // Declarations from PCH should be excluded to restrict `visitChildren` to visit local declarations only
+    private val index = createIndex(excludeDeclarationsFromPCH = true)
+            .toBeDisposedWith { clang_disposeIndex(it) }
+
+    private val unitsHolder = UnitsHolder(index)
+            .toBeDisposedWith { it.dispose() }
 
     private sealed class DeclarationID {
         data class USR(val usr: String) : DeclarationID()
@@ -391,6 +407,7 @@ public open class NativeIndexer(val library: NativeLibrary, val verbose: Boolean
     }
 
     private val objCCategoriesIndex = ObjCCategoriesIndex()
+            .toBeDisposedWith { it.clear() }
 
     private fun getObjCProtocolAt(cursor: CValue<CXCursor>): ObjCProtocolImpl {
         assert(cursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl) { cursor.kind }
@@ -1181,100 +1198,92 @@ public open class NativeIndexer(val library: NativeLibrary, val verbose: Boolean
         return result
     }
 
-}
-
-fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean): IndexerResult {
-    val indexer = NativeIndexer(library, verbose)
-    return buildNativeIndexImpl(indexer)
-}
-
-fun buildNativeIndexImpl(indexer: NativeIndexer): IndexerResult {
-    val compilation = indexDeclarations(indexer)
-    return IndexerResult(indexer.build(), compilation)
-}
-
-private fun indexDeclarations(nativeIndex: NativeIndexer): CompilationWithPCH {
-    // Below, declarations from PCH should be excluded to restrict `visitChildren` to visit local declarations only
-    withIndex(excludeDeclarationsFromPCH = true) { index ->
+    internal fun indexDeclarations(): CompilationWithPCH {
         val errors = mutableListOf<Diagnostic>()
-        val translationUnit = nativeIndex.library.copyWithArgsForPCH().parse(
+        val translationUnit = this.library.copyWithArgsForPCH().parse(
                 index,
                 options = CXTranslationUnit_DetailedPreprocessingRecord or CXTranslationUnit_ForSerialization,
                 diagnosticHandler = { if (it.isError()) errors.add(it) }
-        )
-        try {
-            if (errors.isNotEmpty()) {
-                error(errors.take(10).joinToString("\n") { it.format })
-            }
-            translationUnit.ensureNoCompileErrors()
+        ).toBeDisposedWith { clang_disposeTranslationUnit(it) }
 
-            val compilation = nativeIndex.library.withPrecompiledHeader(translationUnit)
-
-            UnitsHolder(index).use { unitsHolder ->
-                val (headers, ownTranslationUnits) = getHeadersAndUnits(nativeIndex.library, index, translationUnit, unitsHolder)
-                val ownHeaders = headers.ownHeaders
-                val headersCanonicalPaths = ownHeaders.map { it?.canonicalPath }.toSet()
-
-                val unitsToProcess = (ownTranslationUnits + setOf(translationUnit)).toList()
-
-                nativeIndex.includedHeaders = ownHeaders.map {
-                    nativeIndex.getHeaderId(it)
-                }
-
-                unitsToProcess.forEach {
-                    indexTranslationUnit(index, it, 0, object : Indexer {
-                        override fun indexDeclaration(info: CXIdxDeclInfo) {
-                            val file = memScoped {
-                                val fileVar = alloc<CXFileVar>()
-                                clang_indexLoc_getFileLocation(info.loc.readValue(), null, fileVar.ptr, null, null, null)
-                                fileVar.value
-                            }
-
-                            if (file?.canonicalPath in headersCanonicalPaths) {
-                                nativeIndex.indexDeclaration(info)
-                            }
-                        }
-                    })
-                }
-
-                if (nativeIndex.library.language == Language.CPP) {
-                    unitsToProcess.forEach {
-                        visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
-                            if (getContainingFile(cursor) in ownHeaders) {
-                                nativeIndex.indexCxxDeclaration(cursor)
-                            }
-                            CXChildVisitResult.CXChildVisit_Continue
-                        }
-                    }
-                }
-
-                unitsToProcess.forEach {
-                    visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
-                        val file = getContainingFile(cursor)
-                        if (file in ownHeaders && nativeIndex.library.includesDeclaration(cursor)) {
-                            when (cursor.kind) {
-                                CXCursorKind.CXCursor_ObjCInterfaceDecl -> nativeIndex.indexObjCClass(cursor)
-                                CXCursorKind.CXCursor_ObjCProtocolDecl -> nativeIndex.indexObjCProtocol(cursor)
-                                CXCursorKind.CXCursor_ObjCCategoryDecl -> {
-                                    // This fixes https://youtrack.jetbrains.com/issue/KT-49455, which effectively seems to be a bug in libclang:
-                                    // the libclang indexer doesn't properly index categories with
-                                    // `__attribute__((external_source_symbol(language="Swift",...)))`.
-                                    // As a workaround, additionally enumerate all the categories explicitly.
-                                    nativeIndex.indexObjCCategory(cursor)
-                                }
-
-                                else -> {}
-                            }
-                        }
-                        CXChildVisitResult.CXChildVisit_Continue
-                    }
-                }
-
-                findMacros(nativeIndex, compilation, unitsToProcess, ownHeaders)
-                return compilation
-            }
-        } finally {
-            clang_disposeTranslationUnit(translationUnit)
+        if (errors.isNotEmpty()) {
+            error(errors.take(10).joinToString("\n") { it.format })
         }
+        translationUnit.ensureNoCompileErrors()
+
+        val compilation = this.library.withPrecompiledHeader(translationUnit)
+
+        val (headers, ownTranslationUnits) = getHeadersAndUnits(this.library, index, translationUnit, unitsHolder)
+        val ownHeaders = headers.ownHeaders
+        val headersCanonicalPaths = ownHeaders.map { it?.canonicalPath }.toSet()
+
+        val unitsToProcess = (ownTranslationUnits + setOf(translationUnit)).toList()
+
+        this.includedHeaders = ownHeaders.map {
+            this.getHeaderId(it)
+        }
+
+        unitsToProcess.forEach {
+            indexTranslationUnit(index, it, 0, object : Indexer {
+                override fun indexDeclaration(info: CXIdxDeclInfo) {
+                    val file = memScoped {
+                        val fileVar = alloc<CXFileVar>()
+                        clang_indexLoc_getFileLocation(info.loc.readValue(), null, fileVar.ptr, null, null, null)
+                        fileVar.value
+                    }
+
+                    if (file?.canonicalPath in headersCanonicalPaths) {
+                        this@NativeIndexer.indexDeclaration(info)
+                    }
+                }
+            })
+        }
+
+        if (this.library.language == Language.CPP) {
+            unitsToProcess.forEach {
+                visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
+                    if (getContainingFile(cursor) in ownHeaders) {
+                        this.indexCxxDeclaration(cursor)
+                    }
+                    CXChildVisitResult.CXChildVisit_Continue
+                }
+            }
+        }
+
+        unitsToProcess.forEach {
+            visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
+                val file = getContainingFile(cursor)
+                if (file in ownHeaders && this.library.includesDeclaration(cursor)) {
+                    when (cursor.kind) {
+                        CXCursorKind.CXCursor_ObjCInterfaceDecl -> this.indexObjCClass(cursor)
+                        CXCursorKind.CXCursor_ObjCProtocolDecl -> this.indexObjCProtocol(cursor)
+                        CXCursorKind.CXCursor_ObjCCategoryDecl -> {
+                            // This fixes https://youtrack.jetbrains.com/issue/KT-49455, which effectively seems to be a bug in libclang:
+                            // the libclang indexer doesn't properly index categories with
+                            // `__attribute__((external_source_symbol(language="Swift",...)))`.
+                            // As a workaround, additionally enumerate all the categories explicitly.
+                            this.indexObjCCategory(cursor)
+                        }
+
+                        else -> {}
+                    }
+                }
+                CXChildVisitResult.CXChildVisit_Continue
+            }
+        }
+
+        findMacros(this, compilation, unitsToProcess, ownHeaders)
+        return compilation
     }
+}
+
+fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean): IndexerResult {
+    NativeIndexer(library, verbose).use { indexer ->
+        return buildNativeIndexImpl(indexer)
+    }
+}
+
+fun buildNativeIndexImpl(indexer: NativeIndexer): IndexerResult {
+    val compilation = indexer.indexDeclarations()
+    return IndexerResult(indexer.build(), compilation)
 }

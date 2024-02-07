@@ -9,8 +9,9 @@ import kotlinx.cinterop.CValue
 import org.jetbrains.kotlin.native.interop.indexer.*
 
 fun buildSkiaNativeIndexImpl(library: NativeLibrary, verbose: Boolean): IndexerResult {
-    val indexer = SkiaNativeIndexer(library, verbose)
-    return buildNativeIndexImpl(indexer)
+    SkiaNativeIndexer(library, verbose).use { indexer ->
+        return buildNativeIndexImpl(indexer)
+    }
 }
 
 class SkiaNativeIndexer(library: NativeLibrary, verbose: Boolean) : NativeIndexer(library, verbose) {

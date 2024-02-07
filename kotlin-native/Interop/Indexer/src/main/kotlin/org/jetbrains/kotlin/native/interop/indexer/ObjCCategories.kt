@@ -39,6 +39,10 @@ class ObjCCategoriesIndex {
 
     private val translationUnitToCategories = mutableMapOf<CXTranslationUnit, Categories>()
 
+    fun clear() {
+        translationUnitToCategories.clear()
+    }
+
     /**
      * Find all categories for a class that is pointed by [classCursor] in the same file.
      *
