@@ -1,0 +1,2 @@
+Resolved to:
+PsiMethod:ColorProvider(resId: PsiType:int): PsiType:ColorProvider

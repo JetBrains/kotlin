@@ -111,4 +111,16 @@ public class FirStandaloneNormalAnalysisLibraryBinaryModulePsiDeclarationProvide
     public void testPropertiesInOuterClass() throws Exception {
         runTest("analysis/analysis-api/testData/standalone/binary/propertiesInOuterClass.kt");
     }
+
+    @Test
+    @TestMetadata("propertyWithValueClass.kt")
+    public void testPropertyWithValueClass() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/binary/propertyWithValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunctionWithValueClass.kt")
+    public void testTopLevelFunctionWithValueClass() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/binary/topLevelFunctionWithValueClass.kt");
+    }
 }
