@@ -140,7 +140,7 @@ fun main() {
 - It's been initialized at `FirPCLAInferenceSession.currentCommonSystem`.
 - Initially, it's an empty CS with the main candidate's system being added as an outer CS.
 
-## Primary inference session callbacks
+## Inference session callbacks
 
 Currently, there are three implementations of inference session
 - `Default` that effectively does nothing
@@ -230,7 +230,8 @@ So, the current approach is the following: during nested lambda resolution we as
 `myOtherCallWithLambda` candidate. Thus, the constraints from `add` call are being merged into the `myOtherCallWithLambda`'s CS and then 
 finally into regular shared CS.
 
-The proper solution might be just replacing instance of shared CS with current candidate's CS, but that needs some further investigation.
+**Hacky place**: the proper solution might be just replacing instance of shared CS with current candidate's CS, but that needs 
+some further investigation.
 
 Also, there's some special handling of overload resolution by lambda return type, but they are quite expected when we don't have a final
 candidate yet (see `analyzeLambdaAndReduceNumberOfCandidatesRegardingOverloadResolutionByLambdaReturnType`)
@@ -238,6 +239,33 @@ candidate yet (see `analyzeLambdaAndReduceNumberOfCandidatesRegardingOverloadRes
 ### runCallableReferenceResolution
 
 TODO: Mostly, the idea as the same as for lambdas, but for callable references
+
+### addSubtypeConstraintIfCompatible
+
+In some situations, some constraints might be originated not just from calls, but from other kinds of expression, 
+like from variable assignments:
+
+```kotlin
+var <F> MutableList<F>.firstElement 
+    get() = get(0)
+    set(f: F) {
+        set(0, f)
+    }
+
+fun main() {
+    buildList { 
+        firstElement = ""
+    }
+}
+```
+
+We don't specially resolve the call to the setter, thus to declare that `String <: Fv`, thus `String <: Ev`, and finally `Ev := String`,
+there's a need to somehow send this information to the inference session.
+And that's how `addSubtypeConstraintIfCompatible` might be used.
+
+**Hacky place**: In general, this approach is quite fragile, and we might've forgotten some places where this method should be triggered.
+One of the ideas particularly for assignment is that they should be resolved via setter call, thus the necessary constraint would be
+introduced naturally when string literal would be an argument for `Fv` value parameter.
 
 ## PCLA_POSTPONED_CALL completion mode
 
