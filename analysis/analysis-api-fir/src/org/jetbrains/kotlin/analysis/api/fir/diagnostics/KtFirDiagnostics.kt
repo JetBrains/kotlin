@@ -333,7 +333,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val reference: String
     }
 
-    interface DuplicateParameterNameInFunctionType : KtFirDiagnostic<KtTypeReference> {
+    interface DuplicateParameterNameInFunctionType : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = DuplicateParameterNameInFunctionType::class
     }
 

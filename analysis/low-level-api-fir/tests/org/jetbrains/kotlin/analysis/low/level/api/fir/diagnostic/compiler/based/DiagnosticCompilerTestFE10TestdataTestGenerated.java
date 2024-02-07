@@ -358,6 +358,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("duplicateParameterName.kt")
+        public void testDuplicateParameterName() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/duplicateParameterName.kt");
+        }
+
+        @Test
+        @TestMetadata("duplicateParameterNameSimplified.kt")
+        public void testDuplicateParameterNameSimplified() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/duplicateParameterNameSimplified.kt");
+        }
+
+        @Test
         @TestMetadata("emptyLhsClassLiterals.kt")
         public void testEmptyLhsClassLiterals() throws Exception {
             runTest("compiler/testData/diagnostics/tests/emptyLhsClassLiterals.kt");

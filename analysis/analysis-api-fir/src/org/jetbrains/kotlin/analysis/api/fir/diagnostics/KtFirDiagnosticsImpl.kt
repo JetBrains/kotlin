@@ -386,7 +386,7 @@ internal class UnresolvedImportImpl(
 internal class DuplicateParameterNameInFunctionTypeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtTypeReference>(firDiagnostic, token), KtFirDiagnostic.DuplicateParameterNameInFunctionType
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.DuplicateParameterNameInFunctionType
 
 internal class MissingDependencyClassImpl(
     override val type: KtType,
