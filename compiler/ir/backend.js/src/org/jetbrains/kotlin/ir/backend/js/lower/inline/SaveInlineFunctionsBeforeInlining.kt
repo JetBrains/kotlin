@@ -37,8 +37,8 @@ internal class JsInlineFunctionResolver(context: JsIrBackendContext) : InlineFun
         return symbol == enumEntriesIntrinsic || super.shouldExcludeFunctionFromInlining(symbol)
     }
 
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
-        val function = super.getFunctionDeclaration(symbol)
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+        val function = super.getFunctionDeclaration(symbol) ?: return null
         return inlineFunctionsBeforeInlining[function] ?: return function
     }
 }

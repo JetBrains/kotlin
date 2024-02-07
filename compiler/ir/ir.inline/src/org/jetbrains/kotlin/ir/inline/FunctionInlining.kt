@@ -39,7 +39,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 abstract class InlineFunctionResolver {
-    open fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction = symbol.owner
+    open fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+        return symbol.owner
+    }
+
     open fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
         return Symbols.isLateinitIsInitializedPropertyGetter(symbol) || Symbols.isTypeOfIntrinsic(symbol)
     }
@@ -56,7 +59,7 @@ fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
     )
 
 open class InlineFunctionResolverReplacingCoroutineIntrinsics(open val context: CommonBackendContext) : InlineFunctionResolver() {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = symbol.owner
         // TODO: Remove these hacks when coroutine intrinsics are fixed.
         return when {
@@ -106,7 +109,7 @@ class FunctionInlining(
 
         val target = (callee as? IrSimpleFunction)?.resolveFakeOverride() ?: callee
         val actualCallee = inlineFunctionResolver.getFunctionDeclaration(target.symbol)
-        if (actualCallee.body == null) {
+        if (actualCallee?.body == null) {
             return expression
         }
 
@@ -382,7 +385,7 @@ class FunctionInlining(
                 return inlineFunctionReference(
                     irCall, irFunctionReference,
                     if (inlinedFunction.needsInlining)
-                        inlineFunctionResolver.getFunctionDeclaration(inlinedFunction.symbol)
+                        inlineFunctionResolver.getFunctionDeclaration(inlinedFunction.symbol) ?: inlinedFunction
                     else inlinedFunction
                 )
             }
