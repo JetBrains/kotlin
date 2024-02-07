@@ -42,6 +42,7 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                     project.objects.directoryProperty().fileProvider(
                         task.defaultDestinationDirectory.map {
                             val freeArgs = task.enhancedFreeCompilerArgs.get()
+                            @Suppress("DEPRECATION")
                             if (task.compilerOptions.outputFile.orNull != null) {
                                 if (freeArgs.contains(PRODUCE_UNZIPPED_KLIB)) {
                                     val file = File(task.compilerOptions.outputFile.get())
