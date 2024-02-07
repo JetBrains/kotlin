@@ -180,11 +180,10 @@ tasks.named("run") {
     dependsOn(tasks.withType(FileCheckTest).matching { it.enabled })
     // Add regular gradle test tasks
     dependsOn(tasks.withType(Test).matching { it.enabled })
-    dependsOn(":kotlin-native:Interop:Indexer:check")
-    dependsOn(":kotlin-native:Interop:StubGenerator:check")
-    dependsOn(":native:kotlin-native-utils:check")
+    // TODO(KTI-1571): This task should be run by Compiler Unit Tests (Native) configuration
+    dependsOn(":nativeCompilerUnitTest")
+    // TODO(KTI-1571): This should be run by Compiler Tests (Native) configuration
     dependsOn(":native:objcexport-header-generator:check")
-    dependsOn(":kotlin-native:backend.native:check")
 }
 
 // Was a subset of tests.
