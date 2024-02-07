@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.HasConfigurableCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesPublication
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesAndAssetsPublication
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
@@ -183,7 +183,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
                 )
                 // FIXME: publishLibraryVariantsGroupedByFlavor?
                 project.launch {
-                    setUpResourcesPublication(
+                    setUpResourcesAndAssetsPublication(
                         compilation,
                         androidVariantName,
                     )

@@ -19,12 +19,12 @@ internal val SetUpMultiplatformJvmResourcesPublicationAction = KotlinProjectSetu
         project.multiplatformExtension.awaitTargets()
             .filterIsInstance<KotlinJvmTarget>()
             .forEach { target ->
-                target.setUpResourcesPublication()
+                target.setUpResourcesAndAssetsPublication()
             }
     }
 }
 
-private suspend fun KotlinJvmTarget.setUpResourcesPublication() {
+private suspend fun KotlinJvmTarget.setUpResourcesAndAssetsPublication() {
     project.multiplatformExtension.resourcesPublicationExtension.subscribeOnPublishResources(
         this
     ) { resources ->

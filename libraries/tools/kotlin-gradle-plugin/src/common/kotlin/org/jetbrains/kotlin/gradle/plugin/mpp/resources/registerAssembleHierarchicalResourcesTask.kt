@@ -26,7 +26,7 @@ internal suspend fun KotlinCompilation<*>.registerAssembleHierarchicalResourcesT
         "${KotlinTargetResourcesPublication.MULTIPLATFORM_RESOURCES_DIRECTORY}/assemble-hierarchically/${targetNamePrefix}"
     )
 
-    var once = false
+    var isAlreadyConfigured = false
     val copyResourcesByLevel = project.locateOrRegisterTask<AssembleHierarchicalResourcesTask>(
         "${targetNamePrefix}CopyHierarchicalMultiplatformResources",
         invokeWhenRegistered = {
@@ -47,10 +47,10 @@ internal suspend fun KotlinCompilation<*>.registerAssembleHierarchicalResourcesT
             }
         },
         configureTask = {
-            if (once) {
-                error("FIXME: Additional configuration?")
+            if (isAlreadyConfigured) {
+                error("FIXME: Support multiple TargetResources per target?")
             }
-            once = true
+            isAlreadyConfigured = true
         }
     )
 
