@@ -124,19 +124,19 @@ fun buildNativeIndex(library: NativeLibrary, verbose: Boolean): IndexerResult = 
 /**
  * This class describes the IR of definitions from C header file(s).
  */
-abstract class NativeIndex {
-    abstract val structs: Collection<StructDecl>
-    abstract val enums: Collection<EnumDef>
-    abstract val objCClasses: Collection<ObjCClass>
-    abstract val objCProtocols: Collection<ObjCProtocol>
-    abstract val objCCategories: Collection<ObjCCategory>
-    abstract val typedefs: Collection<TypedefDef>
-    abstract val functions: Collection<FunctionDecl>
-    abstract val macroConstants: Collection<ConstantDef>
-    abstract val wrappedMacros: Collection<WrappedMacroDef>
-    abstract val globals: Collection<GlobalDecl>
-    abstract val includedHeaders: Collection<HeaderId>
-}
+class NativeIndex(
+        val structs: Collection<StructDecl>,
+        val enums: Collection<EnumDef>,
+        val objCClasses: Collection<ObjCClass>,
+        val objCProtocols: Collection<ObjCProtocol>,
+        val objCCategories: Collection<ObjCCategory>,
+        val typedefs: Collection<TypedefDef>,
+        val functions: Collection<FunctionDecl>,
+        val macroConstants: Collection<ConstantDef>,
+        val wrappedMacros: Collection<WrappedMacroDef>,
+        val globals: Collection<GlobalDecl>,
+        val includedHeaders: Collection<HeaderId>
+)
 
 /**
  * The (contents-based) header id.

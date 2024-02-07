@@ -26,7 +26,7 @@ val predefinedMacros = setOf("__DATE__", "__TIME__", "__TIMESTAMP__", "__FILE__"
  * Finds all "macro constants" and registers them as [NativeIndex.constants] in given index.
  */
 internal fun findMacros(
-        nativeIndex: NativeIndexImpl,
+        nativeIndex: NativeIndexer,
         compilation: CompilationWithPCH,
         translationUnits: List<CXTranslationUnit>,
         headers: Set<CXFile?>
@@ -286,7 +286,7 @@ enum class VisitorState {
     EXPECT_END, INVALID
 }
 
-private fun collectMacroNames(nativeIndex: NativeIndexImpl, translationUnits: List<CXTranslationUnit>, headers: Set<CXFile?>): List<String> {
+private fun collectMacroNames(nativeIndex: NativeIndexer, translationUnits: List<CXTranslationUnit>, headers: Set<CXFile?>): List<String> {
     val result = mutableSetOf<String>()
 
     translationUnits.forEach {
