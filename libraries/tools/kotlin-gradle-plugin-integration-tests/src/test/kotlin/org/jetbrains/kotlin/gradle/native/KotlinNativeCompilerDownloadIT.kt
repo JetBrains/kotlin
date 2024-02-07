@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Kotlin.STABLE_RELEASE
 import org.jetbrains.kotlin.gradle.util.capitalize
+import org.jetbrains.kotlin.gradle.util.replaceFirst
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.junit.jupiter.api.DisplayName
@@ -97,6 +98,39 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
                 assertDirectoryExists(konanTemp.resolve(STABLE_VERSION_DIR_NAME).resolve("klib").resolve("platform"))
                 assertDirectoryExists(konanTemp.resolve(STABLE_VERSION_DIR_NAME).resolve("bin"))
             }
+        }
+    }
+
+    @DisplayName("KT-65617: check that `addKotlinNativeBundleConfiguration` does not configure dependencies after configuration has been resolved")
+    @GradleTest
+    fun checkThatKonanConfigurationCouldBeConfiguredOnlyOnce(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
+        nativeProject(
+            "commonize-native-distribution",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                konanDataDir = konanTemp,
+            ),
+        ) {
+            buildGradleKts.replaceFirst(
+                "plugins {",
+                """
+                @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+                import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat
+                plugins {
+                """.trimIndent()
+            )
+            buildGradleKts.appendText(
+                """
+                    
+                tasks.create("taskWithConfigurationResolvedConfiguration") {
+                    dependsOn(":commonizeNativeDistribution")
+                    doFirst {
+                        KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration(project.rootProject)
+                    }
+                }
+                """.trimIndent()
+            )
+            build(":commonizeNativeDistribution", "taskWithConfigurationResolvedConfiguration")
         }
     }
 
