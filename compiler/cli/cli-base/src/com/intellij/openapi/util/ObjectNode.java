@@ -173,13 +173,17 @@ final class ObjectNode {
         @Override
         public void removeChildren(@Nullable Predicate<? super Disposable> condition, @NotNull Consumer<? super ObjectNode> deletedNodeConsumer) {
             Iterator<Map.Entry<Disposable, ObjectNode>> iterator = myChildren.entrySet().iterator();
+            List<ObjectNode> deletedValuesToProcess = new SmartList<>();
             while (iterator.hasNext()) {
                 Map.Entry<Disposable, ObjectNode> entry = iterator.next();
                 if (condition == null || condition.test(entry.getKey())) {
                     ObjectNode value = entry.getValue();
                     iterator.remove();
-                    deletedNodeConsumer.accept(value);
+                    deletedValuesToProcess.add(value);
                 }
+            }
+            for (int i = deletedValuesToProcess.size() - 1; i>= 0; i--) {
+                deletedNodeConsumer.accept(deletedValuesToProcess.get(i));
             }
         }
 
