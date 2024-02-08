@@ -1,60 +1,84 @@
-/foo.kt:13:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/foo|foo(){}[0]):
+/foo.kt:14:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/foo|foo(){}[0]):
     fun foo(): kotlin.Long defined in com.example.klib.serialization.diagnostics
     fun foo(): kotlin.String defined in com.example.klib.serialization.diagnostics
     fun foo(): kotlin.Int defined in com.example.klib.serialization.diagnostics
 
-/foo.kt:16:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/myVal|{}myVal[0]):
+/foo.kt:17:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/myVal|{}myVal[0]):
     val myVal: kotlin.String defined in com.example.klib.serialization.diagnostics
     var myVal: kotlin.Int defined in com.example.klib.serialization.diagnostics
     var myVal: kotlin.Long defined in com.example.klib.serialization.diagnostics
 
-/foo.kt:16:1: error: Platform declaration clash: The following fields have the same IR signature ([ com.example.klib.serialization.diagnostics/myVal|{}myVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:myVal type:kotlin.Long visibility:private [static]] ]):
+/foo.kt:17:1: error: Platform declaration clash: The following fields have the same IR signature ([ com.example.klib.serialization.diagnostics/myVal|{}myVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:myVal type:kotlin.Long visibility:private [static]] ]):
     var myVal: kotlin.Int defined in com.example.klib.serialization.diagnostics
     var myVal: kotlin.Long defined in com.example.klib.serialization.diagnostics
 
-/foo.kt:16:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/myVal.<get-myVal>|<get-myVal>(){}[0]):
+/foo.kt:17:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/myVal.<get-myVal>|<get-myVal>(){}[0]):
     fun `<get-myVal>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
     fun `<get-myVal>`(): kotlin.Long defined in com.example.klib.serialization.diagnostics
     fun `<get-myVal>`(): kotlin.String defined in com.example.klib.serialization.diagnostics
 
-/main.kt:21:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/foo|foo(){}[0]):
-    fun foo(): kotlin.Long defined in com.example.klib.serialization.diagnostics
-    fun foo(): kotlin.String defined in com.example.klib.serialization.diagnostics
-    fun foo(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+/foo.kt:19:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/myDelegated|{}myDelegated[0]):
+    val myDelegated: kotlin.Int defined in com.example.klib.serialization.diagnostics
+    val myDelegated: kotlin.Long defined in com.example.klib.serialization.diagnostics
+
+/foo.kt:19:26: error: Platform declaration clash: The following fields have the same IR signature ([ com.example.klib.serialization.diagnostics/myDelegated|{}myDelegated[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:myDelegated$delegate type:kotlin.Lazy<kotlin.Long> visibility:private [final,static]] ]):
+    val `myDelegated$delegate`: kotlin.Lazy<kotlin.Int> defined in com.example.klib.serialization.diagnostics
+    val `myDelegated$delegate`: kotlin.Lazy<kotlin.Long> defined in com.example.klib.serialization.diagnostics
+
+/foo.kt:19:26: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/myDelegated.<get-myDelegated>|<get-myDelegated>(){}[0]):
+    fun `<get-myDelegated>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+    fun `<get-myDelegated>`(): kotlin.Long defined in com.example.klib.serialization.diagnostics
 
 /main.kt:24:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/foo|foo(){}[0]):
     fun foo(): kotlin.Long defined in com.example.klib.serialization.diagnostics
     fun foo(): kotlin.String defined in com.example.klib.serialization.diagnostics
     fun foo(): kotlin.Int defined in com.example.klib.serialization.diagnostics
 
-/main.kt:26:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/myVal|{}myVal[0]):
-    val myVal: kotlin.String defined in com.example.klib.serialization.diagnostics
-    var myVal: kotlin.Int defined in com.example.klib.serialization.diagnostics
-    var myVal: kotlin.Long defined in com.example.klib.serialization.diagnostics
-
-/main.kt:26:1: error: Platform declaration clash: The following fields have the same IR signature ([ com.example.klib.serialization.diagnostics/myVal|{}myVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:myVal type:kotlin.Long visibility:private [static]] ]):
-    var myVal: kotlin.Int defined in com.example.klib.serialization.diagnostics
-    var myVal: kotlin.Long defined in com.example.klib.serialization.diagnostics
-
-/main.kt:26:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/myVal.<get-myVal>|<get-myVal>(){}[0]):
-    fun `<get-myVal>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
-    fun `<get-myVal>`(): kotlin.Long defined in com.example.klib.serialization.diagnostics
-    fun `<get-myVal>`(): kotlin.String defined in com.example.klib.serialization.diagnostics
+/main.kt:27:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/foo|foo(){}[0]):
+    fun foo(): kotlin.Long defined in com.example.klib.serialization.diagnostics
+    fun foo(): kotlin.String defined in com.example.klib.serialization.diagnostics
+    fun foo(): kotlin.Int defined in com.example.klib.serialization.diagnostics
 
 /main.kt:29:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/myVal|{}myVal[0]):
     val myVal: kotlin.String defined in com.example.klib.serialization.diagnostics
     var myVal: kotlin.Int defined in com.example.klib.serialization.diagnostics
     var myVal: kotlin.Long defined in com.example.klib.serialization.diagnostics
 
-/main.kt:31:5: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/myVal.<get-myVal>|<get-myVal>(){}[0]):
+/main.kt:29:1: error: Platform declaration clash: The following fields have the same IR signature ([ com.example.klib.serialization.diagnostics/myVal|{}myVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:myVal type:kotlin.Long visibility:private [static]] ]):
+    var myVal: kotlin.Int defined in com.example.klib.serialization.diagnostics
+    var myVal: kotlin.Long defined in com.example.klib.serialization.diagnostics
+
+/main.kt:29:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/myVal.<get-myVal>|<get-myVal>(){}[0]):
     fun `<get-myVal>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
     fun `<get-myVal>`(): kotlin.Long defined in com.example.klib.serialization.diagnostics
     fun `<get-myVal>`(): kotlin.String defined in com.example.klib.serialization.diagnostics
 
-/main.kt:44:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/bar|bar(){}[0]):
+/main.kt:32:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/myVal|{}myVal[0]):
+    val myVal: kotlin.String defined in com.example.klib.serialization.diagnostics
+    var myVal: kotlin.Int defined in com.example.klib.serialization.diagnostics
+    var myVal: kotlin.Long defined in com.example.klib.serialization.diagnostics
+
+/main.kt:34:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/myVal.<get-myVal>|<get-myVal>(){}[0]):
+    fun `<get-myVal>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+    fun `<get-myVal>`(): kotlin.Long defined in com.example.klib.serialization.diagnostics
+    fun `<get-myVal>`(): kotlin.String defined in com.example.klib.serialization.diagnostics
+
+/main.kt:36:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/myDelegated|{}myDelegated[0]):
+    val myDelegated: kotlin.Int defined in com.example.klib.serialization.diagnostics
+    val myDelegated: kotlin.Long defined in com.example.klib.serialization.diagnostics
+
+/main.kt:37:25: error: Platform declaration clash: The following fields have the same IR signature ([ com.example.klib.serialization.diagnostics/myDelegated|{}myDelegated[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:myDelegated$delegate type:kotlin.Lazy<kotlin.Long> visibility:private [final,static]] ]):
+    val `myDelegated$delegate`: kotlin.Lazy<kotlin.Int> defined in com.example.klib.serialization.diagnostics
+    val `myDelegated$delegate`: kotlin.Lazy<kotlin.Long> defined in com.example.klib.serialization.diagnostics
+
+/main.kt:37:25: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/myDelegated.<get-myDelegated>|<get-myDelegated>(){}[0]):
+    fun `<get-myDelegated>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+    fun `<get-myDelegated>`(): kotlin.Long defined in com.example.klib.serialization.diagnostics
+
+/main.kt:50:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/bar|bar(){}[0]):
     fun bar(): kotlin.Long defined in com.example.klib.serialization.diagnostics
     fun bar(): kotlin.Long defined in com.example.klib.serialization.diagnostics
 
-/main.kt:47:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/bar|bar(){}[0]):
+/main.kt:53:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/bar|bar(){}[0]):
     fun bar(): kotlin.Long defined in com.example.klib.serialization.diagnostics
     fun bar(): kotlin.Long defined in com.example.klib.serialization.diagnostics
