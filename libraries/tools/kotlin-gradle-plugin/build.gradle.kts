@@ -26,7 +26,6 @@ kotlin {
                 "org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi",
             )
         )
-        suppressWarnings = true
     }
 }
 
