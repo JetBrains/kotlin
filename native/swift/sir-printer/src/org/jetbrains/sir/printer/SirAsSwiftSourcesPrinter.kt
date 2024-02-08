@@ -20,12 +20,25 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
     }
 
     override fun visitModule(module: SirModule): Unit = with(printer) {
-        module.declarations.forEach {
+        // We have to write imports before other declarations.
+        val (imports, declarations) = module.declarations.partition { it is SirImport }
+
+        imports.forEach {
+            it.accept(this@SirAsSwiftSourcesPrinter)
+        }
+        if (imports.isNotEmpty()) {
+            println()
+        }
+        declarations.forEach {
             it.accept(this@SirAsSwiftSourcesPrinter)
             if (module.declarations.last() != it) {
                 println()
             }
         }
+    }
+
+    override fun visitImport(import: SirImport): Unit = with(printer) {
+        println("import ${import.moduleName}")
     }
 
     override fun visitVariable(variable: SirVariable): Unit = with(printer) {
