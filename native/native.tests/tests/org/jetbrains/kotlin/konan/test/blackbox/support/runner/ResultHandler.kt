@@ -13,8 +13,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.Exec
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExitCode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestReport
+import org.jetbrains.kotlin.native.executors.RunProcessResult
+import org.jetbrains.kotlin.native.executors.runProcess
 import org.junit.jupiter.api.Assumptions
 import java.io.File
+import kotlin.time.Duration
 
 private fun RunResult.processOutputAsString(output: TestRunCheck.Output) = when (output) {
     TestRunCheck.Output.STDOUT -> processOutput.stdOut.filteredOutput
@@ -79,10 +82,11 @@ internal class ResultHandler(
                     }
                     is TestRunCheck.FileCheckMatcher -> {
                         val fileCheckDump = runResult.testExecutable.executable.fileCheckDump!!
-                        val (result, outText, errText) = doFileCheck(check, fileCheckDump)
-                        if (!(result == 0 && errText.isEmpty() && outText.isEmpty())) {
-                            val shortOutText = outText.lines().take(100)
-                            val shortErrText = errText.lines().take(100)
+                        val result = doFileCheck(check, fileCheckDump)
+
+                        if (!(result.stdout.isEmpty() && result.stderr.isEmpty())) {
+                            val shortOutText = result.stdout.lines().take(100)
+                            val shortErrText = result.stderr.lines().take(100)
                             add("FileCheck matching of ${fileCheckDump.absolutePath}\n" +
                                         "with '--check-prefixes ${check.prefixes}'\n" +
                                         "failed with result=$result:\n" +
@@ -147,29 +151,23 @@ internal class ResultHandler(
     }
 }
 
-internal fun doFileCheck(check: TestRunCheck.FileCheckMatcher, fileCheckDump: File): Triple<Int, String, String> {
+internal fun doFileCheck(check: TestRunCheck.FileCheckMatcher, fileCheckDump: File): RunProcessResult {
     val fileCheckExecutable = check.settings.configurables.absoluteLlvmHome + File.separator + "bin" + File.separator +
             if (SystemInfo.isWindows) "FileCheck.exe" else "FileCheck"
     require(File(fileCheckExecutable).exists()) {
         "$fileCheckExecutable does not exist. Make sure Distribution for `settings.configurables` " +
                 "was created using `propertyOverrides` to specify development variant of LLVM instead of user variant."
     }
-    val fileCheckOut = File(fileCheckDump.absolutePath + ".out")
-    val fileCheckErr = File(fileCheckDump.absolutePath + ".err")
-
-    val result = ProcessBuilder(
-        fileCheckExecutable,
-        check.testDataFile.absolutePath,
-        "--input-file",
-        fileCheckDump.absolutePath,
-        "--check-prefixes", check.prefixes,
-        "--allow-deprecated-dag-overlap" // TODO specify it via new test directive for `function_attributes_at_callsite.kt`
-    ).redirectOutput(fileCheckOut)
-        .redirectError(fileCheckErr)
-        .start()
-        .waitFor()
-    val outText = fileCheckOut.readText()
-    val errText = fileCheckErr.readText()
-
-    return Triple(result, outText, errText)
+    return try {
+        runProcess(
+            fileCheckExecutable,
+            check.testDataFile.absolutePath,
+            "--input-file",
+            fileCheckDump.absolutePath,
+            "--check-prefixes", check.prefixes,
+            "--allow-deprecated-dag-overlap" // TODO specify it via new test directive for `function_attributes_at_callsite.kt`
+        )
+    } catch (t: Throwable) {
+        RunProcessResult(Duration.ZERO, "FileCheck utility failed:", t.toString())
+    }
 }

@@ -64,20 +64,17 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         val objCFrameworkCompilation = testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings)
         objCFrameworkCompilation.result.assertSuccess()
 
-        val (result, outText, errText) = doFileCheck(
-            testCase.checks.fileCheckMatcher!!,
-            buildDir.resolve("out.$fileCheckStage.ll").also { assert(it.exists()) }
-        )
-        if (!(result == 0 && errText.isEmpty() && outText.isEmpty())) {
-            val shortOutText = outText.lines().take(100)
-            val shortErrText = errText.lines().take(100)
-            assert(false) {
-                "FileCheck matching of ${buildDir.resolve("out.$fileCheckStage.ll").also { assert(it.exists()) }.absolutePath}\n" +
+        val fileCheckDump = buildDir.resolve("out.$fileCheckStage.ll").also { assert(it.exists()) }
+        val result = doFileCheck(testCase.checks.fileCheckMatcher!!, fileCheckDump)
+        if (!(result.stdout.isEmpty() && result.stderr.isEmpty())) {
+            val shortOutText = result.stdout.lines().take(100)
+            val shortErrText = result.stderr.lines().take(100)
+            fail("FileCheck matching of ${fileCheckDump.absolutePath}\n" +
                         "with '--check-prefixes ${testCase.checks.fileCheckMatcher.prefixes}'\n" +
                         "failed with result=$result:\n" +
                         shortOutText.joinToString("\n") + "\n" +
                         shortErrText.joinToString("\n")
-            }
+            )
         }
     }
 

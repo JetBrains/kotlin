@@ -15821,6 +15821,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("filecheck_expected_failure.kt")
+            public void testFilecheck_expected_failure() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/filecheck_expected_failure.kt");
+            }
+
+            @Test
             @TestMetadata("force_arm_instruction_set.kt")
             public void testForce_arm_instruction_set() throws Exception {
                 runTest("compiler/testData/codegen/box/fileCheck/force_arm_instruction_set.kt");
