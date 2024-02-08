@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.gradle.targets
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
+import org.jetbrains.kotlin.gradle.plugin.*
 
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 internal val ConfigureBuildSideEffect = KotlinTargetSideEffect { target ->
     val project = target.project
 
@@ -18,8 +18,7 @@ internal val ConfigureBuildSideEffect = KotlinTargetSideEffect { target ->
     val buildDependent = project.tasks.named(JavaBasePlugin.BUILD_DEPENDENTS_TASK_NAME)
 
     val testCompilation = target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)
-    @Suppress("DEPRECATION")
-    if (testCompilation is KotlinCompilationToRunnableFiles) {
+    if (testCompilation is DeprecatedKotlinCompilationToRunnableFiles) {
         addDependsOnTaskInOtherProjects(project, buildNeeded, true, testCompilation.runtimeDependencyConfigurationName)
         addDependsOnTaskInOtherProjects(project, buildDependent, false, testCompilation.runtimeDependencyConfigurationName)
     }

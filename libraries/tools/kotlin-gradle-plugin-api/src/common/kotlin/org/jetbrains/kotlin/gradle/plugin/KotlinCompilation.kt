@@ -186,6 +186,9 @@ interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptionsDeprecated> : 
     override var runtimeDependencyFiles: FileCollection
 }
 
+@Suppress("Deprecation")
+typealias DeprecatedKotlinCompilationToRunnableFiles<T> = KotlinCompilationToRunnableFiles<T>
+
 @Deprecated("Scheduled for removal with Kotlin 2.0")
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER", "deprecation") // kept for compatibility
 val <T : KotlinCommonOptionsDeprecated> KotlinCompilation<T>.runtimeDependencyConfigurationName: String?
