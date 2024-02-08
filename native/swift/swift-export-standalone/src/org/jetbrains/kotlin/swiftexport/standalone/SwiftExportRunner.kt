@@ -84,7 +84,7 @@ public fun runSwiftExport(
     }
 
 
-    val module = buildSwiftModule(input, isDebugModeEnabled)
+    val module = buildSwiftModule(input, isDebugModeEnabled, bridgeModuleName)
         .transformToSwift()
     val bridgeRequests = module.buildFunctionBridges()
     module.dumpResultToFiles(bridgeRequests, output)

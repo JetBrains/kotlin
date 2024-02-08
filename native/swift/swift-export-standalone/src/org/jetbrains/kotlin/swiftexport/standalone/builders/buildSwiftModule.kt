@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.analysisapi.SirGenerator
+import org.jetbrains.kotlin.sir.builder.buildImport
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportInput
 
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportInput
 internal fun buildSwiftModule(
     input: SwiftExportInput,
     shouldSortInputFiles: Boolean,
+    bridgeModuleName: String,
 ): SirModule {
     val session = buildStandaloneAnalysisAPISession {
         registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
@@ -46,9 +48,13 @@ internal fun buildSwiftModule(
         ktFiles = ktFiles.sortedBy { it.name }
     }
 
+
     return buildModule {
         name = sourceModule.moduleName
         val sirFactory = SirGenerator()
+        declarations += buildImport {
+            moduleName = bridgeModuleName
+        }
         ktFiles.forEach { file ->
             declarations += sirFactory.build(file)
         }
