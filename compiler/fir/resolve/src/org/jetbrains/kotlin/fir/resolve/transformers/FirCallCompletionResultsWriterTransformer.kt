@@ -826,7 +826,7 @@ class FirCallCompletionResultsWriterTransformer(
         kind?.annotationOnInvokeClassId?.let { classId ->
             if (annotations.any { it.getClassId() == classId }) return@let
             val annotation =
-                expectedType?.attributes?.get(CustomAnnotationTypeAttribute::class)?.annotations?.single { it.getClassId() == classId }
+                expectedType?.attributes?.get(CustomAnnotationTypeAttribute::class)?.annotations?.firstOrNull { it.getClassId() == classId }
                     ?: return@let
             replaceAnnotations(annotations + annotation)
         }
