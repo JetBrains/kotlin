@@ -50,11 +50,11 @@ internal class TestExecutable(
     }
 }
 
-internal class TestRun(
+internal data class TestRun(
     val displayName: String,
     val executable: TestExecutable,
     val runParameters: List<TestRunParameter>,
-    val testCaseId: TestCaseId,
+    val testCase: TestCase,
     val checks: TestRunChecks,
     val expectedFailure: Boolean,
 )
@@ -84,6 +84,14 @@ internal sealed interface TestRunParameter {
         }
 
         override fun testMatches(testName: TestName) = this.testName == testName
+    }
+
+    class WithIgnoredTestFilter(val testName: TestName) : WithFilter() {
+        override fun applyTo(programArgs: MutableList<String>) {
+            programArgs += "--ktest_filter=*-$testName"
+        }
+
+        override fun testMatches(testName: TestName) = this.testName != testName
     }
 
     class WithGTestPatterns(val positivePatterns: Set<String> = setOf("*"), val negativePatterns: Set<String>) : WithFilter() {

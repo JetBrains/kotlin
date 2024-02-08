@@ -103,7 +103,7 @@ internal class ResultHandler(
                 diagnostics.joinToString("\n")
             }
         } else {
-            val runResultInfo = "TestCaseId: ${testRun.testCaseId}\nExit code: ${runResult.exitCode}\nFiltered test output is${
+            val runResultInfo = "TestCaseId: ${testRun.testCase.id}\nExit code: ${runResult.exitCode}\nFiltered test output is${
                 runResult.processOutput.stdOut.filteredOutput.let {
                     if (it.isNotEmpty()) ":\n$it" else " empty."
                 }

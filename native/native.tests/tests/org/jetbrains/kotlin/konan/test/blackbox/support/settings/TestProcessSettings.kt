@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.MutedOption
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.RunnerWithExecutor
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.NoopTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.Runner
@@ -110,6 +109,13 @@ internal value class CustomKlibs(val klibs: Set<File>) {
  */
 @JvmInline
 internal value class ForcedNoopTestRunner(val value: Boolean)
+
+/**
+ * Controls whether tests that support TestRunner should be executed once in the binary.
+ * Their execution result is shared between tests from the same test executable.
+ */
+@JvmInline
+internal value class SharedExecutionTestRunner(val value: Boolean)
 
 /**
  * Optimization mode to be applied.

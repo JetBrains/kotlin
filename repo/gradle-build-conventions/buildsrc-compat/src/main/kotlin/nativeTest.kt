@@ -27,6 +27,7 @@ private enum class TestProperty(shortName: String) {
     CACHE_MODE("cacheMode"),
     EXECUTION_TIMEOUT("executionTimeout"),
     SANITIZER("sanitizer"),
+    SHARED_TEST_EXECUTION("sharedTestExecution"),
     TEAMCITY("teamcity");
 
     val fullName = "kotlin.internal.native.test.$shortName"
@@ -195,6 +196,7 @@ fun Project.nativeTest(
             compute(CACHE_MODE)
             compute(EXECUTION_TIMEOUT)
             compute(SANITIZER)
+            compute(SHARED_TEST_EXECUTION)
 
             // Pass whether tests are running at TeamCity.
             computePrivate(TEAMCITY) { kotlinBuildProperties.isTeamcityBuild.toString() }
