@@ -15,65 +15,87 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fileOrNull
 
+/**
+ * @param file If [file] is not known at this moment, [initializeFileDetails] should be invoked later in a `catch` to initialize the
+ * exception's file details.
+ */
 class CompilationException(
     message: String,
-    // file is not known in any moment, need to set it later in catch to save stacktrace
-    var file: IrFile?,
-    val ir: Any?, /* IrElement | IrType */
+    file: IrFile?,
+    ir: Any?, /* IrElement | IrType */
     cause: Throwable? = null
 ) : RuntimeException(message, cause) {
+    /**
+     * [CompilationException] must not keep strong references to IR entities. This is because, in the IDE, the exception might be kept in a
+     * message log, which can prevent the IR entity and all its references (including FIR and PSI elements) from being garbage-collected.
+     *
+     * Hence, [CompilationExceptionFileDetails] encapsulates the detailed information gathered from the [IrFile], without keeping a
+     * reference to it. If the exception is never initialized with an [IrFile], the file details won't be included in the message.
+     */
+    private var fileDetails: CompilationExceptionFileDetails? = null
+
+    val irStartOffset: Int? = (ir as? IrElement)?.startOffset
+
+    val content: String? = when (ir) {
+        is IrElement -> ir.dumpKotlinLike()
+        is IrType -> ir.dumpKotlinLike()
+        else -> null
+    }
+
+    init {
+        file?.let(::initializeFileDetails)
+    }
+
+    fun initializeFileDetails(file: IrFile) {
+        if (fileDetails != null) return
+
+        fileDetails = CompilationExceptionFileDetails(file, irStartOffset)
+    }
+
+    val path: String? get() = fileDetails?.path
+
+    val line: Int get() = fileDetails?.line ?: UNDEFINED_OFFSET
+
+    val column: Int get() = fileDetails?.column ?: UNDEFINED_OFFSET
+
     override val message: String
         get() = try {
             buildString {
                 appendLine("Back-end: Please report this problem https://kotl.in/issue")
-                path?.let { appendLine("$it:$line:$column") }
+                fileDetails?.render(this)
                 content?.let { appendLine("Problem with `$it`") }
                 append("Details: " + super.message)
             }
-        } catch (e: Throwable) {
+        } catch (_: Throwable) {
             throw IllegalStateException("Problem with constructing exception message").also {
                 it.stackTrace = stackTrace
             }
         }
+}
 
-    val line: Int
-        get() {
-            val irStartOffset = irStartOffset
-                ?: return UNDEFINED_OFFSET
+/**
+ * @see CompilationException.fileDetails
+ */
+private class CompilationExceptionFileDetails(file: IrFile, irStartOffset: Int?) {
+    val path: String = file.path
 
-            if (irStartOffset == UNDEFINED_OFFSET) return UNDEFINED_OFFSET
-
-            val lineNumber = file?.fileEntry?.getLineNumber(irStartOffset)
-                ?: return UNDEFINED_OFFSET
-
-            return lineNumber + 1
+    val line: Int = run {
+        if (irStartOffset == null || irStartOffset == UNDEFINED_OFFSET) {
+            return@run UNDEFINED_OFFSET
         }
+        file.fileEntry.getLineNumber(irStartOffset) + 1
+    }
 
-    val column: Int
-        get() {
-            val irStartOffset = irStartOffset
-                ?: return UNDEFINED_OFFSET
-
-            if (irStartOffset == UNDEFINED_OFFSET) return UNDEFINED_OFFSET
-
-            val columnNumber = file?.fileEntry?.getColumnNumber(irStartOffset)
-                ?: return UNDEFINED_OFFSET
-
-            return columnNumber + 1
+    val column: Int = run {
+        if (irStartOffset == null || irStartOffset == UNDEFINED_OFFSET) {
+            return@run UNDEFINED_OFFSET
         }
+        file.fileEntry.getColumnNumber(irStartOffset) + 1
+    }
 
-    private val irStartOffset: Int?
-        get() = (ir as? IrElement)?.startOffset
-
-    val path: String?
-        get() = file?.path
-
-    val content: String?
-        get() = when (ir) {
-            is IrElement -> ir.dumpKotlinLike()
-            is IrType -> ir.dumpKotlinLike()
-            else -> null
-        }
+    fun render(stringBuilder: StringBuilder) {
+        stringBuilder.appendLine("$path:$line:$column")
+    }
 }
 
 fun compilationException(message: String, element: IrElement): Nothing {
@@ -87,7 +109,7 @@ fun compilationException(message: String, type: IrType?): Nothing {
 fun compilationException(message: String, declaration: IrDeclaration): Nothing {
     val file = try {
         declaration.fileOrNull
-    } catch (e: Throwable) {
+    } catch (_: Throwable) {
         null
     }
     throw CompilationException(message, file, declaration)

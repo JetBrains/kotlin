@@ -75,7 +75,7 @@ fun FileLoweringPass.lower(
     try {
         lower(it)
     } catch (e: CompilationException) {
-        e.file = it
+        e.initializeFileDetails(it)
         throw e
     } catch (e: KotlinExceptionWithAttachments) {
         throw e
@@ -149,7 +149,7 @@ fun BodyLoweringPass.runOnFilePostfix(
         try {
             declaration.accept(visitor, null)
         } catch (e: CompilationException) {
-            e.file = irFile
+            e.initializeFileDetails(irFile)
             throw e
         } catch (e: Throwable) {
             throw e.wrapWithCompilationException(
@@ -227,7 +227,7 @@ interface DeclarationTransformer : FileLoweringPass {
                 declaration.acceptVoid(visitor)
                 transformFlatRestricted(declaration)
             } catch (e: CompilationException) {
-                e.file = irFile
+                e.initializeFileDetails(irFile)
                 throw e
             } catch (e: Throwable) {
                 throw e.wrapWithCompilationException(
