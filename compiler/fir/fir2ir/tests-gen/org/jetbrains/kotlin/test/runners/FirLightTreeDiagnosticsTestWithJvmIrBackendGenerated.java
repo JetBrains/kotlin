@@ -527,6 +527,12 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("classInitializer.kt")
+      public void testClassInitializer() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/classInitializer.kt");
+      }
+
+      @Test
       @TestMetadata("classObject.kt")
       public void testClassObject() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/classObject.kt");
@@ -566,6 +572,12 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
       @TestMetadata("enum.kt")
       public void testEnum() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/enum.kt");
+      }
+
+      @Test
+      @TestMetadata("innerClass.kt")
+      public void testInnerClass() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/innerClass.kt");
       }
 
       @Test
