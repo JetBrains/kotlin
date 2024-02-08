@@ -288,7 +288,7 @@ abstract class AbstractTypeApproximator(
         toSuper: Boolean,
         depth: Int
     ): KotlinTypeMarker? {
-        fun KotlinTypeMarker.replaceRecursionWithStarProjection(capturedType: CapturedTypeMarker, toSuper: Boolean): KotlinTypeMarker {
+        fun KotlinTypeMarker.replaceRecursionWithStarProjection(capturedType: CapturedTypeMarker): KotlinTypeMarker {
             // This replacement is important for resolving the code like below in K2.
             //     fun bar(y: FieldOrRef<*>) = y.field
             //     interface FieldOrRef<FF : AbstractField<FF>> { val field: FF }
@@ -311,7 +311,7 @@ abstract class AbstractTypeApproximator(
                 return getType().lowerBoundIfFlexible().originalIfDefinitelyNotNullable()
             }
 
-            return if (isK2 && toSuper && getArguments().any { it.unwrapForComparison() == capturedType }) {
+            return if (isK2 && getArguments().any { it.unwrapForComparison() == capturedType }) {
                 replaceArguments {
                     when {
                         it.unwrapForComparison() != capturedType -> it
@@ -326,7 +326,7 @@ abstract class AbstractTypeApproximator(
         val supertypes = capturedType.typeConstructor().supertypes()
         val baseSuperType = when (supertypes.size) {
             0 -> nullableAnyType() // Let C = in Int, then superType for C and C? is Any?
-            1 -> supertypes.single().replaceRecursionWithStarProjection(capturedType, toSuper)
+            1 -> supertypes.single().replaceRecursionWithStarProjection(capturedType)
 
             // Consider the following example:
             // A.getA()::class.java, where `getA()` returns some class from Java
@@ -347,7 +347,7 @@ abstract class AbstractTypeApproximator(
 
             else -> {
                 val projection = capturedType.typeConstructorProjection()
-                if (projection.isStarProjection()) intersectTypes(supertypes.map { it.replaceRecursionWithStarProjection(capturedType, toSuper) })
+                if (projection.isStarProjection()) intersectTypes(supertypes.map { it.replaceRecursionWithStarProjection(capturedType) })
                 else projection.getType()
             }
         }

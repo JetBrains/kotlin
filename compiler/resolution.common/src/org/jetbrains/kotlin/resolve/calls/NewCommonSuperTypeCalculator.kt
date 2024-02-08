@@ -401,7 +401,7 @@ object NewCommonSuperTypeCalculator {
             return false // arguments for contravariant parameters are intersected, recursion should not be possible
 
         val originalTypesSet = originalTypesForCst.toSet()
-        val typeArgumentsTypeSet = typeArgumentsForSuperConstructorParameter.map { it.getType().lowerBoundIfFlexible() }.toSet()
+        val typeArgumentsTypeSet = typeArgumentsForSuperConstructorParameter.map { it.getType().lowerBoundIfFlexible().originalIfDefinitelyNotNullable() }.toSet()
 
         if (originalTypesSet.size != typeArgumentsTypeSet.size)
             return false
@@ -414,7 +414,7 @@ object NewCommonSuperTypeCalculator {
 
             var starProjectionFound = false
             for (supertype in supertypesIfCapturedStarProjection(argumentType).orEmpty()) {
-                if (supertype.lowerBoundIfFlexible().typeConstructor() !in originalTypeConstructorSet)
+                if (supertype.lowerBoundIfFlexible().originalIfDefinitelyNotNullable().typeConstructor() !in originalTypeConstructorSet)
                     return false
                 else starProjectionFound = true
             }
@@ -429,7 +429,7 @@ object NewCommonSuperTypeCalculator {
         for (type in types) {
             if (isCapturedStarProjection(type)) {
                 for (supertype in supertypesIfCapturedStarProjection(type).orEmpty()) {
-                    yield(supertype.lowerBoundIfFlexible().typeConstructor())
+                    yield(supertype.lowerBoundIfFlexible().originalIfDefinitelyNotNullable().typeConstructor())
                 }
             } else {
                 yield(type.typeConstructor())

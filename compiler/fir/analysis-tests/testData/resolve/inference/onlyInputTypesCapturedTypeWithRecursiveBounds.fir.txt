@@ -28,6 +28,8 @@ FILE: onlyInputTypesCapturedTypeWithRecursiveBounds.kt
     }
     private final fun test(node: R|Foo<*>|): R|kotlin/Unit| {
         R|<local>/node|.R|SubstitutionOverride</Foo.data: R|kotlin/collections/Map<CapturedType(*), kotlin/Any?>|>|.R|kotlin/collections/get|<R|it(kotlin/Enum<*> & I)|, R|kotlin/Any?|>(Q|MyEnum|.R|/MyEnum.EnumEntry|)
+        lval map: R|kotlin/collections/Map<out it(kotlin/Enum<*> & I), kotlin/Any?>| = R|<local>/node|.R|SubstitutionOverride</Foo.data: R|kotlin/collections/Map<CapturedType(*), kotlin/Any?>|>|
+        R|<local>/map|.R|kotlin/collections/get|<R|it(kotlin/Enum<*> & I)|, R|kotlin/Any?|>(Q|MyEnum|.R|/MyEnum.EnumEntry|)
     }
     public open class FooEnumMap<P : R|kotlin/Enum<P>|, R|I|> : R|kotlin/Any| {
         public constructor<P : R|kotlin/Enum<P>|, R|I|>(data: R|java/util/EnumMap<P, kotlin/Any?>|): R|FooEnumMap<P>| {
@@ -40,6 +42,8 @@ FILE: onlyInputTypesCapturedTypeWithRecursiveBounds.kt
     }
     private final fun test(node: R|FooEnumMap<*>|): R|kotlin/Unit| {
         R|<local>/node|.R|SubstitutionOverride</FooEnumMap.data: R|java/util/EnumMap<CapturedType(*), kotlin/Any?>|>|.R|kotlin/collections/get|<R|ft<it(kotlin/Enum<*> & I), it(kotlin/Enum<*>? & I?)>|, R|kotlin/Any!|>(Q|MyEnum|.R|/MyEnum.EnumEntry|)
+        lval map: R|java/util/EnumMap<out it(kotlin/Enum<*> & I), kotlin/Any?>| = R|<local>/node|.R|SubstitutionOverride</FooEnumMap.data: R|java/util/EnumMap<CapturedType(*), kotlin/Any?>|>|
+        R|<local>/map|.R|kotlin/collections/get|<R|ft<it(kotlin/Enum<out ft<it(kotlin/Enum<out ft<it(kotlin/Enum<*> & I), it(kotlin/Enum<*>? & I?)>> & I), it(kotlin/Enum<*>? & I?)>> & I), it(kotlin/Enum<*>? & I?)>|, R|kotlin/Any!|>(Q|MyEnum|.R|/MyEnum.EnumEntry|)
     }
     public open class Foo2<P : R|I|> : R|kotlin/Any| {
         public constructor<P : R|I|>(data: R|kotlin/collections/Map<P, kotlin/Any?>|): R|Foo2<P>| {
@@ -52,6 +56,8 @@ FILE: onlyInputTypesCapturedTypeWithRecursiveBounds.kt
     }
     private final fun test(node: R|Foo2<*>|): R|kotlin/Unit| {
         R|<local>/node|.R|SubstitutionOverride</Foo2.data: R|kotlin/collections/Map<CapturedType(*), kotlin/Any?>|>|.R|kotlin/collections/get|<R|I|, R|kotlin/Any?|>(Q|MyEnum|.R|/MyEnum.EnumEntry|)
+        lval map: R|kotlin/collections/Map<out I, kotlin/Any?>| = R|<local>/node|.R|SubstitutionOverride</Foo2.data: R|kotlin/collections/Map<CapturedType(*), kotlin/Any?>|>|
+        R|<local>/map|.R|kotlin/collections/get|<R|I|, R|kotlin/Any?|>(Q|MyEnum|.R|/MyEnum.EnumEntry|)
     }
     public abstract interface I2 : R|kotlin/Any| {
     }
