@@ -30,19 +30,25 @@ import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 import kotlin.io.path.div
 import kotlin.io.path.outputStream
+import kotlin.io.path.pathString
 
 abstract class CliTestModuleCompiler : TestModuleCompiler() {
     internal abstract val compilerKind: CompilerExecutor.CompilerKind
 
     protected abstract fun buildPlatformCompilerOptions(module: TestModule, testServices: TestServices): List<String>
 
-    override fun compile(tmpDir: Path, module: TestModule, testServices: TestServices): Path = CompilerExecutor.compileLibrary(
+    override fun compile(
+        tmpDir: Path,
+        module: TestModule,
+        testServices: TestServices,
+        dependencyPaths: Collection<Path>,
+    ): Path = CompilerExecutor.compileLibrary(
         compilerKind,
         tmpDir,
         buildCompilerOptions(module, testServices),
         compilationErrorExpected = Directives.COMPILATION_ERRORS in module.directives,
         libraryName = module.name,
-        extraClasspath = buildExtraClasspath(module, testServices),
+        extraClasspath = buildExtraClasspath(module, testServices) + dependencyPaths.map { it.pathString },
     )
 
     override fun compileTestModuleToLibrarySources(module: TestModule, testServices: TestServices): Path {
@@ -145,8 +151,8 @@ class DispatchingTestModuleCompiler : TestModuleCompiler() {
         CompilerExecutor.CompilerKind.JS to JsKlibTestModuleCompiler(),
     )
 
-    override fun compile(tmpDir: Path, module: TestModule, testServices: TestServices): Path {
-        return getCompiler(module).compileTestModuleToLibrary(module, testServices)
+    override fun compile(tmpDir: Path, module: TestModule, testServices: TestServices, dependencyPaths: Collection<Path>): Path {
+        return getCompiler(module).compileTestModuleToLibrary(module, testServices, dependencyPaths)
     }
 
     override fun compileTestModuleToLibrarySources(module: TestModule, testServices: TestServices): Path {
