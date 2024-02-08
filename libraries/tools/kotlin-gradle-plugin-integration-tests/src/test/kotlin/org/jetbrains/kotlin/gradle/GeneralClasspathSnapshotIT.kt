@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
@@ -26,7 +27,9 @@ class GeneralClasspathSnapshotIT : KGPBaseTest() {
                 }
                 """.trimIndent()
             )
-            build("compileKotlin")
+            build("compileKotlin") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.DependencyDoesNotPhysicallyExist)
+            }
         }
     }
 }

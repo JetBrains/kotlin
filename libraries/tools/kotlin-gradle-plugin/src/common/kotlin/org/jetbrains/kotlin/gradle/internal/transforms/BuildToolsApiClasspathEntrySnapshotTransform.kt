@@ -71,7 +71,10 @@ abstract class BuildToolsApiClasspathEntrySnapshotTransform : TransformAction<Bu
             checkVersionConsistency()
         }
         val classpathEntryInputDirOrJar = inputArtifact.get().asFile
-        if (!classpathEntryInputDirOrJar.exists()) return
+        if (!classpathEntryInputDirOrJar.exists()) {
+            reportDiagnostic(KotlinToolingDiagnostics.DependencyDoesNotPhysicallyExist(classpathEntryInputDirOrJar))
+            return
+        }
 
         val snapshotOutputFile = outputs.file(classpathEntryInputDirOrJar.name.replace('.', '_') + "-snapshot.bin")
 

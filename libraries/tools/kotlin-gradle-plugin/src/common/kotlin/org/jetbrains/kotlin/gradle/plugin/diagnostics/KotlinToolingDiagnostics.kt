@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
+import java.io.File
 
 @InternalKotlinGradlePluginApi // used in integration tests
 object KotlinToolingDiagnostics {
@@ -699,6 +700,15 @@ object KotlinToolingDiagnostics {
                 
                 Dependencies:
                 ${dependencies.joinToString(separator = "\n")}
+            """.trimIndent()
+        )
+    }
+
+    object DependencyDoesNotPhysicallyExist : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(dependency: File) = build(
+            """
+               Unable to find the dependency at the location '${dependency.absolutePath}'.
+               Please make sure that the dependency exists at the specified location or ensure that dependency declarations are correct in your project.
             """.trimIndent()
         )
     }
