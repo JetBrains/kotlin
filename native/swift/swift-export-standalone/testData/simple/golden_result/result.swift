@@ -1,3 +1,5 @@
+import KotlinBridges
+
 enum namespace1 {
     enum main {
         public static func foobar(

@@ -1,3 +1,5 @@
+import KotlinBridges
+
 enum namespace {
     enum main {
         public static var foo: Swift.Int32 {
