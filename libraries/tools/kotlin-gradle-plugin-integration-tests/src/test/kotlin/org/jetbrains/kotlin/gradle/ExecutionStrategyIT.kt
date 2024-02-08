@@ -213,6 +213,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             gradleVersion = gradleVersion,
             addHeapDumpOptions = addHeapDumpOptions,
             enableKotlinDaemonMemoryLimitInMb = if (shouldConfigureStrategyViaGradleProperty) null else 1024,
+            enableGradleDaemonMemoryLimitInMb = null, // We need to make an assertion based on default Gradle Daemon JDK configuration
             buildOptions = defaultBuildOptions.copy(
                 useDaemonFallbackStrategy = testFallbackStrategy,
                 compilerExecutionStrategy = if (shouldConfigureStrategyViaGradleProperty) {
@@ -248,9 +249,10 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                     assertOutputContains("Using fallback strategy: Compile without Kotlin daemon")
                 } else if (executionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
                     // 256m is the default value for Gradle 5.0+
-                    val defauldJvmSettingsForGivenGradleVersion = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) "256" else "384"
+                    val defaultJvmSettingsForGivenGradleVersion =
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) "256" else "384"
                     assertKotlinDaemonJvmOptions(
-                        listOf("-XX:MaxMetaspaceSize=${defauldJvmSettingsForGivenGradleVersion}m", "-ea")
+                        listOf("-XX:MaxMetaspaceSize=${defaultJvmSettingsForGivenGradleVersion}m", "-ea")
                     )
                 }
             }
