@@ -103,11 +103,6 @@ open class ConeStubTypeForChainInference(
     )
 }
 
-class ConeStubTypeForSyntheticFixation(
-    constructor: ConeStubTypeConstructor,
-    nullability: ConeNullability
-) : ConeStubTypeForChainInference(constructor, nullability)
-
 class ConeStubTypeForTypeVariableInSubtyping(
     constructor: ConeStubTypeConstructor,
     nullability: ConeNullability

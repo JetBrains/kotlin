@@ -120,10 +120,6 @@ open class ConeTypeRenderer(
                 builder.append(")")
             }
 
-            is ConeStubTypeForSyntheticFixation -> {
-                builder.append("Stub (fixation): ${type.constructor.variable}")
-            }
-
             is ConeStubTypeForChainInference -> {
                 builder.append("Stub (chain inference): ${type.constructor.variable}")
             }
