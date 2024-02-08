@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
+import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -14,15 +15,16 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 internal fun <T : KotlinCommonCompilerOptions> T.configureExperimentalTryNext(
     project: Project,
     kotlinProperties: PropertiesProvider = project.kotlinPropertiesProvider
-): T = configureExperimentalTryNext(kotlinProperties)
+): T = configureExperimentalTryNext(kotlinProperties, project.providers)
 
 internal val KotlinVersion.Companion.nextKotlinLanguageVersion get() = KotlinVersion.values().first { it > KotlinVersion.DEFAULT }
 
 internal fun <T : KotlinCommonCompilerOptions> T.configureExperimentalTryNext(
-    kotlinProperties: PropertiesProvider
+    kotlinProperties: PropertiesProvider,
+    providerFactory: ProviderFactory,
 ): T = apply {
     languageVersion.convention(
-        kotlinProperties.kotlinExperimentalTryNext.map { enabled ->
+        kotlinProperties.kotlinExperimentalTryNext.mapOrNull(providerFactory) { enabled ->
             @Suppress("TYPE_MISMATCH")
             if (enabled) KotlinVersion.nextKotlinLanguageVersion else null
         }
