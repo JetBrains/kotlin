@@ -1,0 +1,13 @@
+compiler/testData/javaModules/noDependencyOnUnnamed/main/usage.kt:3:15: error: symbol is declared in unnamed module which is not read by current module
+fun test(foo: Foo) {
+              ^^^
+compiler/testData/javaModules/noDependencyOnUnnamed/main/usage.kt:4:9: error: symbol is declared in unnamed module which is not read by current module
+    foo.field
+        ^^^^^
+compiler/testData/javaModules/noDependencyOnUnnamed/main/usage.kt:5:9: error: symbol is declared in unnamed module which is not read by current module
+    foo.method()
+        ^^^^^^
+compiler/testData/javaModules/noDependencyOnUnnamed/main/usage.kt:6:5: error: symbol is declared in unnamed module which is not read by current module
+    Foo()
+    ^^^
+COMPILATION_ERROR
