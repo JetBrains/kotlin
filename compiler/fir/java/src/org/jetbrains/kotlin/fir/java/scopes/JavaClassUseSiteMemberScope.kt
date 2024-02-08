@@ -585,19 +585,45 @@ class JavaClassUseSiteMemberScope(
         return fir.computeJvmDescriptor(includeReturnType = false) == builtinWithErasedParameters.fir.computeJvmDescriptor(includeReturnType = false)
     }
 
+    /**
+     * This function collects in [destination] an overriding method for base method group [resultOfIntersectionWithNaturalName],
+     * in case base methods should have its name changed in Java,
+     * e.g. MutableList.removeAt(Int) in Kotlin is paired with List.remove(int) in Java.
+     *
+     * Given we have a Java class [klass] and some its method(s) name mapped to [naturalName] in Kotlin
+     * with base method group [resultOfIntersectionWithNaturalName] and (maybe)
+     * explicitly declared [explicitlyDeclaredFunctionWithNaturalName],
+     * this function builds a synthetic override for [resultOfIntersectionWithNaturalName] in the Java class,
+     * binds it with this intersection result using the override relation,
+     * and collects it as a matching method with this [naturalName].
+     *
+     * Important: all explicitly declared functions are already collected at this point, there is no reason to collect them once more!
+     *
+     * @param naturalName the Kotlin name of the function, e.g., toByte, get, removeAt
+     * @param destination used to collect base functions for [explicitlyDeclaredFunctionWithNaturalName] with erased value parameters in Java
+     * @param resultOfIntersectionWithNaturalName one group of intersected base methods, each "overridden member" inside is a pair of (base method, its scope)
+     * @param someSymbolWithNaturalNameFromSuperType unwrapped symbol taken from [resultOfIntersectionWithNaturalName]
+     * @param explicitlyDeclaredFunctionWithNaturalName the function in the Java class [klass] with the name [naturalName], which overrides [resultOfIntersectionWithNaturalName] (if any)
+     * @return true if we collected something, false otherwise
+     * @see [SpecialGenericSignatures.NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP] and
+     * [SpecialGenericSignatures.JVM_SIGNATURES_FOR_RENAMED_BUILT_INS]
+     */
     private fun processOverridesForFunctionsWithDifferentJvmName(
-        // The JVM name of the function, e.g., byteValue or charAt
         someSymbolWithNaturalNameFromSuperType: FirNamedFunctionSymbol,
         explicitlyDeclaredFunctionWithNaturalName: FirNamedFunctionSymbol?,
-        // The Kotlin name of the function, e.g., toByte or get
         naturalName: Name,
         resultOfIntersectionWithNaturalName: ResultOfIntersection<FirNamedFunctionSymbol>,
         destination: MutableCollection<FirNamedFunctionSymbol>,
         resultsOfIntersectionToSaveInCache: MutableList<ResultOfIntersection<FirNamedFunctionSymbol>>
     ): Boolean {
-        /*
-         * naturalName: toByte
-         * jvmName: byteValue
+        // The JVM name of the function, e.g., byteValue or charAt
+        val jvmName = resultOfIntersectionWithNaturalName.overriddenMembers.firstNotNullOfOrNull {
+            it.member.getJvmMethodNameIfSpecial(it.baseScope, session)
+        } ?: return false
+
+        /**
+         * naturalName: `toByte` (or: `CharSequence.get`, or: `MutableList.removeAt`)
+         * jvmName: `byteValue` (or: `CharSequence.charAt`, or: `MutableList.remove`)
          *
          * 1. find declared byteValue (a)
          * 2. find toByte in supertypes (b)
@@ -611,11 +637,6 @@ class JavaClassUseSiteMemberScope(
          * 7.1 create renamed copies of (c): (c')
          * 7.2 save direct overrides
          */
-
-        val jvmName = resultOfIntersectionWithNaturalName.overriddenMembers.firstNotNullOfOrNull {
-            it.member.getJvmMethodNameIfSpecial(it.baseScope, session)
-        } ?: return false
-
 
         // Among the overridden members, some can be regular members and some can be renamed from jvmName to naturalName.
         // If we have the CharBuffer situation, the visible member will override the regular ones and the hidden member will
@@ -691,7 +712,7 @@ class JavaClassUseSiteMemberScope(
             explicitlyDeclaredFunctionWithBuiltinJvmName ?: overriddenByJvmName.first().member
 
         if (explicitlyDeclaredFunctionWithNaturalName != null || overriddenByNaturalName.isNotEmpty()) {
-            // The CharBuffer situation: both get(Int):Char and charAt(Int):Char are declared or inherited.
+            // The CharBuffer situation as example: both `get(Int):Char` and `charAt(Int):Char` are declared or inherited.
 
             // CharBuffer.charAt is renamed to get, becomes hidden and overrides kotlin.CharSequence.charAt.
             val hiddenRenamedFunction = createCopyWithNaturalName(explicitlyDeclaredOrInheritedFunctionWithBuiltinJvmName, isHidden = true)
