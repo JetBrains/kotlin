@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = "kotlinp"
 
@@ -60,11 +59,5 @@ tasks {
     "test" {
         // These dependencies are needed because ForTestCompileRuntime loads jars from dist
         dependsOn(rootProject.tasks.named("dist"))
-    }
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs += listOf("-opt-in=kotlin.RequiresOptIn")
     }
 }
