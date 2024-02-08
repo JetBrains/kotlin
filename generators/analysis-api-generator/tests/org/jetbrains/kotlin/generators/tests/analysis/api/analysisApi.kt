@@ -100,17 +100,21 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
 
     component(
         "compilerFacility",
-        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)
+        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource, TestModuleKind.LibraryBinary)
                 and frontendIs(FrontendKind.Fir)
                 and analysisSessionModeIs(AnalysisSessionMode.Normal)
                 and analysisApiModeIs(AnalysisApiMode.Ide)
     ) {
-        test(AbstractCompilerFacilityTest::class) {
+        test(AbstractCompilerFacilityTest::class, filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)) {
             model("compilation", pattern = TestGeneratorUtil.KT)
         }
 
         test(AbstractMultiModuleCompilerFacilityTest::class, filter = testModuleKindIs(TestModuleKind.Source)) {
             model("compilationMultiModule", pattern = TestGeneratorUtil.KT)
+        }
+
+        test(AbstractMultiModuleCompilerFacilityTest::class, filter = testModuleKindIs(TestModuleKind.LibraryBinary)) {
+            model("compilationMultiBinaryModule", pattern = TestGeneratorUtil.KT)
         }
     }
 
