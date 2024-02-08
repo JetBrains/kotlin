@@ -90,6 +90,7 @@ abstract class KotlinNpmInstallTask :
     @get:Internal
     val yarnLockFile: Provider<RegularFile> = nodeJs.rootPackageDirectory.map { it.file("yarn.lock") }
 
+    @Suppress("DEPRECATION")
     @Deprecated(
         "This property is deprecated and will be removed in future. Use additionalFiles instead",
         replaceWith = ReplaceWith("additionalFiles")
