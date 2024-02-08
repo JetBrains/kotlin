@@ -83,7 +83,7 @@ val relocatedJar by task<ShadowJar> {
 val normalizeComponentsXmlEndings by tasks.registering {
     dependsOn(relocatedJar)
     val outputFile = layout.buildDirectory.file("$name/${ComponentsXmlResourceTransformer.COMPONENTS_XML_PATH}")
-    val relocatedJarFile = project.provider { relocatedJar.get().singleOutputFile() }
+    val relocatedJarFile = relocatedJar.map { it.singleOutputFile(layout) }
     val archiveOperations = serviceOf<ArchiveOperations>()
     outputs.file(outputFile)
 
@@ -105,14 +105,14 @@ val normalizedJar by task<Jar> {
     archiveClassifier.set("normalized")
 
     from {
-        zipTree(relocatedJar.get().singleOutputFile()).matching {
+        zipTree(relocatedJar.get().singleOutputFile(layout)).matching {
             exclude(ComponentsXmlResourceTransformer.COMPONENTS_XML_PATH)
         }
     }
 
     into(ComponentsXmlResourceTransformer.COMPONENTS_XML_PATH.substringBeforeLast("/")) {
         from {
-            normalizeComponentsXmlEndings.get().singleOutputFile()
+            normalizeComponentsXmlEndings.map { it.singleOutputFile(layout) }
         }
     }
 }
@@ -156,7 +156,7 @@ val resultJar by task<Jar> {
     dependsOn(pack)
     setupPublicJar(jarBaseName)
     from {
-        zipTree(pack.get().singleOutputFile())
+        zipTree(pack.map { it.singleOutputFile(layout) })
     }
 }
 

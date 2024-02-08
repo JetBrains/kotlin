@@ -120,7 +120,7 @@ val resultJar by task<Jar> {
     dependsOn(pack)
     setupPublicJar(jarBaseName)
     from {
-        zipTree(pack.get().singleOutputFile())
+        zipTree(pack.map { it.singleOutputFile(layout) })
     }
 }
 
