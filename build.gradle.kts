@@ -901,7 +901,7 @@ tasks {
     }
 
     register("toolsTest") {
-        dependsOn(":tools:kotlinp:test")
+        dependsOn(":tools:kotlinp-jvm:test")
         dependsOn(":native:kotlin-klib-commonizer:test")
         dependsOn(":native:kotlin-klib-commonizer-api:test")
         dependsOn(":kotlin-tooling-core:check")

@@ -11,7 +11,7 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuite(args) {
-        testGroup("libraries/tools/kotlinp/test", "libraries/tools/kotlinp/testData") {
+        testGroup("libraries/tools/kotlinp/jvm/test", "libraries/tools/kotlinp/jvm/testData") {
             testClass<AbstractK1KotlinpTest> {
                 model("")
             }
