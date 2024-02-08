@@ -488,6 +488,17 @@ fun main() {
                 model("CExport", pattern = "^([^_](.+))$", recursive = false)
             }
         }
+        // Swift Export
+        testGroup(
+            "native/native.tests/tests-gen/",
+            "native/swift/swift-export-standalone/testData"
+        ) {
+            testClass<SwiftTypeCheckBaseTest>(
+                suiteTestClassName = "TypeCheckSwiftExportGoldenData"
+            ) {
+                model("", extension = "swift", recursive = true)
+            }
+        }
     }
 }
 
