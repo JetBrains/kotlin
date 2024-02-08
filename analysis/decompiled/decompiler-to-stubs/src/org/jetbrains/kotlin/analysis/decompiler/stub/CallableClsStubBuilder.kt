@@ -55,14 +55,18 @@ fun createDeclarationsStubs(
     propertyProtos: List<ProtoBuf.Property>,
 ) {
     for (propertyProto in propertyProtos) {
-        if (!shouldSkip(propertyProto.flags, outerContext.nameResolver.getName(propertyProto.name))) {
-            PropertyClsStubBuilder(parentStub, outerContext, protoContainer, propertyProto).build()
+        if (mustNotBeWrittenToStubs(propertyProto.flags, outerContext.nameResolver.getName(propertyProto.name))) {
+            continue
         }
+
+        PropertyClsStubBuilder(parentStub, outerContext, protoContainer, propertyProto).build()
     }
     for (functionProto in functionProtos) {
-        if (!shouldSkip(functionProto.flags, outerContext.nameResolver.getName(functionProto.name))) {
-            FunctionClsStubBuilder(parentStub, outerContext, protoContainer, functionProto).build()
+        if (mustNotBeWrittenToStubs(functionProto.flags, outerContext.nameResolver.getName(functionProto.name))) {
+            continue
         }
+
+        FunctionClsStubBuilder(parentStub, outerContext, protoContainer, functionProto).build()
     }
 }
 
@@ -86,7 +90,7 @@ fun createConstructorStub(
     ConstructorClsStubBuilder(parentStub, outerContext, protoContainer, constructorProto).build()
 }
 
-private fun shouldSkip(flags: Int, name: Name): Boolean {
+private fun mustNotBeWrittenToStubs(flags: Int, name: Name): Boolean {
     return when (Flags.MEMBER_KIND.get(flags)) {
         MemberKind.FAKE_OVERRIDE -> true
         //TODO: fix decompiler to use sane criteria
