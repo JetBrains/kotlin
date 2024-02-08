@@ -52,7 +52,7 @@ object ByDescriptorIndexer {
             return classOrObject?.primaryConstructor ?: classOrObject
         }
 
-        if ((original as? CallableMemberDescriptor)?.mustNotBeWrittenToDecompiledText() == true &&
+        if (original is CallableMemberDescriptor && original.mustNotBeWrittenToDecompiledText() &&
             original.containingDeclaration is ClassDescriptor
         ) {
             return getDeclarationForDescriptor(original.containingDeclaration, file)
