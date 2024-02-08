@@ -1,2 +1,2 @@
 Resolved to:
-PsiMethod:getColor(): PsiType:Color
+PsiMethod:getColor-ywy1UOY(): PsiType:int
