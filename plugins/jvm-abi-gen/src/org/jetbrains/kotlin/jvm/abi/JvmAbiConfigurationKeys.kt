@@ -18,4 +18,6 @@ object JvmAbiConfigurationKeys {
         CompilerConfigurationKey.create(JvmAbiCommandLineProcessor.PRESERVE_DECLARATION_ORDER_OPTION.description)
     val REMOVE_PRIVATE_CLASSES: CompilerConfigurationKey<Boolean> =
         CompilerConfigurationKey.create(JvmAbiCommandLineProcessor.REMOVE_PRIVATE_CLASSES_OPTION.description)
+    val TREAT_INTERNAL_AS_PRIVATE: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create(JvmAbiCommandLineProcessor.TREAT_INTERNAL_AS_PRIVATE_OPTION.description)
 }
