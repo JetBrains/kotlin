@@ -41,7 +41,7 @@ projectTest {
     workingDir = rootDir
 }
 
-val generateTests by generator("org.jetbrains.kotlin.kotlinp.test.GenerateKotlinpTestsKt")
+val generateTests by generator("org.jetbrains.kotlin.kotlinp.jvm.test.GenerateKotlinpTestsKt")
 
 val shadowJar by task<ShadowJar> {
     archiveClassifier.set("shadow")
@@ -49,7 +49,7 @@ val shadowJar by task<ShadowJar> {
     configurations = listOf(shadows)
     from(mainSourceSet.output)
     manifest {
-        attributes["Main-Class"] = "org.jetbrains.kotlin.kotlinp.Main"
+        attributes["Main-Class"] = "org.jetbrains.kotlin.kotlinp.jvm.Main"
     }
 }
 

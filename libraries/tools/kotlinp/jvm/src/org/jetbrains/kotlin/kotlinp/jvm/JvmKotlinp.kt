@@ -3,10 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kotlinp
+package org.jetbrains.kotlin.kotlinp.jvm
 
 import kotlinx.metadata.*
 import kotlinx.metadata.jvm.*
+import org.jetbrains.kotlin.kotlinp.*
 
 class JvmKotlinp(settings: Settings) : Kotlinp(settings) {
     fun printClassFile(classFile: KotlinClassMetadata): String = printString {

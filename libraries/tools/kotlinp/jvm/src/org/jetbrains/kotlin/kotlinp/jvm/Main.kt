@@ -3,9 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kotlinp
+package org.jetbrains.kotlin.kotlinp.jvm
 
 import kotlinx.metadata.jvm.UnstableMetadataApi
+import org.jetbrains.kotlin.kotlinp.Settings
 import java.io.File
 import java.io.IOException
 import kotlin.system.exitProcess

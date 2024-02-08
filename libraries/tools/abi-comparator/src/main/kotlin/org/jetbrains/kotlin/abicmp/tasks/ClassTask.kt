@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.abicmp.reports.ClassReport
 import org.jetbrains.kotlin.abicmp.reports.ListEntryDiff
 import org.jetbrains.kotlin.abicmp.tag
 import org.jetbrains.kotlin.kotlinp.Settings
-import org.jetbrains.kotlin.kotlinp.JvmKotlinp
-import org.jetbrains.kotlin.kotlinp.readKotlinClassHeader
+import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
+import org.jetbrains.kotlin.kotlinp.jvm.readKotlinClassHeader
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.tree.ClassNode

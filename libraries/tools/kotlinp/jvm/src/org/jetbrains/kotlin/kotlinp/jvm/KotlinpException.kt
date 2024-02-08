@@ -3,6 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kotlinp
+package org.jetbrains.kotlin.kotlinp.jvm
 
 class KotlinpException(message: String) : RuntimeException(message)

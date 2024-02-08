@@ -10,6 +10,7 @@ import kotlinx.metadata.jvm.*
 import org.jetbrains.kotlin.abicmp.*
 import org.jetbrains.kotlin.abicmp.checkers.*
 import org.jetbrains.kotlin.kotlinp.*
+import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode

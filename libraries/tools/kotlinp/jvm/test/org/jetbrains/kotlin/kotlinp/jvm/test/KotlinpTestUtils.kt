@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kotlinp.test
+package org.jetbrains.kotlin.kotlinp.jvm.test
 
 import com.intellij.openapi.Disposable
 import junit.framework.TestCase.assertEquals
@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.kotlin.kotlinp.Settings
-import org.jetbrains.kotlin.kotlinp.JvmKotlinp
-import org.jetbrains.kotlin.kotlinp.readClassFile
-import org.jetbrains.kotlin.kotlinp.readModuleFile
+import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
+import org.jetbrains.kotlin.kotlinp.jvm.readClassFile
+import org.jetbrains.kotlin.kotlinp.jvm.readModuleFile
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.test.KaptMessageCollectorProvider
 import org.jetbrains.kotlin.kapt3.test.kaptOptionsProvider
 import org.jetbrains.kotlin.kotlinp.Settings
-import org.jetbrains.kotlin.kotlinp.JvmKotlinp
+import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.Printer
