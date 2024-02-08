@@ -506,6 +506,39 @@ class ObjCExportTypeTranslationTest(
         assertEquals("ERROR * -> ERROR *", header.renderTypesOfSymbol("function"))
     }
 
+    @Test
+    fun `test - char - property`() {
+        val header = header(
+            """
+                val property : Char get() = error("stub")
+            """.trimIndent()
+        )
+
+        assertEquals("unichar", header.renderTypesOfSymbol("property"))
+    }
+
+    @Test
+    fun `test - char - function parameter`() {
+        val header = header(
+            """
+                fun foo(x: Char) = Unit
+            """.trimIndent()
+        )
+
+        assertEquals("unichar -> void", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - char - as return type`() {
+        val header = header(
+            """
+                fun foo(): Char = error("stub")
+            """.trimIndent()
+        )
+
+        assertEquals(" -> unichar", header.renderTypesOfSymbol("foo"))
+    }
+
     private fun header(
         @Language("kotlin") vararg sourceCode: String,
         configuration: HeaderGenerator.Configuration = HeaderGenerator.Configuration(),
