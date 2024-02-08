@@ -1,0 +1,39 @@
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {})
+/**
+ * public final annotation class A : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface A {
+}
+
+////////////////////
+
+
+/**
+ * package {
+ *
+ *   // signature: foo(Lkotlin/jvm/functions/Function1;)V
+ *   public final fun foo(callback: @A kotlin/Function1<@kotlin/ParameterName(name = "parameter") kotlin/Function0<kotlin/Unit>, kotlin/Unit>): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Kt65453Kt {
+
+    public Kt65453Kt() {
+        super();
+    }
+
+    public static final void foo(@org.jetbrains.annotations.NotNull()
+    kotlin.jvm.functions.Function1<? super kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.Unit> callback) {
+    }
+}

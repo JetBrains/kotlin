@@ -430,7 +430,7 @@ private class StubGenerator(
 
             private fun Printer.printType(type: PsiType) {
                 recordErrorTypes(type)
-                printTypeSignature(type, true)
+                printTypeSignature(type, false) // TODO: Set to true when KT-65608 is fixed
             }
 
             private fun Printer.printTypeSignature(type: PsiType, annotated: Boolean) {

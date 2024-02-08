@@ -77,10 +77,9 @@ public final class TypeAnnotationsKt {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public static final java.lang.@org.jetbrains.A() String foo(@org.jetbrains.annotations.NotNull()
-    java.util.@org.jetbrains.A() List<java.lang.@org.jetbrains.A() String> x, @org.jetbrains.annotations.NotNull()
-    org.jetbrains.Outer.@org.jetbrains.A() Inner y, @org.jetbrains.A()
-    int z) {
+    public static final java.lang.String foo(@org.jetbrains.annotations.NotNull()
+    java.util.List<java.lang.String> x, @org.jetbrains.annotations.NotNull()
+    org.jetbrains.Outer.Inner y, int z) {
         return null;
     }
 }
