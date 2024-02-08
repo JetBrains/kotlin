@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 
@@ -18,8 +17,8 @@ internal val CreateDefaultCompilationsSideEffect = KotlinTargetSideEffect { targ
         target.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME).apply {
             associateWith(main)
 
-            @Suppress("DEPRECATION")
-            if (this is KotlinCompilationToRunnableFiles && this !is KotlinJsIrTarget) {
+            @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+            if (this is DeprecatedKotlinCompilationToRunnableFiles && this !is KotlinJsIrTarget) {
                 // TODO: fix inconsistency? KT-27272
                 runtimeDependencyFiles += project.files(output.allOutputs)
             }
