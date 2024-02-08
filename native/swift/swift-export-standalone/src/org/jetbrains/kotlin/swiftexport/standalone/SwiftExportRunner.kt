@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone
 
+import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEBUG_MODE_ENABLED
+import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildFunctionBridges
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSwiftModule
 import org.jetbrains.kotlin.swiftexport.standalone.transformation.transformToSwift
@@ -13,10 +15,22 @@ import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpResultToFiles
 import java.nio.file.Path
 
 public data class SwiftExportConfig(
-    val settings: Map<String, String>
+    val settings: Map<String, String>,
+    val logger: SwiftExportLogger,
 ) {
     public companion object {
         public const val DEBUG_MODE_ENABLED: String = "DEBUG_MODE_ENABLED"
+
+        /**
+         * How should the generated stubs refer to C bridging module?
+         * ```swift
+         * import $BRIDGE_MODULE_NAME
+         * ...
+         * ```
+         */
+        public const val BRIDGE_MODULE_NAME: String = "BRIDGE_MODULE_NAME"
+
+        public const val DEFAULT_BRIDGE_MODULE_NAME: String = "KotlinBridges"
     }
 }
 
@@ -32,14 +46,45 @@ public data class SwiftExportOutput(
 )
 
 /**
+ * Trivial logging interface that should be implemented
+ * by the environment to report messages from Swift export.
+ */
+public interface SwiftExportLogger {
+    public enum class Severity {
+        Info,
+        Warning,
+        Error,
+    }
+
+    public fun report(severity: Severity, message: String)
+}
+
+/**
+ * Primitive implementation of [SwiftExportLogger] which should be sufficient for testing purposes.
+ */
+public fun createDummyLogger(): SwiftExportLogger = object : SwiftExportLogger {
+    override fun report(severity: SwiftExportLogger.Severity, message: String) {
+        println("$severity: $message")
+    }
+}
+
+/**
  * A root function for running Swift Export from build tool
  */
 public fun runSwiftExport(
     input: SwiftExportInput,
-    config: SwiftExportConfig = SwiftExportConfig(emptyMap()),
+    config: SwiftExportConfig = SwiftExportConfig(emptyMap(), createDummyLogger()),
     output: SwiftExportOutput,
 ) {
-    val module = buildSwiftModule(input, config.settings.containsKey(DEBUG_MODE_ENABLED))
+    val isDebugModeEnabled = config.settings.containsKey(DEBUG_MODE_ENABLED)
+    val bridgeModuleName = config.settings.getOrElse(BRIDGE_MODULE_NAME) {
+        config.logger.report(SwiftExportLogger.Severity.Warning,
+                             "Bridging header is not set. Using $DEFAULT_BRIDGE_MODULE_NAME instead")
+        DEFAULT_BRIDGE_MODULE_NAME
+    }
+
+
+    val module = buildSwiftModule(input, isDebugModeEnabled)
         .transformToSwift()
     val bridgeRequests = module.buildFunctionBridges()
     module.dumpResultToFiles(bridgeRequests, output)

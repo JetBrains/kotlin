@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportInput
 
 @OptIn(KtAnalysisApiInternals::class)
-internal fun buildSwiftModule(input: SwiftExportInput, shouldSortInputFiles: Boolean): SirModule {
+internal fun buildSwiftModule(
+    input: SwiftExportInput,
+    shouldSortInputFiles: Boolean,
+): SirModule {
     val session = buildStandaloneAnalysisAPISession {
         registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
 
