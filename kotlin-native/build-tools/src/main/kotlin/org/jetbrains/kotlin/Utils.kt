@@ -279,7 +279,6 @@ fun Task.dependsOnKonanBuildingTask(artifact: String, target: KonanTarget) {
 
 //endregion
 
-@JvmOverloads
 fun compileSwift(
     project: Project, target: KonanTarget, sources: List<String>, options: List<String>,
     output: Path
