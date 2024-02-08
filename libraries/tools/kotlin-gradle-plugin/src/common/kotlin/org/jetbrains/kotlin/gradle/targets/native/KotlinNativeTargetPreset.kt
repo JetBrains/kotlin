@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
-import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -46,6 +45,7 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
     override fun createTargetInternal(name: String): T {
         if (!project.kotlinNativeToolchainEnabled) {
+            @Suppress("DEPRECATION")
             project.setupNativeCompiler(konanTarget)
         }
 
@@ -80,7 +80,7 @@ open class KotlinNativeTargetPreset(name: String, project: Project, konanTarget:
     AbstractKotlinNativeTargetPreset<KotlinNativeTarget>(name, project, konanTarget) {
 
     override fun createTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinNativeTarget> =
-        KotlinNativeTargetConfigurator<KotlinNativeTarget>()
+        KotlinNativeTargetConfigurator()
 
     override fun instantiateTarget(name: String): KotlinNativeTarget {
         return project.objects.newInstance(KotlinNativeTarget::class.java, project, konanTarget)
