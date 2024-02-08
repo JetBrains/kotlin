@@ -72,11 +72,14 @@ object CommonRenderers {
         declarationRenderer: DiagnosticParameterRenderer<Declaration>,
         renderSignature: StringBuilder.(Data) -> Unit,
         declarations: (Data) -> Collection<Declaration>,
+        declarationKind: (Data) -> String = { "declarations" },
     ) = Renderer<Data> { data ->
         val sortedDeclarations = declarations(data).sortedWith(sortUsing)
         val renderingContext = RenderingContext.Impl(sortedDeclarations)
         buildString {
-            append("The following declarations have the same ")
+            append("The following ")
+            append(declarationKind(data))
+            append(" have the same ")
             append(signatureKind)
             append(" signature (")
             renderSignature(data)
