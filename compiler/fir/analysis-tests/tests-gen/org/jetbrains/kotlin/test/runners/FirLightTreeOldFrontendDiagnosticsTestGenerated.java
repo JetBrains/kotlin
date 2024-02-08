@@ -18054,6 +18054,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("expectedTypeHasCapturedStarArgument.kt")
+                public void testExpectedTypeHasCapturedStarArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/expectedTypeHasCapturedStarArgument.kt");
+                }
+
+                @Test
                 @TestMetadata("expectedTypeMismatchWithInVariance.kt")
                 public void testExpectedTypeMismatchWithInVariance() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/expectedTypeMismatchWithInVariance.kt");
