@@ -34,7 +34,8 @@ internal class FirErrorExpressionImpl(
     override var nonExpressionElement: FirElement?,
 ) : FirErrorExpression() {
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    override var coneTypeOrNull: ConeKotlinType? = ConeErrorType(ConeStubDiagnostic(diagnostic))
+    override val coneTypeOrNull: ConeKotlinType?
+        get() = expression?.coneTypeOrNull ?: ConeErrorType(ConeStubDiagnostic(diagnostic))
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -54,9 +55,7 @@ internal class FirErrorExpressionImpl(
         return this
     }
 
-    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
-        coneTypeOrNull = newConeTypeOrNull
-    }
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {}
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()

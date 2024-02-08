@@ -11,7 +11,7 @@ fun main() {
     val h1 : String = <!INITIALIZER_TYPE_MISMATCH!>--v<!>;
     val i : String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>!true<!>;
     val j : String = <!INITIALIZER_TYPE_MISMATCH!>foo@ true<!>;
-    val k : String = <!MULTIPLE_LABELS_ARE_FORBIDDEN!>foo@<!> bar@ true;
+    val k : String = <!INITIALIZER_TYPE_MISMATCH!><!MULTIPLE_LABELS_ARE_FORBIDDEN!>foo@<!> bar@ true<!>;
     val l : String = <!INITIALIZER_TYPE_MISMATCH!>-1<!>;
     val m : String = <!INITIALIZER_TYPE_MISMATCH!>+1<!>;
 }
