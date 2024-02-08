@@ -150,4 +150,12 @@ abstract class SirTransformer<in D> : SirVisitor<SirElement, D>() {
     final override fun visitForeignVariable(variable: SirForeignVariable, data: D): SirDeclaration {
         return transformForeignVariable(variable, data)
     }
+
+    open fun transformImport(import: SirImport, data: D): SirDeclaration {
+        return transformDeclaration(import, data)
+    }
+
+    final override fun visitImport(import: SirImport, data: D): SirDeclaration {
+        return transformImport(import, data)
+    }
 }

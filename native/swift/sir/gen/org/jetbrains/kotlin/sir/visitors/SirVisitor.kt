@@ -64,4 +64,7 @@ abstract class SirVisitor<out R, in D> {
 
     open fun visitForeignVariable(variable: SirForeignVariable, data: D): R =
         visitDeclaration(variable, data)
+
+    open fun visitImport(import: SirImport, data: D): R =
+        visitDeclaration(import, data)
 }

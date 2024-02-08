@@ -149,4 +149,12 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
     open fun visitForeignVariable(variable: SirForeignVariable) {
         visitDeclaration(variable)
     }
+
+    final override fun visitImport(import: SirImport, data: Nothing?) {
+        visitImport(import)
+    }
+
+    open fun visitImport(import: SirImport) {
+        visitDeclaration(import)
+    }
 }

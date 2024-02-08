@@ -142,4 +142,11 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
 
         visitorParameterName = "variable"
     }
+
+    val import by element {
+        customParentInVisitor = declaration
+        parent(declaration)
+
+        +field("moduleName", string)
+    }
 }

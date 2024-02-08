@@ -115,4 +115,10 @@ abstract class SirTransformerVoid : SirTransformer<Nothing?>() {
 
     final override fun transformForeignVariable(variable: SirForeignVariable, data: Nothing?): SirDeclaration =
         transformForeignVariable(variable)
+
+    open fun transformImport(import: SirImport): SirDeclaration =
+        transformDeclaration(import)
+
+    final override fun transformImport(import: SirImport, data: Nothing?): SirDeclaration =
+        transformImport(import)
 }
