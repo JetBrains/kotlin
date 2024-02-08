@@ -88,9 +88,18 @@ class LLFirSessionCache(private val project: Project) {
     private fun <T : KtModule> getCachedSession(module: T, storage: SessionStorage, factory: (T) -> LLFirSession): LLFirSession {
         checkCanceled()
 
-        val session = storage.computeIfAbsent(module) { factory(module) }
-        checkSessionValidity(session)
+        val session = if (module.supportsIsolatedSessionCreation) {
+            storage.computeIfAbsent(module) { factory(module) }
+        } else {
+            // Non-isolated session creation may need to access other sessions, so we should create the session outside `computeIfAbsent` to
+            // avoid recursive update exceptions.
+            storage[module] ?: run {
+                val danglingSession = factory(module)
+                storage.computeIfAbsent(module) { danglingSession }
+            }
+        }
 
+        checkSessionValidity(session)
         return session
     }
 
@@ -198,6 +207,13 @@ class LLFirSessionCache(private val project: Project) {
             storage.remove(module)
         }
     }
+
+    /**
+     * Whether the session for [module] can be created without getting other sessions from the cache. Should be kept in sync with
+     * [createSession].
+     */
+    private val KtModule.supportsIsolatedSessionCreation: Boolean
+        get() = this !is KtDanglingFileModule
 
     private fun createSession(module: KtModule): LLFirSession {
         val sessionFactory = createPlatformAwareSessionFactory(module)
