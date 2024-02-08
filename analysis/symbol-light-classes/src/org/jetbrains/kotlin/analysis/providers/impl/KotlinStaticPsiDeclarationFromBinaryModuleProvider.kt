@@ -86,7 +86,11 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
                     // E.g., getJVM_FIELD -> JVM_FIELD
                     nameWithoutPrefix == id ||
                             // E.g., getFooBar -> FooBar -> fooBar
-                            nameWithoutPrefix.decapitalizeSmart().endsWith(id)
+                            nameWithoutPrefix.decapitalizeSmart().let { decapitalizedPrefix ->
+                                decapitalizedPrefix.endsWith(id) ||
+                                        // value class mangling: getColor-hash
+                                        isValueClassMangled(decapitalizedPrefix, id)
+                            }
                 }
         }.toList()
     }
@@ -102,11 +106,21 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
         val classes = callableId.classId?.let { classId ->
             getClassesByClassId(classId)
         } ?: getClassesInPackage(callableId.packageName)
+        val id = callableId.callableName.identifier
         return classes.flatMap { psiClass ->
             psiClass.methods.filter { psiMethod ->
-                psiMethod.name == callableId.callableName.identifier
+                psiMethod.name == id ||
+                        // value class mangling: functionName-hash
+                        isValueClassMangled(psiMethod.name, id)
             }
         }.toList()
+    }
+
+    private fun isValueClassMangled(name: String, prefix: String): Boolean {
+        // A memory optimization for `name.startsWith("$prefix-")`, see KT-63486
+        return name.length > prefix.length &&
+                name[prefix.length] == '-' &&
+                name.startsWith(prefix)
     }
 }
 
