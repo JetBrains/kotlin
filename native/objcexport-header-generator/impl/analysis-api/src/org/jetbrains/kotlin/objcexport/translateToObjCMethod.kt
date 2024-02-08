@@ -13,14 +13,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSelectors
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFunctionMethodBridge
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.isArrayConstructor
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 import org.jetbrains.kotlin.psi.KtFile
 
 internal val KtCallableSymbol.isConstructor: Boolean
     get() = this is KtConstructorSymbol
-
-internal val KtCallableSymbol.isArray: Boolean
-    get() = false //TODO: temp k2 workaround
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtFunctionSymbol.translateToObjCMethod(
@@ -30,7 +28,6 @@ fun KtFunctionSymbol.translateToObjCMethod(
 
     return buildObjCMethod()
 }
-
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtFileSymbol.getObjCFileClassOrProtocolName(): ObjCExportFileName? {
@@ -65,7 +62,7 @@ internal fun KtFunctionLikeSymbol.buildObjCMethod(
         attributes += "swift_error(nonnull_error)" // Means "failure <=> (error != nil)".
     }
 
-    if (this.isConstructor && !isArray) { // TODO: check methodBridge instead.
+    if (this.isConstructor && !isArrayConstructor) { // TODO: check methodBridge instead.
         attributes += "objc_designated_initializer"
     }
 
@@ -239,7 +236,7 @@ context(KtAnalysisSession, KtObjCExportSession)
 private fun KtFunctionLikeSymbol.getMangledName(forSwift: Boolean): String {
 
     if (this.isConstructor) {
-        return if (isArray && !forSwift) "array" else "init"
+        return if (isArrayConstructor && !forSwift) "array" else "init"
     }
 
     val candidate = when (this) {
@@ -292,20 +289,8 @@ private fun String.startsWithWords(words: String) = this.startsWith(words) &&
 fun MethodBridge.valueParametersAssociated(
     function: KtFunctionLikeSymbol,
 ): List<Pair<MethodBridgeValueParameter, KtValueParameterSymbol?>> {
-
-    val skipFirstKotlinParameter = when (this.receiver) {
-        MethodBridgeReceiver.Static -> false
-        MethodBridgeReceiver.Instance -> false
-        MethodBridgeReceiver.Factory -> true
-    }
-
-    val allParameters = function.valueParameters.let { valueParameters ->
-        if (skipFirstKotlinParameter) valueParameters.drop(1)
-        else valueParameters
-    }
-
+    val allParameters = function.valueParameters
     if (allParameters.isEmpty()) return emptyList()
-
 
     return this.valueParameters.mapIndexed { index, valueParameterBridge ->
         when (valueParameterBridge) {
