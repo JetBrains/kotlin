@@ -393,6 +393,10 @@ open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
 @DisplayName("K2 Kapt incremental tests with aggregating apt")
 class K2KaptIncrementalWithAggregatingApt: KaptIncrementalWithAggregatingApt() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+
+    override fun TestProject.customizeProject() {
+        forceKapt4()
+    }
 }
 
 @DisplayName("K1 Kapt incremental tests with aggregating apt with disabled precise compilation outputs backup")
@@ -402,4 +406,8 @@ open class KaptIncrementalWithAggregatingAptAndWithoutPreciseBackup : KaptIncrem
 
 class K2KaptIncrementalWithAggregatingAptAndWithoutPreciseBackup: KaptIncrementalWithAggregatingAptAndWithoutPreciseBackup() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+
+    override fun TestProject.customizeProject() {
+        forceKapt4()
+    }
 }

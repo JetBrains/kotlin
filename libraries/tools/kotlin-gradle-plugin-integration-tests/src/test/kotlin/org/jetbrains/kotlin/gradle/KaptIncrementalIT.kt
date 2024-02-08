@@ -402,6 +402,10 @@ open class KaptIncrementalIT : KGPBaseTest() {
 @OtherGradlePluginTests
 class K2KaptIncrementalIT: KaptIncrementalIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+
+    override fun TestProject.customizeProject() {
+        forceKapt4()
+    }
 }
 
 @DisplayName("Kapt incremental compilation with disabled precise compilation outputs backup")

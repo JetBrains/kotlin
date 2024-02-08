@@ -443,6 +443,10 @@ open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
 @DisplayName("K2 Kapt incremental tests with isolating apt")
 class K2KaptIncrementalWithIsolatingApt : KaptIncrementalWithIsolatingApt() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+
+    override fun TestProject.customizeProject() {
+        forceKapt4()
+    }
 }
 
 @DisplayName("K1 Kapt incremental tests with isolating apt with disabled precise compilation outputs backup")
@@ -453,6 +457,10 @@ open class KaptIncrementalWithIsolatingAptAndWithoutPreciseBackup : KaptIncremen
 @DisplayName("K2 Kapt incremental tests with isolating apt with disabled precise compilation outputs backup")
 class K2KaptIncrementalWithIsolatingAptAndWithoutPreciseBackup : KaptIncrementalWithIsolatingAptAndWithoutPreciseBackup() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+
+    override fun TestProject.customizeProject() {
+        forceKapt4()
+    }
 }
 
 private const val patternApt = "Processing java sources with annotation processors:"

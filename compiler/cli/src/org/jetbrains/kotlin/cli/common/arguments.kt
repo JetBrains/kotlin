@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.common
 import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -47,12 +48,41 @@ fun CompilerConfiguration.setupCommonArguments(
         }
     }
 
+    switchToFallbackModeIfNecessary(arguments, messageCollector)
     setupLanguageVersionSettings(arguments)
 
     val usesK2 = arguments.useK2 || languageVersionSettings.languageVersion.usesK2
     put(CommonConfigurationKeys.USE_FIR, usesK2)
     put(CommonConfigurationKeys.USE_LIGHT_TREE, arguments.useFirLT)
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
+}
+
+private fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, messageCollector: MessageCollector) {
+    fun warn(message: String) {
+        if (!arguments.suppressVersionWarnings) messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, message)
+    }
+
+    if (arguments !is K2JVMCompilerArguments) return
+    val isK2 =
+        arguments.useK2 || (arguments.languageVersion?.startsWith('2') ?: (LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_0))
+    val isKaptUsed = arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
+    when {
+        isK2 && isKaptUsed && !arguments.useKapt4 -> {
+            warn("Kapt currently doesn't support language version 2.0+. Falling back to 1.9.")
+            arguments.languageVersion = LanguageVersion.KOTLIN_1_9.versionString
+            if (arguments.apiVersion?.startsWith("2") == true) {
+                arguments.apiVersion = ApiVersion.KOTLIN_1_9.versionString
+            }
+            arguments.useK2 = false
+            arguments.skipMetadataVersionCheck = true
+            arguments.skipPrereleaseCheck = true
+            arguments.allowUnstableDependencies = true
+        }
+        arguments.useKapt4 -> warn(
+            if (isK2) "K2 kapt is an experimental feature. Use with caution."
+            else "-Xuse-kapt4 flag can be only used with language version 2.0+."
+        )
+    }
 }
 
 fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompilerArguments) {
