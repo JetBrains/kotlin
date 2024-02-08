@@ -70,13 +70,24 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("sameClassNameInDifferentPackage"))
     }
 
-    /**
-     * Naming of nested classes: KT-65633
-     */
     @Test
-    @TodoAnalysisApi
     fun `test - nestedClass`() {
         doTest(headersTestDataDir.resolve("nestedClass"))
+    }
+
+    @Test
+    fun `test - nestedClassWithFrameworkName`() {
+        doTest(headersTestDataDir.resolve("nestedClassWithFrameworkName"), Configuration(frameworkName = "Shared"))
+    }
+
+    @Test
+    fun `test - nestedGenericClass`() {
+        doTest(headersTestDataDir.resolve("nestedGenericClass"))
+    }
+
+    @Test
+    fun `test - nestedInterface`() {
+        doTest(headersTestDataDir.resolve("nestedInterface"))
     }
 
     @Test
@@ -97,7 +108,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - classWithObjCNameAnnotation`() {
         doTest(headersTestDataDir.resolve("classWithObjCNameAnnotation"))
     }

@@ -17,9 +17,10 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
 
     val enumKind = this.classKind == KtClassKind.ENUM_CLASS
     val final = if (this is KtSymbolWithModality) this.modality == Modality.FINAL else false
-    val attributes = if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()
 
     val name = getObjCClassOrProtocolName()
+    val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()
+
     val comment: ObjCComment? = annotationsList.translateToObjCComment()
     val origin: ObjCExportStubOrigin = getObjCExportStubOrigin()
 
