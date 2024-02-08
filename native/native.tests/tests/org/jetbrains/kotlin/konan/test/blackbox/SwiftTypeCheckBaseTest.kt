@@ -53,9 +53,19 @@ abstract class SwiftTypeCheckBaseTest : AbstractNativeSimpleTest() {
         val configs = testRunSettings.configurables as AppleConfigurables
         val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
 
+        val bridgeModuleFile = buildDir.resolve("module.modulemap").apply {
+            writeText("""
+            module KotlinBridges {
+                umbrella header "${cHeader.absolutePath}"
+                export *
+            }
+            """.trimIndent()
+            )
+        }
+
         val args = listOf(
             "-typecheck", swiftFile.absolutePath,
-            "-import-objc-header", cHeader.absolutePath,
+            "-Xcc", "-fmodule-map-file=${bridgeModuleFile.absolutePath}",
             "-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget
         )
 
