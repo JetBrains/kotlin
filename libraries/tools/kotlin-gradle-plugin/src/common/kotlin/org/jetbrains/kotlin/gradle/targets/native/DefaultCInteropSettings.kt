@@ -117,6 +117,7 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
     // DSL methods.
 
     override fun defFile(file: Any) {
+        @Suppress("DEPRECATION")
         defFileProperty.set(params.services.fileOperations.file(file))
     }
 
