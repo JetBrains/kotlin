@@ -120,7 +120,7 @@ fun box(): String {
     if (NonCharSequenceBuffer.create().get(0) != 'g') return "FAIL 7"
     if ((NonCharSequenceBuffer.create() as X).get(0) != 'g') return "FAIL 8"
 
-    if (CharBufferCharAtInherited.create().get(0) != 'g') return "FAIL 9"
+    if (CharBufferCharAtInherited.create().get(0) != 'c') return "FAIL 9"
     if ((CharBufferCharAtInherited.create() as CharSequence).get(0) != 'c') return "FAIL 10"
 
     if (CharBufferXAllInherited.create().get(0) != 'g') return "FAIL 11"

@@ -714,20 +714,35 @@ class JavaClassUseSiteMemberScope(
         if (explicitlyDeclaredFunctionWithNaturalName != null || overriddenByNaturalName.isNotEmpty()) {
             // The CharBuffer situation as example: both `get(Int):Char` and `charAt(Int):Char` are declared or inherited.
 
-            // CharBuffer.charAt is renamed to get, becomes hidden and overrides kotlin.CharSequence.charAt.
-            val hiddenRenamedFunction = createCopyWithNaturalName(explicitlyDeclaredOrInheritedFunctionWithBuiltinJvmName, isHidden = true)
-            destination += hiddenRenamedFunction
-            setOverrides(hiddenRenamedFunction, resultsOfIntersectionOfRenamed)
+            // In case `charAt` is declared, or inherited from base function with the same name, we need to create hidden renamed `get`
+            // Otherwise we don't need it and just use `get` from Java without conflicts
+            val hiddenRenamedFunctionNeeded = explicitlyDeclaredFunctionWithBuiltinJvmName != null ||
+                    explicitlyDeclaredOrInheritedFunctionWithBuiltinJvmName.name == jvmName
+            if (hiddenRenamedFunctionNeeded) {
+                // CharBuffer.charAt is renamed to get, becomes hidden and overrides kotlin.CharSequence.charAt.
+                val hiddenRenamedFunction =
+                    createCopyWithNaturalName(explicitlyDeclaredOrInheritedFunctionWithBuiltinJvmName, isHidden = true)
+                destination += hiddenRenamedFunction
+                setOverrides(hiddenRenamedFunction, resultsOfIntersectionOfRenamed)
+            }
 
             val resultOfIntersectionOfNaturalName = supertypeScopeContext.convertGroupedCallablesToIntersectionResults(
                 overriddenByNaturalName.map { it.baseScope to listOf(it.member) }
             )
 
             if (explicitlyDeclaredFunctionWithNaturalName != null) {
-                // CharBuffer.get is already in destination, but we need to update its overridden declarations.
-                // It mustn't override kotlin.CharSequence.charAt, but it can override different declarations with the same signature.
-                // See compiler/testData/diagnostics/tests/j+k/collectionOverrides/charBuffer.kt
-                setOverrides(explicitlyDeclaredFunctionWithNaturalName, resultOfIntersectionOfNaturalName)
+                // `CharBuffer`.get is already in destination, but we need to update its overridden declarations.
+                setOverrides(
+                    explicitlyDeclaredFunctionWithNaturalName,
+                    when {
+                        // It mustn't override `kotlin.CharSequence.get`, but it can override different declarations with the same signature.
+                        // See compiler/testData/diagnostics/tests/j+k/collectionOverrides/charBuffer.kt
+                        hiddenRenamedFunctionNeeded -> resultOfIntersectionOfNaturalName
+                        // But in case there is no function named `charAt` in hierarchy,
+                        // we can override `kotlin.CharSequence.get` safely
+                        else -> resultsOfIntersectionOfRenamed
+                    }
+                )
             } else {
                 // CharBuffer.get is inherited (possibly a real intersection).
                 // Add it to destination and set overridden declarations.
