@@ -16134,6 +16134,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fakeOverride/kt65274.kt");
         }
 
+        @TestMetadata("kt65695.kt")
+        public void testKt65695() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/kt65695.kt");
+        }
+
         @TestMetadata("methodOfAnyFromInterface.kt")
         public void testMethodOfAnyFromInterface() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/methodOfAnyFromInterface.kt");
