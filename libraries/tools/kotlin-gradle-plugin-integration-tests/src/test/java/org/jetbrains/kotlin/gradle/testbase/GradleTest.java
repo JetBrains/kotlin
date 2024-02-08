@@ -20,5 +20,6 @@ import java.lang.annotation.Target;
 @GradleTestVersions
 @ParameterizedTest(name = "{0}: {displayName}")
 @ArgumentsSource(GradleArgumentsProvider.class)
+@ExtendWith(DisabledIfNoArgumentsProvided.class)
 public @interface GradleTest {
 }

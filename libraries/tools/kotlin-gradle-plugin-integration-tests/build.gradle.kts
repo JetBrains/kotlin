@@ -274,6 +274,56 @@ val memoryPerGradleTestWorkerMb = 6000
 val maxParallelTestForks =
     (totalMaxMemoryForTestsMb / memoryPerGradleTestWorkerMb).coerceIn(1, Runtime.getRuntime().availableProcessors())
 
+// Must be in sync with TestVersions.kt KTI-1612
+val gradleVersions = listOf(
+    "6.8.3",
+    "6.9.4",
+    "7.0.2",
+    "7.1.1",
+    "7.2",
+    "7.3.3",
+    "7.4.2",
+    "7.5.1",
+    "7.6.3",
+    "8.0.2",
+    "8.1.1",
+    "8.2.1",
+    "8.3",
+    "8.4",
+    "8.5",
+    "8.6"
+)
+val junitTags = listOf("JvmKGP", "DaemonsKGP", "JsKGP", "NativeKGP", "MppKGP", "AndroidKGP", "OtherKGP")
+val requiresKotlinNative = listOf("NativeKGP", "MppKGP", "OtherKGP")
+val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
+
+junitTags.forEach { junitTag ->
+    val taskPrefix = "kgp${junitTag.substringBefore("KGP")}"
+    val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
+        tasks.register<Test>("${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}") {
+            group = gradleVersionTaskGroup
+            description = "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion"
+            maxParallelForks = maxParallelTestForks
+
+            systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
+            if (junitTag in requiresKotlinNative) {
+                applyKotlinNativeFromCurrentBranchIfNeeded()
+            }
+
+            useJUnitPlatform {
+                includeTags(junitTag)
+                excludeTags(*(junitTags - junitTag).toTypedArray())
+                includeEngines("junit-jupiter")
+            }
+        }
+    }
+
+    tasks.register("${taskPrefix}TestsGroupedByGradleVersion") {
+        group = gradleVersionTaskGroup
+        dependsOn(tasksByGradleVersion)
+    }
+}
+
 val allParallelTestsTask = tasks.register<Test>("kgpAllParallelTests") {
     group = KGP_TEST_TASKS_GROUP
     description = "Runs all tests for Kotlin Gradle plugins except daemon ones"

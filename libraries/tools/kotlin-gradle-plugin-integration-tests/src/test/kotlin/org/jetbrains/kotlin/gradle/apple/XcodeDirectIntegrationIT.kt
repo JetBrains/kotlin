@@ -24,6 +24,7 @@ class XcodeDirectIntegrationIT : KGPBaseTest() {
     @DisplayName("Xcode direct integration")
     @ParameterizedTest(name = "{displayName} with {1}, {0} and isStatic={2}")
     @ArgumentsSource(XcodeArgumentsProvider::class)
+    @ExtendWith(DisabledIfNoArgumentsProvided::class)
     fun test(
         gradleVersion: GradleVersion,
         iosApp: String,
