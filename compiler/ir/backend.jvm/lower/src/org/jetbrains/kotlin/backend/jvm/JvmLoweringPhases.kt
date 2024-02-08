@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
+import org.jetbrains.kotlin.ir.util.isExpect
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -102,7 +103,11 @@ private val arrayConstructorPhase = makeIrFilePhase(
 
 internal val expectDeclarationsRemovingPhase = makeIrModulePhase(
     { context: JvmBackendContext ->
-        if (context.config.useFir) FileLoweringPass.Empty
+        if (context.config.useFir) object : FileLoweringPass {
+            override fun lower(irFile: IrFile) {
+                irFile.declarations.removeIf { it.isExpect }
+            }
+        }
         else ExpectDeclarationRemover(context)
     },
     name = "ExpectDeclarationsRemoving",

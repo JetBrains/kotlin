@@ -193,6 +193,8 @@ class JvmBackendContext(
 
     val visitedDeclarationsForRegenerationLowering: MutableSet<IrDeclaration> = ConcurrentHashMap.newKeySet()
 
+    val optionalAnnotations = mutableListOf<MetadataSource.Class>()
+
     init {
         state.mapInlineClass = { descriptor ->
             defaultTypeMapper.mapType(referenceClass(descriptor).defaultType)

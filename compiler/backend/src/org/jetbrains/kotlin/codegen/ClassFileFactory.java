@@ -116,7 +116,6 @@ public class ClassFileFactory implements OutputFileCollection {
     public void done() {
         if (!isDone) {
             isDone = true;
-            writeModuleMappings();
             for (ClassFileFactoryFinalizerExtension extension : finalizers) {
                 extension.finalizeClassFactory(this);
             }
@@ -127,20 +126,8 @@ public class ClassFileFactory implements OutputFileCollection {
         generators.clear();
     }
 
-    private void writeModuleMappings() {
-        JvmModuleProtoBuf.Module.Builder builder = JvmModuleProtoBuf.Module.newBuilder();
-        String outputFilePath = getMappingFileName(state.getModuleName());
-
-        StringTableImpl stringTable = new StringTableImpl();
-        ClassFileUtilsKt.addDataFromCompiledModule(builder, packagePartRegistry, stringTable, state);
-
-        Pair<ProtoBuf.StringTable, ProtoBuf.QualifiedNameTable> tables = stringTable.buildProto();
-        builder.setStringTable(tables.getFirst());
-        builder.setQualifiedNameTable(tables.getSecond());
-
-        JvmModuleProtoBuf.Module moduleProto = builder.build();
-
-        generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(sourceFiles)) {
+    public void setModuleMapping(JvmModuleProtoBuf.Module moduleProto) {
+        generators.put(getMappingFileName(state.getModuleName()), new OutAndSourceFileList(CollectionsKt.toList(sourceFiles)) {
             @Override
             public byte[] asBytes(ClassBuilderFactory factory) {
                 int flags = 0;
