@@ -10,6 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import java.nio.file.Path
 
 /**
  * @see org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind.Source
@@ -20,6 +21,7 @@ object KtSourceModuleFactory : KtModuleFactory {
         contextModule: KtModuleWithFiles?,
         testServices: TestServices,
         project: Project,
+        dependencyPaths: Collection<Path>,
     ): KtModuleWithFiles {
         val psiFiles = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
 

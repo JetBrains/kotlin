@@ -27,6 +27,7 @@ object KtLibrarySourceModuleFactory : KtModuleFactory {
         contextModule: KtModuleWithFiles?,
         testServices: TestServices,
         project: Project,
+        dependencyPaths: Collection<Path>,
     ): KtModuleWithFiles {
         Assume.assumeFalse("Compilation of multi-platform libraries is not supported", testModule.targetPlatform.isMultiPlatform())
 

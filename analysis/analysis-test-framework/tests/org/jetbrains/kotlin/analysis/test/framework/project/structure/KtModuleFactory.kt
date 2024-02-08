@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.moduleKin
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
+import java.nio.file.Path
 
 fun interface KtModuleFactory : TestService {
     /**
@@ -26,6 +27,7 @@ fun interface KtModuleFactory : TestService {
         contextModule: KtModuleWithFiles?,
         testServices: TestServices,
         project: Project,
+        dependencyPaths: Collection<Path>,
     ): KtModuleWithFiles
 }
 

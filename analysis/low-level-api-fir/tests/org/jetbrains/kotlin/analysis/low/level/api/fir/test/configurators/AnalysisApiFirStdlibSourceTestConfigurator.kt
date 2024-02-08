@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import java.nio.file.Path
 
 object AnalysisApiFirStdlibSourceTestConfigurator : AnalysisApiFirSourceLikeTestConfigurator(false) {
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
@@ -30,6 +31,7 @@ private object KtStdlibSourceModuleFactory : KtModuleFactory {
         contextModule: KtModuleWithFiles?,
         testServices: TestServices,
         project: Project,
+        dependencyPaths: Collection<Path>,
     ): KtModuleWithFiles {
         val libraryJar = ForTestCompileRuntime.runtimeJarForTests().toPath()
         val librarySourcesJar = ForTestCompileRuntime.runtimeSourcesJarForTests().toPath()

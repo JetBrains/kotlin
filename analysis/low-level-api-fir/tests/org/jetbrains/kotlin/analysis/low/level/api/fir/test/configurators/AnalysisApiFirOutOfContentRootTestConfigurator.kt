@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.getAnalyzerServices
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import java.nio.file.Path
 
 object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirSourceLikeTestConfigurator(false) {
     override val testPrefix: String
@@ -68,6 +69,7 @@ private object KtOutOfContentRootModuleFactory : KtModuleFactory {
         contextModule: KtModuleWithFiles?,
         testServices: TestServices,
         project: Project,
+        dependencyPaths: Collection<Path>,
     ): KtModuleWithFiles {
         val psiFiles = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
         val platform = testModule.targetPlatform
