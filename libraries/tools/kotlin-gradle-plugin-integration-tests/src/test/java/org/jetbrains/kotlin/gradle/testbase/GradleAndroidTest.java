@@ -21,5 +21,6 @@ import java.lang.annotation.Target;
 @AndroidTestVersions
 @ParameterizedTest(name = "AGP {1} with {0}: {displayName}")
 @ArgumentsSource(GradleAndAgpArgumentsProvider.class)
+@ExtendWith(DisabledIfNoArgumentsProvided.class)
 public @interface GradleAndroidTest {
 }

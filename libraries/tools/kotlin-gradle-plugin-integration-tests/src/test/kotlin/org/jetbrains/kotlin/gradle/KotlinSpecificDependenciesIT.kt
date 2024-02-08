@@ -513,6 +513,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @GradleTestVersions
     @ParameterizedTest(name = "{1} with {0}: {displayName}")
     @ArgumentsSource(GradleAndTestFrameworksArgumentsProvider::class)
+    @ExtendWith(DisabledIfNoArgumentsProvided::class)
     fun testFrameworkSelectionJvm(
         gradleVersion: GradleVersion,
         testFramework: Pair<String, String>
@@ -536,6 +537,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @GradleTestVersions
     @ParameterizedTest(name = "{1} with {0}: {displayName}")
     @ArgumentsSource(GradleAndTestFrameworksArgumentsProvider::class)
+    @ExtendWith(DisabledIfNoArgumentsProvided::class)
     fun testFrameworkSelectionMppJvm(
         gradleVersion: GradleVersion,
         testFramework: Pair<String, String>
@@ -560,6 +562,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @GradleTestVersions
     @ParameterizedTest(name = "{1} with {0}: {displayName}")
     @ArgumentsSource(GradleAndTestFrameworksArgumentsProvider::class)
+    @ExtendWith(DisabledIfNoArgumentsProvided::class)
     fun testFrameworkSelectionMppCommon(
         gradleVersion: GradleVersion,
         testFramework: Pair<String, String>

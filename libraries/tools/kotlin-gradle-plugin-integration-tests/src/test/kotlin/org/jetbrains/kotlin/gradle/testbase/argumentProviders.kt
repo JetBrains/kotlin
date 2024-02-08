@@ -7,20 +7,26 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
+import org.junit.jupiter.api.extension.ConditionEvaluationResult
+import org.junit.jupiter.api.extension.ExecutionCondition
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.provider.ArgumentsSource
+import org.junit.jupiter.params.support.AnnotationConsumerInitializer
+import org.junit.platform.commons.JUnitException
+import org.junit.platform.commons.util.AnnotationUtils
+import org.junit.platform.commons.util.ReflectionUtils
 import java.io.File
 import java.util.stream.Stream
 import kotlin.streams.asStream
-import kotlin.streams.toList
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class GradleTestVersions(
     val minVersion: String = TestVersions.Gradle.MIN_SUPPORTED,
     val maxVersion: String = TestVersions.Gradle.MAX_SUPPORTED,
-    val additionalVersions: Array<String> = []
+    val additionalVersions: Array<String> = [],
 )
 
 inline fun <reified T : Annotation> findAnnotation(context: ExtensionContext): T {
@@ -54,8 +60,20 @@ inline fun <reified T : Annotation> findAnnotation(context: ExtensionContext): T
 
 open class GradleArgumentsProvider : ArgumentsProvider {
     override fun provideArguments(
-        context: ExtensionContext
+        context: ExtensionContext,
     ): Stream<out Arguments> {
+        val gradleVersions = gradleVersions(context)
+        val versionFilter = context.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")
+            .map { GradleVersion.version(it) }
+
+        return gradleVersions
+            .asSequence()
+            .filter { gradleVersion -> versionFilter.map { gradleVersion == it }.orElse(true) }
+            .map { Arguments.of(it) }
+            .asStream()
+    }
+
+    protected fun gradleVersions(context: ExtensionContext): Set<GradleVersion> {
         val versionsAnnotation = findAnnotation<GradleTestVersions>(context)
 
         fun max(a: GradleVersion, b: GradleVersion) = if (a >= b) a else b
@@ -73,9 +91,6 @@ open class GradleArgumentsProvider : ArgumentsProvider {
         }
 
         return setOf(minGradleVersion, *additionalGradleVersions.toTypedArray(), maxGradleVersion)
-            .asSequence()
-            .map { Arguments.of(it) }
-            .asStream()
     }
 }
 
@@ -83,11 +98,11 @@ open class GradleArgumentsProvider : ArgumentsProvider {
 @Retention(AnnotationRetention.RUNTIME)
 annotation class JdkVersions(
     val versions: Array<JavaVersion> = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_21],
-    val compatibleWithGradle: Boolean = true
+    val compatibleWithGradle: Boolean = true,
 ) {
     class ProvidedJdk(
         val version: JavaVersion,
-        val location: File
+        val location: File,
     ) {
         override fun toString(): String {
             return "JDK $version"
@@ -97,7 +112,7 @@ annotation class JdkVersions(
 
 class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
     override fun provideArguments(
-        context: ExtensionContext
+        context: ExtensionContext,
     ): Stream<out Arguments> {
         val jdkAnnotation = findAnnotation<JdkVersions>(context)
         val providedJdks = jdkAnnotation
@@ -109,7 +124,9 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
                 )
             }
 
-        val gradleVersions = super.provideArguments(context).map { it.get().first() as GradleVersion }.toList()
+        val gradleVersions = gradleVersions(context)
+        val versionFilter = context.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")
+            .map { GradleVersion.version(it) }
 
         return providedJdks
             .flatMap { providedJdk ->
@@ -129,6 +146,7 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
                     .map { it to providedJdk }
             }
             .asSequence()
+            .filter { (gradleVersion, _) -> versionFilter.map { gradleVersion == it }.orElse(true) }
             .map {
                 Arguments.of(it.first, it.second)
             }
@@ -149,12 +167,12 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
 annotation class AndroidTestVersions(
     val minVersion: String = TestVersions.AGP.MIN_SUPPORTED,
     val maxVersion: String = TestVersions.AGP.MAX_SUPPORTED,
-    val additionalVersions: Array<String> = []
+    val additionalVersions: Array<String> = [],
 )
 
 class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
     override fun provideArguments(
-        context: ExtensionContext
+        context: ExtensionContext,
     ): Stream<out Arguments> {
         val agpVersionsAnnotation = findAnnotation<AndroidTestVersions>(context)
         val agpVersions = setOfNotNull(
@@ -163,11 +181,13 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
             if (agpVersionsAnnotation.minVersion < agpVersionsAnnotation.maxVersion) agpVersionsAnnotation.maxVersion else null
         )
 
-        val gradleVersions = super.provideArguments(context).map { it.get().first() as GradleVersion }.toList()
+        val gradleVersions = gradleVersions(context)
+        val versionFilter = context.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")
+            .map { GradleVersion.version(it) }
 
         return agpVersions
             .flatMap { version ->
-                val agpVersion = TestVersions.AgpCompatibilityMatrix.values().find { it.version == version }
+                val agpVersion = TestVersions.AgpCompatibilityMatrix.entries.find { it.version == version }
                     ?: throw IllegalArgumentException("AGP version $version is not defined in TestVersions.AGP!")
 
                 val providedJdk = JdkVersions.ProvidedJdk(
@@ -186,6 +206,7 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
                     }
             }
             .asSequence()
+            .filter { agpTestArguments -> versionFilter.map { agpTestArguments.gradleVersion == it }.orElse(true) }
             .map {
                 Arguments.of(it.gradleVersion, it.agpVersion, it.jdkVersion)
             }
@@ -195,6 +216,41 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
     data class AgpTestArguments(
         val gradleVersion: GradleVersion,
         val agpVersion: String,
-        val jdkVersion: JdkVersions.ProvidedJdk
+        val jdkVersion: JdkVersions.ProvidedJdk,
     )
+}
+
+class DisabledIfNoArgumentsProvided : ExecutionCondition {
+    override fun evaluateExecutionCondition(context: ExtensionContext): ConditionEvaluationResult {
+        val gradleVersionFilterParameter = context.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")
+        if (!gradleVersionFilterParameter.isPresent)
+            return ConditionEvaluationResult.enabled("No Gradle version filter provided")
+
+        val argumentProviders = AnnotationUtils.findRepeatableAnnotations(context.requiredTestMethod, ArgumentsSource::class.java)
+            .map(ArgumentsSource::value)
+            .map { instantiateArgumentsProvider(it.java) }
+            .map { provider -> AnnotationConsumerInitializer.initialize(context.requiredTestMethod, provider) }
+
+        return if (argumentProviders.any { it.provideArguments(context).count() == 0L })
+            ConditionEvaluationResult.disabled("No arguments provided")
+        else
+            ConditionEvaluationResult.enabled("Arguments provided")
+    }
+
+    private fun instantiateArgumentsProvider(clazz: Class<out ArgumentsProvider>): ArgumentsProvider {
+        try {
+            return ReflectionUtils.newInstance(clazz)
+        } catch (ex: Exception) {
+            if (ex is NoSuchMethodException) {
+                val message = String.format(
+                    "Failed to find a no-argument constructor for ArgumentsProvider [%s]. "
+                            + "Please ensure that a no-argument constructor exists and "
+                            + "that the class is either a top-level class or a static nested class",
+                    clazz.getName()
+                )
+                throw JUnitException(message, ex)
+            }
+            throw ex
+        }
+    }
 }
