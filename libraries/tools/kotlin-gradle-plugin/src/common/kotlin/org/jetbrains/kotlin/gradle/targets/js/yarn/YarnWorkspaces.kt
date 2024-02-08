@@ -23,7 +23,7 @@ class YarnWorkspaces : YarnBasics() {
 
     override fun prepareRootProject(
         nodeJs: NodeJsEnvironment,
-        yarn: YarnEnvironment,
+        packageManagerEnvironment: YarnEnvironment,
         rootProjectName: String,
         rootProjectVersion: String,
         subProjects: Collection<PreparedKotlinCompilationNpmResolution>,
@@ -33,7 +33,7 @@ class YarnWorkspaces : YarnBasics() {
             rootProjectName,
             rootProjectVersion,
             subProjects,
-            yarn.yarnResolutions
+            packageManagerEnvironment.yarnResolutions
                 .associate { it.path to it.toVersionString() },
         )
     }
@@ -60,7 +60,7 @@ class YarnWorkspaces : YarnBasics() {
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsEnvironment,
-        yarn: YarnEnvironment,
+        packageManagerEnvironment: YarnEnvironment,
         npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
         cliArgs: List<String>
     ) {
@@ -70,7 +70,7 @@ class YarnWorkspaces : YarnBasics() {
             services,
             logger,
             nodeJs,
-            yarn,
+            packageManagerEnvironment,
             nodeJsWorldDir,
             NpmApiExecution.resolveOperationDescription("yarn"),
             cliArgs
