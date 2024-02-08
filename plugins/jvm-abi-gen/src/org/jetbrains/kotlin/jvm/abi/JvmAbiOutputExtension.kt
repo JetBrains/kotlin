@@ -16,11 +16,12 @@ import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtensio
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.ClassRemapper
-import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.commons.Remapper
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.File
+import kotlin.metadata.jvm.JvmFieldSignature
+import kotlin.metadata.jvm.JvmMethodSignature
 
 class JvmAbiOutputExtension(
     private val outputPath: File,
@@ -29,12 +30,20 @@ class JvmAbiOutputExtension(
     private val removeDebugInfo: Boolean,
     private val removeDataClassCopyIfConstructorIsPrivate: Boolean,
     private val preserveDeclarationOrder: Boolean,
+    private val treatInternalAsPrivate: Boolean,
 ) : ClassFileFactoryFinalizerExtension {
     override fun finalizeClassFactory(factory: ClassFileFactory) {
         // We need to wait until the end to produce any output in order to strip classes
         // from the InnerClasses attributes.
         val outputFiles =
-            AbiOutputFiles(abiClassInfoBuilder(), factory, removeDebugInfo, removeDataClassCopyIfConstructorIsPrivate, preserveDeclarationOrder)
+            AbiOutputFiles(
+                abiClassInfoBuilder(),
+                factory,
+                removeDebugInfo,
+                removeDataClassCopyIfConstructorIsPrivate,
+                preserveDeclarationOrder,
+                treatInternalAsPrivate,
+            )
         if (outputPath.extension == "jar") {
             // We don't include the runtime or main class in interface jars and always reset time stamps.
             CompileEnvironmentUtil.writeToJar(
@@ -59,6 +68,7 @@ class JvmAbiOutputExtension(
         val removeDebugInfo: Boolean,
         val removeCopyAlongWithConstructor: Boolean,
         val preserveDeclarationOrder: Boolean,
+        val treatInternalAsPrivate: Boolean,
     ) : OutputFileCollection {
         private val classesToBeDeleted = abiClassInfos.mapNotNullTo(mutableSetOf()) { (className, action) ->
             className.takeIf { action == AbiClassInfo.Deleted }
@@ -82,9 +92,9 @@ class JvmAbiOutputExtension(
                     is AbiClassInfo.Public -> outputFile // Copy verbatim
                     is AbiClassInfo.Stripped -> {
                         val prune = abiInfo.prune
-                        val methodInfo = abiInfo.methodInfo
+                        val memberInfo = abiInfo.memberInfo
                         val innerClassesToKeep = mutableSetOf<String>()
-                        val noMethodsKept = methodInfo.values.none { it == AbiMethodInfo.KEEP }
+                        val noMethodsKept = memberInfo.none { it.value == AbiMethodInfo.KEEP && it.key is JvmMethodSignature }
                         val writer = ClassWriter(0)
                         val remapper = ClassRemapper(writer, object : Remapper() {
                             override fun map(internalName: String): String =
@@ -98,12 +108,12 @@ class JvmAbiOutputExtension(
                             // Strip private fields.
                             override fun visitField(
                                 access: Int,
-                                name: String?,
-                                descriptor: String?,
+                                name: String,
+                                descriptor: String,
                                 signature: String?,
                                 value: Any?,
                             ): FieldVisitor? {
-                                if (prune || access and Opcodes.ACC_PRIVATE != 0)
+                                if (prune || memberInfo[JvmFieldSignature(name, descriptor)] != AbiMethodInfo.KEEP)
                                     return null
                                 return FieldNode(access, name, descriptor, signature, value).also {
                                     keptFields += it
@@ -118,7 +128,7 @@ class JvmAbiOutputExtension(
                                 exceptions: Array<out String>?
                             ): MethodVisitor? {
                                 if (prune) return null
-                                val info = methodInfo[Method(name, descriptor)] ?: return null
+                                val info = memberInfo[JvmMethodSignature(name, descriptor)] ?: return null
 
                                 val node = MethodNode(access, name, descriptor, signature, exceptions).also {
                                     keptMethods += it
@@ -164,7 +174,8 @@ class JvmAbiOutputExtension(
                                     removeCopyAlongWithConstructor,
                                     preserveDeclarationOrder,
                                     classesToBeDeleted,
-                                    prune
+                                    prune,
+                                    treatInternalAsPrivate,
                                 )
                             }
 
