@@ -51,7 +51,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declaration)
         parent(named)
 
-        visitorParameterName = "declaration"
+        visitorParameterName = "namedDeclaration"
     }
 
     val enum: Element by element {
