@@ -12,6 +12,7 @@ class GradleLoggerAdapter(private val log: Logger) : KotlinLogger {
 
     override val isDebugEnabled: Boolean
         get() = log.isDebugEnabled
+
     override fun info(msg: String) {
         log.info(msg)
     }
@@ -28,7 +29,7 @@ class GradleLoggerAdapter(private val log: Logger) : KotlinLogger {
         throwable?.let { log.error(msg, throwable) } ?: log.error(msg)
     }
 
-    override fun lifecycle(message: String) {
-        log.lifecycle(message)
+    override fun lifecycle(msg: String) {
+        log.lifecycle(msg)
     }
 }
