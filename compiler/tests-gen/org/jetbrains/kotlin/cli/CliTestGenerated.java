@@ -215,6 +215,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/apiVersionGreaterThanLanguage.args");
         }
 
+        @TestMetadata("apiVersionGreaterThanLanguageSuppress.args")
+        public void testApiVersionGreaterThanLanguageSuppress() throws Exception {
+            runTest("compiler/testData/cli/jvm/apiVersionGreaterThanLanguageSuppress.args");
+        }
+
+        @TestMetadata("apiVersionGreaterThanLanguageSuppressUseless.args")
+        public void testApiVersionGreaterThanLanguageSuppressUseless() throws Exception {
+            runTest("compiler/testData/cli/jvm/apiVersionGreaterThanLanguageSuppressUseless.args");
+        }
+
         @TestMetadata("apiVersionInvalid.args")
         public void testApiVersionInvalid() throws Exception {
             runTest("compiler/testData/cli/jvm/apiVersionInvalid.args");

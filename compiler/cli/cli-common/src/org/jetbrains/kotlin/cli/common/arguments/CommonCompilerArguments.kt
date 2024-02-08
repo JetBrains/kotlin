@@ -562,6 +562,18 @@ Use the 'warning' level to issue warnings instead of errors."""
             field = value
         }
 
+    // TODO(KT-56076): remove this argument after stdlib started to be built with 2.0
+    @Argument(
+        value = "-Xsuppress-api-version-greater-than-language-version-error",
+        description = "Suppress error about API version greater than language version.\n" +
+                "Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build."
+    )
+    var suppressApiVersionGreaterThanLanguageVersionError: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(
         value = "-Xextended-compiler-checks",
         description = """Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
@@ -911,10 +923,14 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         collector: MessageCollector
     ) {
         if (apiVersion > ApiVersion.createByLanguageVersion(languageVersion)) {
-            collector.report(
-                CompilerMessageSeverity.ERROR,
-                "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})"
-            )
+            if (!suppressApiVersionGreaterThanLanguageVersionError) {
+                collector.report(
+                    CompilerMessageSeverity.ERROR,
+                    "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})"
+                )
+            }
+        } else if (suppressApiVersionGreaterThanLanguageVersionError) {
+            collector.report(WARNING, "Useless suppress -Xsuppress-api-version-greater-than-language-version-error")
         }
     }
 
