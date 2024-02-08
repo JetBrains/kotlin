@@ -9,6 +9,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.utils.minSupportedGradleVersion
 
+// Must be in sync with gradleVersions in libraries/tools/kotlin-gradle-plugin-integration-tests/build.gradle.kts KTI-1612
 interface TestVersions {
 
     // https://gradle.org/nightly/
