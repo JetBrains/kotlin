@@ -12,6 +12,7 @@ import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
@@ -762,20 +763,13 @@ private abstract class FirLazyAnnotationTransformer : FirTransformer<FirLazyAnno
 }
 
 private object FirAllLazyBodiesCalculatorTransformer : FirLazyBodiesCalculatorTransformer() {
-    override fun transformFile(file: FirFile, data: PersistentList<FirDeclaration>): FirFile {
-        file.declarations.forEach {
-            it.transformSingle(this, data)
-        }
-
-        return file
-    }
-
     override fun <E : FirElement> transformElement(element: E, data: PersistentList<FirDeclaration>): E {
-        if (element is FirRegularClass) {
-            val newList = data.add(element)
-            element.declarations.forEach {
+        if (element is FirFile || element is FirScript || element is FirRegularClass) {
+            val newList = data.add(element as FirDeclaration)
+            element.forEachDeclaration {
                 it.transformSingle(this, newList)
             }
+
             element.transformChildren(this, newList)
         }
 

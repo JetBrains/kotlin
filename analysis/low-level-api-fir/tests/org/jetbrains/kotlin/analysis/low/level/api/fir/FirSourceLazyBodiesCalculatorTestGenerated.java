@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourceLazyBodiesCalculatorTest {
     @Test
     public void testAllFilesPresentInRawBuilder() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Nested
@@ -30,7 +30,7 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
     public class Declarations {
         @Test
         public void testAllFilesPresentInDeclarations() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -465,7 +465,7 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
         public class Contracts {
             @Test
             public void testAllFilesPresentInContracts() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
             }
 
             @Nested
@@ -474,7 +474,7 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
             public class NewSyntax {
                 @Test
                 public void testAllFilesPresentInNewSyntax() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
                 }
 
                 @Test
@@ -502,7 +502,7 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
             public class OldSyntax {
                 @Test
                 public void testAllFilesPresentInOldSyntax() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
                 }
 
                 @Test
@@ -519,7 +519,7 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
         public class NoParameterType {
             @Test
             public void testAllFilesPresentInNoParameterType() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
             }
 
             @Test
@@ -602,7 +602,7 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
     public class Expressions {
         @Test
         public void testAllFilesPresentInExpressions() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test

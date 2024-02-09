@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import junit.framework.TestCase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.fir.FirElement
@@ -44,6 +45,7 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTes
 
             FirLazyBodiesCalculator.calculateAllLazyExpressionsInFile(laziedFirFile)
             laziedFirFile.accept(lazyChecker)
+            val laziedFirFileDump = FirRenderer().renderElementAsString(laziedFirFile)
 
             val fullFirFile = PsiRawFirBuilder(
                 session,
@@ -51,10 +53,9 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTes
                 bodyBuildingMode = BodyBuildingMode.NORMAL
             ).buildFirFile(mainFile)
 
-            val laziedFirFileDump = FirRenderer().renderElementAsString(laziedFirFile)
             val fullFirFileDump = FirRenderer().renderElementAsString(fullFirFile)
 
-            TestCase.assertEquals(laziedFirFileDump, fullFirFileDump)
+            TestCase.assertEquals(/* expected = */ fullFirFileDump, /* actual = */ laziedFirFileDump)
         }
     }
 }
@@ -65,4 +66,8 @@ abstract class AbstractFirSourceLazyBodiesCalculatorTest : AbstractFirLazyBodies
 
 abstract class AbstractFirOutOfContentRootLazyBodiesCalculatorTest : AbstractFirLazyBodiesCalculatorTest() {
     override val configurator = AnalysisApiFirOutOfContentRootTestConfigurator
+}
+
+abstract class AbstractFirScriptLazyBodiesCalculatorTest : AbstractFirLazyBodiesCalculatorTest() {
+    override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
 }
