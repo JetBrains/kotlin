@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lazy
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.generators.FirBasedFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.backend.generators.isFakeOverride
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.name.Name
 
+@OptIn(FirBasedFakeOverrideGenerator::class) // only for lazy
 class Fir2IrLazyClass(
     components: Fir2IrComponents,
     override val startOffset: Int,

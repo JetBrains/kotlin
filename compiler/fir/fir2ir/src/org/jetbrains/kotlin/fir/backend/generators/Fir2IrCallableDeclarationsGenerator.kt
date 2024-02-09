@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
-import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
@@ -472,6 +471,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                 )
             }
             if (correspondingProperty is Fir2IrLazyProperty && correspondingProperty.containingClass != null && !isFakeOverride && dispatchReceiverType != null) {
+                @OptIn(FirBasedFakeOverrideGenerator::class) // for lazy
                 this.overriddenSymbols = correspondingProperty.fir.generateOverriddenAccessorSymbols(
                     correspondingProperty.containingClass, !isSetter
                 )

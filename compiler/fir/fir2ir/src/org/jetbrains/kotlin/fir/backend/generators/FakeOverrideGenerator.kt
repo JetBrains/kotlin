@@ -31,6 +31,13 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
+@RequiresOptIn(
+    level = RequiresOptIn.Level.ERROR,
+    message = "This api is planned for deprecation. Make sure, you don't use it with useIrFakeOverrideBuilder=true and non-lazy classes"
+)
+annotation class FirBasedFakeOverrideGenerator
+
+@FirBasedFakeOverrideGenerator
 class FakeOverrideGenerator(
     private val components: Fir2IrComponents,
     private val conversionScope: Fir2IrConversionScope
@@ -574,6 +581,7 @@ class FakeOverrideGenerator(
 }
 
 context(Fir2IrComponents)
+@FirBasedFakeOverrideGenerator
 internal fun FirProperty.generateOverriddenAccessorSymbols(containingClass: FirClass, isGetter: Boolean): List<IrSimpleFunctionSymbol> {
     val scope = containingClass.unsubstitutedScope()
     scope.processPropertiesByName(name) {}
@@ -603,6 +611,7 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(containingClass: FirC
 }
 
 context(Fir2IrComponents)
+@FirBasedFakeOverrideGenerator
 internal fun FirProperty.generateOverriddenPropertySymbols(containingClass: FirClass): List<IrPropertySymbol> {
     val superClasses = containingClass.getSuperTypesAsIrClasses()
     val overriddenSet = mutableSetOf<IrPropertySymbol>()
@@ -618,6 +627,7 @@ internal fun FirProperty.generateOverriddenPropertySymbols(containingClass: FirC
 }
 
 context(Fir2IrComponents)
+@FirBasedFakeOverrideGenerator
 internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(containingClass: FirClass): List<IrSimpleFunctionSymbol> {
     val superClasses = containingClass.getSuperTypesAsIrClasses()
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()

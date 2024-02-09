@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
+import org.jetbrains.kotlin.fir.backend.generators.FirBasedFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
@@ -705,6 +706,7 @@ class Fir2IrDeclarationStorage(
         val irParent = findIrParent(property, fakeOverrideOwnerLookupTag)
         if (irParent?.isExternalParent() == true) {
             val symbols = createPropertySymbols(property, fakeOverrideOwnerLookupTag, parentIsExternal = true)
+            @OptIn(FirBasedFakeOverrideGenerator::class) // only for lazy
             val firForLazyProperty = calculateFirForLazyDeclaration(
                 property, fakeOverrideOwnerLookupTag, irParent,
                 fakeOverrideGenerator::createFirPropertyFakeOverrideIfNeeded
@@ -1085,6 +1087,7 @@ class Fir2IrDeclarationStorage(
             val irParent = findIrParent(function, fakeOverrideOwnerLookupTag)
             if (irParent?.isExternalParent() == true) {
                 val symbol = createMemberFunctionSymbol(function, fakeOverrideOwnerLookupTag, parentIsExternal = true)
+                @OptIn(FirBasedFakeOverrideGenerator::class) // only for lazy
                 val firForLazyFunction = calculateFirForLazyDeclaration(
                     function, fakeOverrideOwnerLookupTag, irParent,
                     fakeOverrideGenerator::createFirFunctionFakeOverrideIfNeeded

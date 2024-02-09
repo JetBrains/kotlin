@@ -18514,6 +18514,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("kt65707.kt")
+        public void testKt65707() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/kt65707.kt");
+        }
+
+        @Test
         @TestMetadata("methodOfAnyFromInterface.kt")
         public void testMethodOfAnyFromInterface() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/methodOfAnyFromInterface.kt");
