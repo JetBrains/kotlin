@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
+import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
@@ -115,5 +116,17 @@ internal class ClangParameters(
         command.forEach {
             appendLine("- $it")
         }
+    }
+}
+
+internal fun createModuleMap(directory: File, umbrellaHeader: File): File {
+    return directory.resolve("module.modulemap").apply {
+        writeText("""
+            module KotlinBridges {
+                umbrella header "${umbrellaHeader.absolutePath}"
+                export *
+            }
+            """.trimIndent()
+        )
     }
 }

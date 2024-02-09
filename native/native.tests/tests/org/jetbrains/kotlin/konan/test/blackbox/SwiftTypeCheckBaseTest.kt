@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.withOSVersion
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.invokeSwiftC
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.createModuleMap
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions
@@ -53,15 +54,7 @@ abstract class SwiftTypeCheckBaseTest : AbstractNativeSimpleTest() {
         val configs = testRunSettings.configurables as AppleConfigurables
         val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
 
-        val bridgeModuleFile = buildDir.resolve("module.modulemap").apply {
-            writeText("""
-            module KotlinBridges {
-                umbrella header "${cHeader.absolutePath}"
-                export *
-            }
-            """.trimIndent()
-            )
-        }
+        val bridgeModuleFile = createModuleMap(buildDir, cHeader)
 
         val args = listOf(
             "-typecheck", swiftFile.absolutePath,
