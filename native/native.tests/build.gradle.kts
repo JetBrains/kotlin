@@ -19,6 +19,7 @@ dependencies {
     testImplementation(project(":native:kotlin-native-utils"))
     testImplementation(project(":native:executors"))
     testImplementation(project(":kotlin-util-klib-abi"))
+    testImplementation(project(":native:swift:swift-export-standalone"))
     testImplementation(projectTests(":kotlin-util-klib-abi"))
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)

@@ -499,6 +499,16 @@ fun main() {
                 model("", extension = "swift", recursive = true)
             }
         }
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeSwiftExportTest>(
+                suiteTestClassName = "FirSwiftExportTestGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                ),
+            ) {
+                model("SwiftExport", pattern = "^([^_](.+))$", recursive = false)
+            }
+        }
     }
 }
 
