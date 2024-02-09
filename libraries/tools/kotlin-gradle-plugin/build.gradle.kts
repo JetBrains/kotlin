@@ -70,7 +70,7 @@ dependencies {
     commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     commonCompileOnly(libs.gradle.enterprise.gradlePlugin)
     commonCompileOnly(commonDependency("com.google.code.gson:gson"))
-    commonCompileOnly("de.undercouch:gradle-download-task:4.1.1")
+    commonCompileOnly("de.undercouch:gradle-download-task:5.5.0")
     commonCompileOnly("com.github.gundy:semver4j:0.16.4:nodeps") {
         exclude(group = "*")
     }
@@ -99,7 +99,7 @@ dependencies {
     embedded(libs.guava) { isTransitive = false }
     embedded(commonDependency("org.jetbrains.teamcity:serviceMessages")) { isTransitive = false }
     embedded(project(":kotlin-tooling-metadata")) { isTransitive = false }
-    embedded("de.undercouch:gradle-download-task:4.1.1")
+    embedded("de.undercouch:gradle-download-task:5.5.0")
     embedded("com.github.gundy:semver4j:0.16.4:nodeps") {
         exclude(group = "*")
     }
