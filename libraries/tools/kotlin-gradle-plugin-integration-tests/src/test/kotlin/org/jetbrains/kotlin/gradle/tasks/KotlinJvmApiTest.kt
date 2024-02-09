@@ -14,7 +14,7 @@ import kotlin.io.path.deleteRecursively
 import kotlin.io.path.writeText
 
 @DisplayName("JVM API validation")
-open class KotlinJvmApiTest : KGPBaseTest() {
+class KotlinJvmApiTest : KGPBaseTest() {
     @DisplayName("Kotlin compilation can be set up using APIs")
     @JvmGradlePluginTests
     @GradleTest
@@ -51,7 +51,11 @@ open class KotlinJvmApiTest : KGPBaseTest() {
                         """.trimIndent()
             }
 
-            build("foo")
+            val expectedOutput = projectPath.resolve("build/fooOutput/Foo.class")
+
+            build("foo") {
+                assertFileExists(expectedOutput)
+            }
         }
     }
 
@@ -143,6 +147,7 @@ open class KotlinJvmApiTest : KGPBaseTest() {
                         """.trimIndent()
             }
 
+            val expectedOutputClass = projectPath.resolve("build/fooOutput/Foo.class")
             val expectedOutputStubs = listOf(
                 projectPath.resolve("build/fooOutputStubs/Foo.java"),
                 projectPath.resolve("build/fooOutputStubs/Foo.kapt_metadata"),
@@ -150,6 +155,7 @@ open class KotlinJvmApiTest : KGPBaseTest() {
             )
 
             build("foo") {
+                assertFileExists(expectedOutputClass)
                 expectedOutputStubs.forEach { assertFileExists(it) }
             }
         }
