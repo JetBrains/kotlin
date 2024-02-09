@@ -851,28 +851,27 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilerPluginSuppor
 	public static fun getPluginArtifactForNative (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilerPluginSupportPlugin;)Lorg/jetbrains/kotlin/gradle/plugin/SubpluginArtifact;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler {
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler : org/jetbrains/kotlin/gradle/plugin/HasProject {
 	public abstract fun api (Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
-	public abstract fun api (Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun api (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public abstract fun api (Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun api (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun api (Lorg/gradle/api/artifacts/Dependency;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun api (Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun compileOnly (Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
-	public abstract fun compileOnly (Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun compileOnly (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public abstract fun compileOnly (Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun compileOnly (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun compileOnly (Lorg/gradle/api/artifacts/Dependency;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun compileOnly (Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun devNpm (Ljava/io/File;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun devNpm (Ljava/lang/String;Ljava/io/File;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun devNpm (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun enforcedPlatform (Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun enforcedPlatform (Ljava/lang/Object;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
-	public abstract fun getProject ()Lorg/gradle/api/Project;
 	public abstract fun implementation (Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
-	public abstract fun implementation (Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun implementation (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public abstract fun implementation (Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun implementation (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun implementation (Lorg/gradle/api/artifacts/Dependency;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun implementation (Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun kotlin (Ljava/lang/String;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun kotlin (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun npm (Ljava/io/File;)Lorg/gradle/api/artifacts/Dependency;
@@ -893,21 +892,21 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinDepende
 	public abstract fun project (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/ProjectDependency;
 	public abstract fun project (Ljava/util/Map;)Lorg/gradle/api/artifacts/ProjectDependency;
 	public abstract fun runtimeOnly (Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
-	public abstract fun runtimeOnly (Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun runtimeOnly (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public abstract fun runtimeOnly (Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun runtimeOnly (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun runtimeOnly (Lorg/gradle/api/artifacts/Dependency;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun runtimeOnly (Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler$DefaultImpls {
-	public static fun api (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public static fun api (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
-	public static fun compileOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public static fun compileOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
+	public static fun api (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
+	public static fun api (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
+	public static fun compileOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
+	public static fun compileOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public static fun enforcedPlatform (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
 	public static fun enforcedPlatform (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/Object;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
-	public static fun implementation (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public static fun implementation (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
+	public static fun implementation (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
+	public static fun implementation (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public static fun kotlin (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public static fun npm (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/io/File;Z)Lorg/gradle/api/artifacts/Dependency;
 	public static fun npm (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Ljava/io/File;Z)Lorg/gradle/api/artifacts/Dependency;
@@ -919,8 +918,8 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler$De
 	public static fun platform (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/Object;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public static fun project (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/ProjectDependency;
 	public static synthetic fun project$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/gradle/api/artifacts/ProjectDependency;
-	public static fun runtimeOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public static fun runtimeOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
+	public static fun runtimeOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
+	public static fun runtimeOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinExecution : org/gradle/api/Named {

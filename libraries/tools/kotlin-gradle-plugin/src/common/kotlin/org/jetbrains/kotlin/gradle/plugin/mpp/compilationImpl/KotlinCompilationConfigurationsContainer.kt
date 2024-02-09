@@ -44,7 +44,7 @@ internal fun HasKotlinDependencies(
     project: Project, compilationDependencyContainer: KotlinCompilationConfigurationsContainer
 ): HasKotlinDependencies = object : HasKotlinDependencies {
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
-        DefaultKotlinDependencyHandler(this, project).run(configure)
+        project.objects.DefaultKotlinDependencyHandler(this, project).run(configure)
 
     override fun dependencies(configure: Action<KotlinDependencyHandler>) =
         dependencies { configure.execute(this) }

@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import groovy.lang.Closure
 import org.gradle.api.Action
-import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.logging.Logger
+import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtensionConfig
 import java.io.File
 
 interface KotlinDependencyHandler {
     val project: Project
+interface KotlinDependencyHandler : HasProject {
     fun api(dependencyNotation: Any): Dependency?
     fun api(dependencyNotation: String, configure: ExternalModuleDependency.() -> Unit): ExternalModuleDependency
     fun <T : Dependency> api(dependency: T, configure: T.() -> Unit): T
@@ -30,6 +32,8 @@ interface KotlinDependencyHandler {
 
     fun <T : Dependency> implementation(dependency: T, configure: Closure<*>) =
         implementation(dependency) { project.configure(this, configure) }
+    fun <T : Dependency> implementation(dependency: T, configure: Action<T>) =
+        implementation(dependency) { configure.execute(this) }
 
     fun compileOnly(dependencyNotation: Any): Dependency?
     fun compileOnly(dependencyNotation: String, configure: ExternalModuleDependency.() -> Unit): ExternalModuleDependency
@@ -39,6 +43,8 @@ interface KotlinDependencyHandler {
 
     fun <T : Dependency> compileOnly(dependency: T, configure: Closure<*>) =
         compileOnly(dependency) { project.configure(this, configure) }
+    fun <T : Dependency> compileOnly(dependency: T, configure: Action<T>) =
+        compileOnly(dependency) { configure.execute(this) }
 
     fun runtimeOnly(dependencyNotation: Any): Dependency?
     fun runtimeOnly(dependencyNotation: String, configure: ExternalModuleDependency.() -> Unit): ExternalModuleDependency
@@ -48,6 +54,8 @@ interface KotlinDependencyHandler {
 
     fun <T : Dependency> runtimeOnly(dependency: T, configure: Closure<*>) =
         runtimeOnly(dependency) { project.configure(this, configure) }
+    fun <T : Dependency> runtimeOnly(dependency: T, configure: Action<T>) =
+        runtimeOnly(dependency) { configure.execute(this) }
 
     fun kotlin(simpleModuleName: String): ExternalModuleDependency = kotlin(simpleModuleName, null)
     fun kotlin(simpleModuleName: String, version: String?): ExternalModuleDependency
