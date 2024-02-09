@@ -438,28 +438,25 @@ internal class CInteropCompilation(
     }
 }
 
-internal class SwiftCompilation(
+internal class SwiftCompilation<T: TestCompilationArtifact>(
     testRunSettings: Settings,
     sources: List<File>,
-    expectedArtifact: Executable,
+    expectedArtifact: T,
     swiftExtraOpts: List<String>,
-) : TestCompilation<Executable>() {
-    override val result: TestCompilationResult<out Executable> by lazy {
-        val buildDir = testRunSettings.get<Binaries>().testBinariesDir
+    outputFile: (T) -> File,
+) : TestCompilation<T>() {
+    override val result: TestCompilationResult<out T> by lazy {
         val configs = testRunSettings.configurables as AppleConfigurables
         val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
         val args = swiftExtraOpts + sources.map { it.absolutePath } + listOf(
             "-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget,
-            "-o", expectedArtifact.executableFile.absolutePath,
+            "-o", outputFile(expectedArtifact).absolutePath,
             "-g", // TODO https://youtrack.jetbrains.com/issue/KT-65436/K-N-ObjCExport-tests-use-various-optimization-flags-for-swiftc
-            "-Xlinker", "-rpath", "-Xlinker", "@executable_path/Frameworks",
-            "-Xlinker", "-rpath", "-Xlinker", buildDir.absolutePath,
-            "-F", buildDir.absolutePath,
             "-Xcc", "-Werror", // To fail compilation on warnings in framework header.
         )
 
         val loggedSwiftCParameters = LoggedData.SwiftCParameters(args, sources)
-        val (loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out Executable>) = try {
+        val (loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out T>) = try {
             val (exitCode, swiftcOutput, swiftcOutputHasErrors, duration) =
                 invokeSwiftC(testRunSettings, args)
 

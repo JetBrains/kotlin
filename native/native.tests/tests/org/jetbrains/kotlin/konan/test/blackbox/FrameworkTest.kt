@@ -471,7 +471,11 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
                 """.trimMargin()
             )
         }
-
+        val frameworkOpts = listOf(
+            "-Xlinker", "-rpath", "-Xlinker", "@executable_path/Frameworks",
+            "-Xlinker", "-rpath", "-Xlinker", buildDir.absolutePath,
+            "-F", buildDir.absolutePath
+        )
         return SwiftCompilation(
             testRunSettings,
             testSources + listOf(
@@ -479,7 +483,8 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
                 testSuiteDir.resolve("main.swift")
             ),
             TestCompilationArtifact.Executable(buildDir.resolve("swiftTestExecutable")),
-            swiftExtraOpts,
+            swiftExtraOpts + frameworkOpts,
+            outputFile = { executable -> executable.executableFile }
         ).result.assertSuccess()
     }
 }
