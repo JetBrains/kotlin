@@ -345,6 +345,7 @@
 /libraries/tools/kotlin-tooling-metadata/ "Kotlin Build Tools"
 /libraries/tools/kotlinp/ "Kotlin JVM" "Kotlin Common Backend"
 /libraries/tools/kotlinp/jvm/ "Kotlin JVM"
+/libraries/tools/kotlinp/klib/ "Kotlin Common Backend"
 /libraries/tools/maven-archetypes/ "Kotlin Build Tools"
 /libraries/tools/mutability-annotations-compat/ "Kotlin Libraries"
 /libraries/tools/script-runtime/ "Kotlin Compiler Core"
