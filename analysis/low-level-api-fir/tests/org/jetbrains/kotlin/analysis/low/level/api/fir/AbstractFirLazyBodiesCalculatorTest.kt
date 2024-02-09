@@ -20,10 +20,17 @@ import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractFirLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTest() {
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        builder.useDirectives(Directives)
+    }
+
     private val lazyChecker = object : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
             TestCase.assertFalse("${FirLazyBlock::class.qualifiedName} should not present in the tree", element is FirLazyBlock)
@@ -33,6 +40,8 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTes
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        if (Directives.IGNORE_BODY_CALCULATOR in mainModule.directives) return
+
         resolveWithClearCaches(mainFile) { firResolveSession ->
             val session = firResolveSession.useSiteFirSession
             val provider = session.kotlinScopeProvider
@@ -57,6 +66,10 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTes
 
             TestCase.assertEquals(/* expected = */ fullFirFileDump, /* actual = */ laziedFirFileDump)
         }
+    }
+
+    private object Directives : SimpleDirectivesContainer() {
+        val IGNORE_BODY_CALCULATOR by stringDirective("Ignore body calculator")
     }
 }
 
