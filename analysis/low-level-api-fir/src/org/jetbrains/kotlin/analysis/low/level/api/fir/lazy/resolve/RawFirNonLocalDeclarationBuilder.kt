@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
+import org.jetbrains.kotlin.fir.builder.buildDestructuringVariable
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -27,12 +28,15 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class RawFirNonLocalDeclarationBuilder private constructor(
     session: FirSession,
@@ -157,6 +161,34 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             } else {
                 buildErrorTopLevelDestructuringDeclaration(replacementDeclaration.toFirSourceElement())
             }
+        }
+
+        fun convertDestructuringDeclarationEntry(element: KtDestructuringDeclarationEntry): FirVariable {
+            val replacementDeclaration = replacementApplier?.tryReplace(element) ?: element
+            requireIsInstance<KtDestructuringDeclarationEntry>(replacementDeclaration)
+            requireIsInstance<FirProperty>(originalDeclaration)
+
+            val container = originalDeclaration.destructuringDeclarationContainerVariable?.fir
+            requireWithAttachment(container != null, { "Container is not found"}) {
+                withFirEntry("originalDeclaration", originalDeclaration)
+                withPsiEntry("element", element)
+            }
+
+            return buildDestructuringVariable(
+                moduleData = baseModuleData,
+                container = container,
+                element,
+                isVar = false,
+                localEntries = false,
+                index = element.index(),
+                configure = { configureScriptDestructuringDeclarationEntry(it, container) },
+            )
+        }
+
+        private fun KtDestructuringDeclarationEntry.index(): Int {
+            val destructuringDeclaration = parent
+            requireIsInstance<KtDestructuringDeclaration>(destructuringDeclaration)
+            return destructuringDeclaration.entries.indexOf(this)
         }
 
         fun convertAnonymousInitializer(element: KtAnonymousInitializer, containingDeclaration: FirDeclaration?): FirAnonymousInitializer {
@@ -356,6 +388,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                     }
                 }
                 is KtDestructuringDeclaration -> visitor.convertDestructuringDeclaration(declarationToBuild, containingDeclaration)
+                is KtDestructuringDeclarationEntry -> visitor.convertDestructuringDeclarationEntry(declarationToBuild)
                 is KtCodeFragment -> {
                     val firFile = visitor.convertElement(declarationToBuild, originalDeclaration) as FirFile
                     firFile.codeFragment

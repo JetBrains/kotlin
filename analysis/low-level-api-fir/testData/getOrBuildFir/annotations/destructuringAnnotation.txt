@@ -44,7 +44,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringAnnotation.kts
         }
 
         @R|DestrAnno|[Types](s = <strcat>(String(destr 1 ), R|/prop|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|MyPair| = R|/MyPair.MyPair|(Int(1), Int(2))
-        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = R|<local>/<destruct>|.component1#()
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
 
 
-        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = R|<local>/<destruct>|.component2#()
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION

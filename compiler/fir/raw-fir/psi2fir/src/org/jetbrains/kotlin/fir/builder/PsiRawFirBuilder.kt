@@ -198,6 +198,14 @@ open class PsiRawFirBuilder(
             (this as KtAnnotated).extractAnnotationsTo(target)
         }
 
+        override fun createComponentCall(
+            container: FirVariable,
+            entrySource: KtSourceElement?,
+            index: Int,
+        ): FirExpression = buildOrLazyExpression(entrySource) {
+            super.createComponentCall(container, entrySource, index)
+        }
+
         private inline fun <reified R : FirElement> KtElement?.convertSafe(): R? =
             this?.let { convertElement(it, null) } as? R
 
@@ -1280,6 +1288,10 @@ open class PsiRawFirBuilder(
             }
         }
 
+        protected fun configureScriptDestructuringDeclarationEntry(declaration: FirVariable, container: FirVariable) {
+            (declaration as FirProperty).destructuringDeclarationContainerVariable = container.symbol
+        }
+
         protected fun buildScriptDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration): FirVariable {
             val initializer = destructuringDeclaration.initializer
             val firInitializer = buildOrLazyExpression(initializer?.toFirSourceElement()) {
@@ -1344,7 +1356,7 @@ open class PsiRawFirBuilder(
                                     tmpVariable = false,
                                     localEntries = false,
                                 ) {
-                                    (it as FirProperty).destructuringDeclarationContainerVariable = destructuringContainerVar.symbol
+                                    configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
                                 }
                             }
                             else -> {

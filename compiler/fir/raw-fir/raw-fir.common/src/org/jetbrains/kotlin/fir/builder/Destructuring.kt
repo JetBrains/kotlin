@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -23,6 +24,9 @@ interface DestructuringContext<T> {
     val T.name: Name
     val T.source: KtSourceElement
     fun T.extractAnnotationsTo(target: FirAnnotationContainerBuilder, containerSymbol: FirBasedSymbol<*>)
+    fun createComponentCall(container: FirVariable, entrySource: KtSourceElement?, index: Int): FirExpression {
+        return container.toComponentCall(entrySource, index)
+    }
 }
 
 context(AbstractRawFirBuilder<*>, DestructuringContext<T>)
@@ -39,20 +43,39 @@ fun <T> MutableList<in FirVariable>.addDestructuringVariables(
         this += container
     }
     for ((index, entry) in entries.withIndex()) {
-        this += buildProperty {
-            symbol = FirPropertySymbol(entry.name)
-            withContainerSymbol(symbol, localEntries) {
-                this.moduleData = moduleData
-                origin = FirDeclarationOrigin.Source
-                returnTypeRef = entry.returnTypeRef
-                name = entry.name
-                initializer = container.toComponentCall(entry.source, index)
-                this.isVar = isVar
-                source = entry.source
-                isLocal = localEntries
-                status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL)
-                entry.extractAnnotationsTo(this, context.containerSymbol)
-            }
-        }.also(configure)
+        this += buildDestructuringVariable(
+            moduleData,
+            container,
+            entry,
+            isVar,
+            localEntries,
+            index,
+            configure,
+        )
     }
 }
+
+context(AbstractRawFirBuilder<*>, DestructuringContext<T>)
+fun <T> buildDestructuringVariable(
+    moduleData: FirModuleData,
+    container: FirVariable,
+    entry: T,
+    isVar: Boolean,
+    localEntries: Boolean,
+    index: Int,
+    configure: (FirVariable) -> Unit = {}
+): FirVariable = buildProperty {
+    symbol = FirPropertySymbol(entry.name)
+    withContainerSymbol(symbol, localEntries) {
+        this.moduleData = moduleData
+        origin = FirDeclarationOrigin.Source
+        returnTypeRef = entry.returnTypeRef
+        name = entry.name
+        initializer = createComponentCall(container, entry.source, index)
+        this.isVar = isVar
+        source = entry.source
+        isLocal = localEntries
+        status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL)
+        entry.extractAnnotationsTo(this, context.containerSymbol)
+    }
+}.also(configure)
