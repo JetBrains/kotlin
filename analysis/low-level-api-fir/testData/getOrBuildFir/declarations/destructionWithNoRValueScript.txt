@@ -3,15 +3,15 @@ FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-[ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+[ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <ERROR TYPE REF: Initializer required for destructuring declaration> = ERROR_EXPR(Initializer required for destructuring declaration)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructionWithNoRValueScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructionWithNoRValueScript.kts>
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-destructionWithNoRValueScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <ERROR TYPE REF: Initializer required for destructuring declaration> = ERROR_EXPR(Initializer required for destructuring declaration)
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val o: <implicit> = R|<local>/<destruct>|.component1#()
 
 
