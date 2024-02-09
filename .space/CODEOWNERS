@@ -272,6 +272,7 @@
 /kotlin-native/runtime/test "Kotlin Native" A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
 /kotlin-native/runtime/**/*.mm Alexander.Shabalin Aleksei.Glushko Sergey.Bogolepov Svyatoslav.Scherbina
 /kotlin-native/licenses/ "Kotlin Build Infrastructure"
+/kotlin-native/klib/ "Kotlin Common Backend"
 
 /libraries/examples/annotation-processor-example/ "Kotlin Compiler Core"
 /libraries/examples/kotlin-gradle-subplugin-example/ "Kotlin Compiler Core"
