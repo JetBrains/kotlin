@@ -158,7 +158,7 @@ open class NodeJsRootExtension(
             rootPackageDir = rootPackageDirectory.getFile(),
             dir = nodeDir,
             nodeBinDir = nodeBinDir,
-            nodeExecutable = getExecutable("node", command, "exe"),
+            executable = getExecutable("node", command, "exe"),
             platformName = name,
             architectureName = architecture,
             ivyDependency = getIvyDependency(),

@@ -45,6 +45,7 @@ fun Project.useNodeJsPlugin() {
     NodeJsUtils.useNodeJsPlugin(this)
 }
 
+@Suppress("DEPRECATION")
 fun Test.setupNodeJs() {
     dependsOn(NodeJsUtils.nodeJsPlugin.nodeJsSetupTaskProvider)
     val nodeJsExecutablePath = project.provider {

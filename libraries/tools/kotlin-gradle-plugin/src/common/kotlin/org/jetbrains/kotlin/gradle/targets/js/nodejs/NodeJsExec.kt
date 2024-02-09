@@ -108,7 +108,7 @@ constructor(
                 listOf(compilation)
             ) {
                 it.nodeJs = nodeJs
-                it.executable = nodeJs.requireConfigured().nodeExecutable
+                it.executable = nodeJs.requireConfigured().executable
                 if ((compilation.target as? KotlinJsIrTarget)?.wasmTargetType != KotlinWasmTargetType.WASI) {
                     it.workingDir(npmProject.dir)
                     it.dependsOn(

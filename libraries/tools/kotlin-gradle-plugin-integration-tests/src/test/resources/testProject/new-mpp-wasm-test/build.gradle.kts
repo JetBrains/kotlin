@@ -39,7 +39,6 @@ kotlin {
                 }
             }
         }
-        <ApplyBinaryen>
     }
 
     sourceSets {

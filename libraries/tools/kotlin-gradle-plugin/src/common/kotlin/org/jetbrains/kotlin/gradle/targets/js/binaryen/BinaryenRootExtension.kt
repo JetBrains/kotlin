@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.gradle.targets.js.binaryen
 
 import org.gradle.api.Project
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
-import java.io.Serializable
-import java.net.URL
 
-open class BinaryenRootExtension(@Transient val rootProject: Project) : ConfigurationPhaseAware<BinaryenEnv>(), Serializable {
+open class BinaryenRootExtension(
+    @Transient val rootProject: Project
+) : AbstractSettings<BinaryenEnv>() {
     init {
         check(rootProject.rootProject == rootProject)
     }
@@ -23,30 +22,41 @@ open class BinaryenRootExtension(@Transient val rootProject: Project) : Configur
         rootProject.logger.kotlinInfo("Storing cached files in $it")
     }
 
-    var installationPath by Property(gradleHome.resolve("binaryen"))
-    var downloadBaseUrl by Property("https://github.com/WebAssembly/binaryen/releases/download/")
-    var version by Property("116")
+    override var installationDir by Property(gradleHome.resolve("binaryen"))
+    override var downloadBaseUrl: String? by Property("https://github.com/WebAssembly/binaryen/releases/download")
+    override var version: String by Property("116")
+    override var download: Boolean by Property(true)
+    override var command: String by Property("wasm-opt")
 
-    val setupTaskProvider: TaskProvider<out Copy>
-        get() = rootProject.tasks.withType(Copy::class.java).named(BinaryenRootPlugin.INSTALL_TASK_NAME)
+    val setupTaskProvider: TaskProvider<BinaryenSetupTask>
+        get() = rootProject.tasks.withType(BinaryenSetupTask::class.java).named(BinaryenSetupTask.NAME)
 
     override fun finalizeConfiguration(): BinaryenEnv {
-        val requiredVersionName = "binaryen-version_$version-${BinaryenPlatform.platform}"
-        val requiredZipName = "$requiredVersionName.tar.gz"
-        val cleanableStore = CleanableStore[installationPath.absolutePath]
+        val platform = BinaryenPlatform.platform
+        val requiredVersionName = "binaryen-version_$version"
+        val cleanableStore = CleanableStore[installationDir.absolutePath]
         val targetPath = cleanableStore[requiredVersionName].use()
         val isWindows = BinaryenPlatform.name == BinaryenPlatform.WIN
 
+        fun getExecutable(command: String, customCommand: String, windowsExtension: String): String {
+            val finalCommand = if (isWindows && customCommand == command) "$command.$windowsExtension" else customCommand
+            return if (download)
+                targetPath
+                    .resolve("bin")
+                    .resolve(finalCommand)
+                    .absolutePath
+            else
+                finalCommand
+        }
+
         return BinaryenEnv(
+            download = download,
+            downloadBaseUrl = downloadBaseUrl,
+            ivyDependency = "com.github.webassembly:binaryen:$version:$platform@tar.gz",
+            executable = getExecutable("wasm-opt", command, "exe"),
+            dir = targetPath,
             cleanableStore = cleanableStore,
-            zipPath = cleanableStore[requiredZipName].use(),
-            targetPath = targetPath,
-            executablePath = targetPath
-                .resolve("binaryen-version_$version")
-                .resolve("bin")
-                .resolve(if (isWindows) "wasm-opt.exe" else "wasm-opt"),
             isWindows = isWindows,
-            downloadUrl = URL("${downloadBaseUrl.trimEnd('/')}/version_$version/$requiredZipName"),
         )
     }
 

@@ -63,7 +63,7 @@ open class D8Exec : AbstractExecTask<D8Exec>(D8Exec::class.java) {
             return project.registerTask(
                 name
             ) {
-                it.executable = d8.requireConfigured().executablePath.absolutePath
+                it.executable = d8.requireConfigured().executable
                 it.dependsOn(d8.setupTaskProvider)
                 it.dependsOn(compilation.compileTaskProvider)
                 if (compilation.platformType == KotlinPlatformType.wasm) {

@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.gradle.targets.js.d8
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.Copy
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension.Companion.EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 
 
 open class D8RootPlugin : Plugin<Project> {
@@ -27,37 +27,13 @@ open class D8RootPlugin : Plugin<Project> {
 
         val settings = project.extensions.create(EXTENSION_NAME, D8RootExtension::class.java, project)
 
-        project.gradle.projectsEvaluated {
-            val downloadUrl = settings.requireConfigured().downloadUrl
-            project.repositories.ivy { repo ->
-                repo.name = "D8 Distributions at $downloadUrl"
-                repo.url = downloadUrl.toURI()
-                repo.patternLayout {
-                    it.artifact("[artifact]-[revision].[ext]")
-                }
-                repo.metadataSources { it.artifact() }
-                repo.content { it.includeModule("google.d8", "v8") }
+        project.registerTask<D8SetupTask>(D8SetupTask.NAME) {
+            it.group = TASKS_GROUP_NAME
+            it.description = "Download and install a D8"
+            it.configuration = project.provider {
+                project.configurations.detachedConfiguration(project.dependencies.create(it.ivyDependency))
+                    .also { conf -> conf.isTransitive = false }
             }
-        }
-
-        val downloadTask = project.registerTask<Copy>("${TASKS_GROUP_NAME}Download") {
-            it.group = TASKS_GROUP_NAME
-            it.description = "Download local d8 version"
-
-            val env = settings.requireConfigured()
-            val configuration = project.configurations.detachedConfiguration(project.dependencies.create(env.ivyDependency))
-            it.from(project.provider { configuration.singleFile })
-            it.into(env.zipPath.parentFile)
-        }
-
-        project.registerTask<Copy>(INSTALL_TASK_NAME) {
-            val env = settings.requireConfigured()
-            it.onlyIf { env.zipPath.exists() && !env.executablePath.exists() }
-            it.group = TASKS_GROUP_NAME
-            it.from(project.zipTree(env.zipPath))
-            it.into(env.targetPath)
-            it.dependsOn(downloadTask)
-            it.description = "Install local d8 version"
         }
 
         project.registerTask<CleanDataTask>("d8" + CleanDataTask.NAME_SUFFIX) {
@@ -69,12 +45,14 @@ open class D8RootPlugin : Plugin<Project> {
 
     companion object {
         const val TASKS_GROUP_NAME: String = "d8"
-        const val INSTALL_TASK_NAME: String = "${TASKS_GROUP_NAME}Install"
 
         fun apply(rootProject: Project): D8RootExtension {
             check(rootProject == rootProject.rootProject)
             rootProject.plugins.apply(D8RootPlugin::class.java)
             return rootProject.extensions.getByName(EXTENSION_NAME) as D8RootExtension
         }
+
+        val Project.kotlinD8Extension: D8RootExtension
+            get() = extensions.getByName(EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
     }
 }

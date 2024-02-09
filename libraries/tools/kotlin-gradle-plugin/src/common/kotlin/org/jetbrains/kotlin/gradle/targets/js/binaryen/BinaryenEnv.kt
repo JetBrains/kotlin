@@ -1,14 +1,18 @@
 package org.jetbrains.kotlin.gradle.targets.js.binaryen
 
+import org.jetbrains.kotlin.gradle.targets.js.AbstractEnv
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
-import java.net.URL
 
 data class BinaryenEnv(
-    val cleanableStore: CleanableStore,
-    val zipPath: File,
-    val targetPath: File,
-    val executablePath: File,
+    override val download: Boolean,
+    override val downloadBaseUrl: String?,
+    override val ivyDependency: String,
+    override val executable: String,
+    override val dir: File,
+    override val cleanableStore: CleanableStore,
     val isWindows: Boolean,
-    val downloadUrl: URL
-)
+) : AbstractEnv {
+    val executablePath: File
+        get() = File(executable)
+}

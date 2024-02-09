@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.gradle.targets.js
 
-import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import java.io.File
 

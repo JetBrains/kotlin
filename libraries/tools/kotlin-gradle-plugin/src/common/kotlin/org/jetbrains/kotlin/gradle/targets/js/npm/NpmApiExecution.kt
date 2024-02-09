@@ -51,6 +51,6 @@ data class NodeJsEnvironment(
 internal val NodeJsEnv.asNodeJsEnvironment
     get() = NodeJsEnvironment(
         rootPackageDir,
-        nodeExecutable,
+        executable,
         packageManager
     )

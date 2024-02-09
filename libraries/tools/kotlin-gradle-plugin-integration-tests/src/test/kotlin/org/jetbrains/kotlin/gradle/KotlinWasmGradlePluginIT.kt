@@ -19,11 +19,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     @DisplayName("Check wasi target")
     @GradleTest
     fun wasiTarget(gradleVersion: GradleVersion) {
-        project(
-            "new-mpp-wasm-wasi-test",
-            gradleVersion,
-            dependencyManagement = DependencyManagement.DisabledDependencyManagement // requires custom d8 repository during build
-        ) {
+        project("new-mpp-wasm-wasi-test", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
             build(":wasmWasiTest") {
@@ -57,15 +53,10 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     @DisplayName("Check js target")
     @GradleTest
     fun jsTarget(gradleVersion: GradleVersion) {
-        project(
-            "new-mpp-wasm-test",
-            gradleVersion,
-            dependencyManagement = DependencyManagement.DisabledDependencyManagement // requires custom repository for :kotlinNodeJsSetup during build
-        ) {
+        project("new-mpp-wasm-test", gradleVersion) {
             buildGradleKts.modify {
                 transformBuildScriptWithPluginsDsl(it)
                     .replace("<JsEngine>", "nodejs")
-                    .replace("<ApplyBinaryen>", "")
             }
 
             kotlinSourcesDir("wasmJsTest").resolve("Test.kt").writeText(
@@ -101,10 +92,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     @DisplayName("Check wasi target run")
     @GradleTest
     fun wasiRun(gradleVersion: GradleVersion) {
-        project(
-            "new-mpp-wasm-wasi-test", gradleVersion,
-            dependencyManagement = DependencyManagement.DisabledDependencyManagement // requires d8 custom repository during build
-        ) {
+        project("new-mpp-wasm-wasi-test", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
             build(":wasmWasiNodeRun") {

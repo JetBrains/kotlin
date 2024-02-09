@@ -3,44 +3,44 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.targets.js.yarn
+package org.jetbrains.kotlin.gradle.targets.js.binaryen
 
 import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
+import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootPlugin.Companion.kotlinBinaryenExtension
 import java.io.File
 
 @DisableCachingByDefault
-abstract class YarnSetupTask : AbstractSetupTask<YarnEnv, YarnRootExtension>() {
+abstract class BinaryenSetupTask : AbstractSetupTask<BinaryenEnv, BinaryenRootExtension>() {
     @Transient
     @Internal
-    override val settings = project.yarn
+    override val settings = project.kotlinBinaryenExtension
 
     @get:Internal
     override val artifactPattern: String
-        get() = "v[revision]/[artifact](-v[revision]).[ext]"
+        get() = "version_[revision]/binaryen-version_[revision]-[classifier].[ext]"
 
     @get:Internal
     override val artifactModule: String
-        get() = "com.yarnpkg"
+        get() = "com.github.webassembly"
 
     @get:Internal
     override val artifactName: String
-        get() = "yarn"
+        get() = "binaryen"
 
     override fun extract(archive: File) {
-        val dirInTar = archive.name.removeSuffix(".tar.gz")
         fs.copy {
             it.from(archiveOperations.tarTree(archive))
             it.into(destination.parentFile)
-            it.includeEmptyDirs = false
-            it.eachFile { fileCopy ->
-                fileCopy.path = fileCopy.path.removePrefix(dirInTar)
-            }
+        }
+
+        if (!env.isWindows) {
+            File(env.executable).setExecutable(true)
         }
     }
 
     companion object {
-        const val NAME: String = "kotlinYarnSetup"
+        const val NAME: String = "kotlinBinaryenSetup"
     }
 }

@@ -118,6 +118,45 @@ internal fun getGroovyDependencyManagementBlock(
                     includeModule("org.nodejs", "node") 
                 }
             }
+            ivy {
+                url = uri("https://nodejs.org/download/v8-canary")
+
+                patternLayout {
+                    artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                }
+                metadataSources { 
+                    artifact() 
+                }
+                content { 
+                    includeModule("org.nodejs", "node") 
+                }
+            }
+            ivy {
+                url = uri("https://github.com/WebAssembly/binaryen/releases/download")
+
+                patternLayout {
+                    artifact("version_[revision]/binaryen-version_[revision]-[classifier].[ext]")
+                }
+                metadataSources { 
+                    artifact() 
+                }
+                content { 
+                    includeModule("com.github.webassembly", "binaryen") 
+                }
+            }
+            ivy {
+                url = uri("https://storage.googleapis.com/chromium-v8/official/canary")
+
+                patternLayout {
+                    artifact("[artifact]-[revision].[ext]")
+                }
+                metadataSources { 
+                    artifact() 
+                }
+                content { 
+                    includeModule("google.d8", "v8") 
+                }
+            }
             ${additionalDependencyRepositories.map { repo -> "maven{ url = \"$repo\" }" }.joinToString("\n")}
             ${localRepo?.absolutePathString()?.let { repo -> "maven{ url = \"${repo.replace("\\", "\\\\")}\" }" } ?: ""}
         }
@@ -230,6 +269,45 @@ internal fun getKotlinDependencyManagementBlock(
                 }
                 content { 
                     includeModule("org.nodejs", "node") 
+                }
+            }
+            ivy {
+                url = uri("https://nodejs.org/download/v8-canary")
+
+                patternLayout {
+                    artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                }
+                metadataSources { 
+                    artifact() 
+                }
+                content { 
+                    includeModule("org.nodejs", "node") 
+                }
+            }
+            ivy {
+                url = uri("https://github.com/WebAssembly/binaryen/releases/download")
+
+                patternLayout {
+                    artifact("version_[revision]/binaryen-version_[revision]-[classifier].[ext]")
+                }
+                metadataSources { 
+                    artifact() 
+                }
+                content { 
+                    includeModule("com.github.webassembly", "binaryen") 
+                }
+            }
+            ivy {
+                url = uri("https://storage.googleapis.com/chromium-v8/official/canary")
+
+                patternLayout {
+                    artifact("[artifact]-[revision].[ext]")
+                }
+                metadataSources { 
+                    artifact() 
+                }
+                content { 
+                    includeModule("google.d8", "v8") 
                 }
             }
             maven {

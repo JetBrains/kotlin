@@ -12,9 +12,9 @@ import java.io.File
 data class YarnEnv(
     override val download: Boolean,
     override val downloadBaseUrl: String?,
-    val cleanableStore: CleanableStore,
+    override val cleanableStore: CleanableStore,
     override val dir: File,
-    val executable: String,
+    override val executable: String,
     override val ivyDependency: String,
     val ignoreScripts: Boolean,
     val yarnLockMismatchReport: YarnLockMismatchReport,

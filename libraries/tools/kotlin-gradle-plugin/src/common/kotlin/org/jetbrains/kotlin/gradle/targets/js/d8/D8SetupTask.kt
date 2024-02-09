@@ -3,44 +3,45 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.targets.js.yarn
+package org.jetbrains.kotlin.gradle.targets.js.d8
 
 import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
+import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin.Companion.kotlinD8Extension
 import java.io.File
 
 @DisableCachingByDefault
-abstract class YarnSetupTask : AbstractSetupTask<YarnEnv, YarnRootExtension>() {
+abstract class D8SetupTask : AbstractSetupTask<D8Env, D8RootExtension>() {
     @Transient
     @Internal
-    override val settings = project.yarn
+    override val settings = project.kotlinD8Extension
 
     @get:Internal
     override val artifactPattern: String
-        get() = "v[revision]/[artifact](-v[revision]).[ext]"
+        get() = "[artifact]-[revision].[ext]"
 
     @get:Internal
     override val artifactModule: String
-        get() = "com.yarnpkg"
+        get() = "google.d8"
 
     @get:Internal
     override val artifactName: String
-        get() = "yarn"
+        get() = "v8"
 
     override fun extract(archive: File) {
-        val dirInTar = archive.name.removeSuffix(".tar.gz")
         fs.copy {
-            it.from(archiveOperations.tarTree(archive))
-            it.into(destination.parentFile)
-            it.includeEmptyDirs = false
-            it.eachFile { fileCopy ->
-                fileCopy.path = fileCopy.path.removePrefix(dirInTar)
-            }
+            it.from(archiveOperations.zipTree(archive))
+            //
+            it.into(destination)
+        }
+
+        if (!env.isWindows) {
+            File(env.executable).setExecutable(true)
         }
     }
 
     companion object {
-        const val NAME: String = "kotlinYarnSetup"
+        const val NAME: String = "kotlinD8Setup"
     }
 }
