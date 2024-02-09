@@ -335,17 +335,6 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
-    fun `test - function type returning char`() {
-        val header = header(
-            """
-            val foo: () -> Char
-        """.trimIndent()
-        )
-
-        assertEquals("id (^)(void)", header.renderTypesOfSymbol("foo"))
-    }
-
-    @Test
     fun `test - function type - receiver`() {
         val header = header(
             """
@@ -553,6 +542,29 @@ class ObjCExportTypeTranslationTest(
         )
 
         assertEquals(" -> unichar", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - function type returning char`() {
+        val header = header(
+            """
+            val foo: () -> Char
+        """.trimIndent()
+        )
+
+        assertEquals("id (^)(void)", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - custom List implementation`() {
+        val header = header(
+            """
+                interface MyList<T>: List<T>
+                val foo: MyList<String> get() = error("stub")
+            """.trimIndent()
+        )
+
+        assertEquals("NSArray<NSString *> *", header.renderTypesOfSymbol("foo"))
     }
 
     private fun header(
