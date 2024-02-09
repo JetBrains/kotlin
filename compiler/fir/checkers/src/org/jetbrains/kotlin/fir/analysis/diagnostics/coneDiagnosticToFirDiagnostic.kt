@@ -397,6 +397,8 @@ private fun mapInapplicableCandidateError(
             // Reported later
             is TypeParameterAsExpression -> null
 
+            is AmbiguousInterceptedSymbol -> FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL.createOn(source, rootCause.pluginNames)
+
             else -> genericDiagnostic
         }
     }.distinct()

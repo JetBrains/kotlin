@@ -210,6 +210,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INNER_CLASS_CONSTRUCTOR_NO_RECEIVER by error<PsiElement> {
             parameter<FirRegularClassSymbol>("classSymbol")
         }
+        val PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL by error<PsiElement> {
+            parameter<List<String>>("names")
+        }
         val RESOLUTION_TO_CLASSIFIER by error<PsiElement> {
             parameter<FirRegularClassSymbol>("classSymbol")
         }

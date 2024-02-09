@@ -200,6 +200,7 @@ object FirErrors {
     val INTERFACE_AS_FUNCTION: KtDiagnosticFactory1<FirRegularClassSymbol> by error1<PsiElement, FirRegularClassSymbol>()
     val EXPECT_CLASS_AS_FUNCTION: KtDiagnosticFactory1<FirRegularClassSymbol> by error1<PsiElement, FirRegularClassSymbol>()
     val INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: KtDiagnosticFactory1<FirRegularClassSymbol> by error1<PsiElement, FirRegularClassSymbol>()
+    val PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL: KtDiagnosticFactory1<List<String>> by error1<PsiElement, List<String>>()
     val RESOLUTION_TO_CLASSIFIER: KtDiagnosticFactory1<FirRegularClassSymbol> by error1<PsiElement, FirRegularClassSymbol>()
     val AMBIGUOUS_ALTERED_ASSIGN: KtDiagnosticFactory1<List<String?>> by error1<PsiElement, List<String?>>()
     val FORBIDDEN_BINARY_MOD: KtDiagnosticFactory2<FirBasedSymbol<*>, String> by error2<PsiElement, FirBasedSymbol<*>, String>(SourceElementPositioningStrategies.OPERATOR_MODIFIER)

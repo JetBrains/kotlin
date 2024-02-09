@@ -166,3 +166,5 @@ class TypeVariableAsExplicitReceiver(
 ) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
 
 object CallToDeprecatedOverrideOfHidden : ResolutionDiagnostic(RESOLVED)
+
+class AmbiguousInterceptedSymbol(val pluginNames: List<String>) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)

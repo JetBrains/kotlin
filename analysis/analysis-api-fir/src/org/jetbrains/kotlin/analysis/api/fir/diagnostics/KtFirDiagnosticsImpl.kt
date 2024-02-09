@@ -459,6 +459,12 @@ internal class InnerClassConstructorNoReceiverImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.InnerClassConstructorNoReceiver
 
+internal class PluginAmbiguousInterceptedSymbolImpl(
+    override val names: List<String>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.PluginAmbiguousInterceptedSymbol
+
 internal class ResolutionToClassifierImpl(
     override val classSymbol: KtClassLikeSymbol,
     firDiagnostic: KtPsiDiagnostic,

@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.fir.extensions.originalCallDataForPluginRefinedCall
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
@@ -32,6 +34,9 @@ fun Candidate.computeCompletionMode(
 
         // Full if return type for call has no type variables
         csBuilder.isProperType(currentReturnType) -> ConstraintSystemCompletionMode.FULL
+
+        // Plugins need fully complete calls. Calls that cannot be completed should not be modified, forcing completion will produce type inference error
+        currentReturnType.toRegularClassSymbol(components.session)?.fir?.originalCallDataForPluginRefinedCall != null -> ConstraintSystemCompletionMode.FULL
 
         else -> CalculatorForNestedCall(
             this, currentReturnType, csBuilder, components.trivialConstraintTypeInferenceOracle

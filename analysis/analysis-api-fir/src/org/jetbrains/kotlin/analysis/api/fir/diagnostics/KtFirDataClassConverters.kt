@@ -499,6 +499,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL) { firDiagnostic ->
+        PluginAmbiguousInterceptedSymbolImpl(
+            firDiagnostic.a.map { string ->
+                string
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.RESOLUTION_TO_CLASSIFIER) { firDiagnostic ->
         ResolutionToClassifierImpl(
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),

@@ -396,6 +396,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val classSymbol: KtClassLikeSymbol
     }
 
+    interface PluginAmbiguousInterceptedSymbol : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = PluginAmbiguousInterceptedSymbol::class
+        val names: List<String>
+    }
+
     interface ResolutionToClassifier : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = ResolutionToClassifier::class
         val classSymbol: KtClassLikeSymbol
