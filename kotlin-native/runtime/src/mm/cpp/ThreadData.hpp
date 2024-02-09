@@ -34,9 +34,13 @@ public:
         gcScheduler_(GlobalData::Instance().gcScheduler(), *this),
         allocator_(GlobalData::Instance().allocator()),
         gc_(GlobalData::Instance().gc(), *this),
-        suspensionData_(ThreadState::kNative, *this) {}
+        suspensionData_(ThreadState::kNative, *this),
+        profilers_(GlobalData::Instance().profilers())
+    {}
 
-    ~ThreadData() = default;
+    ~ThreadData() {
+        RuntimeLogError({ logging::Tag::kLogging }, "Thread deinit");
+    }
 
     int threadId() const noexcept { return threadId_; }
 
@@ -62,6 +66,8 @@ public:
 
     ThreadSuspensionData& suspensionData() { return suspensionData_; }
 
+    auto& profilers() { return profilers_; }
+
     void Publish() noexcept {
         // TODO: These use separate locks, which is inefficient.
         globalsThreadQueue_.Publish();
@@ -85,6 +91,7 @@ private:
     gc::GC::ThreadData gc_;
     std::vector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
     ThreadSuspensionData suspensionData_;
+    profiler::Profilers::ThreadData profilers_;
 };
 
 } // namespace mm

@@ -13,7 +13,7 @@
 using namespace kotlin;
 
 // static
-mm::StableRef mm::StableRef::create(ObjHeader* obj) noexcept {
+ALWAYS_INLINE mm::StableRef mm::StableRef::create(ObjHeader* obj) noexcept {
     RuntimeAssert(obj != nullptr, "Creating StableRef for null object");
     return mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().createStableRef(obj);
 }

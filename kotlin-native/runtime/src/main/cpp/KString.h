@@ -37,6 +37,7 @@ OBJ_GETTER(StringFromUtf8Buffer, const char* start, size_t size);
 
 #ifdef __cplusplus
 }
+
 #endif
 
 template <typename T>
@@ -56,6 +57,11 @@ int binarySearchRange(const T* array, int arrayLength, T needle) {
       top = middle - 1;
   }
   return middle - (needle < value ? 1 : 0);
+}
+
+
+namespace kotlin {
+std::string to_string(KConstRef kref);
 }
 
 #endif // RUNTIME_KSTRING_H

@@ -148,6 +148,7 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   delete state;
   WorkerDestroyThreadDataIfNeeded(workerId);
   ::runtimeState = kInvalidRuntime;
+  RuntimeLogError({ logging::Tag::kLogging }, "Deinit runtime");
 }
 
 void Kotlin_deinitRuntimeCallback(void* argument) {
@@ -216,6 +217,7 @@ void Kotlin_shutdownRuntime() {
             needsFullShutdown = Kotlin_forceCheckedShutdown() || Kotlin_memoryLeakCheckerEnabled() || Kotlin_cleanersLeakCheckerEnabled();
             break;
     }
+    needsFullShutdown = true; // FIXME
     if (!needsFullShutdown) {
         auto lastStatus = std_support::atomic_compare_swap_strong(globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
         RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
@@ -269,6 +271,7 @@ void Kotlin_shutdownRuntime() {
     }
 
     deinitRuntime(runtime, canDestroyRuntime);
+    RuntimeLogError({ logging::Tag::kLogging }, "Shutdown runtime");
 }
 
 KInt Konan_Platform_canAccessUnaligned() {

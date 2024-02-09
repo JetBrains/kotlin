@@ -3017,9 +3017,21 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule() : LLVMModule
         config.runtimeLogs[it]!!.ord.let { llvm.constInt32(it) }
     })
     setRuntimeConstGlobal("Kotlin_runtimeLogs", runtimeLogs)
+
+    val eventTrackerFrequency = ConstArray(llvm.int32Type, EventTrackerKind.entries.sortedBy { it.ord }.map {
+        context.config.eventTrackerFrequency[it]!!.let { llvm.constInt32(it) }
+    })
+    setRuntimeConstGlobal("Kotlin_eventTrackerFrequency", eventTrackerFrequency)
+
+    val eventTrackerBacktraceDepth = ConstArray(llvm.int32Type, EventTrackerKind.entries.sortedBy { it.ord }.map {
+        context.config.eventTrackerBacktraceDepth[it]!!.let { llvm.constInt32(it) }
+    })
+    setRuntimeConstGlobal("Kotlin_eventTrackerBacktraceDepth", eventTrackerBacktraceDepth)
+
     setRuntimeConstGlobal("Kotlin_freezingEnabled", llvm.constInt32(if (config.freezing.enableFreezeAtRuntime) 1 else 0))
     setRuntimeConstGlobal("Kotlin_freezingChecksEnabled", llvm.constInt32(if (config.freezing.enableFreezeChecks) 1 else 0))
     setRuntimeConstGlobal("Kotlin_concurrentWeakSweep", llvm.constInt32(if (context.config.concurrentWeakSweep) 1 else 0))
+    setRuntimeConstGlobal("Kotlin_gcMarkSingleThreaded", llvm.constInt32(if (config.gcMarkSingleThreaded) 1 else 0))
     setRuntimeConstGlobal("Kotlin_gcMarkSingleThreaded", llvm.constInt32(if (config.gcMarkSingleThreaded) 1 else 0))
 
     return llvmModule

@@ -158,6 +158,54 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         default + configured
     }
 
+    val eventTrackerConfigured: Boolean by lazy {
+        configuration.get(BinaryOptions.eventTrackerFrequency) != null
+    }
+
+    val eventTrackerFrequency: Map<EventTrackerKind, Int> by lazy {
+        val default = EventTrackerKind.entries.associateWith { 0 }
+
+        val delimiter = "/" // FIXME consider making "," ?
+
+        val parts = configuration.get(BinaryOptions.eventTrackerFrequency)?.split(delimiter)?.toTypedArray()
+        val configured = parseKeyValuePairs(parts, configuration)?.mapNotNull { (key, value) ->
+            val event = EventTrackerKind.parse(key)
+            val frequency = value.toIntOrNull()
+            if (event == null) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Unknown event kind '$key'.")
+                null
+            } else if (frequency == null) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Invalid frequency '$value'.")
+                null
+            } else {
+                event to frequency
+            }
+        }?.toMap() ?: default
+        default + configured
+    }
+
+    val eventTrackerBacktraceDepth: Map<EventTrackerKind, Int> by lazy {
+        val default = EventTrackerKind.entries.associateWith { it.defaultBacktraceDepth }
+
+        val delimiter = "/" // FIXME consider making "," ?
+
+        val parts = configuration.get(BinaryOptions.eventTrackerBacktraceDepth)?.split(delimiter)?.toTypedArray()
+        val configured = parseKeyValuePairs(parts, configuration)?.mapNotNull { (key, value) ->
+            val event = EventTrackerKind.parse(key)
+            val frequency = value.toIntOrNull()
+            if (event == null) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Unknown event kind '$key'")
+                null
+            } else if (frequency == null) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Invalid backtrace depth '$value'")
+                null
+            } else {
+                event to frequency
+            }
+        }?.toMap() ?: return@lazy default
+        default + configured
+    }
+
 
     val suspendFunctionsFromAnyThreadFromObjC: Boolean by lazy {
         configuration.get(BinaryOptions.objcExportSuspendFunctionLaunchThreadRestriction) !=
@@ -566,6 +614,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         sanitizer != null -> "with sanitizers enabled"
         runtimeLogsEnabled -> "with runtime logs"
         checkStateAtExternalCalls -> "with external calls state checker"
+        eventTrackerConfigured -> "with event tracker enabled"
         else -> null
     }
 

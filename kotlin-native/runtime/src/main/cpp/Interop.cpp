@@ -28,7 +28,7 @@ using namespace kotlin;
 
 extern "C" {
 
-KNativePtr Kotlin_Interop_createStablePointer(KRef any) {
+ALWAYS_INLINE KNativePtr Kotlin_Interop_createStablePointer(KRef any) {
     KRefSharedHolder* holder = new KRefSharedHolder();
     holder->init(any);
     return holder;
