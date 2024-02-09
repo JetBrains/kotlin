@@ -58,6 +58,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
                 )
             ),
             givenDependencies = emptySet(),
+            // KT-64879: TODO: refactor fileCheckMatcher out from TestRunChecks to another layer like TestExecutableChecks
             checks = TestRunChecks.Default(Duration.ZERO)
                 .copy(fileCheckMatcher = TestRunCheck.FileCheckMatcher(testRunSettings, testDataFile))
         )
