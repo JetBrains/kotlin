@@ -12,17 +12,10 @@ import org.jetbrains.kotlin.backend.common.serialization.BasicIrModuleDeserializ
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
-import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
@@ -34,25 +27,18 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolverByName
-import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.abi.*
-import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.io.File
 import kotlin.system.exitProcess
 import org.jetbrains.kotlin.konan.file.File as KFile
-
-private val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
 
 fun printUsage() {
     println(
@@ -79,9 +65,9 @@ fun printUsage() {
                                            (such as Compose) were used during compilation of the library, there would be different
                                            signatures for patched declarations.
                signatures                [DEPRECATED] Renamed to "dump-metadata-signatures". Please, use new command name.
-               dump-metadata             Dump the metadata of all non-private declarations in the library in the form of Kotlin-alike code.
-                                           The output of this command is intended to be used for debugging purposes only.
-               contents                  [DEPRECATED] Renamed to "dump-metadata". Please, use new command name.
+               dump-metadata             Dump the metadata of all declarations in the library. The output of this command is intended
+                                           to be used for debugging purposes only.
+               contents                  [DEPRECATED] Reworked and renamed to "dump-metadata". Please, use new command name.
 
             and the options are:
                -repository <path>        [DEPRECATED] Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
@@ -178,18 +164,6 @@ object KlibToolLogger : Logger, IrMessageLogger {
 
 val defaultRepository = KFile(DependencyDirectories.localKonanDir.resolve("klib").absolutePath)
 
-open class ModuleDeserializer(val library: ByteArray) {
-    protected val moduleHeader: KlibMetadataProtoBuf.Header
-        get() = parseModuleHeader(library)
-
-    val moduleName: String
-        get() = moduleHeader.moduleName
-
-    val packageFragmentNameList: List<String>
-        get() = moduleHeader.packageFragmentNameList
-
-}
-
 private class KlibRepoDeprecationWarning {
     private var alreadyLogged = false
 
@@ -216,7 +190,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
         val headerCompilerVersion = library.versions.compilerVersion
         val headerLibraryVersion = library.versions.libraryVersion
         val headerMetadataVersion = library.versions.metadataVersion
-        val moduleName = ModuleDeserializer(library.moduleHeaderData).moduleName
+        val moduleName = parseModuleHeader(library.moduleHeaderData).moduleName
 
         println("")
         println("Resolved to: ${KFile(library.libraryName).absolutePath}")
@@ -269,15 +243,15 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     class KlibToolLinker(
-        module: ModuleDescriptor, irBuiltIns: IrBuiltIns, symbolTable: SymbolTable
+            module: ModuleDescriptor, irBuiltIns: IrBuiltIns, symbolTable: SymbolTable
     ) : KotlinIrLinker(module, KlibToolLogger, irBuiltIns, symbolTable, emptyList()) {
         override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
-            linker = this,
-            symbolTable = symbolTable,
-            mangler = KonanManglerIr,
-            typeSystem = IrTypeSystemContextImpl(builtIns),
-            friendModules = emptyMap(),
-            partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
+                linker = this,
+                symbolTable = symbolTable,
+                mangler = KonanManglerIr,
+                typeSystem = IrTypeSystemContextImpl(builtIns),
+                friendModules = emptyMap(),
+                partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
         )
 
         override val returnUnboundSymbolsIfSignatureNotFound: Boolean
@@ -313,8 +287,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun dumpIr(output: Appendable, printSignatures: Boolean, signatureVersion: KotlinIrSignatureVersion?) {
-        val module = loadModule()
-        val library = module.kotlinLibrary
+        val library = libraryInRepoOrCurrentDir(repository, libraryNameOrPath)
         checkLibraryHasIr(library)
 
         if (signatureVersion != null && signatureVersion != KotlinIrSignatureVersion.V2) {
@@ -322,10 +295,11 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
             logWarning("using a non-default signature version in \"dump-ir\" is not supported yet")
         }
 
-        val versionSpec = LanguageVersionSettingsImpl(currentLanguageVersion, currentApiVersion)
+        val module = ModuleDescriptorLoader.load(library)
+
         val idSignaturer = KonanIdSignaturer(KonanManglerDesc)
         val symbolTable = SymbolTable(idSignaturer, IrFactoryImpl)
-        val typeTranslator = TypeTranslatorImpl(symbolTable, versionSpec, module)
+        val typeTranslator = TypeTranslatorImpl(symbolTable, ModuleDescriptorLoader.languageVersionSettings, module)
         val irBuiltIns = IrBuiltInsOverDescriptors(module.builtIns, typeTranslator, symbolTable)
 
         val linker = KlibToolLinker(module, irBuiltIns, symbolTable)
@@ -391,11 +365,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
 
     fun contents(output: Appendable, printSignatures: Boolean, signatureVersion: KotlinIrSignatureVersion?) {
         logWarning("\"contents\" has been renamed to \"dump-metadata\". Please, use new command name.")
-        dumpMetadata(output, printSignatures, signatureVersion)
-    }
-
-    fun dumpMetadata(output: Appendable, printSignatures: Boolean, signatureVersion: KotlinIrSignatureVersion?) {
-        val module = loadModule()
+        val module = ModuleDescriptorLoader.load(libraryInRepoOrCurrentDir(repository, libraryNameOrPath))
         val signatureRenderer = if (printSignatures)
             DefaultKlibSignatureRenderer(signatureVersion, "// Signature: ")
         else
@@ -405,13 +375,23 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
         printer.print(module)
     }
 
+    /**
+     * @param testMode if `true` then a special pre-processing is performed towards the metadata before rendering:
+     *        - empty package fragments are removed
+     *        - package fragments with the same package FQN are merged
+     *        - classes are sorted in alphabetical order
+     */
+    fun dumpMetadata(output: Appendable, printSignatures: Boolean, signatureVersion: KotlinIrSignatureVersion?, testMode: Boolean) {
+        KotlinpBasedMetadataDumper(output, printSignatures, signatureVersion).dumpLibrary(libraryInCurrentDir(libraryNameOrPath), testMode)
+    }
+
     fun signatures(output: Appendable, signatureVersion: KotlinIrSignatureVersion?) {
         logWarning("\"signatures\" has been renamed to \"dump-metadata-signatures\". Please, use new command name.")
         dumpMetadataSignatures(output, signatureVersion)
     }
 
     fun dumpMetadataSignatures(output: Appendable, signatureVersion: KotlinIrSignatureVersion?) {
-        val module = loadModule()
+        val module = ModuleDescriptorLoader.load(libraryInRepoOrCurrentDir(repository, libraryNameOrPath))
         // Don't call `checkSupportedInLibrary()` - the signatures are anyway generated on the fly.
         val printer = SignaturePrinter(output, DefaultKlibSignatureRenderer(signatureVersion))
 
@@ -437,36 +417,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
             logError("Signature version ${this.number} is not supported in library ${library.libraryFile}." +
                     " Supported versions: ${supportedSignatureVersions.joinToString { it.number.toString() }}")
     }
-
-    private fun loadModule(): ModuleDescriptor {
-        val storageManager = LockBasedStorageManager("klib")
-        val library = libraryInRepoOrCurrentDir(repository, libraryNameOrPath)
-        val versionSpec = LanguageVersionSettingsImpl(currentLanguageVersion, currentApiVersion)
-        val module = KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(library, versionSpec, storageManager, null)
-
-        val defaultModules = mutableListOf<ModuleDescriptorImpl>()
-        if (!module.isNativeStdlib()) {
-            val resolver = resolverByName(
-                emptyList(),
-                distributionKlib = Distribution(KotlinNativePaths.homePath.absolutePath).klib,
-                skipCurrentDir = true,
-                logger = KlibToolLogger
-            )
-            resolver.defaultLinks(false, true, true).mapTo(defaultModules) {
-                KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptor(it, versionSpec, storageManager, module.builtIns, null)
-            }
-        }
-
-        (defaultModules + module).let { allModules ->
-            allModules.forEach { it.setDependencies(allModules) }
-        }
-
-        return module
-    }
 }
-
-val currentLanguageVersion = LanguageVersion.LATEST_STABLE
-val currentApiVersion = ApiVersion.LATEST_STABLE
 
 fun libraryInRepo(repository: KFile, name: String) =
         resolverByName(listOf(repository.absolutePath), skipCurrentDir = true, logger = KlibToolLogger).resolve(name)
@@ -500,7 +451,7 @@ fun main(args: Array<String>) {
         "dump-abi" -> library.dumpAbi(System.out, signatureVersion)
         "dump-ir" -> library.dumpIr(System.out, printSignatures, signatureVersion)
         "dump-ir-signatures" -> library.dumpIrSignatures(System.out, signatureVersion)
-        "dump-metadata" -> library.dumpMetadata(System.out, printSignatures, signatureVersion)
+        "dump-metadata" -> library.dumpMetadata(System.out, printSignatures, signatureVersion, testMode = false)
         "dump-metadata-signatures" -> library.dumpMetadataSignatures(System.out, signatureVersion)
         "contents" -> library.contents(System.out, printSignatures, signatureVersion)
         "signatures" -> library.signatures(System.out, signatureVersion)
