@@ -65,7 +65,7 @@ class SingleCandidateResolver(
 
         val applicability = resolutionStageRunner.processCandidate(candidate, resolutionContext, stopOnFirstError = true)
 
-        val fakeCall = if (applicability.isSuccess) {
+        val fakeCall = if (candidate.isSuccessful) {
             buildCallForResolvedCandidate(candidate, resolutionParameters)
         } else if (
             resolutionParameters.allowUnsafeCall && applicability == CandidateApplicability.UNSAFE_CALL ||
