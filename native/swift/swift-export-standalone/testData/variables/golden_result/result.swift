@@ -1,7 +1,7 @@
 import KotlinBridges
 
-enum namespace {
-    enum main {
+public enum namespace {
+    public enum main {
         public static var foo: Swift.Int32 {
             get {
                 return namespace_main_foo_get()

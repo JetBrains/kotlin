@@ -1,12 +1,12 @@
 import KotlinBridges
 
-enum namespace1 {
-    enum local_functions {
+public enum namespace1 {
+    public enum local_functions {
         public static func foo() -> Swift.Void {
             namespace1_local_functions_foo()
         }
     }
-    enum main {
+    public enum main {
         public static func foobar(
             param: Swift.Int32
         ) -> Swift.Int32 {
@@ -29,7 +29,7 @@ enum namespace1 {
     }
 }
 
-enum namespace2 {
+public enum namespace2 {
     public static func foo(
         arg1: Swift.Int32
     ) -> Swift.Int32 {
@@ -37,7 +37,7 @@ enum namespace2 {
     }
 }
 
-enum overload {
+public enum overload {
     public static func foo(
         arg1: Swift.Int32
     ) -> Swift.Int32 {

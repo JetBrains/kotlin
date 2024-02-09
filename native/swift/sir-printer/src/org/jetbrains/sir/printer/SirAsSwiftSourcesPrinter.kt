@@ -121,7 +121,12 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
     }
 
     override fun visitEnum(enum: SirEnum): Unit = with(printer) {
-        println("enum ${enum.name.swiftIdentifier} {")
+        println(
+            enum.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: "",
+            "enum ",
+            enum.name.swiftIdentifier,
+            " {"
+        )
         withIndent {
             enum.acceptChildren(this@SirAsSwiftSourcesPrinter)
         }
