@@ -38147,6 +38147,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
       }
 
       @Test
+      @TestMetadata("kt-65249.kt")
+      public void testKt_65249() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/kt-65249.kt");
+      }
+
+      @Test
       @TestMetadata("mergedOverrides.kt")
       public void testMergedOverrides() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/mergedOverrides.kt");

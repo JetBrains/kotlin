@@ -193,8 +193,16 @@ private fun IrFakeOverrideBuilder.buildForAll(
             element.acceptChildrenVoid(this)
         }
 
+        private fun isIgnoredClass(declaration: IrClass) : Boolean {
+            return when {
+                declaration.isExpect -> true
+                declaration.metadata is MetadataSource.CodeFragment -> true
+                else -> false
+            }
+        }
+
         override fun visitClass(declaration: IrClass) {
-            if (declaration.metadata !is MetadataSource.CodeFragment) {
+            if (!isIgnoredClass(declaration)) {
                 buildFakeOverrides(declaration)
             }
             declaration.acceptChildrenVoid(this)

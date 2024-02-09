@@ -10,10 +10,10 @@ expect open class Base<T>() {
 
 open class Transitive : Base<String>()
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}, EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect open class Foo : Transitive {
+expect open class Foo : Transitive {
     fun existingMethod()
     val existingParam: Int
-}<!>
+}
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
