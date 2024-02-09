@@ -25,15 +25,21 @@ public class SwiftExportRunnerTest extends AbstractSwiftRunnerTest {
     }
 
     @Test
-    @TestMetadata("no_package")
-    public void testNo_package() throws Exception {
-        runTest("native/swift/swift-export-standalone/testData/no_package/");
+    @TestMetadata("documentation")
+    public void testDocumentation() throws Exception {
+        runTest("native/swift/swift-export-standalone/testData/documentation/");
     }
 
     @Test
-    @TestMetadata("simple")
-    public void testSimple() throws Exception {
-        runTest("native/swift/swift-export-standalone/testData/simple/");
+    @TestMetadata("functions")
+    public void testFunctions() throws Exception {
+        runTest("native/swift/swift-export-standalone/testData/functions/");
+    }
+
+    @Test
+    @TestMetadata("no_package")
+    public void testNo_package() throws Exception {
+        runTest("native/swift/swift-export-standalone/testData/no_package/");
     }
 
     @Test

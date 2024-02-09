@@ -12,13 +12,13 @@ enum namespace {
                 return namespace_main_bar_get()
             }
             set {
-                namespace_main_bar_set(newValue)
+                namespace_main_bar_set__TypesOfArguments__int32_t__(newValue)
             }
         }
         public static func foobar(
             param: Swift.Int32
         ) -> Swift.Int32 {
-            return namespace_main_foobar(param)
+            return namespace_main_foobar__TypesOfArguments__int32_t__(param)
         }
     }
 }

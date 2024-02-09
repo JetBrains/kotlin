@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.sir.util
 
 import org.jetbrains.kotlin.sir.*
 
-val SirNativeCallable.allParameters: List<SirParameter>
+val SirCallable.allParameters: List<SirParameter>
     get() = when (this) {
         is SirFunction -> this.parameters
         is SirSetter -> listOf(SirParameter(parameterName = parameterName, type = this.valueType))
         is SirGetter -> listOf()
     }
 
-val SirNativeCallable.returnType: SirType
+val SirCallable.returnType: SirType
     get() = when (this) {
         is SirFunction -> this.returnType
         is SirGetter -> this.valueType

@@ -42,12 +42,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         }
     }
 
-    val foreignDeclaration by sealedElement {
-        parent(declaration)
-
-        visitorParameterName = "declaration"
-    }
-
     val named by sealedElement {
         +field("name", string)
     }
@@ -78,15 +72,9 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declaration)
     }
 
-    // Denotes "actual" callable node. (I.e. SirCallable & !SIRForeignDeclaration)
-    // TODO: remove along with foreign declaration (KT-65335); replace usages with just SIRCallable
-    val nativeCallable by sealedElement {
-        parent(callable)
-    }
-
     val function by element {
         customParentInVisitor = callable
-        parent(nativeCallable)
+        parent(callable)
 
         +field("isStatic", boolean) // todo: KT-65046 Method|function distinction in SIR
         +field("name", string)
@@ -97,17 +85,9 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field(name = "documentation", string, nullable = true, mutable = true)
     }
 
-    val foreignFunction by element {
-        customParentInVisitor = callable
-        parent(callable)
-        parent(foreignDeclaration)
-
-        visitorParameterName = "function"
-    }
-
     val accessor by sealedElement {
         customParentInVisitor = callable
-        parent(nativeCallable)
+        parent(callable)
 
         +field("body", functionBodyType, nullable = true, mutable = true)
     }
@@ -119,7 +99,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val setter by element {
         parent(accessor)
 
-        +field("parameterName", string, initializer = {  })
+        +field("parameterName", string, initializer = { })
     }
 
     val variable by element {
@@ -134,13 +114,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field("setter", setter, nullable = true)
 
         +field("isStatic", boolean) // todo: KT-65046 Method|function distinction in SIR
-    }
-
-    val foreignVariable by element {
-        customParentInVisitor = declaration
-        parent(foreignDeclaration)
-
-        visitorParameterName = "variable"
     }
 
     val import by element {

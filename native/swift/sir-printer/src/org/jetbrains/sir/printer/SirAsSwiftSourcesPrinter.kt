@@ -128,12 +128,6 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
         println("}")
     }
 
-    // we do not write foreign nodes
-
-    override fun visitForeignFunction(function: SirForeignFunction) {}
-
-    override fun visitForeignVariable(variable: SirForeignVariable) {}
-
     override fun visitElement(element: SirElement): Unit = with(printer) {
         println("/* ERROR: unsupported element type: " + element.javaClass.simpleName + " */")
     }

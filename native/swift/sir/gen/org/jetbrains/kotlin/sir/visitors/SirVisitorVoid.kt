@@ -46,14 +46,6 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
         visitElement(declaration)
     }
 
-    final override fun visitForeignDeclaration(declaration: SirForeignDeclaration, data: Nothing?) {
-        visitForeignDeclaration(declaration)
-    }
-
-    open fun visitForeignDeclaration(declaration: SirForeignDeclaration) {
-        visitDeclaration(declaration)
-    }
-
     final override fun visitNamedDeclaration(declaration: SirNamedDeclaration, data: Nothing?) {
         visitNamedDeclaration(declaration)
     }
@@ -86,27 +78,11 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
         visitDeclaration(callable)
     }
 
-    final override fun visitNativeCallable(nativeCallable: SirNativeCallable, data: Nothing?) {
-        visitNativeCallable(nativeCallable)
-    }
-
-    open fun visitNativeCallable(nativeCallable: SirNativeCallable) {
-        visitCallable(nativeCallable)
-    }
-
     final override fun visitFunction(function: SirFunction, data: Nothing?) {
         visitFunction(function)
     }
 
     open fun visitFunction(function: SirFunction) {
-        visitCallable(function)
-    }
-
-    final override fun visitForeignFunction(function: SirForeignFunction, data: Nothing?) {
-        visitForeignFunction(function)
-    }
-
-    open fun visitForeignFunction(function: SirForeignFunction) {
         visitCallable(function)
     }
 
@@ -139,14 +115,6 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
     }
 
     open fun visitVariable(variable: SirVariable) {
-        visitDeclaration(variable)
-    }
-
-    final override fun visitForeignVariable(variable: SirForeignVariable, data: Nothing?) {
-        visitForeignVariable(variable)
-    }
-
-    open fun visitForeignVariable(variable: SirForeignVariable) {
         visitDeclaration(variable)
     }
 

@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.builders
 
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.sir.SirElement
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.SirVariable
@@ -13,12 +16,12 @@ import org.jetbrains.kotlin.sir.SirAccessor
 import org.jetbrains.kotlin.sir.SirSetter
 import org.jetbrains.kotlin.sir.SirGetter
 import org.jetbrains.kotlin.sir.util.*
-import org.jetbrains.kotlin.sir.SirKotlinOrigin
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.bridge.BridgeRequest
 import org.jetbrains.kotlin.sir.bridge.createFunctionBodyFromRequest
 import org.jetbrains.kotlin.sir.visitors.SirVisitorVoid
 import org.jetbrains.sir.passes.SirPass
+import org.jetbrains.sir.passes.builder.KotlinSource
 import org.jetbrains.sir.passes.run
 
 internal fun SirModule.buildFunctionBridges(): List<BridgeRequest> {
@@ -39,7 +42,9 @@ private object BridgeGenerationPass : SirPass<SirElement, Nothing?, List<BridgeR
         }
 
         override fun visitFunction(function: SirFunction) {
-            val fqName = (function.origin as? SirKotlinOrigin.Function)?.path
+            val fqName = ((function.origin as? KotlinSource)?.symbol as? KtFunctionLikeSymbol)
+                ?.callableIdIfNonLocal?.asSingleFqName()
+                ?.pathSegments()?.map { it.toString() }
                 ?: return
             val fqNameForBridge = fqName.forBridge
 
@@ -53,7 +58,9 @@ private object BridgeGenerationPass : SirPass<SirElement, Nothing?, List<BridgeR
         }
 
         override fun visitVariable(variable: SirVariable) {
-            val fqName = (variable.origin as? SirKotlinOrigin.Property)?.path?.forBridge
+            val fqName = ((variable.origin as? KotlinSource)?.symbol as? KtVariableLikeSymbol)
+                ?.callableIdIfNonLocal?.asSingleFqName()
+                ?.pathSegments()?.map { it.toString() }
                 ?: return
             val fqNameForBridge = fqName.forBridge
 
@@ -71,13 +78,15 @@ private object BridgeGenerationPass : SirPass<SirElement, Nothing?, List<BridgeR
     }
 }
 
-private val SirAccessor.bridgeSuffix: String get() = when(this) {
-    is SirGetter -> "get"
-    is SirSetter -> "set"
-}
+private val SirAccessor.bridgeSuffix: String
+    get() = when (this) {
+        is SirGetter -> "get"
+        is SirSetter -> "set"
+    }
 
-private val List<String>.forBridge: List<String> get() = if (this.count() == 1) {
-    listOf("__root__", this.first()) // todo: should be changed with correct mangling KT-64970
-} else {
-    this
-}
+private val List<String>.forBridge: List<String>
+    get() = if (this.count() == 1) {
+        listOf("__root__", this.first()) // todo: should be changed with correct mangling KT-64970
+    } else {
+        this
+    }

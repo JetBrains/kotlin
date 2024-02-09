@@ -9,23 +9,9 @@ description = "Swift Intermediate Representation"
 dependencies {
     compileOnly(kotlinStdlib())
 
-    api(project(":core:compiler.common"))
-
     if (kotlinBuildProperties.isInIdeaSync) {
         compileOnly(project("tree-generator")) // Provided, so that IDEA can recognize references to this module in KDoc.
     }
-
-    testImplementation(kotlin("test-junit5"))
-    testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
-    testRuntimeOnly(libs.junit.jupiter.engine)
-}
-
-testsJar()
-
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    workingDir = rootDir
-    useJUnitPlatform { }
 }
 
 val generatorClasspath by configurations.creating
@@ -59,7 +45,6 @@ sourceSets {
         projectDefault()
         java.srcDir(generateTree)
     }
-    "test" { projectDefault() }
 }
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {

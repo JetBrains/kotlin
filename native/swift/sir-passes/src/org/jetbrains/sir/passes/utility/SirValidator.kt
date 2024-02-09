@@ -6,9 +6,7 @@
 package org.jetbrains.sir.passes.utility
 
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.visitors.SirVisitor
 import org.jetbrains.sir.passes.SirPass
-import org.jetbrains.sir.passes.utility.ValidationError.WrongForeignDeclarationOrigin
 import org.jetbrains.sir.passes.utility.ValidationError.WrongParent
 import kotlin.collections.plusAssign
 
@@ -17,12 +15,10 @@ import kotlin.collections.plusAssign
  */
 public sealed interface ValidationError {
     public class WrongParent(public val declaration: SirDeclaration, public val expectedParent: SirDeclarationParent) : ValidationError
-    public class WrongForeignDeclarationOrigin(public val declaration: SirForeignDeclaration) : ValidationError
 }
 
 public class SirValidatorConfig(
     public val checkParents: Boolean = true,
-    public val checkForeignDeclarations: Boolean = true
 )
 
 /**
@@ -41,7 +37,6 @@ public fun SirElement.assertValid() {
         val messages = errors.map {
             when (it) {
                 // TODO: better rendering of SIR elements.
-                is WrongForeignDeclarationOrigin -> "Wrong foreign declaration origin: ${it.declaration}"
                 is WrongParent -> "Wrong declaration parent of ${it.declaration}. Expected: ${it.expectedParent}. Got: ${it.declaration.parent}"
             }
         }
@@ -63,9 +58,6 @@ internal class SirValidator(private val config: SirValidatorConfig) : SirPass<Si
         if (config.checkParents) {
             element.accept(ParentValidator(handler), data)
         }
-        if (config.checkForeignDeclarations) {
-            element.accept(ForeignDeclarationValidator(handler), data)
-        }
         return errors
     }
 }
@@ -74,19 +66,6 @@ private class ParentValidator(private val errorHandler: ErrorHandler) : Declarat
     override fun handleParent(declaration: SirDeclaration, parent: SirDeclarationParent) {
         if (declaration.parent != parent) {
             errorHandler.handle(WrongParent(declaration, parent))
-        }
-    }
-}
-
-private class ForeignDeclarationValidator(private val errorHandler: ErrorHandler) : SirVisitor<Unit, Nothing?>() {
-    override fun visitElement(element: SirElement, data: Nothing?) {
-        element.acceptChildren(this, data)
-    }
-
-    override fun visitForeignFunction(foreignFunction: SirForeignFunction, data: Nothing?) {
-        super.visitForeignFunction(foreignFunction, data)
-        if (foreignFunction.origin !is SirOrigin.Foreign) {
-            errorHandler.handle(WrongForeignDeclarationOrigin(foreignFunction))
         }
     }
 }

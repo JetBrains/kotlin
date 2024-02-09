@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.function]
  */
-abstract class SirFunction : SirNativeCallable() {
+abstract class SirFunction : SirCallable() {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override var parent: SirDeclarationParent

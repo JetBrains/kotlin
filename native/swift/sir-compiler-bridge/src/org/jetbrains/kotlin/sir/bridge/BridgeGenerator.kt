@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.sir.bridge
 
 import org.jetbrains.kotlin.sir.SirCallable
 import org.jetbrains.kotlin.sir.SirFunctionBody
-import org.jetbrains.kotlin.sir.SirNativeCallable
+import org.jetbrains.kotlin.sir.bridge.impl.*
 import org.jetbrains.kotlin.sir.bridge.impl.BridgeGeneratorImpl
 import org.jetbrains.kotlin.sir.bridge.impl.CBridgePrinter
 import org.jetbrains.kotlin.sir.bridge.impl.KotlinBridgePrinter
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.sir.util.returnType
  * @param bridgeName C name of the bridge
  */
 public class BridgeRequest(
-    public val callable: SirNativeCallable,
+    public val callable: SirCallable,
     public val bridgeName: String,
     public val fqName: List<String>,
 )
@@ -35,7 +35,7 @@ public class BridgeRequest(
  * @return the generated SirFunctionBody object representing the body of the function
  */
 public fun createFunctionBodyFromRequest(request: BridgeRequest): SirFunctionBody {
-    val callee = request.bridgeName
+    val callee = request.cDeclarationName()
     val calleeArguments = request.callable.allParameters.map { it.name }
     val callSite = "$callee(${calleeArguments.joinToString(separator = ", ")})"
     val callStatement = if (request.callable.returnType.isVoid) callSite else "return $callSite"

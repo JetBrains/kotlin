@@ -16,16 +16,27 @@ private const val stdintHeader = "stdint.h"
 
 internal class BridgeGeneratorImpl : BridgeGenerator {
     override fun generate(request: BridgeRequest): FunctionBridge {
-        val (kotlinReturnType, cReturnType) = bridgeType(request.callable.returnType)
+        val (kotlinReturnType, _) = bridgeType(request.callable.returnType)
         val parameterBridges = request.callable.allParameters.mapIndexed { index, value -> bridgeParameter(value, index) }
 
-        val cDeclaration = createCDeclaration(request.bridgeName, cReturnType, parameterBridges.map { it.c })
+        val cDeclaration = request.createCDeclaration()
         val kotlinBridge = createKotlinBridge(request.bridgeName, request.fqName, kotlinReturnType, parameterBridges.map { it.kotlin })
         return FunctionBridge(
             KotlinFunctionBridge(kotlinBridge, listOf(exportAnnotationFqName)),
             CFunctionBridge(cDeclaration, listOf(stdintHeader))
         )
     }
+}
+
+// TODO: we need to mangle C name in more elegant way. KT-64970
+// problems with this approach are:
+// 1. there can be limit for declaration names in Clang compiler
+// 1. this name will be UGLY in the debug session
+internal fun BridgeRequest.cDeclarationName(): String {
+    val nameSuffixForOverloadSimulation = cParameters().joinToString(separator = "_", transform = { it.type.repr })
+    val suffixString = if (cParameters().isNotEmpty()) "__TypesOfArguments__${nameSuffixForOverloadSimulation}__" else ""
+    val result = "${bridgeName}${suffixString}"
+    return result
 }
 
 private fun createKotlinBridge(
@@ -61,12 +72,15 @@ private fun createKotlinDeclarationSignature(bridgeName: String, returnType: Kot
     }): ${returnType.repr}"
 }
 
-private fun createCDeclaration(bridgeName: String, returnType: CType, parameters: List<CBridgeParameter>): List<String> {
-    val cParameters = parameters.joinToString(separator = ", ", transform = { "${it.type.repr} ${it.name}" })
-    val declaration = "${returnType.repr} $bridgeName($cParameters);"
+private fun BridgeRequest.createCDeclaration(): List<String> {
+    val cParameters = cParameters().joinToString(separator = ", ", transform = { "${it.type.repr} ${it.name}" })
+    val declaration = "${bridgeType(callable.returnType).second.repr} ${cDeclarationName()}($cParameters);"
     return listOf(declaration)
 }
 
+private fun BridgeRequest.cParameters() = callable.allParameters
+    .mapIndexed { index, value -> bridgeParameter(value, index) }
+    .map { it.c }
 
 private fun bridgeType(type: SirType): Pair<KotlinType, CType> {
     require(type is SirNominalType)
@@ -76,16 +90,19 @@ private fun bridgeType(type: SirType): Pair<KotlinType, CType> {
         SirSwiftModule.bool -> (KotlinType.Boolean to CType.Bool)
 
         SirSwiftModule.int8 -> (KotlinType.Byte to CType.Int8)
+        SirSwiftModule.int16 -> (KotlinType.Short to CType.Int16)
         SirSwiftModule.int32 -> (KotlinType.Int to CType.Int32)
         SirSwiftModule.int64 -> (KotlinType.Long to CType.Int64)
-        SirSwiftModule.int16 -> (KotlinType.Short to CType.Int16)
 
         SirSwiftModule.uint8 -> (KotlinType.UByte to CType.UInt8)
+        SirSwiftModule.uint16 -> (KotlinType.UShort to CType.UInt16)
         SirSwiftModule.uint32 -> (KotlinType.UInt to CType.UInt32)
         SirSwiftModule.uint64 -> (KotlinType.ULong to CType.UInt64)
-        SirSwiftModule.uint16 -> (KotlinType.UShort to CType.UInt16)
 
-        else -> error("Unsupported type: ${type.type}")
+        SirSwiftModule.double -> (KotlinType.Double to CType.Double)
+        SirSwiftModule.float -> (KotlinType.Float to CType.Float)
+
+        else -> error("Unsupported type: ${type.type.name}")
     }
 }
 
@@ -129,6 +146,9 @@ public enum class CType(public val repr: String) {
     UInt16("uint16_t"),
     UInt32("uint32_t"),
     UInt64("uint64_t"),
+
+    Float("float"),
+    Double("double"),
 }
 
 internal data class KotlinBridgeParameter(
@@ -150,5 +170,8 @@ internal enum class KotlinType(val repr: String) {
     UShort("UShort"),
     UInt("UInt"),
     ULong("ULong"),
+
+    Float("Float"),
+    Double("Double"),
 }
 

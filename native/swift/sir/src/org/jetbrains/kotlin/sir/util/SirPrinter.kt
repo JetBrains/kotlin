@@ -15,52 +15,44 @@ object SirPrinter : SirVisitor<String, Unit>() {
         return "UNKNOWN<${SirElement::class.simpleName}>($element)"
     }
 
-    override fun visitModule(element: SirModule, data: Unit): String = render(
-        element,
+    override fun visitModule(module: SirModule, data: Unit): String = render(
+        module,
         listOf(
-            "name" to element.name
+            "name" to module.name
         ),
-        element.declarations
+        module.declarations
     )
 
-    override fun visitEnum(element: SirEnum, data: Unit): String = render(
-        element,
+    override fun visitEnum(enum: SirEnum, data: Unit): String = render(
+        enum,
         listOf(
-            "origin" to element.origin,
-            "visibility" to element.visibility,
-            "name" to element.name,
-            "cases" to element.cases
+            "origin" to enum.origin,
+            "visibility" to enum.visibility,
+            "name" to enum.name,
+            "cases" to enum.cases
         ),
-        element.declarations
+        enum.declarations
     )
 
-    override fun visitStruct(element: SirStruct, data: Unit): String = render(
-        element,
+    override fun visitStruct(struct: SirStruct, data: Unit): String = render(
+        struct,
         listOf(
-            "origin" to element.origin,
-            "visibility" to element.visibility,
-            "name" to element.name
+            "origin" to struct.origin,
+            "visibility" to struct.visibility,
+            "name" to struct.name
         ),
-        element.declarations
+        struct.declarations
     )
 
-    override fun visitFunction(element: SirFunction, data: Unit): String = render(
-        element,
+    override fun visitFunction(function: SirFunction, data: Unit): String = render(
+        function,
         listOf(
-            "origin" to element.origin,
-            "visibility" to element.visibility,
-            "name" to element.name,
-            "parameters" to element.parameters,
-            "returnType" to element.returnType,
+            "origin" to function.origin,
+            "visibility" to function.visibility,
+            "name" to function.name,
+            "parameters" to function.parameters,
+            "returnType" to function.returnType,
         )
-    )
-
-    override fun visitForeignFunction(element: SirForeignFunction, data: Unit): String = render(
-        element,
-        listOf(
-            "origin" to element.origin,
-            "visibility" to element.visibility,
-        ),
     )
 }
 

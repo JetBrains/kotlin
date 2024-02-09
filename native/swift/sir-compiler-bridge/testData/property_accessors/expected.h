@@ -2,4 +2,4 @@
 
 _Bool getter_bridge();
 
-void setter_bridge(_Bool newValue);
+void setter_bridge__TypesOfArguments___Bool__(_Bool newValue);

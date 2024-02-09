@@ -13,23 +13,16 @@ dependencies {
 
     api(project(":native:swift:sir"))
 
-    testImplementation(kotlin("test-junit5"))
-    testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
-    testRuntimeOnly(libs.junit.jupiter.engine)
-
-    testImplementation(projectTests(":native:swift:sir"))
-    testImplementation(projectTests(":compiler:tests-common"))
+    api(project(":compiler:psi"))
+    api(project(":analysis:analysis-api"))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
 }
 
-testsJar()
-
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    workingDir = rootDir
-    useJUnitPlatform { }
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xcontext-receivers"
+    }
 }

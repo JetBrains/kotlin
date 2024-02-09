@@ -5,10 +5,12 @@
 
 package org.jetbrains.sir.passes
 
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildEnum
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.visitors.SirTransformer
+import org.jetbrains.sir.passes.builder.KotlinSource
 
 /**
  * Pass that for every occurring declaration in package x.y.z generates a mirroring type scope and puts it there.
@@ -53,15 +55,17 @@ public class SirInflatePackagesPass : SirModulePass {
             name = module.name
 
             for (declaration in module.declarations) {
-                if (declaration is SirForeignDeclaration) {
-                    val origin = declaration.origin
-                    if (origin is SirOrigin.Foreign) {
-                        // FIXME: for now we assume everything before the last dot is a package name.
-                        //  This should change as we add type declarations into the mix
-                        val path = origin.path.dropLast(1)
-                        data.root.getOrCreate(path).elements.add(declaration)
-                        continue
-                    }
+                val origin = declaration.origin as? KotlinSource
+                if (origin != null) {
+                    // FIXME: for now we assume everything before the last dot is a package name.
+                    //  This should change as we add type declarations into the mix
+                    val path = (origin.symbol as? KtCallableSymbol)
+                        ?.callableIdIfNonLocal?.packageName
+                        ?.pathSegments()
+                        ?.map { it.toString() }
+                        ?: emptyList()
+                    data.root.getOrCreate(path).elements.add(declaration)
+                    continue
                 }
                 declarations += declaration
             }
