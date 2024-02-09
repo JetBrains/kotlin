@@ -118,6 +118,7 @@ class FirOverloadByLambdaReturnTypeResolver(
                 firstAtom,
                 firstCandidate,
                 forOverloadByLambdaReturnType = true,
+                // we explicitly decided not to use PCLA in that case because this case didn't work before in K1
                 withPCLASession = false,
             )
             while (iterator.hasNext()) {
