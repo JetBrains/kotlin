@@ -36,7 +36,7 @@ fun Example(x: Int?, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     val tmp0_safe_receiver = x
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "*<A(b)>")
     val tmp0_group = when {
       tmp0_safe_receiver == null -> {
@@ -44,17 +44,17 @@ fun Example(x: Int?, %composer: Composer?, %changed: Int) {
       }
       else -> {
         tmp0_safe_receiver.let { it: Int ->
-          %composer.startReplaceableGroup(<>)
+          %composer.startReplaceGroup(<>)
           sourceInformation(%composer, "<A(a)>")
           if (it > 0) {
             A(a, %composer, 0)
           }
-          %composer.endReplaceableGroup()
+          %composer.endReplaceGroup()
           A(b, %composer, 0)
         }
       }
     }
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
     tmp0_group
     A(c, %composer, 0)
     if (isTraceInProgress()) {

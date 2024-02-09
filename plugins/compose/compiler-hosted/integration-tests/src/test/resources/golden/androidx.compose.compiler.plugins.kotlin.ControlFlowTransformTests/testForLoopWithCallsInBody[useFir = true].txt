@@ -29,14 +29,14 @@ fun Example(items: List<Int>, %composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  %composer.startReplaceableGroup(<>)
+  %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "*<P(i)>")
   val <iterator> = items.iterator()
   while (<iterator>.hasNext()) {
     val i = <iterator>.next()
     P(i, %composer, 0)
   }
-  %composer.endReplaceableGroup()
+  %composer.endReplaceGroup()
   if (isTraceInProgress()) {
     traceEventEnd()
   }

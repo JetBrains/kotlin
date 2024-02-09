@@ -29,12 +29,12 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int) {
     }
     Dialog({ %composer: Composer?, %changed: Int ->
       sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "<Test(p...>")
       if (false) {
         Test(param, %composer, 0b1110 and %dirty)
       }
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
       sourceInformationMarkerEnd(%composer)
     }, %composer, 0)
     if (isTraceInProgress()) {

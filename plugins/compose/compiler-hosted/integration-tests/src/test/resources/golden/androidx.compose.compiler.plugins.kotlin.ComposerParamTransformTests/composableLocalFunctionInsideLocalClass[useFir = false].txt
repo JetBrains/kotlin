@@ -26,7 +26,7 @@ fun test() {
   object : C {
     @Composable
     override fun Render(%composer: Composer?, %changed: Int) {
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C(Render)<B()>:Test.kt")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
@@ -48,7 +48,7 @@ fun test() {
       if (isTraceInProgress()) {
         traceEventEnd()
       }
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
     }
   }
 }

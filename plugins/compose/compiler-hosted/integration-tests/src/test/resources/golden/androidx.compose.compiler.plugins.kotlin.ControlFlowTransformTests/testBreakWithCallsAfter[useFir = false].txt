@@ -30,7 +30,7 @@ fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  %composer.startReplaceableGroup(<>)
+  %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "*<P(i)>")
   while (items.hasNext()) {
     val i = items.next()
@@ -39,7 +39,7 @@ fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
     }
     P(i, %composer, 0)
   }
-  %composer.endReplaceableGroup()
+  %composer.endReplaceGroup()
   if (isTraceInProgress()) {
     traceEventEnd()
   }

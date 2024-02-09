@@ -29,7 +29,7 @@ fun Example(x: Int, %composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  %composer.startReplaceableGroup(<>)
+  %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "*<A(b)>")
   while (x > 0) {
     %composer.startMovableGroup(<>, x)
@@ -38,7 +38,7 @@ fun Example(x: Int, %composer: Composer?, %changed: Int) {
     %composer.endMovableGroup()
     A(b, %composer, 0)
   }
-  %composer.endReplaceableGroup()
+  %composer.endReplaceGroup()
   if (isTraceInProgress()) {
     traceEventEnd()
   }

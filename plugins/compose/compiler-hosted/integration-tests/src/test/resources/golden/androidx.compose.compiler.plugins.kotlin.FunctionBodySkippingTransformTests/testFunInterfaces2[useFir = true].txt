@@ -63,7 +63,7 @@ fun Test(%composer: Composer?, %changed: Int) {
       class <no name provided> : ButtonColors {
         @Composable
         override fun getColor(%composer: Composer?, %changed: Int): Color {
-          %composer.startReplaceableGroup(<>)
+          %composer.startReplaceGroup(<>)
           sourceInformation(%composer, "C(getColor)<condit...>:Test.kt")
           if (isTraceInProgress()) {
             traceEventStart(<>, %changed, -1, <>)
@@ -76,7 +76,7 @@ fun Test(%composer: Composer?, %changed: Int) {
           if (isTraceInProgress()) {
             traceEventEnd()
           }
-          %composer.endReplaceableGroup()
+          %composer.endReplaceGroup()
           return tmp0
         }
       }

@@ -27,7 +27,7 @@ fun app(x: Boolean, %composer: Composer?, %changed: Int) {
     traceEventStart(<>, %changed, -1, <>)
   }
   val a = <block>{
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "<rememb...>")
     val tmp1_group = if (x) {
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
@@ -39,7 +39,7 @@ fun app(x: Boolean, %composer: Composer?, %changed: Int) {
     } else {
       2
     }
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
     tmp1_group
   }
   val b = <block>{

@@ -34,7 +34,7 @@ fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
     }
     Text("Some text", %composer, 0b0110)
     M1({ %composer: Composer?, %changed: Int ->
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C:Test.kt")
       Identity {
         if (condition) {
@@ -48,7 +48,7 @@ fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
           return
         }
       }
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
     }, %composer, 0)
     Text("Some more text", %composer, 0b0110)
     if (isTraceInProgress()) {

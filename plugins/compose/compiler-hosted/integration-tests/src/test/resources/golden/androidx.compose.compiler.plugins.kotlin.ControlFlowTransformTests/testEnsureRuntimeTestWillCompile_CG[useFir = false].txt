@@ -34,7 +34,7 @@ fun test_CM1_RetFun(condition: Boolean, %composer: Composer?, %changed: Int) {
     }
     Text("Root - before", %composer, 0b0110)
     M1({ %composer: Composer?, %changed: Int ->
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C<Text("...>,<Text("...>:Test.kt")
       Text("M1 - before", %composer, 0b0110)
       if (condition) {
@@ -48,7 +48,7 @@ fun test_CM1_RetFun(condition: Boolean, %composer: Composer?, %changed: Int) {
         return
       }
       Text("M1 - after", %composer, 0b0110)
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
     }, %composer, 0)
     Text("Root - after", %composer, 0b0110)
     if (isTraceInProgress()) {
