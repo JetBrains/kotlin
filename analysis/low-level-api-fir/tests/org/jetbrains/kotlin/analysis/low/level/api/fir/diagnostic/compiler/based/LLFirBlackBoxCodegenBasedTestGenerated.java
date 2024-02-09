@@ -31932,6 +31932,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
             }
 
             @Test
+            @TestMetadata("jkkjk.kt")
+            public void testJkkjk() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/statics/jkkjk.kt");
+            }
+
+            @Test
             @TestMetadata("overrideInstanceMethodWithIrrelevantStatic.kt")
             public void testOverrideInstanceMethodWithIrrelevantStatic() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/statics/overrideInstanceMethodWithIrrelevantStatic.kt");

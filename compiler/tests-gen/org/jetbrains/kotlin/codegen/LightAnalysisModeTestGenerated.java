@@ -26806,6 +26806,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/javaInterop/statics/inheritTwoStaticMethods.kt");
             }
 
+            @TestMetadata("jkkjk.kt")
+            public void testJkkjk() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/statics/jkkjk.kt");
+            }
+
             @TestMetadata("overrideInstanceMethodWithIrrelevantStatic.kt")
             public void testOverrideInstanceMethodWithIrrelevantStatic() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/statics/overrideInstanceMethodWithIrrelevantStatic.kt");
