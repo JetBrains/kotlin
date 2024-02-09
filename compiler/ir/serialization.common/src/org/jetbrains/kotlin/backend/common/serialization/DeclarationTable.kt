@@ -37,7 +37,7 @@ abstract class GlobalDeclarationTable(private val mangler: KotlinMangler.IrMangl
         return table.getOrPut(declaration) {
             publicIdSignatureComputer.composePublicIdSignature(declaration, compatibleMode)
         }.also {
-            if (recordInSignatureClashDetector) {
+            if (recordInSignatureClashDetector && it.isPubliclyVisible && !it.isLocal) {
                 clashDetector.trackDeclaration(declaration, it)
             }
         }
