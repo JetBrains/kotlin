@@ -1,0 +1,577 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] lastStatementWithDestructuringDeclarationReference.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lastStatementWithDestructuringDeclarationReference.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a1: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a2: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a3: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a4: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a5: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
+
+
+        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component1(): <implicit> { LAZY_BLOCK }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component2(): <implicit> { LAZY_BLOCK }
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = a4#
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lastStatementWithDestructuringDeclarationReference.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a1: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a2: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a3: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a4: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a5: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
+
+
+        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component1(): <implicit> { LAZY_BLOCK }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component2(): <implicit> { LAZY_BLOCK }
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = a4#
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lastStatementWithDestructuringDeclarationReference.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a1: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a2: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a3: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a4: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a5: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
+
+
+        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component1(): <implicit> { LAZY_BLOCK }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component2(): <implicit> { LAZY_BLOCK }
+
+        }
+
+        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val $$result: <implicit> = a4#
+            public [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lastStatementWithDestructuringDeclarationReference.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a1: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a2: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a3: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a4: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a5: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
+
+
+        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component1(): <implicit> { LAZY_BLOCK }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component2(): <implicit> { LAZY_BLOCK }
+
+        }
+
+        public final [ResolvedTo(COMPANION_GENERATION)] val $$result: <implicit> = a4#
+            public [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lastStatementWithDestructuringDeclarationReference.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a1: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a2: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a3: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a4: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a5: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
+
+
+        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component1(): <implicit> { LAZY_BLOCK }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component2(): <implicit> { LAZY_BLOCK }
+
+        }
+
+        public final [ResolvedTo(SUPER_TYPES)] val $$result: <implicit> = a4#
+            public [ResolvedTo(SUPER_TYPES)] get(): <implicit>
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lastStatementWithDestructuringDeclarationReference.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a1: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a2: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a3: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a4: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a5: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
+
+
+        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component1(): <implicit> { LAZY_BLOCK }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component2(): <implicit> { LAZY_BLOCK }
+
+        }
+
+        public final [ResolvedTo(TYPES)] val $$result: <implicit> = a4#
+            public [ResolvedTo(TYPES)] get(): <implicit>
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lastStatementWithDestructuringDeclarationReference.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a1: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a2: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a3: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a4: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a5: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
+
+
+        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component1(): <implicit> { LAZY_BLOCK }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component2(): <implicit> { LAZY_BLOCK }
+
+        }
+
+        public final [ResolvedTo(STATUS)] val $$result: <implicit> = a4#
+            public [ResolvedTo(STATUS)] get(): <implicit>
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lastStatementWithDestructuringDeclarationReference.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a1: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a2: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a3: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a4: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a5: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
+
+
+        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component1(): <implicit> { LAZY_BLOCK }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component2(): <implicit> { LAZY_BLOCK }
+
+        }
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val $$result: <implicit> = a4#
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-lastStatementWithDestructuringDeclarationReference.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a1: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a2: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a3: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a4: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a5: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
+
+
+        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component1(): <implicit> { LAZY_BLOCK }
+
+            public? final? operator [ResolvedTo(RAW_FIR)] fun component2(): <implicit> { LAZY_BLOCK }
+
+        }
+
+        public final [ResolvedTo(CONTRACTS)] val $$result: <implicit> = a4#
+            public [ResolvedTo(CONTRACTS)] get(): <implicit>
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-lastStatementWithDestructuringDeclarationReference.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|MyClass| = R|/MyClass.MyClass|()
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a1: R|kotlin/Int| = R|<local>/<destruct>|.R|/MyClass.component1|()
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a2: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|MyClass| = R|/MyClass.MyClass|().R|kotlin/let|<R|MyClass|, R|MyClass|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|MyClass|): R|MyClass| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/a1|
+            ^ R|<local>/it|
+        }
+        )
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a3: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a4: R|kotlin/String| = R|<local>/<destruct>|.R|/MyClass.component2|()
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a5: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun component1(): R|kotlin/Int| {
+                ^component1 Int(1)
+            }
+
+            public final operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun component2(): R|kotlin/String| {
+                ^component2 String()
+            }
+
+        }
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val $$result: R|kotlin/String| = R|<local>/a4|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-lastStatementWithDestructuringDeclarationReference.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|MyClass| = R|/MyClass.MyClass|()
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a1: R|kotlin/Int| = R|<local>/<destruct>|.R|/MyClass.component1|()
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a2: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|MyClass| = R|/MyClass.MyClass|().R|kotlin/let|<R|MyClass|, R|MyClass|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|MyClass|): R|MyClass| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/a1|
+            ^ R|<local>/it|
+        }
+        )
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a3: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a4: R|kotlin/String| = R|<local>/<destruct>|.R|/MyClass.component2|()
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a5: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun component1(): R|kotlin/Int| {
+                ^component1 Int(1)
+            }
+
+            public final operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun component2(): R|kotlin/String| {
+                ^component2 String()
+            }
+
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: R|kotlin/String| = R|<local>/a4|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String|
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-lastStatementWithDestructuringDeclarationReference.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|MyClass| = R|/MyClass.MyClass|()
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a1: R|kotlin/Int| = R|<local>/<destruct>|.R|/MyClass.component1|()
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a2: <implicit> = LAZY_EXPRESSION
+
+
+        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|MyClass| = R|/MyClass.MyClass|().R|kotlin/let|<R|MyClass|, R|MyClass|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|MyClass|): R|MyClass| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/a1|
+            ^ R|<local>/it|
+        }
+        )
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a3: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a4: R|kotlin/String| = R|<local>/<destruct>|.R|/MyClass.component2|()
+
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a5: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun component1(): R|kotlin/Int| {
+                ^component1 Int(1)
+            }
+
+            public final operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun component2(): R|kotlin/String| {
+                ^component2 String()
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/String| = R|<local>/a4|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] lastStatementWithDestructuringDeclarationReference.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-lastStatementWithDestructuringDeclarationReference.kts>
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|MyClass| = R|/MyClass.MyClass|()
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a1: R|kotlin/Int| = R|<local>/<destruct>|.R|/MyClass.component1|()
+
+
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a2: R|kotlin/String| = R|<local>/<destruct>|.R|/MyClass.component2|()
+
+
+        [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|MyClass| = R|/MyClass.MyClass|().R|kotlin/let|<R|MyClass|, R|MyClass|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|MyClass|): R|MyClass| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/a1|
+            ^ R|<local>/it|
+        }
+        )
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a3: R|kotlin/Int| = R|<local>/<destruct>|.R|/MyClass.component1|()
+
+
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a4: R|kotlin/String| = R|<local>/<destruct>|.R|/MyClass.component2|()
+
+
+        [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|MyClass| = R|/MyClass.MyClass|()
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a5: R|kotlin/Int| = R|<local>/<destruct>|.R|/MyClass.component1|()
+
+
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: R|kotlin/String| = R|<local>/<destruct>|.R|/MyClass.component2|()
+
+
+        public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int| {
+                ^component1 Int(1)
+            }
+
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/String| {
+                ^component2 String()
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/String| = R|<local>/a4|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+

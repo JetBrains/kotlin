@@ -75,6 +75,9 @@ abstract class AbstractFileStructureTest : AbstractAnalysisApiBasedTest() {
                 is KtScriptInitializer -> {
                     elementToComment[ktDeclaration.body!!]
                 }
+                is KtDestructuringDeclaration, is KtDestructuringDeclarationEntry -> {
+                    elementToComment[ktDeclaration] = comment
+                }
                 else -> error("Unsupported declaration $ktDeclaration")
             }
         }

@@ -1,0 +1,40 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] destructuring.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-destructuring.kts>
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final [ResolvedTo(BODY_RESOLVE)] var b: R|kotlin/Int| = Int(0)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final data [ResolvedTo(BODY_RESOLVE)] class MyPair : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int|): R|MyPair| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val b: R|kotlin/Int| = R|<local>/b|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val pair: R|MyPair| = R|/MyPair.MyPair|(R|/a|, R|/b|)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|MyPair|
+
+        [ResolvedTo(BODY_RESOLVE)] lval <destruct>: R|MyPair| = R|/pair|
+        public final [ResolvedTo(BODY_RESOLVE)] val first: R|kotlin/Int| = R|<local>/<destruct>|.R|/MyPair.component1|()
+
+
+        public final [ResolvedTo(BODY_RESOLVE)] val last: R|kotlin/Int| = R|<local>/<destruct>|.R|/MyPair.component2|()

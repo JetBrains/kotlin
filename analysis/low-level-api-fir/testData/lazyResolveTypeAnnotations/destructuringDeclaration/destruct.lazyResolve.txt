@@ -1,0 +1,634 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] destruct.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-destruct.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final? data [ResolvedTo(RAW_FIR)] class MyPair<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor<[ResolvedTo(RAW_FIR)] A>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: A, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair<A>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: A = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): A
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): A
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: A = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair<A>|
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val pair: @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
+
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] destruct.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-destruct.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final? data [ResolvedTo(RAW_FIR)] class MyPair<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor<[ResolvedTo(RAW_FIR)] A>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: A, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair<A>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: A = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): A
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): A
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: A = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair<A>|
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val pair: @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
+
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] destruct.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-destruct.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final? data [ResolvedTo(RAW_FIR)] class MyPair<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor<[ResolvedTo(RAW_FIR)] A>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: A, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair<A>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: A = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): A
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): A
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: A = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair<A>|
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val pair: @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+        [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
+
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] destruct.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-destruct.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final? data [ResolvedTo(RAW_FIR)] class MyPair<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor<[ResolvedTo(RAW_FIR)] A>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: A, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair<A>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: A = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): A
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): A
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: A = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair<A>|
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val pair: @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+        [ResolvedTo(COMPANION_GENERATION)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
+
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] destruct.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-destruct.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final? data [ResolvedTo(RAW_FIR)] class MyPair<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor<[ResolvedTo(RAW_FIR)] A>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: A, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair<A>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: A = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): A
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): A
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: A = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair<A>|
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val pair: @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+        [ResolvedTo(SUPER_TYPES)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
+
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] destruct.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-destruct.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final? data [ResolvedTo(RAW_FIR)] class MyPair<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor<[ResolvedTo(RAW_FIR)] A>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: A, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair<A>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: A = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): A
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): A
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: A = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair<A>|
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val pair: @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+        [ResolvedTo(TYPES)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
+
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] destruct.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-destruct.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final? data [ResolvedTo(RAW_FIR)] class MyPair<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor<[ResolvedTo(RAW_FIR)] A>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: A, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair<A>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: A = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): A
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): A
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: A = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair<A>|
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val pair: @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+        [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
+
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] destruct.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-destruct.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final? data [ResolvedTo(RAW_FIR)] class MyPair<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor<[ResolvedTo(RAW_FIR)] A>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: A, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair<A>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: A = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): A
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): A
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: A = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair<A>|
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val pair: @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+        [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
+
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] destruct.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-destruct.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final? data [ResolvedTo(RAW_FIR)] class MyPair<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor<[ResolvedTo(RAW_FIR)] A>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: A, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair<A>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: A = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): A
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): A
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: A = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair<A>|
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val pair: @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) MyPair<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+        [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = pair#
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
+
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] destruct.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-destruct.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final? data [ResolvedTo(RAW_FIR)] class MyPair<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor<[ResolvedTo(RAW_FIR)] A>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: A, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair<A>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: A = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): A
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): A
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: A = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair<A>|
+
+        }
+
+        public final [ResolvedTo(CONTRACTS)] val pair: R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  util/MyPair<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|
+            public [ResolvedTo(CONTRACTS)] get(): R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  util/MyPair<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|
+
+        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, PostponedSymbolsForAnnotationResolutionKey=[FirPropertySymbol util/pair]] lval <destruct>: R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  util/MyPair<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>| = R|util/pair|
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
+
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] destruct.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-destruct.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+        }
+
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(1)
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final? data [ResolvedTo(RAW_FIR)] class MyPair<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor<[ResolvedTo(RAW_FIR)] A>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: A, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair<A>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: A = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): A
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): A
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: A = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair<A>|
+
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val pair: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  util/MyPair<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  util/MyPair<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|
+
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  util/MyPair<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>| = R|util/pair|
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
+
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] destruct.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-destruct.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+        }
+
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(1)
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final? data [ResolvedTo(RAW_FIR)] class MyPair<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor<[ResolvedTo(RAW_FIR)] A>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: A, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair<A>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: A = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): A
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): A
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: A = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair<A>|
+
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val pair: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  util/MyPair<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  util/MyPair<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|
+
+        [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  util/MyPair<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>| = R|util/pair|
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
+
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] destruct.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-destruct.kts>
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+        }
+
+        public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(1)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final data [ResolvedTo(BODY_RESOLVE)] class MyPair<[ResolvedTo(BODY_RESOLVE)] A> : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] constructor<[ResolvedTo(BODY_RESOLVE)] A>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/MyPair.a] a: R|A|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/MyPair.b] b: R|kotlin/Int|): R|util/MyPair<A>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: R|A| = R|<local>/a|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] get(): R|A|
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|A|
+
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] a: R|A| = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair<A>|
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val pair: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  util/MyPair<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  util/MyPair<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|
+
+        [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  util/MyPair<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>| = R|util/pair|
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: R|@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>| = R|<local>/<destruct>|.R|SubstitutionOverride<util/MyPair.component1: R|@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>|>|()
+
+
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<util/MyPair.component2: R|kotlin/Int|>|()

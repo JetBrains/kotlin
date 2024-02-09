@@ -244,9 +244,45 @@ public class ScriptLazyDeclarationResolveForTypeAnnotationsTestGenerated extends
         }
 
         @Test
+        @TestMetadata("destruct.kts")
+        public void testDestruct() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration/destruct.kts");
+        }
+
+        @Test
+        @TestMetadata("destructEntry.kts")
+        public void testDestructEntry() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration/destructEntry.kts");
+        }
+
+        @Test
+        @TestMetadata("destructEntryUsage.kts")
+        public void testDestructEntryUsage() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration/destructEntryUsage.kts");
+        }
+
+        @Test
+        @TestMetadata("destructEntryWithType.kts")
+        public void testDestructEntryWithType() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration/destructEntryWithType.kts");
+        }
+
+        @Test
+        @TestMetadata("destructEntryWithTypeUsage.kts")
+        public void testDestructEntryWithTypeUsage() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration/destructEntryWithTypeUsage.kts");
+        }
+
+        @Test
         @TestMetadata("scriptClassLevel.kts")
         public void testScriptClassLevel() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration/scriptClassLevel.kts");
+        }
+
+        @Test
+        @TestMetadata("scriptLevel.kts")
+        public void testScriptLevel() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration/scriptLevel.kts");
         }
 
         @Test

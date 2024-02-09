@@ -64,6 +64,12 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("destructuringEntryAnnotation.kts")
+        public void testDestructuringEntryAnnotation() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/destructuringEntryAnnotation.kts");
+        }
+
+        @Test
         @TestMetadata("fileAnnotationScript.kts")
         public void testFileAnnotationScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/fileAnnotationScript.kts");

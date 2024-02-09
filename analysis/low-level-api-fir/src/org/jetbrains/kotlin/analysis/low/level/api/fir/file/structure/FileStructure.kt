@@ -144,7 +144,7 @@ internal class FileStructure private constructor(
                 structureElements += structureElement
 
                 // Go down only in the case of container declaration
-                val canHaveInnerStructure = dcl is KtClassOrObject || dcl is KtScript
+                val canHaveInnerStructure = dcl is KtClassOrObject || dcl is KtScript || dcl is KtDestructuringDeclaration
                 if (canHaveInnerStructure) {
                     dcl.acceptChildren(this)
                 }

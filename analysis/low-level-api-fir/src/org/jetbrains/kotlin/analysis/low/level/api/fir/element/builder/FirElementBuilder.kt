@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
@@ -290,7 +291,8 @@ internal fun getNonLocalContainingDeclaration(
                 parent is KtAnonymousInitializer ||
                 parent is KtObjectLiteralExpression ||
                 parent is KtCallElement ||
-                parent is KtCodeFragment
+                parent is KtCodeFragment ||
+                parent is PsiErrorElement
             ) {
                 // Candidate turned out to be local. Let's find another one.
                 candidate = null
@@ -302,6 +304,7 @@ internal fun getNonLocalContainingDeclaration(
             when (parent) {
                 is KtScript -> propose(parent)
                 is KtDestructuringDeclaration -> propose(parent)
+                is KtDestructuringDeclarationEntry -> propose(parent)
                 is KtScriptInitializer -> propose(parent)
                 is KtClassInitializer -> {
                     val container = parent.containingDeclaration

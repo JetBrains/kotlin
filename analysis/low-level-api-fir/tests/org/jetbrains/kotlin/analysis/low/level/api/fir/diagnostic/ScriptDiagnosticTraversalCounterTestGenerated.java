@@ -55,6 +55,12 @@ public class ScriptDiagnosticTraversalCounterTestGenerated extends AbstractScrip
     }
 
     @Test
+    @TestMetadata("destructuring.kts")
+    public void testDestructuring() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/fileStructure/destructuring.kts");
+    }
+
+    @Test
     @TestMetadata("enumClassScript.kts")
     public void testEnumClassScript() throws Exception {
         runTest("analysis/low-level-api-fir/testData/fileStructure/enumClassScript.kts");

@@ -205,6 +205,24 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
     }
 
     @Test
+    @TestMetadata("destructuring.kts")
+    public void testDestructuring() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/destructuring.kts");
+    }
+
+    @Test
+    @TestMetadata("destructuringFirstEntry.kts")
+    public void testDestructuringFirstEntry() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/destructuringFirstEntry.kts");
+    }
+
+    @Test
+    @TestMetadata("destructuringSecondEntry.kts")
+    public void testDestructuringSecondEntry() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/destructuringSecondEntry.kts");
+    }
+
+    @Test
     @TestMetadata("enumEntriesScript.kts")
     public void testEnumEntriesScript() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/enumEntriesScript.kts");
@@ -286,6 +304,12 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
     @TestMetadata("lambdaAsSAMInterfaceScript.kts")
     public void testLambdaAsSAMInterfaceScript() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/lambdaAsSAMInterfaceScript.kts");
+    }
+
+    @Test
+    @TestMetadata("lastStatementWithDestructuringDeclarationReference.kts")
+    public void testLastStatementWithDestructuringDeclarationReference() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/lastStatementWithDestructuringDeclarationReference.kts");
     }
 
     @Test
