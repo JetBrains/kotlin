@@ -6,22 +6,28 @@
 package org.jetbrains.kotlin.ir.plugin
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.plugin.types.ComposableNames.FULL_COMPOSABLE_NAME_PREFIX
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeBase
 import org.jetbrains.kotlin.ir.types.impl.IrTypeProjectionImpl
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class ComposableFunctionsTransformer(val pluginContext: IrPluginContext) : IrElementVisitorVoid {
@@ -64,6 +70,45 @@ class ComposableFunctionsTransformer(val pluginContext: IrPluginContext) : IrEle
             type = type.update()
         }
         visitElement(expression)
+    }
+
+    /**
+     * This function propagates the special function type kind for composable to function expressions like lambda expression.
+     */
+    override fun visitFunctionExpression(expression: IrFunctionExpression) {
+        if (expression.type.isSyntheticComposableFunction()) {
+            expression.function.mark()
+        }
+        super.visitFunctionExpression(expression)
+    }
+
+    /**
+     * This function propagates the special function type kind for composable to function references.
+     */
+    override fun visitFunctionReference(expression: IrFunctionReference) {
+        if (expression.type.isSyntheticComposableFunction()) {
+            expression.symbol.owner.mark()
+        }
+        super.visitFunctionReference(expression)
+    }
+
+    private fun IrType.isSyntheticComposableFunction() =
+        classOrNull?.owner?.let {
+            it.name.asString().startsWith("MyComposableFunction") &&
+                    it.packageFqName?.asString() == "some"
+        } ?: false
+
+    private val composableClassId = ClassId(FqName("org.jetbrains.kotlin.fir.plugin"), FqName("MyComposable"), false)
+
+    private val composableSymbol = pluginContext.referenceClass(composableClassId)!!
+
+    private fun IrFunction.mark() {
+        if (!hasAnnotation(composableClassId)) {
+            annotations = annotations + IrConstructorCallImpl.fromSymbolOwner(
+                composableSymbol.owner.defaultType,
+                composableSymbol.constructors.single(),
+            )
+        }
     }
 
     private fun updateReferenceInCallIfNeeded(call: IrCall) {

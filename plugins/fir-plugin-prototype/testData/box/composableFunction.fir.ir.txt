@@ -64,6 +64,8 @@ FILE fqName:<root> fileName:/composableFunction.kt
       VAR name:l1 type:kotlin.Function0<kotlin.Unit> [val]
         FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            annotations:
+              MyComposable
             BLOCK_BODY
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
@@ -77,6 +79,8 @@ FILE fqName:<root> fileName:/composableFunction.kt
       VAR name:l2 type:@[MyComposable] kotlin.Function0<kotlin.Unit> [val]
         FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            annotations:
+              MyComposable
             BLOCK_BODY
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
@@ -126,6 +130,8 @@ FILE fqName:<root> fileName:/composableFunction.kt
       CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            annotations:
+              MyComposable
             BLOCK_BODY
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
@@ -157,6 +163,8 @@ FILE fqName:<root> fileName:/composableFunction.kt
         CALL 'public final fun runComposable2 (block: kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
           block: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.String> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.String
+              annotations:
+                MyComposable
               VALUE_PARAMETER name:it index:0 type:kotlin.String
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String): kotlin.String declared in <root>.test_2'
