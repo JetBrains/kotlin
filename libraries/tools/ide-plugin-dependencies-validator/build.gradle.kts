@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import java.nio.file.Paths
 import kotlin.io.path.readLines
 
 plugins {
@@ -55,6 +54,7 @@ tasks.withType<JavaExec> {
 }
 
 tasks.register("checkIdeDependenciesConfiguration") {
+    notCompatibleWithConfigurationCache("Uses project in task action")
     doFirst {
         for (projectName in projectsUsedInIntelliJKotlinPlugin) {
             project(projectName).checkIdeDependencyConfiguration()
