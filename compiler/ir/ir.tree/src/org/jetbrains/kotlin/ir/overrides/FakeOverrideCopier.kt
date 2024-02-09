@@ -20,8 +20,8 @@ class FakeOverrideCopier(
         val customization = unimplementedOverridesStrategy.computeCustomization(declaration, parent)
 
         return declaration.factory.createFunctionWithLateBinding(
-            startOffset = declaration.startOffset,
-            endOffset = declaration.endOffset,
+            startOffset = parent.startOffset,
+            endOffset = parent.endOffset,
             origin = customization.origin ?: IrDeclarationOrigin.FAKE_OVERRIDE,
             name = symbolRenamer.getFunctionName(declaration.symbol),
             visibility = declaration.visibility,
@@ -71,7 +71,7 @@ class FakeOverrideCopier(
         val customization = unimplementedOverridesStrategy.computeCustomization(declaration, parent)
 
         return declaration.factory.createPropertyWithLateBinding(
-            declaration.startOffset, declaration.endOffset,
+            parent.startOffset, parent.endOffset,
             customization.origin ?: IrDeclarationOrigin.FAKE_OVERRIDE,
             declaration.name,
             declaration.visibility,
@@ -91,8 +91,8 @@ class FakeOverrideCopier(
 
     override fun visitValueParameter(declaration: IrValueParameter): IrValueParameter =
         declaration.factory.createValueParameter(
-            startOffset = declaration.startOffset,
-            endOffset = declaration.endOffset,
+            startOffset = parent.startOffset,
+            endOffset = parent.endOffset,
             origin = IrDeclarationOrigin.DEFINED,
             name = symbolRenamer.getValueParameterName(declaration.symbol),
             type = declaration.type.remapType(),
