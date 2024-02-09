@@ -1059,7 +1059,7 @@ class FirCallCompletionResultsWriterTransformer(
     private fun FirNamedReferenceWithCandidate.toResolvedReference(): FirNamedReference {
         val errorDiagnostic = when {
             this is FirErrorReferenceWithCandidate -> this.diagnostic
-            !candidate.currentApplicability.isSuccess -> ConeInapplicableCandidateError(candidate.currentApplicability, candidate)
+            !candidate.lowestApplicability.isSuccess -> ConeInapplicableCandidateError(candidate.lowestApplicability, candidate)
             !candidate.isSuccessful -> {
                 require(candidate.system.hasContradiction) {
                     "Candidate is not successful, but system has no contradiction"

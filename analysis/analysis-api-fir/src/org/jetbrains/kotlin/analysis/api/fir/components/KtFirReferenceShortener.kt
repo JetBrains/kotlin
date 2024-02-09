@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.components.*
@@ -1037,7 +1036,7 @@ private class ElementsToShortenCollector(
             firResolveSession, fakeFirQualifiedAccess, name, expressionInScope, ResolutionMode.ContextIndependent,
         )
         return candidates.filter { overloadCandidate ->
-            when (overloadCandidate.candidate.currentApplicability) {
+            when (overloadCandidate.candidate.lowestApplicability) {
                 CandidateApplicability.RESOLVED -> true
                 CandidateApplicability.K2_SYNTHETIC_RESOLVED -> true // SAM constructor call
                 else -> false
@@ -1061,7 +1060,7 @@ private class ElementsToShortenCollector(
             firResolveSession, fakeFirQualifiedAccess, name, elementInScope, ResolutionMode.ContextIndependent,
         )
         return candidates.filter { overloadCandidate ->
-            overloadCandidate.candidate.currentApplicability == CandidateApplicability.RESOLVED
+            overloadCandidate.candidate.lowestApplicability == CandidateApplicability.RESOLVED
         }
     }
 

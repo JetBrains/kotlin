@@ -1140,7 +1140,7 @@ internal class KtFirCallResolver(
             return KtApplicableCallCandidateInfo(call, isInBestCandidates)
         }
 
-        val diagnostic = createConeDiagnosticForCandidateWithError(candidate.currentApplicability, candidate)
+        val diagnostic = createConeDiagnosticForCandidateWithError(candidate.lowestApplicability, candidate)
         if (diagnostic is ConeHiddenCandidateError) return null
         val ktDiagnostic =
             resolvable.source?.let { diagnostic.asKtDiagnostic(it, element.toKtPsiSourceElement()) }

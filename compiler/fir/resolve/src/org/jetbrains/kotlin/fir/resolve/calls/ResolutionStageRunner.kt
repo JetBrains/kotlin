@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -39,6 +38,6 @@ class ResolutionStageRunner {
                 break
             }
         }
-        return candidate.currentApplicability
+        return candidate.lowestApplicability
     }
 }

@@ -802,9 +802,9 @@ class FirCallResolver(
                                             }?.coneType ?: coneType
                                         )
                                     }
-                                    singleExpectedCandidate != null && !singleExpectedCandidate.currentApplicability.isSuccess -> {
+                                    singleExpectedCandidate != null && !singleExpectedCandidate.lowestApplicability.isSuccess -> {
                                         createConeDiagnosticForCandidateWithError(
-                                            singleExpectedCandidate.currentApplicability,
+                                            singleExpectedCandidate.lowestApplicability,
                                             singleExpectedCandidate
                                         )
                                     }

@@ -291,7 +291,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
     invokeBuiltinExtensionMode: Boolean,
     extensionReceiverExpression: FirExpression?
 ): FirExpression? {
-    val notFunctionAsOperatorDiagnostics = runIf (candidate.currentApplicability == CandidateApplicability.K2_NOT_FUNCTION_AS_OPERATOR) {
+    val notFunctionAsOperatorDiagnostics = runIf (candidate.lowestApplicability == CandidateApplicability.K2_NOT_FUNCTION_AS_OPERATOR) {
         candidate.diagnostics.filterIsInstance<NotFunctionAsOperator>().map { ConeNotFunctionAsOperator(it.symbol) }
     } ?: emptyList()
     return when (val symbol = candidate.symbol) {
