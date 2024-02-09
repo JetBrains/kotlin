@@ -118,12 +118,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         return when (this) {
             is ConeClassLikeType -> this.substituteArguments()
             is ConeLookupTagBasedType, is ConeTypeVariableType -> return null
-            is ConeFlexibleType -> this.substituteBounds()?.let {
-                // TODO: may be (?) it's worth adding regular type comparison via AbstractTypeChecker
-                // However, the simplified check here should be enough for typical flexible types
-                if (it.lowerBound == it.upperBound) it.lowerBound
-                else it
-            }
+            is ConeFlexibleType -> substituteBounds(this)
             is ConeCapturedType -> return substitute(::substituteOrNull)
             is ConeDefinitelyNotNullType -> this.substituteOriginal()
             is ConeIntersectionType -> this.substituteIntersectedTypes()
@@ -158,13 +153,14 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         ) ?: substituted
     }
 
-    private fun ConeFlexibleType.substituteBounds(): ConeFlexibleType? {
-        val newLowerBound = substituteOrNull(lowerBound)
-        val newUpperBound = substituteOrNull(upperBound)
+    protected open fun substituteBounds(type: ConeFlexibleType): ConeKotlinType? {
+        val newLowerBound = substituteOrNull(type.lowerBound)
+        val newUpperBound = substituteOrNull(type.upperBound)
         if (newLowerBound != null || newUpperBound != null) {
+            if (newLowerBound == newUpperBound) return newLowerBound
             return ConeFlexibleType(
-                newLowerBound?.lowerBoundIfFlexible() ?: lowerBound,
-                newUpperBound?.upperBoundIfFlexible() ?: upperBound
+                newLowerBound?.lowerBoundIfFlexible() ?: type.lowerBound,
+                newUpperBound?.upperBoundIfFlexible() ?: type.upperBound
             )
         }
         return null
@@ -271,6 +267,27 @@ class ConeSubstitutorByMap(
         return substitution.entries.joinToString(prefix = "{", postfix = "}", separator = " | ") { (param, type) ->
             "${param.name} -> ${type.renderForDebugging()}"
         }
+    }
+
+    private fun isSubstitutingDefinitelyNullableToJavaTypeParam(type: ConeFlexibleType): Boolean {
+        // Check if lower bound is T & Any
+        val lowerBoundTypeParam =
+            ((type.lowerBound as? ConeDefinitelyNotNullType)?.original as? ConeTypeParameterType)?.lookupTag ?: return false
+        // Check if upper bound is T?
+        val upperBoundTypeParam =
+            (type.upperBound as? ConeTypeParameterType)?.takeIf { it.nullability == ConeNullability.NULLABLE }?.lookupTag ?: return false
+        if (lowerBoundTypeParam != upperBoundTypeParam) return false
+        return substitution[lowerBoundTypeParam.symbol]?.nullability == ConeNullability.NULLABLE
+    }
+
+    override fun substituteBounds(type: ConeFlexibleType): ConeKotlinType? {
+        // We represent java type parameters as flexible types: A<T> -> A<T & Any .. T?>
+        // When substituting a definitely nullable type to such a type parameter, we want the result to be a definitely nullable type
+        // Otherwise, subtype checking may work incorrect. See kt65184.kt
+        if (isSubstitutingDefinitelyNullableToJavaTypeParam(type)) {
+            return substituteOrNull(type.upperBound)
+        }
+        return super.substituteBounds(type)
     }
 }
 

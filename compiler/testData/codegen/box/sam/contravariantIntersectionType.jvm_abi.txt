@@ -1,6 +1,4 @@
 MODULE main
-	Missing in K2
-		TestKt$example$2.class
 	CLASS TestKt$example$1.class
 		Property: class.signature
 			K1
