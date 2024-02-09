@@ -1280,6 +1280,26 @@ open class PsiRawFirBuilder(
             }
         }
 
+        protected fun buildScriptDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration): FirVariable {
+            val initializer = destructuringDeclaration.initializer
+            val firInitializer = buildOrLazyExpression(initializer?.toFirSourceElement()) {
+                initializer.toFirExpression { ConeSyntaxDiagnostic("Initializer required for destructuring declaration") }
+            }
+
+            val destructuringContainerVar = generateTemporaryVariable(
+                moduleData = baseModuleData,
+                source = destructuringDeclaration.toFirSourceElement(),
+                specialName = "destruct",
+                initializer = firInitializer,
+                origin = FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer,
+                extractAnnotationsTo = { extractAnnotationsTo(it) },
+            ).apply {
+                isDestructuringDeclarationContainerVariable = true
+            }
+
+            return destructuringContainerVar
+        }
+
         private fun convertScript(
             script: KtScript,
             fileName: String,
@@ -1301,7 +1321,6 @@ open class PsiRawFirBuilder(
                     while (scriptDeclarationsIter.hasNext()) {
                         val declaration = scriptDeclarationsIter.next()
                         val isLast = !scriptDeclarationsIter.hasNext()
-                        val declarationSource = declaration.toFirSourceElement()
                         when (declaration) {
                             is KtScriptInitializer -> {
                                 val initializer = buildAnonymousInitializer(
@@ -1315,16 +1334,7 @@ open class PsiRawFirBuilder(
                                 declarations.add(initializer)
                             }
                             is KtDestructuringDeclaration -> {
-                                val destructuringContainerVar = generateTemporaryVariable(
-                                    baseModuleData,
-                                    declarationSource,
-                                    "destruct",
-                                    declaration.initializer.toFirExpression { ConeSyntaxDiagnostic("Initializer required for destructuring declaration") },
-                                    origin = FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer,
-                                    extractAnnotationsTo = { extractAnnotationsTo(it) }
-                                ).apply {
-                                    isDestructuringDeclarationContainerVariable = true
-                                }
+                                val destructuringContainerVar = buildScriptDestructuringDeclaration(declaration)
                                 declarations.add(destructuringContainerVar)
 
                                 declarations.addDestructuringVariables(

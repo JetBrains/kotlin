@@ -146,10 +146,17 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     }
 
     private inner class VisitorWithReplacement(private val containingClass: FirRegularClass?) : Visitor() {
-        fun convertDestructuringDeclaration(element: KtDestructuringDeclaration): FirVariable {
+        fun convertDestructuringDeclaration(element: KtDestructuringDeclaration, containingDeclaration: FirDeclaration?): FirVariable {
             val replacementDeclaration = replacementApplier?.tryReplace(element) ?: element
             requireIsInstance<KtDestructuringDeclaration>(replacementDeclaration)
-            return buildErrorTopLevelDestructuringDeclaration(replacementDeclaration.toFirSourceElement())
+            return if (containingDeclaration is FirScript) {
+                withContainerSymbol(containingDeclaration.symbol) {
+                    // Annotations from script destructuring declarations are linked to the script itself
+                    buildScriptDestructuringDeclaration(replacementDeclaration)
+                }
+            } else {
+                buildErrorTopLevelDestructuringDeclaration(replacementDeclaration.toFirSourceElement())
+            }
         }
 
         fun convertAnonymousInitializer(element: KtAnonymousInitializer, containingDeclaration: FirDeclaration?): FirAnonymousInitializer {
@@ -348,7 +355,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                         else -> visitor.convertElement(declarationToBuild, originalDeclaration)
                     }
                 }
-                is KtDestructuringDeclaration -> visitor.convertDestructuringDeclaration(declarationToBuild)
+                is KtDestructuringDeclaration -> visitor.convertDestructuringDeclaration(declarationToBuild, containingDeclaration)
                 is KtCodeFragment -> {
                     val firFile = visitor.convertElement(declarationToBuild, originalDeclaration) as FirFile
                     firFile.codeFragment
@@ -359,7 +366,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         }
 
         val parent = iterator.next()
-        if (parent !is FirRegularClass) return moveNext(iterator, containingDeclaration = null)
+        if (parent !is FirRegularClass) return moveNext(iterator, containingDeclaration = parent)
 
         val classOrObject = parent.psi
         if (classOrObject !is KtClassOrObject) {
