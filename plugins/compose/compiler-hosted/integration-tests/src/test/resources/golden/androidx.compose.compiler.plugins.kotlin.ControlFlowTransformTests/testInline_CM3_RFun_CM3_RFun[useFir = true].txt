@@ -46,7 +46,7 @@ fun Test(a: Boolean, b: Boolean, %composer: Composer?, %changed: Int) {
     }
     A(%composer, 0)
     M3({ %composer: Composer?, %changed: Int ->
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C<A()>,<A()>:Test.kt")
       A(%composer, 0)
       if (a) {
@@ -60,10 +60,10 @@ fun Test(a: Boolean, b: Boolean, %composer: Composer?, %changed: Int) {
         return
       }
       A(%composer, 0)
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
     }, %composer, 0)
     M3({ %composer: Composer?, %changed: Int ->
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C<A()>,<A()>:Test.kt")
       A(%composer, 0)
       if (b) {
@@ -77,7 +77,7 @@ fun Test(a: Boolean, b: Boolean, %composer: Composer?, %changed: Int) {
         return
       }
       A(%composer, 0)
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
     }, %composer, 0)
     A(%composer, 0)
     if (isTraceInProgress()) {

@@ -38,20 +38,20 @@ fun Test_M3_M1_Return_M3(condition: Boolean, %composer: Composer?, %changed: Int
     A(%composer, 0)
     M3({ %composer: Composer?, %changed: Int ->
       val tmp0_marker = %composer.currentMarker
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C<A()>,<M1>,<A()>:Test.kt")
       A(%composer, 0)
       M1({ %composer: Composer?, %changed: Int ->
-        %composer.startReplaceableGroup(<>)
+        %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "C:Test.kt")
         if (condition) {
           %composer.endToMarker(tmp0_marker)
           return@M3
         }
-        %composer.endReplaceableGroup()
+        %composer.endReplaceGroup()
       }, %composer, 0)
       A(%composer, 0)
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
     }, %composer, 0)
     A(%composer, 0)
     if (isTraceInProgress()) {

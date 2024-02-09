@@ -26,7 +26,7 @@ fun Example(a: Iterator<Int>, b: Iterator<Int>) {
 @NonRestartableComposable
 @Composable
 fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
+  %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "C(Example)*<A()>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
@@ -37,7 +37,7 @@ fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer?, %changed: 
       if (isTraceInProgress()) {
         traceEventEnd()
       }
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
       return
     }
     A(%composer, 0)
@@ -45,5 +45,5 @@ fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer?, %changed: 
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  %composer.endReplaceGroup()
 }

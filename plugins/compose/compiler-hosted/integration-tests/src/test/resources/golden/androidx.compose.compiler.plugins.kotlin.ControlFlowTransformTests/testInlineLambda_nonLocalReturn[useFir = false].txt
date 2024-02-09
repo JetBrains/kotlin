@@ -27,18 +27,18 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int) {
     }
     Inline1({ %composer: Composer?, %changed: Int ->
       val tmp0_marker = %composer.currentMarker
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C<Inline...>:Test.kt")
       Inline2({ %composer: Composer?, %changed: Int ->
-        %composer.startReplaceableGroup(<>)
+        %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "C:Test.kt")
         if (true) {
           %composer.endToMarker(tmp0_marker)
           return@Inline1
         }
-        %composer.endReplaceableGroup()
+        %composer.endReplaceGroup()
       }, %composer, 0)
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
     }, %composer, 0)
     if (isTraceInProgress()) {
       traceEventEnd()

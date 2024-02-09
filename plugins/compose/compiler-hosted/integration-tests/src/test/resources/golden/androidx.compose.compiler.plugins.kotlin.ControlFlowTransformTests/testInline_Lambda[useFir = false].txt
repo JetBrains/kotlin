@@ -26,7 +26,7 @@ fun Test(condition: Boolean) {
           traceEventStart(<>, %changed, -1, <>)
         }
         M1({ %composer: Composer?, %changed: Int ->
-          %composer.startReplaceableGroup(<>)
+          %composer.startReplaceGroup(<>)
           sourceInformation(%composer, "C:Test.kt")
           if (condition) {
             %composer.endToMarker(tmp0_marker)
@@ -35,7 +35,7 @@ fun Test(condition: Boolean) {
             }
             return@composableLambdaInstance
           }
-          %composer.endReplaceableGroup()
+          %composer.endReplaceGroup()
         }, %composer, 0)
         if (isTraceInProgress()) {
           traceEventEnd()

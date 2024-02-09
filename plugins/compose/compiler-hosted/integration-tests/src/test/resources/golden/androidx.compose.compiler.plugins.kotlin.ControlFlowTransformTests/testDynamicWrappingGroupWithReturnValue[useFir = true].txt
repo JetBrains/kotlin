@@ -29,23 +29,23 @@ fun Example(x: Int, %composer: Composer?, %changed: Int): Int {
     traceEventStart(<>, %changed, -1, <>)
   }
   val tmp0 = <block>{
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "")
     val tmp4_group = if (x > 0) {
-      val tmp3_group = if (%composer.startReplaceableGroup(<>)
+      val tmp3_group = if (%composer.startReplaceGroup(<>)
       sourceInformation(%composer, "<B()>")
       val tmp1_group = B(%composer, 0)
-      %composer.endReplaceableGroup()
-      tmp1_group) 1 else if (%composer.startReplaceableGroup(<>)
+      %composer.endReplaceGroup()
+      tmp1_group) 1 else if (%composer.startReplaceGroup(<>)
       sourceInformation(%composer, "<B()>")
       val tmp2_group = B(%composer, 0)
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
       tmp2_group) 2 else 3
       tmp3_group
     } else {
       4
     }
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
     tmp4_group
   }
   if (isTraceInProgress()) {

@@ -40,13 +40,13 @@ fun Test_M3_M1_Return_M1(condition: Boolean, %composer: Composer?, %changed: Int
       sourceInformationMarkerStart(%composer, <>, "C<A()>,<M1>,<A()>:Test.kt")
       A(%composer, 0)
       M1({ %composer: Composer?, %changed: Int ->
-        %composer.startReplaceableGroup(<>)
+        %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "C:Test.kt")
         if (condition) {
-          %composer.endReplaceableGroup()
+          %composer.endReplaceGroup()
           return@M1
         }
-        %composer.endReplaceableGroup()
+        %composer.endReplaceGroup()
       }, %composer, 0)
       A(%composer, 0)
       sourceInformationMarkerEnd(%composer)

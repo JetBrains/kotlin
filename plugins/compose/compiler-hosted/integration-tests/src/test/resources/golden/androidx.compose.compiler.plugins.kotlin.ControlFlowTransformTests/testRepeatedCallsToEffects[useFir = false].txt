@@ -44,14 +44,14 @@ internal object ComposableSingletons%TestKt {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
-      %composer.startReplaceableGroup(<>)
+      %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "*<effect>")
       repeat(number) { it: Int ->
         effects[it] = effect({
           0
         }, %composer, 0b0110)
       }
-      %composer.endReplaceableGroup()
+      %composer.endReplaceGroup()
       outside = effect({
         "0"
       }, %composer, 0b0110)

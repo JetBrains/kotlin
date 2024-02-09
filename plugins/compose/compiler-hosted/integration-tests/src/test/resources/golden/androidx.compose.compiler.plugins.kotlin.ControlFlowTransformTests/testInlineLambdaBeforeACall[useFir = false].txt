@@ -24,17 +24,17 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int): String? {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  %composer.startReplaceableGroup(<>)
+  %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "")
   InlineNonComposable {
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "*<Test("...>")
     repeat(10) { it: Int ->
       Test("InsideInline", %composer, 0b0110)
     }
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
   }
-  %composer.endReplaceableGroup()
+  %composer.endReplaceGroup()
   val tmp0 = Test("AfterInline", %composer, 0b0110)
   if (isTraceInProgress()) {
     traceEventEnd()

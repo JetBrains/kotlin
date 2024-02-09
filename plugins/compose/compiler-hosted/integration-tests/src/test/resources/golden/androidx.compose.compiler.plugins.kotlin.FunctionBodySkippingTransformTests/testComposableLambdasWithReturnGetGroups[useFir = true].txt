@@ -17,7 +17,7 @@ fun B() = A { 123 }
 fun A(factory: Function2<Composer, Int, Int>) { }
 fun B() {
   return A { %composer: Composer?, %changed: Int ->
-    %composer.startReplaceableGroup(<>)
+    %composer.startReplaceGroup(<>)
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -25,7 +25,7 @@ fun B() {
     if (isTraceInProgress()) {
       traceEventEnd()
     }
-    %composer.endReplaceableGroup()
+    %composer.endReplaceGroup()
     tmp0
   }
 }
