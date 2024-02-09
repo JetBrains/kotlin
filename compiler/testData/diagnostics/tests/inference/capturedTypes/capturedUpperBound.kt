@@ -1,4 +1,5 @@
 // ISSUE: KT-65712
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 fun test(a: BodySpec<List<*>, *>) {
     a.value<BodySpec<List<*>, *>>()

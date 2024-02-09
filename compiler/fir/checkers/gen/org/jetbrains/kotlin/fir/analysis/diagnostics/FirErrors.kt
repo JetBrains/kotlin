@@ -433,7 +433,7 @@ object FirErrors {
     val RECURSION_IN_IMPLICIT_TYPES: KtDiagnosticFactory0 by error0<PsiElement>()
     val INFERENCE_ERROR: KtDiagnosticFactory0 by error0<PsiElement>()
     val PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT: KtDiagnosticFactory0 by error0<PsiElement>()
-    val UPPER_BOUND_VIOLATED: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
+    val UPPER_BOUND_VIOLATED: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, String> by error3<PsiElement, ConeKotlinType, ConeKotlinType, String>()
     val UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val TYPE_ARGUMENTS_NOT_ALLOWED: KtDiagnosticFactory1<String> by error1<PsiElement, String>()
     val TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED: KtDiagnosticFactory0 by error0<PsiElement>()

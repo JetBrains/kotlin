@@ -1839,6 +1839,7 @@ internal class ProjectionOnNonClassTypeArgumentImpl(
 internal class UpperBoundViolatedImpl(
     override val expectedUpperBound: KtType,
     override val actualUpperBound: KtType,
+    override val extraMessage: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.UpperBoundViolated

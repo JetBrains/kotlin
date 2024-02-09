@@ -1,0 +1,5 @@
+/capturedUpperBound.fir.kt:(100,120): error: Type argument is not within its bounds: should be subtype of 'CapturedType(*)'. Consider removing the explicit type arguments.
+
+/capturedUpperBound.fir.kt:(136,150): error: Type argument is not within its bounds: should be subtype of 'CapturedType(*)'. Consider removing the explicit type arguments.
+
+/capturedUpperBound.fir.kt:(166,182): error: Type argument is not within its bounds: should be subtype of 'CapturedType(*)'. Consider removing the explicit type arguments.
