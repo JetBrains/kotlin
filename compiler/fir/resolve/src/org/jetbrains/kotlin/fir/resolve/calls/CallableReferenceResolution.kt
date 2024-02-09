@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
-import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
@@ -238,7 +237,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     )
 
     val argumentMapping = mapArguments(fakeArguments, function, originScope = originScope, callSiteIsOperatorCall = false)
-    if (argumentMapping.diagnostics.any { !it.applicability.isSuccess }) return null
+    if (argumentMapping.diagnostics.anyUnsuccessful) return null
 
     /**
      * (A, B, C) -> Unit

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.util.CodeFragmentAdjustment
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -160,7 +159,7 @@ class Candidate(
      * of [CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY] and [CandidateApplicability.RESOLVED_WITH_ERROR].
      */
     val isSuccessful: Boolean
-        get() = diagnostics.all { it.applicability.isSuccess } && (!systemInitialized || !system.hasContradiction)
+        get() = diagnostics.allSuccessful && (!systemInitialized || !system.hasContradiction)
 
     var passedStages: Int = 0
 
@@ -223,7 +222,7 @@ class Candidate(
     }
 
     override fun toString(): String {
-        val okOrFail = if (applicability.isSuccess) "OK" else "FAIL"
+        val okOrFail = if (isSuccessful) "OK" else "FAIL"
         val step = "$passedStages/${callInfo.callKind.resolutionSequence.size}"
         return "$okOrFail($step): $symbol"
     }

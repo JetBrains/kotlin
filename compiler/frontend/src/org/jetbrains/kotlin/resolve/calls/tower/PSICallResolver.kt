@@ -351,6 +351,7 @@ class PSICallResolver(
 
     private fun Collection<ResolutionCandidate>.areAllFailed() =
         all {
+            @OptIn(ApplicabilityDetail::class)
             !it.resultingApplicability.isSuccess
         }
 

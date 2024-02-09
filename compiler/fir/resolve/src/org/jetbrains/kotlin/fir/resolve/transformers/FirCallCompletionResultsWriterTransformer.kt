@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
@@ -165,6 +166,7 @@ class FirCallCompletionResultsWriterTransformer(
             // fun f(s: String, action: (String.() -> Unit)?) {
             //    s.action?.let { it() }
             //}
+            @OptIn(ApplicabilityDetail::class)
             if (subCandidate.explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER && subCandidate.applicability.isSuccess) {
                 replaceExplicitReceiver(dispatchReceiver)
             }
@@ -1059,6 +1061,7 @@ class FirCallCompletionResultsWriterTransformer(
     private fun FirNamedReferenceWithCandidate.toResolvedReference(): FirNamedReference {
         val errorDiagnostic = when {
             this is FirErrorReferenceWithCandidate -> this.diagnostic
+            @OptIn(ApplicabilityDetail::class)
             !candidate.lowestApplicability.isSuccess -> ConeInapplicableCandidateError(candidate.lowestApplicability, candidate)
             !candidate.isSuccessful -> {
                 require(candidate.system.hasContradiction) {

@@ -124,9 +124,18 @@ enum class CandidateApplicability {
 }
 
 /**
+ * Introduced for `CandidateApplicability.isSuccess` spefifically.
+ * Warns about accidental uses of `CandidateApplicability.isSuccess`
+ * instead of `Candidate.isSuccessful`.
+ */
+@RequiresOptIn
+annotation class ApplicabilityDetail
+
+/**
  * This property determines that the considered candidate is "successful" in terms of having no resolve errors.
  * Note that it does not necessarily mean tower resolve should stop on this candidate.
  */
+@ApplicabilityDetail
 val CandidateApplicability.isSuccess: Boolean
     get() = this >= CandidateApplicability.RESOLVED_LOW_PRIORITY && this != CandidateApplicability.RESOLVED_WITH_ERROR
 
