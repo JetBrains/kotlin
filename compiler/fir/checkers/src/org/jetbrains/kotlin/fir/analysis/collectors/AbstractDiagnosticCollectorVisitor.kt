@@ -233,7 +233,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         if (resolvedTypeRefType is ConeErrorType) {
             visitTypeRef(resolvedTypeRef, data)
         }
-        if (resolvedTypeRef.source?.kind?.shouldSkipErrorTypeReporting != false) return
+        if (resolvedTypeRef.source?.kind?.shouldSkipErrorTypeReporting == true) return
 
         // Even though we don't visit the children of the resolvedTypeRef we still add it as an annotation container
         // and take care not to add the corresponding delegatedTypeRef. This is so that diagnostics will have access to
