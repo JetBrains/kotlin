@@ -12,8 +12,8 @@ fun test(a: A, b: B) {
 
     b.(<!UNRESOLVED_REFERENCE!>a<!>)()
 
-    with(b) {
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>(b) <!CANNOT_INFER_PARAMETER_TYPE!>{
         val y: Int = a()
         (<!UNRESOLVED_REFERENCE!>a<!>)()
-    }
+    }<!>
 }

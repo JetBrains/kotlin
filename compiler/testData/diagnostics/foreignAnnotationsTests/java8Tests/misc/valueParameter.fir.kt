@@ -32,25 +32,25 @@ fun <K: Any> getArrayOfNotNullK() = null as Array<K>
 fun <K> getArrayOfNullableK() = null as Array<K?>
 
 fun <R> main(a: ValueParameter<R>) {
-    a.foo1(<!ARGUMENT_TYPE_MISMATCH!>getNotNullStringAndKNullable()<!>)
+    a.foo1(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
     a.foo1(getNullableStringAndKNullable())
-    a.foo1(<!ARGUMENT_TYPE_MISMATCH!>getNotNullStringAndNotNullK()<!>)
-    a.foo1(<!ARGUMENT_TYPE_MISMATCH!>getNullableStringAndNotNullK()<!>)
+    a.foo1(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndNotNullK<!>()<!>)
+    a.foo1(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndNotNullK<!>()<!>)
 
-    a.foo2(<!ARGUMENT_TYPE_MISMATCH!>getNotNullStringAndKNullable()<!>)
-    a.foo2(<!ARGUMENT_TYPE_MISMATCH!>getNullableStringAndKNullable()<!>)
-    a.foo2(<!ARGUMENT_TYPE_MISMATCH!>getNotNullStringAndNotNullK()<!>)
+    a.foo2(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
+    a.foo2(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndKNullable<!>()<!>)
+    a.foo2(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndNotNullK<!>()<!>)
     a.foo2(getNullableStringAndNotNullK())
 
-    a.foo3(<!ARGUMENT_TYPE_MISMATCH!>getNotNullStringAndKNullable()<!>)
-    a.foo3(<!ARGUMENT_TYPE_MISMATCH!>getNullableStringAndKNullable()<!>)
+    a.foo3(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
+    a.foo3(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndKNullable<!>()<!>)
     a.foo3(getNotNullStringAndNotNullK())
-    a.foo3(<!ARGUMENT_TYPE_MISMATCH!>getNullableStringAndNotNullK()<!>)
+    a.foo3(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndNotNullK<!>()<!>)
 
     a.foo4(<!ARGUMENT_TYPE_MISMATCH!>getArrayOfNotNullString()<!>)
     a.foo4(<!ARGUMENT_TYPE_MISMATCH!>getArrayOfNullableString()<!>)
     a.foo4(getArrayOfNotNullK())
-    a.foo4(<!ARGUMENT_TYPE_MISMATCH!>getArrayOfNullableK()<!>)
+    a.foo4(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getArrayOfNullableK<!>()<!>)
 
     a.foo5(getArrayOfNotNullString())
     a.foo5(getArrayOfNullableString())

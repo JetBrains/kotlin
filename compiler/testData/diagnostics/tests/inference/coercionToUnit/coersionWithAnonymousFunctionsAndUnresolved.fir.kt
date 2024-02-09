@@ -51,11 +51,11 @@ fun testUnit() {
 fun testParameter() {
     takeFnToParameter {  }
     takeFnToParameter { Unit }
-    takeFnToParameter { <!UNRESOLVED_REFERENCE!>unresolved<!>() }
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeFnToParameter<!> <!CANNOT_INFER_PARAMETER_TYPE!>{ <!UNRESOLVED_REFERENCE!>unresolved<!>() }<!>
     takeFnToParameter { if (true) <!UNRESOLVED_REFERENCE!>unresolved<!>() }
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeFnToParameter<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeFnToParameter<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
         <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (true) <!UNRESOLVED_REFERENCE!>unresolved<!>() else <!UNRESOLVED_REFERENCE!>unresolved<!>()<!>
-    }
+    }<!>
     takeFnToParameter(fun() = Unit)
     takeFnToParameter(fun() {})
     takeFnToParameter(fun() { return })

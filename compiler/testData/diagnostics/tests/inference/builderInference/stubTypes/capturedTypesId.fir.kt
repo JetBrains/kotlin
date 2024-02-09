@@ -22,7 +22,7 @@ fun main() {
     build {
         emit("")
         // K is fixed into CapturedType(out NotFixed: TypeVariable(R)
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>capture<!>(<!ARGUMENT_TYPE_MISMATCH!>id(getOut())<!>) // unexpected TYPE_MISMATCH (KT-63996)
+        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>capture<!>(<!ARGUMENT_TYPE_MISMATCH!>id(getOut())<!>) // unexpected TYPE_MISMATCH (KT-63996)
         // capture(getOut()) // OK!!!
         Unit
     }

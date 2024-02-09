@@ -19,15 +19,15 @@ fun testAnyCall() {
 }
 
 fun testParam() {
-    callParam {
+    <!CANNOT_INFER_PARAMETER_TYPE!>callParam<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
         <!CANNOT_INFER_PARAMETER_TYPE!>param<!> -> param
-    }
+    }<!>
 }
 
 fun testParamCall() {
-    callParam {
+    <!CANNOT_INFER_PARAMETER_TYPE!>callParam<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
         <!CANNOT_INFER_PARAMETER_TYPE!>param<!> -> <!UNRESOLVED_REFERENCE!>param<!>()
-    }
+    }<!>
 }
 
 fun testNoContext() {

@@ -4,7 +4,7 @@
 fun test() {
     val buildee = build {
         setTypeVariable(TargetType())
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>consumeDifferentTypeSubtype<!>(<!ARGUMENT_TYPE_MISMATCH!>getTypeVariable()<!>)
+        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>consumeDifferentTypeSubtype<!>(<!ARGUMENT_TYPE_MISMATCH!>getTypeVariable()<!>)
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests

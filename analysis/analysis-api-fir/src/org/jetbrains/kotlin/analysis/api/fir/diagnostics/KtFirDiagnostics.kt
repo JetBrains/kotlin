@@ -860,11 +860,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InapplicableFileTarget::class
     }
 
-    interface RepeatedAnnotation : KtFirDiagnostic<KtAnnotationEntry> {
+    interface RepeatedAnnotation : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = RepeatedAnnotation::class
     }
 
-    interface RepeatedAnnotationWarning : KtFirDiagnostic<KtAnnotationEntry> {
+    interface RepeatedAnnotationWarning : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = RepeatedAnnotationWarning::class
     }
 

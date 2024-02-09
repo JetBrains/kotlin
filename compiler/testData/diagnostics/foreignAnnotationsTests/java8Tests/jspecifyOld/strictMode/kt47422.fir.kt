@@ -100,7 +100,7 @@ fun test3() {
     isNotNullAndNullableStringInFoo(
         UtilNullMarkedGeneric.getFooOfK(),
         // jspecify_nullness_mismatch
-        <!ARGUMENT_TYPE_MISMATCH!>UtilNullMarkedGeneric.getFooOfK()<!>
+        <!ARGUMENT_TYPE_MISMATCH!>UtilNullMarkedGeneric.<!CANNOT_INFER_PARAMETER_TYPE!>getFooOfK<!>()<!>
     )
 }
 

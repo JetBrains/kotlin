@@ -20,14 +20,14 @@ fun main(x2: Runnable) {
     val x1 = {}
     val x3 = arrayOf<String>()
 
-    Test.foo1({}, <!ARGUMENT_TYPE_MISMATCH!>arrayOf()<!>)
+    Test.foo1({}, <!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>arrayOf<!>()<!>)
     Test.foo1({}, *arrayOf())
     Test.foo1({}, <!ARGUMENT_TYPE_MISMATCH!>x3<!>)
     Test.foo1({}, *arrayOf(""))
 
-    Test.foo1(x1, <!ARGUMENT_TYPE_MISMATCH!>arrayOf()<!>)
+    Test.foo1(x1, <!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>arrayOf<!>()<!>)
     Test.foo1(x1, *arrayOf())
-    Test.foo1(x2, <!ARGUMENT_TYPE_MISMATCH!>arrayOf()<!>)
+    Test.foo1(x2, <!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>arrayOf<!>()<!>)
     Test.foo1(x2, *arrayOf())
 
     Test.foo1(x1, <!ARGUMENT_TYPE_MISMATCH!>x3<!>)
@@ -35,16 +35,16 @@ fun main(x2: Runnable) {
     Test.foo1(x2, <!ARGUMENT_TYPE_MISMATCH!>arrayOf("")<!>)
     Test.foo1(x2, *arrayOf(""))
 
-    val i1 = <!NONE_APPLICABLE!>Test<!>({}, arrayOf())
+    val i1 = <!NONE_APPLICABLE!>Test<!>({}, <!CANNOT_INFER_PARAMETER_TYPE!>arrayOf<!>())
     val i2 = Test({}, *arrayOf())
     val i3 = <!NONE_APPLICABLE!>Test<!>({}, x3)
     val i4 = <!NONE_APPLICABLE!>Test<!>({}, arrayOf(""))
     val i5 = Test({}, {}, *arrayOf(""))
-    val i6 = <!NONE_APPLICABLE!>Test<!>({}, {}, arrayOf())
+    val i6 = <!NONE_APPLICABLE!>Test<!>({}, {}, <!CANNOT_INFER_PARAMETER_TYPE!>arrayOf<!>())
 
-    i2.foo2({}, {}, <!ARGUMENT_TYPE_MISMATCH!>arrayOf()<!>)
+    i2.foo2({}, {}, <!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>arrayOf<!>()<!>)
     i2.foo2({}, {}, *arrayOf())
-    i2.foo2({}, x2, <!ARGUMENT_TYPE_MISMATCH!>arrayOf()<!>)
+    i2.foo2({}, x2, <!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>arrayOf<!>()<!>)
     i2.foo2(x2, {}, *arrayOf())
 
     i2.foo2({}, {}, <!ARGUMENT_TYPE_MISMATCH!>arrayOf("")<!>)

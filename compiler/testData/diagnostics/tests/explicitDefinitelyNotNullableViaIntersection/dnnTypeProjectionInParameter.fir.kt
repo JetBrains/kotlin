@@ -20,10 +20,10 @@ fun <T : String?> foo(box: MyBoxIn<T & Any>, arg: T) {
 
 fun main() {
     val emptyBoxInv = MyBoxInv<String?>(null)
-    getSizeInv(<!ARGUMENT_TYPE_MISMATCH!>emptyBoxInv<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>getSizeInv<!>(<!ARGUMENT_TYPE_MISMATCH!>emptyBoxInv<!>)
 
     val emptyBoxOut = MyBoxOut<String?>(null)
-    getSizeOut(<!ARGUMENT_TYPE_MISMATCH!>emptyBoxOut<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>getSizeOut<!>(<!ARGUMENT_TYPE_MISMATCH!>emptyBoxOut<!>)
 
     val emptyBoxIn = MyBoxIn<String?>()
     foo(emptyBoxIn, null)

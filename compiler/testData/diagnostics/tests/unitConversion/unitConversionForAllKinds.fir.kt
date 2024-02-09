@@ -12,5 +12,5 @@ fun test(g: () -> String, h: (Float) -> String) {
     foo { "something" }
     foo(<!ARGUMENT_TYPE_MISMATCH!>g<!>)
 
-    fooGeneric(<!ARGUMENT_TYPE_MISMATCH!>h<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>fooGeneric<!>(<!ARGUMENT_TYPE_MISMATCH!>h<!>)
 }

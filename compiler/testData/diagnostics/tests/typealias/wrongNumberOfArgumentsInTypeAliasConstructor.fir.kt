@@ -28,7 +28,7 @@ val test3pr = <!INAPPLICABLE_CANDIDATE!>PR<!><String, Int, Int>(1, "")
 class Num<T : Number>(val x: T)
 typealias N<T> = Num<T>
 
-val testN0 = N(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
+val testN0 = <!CANNOT_INFER_PARAMETER_TYPE!>N<!>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 val testN1 = N<Int>(1)
 val testN1a = N<<!UPPER_BOUND_VIOLATED!>String<!>>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 val testN2 = <!INAPPLICABLE_CANDIDATE!>N<!><Int, Int>(1)
@@ -37,5 +37,5 @@ class MyPair<T1 : CharSequence, T2 : Number>(val string: T1, val number: T2)
 typealias MP<T1> = MyPair<String, T1>
 
 val testMP0 = MP<Int>("", 1)
-val testMP1 = MP(<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
+val testMP1 = <!CANNOT_INFER_PARAMETER_TYPE!>MP<!>(<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
 val testMP2 = MP<<!UPPER_BOUND_VIOLATED!>String<!>>(<!ARGUMENT_TYPE_MISMATCH!>""<!>, <!ARGUMENT_TYPE_MISMATCH!>""<!>)

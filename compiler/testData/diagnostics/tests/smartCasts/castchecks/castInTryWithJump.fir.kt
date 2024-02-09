@@ -96,7 +96,7 @@ fun breakInCatch() {
 
 fun returnInFinally_insideTry_nonLocal() {
     var x: Any? = null
-    run {
+    <!CANNOT_INFER_PARAMETER_TYPE!>run<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
         try {
             x as B
             try {
@@ -112,7 +112,7 @@ fun returnInFinally_insideTry_nonLocal() {
         }
         x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
         x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
-    }
+    }<!>
     x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
     x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
 }

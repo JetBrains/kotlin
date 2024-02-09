@@ -4,5 +4,5 @@
 import java.util.*
 
 fun use(x: String?) {
-    Optional.of(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+    Optional.<!CANNOT_INFER_PARAMETER_TYPE!>of<!>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }

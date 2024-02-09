@@ -7,5 +7,5 @@ fun <T : Foo> foo(t: T) = t
 
 fun main(fooImpl: FooImpl, bar: Bar) {
     val a = foo(fooImpl)
-    val b = foo(<!ARGUMENT_TYPE_MISMATCH!>bar<!>)
+    val b = <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!ARGUMENT_TYPE_MISMATCH!>bar<!>)
 }

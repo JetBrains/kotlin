@@ -29,20 +29,20 @@ interface Foo {
         // with LHS and property
         bar8<T>(Foo::<!NONE_APPLICABLE!>x1<!>)
         bar8<Foo>(Foo::<!NONE_APPLICABLE!>x1<!>)
-        bar8(Foo::<!NONE_APPLICABLE!>x1<!>)
+        <!CANNOT_INFER_PARAMETER_TYPE!>bar8<!>(Foo::<!NONE_APPLICABLE!>x1<!>)
 
         // with LHS and mutable property
         bar8<T>(Foo::<!NONE_APPLICABLE!>x2<!>)
         bar8<Foo>(Foo::<!NONE_APPLICABLE!>x2<!>)
-        bar8(Foo::<!NONE_APPLICABLE!>x2<!>)
+        <!CANNOT_INFER_PARAMETER_TYPE!>bar8<!>(Foo::<!NONE_APPLICABLE!>x2<!>)
 
         // with LHS and propery + mutable property (mixed)
         bar8<T>(Foo::<!NONE_APPLICABLE!>x3<!>)
         bar8<Foo>(Foo::<!NONE_APPLICABLE!>x3<!>)
-        bar8(Foo::<!NONE_APPLICABLE!>x3<!>)
+        <!CANNOT_INFER_PARAMETER_TYPE!>bar8<!>(Foo::<!NONE_APPLICABLE!>x3<!>)
         bar9<T>(Foo::<!NONE_APPLICABLE!>x3<!>)
         bar9<Foo>(Foo::<!NONE_APPLICABLE!>x3<!>)
-        bar9(Foo::<!NONE_APPLICABLE!>x3<!>)
+        <!CANNOT_INFER_PARAMETER_TYPE!>bar9<!>(Foo::<!NONE_APPLICABLE!>x3<!>)
     }
 }
 
@@ -86,12 +86,12 @@ fun <T : Foo, R: Number, D: Int> main() {
     // with LHS and conflicting projection
     bar2<T>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
     bar2<Foo>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar2<!>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar2<!>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
 
     // with LHS and Any? expected type
     bar3<T>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
     bar3<Foo>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar3<!>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar3<!>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
 
     // with LHS and `Function` expected type
     bar4<T>(Foo::resolve) // ERROR before the fix in NI
@@ -122,6 +122,6 @@ fun <T : Foo, R: Number, D: Int> main() {
         // with LHS and sentension function expected type
         bar10<D>(::<!INAPPLICABLE_CANDIDATE!>x1<!>) // ERROR before the fix in NI
         bar10<Int>(::<!INAPPLICABLE_CANDIDATE!>x1<!>) // OK
-        bar10(::<!INAPPLICABLE_CANDIDATE!>x1<!>) // OK
+        <!CANNOT_INFER_PARAMETER_TYPE!>bar10<!>(::<!INAPPLICABLE_CANDIDATE!>x1<!>) // OK
     }
 }

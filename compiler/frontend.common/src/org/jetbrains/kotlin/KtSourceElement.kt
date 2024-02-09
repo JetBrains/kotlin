@@ -42,6 +42,14 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // destruction parameters, function literals, explicitly boolean expressions
     object ImplicitTypeRef : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
 
+    // for type arguments that were inferred as opposed to specified
+    // explicitly via `<>`
+    object ImplicitTypeArgument : KtFakeSourceElementKind()
+
+    // for return types of anonymous functions, because ImplicitTypeRef
+    // may sometimes hide the diagnostic turning red code into green
+    object ImplicitFunctionReturnType : KtFakeSourceElementKind()
+
     // for each class special class self type ref is created
     // and have a fake source referencing it
     object ClassSelfTypeRef : KtFakeSourceElementKind()

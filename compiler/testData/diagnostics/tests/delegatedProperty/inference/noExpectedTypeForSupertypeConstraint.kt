@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // NI_EXPECTED_FILE
 import kotlin.reflect.KProperty
 

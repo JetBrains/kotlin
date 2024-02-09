@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 fun <T : Number> materializeNumber(): T = TODO()
 
 fun a(): Unit = run {

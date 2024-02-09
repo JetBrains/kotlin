@@ -1,5 +1,5 @@
 inline fun <T, reified K> bar() {}
 
 fun foo() {
-    <!INAPPLICABLE_CANDIDATE!>bar<!><Int>()
+    <!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>bar<!><Int>()
 }

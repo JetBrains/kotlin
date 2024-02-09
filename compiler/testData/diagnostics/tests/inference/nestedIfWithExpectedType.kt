@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 interface Promise<T>
 
 fun <T> materializePromise(): Promise<T> = TODO()

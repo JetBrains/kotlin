@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE
-// FIR_IDENTICAL
 
 fun call(vararg x: Any?) {}
 fun <R> Any.call(vararg args: Any?): R = TODO()

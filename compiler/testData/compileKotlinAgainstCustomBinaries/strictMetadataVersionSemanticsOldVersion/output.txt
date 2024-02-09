@@ -14,6 +14,10 @@ compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemant
 The class is loaded from $TMP_DIR$/library.jar!/a/C.class
     c.let { C() }
     ^
+compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemanticsOldVersion/source.kt:6:7: error: class 'a.C' was compiled with an incompatible version of Kotlin. The actual metadata version is $ABI_VERSION_NEXT$, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION$.
+The class is loaded from $TMP_DIR$/library.jar!/a/C.class
+    c.let { C() }
+      ^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemanticsOldVersion/source.kt:6:11: error: class 'a.C' was compiled with an incompatible version of Kotlin. The actual metadata version is $ABI_VERSION_NEXT$, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION$.
 The class is loaded from $TMP_DIR$/library.jar!/a/C.class
     c.let { C() }

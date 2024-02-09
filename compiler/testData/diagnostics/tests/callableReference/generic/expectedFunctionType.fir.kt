@@ -22,6 +22,6 @@ class A3<T> {
     fun test2(): (T) -> Unit = A3<T>()::a3
     fun test3(): (Int) -> String = A3<Int>()::a3
 
-    fun <R> test4(): (R) -> Unit = <!RETURN_TYPE_MISMATCH!>this::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>a3<!><!>
+    fun <R> test4(): (R) -> Unit = <!RETURN_TYPE_MISMATCH!>this::<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>a3<!><!>
     fun <R> test5(): (T) -> R = this::a3
 }

@@ -34,8 +34,8 @@ fun Any?.test_2() {
 }
 
 fun test_3(a: Any, b: Any, c: Any) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(a) wa@{
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(b) wb@{
+    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(a) wa@<!CANNOT_INFER_PARAMETER_TYPE!>{
+        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(b) wb@<!CANNOT_INFER_PARAMETER_TYPE!>{
             with(c) wc@{
                 this@wb as A
                 this@wb.foo()
@@ -43,8 +43,8 @@ fun test_3(a: Any, b: Any, c: Any) {
             }
             this.<!UNRESOLVED_REFERENCE!>foo<!>()
             <!UNRESOLVED_REFERENCE!>foo<!>()
-        }
-    }
+        }<!>
+    }<!>
 }
 
 fun Any?.test_4() {

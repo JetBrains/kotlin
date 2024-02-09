@@ -20,10 +20,10 @@ fun <T : String?> MyBoxIn<T & Any>.fooExt(arg: T) {
 
 fun main() {
     val emptyBoxInv = MyBoxInv<String?>(null)
-    emptyBoxInv.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>getSizeInv<!>()
+    emptyBoxInv.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>getSizeInv<!>()
 
     val emptyBoxOut = MyBoxOut<String?>(null)
-    emptyBoxOut.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>getSizeOut<!>()
+    emptyBoxOut.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>getSizeOut<!>()
 
     val emptyBoxIn = MyBoxIn<String?>()
     emptyBoxIn.fooExt(null)

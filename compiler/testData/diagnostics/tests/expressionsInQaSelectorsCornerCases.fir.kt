@@ -17,7 +17,7 @@ fun main() {
 
     5.(Int::b)().inv()
 
-    val d = Int::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>a<!>
+    val d = Int::<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>a<!>
     5.(d)('=').inv()
 
     val e: Int.(Char) -> Int = Int::a

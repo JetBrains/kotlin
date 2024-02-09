@@ -17,8 +17,8 @@ fun test(out: Out<Int>, i: In<Int>, inv: A<Int>) {
     r checkType { _<Int>() }
 
     // T? <: Int => error
-    doIn(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>doIn<!>(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
 
     // T? >: Int => error
-    doA(<!ARGUMENT_TYPE_MISMATCH!>inv<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>doA<!>(<!ARGUMENT_TYPE_MISMATCH!>inv<!>)
 }

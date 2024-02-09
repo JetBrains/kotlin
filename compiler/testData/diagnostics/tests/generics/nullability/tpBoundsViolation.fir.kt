@@ -17,7 +17,7 @@ class A<F> {
         x2.checkType { _<F>() }
 
         foo1<<!UPPER_BOUND_VIOLATED!>F?<!>>(<!ARGUMENT_TYPE_MISMATCH!>y<!>)
-        foo1(<!ARGUMENT_TYPE_MISMATCH!>y<!>)
+        <!CANNOT_INFER_PARAMETER_TYPE!>foo1<!>(<!ARGUMENT_TYPE_MISMATCH!>y<!>)
         foo2<F?>(y)
 
         val x3 = foo2(y)
@@ -37,7 +37,7 @@ class A<F> {
         x4.checkType { _<Z>() }
 
         foo1<<!UPPER_BOUND_VIOLATED!>W<!>>(<!ARGUMENT_TYPE_MISMATCH!>w<!>)
-        foo1(<!ARGUMENT_TYPE_MISMATCH!>w<!>)
+        <!CANNOT_INFER_PARAMETER_TYPE!>foo1<!>(<!ARGUMENT_TYPE_MISMATCH!>w<!>)
         foo2<W>(w)
 
         val x6 = foo2(w)

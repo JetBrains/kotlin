@@ -8,7 +8,7 @@ fun test_1() {
 }
 
 fun test_2() {
-    <!UNRESOLVED_REFERENCE!>myRun<!> {
-        materialize()
-    }
+    <!UNRESOLVED_REFERENCE!>myRun<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
+        <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>()
+    }<!>
 }

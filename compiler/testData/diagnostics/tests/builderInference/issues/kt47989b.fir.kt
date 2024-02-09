@@ -2,7 +2,7 @@
 // CHECK_TYPE_WITH_EXACT
 
 fun test() {
-    val buildee = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    val buildee = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
         object: TypeSourceInterface {
             override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>produceTargetTypeBuildee<!>() = this@build
         }

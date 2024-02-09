@@ -14,5 +14,5 @@ fun <K, V> B<K>.foo(p: KProperty1<K, V>) {}
 class C : A
 
 fun <R : A> B<R>.test(){
-    foo(C::<!INAPPLICABLE_CANDIDATE!>bla<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(C::<!INAPPLICABLE_CANDIDATE!>bla<!>)
 }

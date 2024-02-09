@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 fun <T: Any> fooT22() : T? {
   return null
 }

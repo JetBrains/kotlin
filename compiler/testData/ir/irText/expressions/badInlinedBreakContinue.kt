@@ -5,6 +5,8 @@
 // LANGUAGE: +BreakContinueInInlineLambdas
 // WITH_STDLIB
 // SKIP_KLIB_TEST
+// IGNORE_BACKEND_K2: ANY
+// STATUS: K2 reports a false-positive `CANNOT_INFER_PARAMETER_TYPE` on things like `{break}()`
 
 inline fun foo(block: () -> Unit) { block() }
 

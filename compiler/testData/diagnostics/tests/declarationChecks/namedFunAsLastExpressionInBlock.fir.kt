@@ -5,7 +5,7 @@ fun foo(block: () -> (() -> Int)) {}
 
 fun test() {
     val x = <!ANONYMOUS_FUNCTION_WITH_NAME!>fun named1(x: Int): Int { return 1 }<!>
-    x <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>Function1<Int, Int><!>>() }
+    x <!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>Function1<Int, Int><!>>() }
 
     foo { <!ARGUMENT_TYPE_MISMATCH!>fun named2(): Int {return 1}<!> }
     foo({ <!ARGUMENT_TYPE_MISMATCH!>fun named3() = 1<!> })

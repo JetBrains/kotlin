@@ -89,10 +89,10 @@ fun test13(): InOuter<Int>.OutIntermediate<<!CONFLICTING_PROJECTION!>in<!> Strin
 fun test14(): InOuter<Int>.OutIntermediate<<!REDUNDANT_PROJECTION!>out<!> String>.InInner<Char> = InOuter<Int>().OutIntermediate<String>().InInner()
 
 fun test15(): InOuter<Int>.OutIntermediate<String>.InInner<<!REDUNDANT_PROJECTION!>in<!> Char> = InOuter<Int>().OutIntermediate<String>().InInner()
-fun test16(): InOuter<Int>.OutIntermediate<String>.InInner<<!CONFLICTING_PROJECTION!>out<!> Char> = InOuter<Int>().OutIntermediate<String>().<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>InInner<!>()
+fun test16(): InOuter<Int>.OutIntermediate<String>.InInner<<!CONFLICTING_PROJECTION!>out<!> Char> = InOuter<Int>().OutIntermediate<String>().<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>InInner<!>()
 
 fun test17(): InOuter<<!REDUNDANT_PROJECTION!>in<!> Int>.OutIntermediate<<!REDUNDANT_PROJECTION!>out<!> String>.InInner<Char> = InOuter<Int>().OutIntermediate<String>().InInner()
-fun test18(): InOuter<Int>.OutIntermediate<<!CONFLICTING_PROJECTION!>in<!> String>.InInner<<!CONFLICTING_PROJECTION!>out<!> Char> = InOuter<Int>().OutIntermediate<String>().<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>InInner<!>()
+fun test18(): InOuter<Int>.OutIntermediate<<!CONFLICTING_PROJECTION!>in<!> String>.InInner<<!CONFLICTING_PROJECTION!>out<!> Char> = InOuter<Int>().OutIntermediate<String>().<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>InInner<!>()
 
 class TwoParametersOuter<T, in T1> {
     inner class TwoParametersIntermediate<out K, K1> {

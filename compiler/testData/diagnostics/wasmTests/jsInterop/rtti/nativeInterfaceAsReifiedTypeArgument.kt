@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline fun <reified T> foo(x: T) {

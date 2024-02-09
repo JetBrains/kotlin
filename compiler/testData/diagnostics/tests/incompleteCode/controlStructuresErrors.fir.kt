@@ -19,7 +19,7 @@ fun test1() {
 }
 
 fun test2(l: List<<!UNRESOLVED_REFERENCE!>AA<!>>) {
-    l.<!UNRESOLVED_REFERENCE!>map<!> {
+    l.<!UNRESOLVED_REFERENCE!>map<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
         <!UNRESOLVED_REFERENCE!>it<!>!!
-    }
+    }<!>
 }

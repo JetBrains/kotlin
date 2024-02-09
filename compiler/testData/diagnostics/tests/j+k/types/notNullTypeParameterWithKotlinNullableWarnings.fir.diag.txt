@@ -2,8 +2,14 @@
 
 /main.kt:(119,120): error: Argument type mismatch: actual type is 'kotlin.collections.List<V>', but 'kotlin.collections.(Mutable)List<@NotNull() V & Any>' was expected.
 
+/main.kt:(127,132): error: Cannot infer type for this parameter. Please specify it explicitly.
+
 /main.kt:(133,138): error: Argument type mismatch: actual type is 'V', but 'E & Any' was expected.
 
+/main.kt:(144,153): error: Cannot infer type for this parameter. Please specify it explicitly.
+
 /main.kt:(154,155): error: Argument type mismatch: actual type is 'kotlin.collections.List<V>', but 'kotlin.collections.(Mutable)List<@NotNull() E & Any>' was expected.
+
+/main.kt:(161,166): error: Cannot infer type for this parameter. Please specify it explicitly.
 
 /main.kt:(167,176): error: Argument type mismatch: actual type is 'V!', but 'E & Any' was expected.

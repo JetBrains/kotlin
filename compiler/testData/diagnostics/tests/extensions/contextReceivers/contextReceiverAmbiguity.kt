@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !LANGUAGE: +ContextReceivers
 // RENDER_DIAGNOSTICS_FULL_TEXT
 

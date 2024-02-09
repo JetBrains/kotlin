@@ -19,5 +19,5 @@ val p2 = Pair(1, "")
 val test1: Int = C<Int>().first(<!ARGUMENT_TYPE_MISMATCH!>p1<!>)
 val test2: Int = C<Int>().second(<!ARGUMENT_TYPE_MISMATCH!>p1<!>)
 
-val test3: Int = C<Int>().first2(<!ARGUMENT_TYPE_MISMATCH!>p2<!>)
+val test3: Int = C<Int>().<!CANNOT_INFER_PARAMETER_TYPE!>first2<!>(<!ARGUMENT_TYPE_MISMATCH!>p2<!>)
 val test4: String = C<Int>().second2(<!ARGUMENT_TYPE_MISMATCH!>p2<!>)

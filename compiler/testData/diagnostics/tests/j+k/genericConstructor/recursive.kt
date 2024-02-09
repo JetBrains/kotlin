@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: C.java
 
 // See KT-10410

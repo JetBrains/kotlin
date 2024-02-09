@@ -13,4 +13,4 @@ typealias TMap<T> = Map<T, T>
 fun <T> foo2(m: TMap<T>) = m
 
 fun bar2(m: TMap<*>) =
-        foo2(<!ARGUMENT_TYPE_MISMATCH!>m<!>)
+        <!CANNOT_INFER_PARAMETER_TYPE!>foo2<!>(<!ARGUMENT_TYPE_MISMATCH!>m<!>)

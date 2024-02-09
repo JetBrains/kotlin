@@ -1,7 +1,7 @@
 // FILE: main.kt
 
 fun foo(p: AAA<String>, s: Int?) {
-    p.process(<!ARGUMENT_TYPE_MISMATCH("Q!; kotlin.Int?")!>s<!>)
+    p.<!CANNOT_INFER_PARAMETER_TYPE!>process<!>(<!ARGUMENT_TYPE_MISMATCH("Q!; kotlin.Int?")!>s<!>)
 }
 
 // FILE: AAA.java

@@ -19,7 +19,7 @@ class Inv<T>(val value: T)
 object ImplicitWrapped {
     operator fun Inv<*>.invoke(): Inv<String> = Inv("Fail")
 
-    val foo = Inv(<!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>foo<!>)()
+    val foo = <!CANNOT_INFER_PARAMETER_TYPE!>Inv<!>(<!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>foo<!>)()
 }
 
 object ImplicitIndirect {

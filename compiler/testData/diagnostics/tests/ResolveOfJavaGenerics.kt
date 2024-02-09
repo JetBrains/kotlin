@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // WITH_EXTENDED_CHECKERS
 // Fixpoint generic in Java: Enum<T extends Enum<T>>

@@ -1,10 +1,10 @@
 // !LANGUAGE: -TypeInferenceOnCallsWithSelfTypes
 
 fun test() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer argument for type parameter B")!>WriterAppender.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newBuilder<!>()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<ERROR CLASS: Cannot infer argument for type parameter B>")!>WriterAppender.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Builder1<!>()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer argument for type parameter B")!>WriterAppender.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newBuilder<!>()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<ERROR CLASS: Cannot infer argument for type parameter B>")!>WriterAppender.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Builder1<!>()<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer argument for type parameter B")!>WriterAppender.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>intersectTwoSelfTypes<!>()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer argument for type parameter B")!>WriterAppender.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>intersectTwoSelfTypes<!>()<!>
 }
 
 object WriterAppender {
