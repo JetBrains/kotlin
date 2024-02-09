@@ -10,17 +10,15 @@ import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.isFileClass
+import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor
-import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
 
 enum class AbiMethodInfo {
@@ -63,6 +61,7 @@ class JvmAbiClassBuilderInterceptor(
     private val removeDataClassCopyIfConstructorIsPrivate: Boolean,
     private val removePrivateClasses: Boolean,
 ) : ClassGeneratorExtension {
+    var removedEmptyFileClassesWithoutAliases = mutableMapOf<String?, MutableSet<String>>()
     private var abiClassInfoBuilder = JvmAbiClassInfoBuilder(removePrivateClasses)
 
     fun buildAbiClassInfoAndReleaseResources(): Map<String, AbiClassInfo> {
@@ -83,6 +82,11 @@ class JvmAbiClassBuilderInterceptor(
         private val removeClassFromAbi = shouldRemoveFromAbi(irClass, removePrivateClasses)
 
         @OptIn(UnsafeDuringIrConstructionAPI::class)
+        private val isFileClassWithoutAliases =
+            irClass?.origin == IrDeclarationOrigin.FILE_CLASS && irClass.declarations.none { it is IrTypeAlias }
+        private val fileClassPackageName = irClass.takeIf { isFileClassWithoutAliases }?.packageFqName?.asString()
+
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         private val primaryConstructorIsNotInAbi =
             irClass?.primaryConstructor?.visibility?.let(DescriptorVisibilities::isPrivate) == true
 
@@ -92,6 +96,7 @@ class JvmAbiClassBuilderInterceptor(
         var keepClassAsIs = false
         val methodInfos = mutableMapOf<Method, AbiMethodInfo>()
         val maskedMethods = mutableSetOf<Method>() // Methods which should be stripped even if they are marked as KEEP
+        var hasNoFields = true
 
         override fun defineClass(
             version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>
@@ -108,6 +113,13 @@ class JvmAbiClassBuilderInterceptor(
         override fun visitEnclosingMethod(owner: String, name: String?, desc: String?) {
             localOrAnonymousClass = true
             delegate.visitEnclosingMethod(owner, name, desc)
+        }
+
+        override fun newField(
+            declaration: IrField?, access: Int, name: String, desc: String, signature: String?, value: Any?,
+        ): FieldVisitor {
+            hasNoFields = false
+            return delegate.newField(declaration, access, name, desc, signature, value)
         }
 
         override fun newMethod(
@@ -188,7 +200,12 @@ class JvmAbiClassBuilderInterceptor(
                     for (method in maskedMethods) {
                         methodInfos[method] = AbiMethodInfo.STRIP
                     }
-                    AbiClassInfo.Stripped(methodInfos)
+                    if (isFileClassWithoutAliases && hasNoFields && methodInfos.isEmpty()) {
+                        removedEmptyFileClassesWithoutAliases.getOrPut(fileClassPackageName, ::mutableSetOf).add(internalName)
+                        AbiClassInfo.Deleted
+                    } else {
+                        AbiClassInfo.Stripped(methodInfos)
+                    }
                 }
             }
             abiClassInfoBuilder.recordInitialClassInfo(internalName, classInfo, superInterfaces)
