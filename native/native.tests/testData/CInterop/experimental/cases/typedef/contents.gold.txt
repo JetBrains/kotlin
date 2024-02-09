@@ -1,18 +1,43 @@
+library {
+  // module name: <dependency.def>
 
-package dependency {
+  library fragment {
+    // package name: dependency
 
-    @CStruct(spelling = "struct  { }") @ExperimentalForeignApi class T constructor(rawPtr: NativePtr /* = NativePtr */) : CStructVar {
-        @CStruct.VarType(align = 1, size = 0.toLong()) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CStructVar.Type
+    // class name: dependency/T
+    // class name: dependency/T.Companion
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { }")
+    @kotlinx/cinterop/ExperimentalForeignApi
+    public final class dependency/T : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      // companion object: Companion
+
+      // nested class: Companion
     }
 
-}
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 0L, align = 1)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object dependency/T.Companion : kotlinx/cinterop/CStructVar.Type {
 
-package dependency {
-    @ExperimentalForeignApi typealias MyInt = Int
-    @ExperimentalForeignApi typealias MyIntVar = IntVarOf<MyInt /* = Int */>
-    @ExperimentalForeignApi typealias MyPointer = COpaquePointer
-    @ExperimentalForeignApi typealias MyPointerVar = CPointerVarOf<MyPointer /* = CPointer<out CPointed> */>
-    @ExperimentalForeignApi typealias MyS = S
-    @ExperimentalForeignApi typealias MyT = T
-}
+      private constructor()
+    }
 
+    package {
+
+      public typealias MyInt = kotlin/Int /* = kotlin/Int */
+
+      public typealias MyIntVar = kotlinx/cinterop/IntVarOf<dependency/MyInt^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = dependency/MyInt^ */> */
+
+      public typealias MyPointer = kotlinx/cinterop/COpaquePointer^ /* = kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed> /* = kotlinx/cinterop/COpaquePointer^ */ */
+
+      public typealias MyPointerVar = kotlinx/cinterop/CPointerVarOf<dependency/MyPointer^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed> /* = dependency/MyPointer^ */> */
+
+      public typealias MyS = cnames/structs/S /* = cnames/structs/S */
+
+      public typealias MyT = dependency/T /* = dependency/T */
+    }
+  }
+}

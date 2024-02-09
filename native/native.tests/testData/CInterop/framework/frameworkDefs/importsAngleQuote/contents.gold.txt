@@ -1,13 +1,28 @@
+library {
+  // module name: <pod1.def>
 
-package pod1 {
-    var podImportsAngleQuote: Int
-        @CCall(id = "knifunptr_pod10_podImportsAngleQuote_getter") get
-        @CCall(id = "knifunptr_pod11_podImportsAngleQuote_setter") set
-    var podImportsAngleQuoteA: Int
-        @CCall(id = "knifunptr_pod12_podImportsAngleQuoteA_getter") get
-        @CCall(id = "knifunptr_pod13_podImportsAngleQuoteA_setter") set
-    var podImportsAngleQuote_umbrella: Int
-        @CCall(id = "knifunptr_pod14_podImportsAngleQuote_umbrella_getter") get
-        @CCall(id = "knifunptr_pod15_podImportsAngleQuote_umbrella_setter") set
+  library fragment {
+    // package name: pod1
+
+    package {
+
+      public final var podImportsAngleQuote: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_podImportsAngleQuote_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_podImportsAngleQuote_setter")
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final var podImportsAngleQuoteA: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_podImportsAngleQuoteA_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_podImportsAngleQuoteA_setter")
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final var podImportsAngleQuote_umbrella: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod14_podImportsAngleQuote_umbrella_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod15_podImportsAngleQuote_umbrella_setter")
+        public final /* non-default */ external set(value: kotlin/Int)
+    }
+  }
 }
-

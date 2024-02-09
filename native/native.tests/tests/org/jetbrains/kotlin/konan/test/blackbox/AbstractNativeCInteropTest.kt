@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
 import org.jetbrains.kotlin.konan.util.CInteropHints
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
@@ -104,18 +105,15 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
                 "Test failed. CInterop compilation result was: $testCompilationResult"
             }
         } else {
-            val metadata = testCompilationResult.assertSuccess().resultingArtifact.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
-                .let {
-                    if (ignoreExperimentalForeignApi) {
-                        it.replace("@ExperimentalForeignApi ", "")
-                    } else {
-                        it
-                    }
-                }
-            val expectedContents = goldenFile.readText()
-            assertEquals(StringUtilRt.convertLineSeparators(expectedContents), StringUtilRt.convertLineSeparators(metadata)) {
-                "Test failed. CInterop compilation result was: $testCompilationResult"
-            }
+            val metadata = testCompilationResult.assertSuccess().resultingArtifact
+                .dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
+
+            val filteredMetadata = if (ignoreExperimentalForeignApi)
+                metadata.lineSequence().filterNot { it.trim() == "@kotlinx/cinterop/ExperimentalForeignApi" }.joinToString("\n")
+            else
+                metadata
+
+            assertEqualsToFile(goldenFile, filteredMetadata)
         }
     }
 
