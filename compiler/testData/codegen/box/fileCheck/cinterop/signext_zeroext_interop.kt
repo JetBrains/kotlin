@@ -36,9 +36,9 @@ int callbackUser(int (*fn)(int, short)) {
 import signext_zeroext_interop_input.*
 import kotlinx.cinterop.*
 
-// CHECK-DEFAULTABI: declare zeroext i1 @Kotlin_Char_isHighSurrogate(i16 zeroext){{.*}}
-// CHECK-AAPCS: declare i1 @Kotlin_Char_isHighSurrogate(i16)
-// CHECK-WINDOWSX64: declare zeroext i1 @Kotlin_Char_isHighSurrogate(i16)
+// CHECK-DEFAULTABI-CACHE_NO: declare zeroext i1 @Kotlin_Char_isHighSurrogate(i16 zeroext){{.*}}
+// CHECK-AAPCS-CACHE_NO: declare i1 @Kotlin_Char_isHighSurrogate(i16)
+// CHECK-WINDOWSX64-CACHE_NO: declare zeroext i1 @Kotlin_Char_isHighSurrogate(i16)
 
 // Check that we pass attributes to functions imported from runtime.
 // CHECK-LABEL: void @"kfun:#checkRuntimeFunctionImport(){}"()
@@ -88,6 +88,10 @@ fun box(): String {
     checkDirectInterop()
     return "OK"
 }
+
+// CHECK-DEFAULTABI-CACHE_STATIC_ONLY_DIST: declare zeroext i1 @Kotlin_Char_isHighSurrogate(i16 zeroext){{.*}}
+// CHECK-AAPCS-CACHE_STATIC_ONLY_DIST: declare i1 @Kotlin_Char_isHighSurrogate(i16)
+// CHECK-WINDOWSX64-CACHE_STATIC_ONLY_DIST: declare zeroext i1 @Kotlin_Char_isHighSurrogate(i16)
 
 // CHECK-DEFAULTABI: signext i8 [[CHAR_ID_BRIDGE]](i8 signext %0)
 // CHECK-DEFAULTABI: [[CHAR_ID_PTR:%[0-9]+]] = load i8 (i8)*, i8 (i8)** @{{.*char_id}}

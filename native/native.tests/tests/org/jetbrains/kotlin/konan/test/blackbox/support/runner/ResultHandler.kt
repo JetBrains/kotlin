@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExecutionTimeout
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExitCode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
@@ -110,7 +111,9 @@ internal class ResultHandler(
                         }
                         val optimizationMode = check.settings.get<OptimizationMode>().name
                         val checkPrefixesWithOptMode = checkPrefixes.map { "$it-$optimizationMode" }
-                        val commaSeparatedCheckPrefixes = (checkPrefixes + checkPrefixesWithOptMode).joinToString(",")
+                        val cacheMode = check.settings.get<CacheMode>().alias
+                        val checkPrefixesWithCacheMode = checkPrefixes.map { "$it-CACHE_$cacheMode" }
+                        val commaSeparatedCheckPrefixes = (checkPrefixes + checkPrefixesWithOptMode + checkPrefixesWithCacheMode).joinToString(",")
 
                         val result = ProcessBuilder(
                             fileCheckExecutable,
