@@ -2186,6 +2186,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/boxingOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
+    @TestMetadata("boxedBooleanIdentity.kt")
+    public void testBoxedBooleanIdentity() {
+      runTest("compiler/testData/codegen/box/boxingOptimization/boxedBooleanIdentity.kt");
+    }
+
     @TestMetadata("boxedIntegersCmp.kt")
     public void testBoxedIntegersCmp() {
       runTest("compiler/testData/codegen/box/boxingOptimization/boxedIntegersCmp.kt");

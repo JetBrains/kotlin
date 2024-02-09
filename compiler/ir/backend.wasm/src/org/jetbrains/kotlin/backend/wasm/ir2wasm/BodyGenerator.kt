@@ -377,8 +377,18 @@ class BodyGenerator(
 
         // Box intrinsic has an additional klass ID argument.
         // Processing it separately
+        if (call.symbol == wasmSymbols.boxBoolean) {
+            generateBox(call.getValueArgument(0)!!, irBuiltIns.booleanType)
+            return
+        }
         if (call.symbol == wasmSymbols.boxIntrinsic) {
-            generateBox(call.getValueArgument(0)!!, call.getTypeArgument(0)!!)
+            val type = call.getTypeArgument(0)!!
+            if (type == irBuiltIns.booleanType) {
+                generateExpression(call.getValueArgument(0)!!)
+                body.buildCall(context.referenceFunction(context.backendContext.wasmSymbols.getBoxedBoolean), location)
+            } else {
+                generateBox(call.getValueArgument(0)!!, type)
+            }
             return
         }
 

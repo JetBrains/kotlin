@@ -224,6 +224,8 @@ class WasmSymbols(
         symbolTable.descriptorExtension.referenceSimpleFunction(it)
     }
 
+    val getBoxedBoolean: IrSimpleFunctionSymbol = getInternalFunction("getBoxedBoolean")
+    val boxBoolean: IrSimpleFunctionSymbol = getInternalFunction("boxBoolean")
     val boxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("boxIntrinsic")
     val unboxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("unboxIntrinsic")
 
