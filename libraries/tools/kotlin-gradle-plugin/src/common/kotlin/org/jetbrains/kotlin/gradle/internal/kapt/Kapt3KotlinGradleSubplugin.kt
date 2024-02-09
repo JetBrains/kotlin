@@ -25,6 +25,7 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isInfoAsWarnings
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isKaptKeepKdocCommentsInStubs
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isKaptVerbose
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isUseK2
 import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
@@ -122,6 +123,10 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             return getBooleanOptionValue(BooleanOption.KAPT_KEEP_KDOC_COMMENTS_IN_STUBS)
         }
 
+        fun Project.isUseK2(): Boolean {
+            return getBooleanOptionValue(BooleanOption.KAPT_USE_K2)
+        }
+
         fun Project.classLoadersCacheSize(): Int = findPropertySafe(CLASSLOADERS_CACHE_SIZE)?.toString()?.toInt() ?: 0
 
         fun Project.disableClassloaderCacheForProcessors(): Set<String> {
@@ -213,6 +218,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             KAPT_INFO_AS_WARNINGS("kapt.info.as.warnings", false),
             KAPT_INCLUDE_COMPILE_CLASSPATH("kapt.include.compile.classpath", true),
             KAPT_KEEP_KDOC_COMMENTS_IN_STUBS("kapt.keep.kdoc.comments.in.stubs", true),
+            KAPT_USE_K2("kapt.use.k2", false),
         }
     }
 
@@ -532,6 +538,7 @@ internal fun buildKaptSubpluginOptions(
     pluginOptions += SubpluginOption("keepKdocCommentsInStubs", "${project.isKaptKeepKdocCommentsInStubs()}")
     pluginOptions += SubpluginOption("showProcessorTimings", "${kaptExtension.showProcessorStats}")
     pluginOptions += SubpluginOption("detectMemoryLeaks", kaptExtension.detectMemoryLeaks)
+    pluginOptions += SubpluginOption("useK2", "${project.isUseK2()}")
     pluginOptions += SubpluginOption("infoAsWarnings", "${project.isInfoAsWarnings()}")
     pluginOptions += FilesSubpluginOption("stubs", kaptStubsDir)
 
