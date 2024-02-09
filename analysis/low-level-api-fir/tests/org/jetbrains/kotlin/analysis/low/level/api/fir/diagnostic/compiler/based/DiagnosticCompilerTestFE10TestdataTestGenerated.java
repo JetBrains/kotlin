@@ -352,6 +352,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     }
 
     @Test
+    @TestMetadata("dnnAsSuperTypeTypeArgument.kt")
+    public void testDnnAsSuperTypeTypeArgument() {
+      runTest("compiler/testData/diagnostics/tests/dnnAsSuperTypeTypeArgument.kt");
+    }
+
+    @Test
     @TestMetadata("Dollar.kt")
     public void testDollar() {
       runTest("compiler/testData/diagnostics/tests/Dollar.kt");
@@ -853,6 +859,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     @TestMetadata("kt60638.kt")
     public void testKt60638() {
       runTest("compiler/testData/diagnostics/tests/kt60638.kt");
+    }
+
+    @Test
+    @TestMetadata("kt65184.kt")
+    public void testKt65184() {
+      runTest("compiler/testData/diagnostics/tests/kt65184.kt");
     }
 
     @Test
