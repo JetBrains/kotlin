@@ -1,0 +1,97 @@
+library {
+  // module name: <compileTimeConstants.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Class
+    // class name: test/Weapon
+
+    public final class test/Class : kotlin/Any {
+
+      public constructor()
+
+      public final val arrayConst: kotlin/Any /* = [1.toByte(), 2.toByte()] */
+        public final get
+
+      public final val booleanConst: kotlin/Boolean /* = true */
+        public final get
+
+      public final val byteConst: kotlin/Byte /* = 10.toByte() */
+        public final get
+
+      public final val charConst: kotlin/Char /* = 'A' */
+        public final get
+
+      public final val doubleConst: kotlin/Double /* = 3.0 */
+        public final get
+
+      public final val enumConst: test/Weapon? /* = test/Weapon.ROCK */
+        public final get
+
+      public final val floatConst: kotlin/Float /* = 2.0f */
+        public final get
+
+      public final val intConst: kotlin/Int /* = 30 */
+        public final get
+
+      public final val longConst: kotlin/Long /* = 40L */
+        public final get
+
+      public final val shortConst: kotlin/Short /* = 20.toShort() */
+        public final get
+
+      public final val stringConst: kotlin/String /* = "abcd" */
+        public final get
+    }
+
+    public final enum class test/Weapon : kotlin/Enum<test/Weapon> {
+
+      private constructor()
+
+      ROCK,
+
+      PAPER,
+
+      SCISSORS,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      public final val arrayConst: kotlin/Any /* = [1.toByte(), 2.toByte()] */
+        public final get
+
+      public final val booleanConst: kotlin/Boolean /* = true */
+        public final get
+
+      public final val byteConst: kotlin/Byte /* = 10.toByte() */
+        public final get
+
+      public final val charConst: kotlin/Char /* = 'A' */
+        public final get
+
+      public final val doubleConst: kotlin/Double /* = 3.0 */
+        public final get
+
+      public final val enumConst: test/Weapon? /* = test/Weapon.ROCK */
+        public final get
+
+      public final val floatConst: kotlin/Float /* = 2.0f */
+        public final get
+
+      public final val intConst: kotlin/Int /* = 30 */
+        public final get
+
+      public final val longConst: kotlin/Long /* = 40L */
+        public final get
+
+      public final val shortConst: kotlin/Short /* = 20.toShort() */
+        public final get
+
+      public final val stringConst: kotlin/String /* = "abcd" */
+        public final get
+    }
+  }
+}

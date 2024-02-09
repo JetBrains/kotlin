@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 object Obj {
     const val O = "O"
     val concat = "${O}K"

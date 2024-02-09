@@ -1,9 +1,44 @@
-package test {
-    @Retention(value = AnnotationRetention.SOURCE) @Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER}) annotation class A constructor() : Annotation
-    enum class Enum private constructor() : Enum<Enum> {
-        enum entry ENTRY
+library {
+  // module name: <sourceRetainedAnnotation.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/Enum
+    // class name: test/Enum.ENTRY
+    // class name: test/Klass
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER])
+    public final annotation class test/A : kotlin/Annotation {
+
+      public constructor()
     }
-    class Klass constructor()
-    fun <T> function(param: Unit)
-    val property: Unit
+
+    public final enum class test/Enum : kotlin/Enum<test/Enum> {
+
+      private constructor()
+
+      ENTRY,
+
+      // has Enum.entries
+    }
+
+    public final enum entry test/Enum.ENTRY : test/Enum {
+    }
+
+    public final class test/Klass : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun <T#0 /* T */> function(param: kotlin/Unit): kotlin/Unit
+
+      public final val property: kotlin/Unit
+        public final get
+    }
+  }
 }

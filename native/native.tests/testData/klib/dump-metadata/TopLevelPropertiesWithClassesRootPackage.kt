@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @file:Suppress("UNUSED_PARAMETER")
 
 class Foo

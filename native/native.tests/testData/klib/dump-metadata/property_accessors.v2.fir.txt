@@ -1,0 +1,76 @@
+library {
+  // module name: <property_accessors.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+
+    // signature: test/A|null[0]
+    public abstract class test/A : kotlin/Any {
+
+      // signature: test/A.<init>|<init>(){}[0]
+      public constructor()
+
+      // signature: test/A.a|{}a[0]
+      public abstract val a: kotlin/Int
+        // signature: test/A.a.<get-a>|<get-a>(){}[0]
+        public abstract get
+
+      // signature: test/A.b|{}b[0]
+      public abstract var b: kotlin/Int
+        // signature: test/A.b.<get-b>|<get-b>(){}[0]
+        public abstract get
+        // signature: test/A.b.<set-b>|<set-b>(kotlin.Int){}[0]
+        protected abstract /* non-default */ set(value: kotlin/Int)
+
+      // signature: test/A.c|{}c[0]
+      public final val c: kotlin/Int
+        // signature: test/A.c.<get-c>|<get-c>(){}[0]
+        public final get
+
+      // signature: test/A.d|{}d[0]
+      public final val d: kotlin/Int
+        // signature: test/A.d.<get-d>|<get-d>(){}[0]
+        public final /* non-default */ get
+
+      // signature: test/A.e|{}e[0]
+      public final var e: kotlin/Int
+        // signature: test/A.e.<get-e>|<get-e>(){}[0]
+        public final /* non-default */ get
+        // signature: test/A.e.<set-e>|<set-e>(kotlin.Int){}[0]
+        public final /* non-default */ set(value: kotlin/Int)
+
+      // signature: test/A.f|{}f[0]
+      public final var f: kotlin/Int
+        // signature: test/A.f.<get-f>|<get-f>(){}[0]
+        public final get
+        // signature: test/A.f.<set-f>|<set-f>(kotlin.Int){}[0]
+        private final /* non-default */ set(value: kotlin/Int)
+
+      // signature: test/A.g|{}g[0]
+      public open val g: kotlin/Int
+        // signature: test/A.g.<get-g>|<get-g>(){}[0]
+        public open get
+
+      // signature: test/A.h|{}h[0]
+      public open val h: kotlin/Int
+        // signature: test/A.h.<get-h>|<get-h>(){}[0]
+        public open /* non-default */ get
+
+      // signature: test/A.k|{}k[0]
+      public open var k: kotlin/Int
+        // signature: test/A.k.<get-k>|<get-k>(){}[0]
+        public open /* non-default */ get
+        // signature: test/A.k.<set-k>|<set-k>(kotlin.Int){}[0]
+        public open /* non-default */ set(value: kotlin/Int)
+
+      // signature: test/A.l|{}l[0]
+      public open var l: kotlin/Int
+        // signature: test/A.l.<get-l>|<get-l>(){}[0]
+        public open get
+        // signature: test/A.l.<set-l>|<set-l>(kotlin.Int){}[0]
+        protected open /* non-default */ set(value: kotlin/Int)
+    }
+  }
+}

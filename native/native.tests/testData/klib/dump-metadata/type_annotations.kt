@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package test
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.TYPE)

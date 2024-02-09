@@ -1,0 +1,40 @@
+library {
+  // module name: <sourceRetainedAnnotation.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/Enum
+    // class name: test/Klass
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER])
+    public final annotation class test/A : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    public final enum class test/Enum : kotlin/Enum<test/Enum> {
+
+      private constructor()
+
+      ENTRY,
+
+      // has Enum.entries
+    }
+
+    public final class test/Klass : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final fun <T#0 /* T */> function(param: kotlin/Unit): kotlin/Unit
+
+      public final val property: kotlin/Unit
+        public final get
+    }
+  }
+}

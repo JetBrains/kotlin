@@ -1,0 +1,66 @@
+library {
+  // module name: <data_class.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/DataClass
+    // class name: test/DataObject
+
+    // signature: test/DataClass|null[0]
+    public final data class test/DataClass : kotlin/Any {
+
+      // signature: test/DataClass.<init>|<init>(kotlin.Int;kotlin.String){}[0]
+      public constructor(intProp: kotlin/Int, stringProp: kotlin/String)
+
+      // signature: test/DataClass.component1|component1(){}[0]
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      // signature: test/DataClass.component2|component2(){}[0]
+      public final /* synthesized */ operator fun component2(): kotlin/String
+
+      // signature: test/DataClass.copy|copy(kotlin.Int;kotlin.String){}[0]
+      public final /* synthesized */ fun copy(intProp: kotlin/Int /* = ... */, stringProp: kotlin/String /* = ... */): test/DataClass
+
+      // signature: test/DataClass.equals|equals(kotlin.Any?){}[0]
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      // signature: test/DataClass.hashCode|hashCode(){}[0]
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      // signature: test/DataClass.toString|toString(){}[0]
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      // signature: test/DataClass.intProp|{}intProp[0]
+      public final val intProp: kotlin/Int
+        // signature: test/DataClass.intProp.<get-intProp>|<get-intProp>(){}[0]
+        public final get
+
+      // signature: test/DataClass.nonConstructorProp|{}nonConstructorProp[0]
+      public final val nonConstructorProp: kotlin/Int /* = 0 */
+        // signature: test/DataClass.nonConstructorProp.<get-nonConstructorProp>|<get-nonConstructorProp>(){}[0]
+        public final get
+
+      // signature: test/DataClass.stringProp|{}stringProp[0]
+      public final val stringProp: kotlin/String
+        // signature: test/DataClass.stringProp.<get-stringProp>|<get-stringProp>(){}[0]
+        public final get
+    }
+
+    // signature: test/DataObject|null[0]
+    public final data object test/DataObject : kotlin/Any {
+
+      // signature: test/DataObject.<init>|<init>(){}[0]
+      private constructor()
+
+      // signature: test/DataObject.equals|equals(kotlin.Any?){}[0]
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      // signature: test/DataObject.hashCode|hashCode(){}[0]
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      // signature: test/DataObject.toString|toString(){}[0]
+      public open /* synthesized */ fun toString(): kotlin/String
+    }
+  }
+}

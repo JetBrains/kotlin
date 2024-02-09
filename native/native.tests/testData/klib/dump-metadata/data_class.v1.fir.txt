@@ -1,0 +1,66 @@
+library {
+  // module name: <data_class.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/DataClass
+    // class name: test/DataObject
+
+    // signature: test/DataClass|null[0]
+    public final data class test/DataClass : kotlin/Any {
+
+      // signature: test/DataClass.<init>|-6994814679185246063[0]
+      public constructor(intProp: kotlin/Int, stringProp: kotlin/String)
+
+      // signature: test/DataClass.component1|162597135895221648[0]
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      // signature: test/DataClass.component2|3796717572321500973[0]
+      public final /* synthesized */ operator fun component2(): kotlin/String
+
+      // signature: test/DataClass.copy|5893098757611139585[0]
+      public final /* synthesized */ fun copy(intProp: kotlin/Int /* = ... */, stringProp: kotlin/String /* = ... */): test/DataClass
+
+      // signature: test/DataClass.equals|4638265728071529943[0]
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      // signature: test/DataClass.hashCode|3409210261493131192[0]
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      // signature: test/DataClass.toString|-1522858123163872138[0]
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      // signature: test/DataClass.intProp|-1954141164874420124[0]
+      public final val intProp: kotlin/Int
+        // signature: test/DataClass.intProp.<get-intProp>|-1747412063459010494[0]
+        public final get
+
+      // signature: test/DataClass.nonConstructorProp|-7591717016192191275[0]
+      public final val nonConstructorProp: kotlin/Int /* = 0 */
+        // signature: test/DataClass.nonConstructorProp.<get-nonConstructorProp>|-4157169863676572493[0]
+        public final get
+
+      // signature: test/DataClass.stringProp|36744939140285916[0]
+      public final val stringProp: kotlin/String
+        // signature: test/DataClass.stringProp.<get-stringProp>|-4778051063024598129[0]
+        public final get
+    }
+
+    // signature: test/DataObject|null[0]
+    public final data object test/DataObject : kotlin/Any {
+
+      // signature: test/DataObject.<init>|-5645683436151566731[0]
+      private constructor()
+
+      // signature: test/DataObject.equals|4638265728071529943[0]
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      // signature: test/DataObject.hashCode|3409210261493131192[0]
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      // signature: test/DataObject.toString|-1522858123163872138[0]
+      public open /* synthesized */ fun toString(): kotlin/String
+    }
+  }
+}

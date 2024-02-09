@@ -1,7 +1,24 @@
-package <root> {
-    typealias MyTransformer = (String) -> Int
-    val v1: Int = 1
-    val v2: String = "hello"
-    val v3: (String) -> Int
-    val v4: MyTransformer /* = (String) -> Int */
+library {
+  // module name: <TopLevelPropertiesRootPackage.kt>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      public final val v1: kotlin/Int /* = 1 */
+        public final get
+
+      public final val v2: kotlin/String /* = "hello" */
+        public final get
+
+      public final val v3: kotlin/Function1<kotlin/String, kotlin/Int>
+        public final get
+
+      public final val v4: kotlin/Function1<kotlin/String, kotlin/Int> /* = MyTransformer^ */
+        public final get
+
+      public typealias MyTransformer = kotlin/Function1<kotlin/String, kotlin/Int> /* = kotlin/Function1<kotlin/String, kotlin/Int> */
+    }
+  }
 }

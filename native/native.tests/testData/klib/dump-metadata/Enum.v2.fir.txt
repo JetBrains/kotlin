@@ -1,0 +1,47 @@
+library {
+  // module name: <Enum.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: E
+
+    // signature: /E|null[0]
+    public final enum class E : kotlin/Enum<E> {
+
+      // signature: /E.<init>|<init>(kotlin.Int){}[0]
+      private constructor(x: kotlin/Int /* = ... */)
+
+      // signature: /E.enumFun|enumFun(){}[0]
+      public open fun enumFun(): kotlin/Int
+
+      // signature: /E.enumVal|{}enumVal[0]
+      public final val enumVal: kotlin/Int /* = 0 */
+        // signature: /E.enumVal.<get-enumVal>|<get-enumVal>(){}[0]
+        public final get
+
+      // signature: /E.enumVar|{}enumVar[0]
+      public final var enumVar: kotlin/String
+        // signature: /E.enumVar.<get-enumVar>|<get-enumVar>(){}[0]
+        public final get
+        // signature: /E.enumVar.<set-enumVar>|<set-enumVar>(kotlin.String){}[0]
+        public final set
+
+      // signature: /E.x|{}x[0]
+      public final val x: kotlin/Int
+        // signature: /E.x.<get-x>|<get-x>(){}[0]
+        public final get
+
+      // signature: /E.A|null[0]
+      A,
+
+      // signature: /E.B|null[0]
+      B,
+
+      // signature: /E.C|null[0]
+      C,
+
+      // has Enum.entries
+    }
+  }
+}

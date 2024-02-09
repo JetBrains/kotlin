@@ -1,0 +1,45 @@
+library {
+  // module name: <binaryRetainedAnnotation.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/Enum
+    // class name: test/Klass
+
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER])
+    public final annotation class test/A : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    public final enum class test/Enum : kotlin/Enum<test/Enum> {
+
+      private constructor()
+
+      @test/A
+      ENTRY,
+
+      // has Enum.entries
+    }
+
+    @test/A
+    public final class test/Klass : kotlin/Any {
+
+      @test/A
+      public constructor()
+    }
+
+    package {
+
+      @test/A
+      public final fun <@test/A T#0 /* T */> function(@test/A param: kotlin/Unit): @test/A kotlin/Unit
+
+      @test/A
+      public final val property: kotlin/Unit
+        public final get
+    }
+  }
+}
