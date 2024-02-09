@@ -112,11 +112,13 @@ extern "C" void DeinitMemory(MemoryState* state, bool destroyRuntime) {
     // the thread registery and waits for threads to suspend or go to the native state.
     AssertThreadState(state, ThreadState::kNative);
     auto* node = mm::FromMemoryState(state);
+    node->Get()->profilers().publish();
     if (destroyRuntime) {
         ThreadStateGuard guard(state, ThreadState::kRunnable);
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
         // TODO: Why not just destruct `GC` object and its thread data counterpart entirely?
         mm::GlobalData::Instance().gc().StopFinalizerThreadIfRunning();
+        mm::GlobalData::Instance().profilers().report();
     }
     if (!konan::isOnThreadExitNotSetOrAlreadyStarted()) {
         // we can clear reference in advance, as Unregister function can't use it anyway
@@ -133,16 +135,18 @@ extern "C" void ClearMemoryForTests(MemoryState* state) {
     state->GetThreadData()->ClearForTests();
 }
 
-extern "C" RUNTIME_NOTHROW OBJ_GETTER(AllocInstance, const TypeInfo* typeInfo) {
+extern "C" ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(AllocInstance, const TypeInfo* typeInfo) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    ProfilerHit(threadData->profilers().allocation(), {typeInfo});
     RETURN_RESULT_OF(mm::AllocateObject, threadData, typeInfo);
 }
 
-extern "C" OBJ_GETTER(AllocArrayInstance, const TypeInfo* typeInfo, int32_t elements) {
+extern "C" ALWAYS_INLINE OBJ_GETTER(AllocArrayInstance, const TypeInfo* typeInfo, int32_t elements) {
     if (elements < 0) {
         ThrowIllegalArgumentException();
     }
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    ProfilerHit(threadData->profilers().allocation(), {typeInfo, static_cast<size_t>(elements)});
     RETURN_RESULT_OF(mm::AllocateArray, threadData, typeInfo, static_cast<uint32_t>(elements));
 }
 
@@ -500,7 +504,7 @@ extern "C" RUNTIME_NOTHROW bool ClearSubgraphReferences(ObjHeader* root, bool ch
     return true;
 }
 
-extern "C" RUNTIME_NOTHROW void* CreateStablePointer(ObjHeader* object) {
+ALWAYS_INLINE extern "C" RUNTIME_NOTHROW void* CreateStablePointer(ObjHeader* object) {
     if (!object)
         return nullptr;
 

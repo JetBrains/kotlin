@@ -40,7 +40,7 @@ enum class Tag : int32_t {
     kBarriers = 8,
     kGCMark = 9,
 
-    kEnumSize = 10
+    kEnumSize = 11
 };
 
 namespace internal {

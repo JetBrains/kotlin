@@ -19,7 +19,7 @@ void KRefSharedHolder::initLocal(ObjHeader* obj) {
     obj_ = obj;
 }
 
-void KRefSharedHolder::init(ObjHeader* obj) {
+ALWAYS_INLINE void KRefSharedHolder::init(ObjHeader* obj) {
     RuntimeAssert(obj != nullptr, "must not be null");
     ref_ = static_cast<mm::RawSpecialRef*>(mm::StableRef::create(obj));
     obj_ = obj;

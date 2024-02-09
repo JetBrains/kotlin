@@ -37,6 +37,9 @@ OBJ_GETTER(StringFromUtf8Buffer, const char* start, size_t size);
 
 #ifdef __cplusplus
 }
+
+std::string to_string(KConstRef kstring);
+
 #endif
 
 template <typename T>

@@ -88,6 +88,10 @@ object BinaryOptions : BinaryOptionRegistry() {
     val swiftExport by booleanOption()
 
     val genericSafeCasts by booleanOption()
+
+    val eventTrackerFrequency by stringOption()
+
+    val eventTrackerBacktraceDepth by stringOption()
 }
 
 open class BinaryOption<T : Any>(

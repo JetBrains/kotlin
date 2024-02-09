@@ -15,6 +15,7 @@
 #include "SpecialRefRegistry.hpp"
 #include "ThreadRegistry.hpp"
 #include "Utils.hpp"
+#include "profiler/Profiler.hpp"
 
 namespace kotlin {
 namespace mm {
@@ -35,6 +36,7 @@ public:
     alloc::Allocator& allocator() noexcept { return allocator_; }
     gc::GC& gc() noexcept { return gc_; }
     AppStateTracking& appStateTracking() noexcept { return appStateTracking_; }
+    profiler::Profilers& profilers() noexcept { return profilers_; }
 
 private:
     friend class ManuallyScoped<GlobalData>;
@@ -49,6 +51,7 @@ private:
     gcScheduler::GCScheduler gcScheduler_;
     alloc::Allocator allocator_;
     gc::GC gc_{allocator_, gcScheduler_};
+    profiler::Profilers profilers_;
 };
 
 } // namespace mm
