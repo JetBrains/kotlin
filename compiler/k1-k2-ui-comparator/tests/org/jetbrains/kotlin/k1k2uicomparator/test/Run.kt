@@ -32,6 +32,7 @@ val uiComparatorStyleForCompiler = UIComparatorStyle(
     initialSource = """
         // WITH_STDLIB
         // FULL_JDK
+        // RENDER_DIAGNOSTICS_MESSAGES
 
         fun main() {
             happiness
