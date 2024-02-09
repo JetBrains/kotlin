@@ -13,19 +13,13 @@
 @kotlin.Metadata()
 public final class Kt14996Kt {
 
-    public Kt14996Kt() {
-        super();
-    }
-
     @org.jetbrains.annotations.NotNull()
-    public static final java.lang.CharSequence crashMe(@org.jetbrains.annotations.NotNull()
-    java.util.List<? extends java.lang.CharSequence> values) {
+    public static final java.lang.CharSequence crashMe(@org.jetbrains.annotations.NotNull() java.util.List<? extends java.lang.CharSequence> values) {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    public static final java.lang.String crashMe(@org.jetbrains.annotations.NotNull()
-    java.util.List<java.lang.String> values) {
+    public static final java.lang.String crashMe(@org.jetbrains.annotations.NotNull() java.util.List<java.lang.String> values) {
         return null;
     }
 }

@@ -18,8 +18,8 @@ public abstract @interface A {
     public abstract int[] x();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * package {
@@ -38,10 +38,6 @@ public abstract @interface A {
  */
 @kotlin.Metadata()
 public final class AnnotationWithVaragArgumentsKt {
-
-    public AnnotationWithVaragArgumentsKt() {
-        super();
-    }
 
     @A(x = {1})
     @B(x = "x", y = {1}, z = "z")
@@ -64,8 +60,8 @@ public final class AnnotationWithVaragArgumentsKt {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class B : kotlin/Annotation {
@@ -99,8 +95,8 @@ public abstract @interface B {
     public abstract java.lang.String z();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class C : kotlin/Annotation {
@@ -128,8 +124,8 @@ public abstract @interface C {
     public abstract B b();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class D : kotlin/Annotation {
@@ -151,8 +147,8 @@ public abstract @interface D {
     public abstract java.lang.String[] x() default {"a", "b"};
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class E : kotlin/Annotation {

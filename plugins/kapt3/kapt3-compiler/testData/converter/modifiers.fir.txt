@@ -17,6 +17,7 @@ public final class InternalClass {
     }
 }
 
+
 ////////////////////
 
 package modifiers;
@@ -30,6 +31,7 @@ package modifiers;
 @kotlin.Metadata()
 public abstract interface InternalInterface {
 }
+
 
 ////////////////////
 
@@ -67,6 +69,7 @@ public final class Modifiers {
     @kotlin.jvm.Transient()
     @org.jetbrains.annotations.NotNull()
     private final transient java.lang.String transientField = "";
+
     @kotlin.jvm.Volatile()
     @org.jetbrains.annotations.NotNull()
     private volatile java.lang.String volatileField = "";
@@ -85,8 +88,7 @@ public final class Modifiers {
         return null;
     }
 
-    public final void setVolatileField(@org.jetbrains.annotations.NotNull()
-    java.lang.String p0) {
+    public final void setVolatileField(@org.jetbrains.annotations.NotNull() java.lang.String p0) {
     }
 
     @kotlin.jvm.Strictfp()
@@ -101,18 +103,17 @@ public final class Modifiers {
 
     @kotlin.jvm.JvmOverloads()
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
-    java.lang.String a) {
+    public final java.lang.String overloads(@org.jetbrains.annotations.NotNull() java.lang.String a) {
         return null;
     }
 
     @kotlin.jvm.JvmOverloads()
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
-    java.lang.String a, int n) {
+    public final java.lang.String overloads(@org.jetbrains.annotations.NotNull() java.lang.String a, int n) {
         return null;
     }
 }
+
 
 ////////////////////
 
@@ -135,6 +136,7 @@ final class PrivateClass {
     }
 }
 
+
 ////////////////////
 
 package modifiers;
@@ -148,6 +150,7 @@ package modifiers;
 @kotlin.Metadata()
 abstract interface PrivateInterface {
 }
+
 
 ////////////////////
 
@@ -170,6 +173,7 @@ public final class PublicClass {
     }
 }
 
+
 ////////////////////
 
 package modifiers;
@@ -190,6 +194,7 @@ public abstract class PublicClassPrivateConstructor {
         super();
     }
 }
+
 
 ////////////////////
 
@@ -224,7 +229,6 @@ public class PublicClassProtectedConstructor {
     @kotlin.Metadata()
     protected static abstract interface ProtectedInterface {
     }
-
     /**
      * private abstract interface modifiers/PublicClassProtectedConstructor.PrivateInterface : kotlin/Any {
      *
@@ -235,6 +239,7 @@ public class PublicClassProtectedConstructor {
     private static abstract interface PrivateInterface {
     }
 }
+
 
 ////////////////////
 
@@ -249,6 +254,7 @@ package modifiers;
 @kotlin.Metadata()
 public abstract interface PublicInterface {
 }
+
 
 ////////////////////
 
@@ -294,7 +300,6 @@ public abstract class SealedClass {
             super();
         }
     }
-
     /**
      * public open class modifiers/SealedClass.Two : modifiers/SealedClass {
      *
@@ -311,7 +316,6 @@ public abstract class SealedClass {
             super();
         }
     }
-
     /**
      * public abstract class modifiers/SealedClass.Three : modifiers/SealedClass.Two {
      *
@@ -328,7 +332,6 @@ public abstract class SealedClass {
             super();
         }
     }
-
     /**
      * public final class modifiers/SealedClass.Four : modifiers/SealedClass.Three {
      *

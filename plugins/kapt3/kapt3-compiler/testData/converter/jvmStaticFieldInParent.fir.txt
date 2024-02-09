@@ -15,6 +15,7 @@
 public final class Test {
     @org.jetbrains.annotations.NotNull()
     public static final Test.A A = null;
+
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String test = "";
 

@@ -15,8 +15,8 @@ public abstract class Foo {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * package {
@@ -38,10 +38,6 @@ public abstract class Foo {
  */
 @kotlin.Metadata()
 public final class Kt18682Kt {
-
-    public Kt18682Kt() {
-        super();
-    }
 
     @org.jetbrains.annotations.NotNull()
     public static final java.util.List<java.lang.Object> test1() {

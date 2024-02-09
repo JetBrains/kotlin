@@ -25,8 +25,9 @@
  */
 @kotlin.Metadata()
 public enum E {
-    /*public static final*/ X /* = new E() */,
-    /*public static final*/ Y /* = new E() */;
+    X,
+    Y;
+
 
     E() {
     }
@@ -59,7 +60,6 @@ public enum E {
             super();
         }
     }
-
     /**
      * public final class E.NestedClass : kotlin/Any {
      *
@@ -78,8 +78,8 @@ public enum E {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final enum class E2 : kotlin/Enum<E2> {
@@ -104,8 +104,9 @@ public enum E {
  */
 @kotlin.Metadata()
 public enum E2 {
-    /*public static final*/ X /* = new E2() */,
-    /*public static final*/ Y /* = new E2() */;
+    X,
+    Y;
+
 
     E2(int n) {
     }
@@ -121,8 +122,8 @@ public enum E2 {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final enum class E3 : kotlin/Enum<E3> {
@@ -146,8 +147,9 @@ public enum E2 {
  */
 @kotlin.Metadata()
 public enum E3 {
-    /*public static final*/ X /* = new E3() */,
-    /*public static final*/ Y /* = new E3() */;
+    X,
+    Y;
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
@@ -165,8 +167,8 @@ public enum E3 {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final enum class E4 : kotlin/Enum<E4> {
@@ -203,11 +205,15 @@ public enum E3 {
  */
 @kotlin.Metadata()
 public enum E4 {
-    /*public static final*/ X /* = new E4() */;
+    X;
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
+
     private final int b = 0;
+
     private final long c = 0L;
+
     private final boolean d = false;
 
     E4(java.lang.String a, int b, long c, boolean d) {

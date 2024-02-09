@@ -41,8 +41,8 @@ public final class Test {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Test2 : kotlin/Any {
@@ -106,8 +106,8 @@ public final class Test2 {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Test3 : kotlin/Any {

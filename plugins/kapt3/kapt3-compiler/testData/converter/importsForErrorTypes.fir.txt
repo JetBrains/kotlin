@@ -10,10 +10,6 @@
 @kotlin.Metadata()
 public final class ImportsForErrorTypesKt {
 
-    public ImportsForErrorTypesKt() {
-        super();
-    }
-
     @org.jetbrains.annotations.Nullable()
     public static final java.lang.Object test() {
         return null;

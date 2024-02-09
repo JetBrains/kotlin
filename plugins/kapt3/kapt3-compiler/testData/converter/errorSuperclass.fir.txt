@@ -14,6 +14,7 @@ package test;
 public abstract @interface Anno {
 }
 
+
 ////////////////////
 
 package test;

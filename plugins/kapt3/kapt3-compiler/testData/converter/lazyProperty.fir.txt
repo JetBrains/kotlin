@@ -31,10 +31,13 @@
 public final class Foo {
     @org.jetbrains.annotations.NotNull()
     private final kotlin.Lazy<java.lang.Runnable> foo$delegate = null;
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.Lazy<java.lang.Object> bar$delegate = null;
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.Lazy<java.lang.Object> baz$delegate = null;
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.Lazy<GenericIntf<java.lang.CharSequence>> generic1$delegate = null;
 
@@ -59,8 +62,8 @@ public final class Foo {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public abstract interface GenericIntf<T#0 (* T *)> : kotlin/Any {
@@ -72,8 +75,8 @@ public final class Foo {
 public abstract interface GenericIntf<T extends java.lang.Object> {
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public abstract interface Intf : kotlin/Any {

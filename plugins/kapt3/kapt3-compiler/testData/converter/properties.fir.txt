@@ -52,18 +52,24 @@
 public final class Test {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String simple = "123";
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String inferType = null;
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String getter = "O";
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Class<?> constJavaClassValue = null;
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.reflect.KClass<?> constClassValue = null;
-    @java.lang.Deprecated()
+
+    @java.lang.Deprecated
     private boolean isBoolean = false;
+
     @org.jetbrains.annotations.NotNull()
-    @java.lang.Deprecated()
+    @java.lang.Deprecated
     private kotlin.Unit unit;
 
     public Test() {
@@ -95,7 +101,7 @@ public final class Test {
         return null;
     }
 
-    @java.lang.Deprecated()
+    @java.lang.Deprecated
     public final boolean isBoolean() {
         return false;
     }
@@ -105,12 +111,12 @@ public final class Test {
     public static void isBoolean$annotations() {
     }
 
-    @java.lang.Deprecated()
+    @java.lang.Deprecated
     public final void setBoolean(boolean p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @java.lang.Deprecated()
+    @java.lang.Deprecated
     public final kotlin.Unit getUnit() {
         return null;
     }
@@ -120,8 +126,7 @@ public final class Test {
     public static void getUnit$annotations() {
     }
 
-    @java.lang.Deprecated()
-    public final void setUnit(@org.jetbrains.annotations.NotNull()
-    kotlin.Unit p0) {
+    @java.lang.Deprecated
+    public final void setUnit(@org.jetbrains.annotations.NotNull() kotlin.Unit p0) {
     }
 }

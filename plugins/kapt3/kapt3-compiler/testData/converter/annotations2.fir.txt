@@ -21,6 +21,7 @@ public abstract @interface Anno {
     public abstract java.lang.String value();
 }
 
+
 ////////////////////
 
 package test;
@@ -43,13 +44,8 @@ package test;
 @kotlin.jvm.JvmName(name = "AnnotationsTest")
 public final class AnnotationsTest {
 
-    public AnnotationsTest() {
-        super();
-    }
-
     @org.jetbrains.annotations.NotNull()
-    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
-    int $this$topLevelVal) {
+    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver") int $this$topLevelVal) {
         return null;
     }
 
@@ -59,11 +55,10 @@ public final class AnnotationsTest {
     }
 
     @Anno(value = "top-level-fun")
-    public static final void topLevelFun(@Anno(value = "top-level-fun-receiver")
-    @org.jetbrains.annotations.NotNull()
-    java.lang.String $this$topLevelFun) {
+    public static final void topLevelFun(@Anno(value = "top-level-fun-receiver") @org.jetbrains.annotations.NotNull() java.lang.String $this$topLevelFun) {
     }
 }
+
 
 ////////////////////
 
@@ -93,14 +88,14 @@ package test;
 @Anno(value = "enum")
 public enum Enum {
     @Anno(value = "white")
-    /*public static final*/ WHITE /* = new Enum() */,
+    WHITE,
     @Anno(value = "black")
-    /*public static final*/ BLACK /* = new Enum() */;
+    BLACK;
+
     private final int x = 0;
 
     @Anno(value = "enum-constructor")
-    Enum(@Anno(value = "x")
-    int x) {
+    Enum(@Anno(value = "x") int x) {
     }
 
     public final int getX() {
@@ -112,6 +107,7 @@ public enum Enum {
         return null;
     }
 }
+
 
 ////////////////////
 
@@ -149,9 +145,7 @@ public abstract class Test {
     private java.lang.String v;
 
     @Anno(value = "test-constructor")
-    protected Test(@Anno(value = "v-param")
-    @org.jetbrains.annotations.NotNull()
-    java.lang.String v) {
+    protected Test(@Anno(value = "v-param") @org.jetbrains.annotations.NotNull() java.lang.String v) {
         super();
     }
 
@@ -167,9 +161,7 @@ public abstract class Test {
     }
 
     @Anno(value = "v-set")
-    public final void setV(@Anno(value = "v-setparam")
-    @org.jetbrains.annotations.NotNull()
-    java.lang.String p0) {
+    public final void setV(@Anno(value = "v-setparam") @org.jetbrains.annotations.NotNull() java.lang.String p0) {
     }
 
     @Anno(value = "abstract-method")

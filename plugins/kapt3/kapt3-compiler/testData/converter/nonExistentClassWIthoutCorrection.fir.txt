@@ -17,8 +17,8 @@
 public final class NonExistentClassWIthoutCorrectionKt {
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final object NonExistentType : kotlin/Any {
@@ -101,19 +101,29 @@ public final class NonExistentClassWIthoutCorrectionKt {
 public final class NonExistentType {
     @org.jetbrains.annotations.NotNull()
     public static final NonExistentType INSTANCE = null;
+
     @org.jetbrains.annotations.NotNull()
     private static final ABCDEF a = null;
+
     @org.jetbrains.annotations.Nullable()
     private static final java.util.List<ABCDEF> b = null;
+
     @org.jetbrains.annotations.NotNull()
     private static final kotlin.jvm.functions.Function1<ABCDEF, kotlin.Unit> c = null;
+
     @org.jetbrains.annotations.NotNull()
     private static final ABCDEF<java.lang.String, kotlin.jvm.functions.Function1<java.util.List<? extends ABCDEF>, kotlin.Unit>> d = null;
+
     public static java.lang.String string2;
+
     public static ABC coocoo;
+
     public static ABC<java.lang.String> coocoo2;
+
     public static ABC<ABC> coocoo21;
+
     public static ABC<java.lang.String, java.lang.String> coocoo3;
+
     public static ABC<java.lang.String, ABC<ABC>> coocoo31;
 
     private NonExistentType() {
@@ -145,8 +155,7 @@ public final class NonExistentType {
         return null;
     }
 
-    public final void setString2(@org.jetbrains.annotations.NotNull()
-    java.lang.String p0) {
+    public final void setString2(@org.jetbrains.annotations.NotNull() java.lang.String p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -154,8 +163,7 @@ public final class NonExistentType {
         return null;
     }
 
-    public final void setCoocoo(@org.jetbrains.annotations.NotNull()
-    ABC p0) {
+    public final void setCoocoo(@org.jetbrains.annotations.NotNull() ABC p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -163,8 +171,7 @@ public final class NonExistentType {
         return null;
     }
 
-    public final void setCoocoo2(@org.jetbrains.annotations.NotNull()
-    ABC<java.lang.String> p0) {
+    public final void setCoocoo2(@org.jetbrains.annotations.NotNull() ABC<java.lang.String> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -172,8 +179,7 @@ public final class NonExistentType {
         return null;
     }
 
-    public final void setCoocoo21(@org.jetbrains.annotations.NotNull()
-    ABC<ABC> p0) {
+    public final void setCoocoo21(@org.jetbrains.annotations.NotNull() ABC<ABC> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -181,8 +187,7 @@ public final class NonExistentType {
         return null;
     }
 
-    public final void setCoocoo3(@org.jetbrains.annotations.NotNull()
-    ABC<java.lang.String, java.lang.String> p0) {
+    public final void setCoocoo3(@org.jetbrains.annotations.NotNull() ABC<java.lang.String, java.lang.String> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -190,20 +195,16 @@ public final class NonExistentType {
         return null;
     }
 
-    public final void setCoocoo31(@org.jetbrains.annotations.NotNull()
-    ABC<java.lang.String, ABC<ABC>> p0) {
+    public final void setCoocoo31(@org.jetbrains.annotations.NotNull() ABC<java.lang.String, ABC<ABC>> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final ABCDEF a(@org.jetbrains.annotations.NotNull()
-    ABCDEF a, @org.jetbrains.annotations.NotNull()
-    java.lang.String s) {
+    public final ABCDEF a(@org.jetbrains.annotations.NotNull() ABCDEF a, @org.jetbrains.annotations.NotNull() java.lang.String s) {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final ABCDEF b(@org.jetbrains.annotations.NotNull()
-    java.lang.String s) {
+    public final ABCDEF b(@org.jetbrains.annotations.NotNull() java.lang.String s) {
         return null;
     }
 }

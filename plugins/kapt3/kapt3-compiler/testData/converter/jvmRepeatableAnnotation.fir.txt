@@ -17,8 +17,8 @@ public final class A {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class Condition : kotlin/Annotation {

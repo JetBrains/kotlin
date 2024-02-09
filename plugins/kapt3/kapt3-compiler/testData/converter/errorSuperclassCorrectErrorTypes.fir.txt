@@ -17,6 +17,7 @@ public final class Child extends kotlin.collections.AbstractList<java.lang.Strin
     }
 }
 
+
 ////////////////////
 
 package test;
@@ -37,6 +38,7 @@ public class Cl {
         super();
     }
 }
+
 
 ////////////////////
 
@@ -59,6 +61,7 @@ public final class Generics1 extends Foo<java.lang.String> {
     }
 }
 
+
 ////////////////////
 
 package test;
@@ -79,6 +82,7 @@ public final class Generics2 implements Foo<java.lang.String> {
         super();
     }
 }
+
 
 ////////////////////
 
@@ -101,6 +105,7 @@ public final class Generics3 implements Foo<Bar, Baz, Boo<Baz, java.util.List<?>
     }
 }
 
+
 ////////////////////
 
 package test;
@@ -114,6 +119,7 @@ package test;
 @kotlin.Metadata()
 public abstract interface Intf {
 }
+
 
 ////////////////////
 
@@ -154,6 +160,7 @@ public final class MappedList<R extends java.lang.Object> extends kotlin.collect
     }
 }
 
+
 ////////////////////
 
 package test;
@@ -167,6 +174,7 @@ package test;
 @kotlin.Metadata()
 public abstract interface Parent<A extends java.lang.CharSequence, B extends java.lang.Object> {
 }
+
 
 ////////////////////
 
@@ -189,6 +197,7 @@ public final class TBarBazCl extends test.Cl implements Bar, Baz {
     }
 }
 
+
 ////////////////////
 
 package test;
@@ -209,6 +218,7 @@ public final class TClBarBaz extends test.Cl implements Bar, Baz {
         super();
     }
 }
+
 
 ////////////////////
 
@@ -233,8 +243,7 @@ public final class TFooBar extends Foo implements Bar, test.Intf {
     @org.jetbrains.annotations.NotNull()
     private final X a = null;
 
-    public TFooBar(@org.jetbrains.annotations.NotNull()
-    X a) {
+    public TFooBar(@org.jetbrains.annotations.NotNull() X a) {
         super();
     }
 
@@ -243,6 +252,7 @@ public final class TFooBar extends Foo implements Bar, test.Intf {
         return null;
     }
 }
+
 
 ////////////////////
 
@@ -267,8 +277,7 @@ public final class TFooBar2 implements Foo, Bar {
     @org.jetbrains.annotations.NotNull()
     private final X a = null;
 
-    public TFooBar2(@org.jetbrains.annotations.NotNull()
-    X a) {
+    public TFooBar2(@org.jetbrains.annotations.NotNull() X a) {
         super();
     }
 
@@ -277,6 +286,7 @@ public final class TFooBar2 implements Foo, Bar {
         return null;
     }
 }
+
 
 ////////////////////
 
@@ -299,6 +309,7 @@ public final class TFooBarBaz extends Foo implements Bar, Baz {
     }
 }
 
+
 ////////////////////
 
 package test;
@@ -319,6 +330,7 @@ public final class TFooBarBaz2 extends Foo implements Baz, test.Intf {
         super();
     }
 }
+
 
 ////////////////////
 
@@ -341,6 +353,7 @@ public final class TFooBarBaz3 implements Foo, Bar, Baz {
     }
 }
 
+
 ////////////////////
 
 package test;
@@ -361,6 +374,7 @@ public final class TFooBarBaz4 implements Foo, Bar, Baz {
         super();
     }
 }
+
 
 ////////////////////
 
@@ -385,11 +399,11 @@ public final class TFooBarBaz5 implements Foo, Bar, Baz {
         super();
     }
 
-    public TFooBarBaz5(@org.jetbrains.annotations.NotNull()
-    java.lang.String s) {
+    public TFooBarBaz5(@org.jetbrains.annotations.NotNull() java.lang.String s) {
         super();
     }
 }
+
 
 ////////////////////
 
@@ -407,11 +421,11 @@ package test;
 @kotlin.Metadata()
 public final class TFooBarBaz6 implements Foo, Bar, Baz {
 
-    public TFooBarBaz6(@org.jetbrains.annotations.NotNull()
-    java.lang.String s) {
+    public TFooBarBaz6(@org.jetbrains.annotations.NotNull() java.lang.String s) {
         super();
     }
 }
+
 
 ////////////////////
 
@@ -433,6 +447,7 @@ public final class TxFooxBarxBaz extends x.Foo implements x.Bar, x.Baz, test.Int
         super();
     }
 }
+
 
 ////////////////////
 

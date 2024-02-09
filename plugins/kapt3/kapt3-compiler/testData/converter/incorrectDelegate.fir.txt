@@ -10,14 +10,13 @@
 @kotlin.Metadata()
 public final class GroupedNewsListDelegateAdapter {
 
-    public GroupedNewsListDelegateAdapter(@org.jetbrains.annotations.NotNull()
-    kotlin.jvm.functions.Function0<kotlin.Unit> onWiFiClickListener) {
+    public GroupedNewsListDelegateAdapter(@org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function0<kotlin.Unit> onWiFiClickListener) {
         super();
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class HomeFragment : kotlin/Any {
@@ -43,6 +42,7 @@ public final class GroupedNewsListDelegateAdapter {
 public final class HomeFragment {
     @org.jetbrains.annotations.NotNull()
     private final kotlin.Unit categoryNewsListPresenter$delegate = null;
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.Lazy<GroupedNewsListDelegateAdapter> groupedNewsListAdapter$delegate = null;
 
@@ -64,8 +64,8 @@ public final class HomeFragment {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * package {
@@ -78,10 +78,6 @@ public final class HomeFragment {
  */
 @kotlin.Metadata()
 public final class IncorrectDelegateKt {
-
-    public IncorrectDelegateKt() {
-        super();
-    }
 
     public static final void moxyPresenter() {
     }

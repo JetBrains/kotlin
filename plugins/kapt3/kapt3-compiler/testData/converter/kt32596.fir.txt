@@ -18,8 +18,8 @@ public abstract @interface Anno {
     public abstract java.lang.Class<?> klass();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class ErrorMissingAnnotation : kotlin/Any {
@@ -39,8 +39,8 @@ public final class ErrorMissingAnnotation {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class ErrorMultipleMissingAnnotations : kotlin/Any {
@@ -61,8 +61,8 @@ public final class ErrorMultipleMissingAnnotations {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class ErrorSomeMissingAnnotations : kotlin/Any {
@@ -84,8 +84,8 @@ public final class ErrorSomeMissingAnnotations {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class FullyQualifiedMissingAnnotation : kotlin/Any {

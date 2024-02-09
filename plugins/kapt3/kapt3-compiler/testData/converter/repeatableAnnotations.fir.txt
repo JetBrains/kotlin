@@ -24,8 +24,8 @@ public abstract @interface AnnoArray {
     public abstract java.lang.String[] a();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class AnnoBoolean : kotlin/Annotation {
@@ -53,8 +53,8 @@ public abstract @interface AnnoBoolean {
     public abstract boolean bool();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class AnnoChar : kotlin/Annotation {
@@ -82,8 +82,8 @@ public abstract @interface AnnoChar {
     public abstract char chr();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class AnnoClass : kotlin/Annotation {
@@ -111,8 +111,8 @@ public abstract @interface AnnoClass {
     public abstract java.lang.Class<Color> c();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class AnnoDouble : kotlin/Annotation {
@@ -140,8 +140,8 @@ public abstract @interface AnnoDouble {
     public abstract double dbl();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class AnnoEnum : kotlin/Annotation {
@@ -169,8 +169,8 @@ public abstract @interface AnnoEnum {
     public abstract Color c();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class AnnoFloat : kotlin/Annotation {
@@ -198,8 +198,8 @@ public abstract @interface AnnoFloat {
     public abstract float flt();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class AnnoInt : kotlin/Annotation {
@@ -227,8 +227,8 @@ public abstract @interface AnnoInt {
     public abstract int i();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class AnnoIntArray : kotlin/Annotation {
@@ -256,8 +256,8 @@ public abstract @interface AnnoIntArray {
     public abstract int[] b();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class AnnoLong : kotlin/Annotation {
@@ -285,8 +285,8 @@ public abstract @interface AnnoLong {
     public abstract long l();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class AnnoLongArray : kotlin/Annotation {
@@ -314,8 +314,8 @@ public abstract @interface AnnoLongArray {
     public abstract long[] b();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class AnnoString : kotlin/Annotation {
@@ -343,8 +343,8 @@ public abstract @interface AnnoString {
     public abstract java.lang.String s();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final enum class Color : kotlin/Enum<Color> {
@@ -361,7 +361,8 @@ public abstract @interface AnnoString {
  */
 @kotlin.Metadata()
 public enum Color {
-    /*public static final*/ BLACK /* = new Color() */;
+    BLACK;
+
 
     Color() {
     }
@@ -372,8 +373,8 @@ public enum Color {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Test : kotlin/Any {
@@ -412,8 +413,8 @@ public final class Test {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Test2 : kotlin/Any {
@@ -428,7 +429,7 @@ public final class Test {
 @AnnoChar(x = 100, chr = 'c')
 @AnnoBoolean(x = 100, bool = false)
 @AnnoInt(x = 100, i = 5)
-@AnnoFloat(x = 100, flt = 1.0F)
+@AnnoFloat(x = 100, flt = 1.0f)
 @AnnoDouble(x = 100, dbl = 4.0)
 @AnnoString(x = 100, s = "AAA")
 @AnnoIntArray(x = 100, b = {1, 2, 3})
@@ -439,35 +440,5 @@ public final class Test2 {
 
     public Test2() {
         super();
-    }
-}
-
-////////////////////
-
-package lib;
-
-public @interface Anno {
-
-    String[] construct() default {};
-
-    String value();
-}
-
-////////////////////
-
-package lib;
-
-public class R {
-
-    public R() {
-        super();
-    }
-
-    public static class id {
-
-        public id() {
-            super();
-        }
-        public static final int textView = 100;
     }
 }
