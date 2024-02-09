@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.plugin
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.plugin.generators.*
@@ -27,6 +28,10 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::FirNumberSignAttributeExtension
         +::AlgebraReceiverInjector
         +::ComposableLikeFunctionTypeKindExtension
+        @OptIn(FirExtensionApiInternals::class)
+        +::DataFrameLikeCallsRefinementExtension
+        +::DataFrameLikeReturnTypeInjector
+        +::CallDataStorage
 
         // Declaration generators
         +::TopLevelDeclarationsGenerator
@@ -35,6 +40,7 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::AdditionalMembersGenerator
         +::CompanionGenerator
         +::MembersOfSerializerGenerator
+        +::DataFrameLikeTypeMembersGenerator
     }
 }
 
