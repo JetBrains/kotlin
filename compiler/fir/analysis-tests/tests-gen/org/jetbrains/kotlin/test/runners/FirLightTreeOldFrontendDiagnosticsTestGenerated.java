@@ -18042,6 +18042,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("capturedUpperBound.kt")
+                public void testCapturedUpperBound() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedUpperBound.kt");
+                }
+
+                @Test
                 @TestMetadata("capturingFromArgumentOfFlexibleType.kt")
                 public void testCapturingFromArgumentOfFlexibleType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturingFromArgumentOfFlexibleType.kt");
