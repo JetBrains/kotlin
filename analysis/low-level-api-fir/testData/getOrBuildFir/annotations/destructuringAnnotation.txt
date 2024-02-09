@@ -1,0 +1,50 @@
+KT element: KtAnnotationEntry
+FIR element: FirAnnotationCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@DestrAnno[Unresolved](LAZY_EXPRESSION)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] destructuringAnnotation.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringAnnotation.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|/MyPair|.R|/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class DestrAnno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DestrAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/DestrAnno.s] s: String): R|DestrAnno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DestrAnno] get(): String
+
+        }
+
+        @DestrAnno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = R|<local>/<destruct>|.component1#()
+
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = R|<local>/<destruct>|.component2#()
