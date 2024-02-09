@@ -118,8 +118,6 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 )
             }
 
-            @Suppress("DEPRECATION")
-            task.ownModuleName.set(project.provider { compilationInfo.moduleName })
             task.sourceSetName.value(providers.provider { compilationInfo.compilationName })
             task.multiPlatformEnabled.value(
                 providers.provider {

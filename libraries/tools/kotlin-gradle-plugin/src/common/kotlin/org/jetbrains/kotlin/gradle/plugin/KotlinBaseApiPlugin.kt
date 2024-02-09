@@ -87,8 +87,6 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         )
         registeredKotlinJvmCompileTask.configure {
             @Suppress("DEPRECATION")
-            it.ownModuleName.set(compilerOptions.moduleName)
-            @Suppress("DEPRECATION")
             it.moduleName.set(compilerOptions.moduleName)
         }
         return registeredKotlinJvmCompileTask

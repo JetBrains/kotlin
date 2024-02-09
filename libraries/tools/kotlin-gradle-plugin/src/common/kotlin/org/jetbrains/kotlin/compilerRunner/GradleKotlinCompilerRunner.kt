@@ -300,8 +300,7 @@ internal open class GradleCompilerRunner(
                 if (task is AbstractKotlinCompile<*>) {
                     val module = IncrementalModuleEntry(
                         project.path,
-                        @Suppress("DEPRECATION") // remove with KT-64504
-                        task.ownModuleName.get(),
+                        task.taskModuleName,
                         project.layout.buildDirectory.get().asFile,
                         task.buildHistoryFile.get().asFile,
                         task.abiSnapshotFile.get().asFile
@@ -336,8 +335,7 @@ internal open class GradleCompilerRunner(
                         val kotlinTask = mainCompilation.compileTaskProvider.get() as? AbstractKotlinCompile<*> ?: continue
                         val module = IncrementalModuleEntry(
                             project.path,
-                            @Suppress("DEPRECATION") // remove with KT-64504
-                            kotlinTask.ownModuleName.get(),
+                            kotlinTask.taskModuleName,
                             project.layout.buildDirectory.get().asFile,
                             kotlinTask.buildHistoryFile.get().asFile,
                             kotlinTask.abiSnapshotFile.get().asFile
@@ -369,6 +367,14 @@ internal open class GradleCompilerRunner(
                 cachedModulesInfo = it
             }
         }
+
+        private val AbstractKotlinCompile<*>.taskModuleName
+            get() = when (this) {
+                is KotlinCompile -> compilerOptions.moduleName.get()
+                is Kotlin2JsCompile -> compilerOptions.moduleName.get()
+                is KotlinCompileCommon -> moduleName.get()
+                else -> throw IllegalStateException("Unknown AbstractKotlinCompile task instance: ${this::class.qualifiedName}")
+            }
 
         private fun jarForJavaSourceSet(
             project: Project,

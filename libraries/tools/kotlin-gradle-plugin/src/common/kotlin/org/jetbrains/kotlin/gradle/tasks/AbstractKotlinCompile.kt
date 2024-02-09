@@ -112,10 +112,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                 .map { it.normalize().relativeTo(buildDirFile).invariantSeparatorsPath }.toSet()
         }
 
-    @Deprecated("Scheduled for removal with Kotlin 2.0", ReplaceWith("moduleName"))
-    @get:Input
-    abstract val ownModuleName: Property<String>
-
     @get:Internal
     val startParameters = BuildReportsService.getStartParameters(project)
 
