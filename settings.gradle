@@ -428,6 +428,7 @@ include ":compiler:build-tools:kotlin-build-tools-api",
 include ":plugins:compose-compiler-plugin:compiler",
         ":plugins:compose-compiler-plugin:compiler:integration-tests",
         ":plugins:compose-compiler-plugin:compiler-hosted",
+        ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
         ":plugins:compose-compiler-plugin:testutils-gradle-plugin"
 
 // Swift Export modules
