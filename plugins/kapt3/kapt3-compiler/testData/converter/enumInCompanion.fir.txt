@@ -19,6 +19,7 @@
 public final class Test {
     @org.jetbrains.annotations.NotNull()
     private final Test.Companion.Example foo = Test.Companion.Example.FOO;
+
     @org.jetbrains.annotations.NotNull()
     public static final Test.Companion Companion = null;
 
@@ -59,7 +60,8 @@ public final class Test {
          */
         @kotlin.Metadata()
         public static enum Example {
-            /*public static final*/ FOO /* = new Example() */;
+            FOO;
+
 
             Example() {
             }
@@ -72,8 +74,8 @@ public final class Test {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Test2 : kotlin/Any {
@@ -96,6 +98,7 @@ public final class Test {
 public final class Test2 {
     @org.jetbrains.annotations.NotNull()
     private final Test2.Amigo.Example foo = Test2.Amigo.Example.FOO;
+
     @org.jetbrains.annotations.NotNull()
     public static final Test2.Amigo Amigo = null;
 
@@ -136,7 +139,8 @@ public final class Test2 {
          */
         @kotlin.Metadata()
         public static enum Example {
-            /*public static final*/ FOO /* = new Example() */;
+            FOO;
+
 
             Example() {
             }
@@ -149,8 +153,8 @@ public final class Test2 {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Test3 : kotlin/Any {
@@ -211,7 +215,8 @@ public final class Test3 {
          */
         @kotlin.Metadata()
         public static enum Example {
-            /*public static final*/ FOO /* = new Example() */;
+            FOO;
+
 
             Example() {
             }
@@ -224,8 +229,8 @@ public final class Test3 {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Test4 : kotlin/Any {
@@ -247,6 +252,7 @@ public final class Test3 {
 @kotlin.Metadata()
 public final class Test4 {
     private final int foo = 1;
+
     @org.jetbrains.annotations.NotNull()
     public static final Test4.Companion Companion = null;
 
@@ -289,6 +295,7 @@ public final class Test4 {
         public static final class Foo {
             @org.jetbrains.annotations.NotNull()
             public static final Test4.Companion.Foo INSTANCE = null;
+
             public static final int constProperty = 1;
 
             private Foo() {
@@ -298,8 +305,8 @@ public final class Test4 {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Test5 : kotlin/Any {
@@ -398,7 +405,8 @@ public final class Test5 {
                  */
                 @kotlin.Metadata()
                 public static enum Example {
-                    /*public static final*/ FOO /* = new Example() */;
+                    FOO;
+
 
                     Example() {
                     }

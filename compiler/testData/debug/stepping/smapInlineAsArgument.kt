@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: WASM
+
 // FILE: test.kt
 
 fun box(){
@@ -52,7 +52,7 @@ fun fail() : String {
 // EXPECTATIONS WASM
 // test.kt:1 $box
 // test.kt:5 $box (16, 4)
-// test.kt:17 $box (12, 12, 12, 12, 4, 12, 12, 12, 12, 4)
+// test.kt:17 $box (11, 11, 11, 11, 4, 11, 11, 11, 11, 4)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8)
 // ThrowHelpers.kt:29 $kotlin.wasm.internal.rangeCheck (6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19)
@@ -67,8 +67,8 @@ fun fail() : String {
 // Array.kt:76 $kotlin.Array.set (5, 5, 5)
 // String.kt:149 $kotlin.stringLiteral (11, 4, 11, 4, 11, 4)
 // test.kt:6 $box
-// test.kt:21 $fail (12, 12, 12, 12, 4, 12, 12, 12, 12, 4)
-// test.kt:13 $checkEquals (5, 5, 5, 5, 5, 5, 5, 5)
+// test.kt:21 $fail (11, 11, 11, 11, 4, 11, 11, 11, 11, 4)
+// test.kt:13 $checkEquals (4, 4, 4, 4, 4, 4, 4, 4)
 // test.kt:14 $checkEquals (1, 1)
 // test.kt:8 $box (16, 4)
 // String.kt:143 $kotlin.stringLiteral (15, 8, 15, 8, 15, 8)

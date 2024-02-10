@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.callable]
  */
-sealed interface SirCallable : SirDeclaration {
-    override val origin: SirOrigin
-    override val visibility: SirVisibility
-    override var parent: SirDeclarationParent
+sealed class SirCallable : SirElementBase(), SirDeclaration {
+    abstract override val origin: SirOrigin
+    abstract override val visibility: SirVisibility
+    abstract override var parent: SirDeclarationParent
 
     override fun <R, D> accept(visitor: SirVisitor<R, D>, data: D): R =
         visitor.visitCallable(this, data)

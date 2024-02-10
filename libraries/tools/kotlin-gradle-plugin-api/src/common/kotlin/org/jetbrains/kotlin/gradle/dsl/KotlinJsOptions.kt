@@ -43,6 +43,7 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
      *
      * Default value: true
      */
+    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.WARNING)
     var metaInfo: kotlin.Boolean
         get() = options.metaInfo.get()
         set(value) = options.metaInfo.set(value)
@@ -76,19 +77,10 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
      *
      * Default value: true
      */
+    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.WARNING)
     var noStdlib: kotlin.Boolean
         get() = options.noStdlib.get()
         set(value) = options.noStdlib.set(value)
-
-    /**
-     * Destination *.js file for the compilation result.
-     *
-     * Default value: null
-     */
-    @Deprecated(message = "Only for legacy backend. For IR backend please use task.destinationDirectory and moduleName", level = DeprecationLevel.WARNING)
-    var outputFile: kotlin.String?
-        get() = options.outputFile.orNull
-        set(value) = options.outputFile.set(value)
 
     /**
      * Generate a source map.

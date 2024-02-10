@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
-import java.io.File
 
 internal typealias Kotlin2JsCompileConfig = BaseKotlin2JsCompileConfig<Kotlin2JsCompile>
 
@@ -36,25 +35,6 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
             task.incrementalJsKlib = propertiesProvider.incrementalJsKlib ?: true
 
             configureAdditionalFreeCompilerArguments(task, compilation)
-
-            task.destinationDirectory
-                .convention(
-                    project.objects.directoryProperty().fileProvider(
-                        task.defaultDestinationDirectory.map {
-                            val freeArgs = task.enhancedFreeCompilerArgs.get()
-                            if (task.compilerOptions.outputFile.orNull != null) {
-                                if (freeArgs.contains(PRODUCE_UNZIPPED_KLIB)) {
-                                    val file = File(task.compilerOptions.outputFile.get())
-                                    if (file.extension == "") file else file.parentFile
-                                } else {
-                                    File(task.compilerOptions.outputFile.get()).parentFile
-                                }
-                            } else {
-                                it.asFile
-                            }
-                        }
-                    )
-                )
 
             task.libraryFilterCacheService.value(libraryFilterCachingService).disallowChanges()
             task.incrementalModuleInfoProvider.value(incrementalModuleInfoProvider).disallowChanges()

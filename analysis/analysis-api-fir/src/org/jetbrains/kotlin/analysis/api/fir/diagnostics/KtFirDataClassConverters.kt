@@ -4721,6 +4721,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE_DEPRECATION) { firDiagnostic ->
+        NonPublicCallFromPublicInlineDeprecationImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE) { firDiagnostic ->
         ProtectedConstructorCallFromPublicInlineImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),

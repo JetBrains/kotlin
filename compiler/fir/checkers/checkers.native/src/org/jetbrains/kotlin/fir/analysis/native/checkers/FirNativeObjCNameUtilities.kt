@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
@@ -74,7 +72,7 @@ object FirNativeObjCNameUtilities {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val overriddenSymbols = firTypeScope.retrieveDirectOverriddenOf(memberSymbol)
+        val overriddenSymbols = firTypeScope.retrieveDirectOverriddenOf(memberSymbol).map { it.originalForSubstitutionOverride ?: it }
         if (overriddenSymbols.isEmpty()) return
         val objCNames = overriddenSymbols.map { it.getFirstBaseSymbol(context).getObjCNames(context.session) }
         if (!objCNames.allNamesEquals()) {
@@ -95,7 +93,7 @@ object FirNativeObjCNameUtilities {
         val session = context.session
         val ownScope = containingClassLookupTag()?.toSymbol(session)?.fullyExpandedClass(session)?.unsubstitutedScope(context)
             ?: return this
-        val overriddenMemberSymbols = ownScope.retrieveDirectOverriddenOf(this)
+        val overriddenMemberSymbols = ownScope.retrieveDirectOverriddenOf(this).map { it.originalForSubstitutionOverride ?: it }
         return if (overriddenMemberSymbols.isEmpty()) this else overriddenMemberSymbols.first().getFirstBaseSymbol(context)
     }
 

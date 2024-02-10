@@ -20,13 +20,11 @@ import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.EXPECTED_ERROR
 import org.jetbrains.kotlin.kapt3.test.handlers.ClassFileToSourceKaptStubHandler
 import org.jetbrains.kotlin.kapt3.test.handlers.removeMetadataAnnotationContents
 import org.jetbrains.kotlin.kapt3.test.messageCollectorProvider
-import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.model.AnalysisHandler
 import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.getRealJavaFiles
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.test.utils.withExtension
@@ -46,13 +44,13 @@ internal class Kapt4Handler(testServices: TestServices) : AnalysisHandler<Kapt4C
         val validate = KaptTestDirectives.NO_VALIDATION !in module.directives
 
         val (kaptContext) = info
-        val convertedFiles = getJavaFiles(info, module)
+        val convertedFiles = getJavaFiles(info)
         kaptContext.javaLog.interceptorData.files = convertedFiles.associateBy { it.sourceFile }
         if (validate) kaptContext.compiler.enterTrees(convertedFiles)
 
         val actualRaw = convertedFiles
             .sortedBy { it.sourceFile.name }
-            .joinToString(ClassFileToSourceKaptStubHandler.FILE_SEPARATOR) { it.prettyPrint(kaptContext.context) }
+            .joinToString(ClassFileToSourceKaptStubHandler.FILE_SEPARATOR) { (it.sourceFile as KaptJavaFileObject).file!!.readText() }
 
         val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' })
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
@@ -111,8 +109,7 @@ internal class Kapt4Handler(testServices: TestServices) : AnalysisHandler<Kapt4C
     }
 
     private fun getJavaFiles(
-        info: Kapt4ContextBinaryArtifact,
-        module: TestModule
+        info: Kapt4ContextBinaryArtifact
     ): List<JCTree.JCCompilationUnit> {
         val (kaptContext, kaptStubs) = info
         val convertedFiles = kaptStubs.mapIndexed { index, stub ->
@@ -121,16 +118,13 @@ internal class Kapt4Handler(testServices: TestServices) : AnalysisHandler<Kapt4C
             sourceFile
         }
 
-        val javaFiles = testServices.sourceFileProvider.getRealJavaFiles(module)
-        val allJavaFiles = javaFiles + convertedFiles
-
         // A workaround needed for Javac to parse files correctly even if errors were already reported
         // If nerrors > 0, "parseFiles()" returns the empty list
         val oldErrorCount = kaptContext.compiler.log.nerrors
         kaptContext.compiler.log.nerrors = 0
 
         try {
-            val parsedJavaFiles = kaptContext.parseJavaFiles(allJavaFiles)
+            val parsedJavaFiles = kaptContext.parseJavaFiles(convertedFiles)
 
             for (tree in parsedJavaFiles) {
                 val actualFile = File(tree.sourceFile.toUri())

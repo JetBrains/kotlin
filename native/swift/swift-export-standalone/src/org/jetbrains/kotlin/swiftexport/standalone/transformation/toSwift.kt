@@ -13,7 +13,6 @@ import org.jetbrains.sir.passes.SirInflatePackagesPass
 import org.jetbrains.sir.passes.SirModulePass
 import org.jetbrains.sir.passes.SirPass
 import org.jetbrains.sir.passes.run
-import org.jetbrains.sir.passes.translation.ForeignIntoSwiftFunctionTranslationPass
 
 internal fun SirModule.transformToSwift(): SirModule {
     return SirPassesConfiguration.passes.fold(this) { module, pass ->
@@ -24,9 +23,9 @@ internal fun SirModule.transformToSwift(): SirModule {
 private object SirPassesConfiguration {
     val passes: List<SirModulePass> = listOf(
         SirInflatePackagesPass(),
-        WholeModuleTranslationByElementPass(ForeignIntoSwiftFunctionTranslationPass()),
     )
 
+    @Suppress("Unused")
     class WholeModuleTranslationByElementPass(
         val pass: SirPass<SirElement, Nothing?, SirDeclaration>
     ) : SirModulePass {

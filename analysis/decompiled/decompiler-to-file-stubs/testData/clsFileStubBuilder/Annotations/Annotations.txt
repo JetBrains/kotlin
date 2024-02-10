@@ -8,7 +8,7 @@ PsiJetFileStubImpl[package=]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=a]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=Annotations]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Annotations]
       MODIFIER_LIST[private]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
           CONSTRUCTOR_CALLEE
@@ -365,7 +365,7 @@ PsiJetFileStubImpl[package=]
             REFERENCE_EXPRESSION[referencedName=Unit]
       CLASS[classId=/Annotations.ClassWithConstructor, fqName=Annotations.ClassWithConstructor, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithConstructor, superNames=[]]
         MODIFIER_LIST[public final]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=ClassWithConstructor]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ClassWithConstructor]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
@@ -390,7 +390,7 @@ PsiJetFileStubImpl[package=]
                 REFERENCE_EXPRESSION[referencedName=Int]
       CLASS[classId=/Annotations.En, fqName=Annotations.En, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
         MODIFIER_LIST[enum public final]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=En]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=En]
           MODIFIER_LIST[private]
           VALUE_PARAMETER_LIST
         SUPER_TYPE_LIST
@@ -430,7 +430,7 @@ PsiJetFileStubImpl[package=]
                       REFERENCE_EXPRESSION[referencedName=c]
       CLASS[classId=/Annotations.Nested, fqName=Annotations.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
         MODIFIER_LIST[public final]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=Nested]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested]
           MODIFIER_LIST[private]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
               CONSTRUCTOR_CALLEE

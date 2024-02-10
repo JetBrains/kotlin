@@ -215,6 +215,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/apiVersionGreaterThanLanguage.args");
         }
 
+        @TestMetadata("apiVersionGreaterThanLanguageSuppress.args")
+        public void testApiVersionGreaterThanLanguageSuppress() throws Exception {
+            runTest("compiler/testData/cli/jvm/apiVersionGreaterThanLanguageSuppress.args");
+        }
+
+        @TestMetadata("apiVersionGreaterThanLanguageSuppressUseless.args")
+        public void testApiVersionGreaterThanLanguageSuppressUseless() throws Exception {
+            runTest("compiler/testData/cli/jvm/apiVersionGreaterThanLanguageSuppressUseless.args");
+        }
+
         @TestMetadata("apiVersionInvalid.args")
         public void testApiVersionInvalid() throws Exception {
             runTest("compiler/testData/cli/jvm/apiVersionInvalid.args");
@@ -628,11 +638,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("firVsClassicAnnotation.args")
         public void testFirVsClassicAnnotation() throws Exception {
             runTest("compiler/testData/cli/jvm/firVsClassicAnnotation.args");
-        }
-
-        @TestMetadata("flagAllowingResultAsReturnType.args")
-        public void testFlagAllowingResultAsReturnType() throws Exception {
-            runTest("compiler/testData/cli/jvm/flagAllowingResultAsReturnType.args");
         }
 
         @TestMetadata("forbidKotlinPackageK1.args")
@@ -1198,11 +1203,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("useDeclarationThatWasExperimentalWithoutMarker.args")
         public void testUseDeclarationThatWasExperimentalWithoutMarker() throws Exception {
             runTest("compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.args");
-        }
-
-        @TestMetadata("useMixedNamedArgumentsFlag.args")
-        public void testUseMixedNamedArgumentsFlag() throws Exception {
-            runTest("compiler/testData/cli/jvm/useMixedNamedArgumentsFlag.args");
         }
 
         @TestMetadata("warningJdkWithNoJdk.args")

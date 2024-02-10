@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithScript
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Context
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.FilterResponse
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -42,7 +41,6 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.util.PrivateForInline
-import org.jetbrains.kotlin.utils.yieldIfNotNull
 import java.util.ArrayList
 
 object ContextCollector {
@@ -125,13 +123,7 @@ object ContextCollector {
         if (contextKtDeclaration != null) {
             val designationPath = FirElementFinder.collectDesignationPath(file, contextKtDeclaration)
             if (designationPath != null) {
-                val script = file.declarations.singleOrNull() as? FirScript
-
-                return if (script == null || script === designationPath.target) {
-                    FirDesignation(designationPath.path, designationPath.target)
-                } else {
-                    FirDesignationWithScript(designationPath.path, designationPath.target, script)
-                }
+                return designationPath
             }
         }
 
@@ -166,7 +158,7 @@ object ContextCollector {
         holder: SessionHolder,
         designation: FirDesignation?,
         shouldCollectBodyContext: Boolean,
-        filter: (PsiElement) -> FilterResponse
+        filter: (PsiElement) -> FilterResponse,
     ): ContextProvider {
         val interceptor = designation?.let(::DesignationInterceptor) ?: { null }
         val visitor = ContextCollectorVisitor(holder, shouldCollectBodyContext, filter, interceptor)
@@ -177,7 +169,6 @@ object ContextCollector {
 
     private class DesignationInterceptor(private val designation: FirDesignation) : () -> FirElement? {
         private val targetIterator = iterator {
-            yieldIfNotNull((designation as? FirDesignationWithScript)?.firScript)
             yieldAll(designation.path)
             yield(designation.target)
         }
@@ -196,7 +187,7 @@ private class ContextCollectorVisitor(
     private val holder: SessionHolder,
     private val shouldCollectBodyContext: Boolean,
     private val filter: (PsiElement) -> FilterResponse,
-    private val designationPathInterceptor: () -> FirElement?
+    private val designationPathInterceptor: () -> FirElement?,
 ) : FirDefaultVisitorVoid() {
     private data class ContextKey(val element: PsiElement, val kind: ContextKind)
 

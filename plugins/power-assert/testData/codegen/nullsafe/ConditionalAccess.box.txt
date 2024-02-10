@@ -1,0 +1,7 @@
+Assertion failed
+assert(text?.length?.minus(2) == 1)
+       |     |       |        |
+       |     |       |        false
+       |     |       3
+       |     5
+       Hello

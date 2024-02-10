@@ -57,7 +57,6 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             buildGradleKts.modify {
                 transformBuildScriptWithPluginsDsl(it)
                     .replace("<JsEngine>", "nodejs")
-                    .replace("<ApplyBinaryen>", "")
             }
 
             kotlinSourcesDir("wasmJsTest").resolve("Test.kt").writeText(

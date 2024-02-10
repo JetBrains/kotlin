@@ -26,9 +26,6 @@ abstract class SirVisitor<out R, in D> {
     open fun visitDeclaration(declaration: SirDeclaration, data: D): R =
         visitElement(declaration, data)
 
-    open fun visitForeignDeclaration(declaration: SirForeignDeclaration, data: D): R =
-        visitDeclaration(declaration, data)
-
     open fun visitNamedDeclaration(declaration: SirNamedDeclaration, data: D): R =
         visitDeclaration(declaration, data)
 
@@ -44,6 +41,18 @@ abstract class SirVisitor<out R, in D> {
     open fun visitFunction(function: SirFunction, data: D): R =
         visitCallable(function, data)
 
-    open fun visitForeignFunction(function: SirForeignFunction, data: D): R =
-        visitCallable(function, data)
+    open fun visitAccessor(accessor: SirAccessor, data: D): R =
+        visitCallable(accessor, data)
+
+    open fun visitGetter(getter: SirGetter, data: D): R =
+        visitAccessor(getter, data)
+
+    open fun visitSetter(setter: SirSetter, data: D): R =
+        visitAccessor(setter, data)
+
+    open fun visitVariable(variable: SirVariable, data: D): R =
+        visitDeclaration(variable, data)
+
+    open fun visitImport(import: SirImport, data: D): R =
+        visitDeclaration(import, data)
 }

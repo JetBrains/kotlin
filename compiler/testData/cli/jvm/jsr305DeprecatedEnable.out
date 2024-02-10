@@ -2,5 +2,5 @@ warning: argument -Xjsr305-annotations is deprecated. Please use -Xjsr305 instea
 warning: option 'enable' for -Xjsr305 flag is deprecated. Please use 'strict' instead
 compiler/testData/cli/jvm/jsr305Usage.kt:2:11: error: null cannot be a value of a non-null type 'kotlin.String'.
     a.foo(null)
-          ^
+          ^^^^
 COMPILATION_ERROR

@@ -131,7 +131,7 @@ fun compileIr(
     }
 
     // TODO should be done incrementally
-    generateJsTests(context, allModules.last())
+    generateJsTests(context, allModules.last(), groupByPackage = false)
 
     (irFactory.stageController as? WholeWorldStageController)?.let {
         lowerPreservingTags(allModules, context, phaseConfig, it)

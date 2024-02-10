@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.test.runners.ir.interpreter
 
-import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
@@ -16,12 +14,12 @@ import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.BinaryKind
+import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.FrontendKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.preprocessors.IrInterpreterImplicitKotlinImports
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.IrInterpreterHelpersSourceFilesProvider
@@ -38,7 +36,6 @@ open class AbstractIrInterpreterTest(
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::IrInterpreterEnvironmentConfigurator,
         )
 
         firFrontendStep()
@@ -89,12 +86,3 @@ abstract class AbstractJvmIrInterpreterAfterFir2IrTestBase(val parser: FirParser
 open class AbstractJvmIrInterpreterAfterFirPsi2IrTest : AbstractJvmIrInterpreterAfterFir2IrTestBase(FirParser.Psi)
 
 open class AbstractJvmIrInterpreterAfterPsi2IrTest : AbstractJvmIrInterpreterTest(FrontendKinds.ClassicFrontend)
-
-class IrInterpreterEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun provideAdditionalAnalysisFlags(
-        directives: RegisteredDirectives,
-        languageVersion: LanguageVersion
-    ): Map<AnalysisFlag<*>, Any?> {
-        return mapOf(AnalysisFlags.builtInsFromSources to true)
-    }
-}

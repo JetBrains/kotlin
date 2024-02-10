@@ -1,0 +1,17 @@
+/**
+ * package {
+ *
+ *   // signature: Date(D)Ljava/util/Date;
+ *   public final fun Date(double: kotlin/Double): java/util/Date
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Kt18377Kt {
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.util.Date Date(double p0_1484504552) {
+        return null;
+    }
+}

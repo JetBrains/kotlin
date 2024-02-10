@@ -17,8 +17,6 @@ public final class Test {
         super();
     }
 
-    public final void a(@org.jetbrains.annotations.NotNull()
-    ABC a, @org.jetbrains.annotations.NotNull()
-    BCD b) {
+    public final void a(@org.jetbrains.annotations.NotNull() ABC a, @org.jetbrains.annotations.NotNull() BCD b) {
     }
 }

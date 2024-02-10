@@ -4,7 +4,7 @@ KotlinStub$PACKAGE_DIRECTIVE
 KotlinStub$IMPORT_LIST
 KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializer, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=PropertyInitializer, superNames=[]]
   KotlinStub$MODIFIER_LIST[public final]
-  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=PropertyInitializer]
+  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=PropertyInitializer]
     KotlinStub$MODIFIER_LIST[public]
     KotlinStub$VALUE_PARAMETER_LIST
   KotlinStub$CLASS_BODY
@@ -148,7 +148,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
     KotlinStub$CLASS[classId=test/PropertyInitializer.Anno, fqName=test.PropertyInitializer.Anno, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Anno, superNames=[Annotation]]
       KotlinStub$MODIFIER_LIST[public final annotation]
-      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=Anno]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Anno]
         KotlinStub$MODIFIER_LIST[public]
         KotlinStub$VALUE_PARAMETER_LIST
           KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=arrayWithDefault]

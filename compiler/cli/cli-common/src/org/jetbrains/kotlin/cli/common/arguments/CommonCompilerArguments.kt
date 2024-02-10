@@ -251,26 +251,6 @@ progressive mode enabled may cause compilation errors in progressive mode."""
             field = value
         }
 
-    @Argument(
-        value = "-Xeffect-system",
-        description = "Enable experimental language feature: effect system."
-    )
-    var effectSystem = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xread-deserialized-contracts",
-        description = "Enable reading contracts from metadata."
-    )
-    var readDeserializedContracts = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @IDEAPluginsCompatibilityAPI(
         IDEAPlatforms._212, // maybe 211 AS used it too
         IDEAPlatforms._213,
@@ -286,16 +266,6 @@ progressive mode enabled may cause compilation errors in progressive mode."""
         plugins = "Android"
     )
     var useExperimental: Array<String>? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xproper-ieee754-comparisons",
-        description = "Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types."
-    )
-    var properIeee754Comparisons = false
         set(value) {
             checkFrozen()
             field = value
@@ -336,16 +306,6 @@ progressive mode enabled may cause compilation errors in progressive mode."""
 They should be a subset of sources passed as free arguments."""
     )
     var commonSources: Array<String>? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xallow-result-return-type",
-        description = "Allow compiling code when 'kotlin.Result' is used as a return type."
-    )
-    var allowResultReturnType = false
         set(value) {
             checkFrozen()
             field = value
@@ -553,26 +513,6 @@ They should be a subset of sources passed as free arguments."""
         }
 
     @Argument(
-        value = "-Xdisable-ultra-light-classes",
-        description = "Don't use ultra-light classes."
-    )
-    var disableUltraLightClasses = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xuse-mixed-named-arguments",
-        description = "Allow mixing named and unnamed arguments when the arguments appear in their default order."
-    )
-    var useMixedNamedArguments = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xmetadata-klib",
         description = "Produce a klib that only contains the metadata of declarations.",
         deprecatedName = "-Xexpect-actual-linker"
@@ -622,22 +562,24 @@ Use the 'warning' level to issue warnings instead of errors."""
             field = value
         }
 
+    // TODO(KT-56076): remove this argument after stdlib started to be built with 2.0
     @Argument(
-        value = "-Xextended-compiler-checks",
-        description = """Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
-Warning: This mode is not backward compatible and might cause compilation errors in previously compiled code."""
+        value = "-Xsuppress-api-version-greater-than-language-version-error",
+        description = "Suppress error about API version greater than language version.\n" +
+                "Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build."
     )
-    var extendedCompilerChecks = false
+    var suppressApiVersionGreaterThanLanguageVersionError: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
     @Argument(
-        value = "-Xbuiltins-from-sources",
-        description = "Compile built-ins from sources."
+        value = "-Xextended-compiler-checks",
+        description = """Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
+Warning: This mode is not backward compatible and might cause compilation errors in previously compiled code."""
     )
-    var builtInsFromSources = false
+    var extendedCompilerChecks = false
         set(value) {
             checkFrozen()
             field = value
@@ -810,14 +752,12 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             put(AnalysisFlags.optIn, useExperimentalFqNames + optIn?.toList().orEmpty())
             put(AnalysisFlags.skipExpectedActualDeclarationChecker, metadataKlib)
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)
-            put(AnalysisFlags.allowResultReturnType, allowResultReturnType)
             ExplicitApiMode.fromString(explicitApi)?.also { put(AnalysisFlags.explicitApiMode, it) } ?: collector.report(
                 CompilerMessageSeverity.ERROR,
                 "Unknown value for parameter -Xexplicit-api: '$explicitApi'. Value should be one of ${ExplicitApiMode.availableValues()}"
             )
             put(AnalysisFlags.extendedCompilerChecks, extendedCompilerChecks)
             put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
-            put(AnalysisFlags.builtInsFromSources, builtInsFromSources)
             put(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)
             put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
             put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
@@ -859,23 +799,6 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
             if (legacySmartCastAfterTry) {
                 put(LanguageFeature.SoundSmartCastsAfterTry, LanguageFeature.State.DISABLED)
-            }
-
-            if (effectSystem) {
-                put(LanguageFeature.UseCallsInPlaceEffect, LanguageFeature.State.ENABLED)
-                put(LanguageFeature.UseReturnsEffect, LanguageFeature.State.ENABLED)
-            }
-
-            if (readDeserializedContracts) {
-                put(LanguageFeature.ReadDeserializedContracts, LanguageFeature.State.ENABLED)
-            }
-
-            if (properIeee754Comparisons) {
-                put(LanguageFeature.ProperIeee754Comparisons, LanguageFeature.State.ENABLED)
-            }
-
-            if (useMixedNamedArguments) {
-                put(LanguageFeature.MixedNamedArgumentsInTheirOwnPosition, LanguageFeature.State.ENABLED)
             }
 
             if (inferenceCompatibility) {
@@ -1000,10 +923,14 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         collector: MessageCollector
     ) {
         if (apiVersion > ApiVersion.createByLanguageVersion(languageVersion)) {
-            collector.report(
-                CompilerMessageSeverity.ERROR,
-                "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})"
-            )
+            if (!suppressApiVersionGreaterThanLanguageVersionError) {
+                collector.report(
+                    CompilerMessageSeverity.ERROR,
+                    "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})"
+                )
+            }
+        } else if (suppressApiVersionGreaterThanLanguageVersionError) {
+            collector.report(WARNING, "Useless suppress -Xsuppress-api-version-greater-than-language-version-error")
         }
     }
 

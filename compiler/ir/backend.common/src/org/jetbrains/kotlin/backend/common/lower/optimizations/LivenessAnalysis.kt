@@ -49,6 +49,7 @@ object LivenessAnalysis {
         private val loopEndsLV = mutableMapOf<IrLoop, BitSet>()
         private val loopStartsLV = mutableMapOf<IrLoop, BitSet>()
         private var catchesLV = BitSet()
+        private val suspensionPointIdParameters = BitSet()
 
         fun run(body: IrBody): Map<IrElement, List<IrVariable>> {
             body.accept(this, BitSet() /* No variable is live at the end */)
@@ -81,6 +82,8 @@ object LivenessAnalysis {
                 val elementLV = filteredElementEndsLV.getOrPut(element) { BitSet() }
                 elementLV.or(liveVariables)
                 elementLV.or(catchesLV)
+                // Suspension points id parameters are never live since they are provided at codegen.
+                elementLV.andNot(suspensionPointIdParameters)
             }
             return compute()
         }
@@ -182,6 +185,14 @@ object LivenessAnalysis {
             currentCatchesLV.or(aTry.tryResult.accept(this, data))
             catchesLV = prevCatchesLV
             currentCatchesLV
+        }
+
+        override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: BitSet): BitSet {
+            val variableId = getVariableId(expression.suspensionPointIdParameter)
+            suspensionPointIdParameters.set(variableId)
+            return super.visitSuspensionPoint(expression, data).also {
+                suspensionPointIdParameters.clear(variableId)
+            }
         }
 
         override fun visitBreak(jump: IrBreak, data: BitSet) = saveAndCompute(jump, data) {

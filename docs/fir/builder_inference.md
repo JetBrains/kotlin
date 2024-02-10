@@ -1,6 +1,8 @@
 ## FIR/Builder inference
 See also: [Kotlin Spec: Builder-style type inference](https://kotlinlang.org/spec/type-inference.html#builder-style-type-inference)
 
+**NB:** This document is quite obsolete, see [pcla.md](pcla.md).
+
 ### Glossary
 #### Postponed type variable
 Type-variable, that was used to build a stub type on, and fixation of which is postponed until the end of lambda analysis.

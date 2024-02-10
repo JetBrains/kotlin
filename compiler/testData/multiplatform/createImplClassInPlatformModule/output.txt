@@ -7,7 +7,7 @@ Exit code: OK
 Output:
 compiler/testData/multiplatform/createImplClassInPlatformModule/common.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect class Foo
-^
+^^^^^^
 compiler/testData/multiplatform/createImplClassInPlatformModule/jvm.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 actual class Foo(x: Int) {
-^
+^^^^^^

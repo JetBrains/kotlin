@@ -55,16 +55,17 @@ class PostponedArgumentsAnalyzer(
         c: PostponedArgumentsAnalyzerContext,
         argument: PostponedResolvedAtom,
         candidate: Candidate,
+        withPCLASession: Boolean,
     ) {
         when (argument) {
             is ResolvedLambdaAtom ->
-                analyzeLambda(c, argument, candidate, forOverloadByLambdaReturnType = false)
+                analyzeLambda(c, argument, candidate, forOverloadByLambdaReturnType = false, withPCLASession)
 
             is LambdaWithTypeVariableAsExpectedTypeAtom ->
                 analyzeLambda(
                     c,
                     argument.transformToResolvedLambda(c.getBuilder(), resolutionContext),
-                    candidate, forOverloadByLambdaReturnType = false
+                    candidate, forOverloadByLambdaReturnType = false, withPCLASession
                 )
 
             is ResolvedCallableReferenceAtom -> processCallableReference(argument, candidate)
@@ -106,6 +107,7 @@ class PostponedArgumentsAnalyzer(
         lambda: ResolvedLambdaAtom,
         candidate: Candidate,
         forOverloadByLambdaReturnType: Boolean,
+        withPCLASession: Boolean,
         //diagnosticHolder: KotlinDiagnosticsHolder
     ): ReturnArgumentsAnalysisResult {
         // TODO: replace with `require(!lambda.analyzed)` when KT-54767 will be fixed
@@ -114,11 +116,11 @@ class PostponedArgumentsAnalyzer(
         }
 
         val additionalBindings: Map<TypeConstructorMarker, KotlinTypeMarker>? =
-            (resolutionContext.bodyResolveContext.inferenceSession as? FirPCLAInferenceSession)?.let { builderInferenceSession ->
+            (resolutionContext.bodyResolveContext.inferenceSession as? FirPCLAInferenceSession)?.let { pclaInferenceSession ->
                 // TODO: Fix variables for context receivers, too (KT-64859)
                 buildMap {
                     lambda.receiver
-                        ?.let { builderInferenceSession.fixVariablesForMemberScope(it, candidate.system) }
+                        ?.let { pclaInferenceSession.fixVariablesForMemberScope(it, candidate.system) }
                         ?.let(this::plusAssign)
                 }
             }
@@ -141,12 +143,6 @@ class PostponedArgumentsAnalyzer(
 
             else -> null
         }
-
-        val withPCLASession =
-            lambda.inputTypes
-                .any { inputType ->
-                    with(c) { inputType.extractTypeVariables() }.any(c.notFixedTypeVariables::contains)
-                }
 
         val results = lambdaAnalyzer.analyzeAndGetLambdaReturnArguments(
             lambda,

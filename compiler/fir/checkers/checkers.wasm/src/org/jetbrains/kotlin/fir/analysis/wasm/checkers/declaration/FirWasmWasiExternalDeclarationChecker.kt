@@ -13,23 +13,22 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclaratio
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.name.WasmStandardClassIds
 
 object FirWasmWasiExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (!context.isTopLevel) return
         if (!declaration.symbol.isEffectivelyExternal(context.session)) return
 
-        if (declaration is FirSimpleFunction) {
-            if (!context.isTopLevel) {
-                reporter.reportOn(declaration.source, FirWasmErrors.WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION, context)
-            } else {
-                if (!declaration.hasAnnotation(WasmStandardClassIds.Annotations.WasmImport, context.session)) {
-                    reporter.reportOn(declaration.source, FirWasmErrors.WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT, context)
-                }
+        if (declaration is FirFunction) {
+            if (!declaration.hasAnnotation(WasmStandardClassIds.Annotations.WasmImport, context.session)) {
+                reporter.reportOn(declaration.source, FirWasmErrors.WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT, context)
             }
+        } else {
+            reporter.reportOn(declaration.source, FirWasmErrors.WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION, context)
         }
     }
 }

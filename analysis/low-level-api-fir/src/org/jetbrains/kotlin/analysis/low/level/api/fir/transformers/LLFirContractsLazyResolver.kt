@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -116,30 +116,34 @@ private class LLFirContractsTargetResolver(
         }
     }
 
-    override fun withScript(firScript: FirScript, action: () -> Unit) {
-        val actionWithCollector = actionWithContextCollector(action) { collector, context ->
-            collector.addDeclarationContext(firScript, context)
-        }
-
-        super.withScript(firScript, actionWithCollector)
-    }
-
-    override fun withFile(firFile: FirFile, action: () -> Unit) {
+    @Deprecated("Should never be called directly, only for override purposes, please use withFile", level = DeprecationLevel.ERROR)
+    override fun withContainingFile(firFile: FirFile, action: () -> Unit) {
         val actionWithCollector = actionWithContextCollector(action) { collector, context ->
             collector.addFileContext(firFile, context.towerDataContext)
         }
 
-        super.withFile(firFile, actionWithCollector)
+        @Suppress("DEPRECATION_ERROR")
+        super.withContainingFile(firFile, actionWithCollector)
+    }
+
+    @Deprecated("Should never be called directly, only for override purposes, please use withScript", level = DeprecationLevel.ERROR)
+    override fun withContainingScript(firScript: FirScript, action: () -> Unit) {
+        val actionWithCollector = actionWithContextCollector(action) { collector, context ->
+            collector.addDeclarationContext(firScript, context)
+        }
+
+        @Suppress("DEPRECATION_ERROR")
+        super.withContainingScript(firScript, actionWithCollector)
     }
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
-    override fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
+    override fun withContainingRegularClass(firClass: FirRegularClass, action: () -> Unit) {
         val actionWithCollector = actionWithContextCollector(action) { collector, context ->
             collector.addDeclarationContext(firClass, context)
         }
 
         @Suppress("DEPRECATION_ERROR")
-        super.withRegularClassImpl(firClass, actionWithCollector)
+        super.withContainingRegularClass(firClass, actionWithCollector)
     }
 
     private fun collectTowerDataContext(target: FirElementWithResolveState) {

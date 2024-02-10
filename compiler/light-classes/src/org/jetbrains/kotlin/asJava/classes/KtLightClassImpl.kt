@@ -171,7 +171,7 @@ abstract class KtLightClassImpl(
             .filter { it.name != null }
             .mapNotNullTo(result, KtClassOrObject::toLightClass)
 
-        if (classOrObject.hasInterfaceDefaultImpls && jvmDefaultMode != JvmDefaultMode.ALL_INCOMPATIBLE) {
+        if (classOrObject.hasInterfaceDefaultImpls && jvmDefaultMode != JvmDefaultMode.ALL) {
             result.add(createClassForInterfaceDefaultImpls())
         }
 

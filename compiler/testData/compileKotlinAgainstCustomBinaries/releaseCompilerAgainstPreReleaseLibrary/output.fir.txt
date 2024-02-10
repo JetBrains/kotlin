@@ -1,4 +1,4 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:8:28: error: unresolved reference 'method'.
     val methodCall = param.method()
-                           ^
+                           ^^^^^^
 COMPILATION_ERROR

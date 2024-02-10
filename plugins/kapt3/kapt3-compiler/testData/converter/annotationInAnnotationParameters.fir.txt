@@ -14,6 +14,7 @@ package a;
 public abstract @interface A {
 }
 
+
 ////////////////////
 
 package b;
@@ -37,6 +38,7 @@ public abstract @interface B {
 
     public abstract a.A value();
 }
+
 
 ////////////////////
 

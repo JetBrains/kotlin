@@ -74,6 +74,8 @@ internal enum class IntrinsicType {
     // Coroutines
     GET_CONTINUATION,
     RETURN_IF_SUSPENDED,
+    SAVE_COROUTINE_STATE,
+    RESTORE_COROUTINE_STATE,
     // Interop
     INTEROP_READ_BITS,
     INTEROP_WRITE_BITS,
@@ -279,6 +281,8 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.GET_AND_ADD_ARRAY_ELEMENT -> emitGetAndAddArrayElement(callSite, args)
                 IntrinsicType.GET_CONTINUATION,
                 IntrinsicType.RETURN_IF_SUSPENDED,
+                IntrinsicType.SAVE_COROUTINE_STATE,
+                IntrinsicType.RESTORE_COROUTINE_STATE,
                 IntrinsicType.INTEROP_BITS_TO_FLOAT,
                 IntrinsicType.INTEROP_BITS_TO_DOUBLE,
                 IntrinsicType.INTEROP_SIGN_EXTEND,

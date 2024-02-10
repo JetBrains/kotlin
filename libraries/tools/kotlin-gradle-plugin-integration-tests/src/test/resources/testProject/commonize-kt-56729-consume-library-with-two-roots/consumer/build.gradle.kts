@@ -6,12 +6,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-repositories {
-    maven(project(":producer").layout.buildDirectory.dir("repo"))
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
     linuxArm64()
     linuxX64()

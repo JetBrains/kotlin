@@ -167,7 +167,6 @@ dependencies {
     distPack project(':native:objcexport-header-generator-k1')
     distPack project(':native:base')
     distPack project(':kotlin-native:utilities:cli-runner')
-    distPack project(':kotlin-native:utilities:basic-utils')
     distPack project(':kotlin-native:klib')
     distPack project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
     distPack project(path: ':kotlin-native:endorsedLibraries:kotlinx.cli', configuration: "jvmRuntimeElements")
@@ -372,7 +371,7 @@ tasks.register("distStdlib", Copy) {
     from(project(":kotlin-native:runtime")
             .tasks
             .named("nativeStdlib")
-            .map { it.outputs }
+            .map { it.outputs.files }
     )
     destinationDir project.file("$distDir/$stdlib")
 }
@@ -397,11 +396,10 @@ targetList.each { target ->
             }
         }.files
 
-        destinationDir project.file("$distDir/konan/targets/")
+        destinationDir project.file("$distDir/konan/targets/$target/native")
 
         from(bitcodeFiles) {
             include("*.bc")
-            into("$target/native")
         }
     }
 
@@ -546,10 +544,6 @@ configure([bundleRegular, bundlePrebuilt]) {
     dependsOn("crossDistStdlibCache")
     dependsOn("distSources")
     dependsOn("distDef")
-    from(project.projectDir) {
-        include 'RELEASE_NOTES.md'
-        into "${archiveBaseName.get()}-${archiveVersion.get()}"
-    }
 
     destinationDirectory.set(file('.'))
 
@@ -788,6 +782,10 @@ publishing {
                     classifier = HostManager.platformName()
                     extension = (PlatformInfo.isWindows()) ? 'zip' : 'tar.gz'
                 }
+                mvn.artifact(sbomBundleRegular.map { it.outputDirectory.file("BundleRegular.spdx.json") }) {
+                    classifier = HostManager.platformName()
+                    extension = "spdx.json"
+                }
             }
 
             KotlinBuildPublishingPluginKt.configureKotlinPomAttributes(
@@ -824,6 +822,10 @@ publishing {
                 mvn.artifact(bundlePrebuilt) {
                     classifier = HostManager.platformName()
                     extension = (PlatformInfo.isWindows()) ? 'zip' : 'tar.gz'
+                }
+                mvn.artifact(sbomBundlePrebuilt.map { it.outputDirectory.file("BundlePrebuilt.spdx.json") }) {
+                    classifier = HostManager.platformName()
+                    extension = "spdx.json"
                 }
             }
             KotlinBuildPublishingPluginKt.configureKotlinPomAttributes(

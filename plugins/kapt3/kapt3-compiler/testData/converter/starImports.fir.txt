@@ -13,10 +13,6 @@
  */
 @kotlin.Metadata()
 public final class ResolvedKt {
-
-    public ResolvedKt() {
-        super();
-    }
     @org.jetbrains.annotations.Nullable()
     private static kotlin.io.encoding.Base64 base64 = null;
 
@@ -25,13 +21,12 @@ public final class ResolvedKt {
         return null;
     }
 
-    public static final void setBase64(@org.jetbrains.annotations.Nullable()
-    kotlin.io.encoding.Base64 p0) {
+    public static final void setBase64(@org.jetbrains.annotations.Nullable() kotlin.io.encoding.Base64 p0) {
     }
 }
 
-////////////////////
 
+////////////////////
 
 import kotlin.io.encoding.*;
 
@@ -51,10 +46,6 @@ import kotlin.io.encoding.*;
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class UnresolvedKt {
-
-    public UnresolvedKt() {
-        super();
-    }
     @org.jetbrains.annotations.NotNull()
     private static Base65 base65 = null;
 
@@ -63,7 +54,6 @@ public final class UnresolvedKt {
         return null;
     }
 
-    public static final void setBase65(@org.jetbrains.annotations.NotNull()
-    Base65 p0) {
+    public static final void setBase65(@org.jetbrains.annotations.NotNull() Base65 p0) {
     }
 }

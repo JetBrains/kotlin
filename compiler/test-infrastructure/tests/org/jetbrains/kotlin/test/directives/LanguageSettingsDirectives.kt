@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.test.directives
 
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.ExplicitApiMode
+import org.jetbrains.kotlin.config.JvmDefaultMode
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object LanguageSettingsDirectives : SimpleDirectivesContainer() {
@@ -49,10 +52,6 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
 
     val IGNORE_DATA_FLOW_IN_ASSERT by directive(
         description = "Enables corresponding analysis flag (AnalysisFlags.ignoreDataFlowInAssert)"
-    )
-
-    val ALLOW_RESULT_RETURN_TYPE by directive(
-        description = "Allow using Result in return type position"
     )
 
     val EXPLICIT_API_MODE by enumDirective(

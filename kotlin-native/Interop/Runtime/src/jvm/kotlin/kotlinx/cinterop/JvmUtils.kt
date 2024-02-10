@@ -16,7 +16,7 @@
 
 package kotlinx.cinterop
 
-import org.jetbrains.kotlin.konan.util.KonanHomeProvider
+import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -192,7 +192,7 @@ fun loadKonanLibrary(name: String) {
     for (dir in paths) {
         if (tryLoadKonanLibrary(dir, fullLibraryName, runFromDaemon)) return
     }
-    val defaultNativeLibsDir = "${KonanHomeProvider.determineKonanHome()}/konan/nativelib"
+    val defaultNativeLibsDir = "${KotlinNativePaths.homePath.absolutePath}/konan/nativelib"
     if (tryLoadKonanLibrary(defaultNativeLibsDir, fullLibraryName, runFromDaemon))
         return
     error("Lib $fullLibraryName is not found in $defaultNativeLibsDir and ${paths.joinToString { it }}")

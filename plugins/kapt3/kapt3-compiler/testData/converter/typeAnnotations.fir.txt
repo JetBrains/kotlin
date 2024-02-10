@@ -16,6 +16,7 @@ package org.jetbrains;
 public abstract @interface A {
 }
 
+
 ////////////////////
 
 package org.jetbrains;
@@ -56,6 +57,7 @@ public final class Outer {
     }
 }
 
+
 ////////////////////
 
 package org.jetbrains;
@@ -72,15 +74,8 @@ package org.jetbrains;
 @kotlin.Metadata()
 public final class TypeAnnotationsKt {
 
-    public TypeAnnotationsKt() {
-        super();
-    }
-
     @org.jetbrains.annotations.NotNull()
-    public static final java.lang.@org.jetbrains.A() String foo(@org.jetbrains.annotations.NotNull()
-    java.util.@org.jetbrains.A() List<java.lang.@org.jetbrains.A() String> x, @org.jetbrains.annotations.NotNull()
-    org.jetbrains.Outer.@org.jetbrains.A() Inner y, @org.jetbrains.A()
-    int z) {
+    public static final java.lang.String foo(@org.jetbrains.annotations.NotNull() java.util.List<java.lang.String> x, @org.jetbrains.annotations.NotNull() org.jetbrains.Outer.Inner y, int z) {
         return null;
     }
 }

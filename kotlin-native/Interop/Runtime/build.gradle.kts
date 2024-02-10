@@ -47,7 +47,7 @@ native {
 }
 
 dependencies {
-    implementation(project(":kotlin-native:utilities:basic-utils"))
+    implementation(project(":compiler:util"))
     implementation(project(":kotlin-stdlib"))
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }

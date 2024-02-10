@@ -1,6 +1,6 @@
 [versions]
 dexMemberList = "4.1.1"
-dokka = "1.8.20"
+dokka = "1.9.10"
 gradle-custom-user-data = "1.12"
 gradle-enterprise = "3.14.1"
 gradle-plugin-publish = "1.2.1"
@@ -11,7 +11,7 @@ jdom2 = "2.0.6.1"
 kotlinx-serialization = "1.5.0"
 shadow = "8.1.1" # Should be in sync with version in kotlin-native/
 spdx = "0.1.0-dev-10"
-proguard = "7.4.1"
+proguard = "7.4.2"
 ktor = "2.3.7"
 kotlinx-metadataJvm = "0.7.0"
 # Forcing gson version because of https://github.com/google/gson/pull/1991

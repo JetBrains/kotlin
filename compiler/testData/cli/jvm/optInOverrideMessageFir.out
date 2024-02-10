@@ -1,7 +1,7 @@
 compiler/testData/cli/jvm/optInOverrideMessageFir.kt:16:18: error: base declaration of supertype 'Base' needs opt-in. This API is experimental and can change at any time, please use with care. The declaration override must be annotated with '@Marker' or '@OptIn(Marker::class)'
     override fun foo() {}
-                 ^
+                 ^^^
 compiler/testData/cli/jvm/optInOverrideMessageFir.kt:18:18: error: base declaration of supertype 'Base' needs opt-in. The declaration override must be annotated with '@EmptyMarker' or '@OptIn(EmptyMarker::class)'
     override fun bar() {}
-                 ^
+                 ^^^
 COMPILATION_ERROR

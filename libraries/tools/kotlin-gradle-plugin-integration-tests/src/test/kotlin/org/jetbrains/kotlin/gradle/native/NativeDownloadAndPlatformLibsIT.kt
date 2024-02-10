@@ -271,7 +271,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
     @DisplayName("The plugin shouldn't download the K/N compiler if there are no corresponding targets in the project.")
     @GradleTest
     fun shouldNotDownloadKonanWithoutCorrespondingTargets(gradleVersion: GradleVersion) {
-        nativeProject("new-mpp-lib-and-app/sample-old-style-app", gradleVersion) {
+        nativeProject("jvm-and-js-hmpp", gradleVersion) {
             build("tasks") {
                 assertOutputDoesNotContain("Kotlin/Native distribution: ")
             }

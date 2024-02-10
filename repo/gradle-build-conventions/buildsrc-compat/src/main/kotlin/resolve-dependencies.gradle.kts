@@ -22,6 +22,7 @@ tasks.register("resolveDependencies") {
             }
 
             configurations.findByName("commonCompileClasspath")?.resolve()
+            configurations.findByName("testRuntimeClasspath")?.resolve()
 
             project.extensions.findByType<SpdxSbomExtension>()?.run {
                 targets.forEach { target ->

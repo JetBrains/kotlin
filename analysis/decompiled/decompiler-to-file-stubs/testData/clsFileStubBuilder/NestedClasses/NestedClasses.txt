@@ -6,7 +6,7 @@ PsiJetFileStubImpl[package=test]
     MODIFIER_LIST[public final]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TOuter]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=NestedClasses]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=NestedClasses]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
@@ -32,7 +32,7 @@ PsiJetFileStubImpl[package=test]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=TOuter]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=Inner]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Inner]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
@@ -52,7 +52,7 @@ PsiJetFileStubImpl[package=test]
             MODIFIER_LIST[inner private final]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TII]
-            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=II]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=II]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             CLASS_BODY
@@ -108,7 +108,7 @@ PsiJetFileStubImpl[package=test]
         MODIFIER_LIST[private final]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TN]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=Nested]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
@@ -138,7 +138,7 @@ PsiJetFileStubImpl[package=test]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=TN]
-            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=NI]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=NI]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             CLASS_BODY
@@ -162,7 +162,7 @@ PsiJetFileStubImpl[package=test]
             MODIFIER_LIST[public final]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TNN]
-            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=NN]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=NN]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             CLASS_BODY

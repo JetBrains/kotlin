@@ -10,10 +10,10 @@ The following declaration is incompatible because property kinds are different (
     expect val pval: String
 
 actual var pval: String = ""
-           ^
+           ^^^^
 compiler/testData/multiplatform/incompatibleProperties/jvm.kt:2:12: error: 'actual val pvar: String' has no corresponding expected declaration
 The following declaration is incompatible because property kinds are different (val vs var):
     expect var pvar: String
 
 actual val pvar: String = ""
-           ^
+           ^^^^

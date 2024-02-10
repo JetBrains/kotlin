@@ -12,8 +12,8 @@
 public abstract @interface Anno1 {
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class Anno2 : kotlin/Annotation {
@@ -83,8 +83,8 @@ public abstract @interface Anno2 {
     public abstract java.lang.Class<?>[] classes();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class Anno3 : kotlin/Annotation {
@@ -106,8 +106,8 @@ public abstract @interface Anno3 {
     public abstract java.lang.String value();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final enum class Colors : kotlin/Enum<Colors> {
@@ -126,8 +126,9 @@ public abstract @interface Anno3 {
  */
 @kotlin.Metadata()
 public enum Colors {
-    /*public static final*/ WHITE /* = new Colors() */,
-    /*public static final*/ BLACK /* = new Colors() */;
+    WHITE,
+    BLACK;
+
 
     Colors() {
     }
@@ -138,8 +139,8 @@ public enum Colors {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final enum class Enum1 : kotlin/Enum<Enum1> {
@@ -158,9 +159,10 @@ public enum Colors {
  */
 @kotlin.Metadata()
 public enum Enum1 {
-    /*public static final*/ BLACK /* = new Enum1() */,
+    BLACK,
     @Anno1()
-    /*public static final*/ WHITE /* = new Enum1() */;
+    WHITE;
+
 
     Enum1() {
     }
@@ -171,8 +173,8 @@ public enum Enum1 {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class TestAnno : kotlin/Any {
@@ -194,8 +196,8 @@ public final class TestAnno {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class TestAnno2 : kotlin/Any {
@@ -230,9 +232,7 @@ public final class TestAnno2 {
     }
 
     @Anno1()
-    public final void a(@Anno3(value = "param-pam-pam")
-    @org.jetbrains.annotations.NotNull()
-    java.lang.String param) {
+    public final void a(@Anno3(value = "param-pam-pam") @org.jetbrains.annotations.NotNull() java.lang.String param) {
     }
 
     @Anno3(value = "getter")
@@ -247,8 +247,6 @@ public final class TestAnno2 {
     }
 
     @Anno3(value = "setter")
-    public final void setB(@Anno3(value = "setparam")
-    @org.jetbrains.annotations.NotNull()
-    java.lang.String p0) {
+    public final void setB(@Anno3(value = "setparam") @org.jetbrains.annotations.NotNull() java.lang.String p0) {
     }
 }

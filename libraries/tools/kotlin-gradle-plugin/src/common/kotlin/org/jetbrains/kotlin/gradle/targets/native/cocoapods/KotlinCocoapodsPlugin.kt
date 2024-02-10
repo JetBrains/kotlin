@@ -390,7 +390,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         val dependencyTaskName = cinterops.getByName(dependencyPod.moduleName).interopProcessingTaskName
         val dependencyTask = project.tasks.named<CInteropProcess>(dependencyTaskName)
 
-        interop.dependencyFiles += project.files(dependencyTask.map { it.outputFile }).builtBy(dependencyTask)
+        interop.dependencyFiles += project.files(dependencyTask.flatMap { it.outputFileProvider }).builtBy(dependencyTask)
 
         dependencyPod.interopBindingDependencies.forEach { transitiveDependency ->
             addPodDependencyToInterop(project, cocoapodsExtension, pod, cinterops, interop, transitiveDependency)
@@ -404,7 +404,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project.registerTask<DummyFrameworkTask>(DUMMY_FRAMEWORK_TASK_NAME) { task ->
             task.frameworkName.convention(cocoapodsExtension.podFrameworkName)
             task.useStaticFramework.convention(cocoapodsExtension.podFrameworkIsStatic)
-            task.outputFramework.convention(project.layout.cocoapodsBuildDirs.framework.map { it.dir(task.frameworkName.get() + ".framework") })
         }
     }
 

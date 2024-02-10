@@ -1,0 +1,5 @@
+Assertion failed
+assert("Hello" !in listOf("Hello", "World"))
+               |   |
+               |   [Hello, World]
+               false

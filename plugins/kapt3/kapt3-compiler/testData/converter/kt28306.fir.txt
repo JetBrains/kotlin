@@ -16,6 +16,7 @@ public abstract interface InterfaceWithDefaults<T extends java.lang.Object> {
     }
 }
 
+
 ////////////////////
 
 package foo;

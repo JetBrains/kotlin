@@ -47,19 +47,18 @@
 public final class User {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String firstName = null;
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String secondName = null;
+
     private final int age = 0;
 
     @org.jetbrains.annotations.NotNull()
-    public final User copy(@org.jetbrains.annotations.NotNull()
-    java.lang.String firstName, @org.jetbrains.annotations.NotNull()
-    java.lang.String secondName, int age) {
+    public final User copy(@org.jetbrains.annotations.NotNull() java.lang.String firstName, @org.jetbrains.annotations.NotNull() java.lang.String secondName, int age) {
         return null;
     }
 
-    public boolean equals(@org.jetbrains.annotations.Nullable()
-    java.lang.Object other) {
+    public boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object other) {
         return false;
     }
 
@@ -72,9 +71,7 @@ public final class User {
         return null;
     }
 
-    public User(@org.jetbrains.annotations.NotNull()
-    java.lang.String firstName, @org.jetbrains.annotations.NotNull()
-    java.lang.String secondName, int age) {
+    public User(@org.jetbrains.annotations.NotNull() java.lang.String firstName, @org.jetbrains.annotations.NotNull() java.lang.String secondName, int age) {
         super();
     }
 

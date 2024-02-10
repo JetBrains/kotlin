@@ -1,13 +1,14 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.ContextByDesignationCollector
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClassIdOrNull
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 private class ContextCollectingDiagnosticCollectorVisitor private constructor(
     sessionHolder: SessionHolder,
-    designation: FirDesignationWithFile,
+    designation: FirDesignation,
 ) : AbstractDiagnosticCollectorVisitor(
     PersistentCheckerContextFactory.createEmptyPersistenceCheckerContext(sessionHolder)
 ) {
@@ -45,11 +46,20 @@ private class ContextCollectingDiagnosticCollectorVisitor private constructor(
 
     override fun checkElement(element: FirElement) {}
 
+    fun collect(): CheckerContextForProvider {
+        // Trigger the collector
+        contextCollector.nextStep()
+
+        return contextCollector.getCollectedContext()
+    }
+
     companion object {
-        fun collect(sessionHolder: SessionHolder, designation: FirDesignationWithFile): CheckerContextForProvider {
-            val visitor = ContextCollectingDiagnosticCollectorVisitor(sessionHolder, designation)
-            designation.firFile.accept(visitor, null)
-            return visitor.contextCollector.getCollectedContext()
+        fun collect(sessionHolder: SessionHolder, designation: FirDesignation): CheckerContextForProvider {
+            requireWithAttachment(designation.fileOrNull != null, { "${FirFile::class.simpleName} is missed" }) {
+                withFirDesignationEntry("designation", designation)
+            }
+
+            return ContextCollectingDiagnosticCollectorVisitor(sessionHolder, designation).collect()
         }
     }
 }

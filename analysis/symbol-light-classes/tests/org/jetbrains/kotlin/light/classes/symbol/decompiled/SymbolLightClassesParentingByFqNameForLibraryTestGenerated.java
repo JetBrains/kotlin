@@ -616,5 +616,11 @@ public class SymbolLightClassesParentingByFqNameForLibraryTestGenerated extends 
         public void testAllOpen() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/withTestCompilerPluginEnabled/allOpen.kt");
         }
+
+        @Test
+        @TestMetadata("companionWithFoo_companionTypeUsedInJava_ReferenceFromKotlin.kt")
+        public void testCompanionWithFoo_companionTypeUsedInJava_ReferenceFromKotlin() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/withTestCompilerPluginEnabled/companionWithFoo_companionTypeUsedInJava_ReferenceFromKotlin.kt");
+        }
     }
 }

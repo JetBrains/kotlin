@@ -2,11 +2,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-repositories {
-    maven("<localRepo>")
-}
-
-
 kotlin {
     applyDefaultHierarchyTemplate()
 

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: WASM
+
 // FILE: test.kt
 
 fun ifoo(ok: String = "OK"): String {
@@ -23,7 +23,7 @@ fun box(): String {
 // EXPECTATIONS WASM
 // test.kt:1 $box__JsExportAdapter
 // test.kt:9 $box (11, 11, 11, 11, 4)
-// test.kt:4 $ifoo$default (0, 23, 23, 23, 23, 0)
+// test.kt:4 $ifoo$default (0, 22, 22, 22, 22, 0)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8)
 // ThrowHelpers.kt:29 $kotlin.wasm.internal.rangeCheck (6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19)

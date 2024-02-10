@@ -8,35 +8,31 @@ package kotlin.wasm.internal
 import kotlin.reflect.wasm.internal.KClassImpl
 import kotlin.reflect.KClass
 
-internal var associatedObjects: Map<ULong, Any>? = null
-
 @PublishedApi
 internal fun findAssociatedObject(klass: KClass<*>, key: Int): Any? {
     val klassId = (klass as? KClassImpl<*>)?.typeData?.typeId ?: return null
-
-    val map = associatedObjects ?: run {
-        val newMap: MutableMap<ULong, Any> = mutableMapOf()
-        initAssociatedObjects(newMap)
-        associatedObjects = newMap
-        newMap
-    }
-
-    return map[packIntoULong(klassId, key)]
+    return tryGetAssociatedObject(klassId, key)
 }
 
-internal fun packIntoULong(a: Int, b: Int): ULong =
-    (a.toUInt().toULong() shl Int.SIZE_BITS) or b.toUInt().toULong()
+internal fun tryGetAssociatedObject(
+    @Suppress("UNUSED_PARAMETER") klassId: Int,
+    @Suppress("UNUSED_PARAMETER") keyId: Int,
+): Any? {
+    // Init implicitly with AssociatedObjectsLowering:
+    // if (C1.klassId == klassId) if (Key1.klassId == keyId) return OBJ1
+    // if (C2.klassId == klassId) if (Key2.klassId == keyId) return OBJ2
+    // ...
+    return null
+}
 
+// Remove after bootstrap KT-65322
+@Suppress("UNUSED_PARAMETER")
 internal fun addAssociatedObject(
     mapToInit: MutableMap<ULong, Any>,
     klassId: Int,
     keyId: Int,
     instance: Any
-) {
-    mapToInit[packIntoULong(klassId, keyId)] = instance
-}
+): Unit = error("Remove after bootstrap")
 
-internal fun initAssociatedObjects(@Suppress("UNUSED_PARAMETER") mapToInit: MutableMap<ULong, Any>) {
-    // Init implicitly with AssociatedObjectsLowering
-    // addAssociatedObject(mapToInit, ...)
-}
+// Remove after bootstrap KT-65322
+internal fun initAssociatedObjects(): Unit = error("Remove after bootstrap")

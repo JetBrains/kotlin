@@ -9,7 +9,7 @@ class MyMap : AbstractMap<Int, Int> {
     field = emptySet<Entry<Int, Int>>()
     override get
 
-  internal fun containsEntry(entry: Entry<*, *>?): Boolean {
+  fun containsEntry(entry: Entry<*, *>?): Boolean {
     return false
   }
 

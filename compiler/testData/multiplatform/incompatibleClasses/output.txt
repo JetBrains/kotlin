@@ -10,94 +10,94 @@ The following declaration is incompatible because class kinds are different (cla
     expect class PClass : Any
 
 actual interface PClass
-                 ^
+                 ^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:2:15: error: 'actual object PInterface : Any' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     expect interface PInterface : Any
 
 actual object PInterface
-              ^
+              ^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:3:19: error: 'actual enum class PObject : Enum<PObject>' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     expect object PObject : Any
 
 actual enum class PObject
-                  ^
+                  ^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:4:25: error: 'actual annotation class PEnumClass : Annotation' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     expect enum class PEnumClass : Enum<PEnumClass>
 
 actual annotation class PEnumClass
-                        ^
+                        ^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:5:14: error: 'actual class PAnnotationClass : Any' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     expect annotation class PAnnotationClass : Annotation
 
 actual class PAnnotationClass
-             ^
+             ^^^^^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:7:24: error: 'actual object PublicObject : Any' has no corresponding expected declaration
 The following declaration is incompatible because visibility is different:
     expect object PublicObject : Any
 
 internal actual object PublicObject
-                       ^
+                       ^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:10:20: error: 'actual class OpenClass : Any' has no corresponding expected declaration
 The following declaration is incompatible because modality is different:
     expect class OpenClass : Any
 
 final actual class OpenClass
-                   ^
+                   ^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:11:19: error: 'actual class AbstractClass : Any' has no corresponding expected declaration
 The following declaration is incompatible because modality is different:
     expect class AbstractClass : Any
 
 open actual class AbstractClass
-                  ^
+                  ^^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:12:23: error: 'actual class FinalClass : Any' has no corresponding expected declaration
 The following declaration is incompatible because modality is different:
     expect class FinalClass : Any
 
 abstract actual class FinalClass
-                      ^
+                      ^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:14:14: error: 'actual class C1<A, Extra> : Any' has no corresponding expected declaration
 The following declaration is incompatible because number of type parameters is different:
     expect class C1<A> : Any
 
 actual class C1<A, Extra>
-             ^
+             ^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:15:14: error: 'actual class C2<out B> : Any' has no corresponding expected declaration
 The following declaration is incompatible because declaration-site variances of type parameters are different:
     expect class C2<B> : Any
 
 actual class C2<out B>
-             ^
+             ^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:16:14: error: 'actual class C3<D, E : D?> : Any' has no corresponding expected declaration
 The following declaration is incompatible because upper bounds of type parameters are different:
     expect class C3<D, E : D> : Any
 
 actual class C3<D, E : D?>
-             ^
+             ^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:18:18: error: 'actual typealias C4<F> = C4Impl<F>' has no corresponding expected declaration
 The following declaration is incompatible because upper bounds of type parameters are different:
     expect class C4<F> : Any
 
 actual typealias C4<F> = C4Impl<F>
-                 ^
+                 ^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:21:23: error: 'actual class ExtendsNumber : Any' has no corresponding expected declaration
 The following declaration is incompatible because some supertypes are missing in the actual declaration:
     expect class ExtendsNumber : Number
 
 actual abstract class ExtendsNumber : Any()
-                      ^
+                      ^^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:23:18: error: 'actual interface FunInterface : Any' has no corresponding expected declaration
 The following declaration is incompatible because actual declaration for fun expect interface is not a functional interface:
     expect fun interface FunInterface : Any
 
 actual interface FunInterface {
-                 ^
+                 ^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:31:18: error: 'actual typealias FunInterface2 = FunInterface2Typealias' has no corresponding expected declaration
 The following declaration is incompatible because actual declaration for fun expect interface is not a functional interface:
     expect fun interface FunInterface2 : Any
 
 actual typealias FunInterface2 = FunInterface2Typealias
-                 ^
+                 ^^^^^^^^^^^^^

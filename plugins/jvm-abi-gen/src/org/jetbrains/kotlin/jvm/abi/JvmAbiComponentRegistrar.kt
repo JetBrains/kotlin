@@ -20,12 +20,15 @@ class JvmAbiComponentRegistrar : CompilerPluginRegistrar() {
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
         configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
         val removeDataClassCopy = configuration.getBoolean(JvmAbiConfigurationKeys.REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE)
-
-        val builderExtension = JvmAbiClassBuilderInterceptor(removeDataClassCopy)
-        val outputExtension = JvmAbiOutputExtension(
-            File(outputPath), builderExtension.abiClassInfo, messageCollector,
-            configuration.getBoolean(JvmAbiConfigurationKeys.REMOVE_DEBUG_INFO),
+        val builderExtension = JvmAbiClassBuilderInterceptor(
             removeDataClassCopy,
+            configuration.getBoolean(JvmAbiConfigurationKeys.REMOVE_PRIVATE_CLASSES),
+        )
+        val outputExtension = JvmAbiOutputExtension(
+            File(outputPath), builderExtension::buildAbiClassInfoAndReleaseResources,
+            messageCollector, configuration.getBoolean(JvmAbiConfigurationKeys.REMOVE_DEBUG_INFO),
+            removeDataClassCopy,
+            configuration.getBoolean(JvmAbiConfigurationKeys.PRESERVE_DECLARATION_ORDER),
         )
 
         ClassGeneratorExtension.registerExtension(builderExtension)

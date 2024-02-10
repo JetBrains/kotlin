@@ -17,71 +17,47 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Logger
-import kotlin.time.*
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-
-fun Logger.debugKt65113(msg: String) {
-    if (!HostManager.hostIsMingw)
-        return
-    info("DEBUG(KT-65113): $msg")
-}
+import kotlin.time.ExperimentalTime
+import kotlin.time.TimeSource
+import kotlin.time.measureTimedValue
 
 class ProcessStreams(
-    private val logger: Logger,
+    scope: CoroutineScope,
     process: Process,
     stdin: InputStream,
     stdout: OutputStream,
     stderr: OutputStream,
-    jobLauncher: (suspend () -> Unit) -> Job,
 ) {
     private val ignoreIOErrors = AtomicBoolean(false)
-    private val stdin = jobLauncher {
+    private val stdin = scope.launch {
         stdin.apply {
-            copyStreams(null, this, process.outputStream)
+            copyStreams(this, process.outputStream)
             close()
         }
         process.outputStream.close()
     }
-    private val stdout = jobLauncher {
+    private val stdout = scope.launch {
         stdout.apply {
-            logger.debugKt65113("Will copy from process.inputStream to stdout")
-            copyStreams(logger, process.inputStream, this)
-            logger.debugKt65113("Will close stdout")
+            copyStreams(process.inputStream, this)
             close()
         }
-        logger.debugKt65113("Will close process.inputStream")
         process.inputStream.close()
-        logger.debugKt65113("Finished stdout job")
     }
-    private val stderr = jobLauncher {
+    private val stderr = scope.launch {
         stderr.apply {
-            copyStreams(null, process.errorStream, this)
+            copyStreams(process.errorStream, this)
             close()
         }
         process.errorStream.close()
     }
 
-    private fun copyStreams(logger: Logger?, from: InputStream, to: OutputStream) {
+    private fun copyStreams(from: InputStream, to: OutputStream) {
         try {
-            if (logger == null || !HostManager.hostIsMingw) {
-                from.copyTo(to)
-                return
-            }
-            // TODO(KT-65113): Debug where does the hang happen: infinite loop in copyTo, or inside read()
-            val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-            logger.debugKt65113("Will do initial read()")
-            var bytes = from.read(buffer)
-            logger.debugKt65113("Read $bytes of ${buffer.size} during initial read()")
-            while (bytes >= 0) {
-                logger.debugKt65113("Will write to output stream")
-                to.write(buffer, 0, bytes)
-                logger.debugKt65113("Will do next read()")
-                bytes = from.read(buffer)
-                logger.debugKt65113("Read $bytes")
-            }
-        } catch(e: IOException) {
-            if (ignoreIOErrors.get())
-                return
+            from.copyTo(to)
+        } catch (e: IOException) {
+            if (ignoreIOErrors.get()) return
             throw e
         }
     }
@@ -90,9 +66,7 @@ class ProcessStreams(
         // First finish passing input into the process.
         stdin.join()
         // Now receive all the output in whatever order.
-        logger.debugKt65113("Will join stdout")
         stdout.join()
-        logger.debugKt65113("Did join stdout")
         stderr.join()
     }
 
@@ -101,24 +75,6 @@ class ProcessStreams(
         stdout.cancel()
         stderr.cancel()
         stdin.cancel()
-    }
-}
-
-fun CoroutineScope.pumpStreams(
-    logger: Logger,
-    process: Process,
-    stdin: InputStream,
-    stdout: OutputStream,
-    stderr: OutputStream,
-) = ProcessStreams(
-    logger,
-    process,
-    stdin,
-    stdout,
-    stderr,
-) {
-    launch {
-        it()
     }
 }
 
@@ -142,7 +98,7 @@ private object ProcessKiller {
     fun deregister(process: Process) = processes.remove(process)
 }
 
-private fun <T> ProcessBuilder.scoped(logger: Logger, block: suspend CoroutineScope.(Process) -> T): T {
+private fun <T> ProcessBuilder.scoped(block: suspend CoroutineScope.(Process) -> T): T {
     val process = start()
     // Make sure the process is killed even if the jvm process is being destroyed.
     // e.g. gradle --no-daemon task execution was cancelled by the user pressing ^C
@@ -176,20 +132,16 @@ private class SleeperWithBackoff {
 }
 
 private fun Process.waitFor(timeout: Duration): Boolean {
-    if (!HostManager.hostIsMingw)
-        return waitFor(timeout.inWholeMilliseconds, TimeUnit.MILLISECONDS)
+    if (!HostManager.hostIsMingw) return waitFor(timeout.inWholeMilliseconds, TimeUnit.MILLISECONDS)
     // KT-65113: Looks like there's a race in waitFor implementation for Windows. It can wait for the entire `timeout` but the process'
     // exitValue would be 0.
-    if (!isAlive)
-        return true
-    if (!timeout.isPositive())
-        return false
+    if (!isAlive) return true
+    if (!timeout.isPositive()) return false
     val deadline = TimeSource.Monotonic.markNow() + timeout
     val sleeper = SleeperWithBackoff()
     do {
         sleeper.sleep()
-        if (!isAlive)
-            break
+        if (!isAlive) break
     } while (deadline.hasNotPassedNow())
     return !isAlive
 }
@@ -216,21 +168,25 @@ class HostExecutor : Executor {
         return ProcessBuilder(listOf(request.executableAbsolutePath) + request.args).apply {
             directory(workingDirectory)
             environment().putAll(request.environment)
-        }.scoped(logger) { process ->
-            val streams = pumpStreams(logger, process, request.stdin, request.stdout, request.stderr)
+        }.scoped { process ->
+            val streams = ProcessStreams(this, process, request.stdin, request.stdout, request.stderr)
             val (isTimeout, duration) = measureTimedValue {
                 !process.waitFor(request.timeout)
             }
-            if (isTimeout) {
-                logger.warning("Timeout running $commandLine in $duration")
+            suspend fun cancel() {
                 streams.cancel()
                 process.destroyForcibly()
                 streams.drain()
+            }
+            if (isTimeout) {
+                logger.warning("Timeout running $commandLine in $duration")
+                cancel()
                 ExecuteResponse(null, duration)
             } else {
-                var exitCode: Int? = process.exitValue()
+                val exitCode = process.exitValue()
                 logger.info("Finished executing $commandLine in $duration exit code $exitCode")
-                // Workaround for KT-65113
+                // KT-65113: Looks like read() from stdout/stderr of a child process may hang on Windows
+                // even when the child process is already terminated.
                 val waitStreamsDuration = if (HostManager.hostIsMingw) 10.seconds else Duration.INFINITE
                 try {
                     withTimeout(waitStreamsDuration) {
@@ -238,11 +194,7 @@ class HostExecutor : Executor {
                     }
                 } catch (e: TimeoutCancellationException) {
                     logger.warning("Failed to join the streams in $waitStreamsDuration.")
-                    // TODO(KT-65113): This is here to keep tests failing in the scenario for now.
-                    exitCode = null
-                    streams.cancel()
-                    process.destroyForcibly()
-                    streams.drain()
+                    cancel()
                 }
                 ExecuteResponse(exitCode, duration)
             }

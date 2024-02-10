@@ -5,7 +5,6 @@
 
 package kotlin.test
 
-import kotlin.test.FrameworkAdapter
 import kotlin.js.Promise
 
 // Need to wrap into additional lambdas so that js launcher will work without Mocha or any other testing framework
@@ -68,3 +67,26 @@ internal class JasmineLikeAdapter : FrameworkAdapter {
         }
     }
 }
+
+internal external interface ExternalFrameworkAdapter : JsAny {
+    fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit)
+    fun test(name: String, ignored: Boolean, testFn: () -> JsReference<Any>?)
+}
+
+private fun createExternalJasmineLikeAdapter(
+    suiteFn: (String, Boolean, () -> Unit) -> Unit,
+    testFn: (String, Boolean, () -> JsReference<Any>?) -> Unit
+): ExternalFrameworkAdapter = js("{ return { suite: suiteFn, test: testFn } }")
+
+private class ExternalAdapterWrapper(private val externalAdapter: ExternalFrameworkAdapter) : FrameworkAdapter {
+    override fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) = externalAdapter.suite(name, ignored, suiteFn)
+    override fun test(name: String, ignored: Boolean, testFn: () -> Any?) = externalAdapter.test(name, ignored, { testFn()?.toJsReference() })
+}
+
+internal fun JasmineLikeAdapter.externalize(): ExternalFrameworkAdapter =
+    createExternalJasmineLikeAdapter(
+        suiteFn = this::suite,
+        testFn = { name, ignored, testFn -> this.test(name, ignored, { testFn()?.get() }) }
+    )
+
+internal fun ExternalFrameworkAdapter.internalize(): FrameworkAdapter = ExternalAdapterWrapper(this)

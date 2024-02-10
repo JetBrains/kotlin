@@ -1951,6 +1951,18 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
+            @TestMetadata("pclaRootIsTrySyntheticCallWithDelegate.kt")
+            public void testPclaRootIsTrySyntheticCallWithDelegate() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/pclaRootIsTrySyntheticCallWithDelegate.kt");
+            }
+
+            @Test
+            @TestMetadata("posptonedPCLACallInsideStringInterpolation.kt")
+            public void testPosptonedPCLACallInsideStringInterpolation() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/posptonedPCLACallInsideStringInterpolation.kt");
+            }
+
+            @Test
             @TestMetadata("receiverUsesOuterTVButReturnTypeIsProper.kt")
             public void testReceiverUsesOuterTVButReturnTypeIsProper() throws Exception {
                 runTest("compiler/testData/codegen/box/builderInference/receiverUsesOuterTVButReturnTypeIsProper.kt");
@@ -4451,6 +4463,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             @TestMetadata("kt59022.kt")
             public void testKt59022() throws Exception {
                 runTest("compiler/testData/codegen/box/casts/kt59022.kt");
+            }
+
+            @Test
+            @TestMetadata("kt65197.kt")
+            public void testKt65197() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/kt65197.kt");
             }
 
             @Test
@@ -16017,6 +16035,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
+            @TestMetadata("fakeOverrideOfPrivateSetter.kt")
+            public void testFakeOverrideOfPrivateSetter() throws Exception {
+                runTest("compiler/testData/codegen/box/fakeOverride/fakeOverrideOfPrivateSetter.kt");
+            }
+
+            @Test
             @TestMetadata("function.kt")
             public void testFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/fakeOverride/function.kt");
@@ -26577,6 +26601,19 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
                 @Test
                 public void testAllFilesPresentInPrimitiveVsWrapperTypeInInheritance() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/javaInterop/statics")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @UseExtTestCaseGroupProvider()
+            public class Statics {
+                @Test
+                public void testAllFilesPresentInStatics() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/statics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
             }
         }

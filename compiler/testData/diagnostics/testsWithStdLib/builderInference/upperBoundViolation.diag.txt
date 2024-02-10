@@ -1,4 +1,4 @@
 /upperBoundViolation.kt:9:9: error: upper bound violation for generic parameter `T` of `printGenericNumber`: String is not a subtype of Number
         printGenericNumber(this[0])
-        ^
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

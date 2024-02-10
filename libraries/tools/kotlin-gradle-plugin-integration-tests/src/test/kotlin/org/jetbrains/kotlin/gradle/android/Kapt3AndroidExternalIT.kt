@@ -90,7 +90,10 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
             "android-dbflow".withPrefix,
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
-            buildJdk = jdkVersion.location
+            buildJdk = jdkVersion.location,
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(
+                setOf("https://jitpack.io")
+            )
         ) {
             build("assembleDebug") {
                 assertKaptSuccessful()

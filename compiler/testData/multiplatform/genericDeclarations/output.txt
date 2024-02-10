@@ -7,25 +7,25 @@ Exit code: OK
 Output:
 compiler/testData/multiplatform/genericDeclarations/common.kt:9:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect class C1<A>
-^
+^^^^^^
 compiler/testData/multiplatform/genericDeclarations/common.kt:10:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect class C2<B : C2<B>>
-^
+^^^^^^
 compiler/testData/multiplatform/genericDeclarations/common.kt:11:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect class C3<D, E : MutableList<in D>>
-^
+^^^^^^
 compiler/testData/multiplatform/genericDeclarations/common.kt:13:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect abstract class AbstractList<F> : MutableList<F>
-^
+^^^^^^
 compiler/testData/multiplatform/genericDeclarations/jvm.kt:11:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 actual class C1<A>
-^
+^^^^^^
 compiler/testData/multiplatform/genericDeclarations/jvm.kt:12:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 actual class C2<B : C2<B>>
-^
+^^^^^^
 compiler/testData/multiplatform/genericDeclarations/jvm.kt:13:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 actual class C3<D, E : MutableList<in D>>
-^
+^^^^^^
 compiler/testData/multiplatform/genericDeclarations/jvm.kt:15:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 actual abstract class AbstractList<F> : MutableList<F>, java.io.Serializable
-^
+^^^^^^

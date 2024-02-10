@@ -715,9 +715,9 @@ public class FunctionCodegen {
     }
 
     private static boolean isCompiledInCompatibilityMode(JvmDefaultMode mode, CallableMemberDescriptor descriptor) {
-        return mode.isCompatibility() ||
-               (mode == JvmDefaultMode.ALL_INCOMPATIBLE &&
-               JvmAnnotationUtilKt.hasJvmDefaultWithCompatibilityAnnotation(descriptor.getContainingDeclaration()));
+        return mode == JvmDefaultMode.ALL_COMPATIBILITY ||
+               (mode == JvmDefaultMode.ALL &&
+                JvmAnnotationUtilKt.hasJvmDefaultWithCompatibilityAnnotation(descriptor.getContainingDeclaration()));
     }
 
     private static void generateLocalVariableTable(
@@ -1681,7 +1681,7 @@ public class FunctionCodegen {
         // Fake overrides in interfaces should be expanded to implementation to make proper default check
         if (JvmAnnotationUtilKt.checkIsImplementationCompiledToJvmDefault(memberDescriptor, mode)) {
             boolean isCompatibilityMode = isCompiledInCompatibilityMode(mode, memberDescriptor);
-            boolean isSyntheticInCompatibilityOrJvmDefault = isSynthetic && (isCompatibilityMode || mode == JvmDefaultMode.ENABLE);
+            boolean isSyntheticInCompatibilityOrJvmDefault = isSynthetic && isCompatibilityMode;
             return (kind != OwnerKind.DEFAULT_IMPLS && !isSyntheticInCompatibilityOrJvmDefault) ||
                    (kind == OwnerKind.DEFAULT_IMPLS &&
                     (isSyntheticInCompatibilityOrJvmDefault ||

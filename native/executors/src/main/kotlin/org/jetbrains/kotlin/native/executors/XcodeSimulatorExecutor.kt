@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.logging.Logger
+import kotlin.jvm.Volatile
+import kotlin.jvm.Synchronized
 
 private fun defaultDeviceId(target: KonanTarget) = when (target.family) {
     Family.TVOS -> "com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-4K"
@@ -61,15 +63,17 @@ class XcodeSimulatorExecutor(
         return hostExecutor.runProcess("/usr/bin/xcrun", "simctl", *args).stdout
     }
 
+    @Volatile
     private var deviceChecked: SimulatorDeviceDescriptor? = null
 
+    @Synchronized
     private fun ensureSimulatorExists() {
         // Already ensured that simulator for `deviceId` exists.
         if (deviceId == deviceChecked?.deviceTypeIdentifier) {
             logger.info("Device already exists: ${deviceChecked?.deviceTypeIdentifier} with name ${deviceChecked?.name}")
             return
         }
-        logger.info("Device was not cheked before. Find the device with id: $deviceId")
+        logger.info("Device was not checked before. Find the device with id: $deviceId")
         val simulatorRuntime = getSimulatorRuntime()
         logger.info("Runtime used for the $deviceId is $simulatorRuntime")
 
@@ -136,7 +140,7 @@ class XcodeSimulatorExecutor(
         check(version.major >= 14) {
             "Was unable to get the required runtimes running on Xcode $version. Check the Xcode installation"
         }
-        if (version.minor >= 1) {
+        if (version >= XcodeVersion(14, 1)) {
             // Option -downloadPlatform NAME available only since 14.1
             hostExecutor.runProcess("/usr/bin/xcrun", "xcodebuild", "-downloadPlatform", osName)
         } else {

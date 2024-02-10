@@ -268,7 +268,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         classOrObjectSymbol.getStaticDeclaredMemberScope().getCallableSymbols()
             .filterIsInstance<KtEnumEntrySymbol>()
             .mapNotNullTo(result) {
-                val enumEntry = it.psiSafe<KtEnumEntry>()
+                val enumEntry = it.sourcePsiSafe<KtEnumEntry>()
                 val name = enumEntry?.name ?: return@mapNotNullTo null
                 SymbolLightFieldForEnumEntry(
                     enumEntry = enumEntry,

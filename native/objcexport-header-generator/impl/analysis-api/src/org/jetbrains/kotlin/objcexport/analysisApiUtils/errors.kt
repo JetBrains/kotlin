@@ -44,5 +44,5 @@ internal val errorInterface
         superClassGenerics = emptyList()
     )
 
-internal val objCErrorType = ObjCClassType(errorClassName)
+internal val objCErrorType = ObjCClassType(errorClassName, classId = null)
 internal val errorForwardClass = ObjCClassForwardDeclaration(errorClassName)

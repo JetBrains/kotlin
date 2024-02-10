@@ -15,6 +15,7 @@ package a;
 public abstract @interface LinkifyMask {
 }
 
+
 ////////////////////
 
 package a;
@@ -40,24 +41,6 @@ public final class SphinxLinkify {
         super();
     }
 
-    private final void addLinks(@LinkifyMask()
-    int mask) {
-    }
-}
-
-////////////////////
-
-package b;
-
-public @interface RestrictTo {
-
-    Scope[] value();
-
-    public static enum Scope {
-        /*public static final*/ LIBRARY_GROUP_PREFIX /* = new Scope() */;
-
-        private Scope() {
-            super();
-        }
+    private final void addLinks(@LinkifyMask() int mask) {
     }
 }

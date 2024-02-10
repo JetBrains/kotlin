@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -15,6 +16,13 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
 public abstract class KtCompletionCandidateChecker : KtAnalysisSessionComponent() {
+    public abstract fun createExtensionCandidateChecker(
+        originalFile: KtFile,
+        nameExpression: KtSimpleNameExpression,
+        explicitReceiver: KtExpression?
+    ): KtCompletionExtensionCandidateChecker
+
+    @Deprecated("Use createExtensionCandidateChecker() instead.")
     public abstract fun checkExtensionFitsCandidate(
         firSymbolForCandidate: KtCallableSymbol,
         originalFile: KtFile,
@@ -23,6 +31,10 @@ public abstract class KtCompletionCandidateChecker : KtAnalysisSessionComponent(
     ): KtExtensionApplicabilityResult
 }
 
+public interface KtCompletionExtensionCandidateChecker {
+    context(KtAnalysisSession)
+    public fun computeApplicability(candidate: KtCallableSymbol): KtExtensionApplicabilityResult
+}
 
 public sealed class KtExtensionApplicabilityResult : KtLifetimeOwner {
     public sealed class Applicable : KtExtensionApplicabilityResult() {
@@ -54,11 +66,36 @@ public sealed class KtExtensionApplicabilityResult : KtLifetimeOwner {
 }
 
 public interface KtCompletionCandidateCheckerMixIn : KtAnalysisSessionMixIn {
+    /**
+     * Returns an extension applicability checker for the given context [nameExpression].
+     * The function is meant to only be used for providing auto-completion for Kotlin in IntelliJ IDEA.
+     *
+     * The returned checker does not cache the results for individual callable candidates.
+     *
+     * @param originalFile The file being edited.
+     * @param nameExpression The expression under the caret in an in-memory copy of [originalFile]
+     *     with a dummy identifier inserted. Also see `CompletionUtilCore.DUMMY_IDENTIFIER` in IntelliJ IDEA.
+     * @param explicitReceiver A receiver expression, if available (also from the in-memory copy of [originalFile]).
+     */
+    public fun createExtensionCandidateChecker(
+        originalFile: KtFile,
+        nameExpression: KtSimpleNameExpression,
+        explicitReceiver: KtExpression?
+    ): KtCompletionExtensionCandidateChecker {
+        return analysisSession.completionCandidateChecker.createExtensionCandidateChecker(
+            originalFile,
+            nameExpression,
+            explicitReceiver
+        )
+    }
+
+    @Deprecated("Use createExtensionCandidateChecker() instead.")
     public fun KtCallableSymbol.checkExtensionIsSuitable(
         originalPsiFile: KtFile,
         psiFakeCompletionExpression: KtSimpleNameExpression,
         psiReceiverExpression: KtExpression?,
     ): KtExtensionApplicabilityResult = withValidityAssertion {
+        @Suppress("DEPRECATION")
         analysisSession.completionCandidateChecker.checkExtensionFitsCandidate(
             this,
             originalPsiFile,

@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -48,5 +51,13 @@ internal object SerializationDiagnosticRenderers {
             },
             renderSignature = { append(it.signature.render()) },
             declarations = { it.declarations.map(IrDeclaration::toIrBasedDescriptor) },
+            declarationKind = { data ->
+                when {
+                    data.declarations.all { it is IrSimpleFunction } -> "functions"
+                    data.declarations.all { it is IrProperty } -> "properties"
+                    data.declarations.all { it is IrField } -> "fields"
+                    else -> "declarations"
+                }
+            },
         )
 }

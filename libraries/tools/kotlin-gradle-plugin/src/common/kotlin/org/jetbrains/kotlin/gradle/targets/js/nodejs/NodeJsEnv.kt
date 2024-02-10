@@ -7,11 +7,11 @@ import java.io.File
 
 data class NodeJsEnv(
     override val download: Boolean,
-    val cleanableStore: CleanableStore,
+    override val cleanableStore: CleanableStore,
     val rootPackageDir: File,
     override val dir: File,
     val nodeBinDir: File,
-    val nodeExecutable: String,
+    override val executable: String,
     val platformName: String,
     val architectureName: String,
     override val ivyDependency: String,
@@ -21,4 +21,8 @@ data class NodeJsEnv(
 ) : AbstractEnv {
     val isWindows: Boolean
         get() = platformName == "win"
+
+    @Deprecated("Use executable instead", ReplaceWith("executable"))
+    val nodeExecutable
+        get() = executable
 }

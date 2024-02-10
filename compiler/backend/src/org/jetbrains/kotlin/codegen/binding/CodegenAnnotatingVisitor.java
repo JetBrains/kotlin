@@ -591,7 +591,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
                 }
 
                 return AsmUtil.asmTypeByClassId(
-                        DescriptorUtils.isInterface(descriptor) && !jvmDefaultMode.getForAllMethodsWithBody()
+                        DescriptorUtils.isInterface(descriptor) && !jvmDefaultMode.isEnabled()
                         ? classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
                         : classId
                 );

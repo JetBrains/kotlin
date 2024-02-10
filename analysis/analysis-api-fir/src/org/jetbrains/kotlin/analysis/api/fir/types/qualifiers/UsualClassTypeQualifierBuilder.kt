@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,22 +7,21 @@ package org.jetbrains.kotlin.analysis.api.fir.types.qualifiers
 
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.toSequence
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.fir.containingClassForLocal
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal object UsualClassTypeQualifierBuilder {
     fun buildQualifiers(
@@ -48,23 +47,18 @@ internal object UsualClassTypeQualifierBuilder {
 
         val designation = classSymbolToRender.fir.let {
             val nonLocalDesignation = it.tryCollectDesignation()
-            nonLocalDesignation?.toSequence(includeTarget = true)?.toList()
-                ?: collectDesignationPathForLocal(it)
-        }
-
+            nonLocalDesignation?.toSequence(includeTarget = true)?.toList() ?: collectDesignationPathForLocal(it)
+        }.filterIsInstance<FirRegularClass>()
 
         var typeParametersLeft = coneType.typeArguments.size
 
         fun needToRenderTypeParameters(index: Int): Boolean {
             if (typeParametersLeft <= 0) return false
-            return index == designation.lastIndex ||
-                    (designation[index] as? FirRegularClass)?.isInner == true ||
-                    (designation[index + 1] as? FirRegularClass)?.isInner == true
+            return index == designation.lastIndex || designation[index].isInner || designation[index + 1].isInner
         }
 
         val result = mutableListOf<KtClassTypeQualifier.KtResolvedClassTypeQualifier>()
         designation.forEachIndexed { index, currentClass ->
-            check(currentClass is FirRegularClass)
             val typeParameters = if (needToRenderTypeParameters(index)) {
                 val typeParametersCount = currentClass.typeParameters.count { it is FirTypeParameter }
                 val begin = typeParametersLeft - typeParametersCount
@@ -95,7 +89,7 @@ internal object UsualClassTypeQualifierBuilder {
         return designation.asReversed()
     }
 
-    private fun collectDesignationPathForLocal(declaration: FirClassLikeDeclaration): List<FirDeclaration> {
+    private fun collectDesignationPathForLocal(declaration: FirClassLikeDeclaration): List<FirClassLikeDeclaration> {
         checkWithAttachment(
             declaration.isLocal,
             message = { "${declaration::class} is not local" }

@@ -1,4 +1,3 @@
-// IGNORE_TREE_ACCESS: KT-65268
 object A {
     constructor()
     init {}

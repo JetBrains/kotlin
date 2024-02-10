@@ -1,31 +1,31 @@
 /noAnnotation.kt:17:5: error: val cannot be reassigned
     task.input = "OK"
-    ^
+    ^^^^^^^^^^
 /noAnnotation.kt:17:18: error: type mismatch: inferred type is String but StringProperty was expected
     task.input = "OK"
-                 ^
+                 ^^^^
 /noAnnotation.kt:18:5: error: val cannot be reassigned
     task.input = StringProperty("OK")
-    ^
+    ^^^^^^^^^^
 /noAnnotation.kt:20:9: error: val cannot be reassigned
         input = "OK"
-        ^
+        ^^^^^
 /noAnnotation.kt:20:17: error: type mismatch: inferred type is String but StringProperty was expected
         input = "OK"
-                ^
+                ^^^^
 /noAnnotation.kt:23:9: error: val cannot be reassigned
         input = StringProperty("OK")
-        ^
+        ^^^^^
 /noAnnotation.kt:25:5: error: val cannot be reassigned
     task.input = 42
-    ^
+    ^^^^^^^^^^
 /noAnnotation.kt:25:18: error: the integer literal does not conform to the expected type StringProperty
     task.input = 42
-                 ^
+                 ^^
 /noAnnotation.kt:27:9: error: val cannot be reassigned
         input = 42
-        ^
+        ^^^^^
 /noAnnotation.kt:27:17: error: the integer literal does not conform to the expected type StringProperty
         input = 42
-                ^
+                ^^
 

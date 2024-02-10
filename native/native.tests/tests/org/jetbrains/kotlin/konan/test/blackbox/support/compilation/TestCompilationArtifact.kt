@@ -57,4 +57,11 @@ internal sealed interface TestCompilationArtifact {
                 return expectedFile.takeIf { it.exists() }
             }
     }
+
+    sealed interface Swift : TestCompilationArtifact {
+        class Module(val rootDir: File, val moduleName: String) : Swift {
+            override val logFile: File get() = rootDir.resolve("$moduleName.log")
+            val binaryLibrary: File get() = rootDir.resolve("lib$moduleName.dylib")
+        }
+    }
 }

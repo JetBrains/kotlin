@@ -16,15 +16,15 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final? class After_OtherClass : R|kotlin/Any|
                 FirRegularClassSymbol public final? class Before_OtherClass : R|kotlin/Any|
-                FirRegularClassSymbol public final? class MyClass : R|kotlin/Any|
+                FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
             Functions
                 FirNamedFunctionSymbol public? final? fun after_Fun(): R|kotlin/Unit|
                 FirNamedFunctionSymbol public? final? fun before_Fun(): R|kotlin/Unit|
             Properties:
-                FirPropertySymbol public? final? val after_Val: <implicit>
-                    public? get(): <implicit>
-                FirPropertySymbol public? final? val before_Val: <implicit>
-                    public? get(): <implicit>
+                FirPropertySymbol public final val after_Val: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val before_Val: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
     Element 7
         Scope: FirLocalScope
             Classifiers:
@@ -38,14 +38,14 @@ Tower Data Context:
                 lval args: R|kotlin/Array<kotlin/String>|
 
                 public? final? fun before_Fun(): R|kotlin/Unit|
-                public? final? val before_Val: <implicit>
-                    public? get(): <implicit>
+                public final val before_Val: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
 
                 public final? class Before_OtherClass : R|kotlin/Any|
-                public final? class MyClass : R|kotlin/Any|
+                public final class MyClass : R|kotlin/Any|
                 public? final? fun after_Fun(): R|kotlin/Unit|
-                public? final? val after_Val: <implicit>
-                    public? get(): <implicit>
+                public final val after_Val: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
 
                 public final? class After_OtherClass : R|kotlin/Any|
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
@@ -60,8 +60,8 @@ Tower Data Context:
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] insideClassMember.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] <script-insideClassMember.kts>
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideClassMember.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun before_Fun(): R|kotlin/Unit| { LAZY_BLOCK }

@@ -9,6 +9,7 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
+    testApi(projectTests(":compiler:fir:fir2ir"))
 
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)

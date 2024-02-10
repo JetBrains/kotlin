@@ -1,19 +1,19 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/internalFromForeignModule/source.kt:3:21: error: cannot access 'InternalInterface': it is internal in 'a'
 private fun test(i: InternalInterface): InternalTypealias {
-                    ^
+                    ^^^^^^^^^^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/internalFromForeignModule/source.kt:3:41: error: cannot access 'InternalTypealias': it is internal in 'a'
 private fun test(i: InternalInterface): InternalTypealias {
-                                        ^
+                                        ^^^^^^^^^^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/internalFromForeignModule/source.kt:4:19: error: cannot access 'internalMemberFun': it is internal in 'PublicClass'
     PublicClass().internalMemberFun()
-                  ^
+                  ^^^^^^^^^^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/internalFromForeignModule/source.kt:5:17: error: cannot access 'Companion': it is internal in 'PublicClass'
     PublicClass.Companion
-                ^
+                ^^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/internalFromForeignModule/source.kt:7:5: error: cannot access 'internalFun': it is internal in 'a'
     internalFun(internalVal)
-    ^
+    ^^^^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/internalFromForeignModule/source.kt:7:17: error: cannot access 'internalVal': it is internal in 'a'
     internalFun(internalVal)
-                ^
+                ^^^^^^^^^^^
 COMPILATION_ERROR

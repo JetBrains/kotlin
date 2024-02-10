@@ -7,10 +7,10 @@ Exit code: COMPILATION_ERROR
 Output:
 compiler/testData/multiplatform/regressions/kt28385/jvm.kt:3:1: error: property must be initialized.
 val dasda
-^
+^^^^^^^^^
 compiler/testData/multiplatform/regressions/kt28385/jvm.kt:5:1: error: syntax error: Expecting a top level declaration.
 sdax = {
-^
+^^^^
 compiler/testData/multiplatform/regressions/kt28385/jvm.kt:5:6: error: syntax error: Expecting a top level declaration.
 sdax = {
      ^

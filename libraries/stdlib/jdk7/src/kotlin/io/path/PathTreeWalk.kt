@@ -43,6 +43,10 @@ internal class PathTreeWalk(
         entriesAction: (List<PathNode>) -> Unit
     ) {
         val path = node.path
+        if (node.parent != null) {
+            // Check entries other than the starting path of traversal
+            path.checkFileName()
+        }
         if (path.isDirectory(*linkOptions)) {
             if (node.createsCycle())
                 throw FileSystemLoopException(path.toString())

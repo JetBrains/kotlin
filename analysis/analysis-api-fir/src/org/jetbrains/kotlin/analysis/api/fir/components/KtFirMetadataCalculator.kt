@@ -155,7 +155,7 @@ internal class KtFirMetadataCalculator(override val analysisSession: KtFirAnalys
             metadataVersion = metadataVersion,
             // Technically we should use JvmDefaultMode.ALL_INCOMPATIBLE because Kapt4 always uses `-Xjvm-default=all`, but it would make
             // the majority of tests fail because metadata of each interface will have a flag set, compared to Kapt3.
-            jvmDefaultMode = JvmDefaultMode.DEFAULT,
+            jvmDefaultMode = JvmDefaultMode.DISABLE,
             stringTable,
             null,
             null

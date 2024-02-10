@@ -192,3 +192,23 @@ internal fun TestProject.addArchivesBaseNameCompat(
         )
     }
 }
+
+/**
+ * Chooses compiler version used for JVM compilation in the build tools API mode.
+ *
+ * If the chosen version requires additional repositories, please consider using [DependencyManagement.DefaultDependencyManagement].
+ *
+ * Ensure [BuildOptions.runViaBuildToolsApi] is set to true for the builds!
+ */
+internal fun TestProject.chooseCompilerVersion(
+    version: String,
+) {
+    buildGradle.append(
+        //language=Gradle
+        """
+        kotlin {
+            compilerVersion.set("$version")
+        }
+        """.trimIndent()
+    )
+}

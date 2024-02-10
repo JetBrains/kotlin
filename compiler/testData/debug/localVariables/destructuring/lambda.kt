@@ -8,13 +8,23 @@ fun box() {
     foo(A("O", 123)) { (x, y) -> x + y }
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS ClassicFrontend JVM_IR
 // test.kt:8 box:
 // test.kt:3 <init>: x:java.lang.String="O":java.lang.String, y:int=123:int
 // test.kt:8 box:
 // test.kt:5 foo: a:A=A, block:kotlin.jvm.functions.Function1=TestKt$box$1
 // test.kt:8 invoke:
 // test.kt:5 foo: a:A=A, block:kotlin.jvm.functions.Function1=TestKt$box$1
+// test.kt:8 box:
+// test.kt:9 box:
+
+// EXPECTATIONS FIR JVM_IR
+// test.kt:8 box:
+// test.kt:3 <init>: x:java.lang.String="O":java.lang.String, y:int=123:int
+// test.kt:8 box:
+// test.kt:5 foo: a:A=A, block:kotlin.jvm.functions.Function1=TestKt$<lambda>
+// test.kt:8 box$lambda$0:
+// test.kt:5 foo: a:A=A, block:kotlin.jvm.functions.Function1=TestKt$<lambda>
 // test.kt:8 box:
 // test.kt:9 box:
 

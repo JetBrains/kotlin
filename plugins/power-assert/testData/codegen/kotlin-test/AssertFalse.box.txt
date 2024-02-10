@@ -1,0 +1,4 @@
+Assertion failed
+assertFalse(1 == 1)
+              |
+              true

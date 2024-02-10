@@ -42,12 +42,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         }
     }
 
-    val foreignDeclaration by sealedElement {
-        parent(declaration)
-
-        visitorParameterName = "declaration"
-    }
-
     val named by sealedElement {
         +field("name", string)
     }
@@ -91,11 +85,41 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field(name = "documentation", string, nullable = true, mutable = true)
     }
 
-    val foreignFunction by element {
+    val accessor by sealedElement {
         customParentInVisitor = callable
         parent(callable)
-        parent(foreignDeclaration)
 
-        visitorParameterName = "function"
+        +field("body", functionBodyType, nullable = true, mutable = true)
+    }
+
+    val getter by element {
+        parent(accessor)
+    }
+
+    val setter by element {
+        parent(accessor)
+
+        +field("parameterName", string, initializer = { })
+    }
+
+    val variable by element {
+        customParentInVisitor = declaration
+        parent(declaration)
+        parent(declarationParent)
+
+        +field("name", string)
+        +field("type", typeType)
+
+        +field("getter", getter)
+        +field("setter", setter, nullable = true)
+
+        +field("isStatic", boolean) // todo: KT-65046 Method|function distinction in SIR
+    }
+
+    val import by element {
+        customParentInVisitor = declaration
+        parent(declaration)
+
+        +field("moduleName", string)
     }
 }

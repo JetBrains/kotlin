@@ -82,9 +82,6 @@ kotlin {
                 val java9CompileOnly = configurations[frameworkJava9SourceSet.compileOnlyConfigurationName]
                 project.dependencies {
                     java9CompileOnly(project)
-                    if (framework == JvmTestFramework.TestNG) {
-                        java9CompileOnly("org.testng:testng:7.0.0")
-                    }
                 }
             }
             test.associateWith(getByName("JUnit"))
@@ -162,6 +159,7 @@ kotlin {
             }
         }
         val jvmJUnitTest by getting {
+            dependsOn(commonTest)
             kotlin.srcDir("junit/src/test/kotlin")
         }
         val jvmJUnit5 by getting {
@@ -173,9 +171,11 @@ kotlin {
             }
         }
         val jvmJUnit5Test by getting {
+            dependsOn(commonTest)
             kotlin.srcDir("junit5/src/test/kotlin")
             dependencies {
                 runtimeOnly(libs.junit.jupiter.engine)
+                runtimeOnly(libs.junit.platform.launcher)
             }
         }
         val jvmTestNG by getting {
@@ -183,11 +183,15 @@ kotlin {
             kotlin.srcDir("testng/src/main/kotlin")
             resources.srcDir("testng/src/main/resources")
             dependencies {
-                api("org.testng:testng:6.13.1")
+                api("org.testng:testng:7.0.0")
             }
         }
         val jvmTestNGTest by getting {
+            dependsOn(commonTest)
             kotlin.srcDir("testng/src/test/kotlin")
+            dependencies {
+                implementation("org.testng:testng:7.5.1")
+            }
         }
         val jsMain by getting {
             dependsOn(assertionsCommonMain)
@@ -205,6 +209,9 @@ kotlin {
         val wasmJsMain by getting {
             dependsOn(wasmCommonMain)
             kotlin.srcDir("wasm/js/src/main/kotlin")
+        }
+        val wasmJsTest by getting {
+            kotlin.srcDir("wasm/js/src/test/kotlin")
         }
         val wasmWasiMain by getting {
             dependsOn(wasmCommonMain)
@@ -265,16 +272,23 @@ tasks {
         dependsOn(jvmJarTasks)
     }
 
-    val jvmTestTasks = jvmTestFrameworks.map { framework ->
-        register("jvm${framework}Test", Test::class) {
-            group = "verification"
-            val compilation = kotlin.jvm().compilations["${framework}Test"]
-            classpath = compilation.runtimeDependencyFiles + compilation.output.allOutputs
-            testClassesDirs = compilation.output.classesDirs
-            when (framework) {
-                JvmTestFramework.JUnit -> useJUnit()
-                JvmTestFramework.JUnit5 -> useJUnitPlatform()
-                JvmTestFramework.TestNG -> useTestNG()
+    val jvmTestTasks = jvmTestFrameworks.flatMap { framework ->
+        listOf(false, true).map { excludeAsserterContributor ->
+            register("jvm${framework}${if (excludeAsserterContributor) "NoAsserter" else ""}Test", Test::class) {
+                group = "verification"
+                val testCompilation = kotlin.jvm().compilations["${framework}Test"]
+                classpath = testCompilation.runtimeDependencyFiles + testCompilation.output.allOutputs
+                if (excludeAsserterContributor) {
+                    val mainCompilation = kotlin.jvm().compilations["$framework"]
+                    classpath -= mainCompilation.output.allOutputs
+                    filter.excludePatterns += "*ContributorTest"
+                }
+                testClassesDirs = testCompilation.output.classesDirs
+                when (framework) {
+                    JvmTestFramework.JUnit -> useJUnit()
+                    JvmTestFramework.JUnit5 -> useJUnitPlatform()
+                    JvmTestFramework.TestNG -> useTestNG()
+                }
             }
         }
     }
@@ -363,10 +377,13 @@ configurations {
             when (framework) {
                 JvmTestFramework.JUnit -> {}
                 JvmTestFramework.JUnit5 -> {
-                    apiElements("org.junit.jupiter:junit-jupiter-api:5.6.3")
-                    runtimeDeps("org.junit.jupiter:junit-jupiter-engine:5.6.3")
+                    apiElements("org.junit.jupiter:junit-jupiter-api:5.10.1")
+                    runtimeDeps("org.junit.jupiter:junit-jupiter-engine:5.10.1")
+                    runtimeDeps("org.junit.platform:junit-platform-launcher:1.10.1")
                 }
-                JvmTestFramework.TestNG -> {}
+                JvmTestFramework.TestNG -> {
+                    apiElements("org.testng:testng:7.5.1")
+                }
             }
         }
         artifacts {

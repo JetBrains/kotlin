@@ -9,13 +9,13 @@ public final class A : kotlin/Any {
 }
 // A$L.class
 // ------------------------------------------
-local final class .A.L<T#0 /* T */> : kotlin/Any {
+local final class .A$L<T#0 /* T */> : kotlin/Any {
 
   // signature: <init>()V
   public constructor()
 
   // signature: x(LA$L;)V
-  public final fun x(l: .A.L<.A.L.I>): kotlin/Unit
+  public final fun x(l: .A$L<.A.L.I>): kotlin/Unit
 
   // nested class: I
 

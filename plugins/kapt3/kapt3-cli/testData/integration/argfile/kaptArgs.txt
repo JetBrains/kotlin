@@ -1,4 +1,3 @@
--language-version 1.9
 -Kapt-stubs=output/stubs
 -Kapt-classes=output/classes
 -Kapt-sources=output/sources

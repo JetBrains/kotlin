@@ -19,7 +19,7 @@ fun box() {
 // EXPECTATIONS WASM
 // test.kt:1 $box
 // test.kt:5 $box
-// test.kt:6 $box$lambda.invoke (9, 9, 9, 9)
+// test.kt:6 $box$lambda.invoke (8, 8, 8, 8)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8)
 // ThrowHelpers.kt:29 $kotlin.wasm.internal.rangeCheck (6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19)

@@ -121,6 +121,7 @@ val distCompilerPluginProjects = listOf(
     ":plugins:parcelize:parcelize-compiler",
     ":plugins:parcelize:parcelize-runtime",
     ":kotlin-noarg-compiler-plugin",
+    ":kotlin-power-assert-compiler-plugin",
     ":kotlin-sam-with-receiver-compiler-plugin",
     ":kotlinx-serialization-compiler-plugin",
     ":kotlin-lombok-compiler-plugin",
@@ -314,7 +315,7 @@ val proguard by task<CacheableProguardTask> {
             **.class,**.properties,**.kt,**.kotlin_*,**.jnilib,**.so,**.dll,**.txt,**.caps,
             META-INF/services/**,META-INF/native/**,META-INF/extensions/**,META-INF/MANIFEST.MF,
             messages/**""".trimIndent()),
-        provider { packCompiler.get().outputs.files.singleFile }
+        packCompiler.map { it.outputs.files.singleFile }
     )
 
     outjars(layout.buildDirectory.file("libs/$compilerBaseName-after-proguard.jar"))
@@ -345,7 +346,7 @@ val proguard by task<CacheableProguardTask> {
     printconfiguration(layout.buildDirectory.file("compiler.pro.dump"))
 }
 
-val pack = if (kotlinBuildProperties.proguard) proguard else packCompiler
+val pack: TaskProvider<out DefaultTask> = if (kotlinBuildProperties.proguard) proguard else packCompiler
 val distDir: String by rootProject.extra
 
 val jar = runtimeJar {
@@ -353,7 +354,7 @@ val jar = runtimeJar {
     dependsOn(compilerVersion)
 
     from {
-        zipTree(pack.get().singleOutputFile())
+        pack.map { zipTree(it.singleOutputFile(layout)) }
     }
 
     from {

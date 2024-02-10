@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.util.KonanHomeProvider
+import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
@@ -41,7 +41,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
 
         Distribution(
-                configuration.get(KonanConfigKeys.KONAN_HOME) ?: KonanHomeProvider.determineKonanHome(),
+                configuration.get(KonanConfigKeys.KONAN_HOME) ?: KotlinNativePaths.homePath.absolutePath,
                 false,
                 configuration.get(KonanConfigKeys.RUNTIME_FILE),
                 overridenProperties,

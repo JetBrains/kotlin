@@ -95,7 +95,6 @@ class GenerateIrRuntime {
                     "kotlin.Experimental",
                     "kotlin.ExperimentalMultiplatform"
                 ),
-                AnalysisFlags.allowResultReturnType to true
             )
         )
 
@@ -307,7 +306,6 @@ class GenerateIrRuntime {
             irModuleName = "kotlin"
             allowKotlinPackage = true
             optIn = arrayOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental", "kotlin.ExperimentalMultiplatform")
-            allowResultReturnType = true
             multiPlatform = true
             languageVersion = "1.4"
             commonSources = filesToCompile.filter { it.isCommonSource == true }.map { it.virtualFilePath }.toTypedArray()

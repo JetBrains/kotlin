@@ -122,7 +122,7 @@ KtKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
-    modality: FINAL
+    modality: OPEN
     origin: SOURCE
     receiverParameter: null
     returnType: KtUsualClassType:
@@ -173,7 +173,7 @@ KtKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
-    modality: FINAL
+    modality: OPEN
     origin: SOURCE
     parameter: KtValueParameterSymbol:
       annotationsList: []
@@ -290,7 +290,7 @@ KtKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
-    modality: FINAL
+    modality: OPEN
     origin: SOURCE
     receiverParameter: KtReceiverParameterSymbol:
       annotationsList: []
@@ -439,7 +439,7 @@ KtKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
-    modality: FINAL
+    modality: OPEN
     origin: SOURCE
     receiverParameter: null
     returnType: KtUsualClassType:
@@ -530,7 +530,7 @@ KtKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
-    modality: FINAL
+    modality: OPEN
     origin: SOURCE
     receiverParameter: KtReceiverParameterSymbol:
       annotationsList: []
@@ -601,7 +601,7 @@ KtKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
-    modality: FINAL
+    modality: OPEN
     origin: SOURCE
     parameter: KtValueParameterSymbol:
       annotationsList: []

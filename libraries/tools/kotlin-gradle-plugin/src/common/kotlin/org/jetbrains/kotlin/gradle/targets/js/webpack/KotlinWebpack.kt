@@ -51,7 +51,7 @@ abstract class KotlinWebpack
 constructor(
     @Internal
     @Transient
-    override val compilation: KotlinJsIrCompilation,
+    final override val compilation: KotlinJsIrCompilation,
     private val objects: ObjectFactory,
 ) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl, UsesBuildMetricsService {
     @Transient
@@ -76,7 +76,7 @@ constructor(
     val compilationId: String by lazy {
         compilation.let {
             val target = it.target
-            target.project.path + "@" + target.name + ":" + it.compilationPurpose
+            target.project.path + "@" + target.name + ":" + it.compilationName
         }
     }
 
@@ -122,7 +122,7 @@ constructor(
         }
 
     init {
-        onlyIf {
+        this.onlyIf {
             entry.get().asFile.exists()
         }
     }
@@ -182,6 +182,9 @@ constructor(
     @get:InputDirectory
     open val configDirectory: File?
         get() = projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
+
+    @Input
+    var debug: Boolean = false
 
     @Input
     var bin: String = "webpack/bin/webpack.js"
@@ -263,13 +266,19 @@ constructor(
         webpackConfigAppliers
             .forEach { it.execute(config) }
 
+        val webpackArgs = args.run {
+            val port = devServerProperty.orNull?.port
+            if (debug && port != null) plus(listOf("--port", port.toString()))
+            else this
+        }
+
         return KotlinWebpackRunner(
             npmProject,
             logger,
             configFile.get(),
             execHandleFactory,
             bin,
-            args,
+            webpackArgs,
             nodeArgs,
             config
         )

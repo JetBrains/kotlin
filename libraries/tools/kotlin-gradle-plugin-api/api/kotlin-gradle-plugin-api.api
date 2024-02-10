@@ -284,7 +284,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsCompiler
 	public abstract fun getModuleKind ()Lorg/gradle/api/provider/Property;
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getNoStdlib ()Lorg/gradle/api/provider/Property;
-	public abstract fun getOutputFile ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSourceMap ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSourceMapEmbedSources ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSourceMapNamesPolicy ()Lorg/gradle/api/provider/Property;
@@ -330,7 +329,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions 
 	public abstract fun getModuleName ()Ljava/lang/String;
 	public abstract fun getNoStdlib ()Z
 	public abstract fun getOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsCompilerOptions;
-	public abstract fun getOutputFile ()Ljava/lang/String;
 	public abstract fun getSourceMap ()Z
 	public abstract fun getSourceMapEmbedSources ()Ljava/lang/String;
 	public abstract fun getSourceMapNamesPolicy ()Ljava/lang/String;
@@ -344,7 +342,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions 
 	public abstract fun setModuleKind (Ljava/lang/String;)V
 	public abstract fun setModuleName (Ljava/lang/String;)V
 	public abstract fun setNoStdlib (Z)V
-	public abstract fun setOutputFile (Ljava/lang/String;)V
 	public abstract fun setSourceMap (Z)V
 	public abstract fun setSourceMapEmbedSources (Ljava/lang/String;)V
 	public abstract fun setSourceMapNamesPolicy (Ljava/lang/String;)V
@@ -365,7 +362,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls 
 	public static fun getModuleKind (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
 	public static fun getModuleName (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
 	public static fun getNoStdlib (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
-	public static fun getOutputFile (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
 	public static fun getSourceMap (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getSourceMapEmbedSources (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
 	public static fun getSourceMapNamesPolicy (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
@@ -386,7 +382,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls 
 	public static fun setModuleKind (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
 	public static fun setModuleName (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
 	public static fun setNoStdlib (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
-	public static fun setOutputFile (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
 	public static fun setSourceMap (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setSourceMapEmbedSources (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
 	public static fun setSourceMapNamesPolicy (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V

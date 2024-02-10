@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.sir.printer
 
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.builder.buildForeignFunction
 import org.jetbrains.kotlin.sir.builder.buildFunction
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
@@ -17,18 +16,6 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 class SirAsSwiftSourcesPrinterTests {
-    @Test
-    fun `should ignore foreign elements`() {
-        val module = buildModule {
-            name = "Test"
-            declarations.add(foreignFunction())
-        }
-
-        runTest(
-            module,
-            "testData/empty"
-        )
-    }
 
     @Test
     fun `should print simple function`() {
@@ -146,7 +133,6 @@ class SirAsSwiftSourcesPrinterTests {
     fun `should all types as parameter be handled`() {
         val module = buildModule {
             name = "Test"
-            declarations.add(foreignFunction())
 
             declarations.add(
                 buildFunction {
@@ -294,10 +280,5 @@ class SirAsSwiftSourcesPrinterTests {
 
         val actualSwiftSrc = SirAsSwiftSourcesPrinter().print(module)
         JUnit5Assertions.assertEqualsToFile(expectedSwiftSrc, actualSwiftSrc)
-    }
-
-    private fun foreignFunction(): SirForeignFunction = buildForeignFunction {
-        origin = SirOrigin.Unknown
-        visibility = SirVisibility.PUBLIC
     }
 }

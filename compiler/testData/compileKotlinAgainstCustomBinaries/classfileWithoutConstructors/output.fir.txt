@@ -1,4 +1,4 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/classfileWithoutConstructors/shouldNotCompile.kt:6:9: error: resolution to the classifier 'class TopLevelKt : Any' is not appropriate here.
         TopLevelKt() // error here
-        ^
+        ^^^^^^^^^^
 COMPILATION_ERROR

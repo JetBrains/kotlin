@@ -27,7 +27,7 @@ abstract class NodeJsSetupTask : AbstractSetupTask<NodeJsEnv, NodeJsRootExtensio
     override val artifactName: String
         get() = "node"
 
-    override fun extract(archive: File, destination: File) {
+    override fun extract(archive: File) {
         var fixBrokenSymLinks = false
 
         fs.copy {
@@ -40,13 +40,13 @@ abstract class NodeJsSetupTask : AbstractSetupTask<NodeJsEnv, NodeJsRootExtensio
                     }
                 }
             )
-            it.into(destination)
+            it.into(destination.parentFile)
         }
 
         fixBrokenSymlinks(this.destination, env.isWindows, fixBrokenSymLinks)
 
         if (!env.isWindows) {
-            File(env.nodeExecutable).setExecutable(true)
+            File(env.executable).setExecutable(true)
         }
     }
 

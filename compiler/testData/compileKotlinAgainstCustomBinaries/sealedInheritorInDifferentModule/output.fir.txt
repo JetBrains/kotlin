@@ -10,8 +10,8 @@ compiler or generated code. Use it at your own risk!
 
 compiler/testData/compileKotlinAgainstCustomBinaries/sealedInheritorInDifferentModule/main.kt:5:11: error: extending sealed classes or interfaces from a different module is prohibited.
 class B : Base(), IBase
-          ^
+          ^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/sealedInheritorInDifferentModule/main.kt:5:19: error: extending sealed classes or interfaces from a different module is prohibited.
 class B : Base(), IBase
-                  ^
+                  ^^^^^
 COMPILATION_ERROR

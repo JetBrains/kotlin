@@ -19,6 +19,7 @@
 public final class Boo {
     @org.jetbrains.annotations.NotNull()
     public static final Boo INSTANCE = null;
+
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String z = null;
 
@@ -37,8 +38,8 @@ public final class Boo {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final object Foo : kotlin/Any {
@@ -125,25 +126,39 @@ public final class Boo {
 public final class Foo {
     @org.jetbrains.annotations.NotNull()
     public static final Foo INSTANCE = null;
+
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String aString = "foo";
+
     public static final int aInt = 3;
+
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String bString = "bar";
+
     private static final int bInt = 5;
+
     @org.jetbrains.annotations.NotNull()
     private static java.lang.String cString = "baz";
+
     private static int cInt = 7;
+
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String d = null;
+
     private static final int e = 0;
+
     private static final int f = 8;
+
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String g = "ab";
+
     private static final int h = -4;
+
     private static final int i = 2147483647;
+
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String j = null;
+
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String k = null;
 
@@ -165,8 +180,7 @@ public final class Foo {
         return null;
     }
 
-    public final void setCString(@org.jetbrains.annotations.NotNull()
-    java.lang.String p0) {
+    public final void setCString(@org.jetbrains.annotations.NotNull() java.lang.String p0) {
     }
 
     public final int getCInt() {
@@ -213,8 +227,8 @@ public final class Foo {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class HavingState : kotlin/Any {
@@ -294,27 +308,39 @@ public final class Foo {
 public final class HavingState {
     @org.jetbrains.annotations.NotNull()
     private final State state = State.START;
+
     @org.jetbrains.annotations.NotNull()
     private final State[] stateArray = {State.START};
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String[] stringArray = {"foo"};
+
     @org.jetbrains.annotations.NotNull()
     private final java.util.List<java.lang.String> stringList = null;
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Integer[] intArray = {1};
+
     @org.jetbrains.annotations.NotNull()
-    private final float[] floatArray = {-1.0F};
+    private final float[] floatArray = {-1.0f};
+
     @org.jetbrains.annotations.NotNull()
     private final java.util.List<java.lang.Integer> intList = null;
+
     private final int uint = 1;
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.UInt[] uintArray = {1};
+
     @org.jetbrains.annotations.NotNull()
     private final java.util.List<kotlin.UInt> uintList = null;
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.reflect.KClass<State> clazz = null;
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Class<State> javaClass = null;
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.reflect.KClass<? extends java.lang.Object> anonymous = null;
 
@@ -387,8 +413,8 @@ public final class HavingState {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final enum class State : kotlin/Enum<State> {
@@ -407,8 +433,9 @@ public final class HavingState {
  */
 @kotlin.Metadata()
 public enum State {
-    /*public static final*/ START /* = new State() */,
-    /*public static final*/ FINISH /* = new State() */;
+    START,
+    FINISH;
+
 
     State() {
     }

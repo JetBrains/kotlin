@@ -62,6 +62,10 @@ import java.nio.file.attribute.BasicFileAttributes
  *   This exception is passed to [onError] for handling.
  * @throws IOException if any errors occur while copying.
  *   This exception is passed to [onError] for handling.
+ * @throws FileSystemException if the source subtree contains an entry with an illegal name such as "." or "..".
+ *   This exception is passed to [onError] for handling.
+ * @throws FileSystemLoopException if the recursive copy reaches a cycle.
+ *   This exception is passed to [onError] for handling.
  * @throws SecurityException if a security manager is installed and access is not permitted to an entry in the source or target subtree.
  *   This exception is passed to [onError] for handling.
  */
@@ -143,6 +147,10 @@ public fun Path.copyToRecursively(
  * @throws FileSystemException if [target] is an entry inside the source subtree.
  * @throws IOException if any errors occur while copying.
  *   This exception is passed to [onError] for handling.
+ * @throws FileSystemException if the source subtree contains an entry with an illegal name such as "." or "..".
+ *   This exception is passed to [onError] for handling.
+ * @throws FileSystemLoopException if the recursive copy reaches a cycle.
+ *   This exception is passed to [onError] for handling.
  * @throws SecurityException if a security manager is installed and access is not permitted to an entry in the source or target subtree.
  *   This exception is passed to [onError] for handling.
  */
@@ -188,18 +196,35 @@ public fun Path.copyToRecursively(
         }
     }
 
+    val normalizedTarget = target.normalize()
+
     fun destination(source: Path): Path {
         val relativePath = source.relativeTo(this@copyToRecursively)
-        return target.resolve(relativePath.pathString)
+        val destination = target.resolve(relativePath.pathString)
+        if (!destination.normalize().startsWith(normalizedTarget)) {
+            throw IllegalFileNameException(
+                source,
+                destination,
+                "Copying files to outside the specified target directory is prohibited. The directory being recursively copied might contain an entry with an illegal name."
+            )
+        }
+        return destination
     }
 
     fun error(source: Path, exception: Exception): FileVisitResult {
         return onError(source, destination(source), exception).toFileVisitResult()
     }
 
+    val stack = arrayListOf<Path>()
+
     @Suppress("UNUSED_PARAMETER")
     fun copy(source: Path, attributes: BasicFileAttributes): FileVisitResult {
         return try {
+            if (stack.isNotEmpty()) {
+                // Check entries other than the starting path of traversal
+                source.checkFileName()
+                source.checkNotSameAs(stack.last())
+            }
             DefaultCopyActionContext.copyAction(source, destination(source)).toFileVisitResult()
         } catch (exception: Exception) {
             error(source, exception)
@@ -207,10 +232,15 @@ public fun Path.copyToRecursively(
     }
 
     visitFileTree(followLinks = followLinks) {
-        onPreVisitDirectory(::copy)
+        onPreVisitDirectory { directory, attributes ->
+            copy(directory, attributes).also {
+                if (it == FileVisitResult.CONTINUE) stack.add(directory)
+            }
+        }
         onVisitFile(::copy)
         onVisitFileFailed(::error)
         onPostVisitDirectory { directory, exception ->
+            stack.removeLast()
             if (exception == null) {
                 FileVisitResult.CONTINUE
             } else {
@@ -330,13 +360,13 @@ private fun Path.deleteRecursivelyImpl(): List<Exception> {
             if (stream is SecureDirectoryStream<Path>) {
                 useInsecure = false
                 collector.path = parent
-                stream.handleEntry(this.fileName, collector)
+                stream.handleEntry(this.fileName, null, collector)
             }
         }
     }
 
     if (useInsecure) {
-        insecureHandleEntry(this, collector)
+        insecureHandleEntry(this, null, collector)
     }
 
     return collector.collectedExceptions
@@ -356,10 +386,16 @@ private inline fun <R> tryIgnoreNoSuchFileException(function: () -> R): R? {
 
 // secure walk
 
-private fun SecureDirectoryStream<Path>.handleEntry(name: Path, collector: ExceptionsCollector) {
+private fun SecureDirectoryStream<Path>.handleEntry(name: Path, parent: Path?, collector: ExceptionsCollector) {
     collector.enterEntry(name)
 
     collectIfThrows(collector) {
+        if (parent != null) {
+            // Check entries other than the starting path of traversal
+            val entry = collector.path!!
+            entry.checkFileName()
+            entry.checkNotSameAs(parent)
+        }
         if (this.isDirectory(name, LinkOption.NOFOLLOW_LINKS)) {
             val preEnterTotalExceptions = collector.totalExceptions
 
@@ -384,7 +420,7 @@ private fun SecureDirectoryStream<Path>.enterDirectory(name: Path, collector: Ex
             this.newDirectoryStream(name, LinkOption.NOFOLLOW_LINKS)
         }?.use { directoryStream ->
             for (entry in directoryStream) {
-                directoryStream.handleEntry(entry.fileName, collector)
+                directoryStream.handleEntry(entry.fileName, collector.path, collector)
             }
         }
     }
@@ -398,8 +434,13 @@ private fun SecureDirectoryStream<Path>.isDirectory(entryName: Path, vararg opti
 
 // insecure walk
 
-private fun insecureHandleEntry(entry: Path, collector: ExceptionsCollector) {
+private fun insecureHandleEntry(entry: Path, parent: Path?, collector: ExceptionsCollector) {
     collectIfThrows(collector) {
+        if (parent != null) {
+            // Check entries other than the starting path of traversal
+            entry.checkFileName()
+            entry.checkNotSameAs(parent)
+        }
         if (entry.isDirectory(LinkOption.NOFOLLOW_LINKS)) {
             val preEnterTotalExceptions = collector.totalExceptions
 
@@ -422,8 +463,67 @@ private fun insecureEnterDirectory(path: Path, collector: ExceptionsCollector) {
             Files.newDirectoryStream(path)
         }?.use { directoryStream ->
             for (entry in directoryStream) {
-                insecureHandleEntry(entry, collector)
+                insecureHandleEntry(entry, path, collector)
             }
         }
     }
+}
+
+// illegal file name
+
+/**
+ * Checks whether the name of this file is legal for traversal to prevent cycles.
+ *
+ * Some names are considered illegal as they may cause traversal cycles.
+ * This function is intended for use with entries whose parent directories have already been traversed.
+ * The file being checked is not the starting point of traversal.
+ *
+ * For instance, "/a/b/.." is a valid starting path for traversal. However, if traversal begins from "/a"
+ * and reaches "a/b/..", it will result in a cycle.
+ *
+ * @throws IllegalFileNameException if the file name is "..", "../", , "..\", ".", "./", or ".\" since these may lead to traversal cycles.
+ *
+ * See KT-63103 for more details on the issue.
+ */
+internal fun Path.checkFileName() {
+    val fileName = this.name
+    if (fileName == ".." || fileName == "../" || fileName == "..\\" ||
+        fileName == "." || fileName == "./" || fileName == ".\\") throw IllegalFileNameException(this)
+}
+
+/**
+ * Checks that this entry is not the same as the specified [parent] path to prevent traversal cycles.
+ *
+ * When reading entries of a directory, there are cases where the directory itself is returned,
+ * such as when a zip entry name is '/'. Including the directory itself in the list of its entries can lead to traversal cycles.
+ *
+ * Unfortunately, [Files.walkFileTree], utilized in [copyToRecursively], may not detect such cycles when links are not followed.
+ * Similarly, [deleteRecursively] lacks cycle detection capabilities as it never follows links.
+ *
+ * This function is intended for use with entries whose parent directories have already been traversed.
+ * The file being checked is not the starting point of traversal.
+ *
+ * For instance, "/a/b/.." is a valid starting path for traversal. However, if traversal begins from "/a"
+ * and reaches "a/b/..", it will result in a cycle.
+ *
+ * @throws FileSystemLoopException if this entry is the same as the [parent] path, indicating a potential traversal cycle.
+ *
+ * See KT-63103 for more details on the issue.
+ */
+private fun Path.checkNotSameAs(parent: Path) {
+    // Symlinks are skipped:
+    //   If this path is a symlink pointing to [parent] and links are not followed, the path is perfectly fine for traversal.
+    //   However, [Path.isSameFileAs] always follows links.
+    // [parent] can't be a symlink:
+    //   Otherwise, it would mean links are followed and [Files.walkFileTree] would have already detected the cycle.
+    if (!isSymbolicLink() && isSameFileAs(parent))
+        throw FileSystemLoopException(this.toString())
+}
+
+internal class IllegalFileNameException(
+    file: Path,
+    other: Path?,
+    message: String?
+) : FileSystemException(file.toString(), other?.toString(), message) {
+    constructor(file: Path) : this(file, null, null)
 }

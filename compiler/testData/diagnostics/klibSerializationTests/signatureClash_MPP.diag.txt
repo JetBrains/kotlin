@@ -1,16 +1,40 @@
 Module: common
-/common.kt:7:1: error: Platform declaration clash: The following declarations have the same IR signature (/foo|foo(){}[0]):
+/common.kt:7:1: error: Platform declaration clash: The following functions have the same IR signature (/foo|foo(){}[0]):
     fun foo(): kotlin.Int defined in root package
     fun foo(): kotlin.String defined in root package
 
-/common.kt:10:1: error: Platform declaration clash: The following declarations have the same IR signature (/bar|bar(B){}[0]):
+/common.kt:10:1: error: Platform declaration clash: The following functions have the same IR signature (/bar|bar(B){}[0]):
     fun bar(x: B): kotlin.Int defined in root package
     fun bar(x: B): kotlin.Int defined in root package
+
+/common.kt:13:1: error: Platform declaration clash: The following properties have the same IR signature (/param|{}param[0]):
+    val param: kotlin.Int defined in root package
+    val param: kotlin.Int defined in root package
+
+/common.kt:13:1: error: Platform declaration clash: The following fields have the same IR signature ([ /param|{}param[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:param type:kotlin.Int visibility:private [final,static]] ]):
+    val param: kotlin.Int defined in root package
+    val param: kotlin.Int defined in root package
+
+/common.kt:13:1: error: Platform declaration clash: The following functions have the same IR signature (/param.<get-param>|<get-param>(){}[0]):
+    fun `<get-param>`(): kotlin.Int defined in root package
+    fun `<get-param>`(): kotlin.Int defined in root package
 Module: platform
-/platform.kt:14:1: error: Platform declaration clash: The following declarations have the same IR signature (/foo|foo(){}[0]):
+/platform.kt:17:1: error: Platform declaration clash: The following functions have the same IR signature (/foo|foo(){}[0]):
     fun foo(): kotlin.Int defined in root package
     fun foo(): kotlin.String defined in root package
 
-/platform.kt:18:1: error: Platform declaration clash: The following declarations have the same IR signature (/bar|bar(B){}[0]):
+/platform.kt:21:1: error: Platform declaration clash: The following functions have the same IR signature (/bar|bar(B){}[0]):
     fun bar(x: B): kotlin.Int defined in root package
     fun bar(x: B): kotlin.Int defined in root package
+
+/platform.kt:24:1: error: Platform declaration clash: The following properties have the same IR signature (/param|{}param[0]):
+    val param: kotlin.Int defined in root package
+    val param: kotlin.Int defined in root package
+
+/platform.kt:24:1: error: Platform declaration clash: The following fields have the same IR signature ([ /param|{}param[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:param type:kotlin.Int visibility:private [final,static]] ]):
+    val param: kotlin.Int defined in root package
+    val param: kotlin.Int defined in root package
+
+/platform.kt:24:1: error: Platform declaration clash: The following functions have the same IR signature (/param.<get-param>|<get-param>(){}[0]):
+    fun `<get-param>`(): kotlin.Int defined in root package
+    fun `<get-param>`(): kotlin.Int defined in root package

@@ -20,7 +20,6 @@ where advanced options include:
                              The default value is 1.
   -Xbuild-file=<path>        Path to the .xml build file to compile.
   -Xcompile-java             Reuse 'javac' analysis and compile Java source files.
-  -Xdump-declarations-to=<path> Path to the JSON file where Java-to-Kotlin declaration mappings should be dumped.
   -Xdefault-script-extension=<script filename extension>
                              Compile expressions and unrecognized scripts passed with the -script argument as scripts with the given filename extension.
   -Xdisable-standard-script  Disable standard Kotlin scripting support.
@@ -144,6 +143,7 @@ where advanced options include:
                              See KT-45671 for more details.
   -Xuse-fast-jar-file-system Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental.
   -Xuse-javac                Use javac for Java source and class file analysis.
+  -Xuse-kapt4                Enable the experimental KAPT 4.
   -Xuse-old-backend          Use the old JVM backend.
   -Xuse-old-class-files-reading Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
                              This can be used in the event of problems with the new implementation.
@@ -156,8 +156,6 @@ where advanced options include:
   -Xallow-any-scripts-in-source-roots
                              Allow compiling scripts along with regular Kotlin sources.
   -Xallow-kotlin-package     Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'.
-  -Xallow-result-return-type Allow compiling code when 'kotlin.Result' is used as a return type.
-  -Xbuiltins-from-sources    Compile built-ins from sources.
   -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
   -Xcheck-sticky-phase-conditions
                              Run sticky condition checks on subsequent phases. Implicitly enables '-Xcheck-phase-conditions'.
@@ -167,13 +165,11 @@ where advanced options include:
   -Xdisable-default-scripting-plugin
                              Don't enable the scripting plugin by default.
   -Xdisable-phases           Disable backend phases.
-  -Xdisable-ultra-light-classes Don't use ultra-light classes.
   -Xdont-warn-on-error-suppression
                              Don't report warnings when errors are suppressed. This only affects K2.
   -Xdump-directory           Dump the backend state into this directory.
   -Xdump-fqname              Dump the declaration with the given FqName.
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file.
-  -Xeffect-system            Enable experimental language feature: effect system.
   -Xenable-builder-inference Use builder inference by default for all calls with lambdas that can't be resolved without it.
                              The corresponding calls' declarations may not be marked with @BuilderInference.
   -Xklib-enable-signature-clash-checks
@@ -216,8 +212,6 @@ where advanced options include:
   -Xcompiler-plugin=<path1>,<path2>:<optionName>=<value>,<optionName>=<value>
                              Register a compiler plugin.
   -Xprofile-phases           Profile backend phases.
-  -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types.
-  -Xread-deserialized-contracts Enable reading contracts from metadata.
   -Xklib-relative-path-base  Provide a base path to compute the source's relative paths in klib (default is empty).
   -Xrender-internal-diagnostic-names
                              Render the internal names of warnings and errors.
@@ -226,6 +220,9 @@ where advanced options include:
   -Xself-upper-bound-inference Support inferring type arguments from the self-type upper bounds of the corresponding type parameters.
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
   -Xskip-prerelease-check    Allow loading pre-release classes.
+  -Xsuppress-api-version-greater-than-language-version-error
+                             Suppress error about API version greater than language version.
+                             Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
   -Xunrestricted-builder-inference
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
@@ -236,7 +233,6 @@ where advanced options include:
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
   -Xuse-ir-fake-override-builder Generate fake overrides via IR. See KT-61514
   -Xuse-k2                   Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.
-  -Xuse-mixed-named-arguments Allow mixing named and unnamed arguments when the arguments appear in their default order.
   -Xverbose-phases           Be verbose while performing the given backend phases.
 
 Advanced options are non-standard and may be changed or removed without any notice.

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: WASM
+
 // FILE: test.kt
 
 inline fun alsoInline() = "OK"
@@ -26,7 +26,7 @@ fun box(): String {
 // test.kt:1 $box__JsExportAdapter
 // test.kt:11 $box (11, 4)
 // test.kt:6 $box
-// test.kt:4 $box (27, 27, 27, 27, 29)
+// test.kt:4 $box (26, 26, 26, 26, 30)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8)
 // ThrowHelpers.kt:29 $kotlin.wasm.internal.rangeCheck (6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19)

@@ -12,8 +12,8 @@
 public abstract @interface Anno {
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Bar : kotlin/Any {
@@ -52,8 +52,8 @@ public final class Bar {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Baz : kotlin/Any {
@@ -86,8 +86,8 @@ public final class Baz {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class FieldAnno : kotlin/Annotation {
@@ -105,8 +105,8 @@ public final class Baz {
 public abstract @interface FieldAnno {
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Foo : kotlin/Any {
@@ -129,10 +129,7 @@ public final class Foo {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
-    public Foo(@ParameterAnno()
-    @Anno()
-    @org.jetbrains.annotations.NotNull()
-    java.lang.String a) {
+    public Foo(@ParameterAnno() @Anno() @org.jetbrains.annotations.NotNull() java.lang.String a) {
         super();
     }
 
@@ -147,8 +144,8 @@ public final class Foo {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class ParameterAnno : kotlin/Annotation {
@@ -166,8 +163,8 @@ public final class Foo {
 public abstract @interface ParameterAnno {
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class PropertyAnno : kotlin/Annotation {

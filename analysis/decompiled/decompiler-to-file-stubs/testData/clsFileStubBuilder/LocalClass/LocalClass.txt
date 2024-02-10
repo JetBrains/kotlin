@@ -4,7 +4,7 @@ PsiJetFileStubImpl[package=test]
   IMPORT_LIST
   CLASS[classId=test/LocalClass, fqName=test.LocalClass, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=LocalClass, superNames=[]]
     MODIFIER_LIST[public final]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=LocalClass]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=LocalClass]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY

@@ -24,36 +24,26 @@ package test;
 @kotlin.Metadata()
 public abstract class BundleProperty<AA extends java.lang.Object> extends test.NullableBundleProperty<AA> {
 
-    public BundleProperty(@org.jetbrains.annotations.Nullable()
-    java.lang.String key) {
+    public BundleProperty(@org.jetbrains.annotations.Nullable() java.lang.String key) {
         super(null);
     }
 
     @java.lang.Override()
-    public final void setValue(@org.jetbrains.annotations.NotNull()
-    java.lang.Object thisRef, @org.jetbrains.annotations.NotNull()
-    kotlin.reflect.KProperty<?> property, @org.jetbrains.annotations.Nullable()
-    AA value) {
+    public final void setValue(@org.jetbrains.annotations.NotNull() java.lang.Object thisRef, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?> property, @org.jetbrains.annotations.Nullable() AA value) {
     }
 
     @java.lang.Override()
-    public final AA getValue(@org.jetbrains.annotations.NotNull()
-    java.lang.Object thisRef, @org.jetbrains.annotations.NotNull()
-    kotlin.reflect.KProperty<?> property) {
+    public final AA getValue(@org.jetbrains.annotations.NotNull() java.lang.Object thisRef, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?> property) {
         return null;
     }
 
     @java.lang.Override()
-    public final void setNullableValue(@org.jetbrains.annotations.NotNull()
-    java.lang.Object bundle, @org.jetbrains.annotations.NotNull()
-    java.lang.String key, @org.jetbrains.annotations.Nullable()
-    AA value) {
+    public final void setNullableValue(@org.jetbrains.annotations.NotNull() java.lang.Object bundle, @org.jetbrains.annotations.NotNull() java.lang.String key, @org.jetbrains.annotations.Nullable() AA value) {
     }
 
-    public abstract void setValue(@org.jetbrains.annotations.NotNull()
-    java.lang.Object bundle, @org.jetbrains.annotations.NotNull()
-    java.lang.String key, AA value);
+    public abstract void setValue(@org.jetbrains.annotations.NotNull() java.lang.Object bundle, @org.jetbrains.annotations.NotNull() java.lang.String key, AA value);
 }
+
 
 ////////////////////
 
@@ -72,16 +62,12 @@ package test;
 @kotlin.Suppress(names = {"NOTHING_TO_INLINE"})
 public final class Kt27126Kt {
 
-    public Kt27126Kt() {
-        super();
-    }
-
     @org.jetbrains.annotations.NotNull()
-    public static final test.BundleProperty<java.lang.CharSequence> charSequence(@org.jetbrains.annotations.Nullable()
-    java.lang.String key) {
+    public static final test.BundleProperty<java.lang.CharSequence> charSequence(@org.jetbrains.annotations.Nullable() java.lang.String key) {
         return null;
     }
 }
+
 
 ////////////////////
 
@@ -120,38 +106,26 @@ public abstract class NullableBundleProperty<EE extends java.lang.Object> implem
     @org.jetbrains.annotations.Nullable()
     private final java.lang.String key = null;
 
-    public NullableBundleProperty(@org.jetbrains.annotations.Nullable()
-    java.lang.String key) {
+    public NullableBundleProperty(@org.jetbrains.annotations.Nullable() java.lang.String key) {
         super();
     }
 
-    private final java.lang.String toKey(@org.jetbrains.annotations.NotNull()
-    kotlin.reflect.KProperty<?> $this$toKey) {
+    private final java.lang.String toKey(@org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?> $this$toKey) {
         return null;
     }
 
     @org.jetbrains.annotations.Nullable()
     @java.lang.Override()
-    public EE getValue(@org.jetbrains.annotations.NotNull()
-    java.lang.Object thisRef, @org.jetbrains.annotations.NotNull()
-    kotlin.reflect.KProperty<?> property) {
+    public EE getValue(@org.jetbrains.annotations.NotNull() java.lang.Object thisRef, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?> property) {
         return null;
     }
 
     @java.lang.Override()
-    public void setValue(@org.jetbrains.annotations.NotNull()
-    java.lang.Object thisRef, @org.jetbrains.annotations.NotNull()
-    kotlin.reflect.KProperty<?> property, @org.jetbrains.annotations.Nullable()
-    EE value) {
+    public void setValue(@org.jetbrains.annotations.NotNull() java.lang.Object thisRef, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?> property, @org.jetbrains.annotations.Nullable() EE value) {
     }
 
     @org.jetbrains.annotations.Nullable()
-    public abstract EE getValue(@org.jetbrains.annotations.NotNull()
-    java.lang.Object bundle, @org.jetbrains.annotations.NotNull()
-    java.lang.String key);
+    public abstract EE getValue(@org.jetbrains.annotations.NotNull() java.lang.Object bundle, @org.jetbrains.annotations.NotNull() java.lang.String key);
 
-    public abstract void setNullableValue(@org.jetbrains.annotations.NotNull()
-    java.lang.Object bundle, @org.jetbrains.annotations.NotNull()
-    java.lang.String key, @org.jetbrains.annotations.Nullable()
-    EE value);
+    public abstract void setNullableValue(@org.jetbrains.annotations.NotNull() java.lang.Object bundle, @org.jetbrains.annotations.NotNull() java.lang.String key, @org.jetbrains.annotations.Nullable() EE value);
 }

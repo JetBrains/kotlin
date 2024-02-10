@@ -13,4 +13,4 @@ compiler/testData/multiplatform/classScopes/missingConstructor/jvm.kt:1:14: erro
         constructor(): Foo
 
 actual class Foo
-             ^
+             ^^^

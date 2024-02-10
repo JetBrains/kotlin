@@ -21,8 +21,8 @@ public class CrashMe {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * package {
@@ -61,10 +61,6 @@ public class CrashMe {
 @kotlin.Suppress(names = {"AMBIGUOUS_ANONYMOUS_TYPE_INFERRED"})
 public final class Kt14997Kt {
 
-    public Kt14997Kt() {
-        super();
-    }
-
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.Runnable a() {
         return null;
@@ -90,19 +86,15 @@ public final class Kt14997Kt {
         return null;
     }
 
-    public static final void e1(@org.jetbrains.annotations.NotNull()
-    java.lang.CharSequence[] a) {
+    public static final void e1(@org.jetbrains.annotations.NotNull() java.lang.CharSequence[] a) {
     }
 
-    public static final void e2(@org.jetbrains.annotations.NotNull()
-    java.lang.Object[] a) {
+    public static final void e2(@org.jetbrains.annotations.NotNull() java.lang.Object[] a) {
     }
 
-    public static final void e3(@org.jetbrains.annotations.NotNull()
-    java.lang.CharSequence[] a) {
+    public static final void e3(@org.jetbrains.annotations.NotNull() java.lang.CharSequence[] a) {
     }
 
-    public static final void e3(@org.jetbrains.annotations.NotNull()
-    java.lang.Object[] a) {
+    public static final void e3(@org.jetbrains.annotations.NotNull() java.lang.Object[] a) {
     }
 }

@@ -12,6 +12,6 @@ open class Base {
 // FILE: jvm.kt
 
 actual open class Foo : Base() {
-    override var foo: String = ""
+    override var <!ACTUAL_WITHOUT_EXPECT!>foo<!>: String = ""
         public set
 }

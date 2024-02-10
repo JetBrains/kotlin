@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
@@ -22,32 +23,30 @@ import org.jetbrains.kotlin.fir.declarations.FirScript
  *
  * Specifies the path to resolve targets and resolve targets themselves.
  * Those targets are going to be resolved by [LLFirModuleLazyDeclarationResolver][org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirModuleLazyDeclarationResolver].
+ *
+ * @see FirDesignation
  */
-internal sealed class LLFirResolveTarget(
+internal sealed class LLFirResolveTarget(val designation: FirDesignation) {
     /**
      * [FirFile] where the targets are located.
      * Can be null if [target] does not belong to any file.
      * E.g., fake overrides.
      * @see org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
      */
-    val firFile: FirFile?,
+    val firFile: FirFile? get() = designation.fileOrNull
 
     /**
-     * The list of [FirRegularClass] which are the required to go from file to target declarations in the top-down order.
+     * The list of [FirFile], [FirScript] and [FirRegularClass] which are
+     * the required to go from file to target declarations in the top-down order.
+     *
+     * If resolve target is [FirFile], [FirScript] or [FirRegularClass] itself, it's not included into the [path].
      */
-    containerClasses: List<FirRegularClass>,
+    val path: List<FirDeclaration> get() = designation.path
 
     /**
      * A dedicated main element.
      */
-    val target: FirElementWithResolveState,
-) {
-    /**
-     * The list of [FirScript] and [FirRegularClass] which are the required to go from file to target declarations in the top-down order.
-     *
-     * If resolve target is [FirRegularClass] or [FirScript] itself, it's not included into the [path].
-     */
-    val path: List<FirDeclaration> = pathWithScript(firFile, containerClasses, target)
+    val target: FirElementWithResolveState get() = designation.target
 
     /**
      * Visit [path], [target] and optionally its subgraph.
@@ -59,13 +58,7 @@ internal sealed class LLFirResolveTarget(
             visitor.performAction(target)
         }
 
-        if (firFile != null) {
-            visitor.withFile(firFile) {
-                goToTarget(visitor)
-            }
-        } else {
-            goToTarget(visitor)
-        }
+        goToTarget(visitor)
     }
 
     private fun goToTarget(visitor: LLFirResolveTargetVisitor) {
@@ -81,6 +74,7 @@ internal sealed class LLFirResolveTarget(
             when (val declaration = pathIterator.next()) {
                 is FirRegularClass -> visitor.withRegularClass(declaration) { goToTarget(pathIterator, visitor) }
                 is FirScript -> visitor.withScript(declaration) { goToTarget(pathIterator, visitor) }
+                is FirFile -> visitor.withFile(declaration) { goToTarget(pathIterator, visitor) }
                 else -> errorWithFirSpecificEntries(
                     "Unexpected declaration in path: ${declaration::class.simpleName}",
                     fir = declaration,
@@ -114,9 +108,9 @@ internal sealed class LLFirResolveTarget(
         append(this@LLFirResolveTarget::class.simpleName)
         append("(")
         buildList {
-            firFile?.name?.let(::add)
             path.mapTo(this) {
                 when (it) {
+                    is FirFile -> it.name
                     is FirRegularClass -> it.name
                     is FirScript -> it.name
                     else -> errorWithFirSpecificEntries("Unsupported path declaration: ${it::class.simpleName}", fir = it)
@@ -131,19 +125,13 @@ internal sealed class LLFirResolveTarget(
 
     protected open fun toStringAdditionalSuffix(): String? = null
 
-    private fun toStringForTarget(): String = when (target) {
+    private fun toStringForTarget(): String = when (val fir = target) {
         is FirConstructor -> "constructor"
-        is FirClassLikeDeclaration -> target.symbol.name.asString()
-        is FirCallableDeclaration -> target.symbol.name.asString()
+        is FirClassLikeDeclaration -> fir.symbol.name.asString()
+        is FirCallableDeclaration -> fir.symbol.name.asString()
         is FirAnonymousInitializer -> ("<init-block>")
         is FirFileAnnotationsContainer -> "<file annotations>"
-        is FirScript -> target.name.asString()
+        is FirScript -> fir.name.asString()
         else -> "???"
     }
-}
-
-private fun pathWithScript(firFile: FirFile?, path: List<FirRegularClass>, target: FirElementWithResolveState): List<FirDeclaration> {
-    if (firFile == null || target is FirFile || target is FirFileAnnotationsContainer || target is FirScript) return path
-    val firScript = firFile.declarations.singleOrNull() as? FirScript ?: return path
-    return listOf(firScript) + path
 }

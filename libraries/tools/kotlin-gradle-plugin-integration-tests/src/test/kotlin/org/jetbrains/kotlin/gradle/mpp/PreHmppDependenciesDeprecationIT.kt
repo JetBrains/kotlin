@@ -82,9 +82,17 @@ class PreHmppDependenciesDeprecationIT : KGPBaseTest() {
         tempDir: Path? = null,
         projectPathToCheck: String = "", // empty means rootProject
         expectReportForDependency: String? = null,
-        preBuildAction: TestProject.() -> Unit = {}
+        preBuildAction: TestProject.() -> Unit = {},
     ) {
-        project("preHmppDependenciesDeprecation/$projectName", gradleVersion, localRepoDir = tempDir?.resolve("repo")) {
+        project(
+            "preHmppDependenciesDeprecation/$projectName", gradleVersion,
+            localRepoDir = tempDir?.resolve("repo"),
+            buildOptions = defaultBuildOptions.copy(
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    distributionDownloadFromMaven = false // TODO(Dmitrii Krasnov): this flag is off, because we try to find configuration which is not in maven yet. Could be set to true after KTI-1569 is done
+                )
+            )
+        ) {
             preBuildAction()
             suppressDependencySourcesConfigurations()
             build("$projectPathToCheck:dependencies") {

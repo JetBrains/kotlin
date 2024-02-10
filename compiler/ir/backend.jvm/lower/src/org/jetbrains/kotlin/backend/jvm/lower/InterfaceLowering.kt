@@ -19,7 +19,10 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrReturn
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.functions
@@ -65,8 +68,8 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
     private fun handleInterface(irClass: IrClass) {
         val jvmDefaultMode = context.config.jvmDefaultMode
         val isCompatibilityMode =
-            (jvmDefaultMode.isCompatibility && !irClass.hasJvmDefaultNoCompatibilityAnnotation()) ||
-                    (jvmDefaultMode == JvmDefaultMode.ALL_INCOMPATIBLE && irClass.hasJvmDefaultWithCompatibilityAnnotation())
+            (jvmDefaultMode == JvmDefaultMode.ALL_COMPATIBILITY && !irClass.hasJvmDefaultNoCompatibilityAnnotation()) ||
+                    (jvmDefaultMode == JvmDefaultMode.ALL && irClass.hasJvmDefaultWithCompatibilityAnnotation())
         // There are 6 cases for functions on interfaces:
         for (function in irClass.functions) {
             when {
@@ -130,8 +133,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                         || function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
                         || function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS)) ||
                         (function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
-                                (isCompatibilityMode || jvmDefaultMode == JvmDefaultMode.ENABLE) &&
-                                function.isCompiledToJvmDefault(jvmDefaultMode)) -> {
+                                isCompatibilityMode && function.isCompiledToJvmDefault(jvmDefaultMode)) -> {
                     if (function.origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA) {
                         //move as is
                         val defaultImplsClass = context.cachedDeclarations.getDefaultImplsClass(irClass)
@@ -177,7 +179,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
 
         // Move $$delegatedProperties array and $assertionsDisabled field
         for (field in irClass.declarations.filterIsInstance<IrField>()) {
-            if ((jvmDefaultMode.forAllMethodsWithBody || field.origin != JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE) &&
+            if ((jvmDefaultMode.isEnabled || field.origin != JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE) &&
                 field.origin != JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD
             )
                 continue

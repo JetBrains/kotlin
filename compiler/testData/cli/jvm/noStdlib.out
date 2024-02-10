@@ -1,7 +1,7 @@
 compiler/testData/cli/jvm/noStdlib.kt:4:19: error: unresolved reference 'primaryConstructor'.
     String::class.primaryConstructor
-                  ^
+                  ^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/noStdlib.kt:7:5: error: unresolved reference 'listOf'.
     listOf(42)
-    ^
+    ^^^^^^
 COMPILATION_ERROR

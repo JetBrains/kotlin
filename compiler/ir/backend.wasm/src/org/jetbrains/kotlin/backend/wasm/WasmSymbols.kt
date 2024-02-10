@@ -77,8 +77,7 @@ class WasmSymbols(
         getProperty(FqName.fromSegments(listOf("kotlin", "wasm", "internal", "isNotFirstWasmExportCall")))
     )
 
-    internal val initAssociatedObjects = getInternalFunction("initAssociatedObjects")
-    internal val addAssociatedObject = getInternalFunction("addAssociatedObject")
+    internal val tryGetAssociatedObject = getInternalFunction("tryGetAssociatedObject")
 
     override val throwNullPointerException = getInternalFunction("THROW_NPE")
     override val throwISE = getInternalFunction("THROW_ISE")
@@ -384,6 +383,8 @@ class WasmSymbols(
         val jsArrayPush = getInternalFunction("jsArrayPush")
 
         val externRefIsNull = getInternalFunction("wasm_externref_is_null")
+
+        val jsPromise = getIrClass(FqName("kotlin.js.Promise"))
 
         internal val throwAsJsException: IrSimpleFunctionSymbol =
             getInternalFunction("throwAsJsException")

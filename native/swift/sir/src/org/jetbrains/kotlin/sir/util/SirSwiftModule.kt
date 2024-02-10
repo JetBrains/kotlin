@@ -20,6 +20,8 @@ object SirSwiftModule : SirModule() {
     override val name: String get() = "Swift"
     override val declarations: List<SirDeclaration> by lazy {
         listOf(
+            void,
+
             bool,
 
             int8,
@@ -51,6 +53,12 @@ object SirSwiftModule : SirModule() {
 
     val double = primitive("Double")
     val float = primitive("Float")
+
+    val void = buildStruct {
+        origin = SirOrigin.ExternallyDefined(name = "Swift.Void")
+        visibility = SirVisibility.PUBLIC
+        name = "Void"
+    }.also { it.parent = SirSwiftModule }
 
     override fun <R, D> acceptChildren(visitor: SirVisitor<R, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }

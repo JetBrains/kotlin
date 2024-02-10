@@ -70,9 +70,6 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<File> MODULE_XML_FILE =
             CompilerConfigurationKey.create("path to module.xml");
 
-    public static final CompilerConfigurationKey<String> DECLARATIONS_JSON_PATH =
-            CompilerConfigurationKey.create("path to declarations output");
-
     public static final CompilerConfigurationKey<List<Module>> MODULES =
             CompilerConfigurationKey.create("module data");
 

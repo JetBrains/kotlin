@@ -475,12 +475,6 @@ private val wasmVarargExpressionLoweringPhase = makeIrModulePhase(
     description = "Lower varargs"
 )
 
-private val fieldInitializersLoweringPhase = makeIrModulePhase(
-    ::FieldInitializersLowering,
-    name = "FieldInitializersLowering",
-    description = "Move field initializers to start function"
-)
-
 private val builtInsLoweringPhase0 = makeIrModulePhase(
     ::BuiltInsLowering,
     name = "BuiltInsLowering0",
@@ -505,7 +499,7 @@ private val objectDeclarationLoweringPhase = makeIrModulePhase(
     ::ObjectDeclarationLowering,
     name = "ObjectDeclarationLowering",
     description = "Create lazy object instance generator functions",
-    prerequisite = setOf(enumClassCreateInitializerLoweringPhase)
+    prerequisite = setOf(enumClassCreateInitializerLoweringPhase, staticCallableReferenceLoweringPhase)
 )
 
 private val objectUsageLoweringPhase = makeIrModulePhase(
@@ -603,6 +597,13 @@ private val inlineObjectsWithPureInitializationLoweringPhase = makeIrModulePhase
     ::InlineObjectsWithPureInitializationLowering,
     name = "InlineObjectsWithPureInitializationLowering",
     description = "[Optimization] Inline object instance fields getters whenever it's possible",
+    prerequisite = setOf(purifyObjectInstanceGettersLoweringPhase)
+)
+
+private val fieldInitializersLoweringPhase = makeIrModulePhase(
+    ::FieldInitializersLowering,
+    name = "FieldInitializersLowering",
+    description = "Move field initializers to start function",
     prerequisite = setOf(purifyObjectInstanceGettersLoweringPhase)
 )
 

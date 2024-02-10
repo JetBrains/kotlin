@@ -12,23 +12,19 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
 
     to.allowAnyScriptsInSourceRoots = from.allowAnyScriptsInSourceRoots
     to.allowKotlinPackage = from.allowKotlinPackage
-    to.allowResultReturnType = from.allowResultReturnType
     to.apiVersion = from.apiVersion
     to.autoAdvanceApiVersion = from.autoAdvanceApiVersion
     to.autoAdvanceLanguageVersion = from.autoAdvanceLanguageVersion
-    to.builtInsFromSources = from.builtInsFromSources
     to.checkPhaseConditions = from.checkPhaseConditions
     to.checkStickyPhaseConditions = from.checkStickyPhaseConditions
     to.commonSources = from.commonSources?.copyOf()
     to.contextReceivers = from.contextReceivers
     to.disableDefaultScriptingPlugin = from.disableDefaultScriptingPlugin
     to.disablePhases = from.disablePhases?.copyOf()
-    to.disableUltraLightClasses = from.disableUltraLightClasses
     to.dontWarnOnErrorSuppression = from.dontWarnOnErrorSuppression
     to.dumpDirectory = from.dumpDirectory
     to.dumpOnlyFqName = from.dumpOnlyFqName
     to.dumpPerf = from.dumpPerf
-    to.effectSystem = from.effectSystem
     to.enableBuilderInference = from.enableBuilderInference
     to.enableSignatureClashChecks = from.enableSignatureClashChecks
     to.expectActualClasses = from.expectActualClasses
@@ -66,8 +62,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.pluginOptions = from.pluginOptions?.copyOf()
     to.profilePhases = from.profilePhases
     to.progressiveMode = from.progressiveMode
-    to.properIeee754Comparisons = from.properIeee754Comparisons
-    to.readDeserializedContracts = from.readDeserializedContracts
     to.relativePathBases = from.relativePathBases?.copyOf()
     to.renderInternalDiagnosticNames = from.renderInternalDiagnosticNames
     to.reportOutputFiles = from.reportOutputFiles
@@ -76,6 +70,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.selfUpperBoundInference = from.selfUpperBoundInference
     to.skipMetadataVersionCheck = from.skipMetadataVersionCheck
     to.skipPrereleaseCheck = from.skipPrereleaseCheck
+    to.suppressApiVersionGreaterThanLanguageVersionError = from.suppressApiVersionGreaterThanLanguageVersionError
     to.suppressVersionWarnings = from.suppressVersionWarnings
     to.unrestrictedBuilderInference = from.unrestrictedBuilderInference
     to.useExperimental = from.useExperimental?.copyOf()
@@ -84,7 +79,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.useFirLT = from.useFirLT
     to.useIrFakeOverrideBuilder = from.useIrFakeOverrideBuilder
     to.useK2 = from.useK2
-    to.useMixedNamedArguments = from.useMixedNamedArguments
     to.verbosePhases = from.verbosePhases?.copyOf()
 
     return to

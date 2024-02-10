@@ -1204,6 +1204,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("getterFromLibraryAndSetterFromSources.kt")
+        public void testGetterFromLibraryAndSetterFromSources() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/getterFromLibraryAndSetterFromSources.kt");
+        }
+
+        @Test
         @TestMetadata("implicitReturnType.kt")
         public void testImplicitReturnType() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/implicitReturnType.kt");
@@ -1249,6 +1255,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
         @TestMetadata("setterAndExplicitReturnTypeAndAnnotationsAsSetter.kt")
         public void testSetterAndExplicitReturnTypeAndAnnotationsAsSetter() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/setterAndExplicitReturnTypeAndAnnotationsAsSetter.kt");
+        }
+
+        @Test
+        @TestMetadata("setterFromLibraryAndGetterFromSources.kt")
+        public void testSetterFromLibraryAndGetterFromSources() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/setterFromLibraryAndGetterFromSources.kt");
         }
     }
 

@@ -87,10 +87,9 @@ internal object CompilerArgumentMetrics : FusMetrics {
             is K2JSCompilerArguments -> {
                 val args = K2JSCompilerArguments()
                 parseCommandLineArguments(argsArray.toList(), args)
-                if (!args.isPreIrBackendDisabled() || args.irProduceJs) {
-                    metricsConsumer.report(BooleanMetrics.JS_SOURCE_MAP, args.sourceMap)
-                }
+
                 if (args.irProduceJs) {
+                    metricsConsumer.report(BooleanMetrics.JS_SOURCE_MAP, args.sourceMap)
                     metricsConsumer.report(StringMetrics.JS_PROPERTY_LAZY_INITIALIZATION, args.irPropertyLazyInitialization.toString())
                 }
             }

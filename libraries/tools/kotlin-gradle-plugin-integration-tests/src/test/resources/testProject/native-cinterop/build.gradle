@@ -2,12 +2,6 @@ plugins {
     id("org.jetbrains.kotlin.multiplatform")
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-    maven { url 'repo' }
-}
-
 kotlin {
     sourceSets {
         hostMain {

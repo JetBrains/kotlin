@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.test.services.jvm.jvmBoxMainClassProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.fileContainsBoxMethod
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
@@ -44,6 +45,8 @@ import java.util.concurrent.TimeUnit
 open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     companion object {
         private val BOX_IN_SEPARATE_PROCESS_PORT = System.getProperty("kotlin.test.box.in.separate.process.port")
+        private const val DEFAULT_EXPECTED_RESULT = "OK"
+        private const val OUTPUT_EXTENSION = "box.txt"
     }
 
     private var boxMethodFound = false
@@ -144,9 +147,15 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             }
         }
         if (unexpectedBehaviour) {
-            TestCase.assertNotSame("OK", result)
+            TestCase.assertNotSame(DEFAULT_EXPECTED_RESULT, result)
         } else {
-            assertions.assertEquals("OK", result)
+            val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
+            val outputFile = originalFile.withExtension(OUTPUT_EXTENSION)
+            if (outputFile.exists()) {
+                assertions.assertEqualsToFile(outputFile, result)
+            } else {
+                assertions.assertEquals(DEFAULT_EXPECTED_RESULT, result)
+            }
         }
     }
 

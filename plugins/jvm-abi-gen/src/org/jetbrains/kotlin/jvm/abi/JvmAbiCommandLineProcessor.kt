@@ -42,13 +42,37 @@ class JvmAbiCommandLineProcessor : CommandLineProcessor {
                         "outside of the compilation unit where it's declared.",
                 false,
             )
+
+        val PRESERVE_DECLARATION_ORDER_OPTION: CliOption =
+            CliOption(
+                "preserveDeclarationOrder",
+                "true/false",
+                "Do not sort class members in output abi.jar. Legacy flag that allows tools that rely on methods/fields order in the source" +
+                        " to keep working. Flipping this to true reduces stability of the ABI.",
+                false,
+            )
+
+        val REMOVE_PRIVATE_CLASSES_OPTION: CliOption =
+            CliOption(
+                "removePrivateClasses",
+                "true/false",
+                "Remove private classes from ABI. False by default due to backwards compatibility. If enabled, " +
+                        "private top-level classes will no longer be available from Java classes in the same package.",
+                false,
+            )
     }
 
     override val pluginId: String
         get() = COMPILER_PLUGIN_ID
 
     override val pluginOptions: Collection<CliOption>
-        get() = listOf(OUTPUT_PATH_OPTION, REMOVE_DEBUG_INFO_OPTION, REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE_OPTION)
+        get() = listOf(
+            OUTPUT_PATH_OPTION,
+            REMOVE_DEBUG_INFO_OPTION,
+            REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE_OPTION,
+            PRESERVE_DECLARATION_ORDER_OPTION,
+            REMOVE_PRIVATE_CLASSES_OPTION,
+        )
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
@@ -56,6 +80,11 @@ class JvmAbiCommandLineProcessor : CommandLineProcessor {
             REMOVE_DEBUG_INFO_OPTION -> configuration.put(JvmAbiConfigurationKeys.REMOVE_DEBUG_INFO, value == "true")
             REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE_OPTION -> configuration.put(
                 JvmAbiConfigurationKeys.REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE,
+                value == "true"
+            )
+            PRESERVE_DECLARATION_ORDER_OPTION -> configuration.put(JvmAbiConfigurationKeys.PRESERVE_DECLARATION_ORDER, value == "true")
+            REMOVE_PRIVATE_CLASSES_OPTION -> configuration.put(
+                JvmAbiConfigurationKeys.REMOVE_PRIVATE_CLASSES,
                 value == "true"
             )
             else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")

@@ -20,6 +20,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.project as testBaseProject
@@ -81,6 +82,7 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
         buildJdk: File? = null,
         localRepoDir: Path? = null,
         environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
+        dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
         test: TestProject.() -> Unit = {},
     ): TestProject = testBaseProject(
         projectName = projectName,
@@ -88,6 +90,7 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
         buildOptions = buildOptions,
         forceOutput = forceOutput,
         enableBuildScan = enableBuildScan,
+        dependencyManagement = dependencyManagement,
         addHeapDumpOptions = addHeapDumpOptions,
         enableGradleDebug = enableGradleDebug,
         enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
@@ -146,7 +149,15 @@ open class Kapt3ClassLoadersCacheIT : Kapt3IT() {
     }
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    override fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {
+    }
+
+    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
     override fun testMultipleProcessingPasses(gradleVersion: GradleVersion) {
+    }
+
+    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    override fun useK2KaptProperty(gradleVersion: GradleVersion) {
     }
 
     override fun testAnnotationProcessorAsFqName(gradleVersion: GradleVersion) {
@@ -225,7 +236,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @GradleWithJdkTest
     fun doTestSimpleWithCustomJdk(
         gradleVersion: GradleVersion,
-        jdk: JdkVersions.ProvidedJdk
+        jdk: JdkVersions.ProvidedJdk,
     ) {
         project(
             "simple".withPrefix,
@@ -254,7 +265,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @GradleWithJdkTest
     fun kaptClasspathJreToolchain(
         gradleVersion: GradleVersion,
-        jdk: JdkVersions.ProvidedJdk
+        jdk: JdkVersions.ProvidedJdk,
     ) {
         project(
             "simple".withPrefix,
@@ -382,13 +393,13 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Kapt is working with incremental compilation")
     @GradleTest
-   open fun testSimpleWithIC(gradleVersion: GradleVersion) {
+    fun testSimpleWithIC(gradleVersion: GradleVersion) {
         doTestSimpleWithIC(gradleVersion)
     }
 
     @DisplayName("Kapt is working with incremental compilation, when kotlin.incremental.useClasspathSnapshot=true")
     @GradleTest
-    open fun testSimpleWithIC_withClasspathSnapshot(gradleVersion: GradleVersion) {
+    fun testSimpleWithIC_withClasspathSnapshot(gradleVersion: GradleVersion) {
         doTestSimpleWithIC(gradleVersion, useClasspathSnapshot = true)
     }
 
@@ -567,7 +578,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     // tests all output directories are cleared when IC rebuilds
     private fun testICRebuild(
         gradleVersion: GradleVersion,
-        performChange: (TestProject) -> Unit
+        performChange: (TestProject) -> Unit,
     ) {
         project(
             "incrementalRebuild".withPrefix,
@@ -707,7 +718,12 @@ open class Kapt3IT : Kapt3BaseIT() {
 
             buildAndFail("build") {
                 val actual = getErrorMessages()
-                assertEquals(expected = genJavaErrorString(7, 19), actual = actual)
+                assertEquals(
+                    expected = genJavaErrorString(
+                        7,
+                        if (buildOptions.languageVersion?.startsWith("2") ?: (KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0)) 18 else 19
+                    ),
+                    actual = actual)
             }
 
             buildGradle.modify {
@@ -735,7 +751,11 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Should re-run kapt on changes in local annotation processor")
     @GradleTest
     open fun testChangesInLocalAnnotationProcessor(gradleVersion: GradleVersion) {
-        project("localAnnotationProcessor".withPrefix, gradleVersion) {
+        project(
+            "localAnnotationProcessor".withPrefix,
+            gradleVersion,
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://jitpack.io"))
+        ) {
             build("build")
 
             val testAnnotationProcessor = subProject("annotation-processor").javaSourcesDir().resolve("TestAnnotationProcessor.kt")
@@ -973,7 +993,15 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Dependency on kapt module should not resolve all configurations")
     @GradleTest
     fun testDependencyOnKaptModule(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
+        project(
+            "simpleProject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    distributionDownloadFromMaven = false // TODO(Dmitrii Krasnov): this flag is off, because we try to find configuration which is not in maven yet. Could be set to true after KTI-1569 is done
+                )
+            )
+        ) {
             includeOtherProjectAsSubmodule("simple", "kapt2")
             buildGradle.append("\ndependencies { implementation project(':simple') }")
 
@@ -983,7 +1011,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Kapt with MPP/Jvm")
     @GradleTest
-    open fun testMPPKaptPresence(gradleVersion: GradleVersion) {
+    fun testMPPKaptPresence(gradleVersion: GradleVersion) {
         project(
             "mpp-kapt-presence".withPrefix,
             gradleVersion,
@@ -1076,7 +1104,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Works with JPMS on JDK 9+")
     @GradleTest
-    fun testJpmsModule(gradleVersion: GradleVersion, ) {
+    fun testJpmsModule(gradleVersion: GradleVersion) {
         project(
             "jpms-module".withPrefix,
             gradleVersion,
@@ -1128,7 +1156,11 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("KT-47347: kapt processors should not be an input files for stub generation")
     @GradleTest
     open fun testChangesToKaptConfigurationDoNotTriggerStubGeneration(gradleVersion: GradleVersion) {
-        project("localAnnotationProcessor".withPrefix, gradleVersion) {
+        project(
+            "localAnnotationProcessor".withPrefix,
+            gradleVersion,
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://jitpack.io"))
+        ) {
             build("assemble")
 
             ZipOutputStream(projectPath.resolve("fake_processor.jar").outputStream()).close()
@@ -1250,6 +1282,99 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
     }
 
+    @DisplayName("Kapt runs in fallback mode with useK2 = true")
+    @GradleTest
+    open fun fallBackModeWithUseK2(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            buildGradle.appendText(
+                """
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                |    compilerOptions {
+                |        freeCompilerArgs.addAll([
+                |            "-Xuse-fir-ic",
+                |            "-Xuse-fir-lt"
+                |        ])
+                |    }
+                |    kotlinOptions {
+                |      useK2 = true
+                |    }
+                |}
+                |
+                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
+                """.trimMargin()
+            )
+            build("build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+                assertOutputContains("Falling back to 1.9.")
+            }
+        }
+    }
+
+    @DisplayName("Kapt runs in fallback mode with languageVersion = 2.0")
+    @GradleTest
+    open fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            buildGradle.appendText(
+                """
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                |    compilerOptions {
+                |        freeCompilerArgs.addAll([
+                |            "-Xuse-fir-ic",
+                |            "-Xuse-fir-lt"
+                |        ])
+                |    }
+                |    kotlinOptions {
+                |      languageVersion = "2.0"
+                |    }
+                |}
+                |
+                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
+                """.trimMargin()
+            )
+            build("build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+                assertOutputContains("Falling back to 1.9.")
+            }
+        }
+    }
+
+    @DisplayName("K2 Kapt can be enabled via Gradle property kapt.use.k2")
+    @GradleTest
+    open fun useK2KaptProperty(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            buildGradle.appendText(
+                """
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                |    compilerOptions {
+                |        freeCompilerArgs.addAll([
+                |            "-Xuse-fir-ic",
+                |            "-Xuse-fir-lt"
+                |        ])
+                |    }
+                |    kotlinOptions {
+                |        languageVersion = "2.0"
+                |    }
+                |}
+                |
+                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
+                """.trimMargin()
+            )
+            build("-Pkapt.use.k2=true", "build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+                assertOutputDoesNotContain("Falling back to 1.9.")
+                assertOutputContains("K2 kapt is an experimental feature. Use with caution.")
+            }
+            build("-Pkapt.use.k2=true", "cleanCompileKotlin", "compileKotlin") {
+                assertTasksExecuted(":compileKotlin")
+                // The warning should not be displayed for the compile task.
+                assertOutputDoesNotContain("K2 kapt is an experimental feature. Use with caution.")
+            }
+        }
+    }
+
     @DisplayName("Kapt-generated Kotlin sources can be used in Kotlin")
     @GradleTest
     open fun useGeneratedKotlinSource(gradleVersion: GradleVersion) {
@@ -1257,6 +1382,35 @@ open class Kapt3IT : Kapt3BaseIT() {
             build("build") {
                 assertKaptSuccessful()
                 assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+            }
+        }
+    }
+
+    @DisplayName("Kapt-generated Kotlin sources can be used in Kotlin with languageVersion = 2.0")
+    @GradleTest
+    open fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {
+        project("useGeneratedKotlinSource".withPrefix, gradleVersion) {
+            buildGradle.appendText(
+                """
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                |    compilerOptions {
+                |        freeCompilerArgs.addAll([
+                |            "-Xuse-fir-ic",
+                |            "-Xuse-fir-lt"
+                |        ])
+                |    }
+                |    kotlinOptions {
+                |      languageVersion = "2.0"
+                |    }
+                |}
+                |
+                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
+                """.trimMargin()
+            )
+            build("build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+                assertOutputContains("Falling back to 1.9.")
             }
         }
     }
@@ -1337,9 +1491,11 @@ open class Kapt3IT : Kapt3BaseIT() {
     fun testSerializationPlugin(gradleVersion: GradleVersion) {
         project("serialization".withPrefix, gradleVersion) {
             build(":kaptGenerateStubsKotlin") {
-                assertFileInProjectContains("build/tmp/kapt3/stubs/main/foo/Data.java",
+                assertFileInProjectContains(
+                    "build/tmp/kapt3/stubs/main/foo/Data.java",
                     "public static final class Companion",
-                    "public static final class \$serializer implements kotlinx.serialization.internal.GeneratedSerializer<foo.Data>")
+                    "public static final class \$serializer implements kotlinx.serialization.internal.GeneratedSerializer<foo.Data>"
+                )
             }
         }
     }

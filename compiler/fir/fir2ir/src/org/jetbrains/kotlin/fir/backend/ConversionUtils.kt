@@ -586,7 +586,7 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
     explicitReceiver: FirReceiverParameter? = null,
     isAssignable: Boolean = false
 ): IrValueParameter {
-    return symbolTable.irFactory.createValueParameter(
+    return irFactory.createValueParameter(
         startOffset = startOffset,
         endOffset = endOffset,
         origin = thisOrigin,

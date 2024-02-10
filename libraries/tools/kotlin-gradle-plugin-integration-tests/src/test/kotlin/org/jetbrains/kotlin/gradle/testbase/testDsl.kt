@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.gradle.api.initialization.resolve.RepositoriesMode
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
@@ -50,6 +51,7 @@ fun KGPBaseTest.project(
     buildJdk: File? = null,
     localRepoDir: Path? = null,
     environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
+    dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     test: TestProject.() -> Unit = {},
 ): TestProject {
     val projectPath = setupProjectFromTestResources(
@@ -58,7 +60,7 @@ fun KGPBaseTest.project(
         workingDir,
         projectPathAdditionalSuffix,
     )
-    projectPath.addDefaultBuildFiles()
+    projectPath.addDefaultSettingsToSettingsGradle(dependencyManagement, localRepoDir)
     projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
     if (buildOptions.languageVersion != null || buildOptions.languageApiVersion != null) {
@@ -121,6 +123,7 @@ fun KGPBaseTest.nativeProject(
     localRepoDir: Path? = null,
     environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
     configureSubProjects: Boolean = false,
+    dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     test: TestProject.() -> Unit = {},
 ): TestProject {
     val project = project(
@@ -129,6 +132,7 @@ fun KGPBaseTest.nativeProject(
         buildOptions = buildOptions,
         forceOutput = forceOutput,
         enableBuildScan = enableBuildScan,
+        dependencyManagement = dependencyManagement,
         addHeapDumpOptions = addHeapDumpOptions,
         enableGradleDebug = enableGradleDebug,
         enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
@@ -323,12 +327,12 @@ open class GradleProject(
     fun classesDir(
         sourceSet: String = "main",
         targetName: String? = null,
-        language: String = "kotlin"
+        language: String = "kotlin",
     ): Path = projectPath.resolve("build/classes/$language/${targetName.orEmpty()}/$sourceSet/")
 
     fun kotlinClassesDir(
         sourceSet: String = "main",
-        targetName: String? = null
+        targetName: String? = null,
     ): Path = classesDir(sourceSet, targetName, language = "kotlin")
 
     fun javaClassesDir(
@@ -353,7 +357,8 @@ open class GradleProject(
  */
 @JvmInline
 value class EnvironmentalVariables @EnvironmentalVariablesOverride constructor(val environmentalVariables: Map<String, String> = emptyMap()) {
-    @EnvironmentalVariablesOverride constructor(vararg environmentVariables: Pair<String, String>) : this(mapOf(*environmentVariables))
+    @EnvironmentalVariablesOverride
+    constructor(vararg environmentVariables: Pair<String, String>) : this(mapOf(*environmentVariables))
 }
 
 @RequiresOptIn("Environmental variables override may lead to interference of parallel builds and breaks Gradle tests debugging")
@@ -392,11 +397,16 @@ class TestProject(
      */
     fun includeOtherProjectAsSubmodule(
         otherProjectName: String,
-        pathPrefix: String,
+        pathPrefix: String = "",
         newSubmoduleName: String = otherProjectName,
         isKts: Boolean = false,
+        localRepoDir: Path? = null,
     ) {
-        val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
+        val otherProjectPath = if (pathPrefix.isEmpty()) {
+            otherProjectName.testProjectPath
+        } else {
+            "$pathPrefix/$otherProjectName".testProjectPath
+        }
         otherProjectPath.copyRecursively(projectPath.resolve(newSubmoduleName))
 
         val gradleSettingToUpdate = if (isKts) settingsGradleKts else settingsGradle
@@ -407,6 +417,8 @@ class TestProject(
             include(":$newSubmoduleName")
             """.trimIndent()
         )
+
+        localRepoDir?.let { subProject(newSubmoduleName).configureLocalRepository(localRepoDir) }
     }
 
     fun includeOtherProjectAsIncludedBuild(
@@ -416,7 +428,7 @@ class TestProject(
         val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
         otherProjectPath.copyRecursively(projectPath.resolve(otherProjectName))
 
-        projectPath.resolve(otherProjectName).addDefaultBuildFiles()
+        projectPath.resolve(otherProjectName).addDefaultSettingsToSettingsGradle()
 
         settingsGradle.append(
             """
@@ -523,12 +535,29 @@ private fun setupProjectFromTestResources(
 
 private val String.testProjectPath: Path get() = Paths.get("src", "test", "resources", "testProject", this)
 
-internal fun Path.addDefaultBuildFiles() {
+internal fun Path.addDefaultSettingsToSettingsGradle(
+    dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
+    localRepo: Path? = null,
+) {
     addPluginManagementToSettings()
+    when (dependencyManagement) {
+        is DependencyManagement.DefaultDependencyManagement -> addDependencyManagementToSettings(
+            additionalDependencyRepositories = dependencyManagement.additionalRepos,
+            localRepo = localRepo
+        )
+        is DependencyManagement.DisabledDependencyManagement -> {}
+    }
 
     val buildSrc = resolve("buildSrc")
     if (Files.exists(buildSrc)) {
         buildSrc.addPluginManagementToSettings()
+        when (dependencyManagement) {
+            is DependencyManagement.DefaultDependencyManagement -> buildSrc.addDependencyManagementToSettings(
+                additionalDependencyRepositories = dependencyManagement.additionalRepos,
+                localRepo = localRepo
+            )
+            is DependencyManagement.DisabledDependencyManagement -> {}
+        }
     }
 }
 
@@ -542,7 +571,7 @@ internal fun Path.addPluginManagementToSettings() {
             if (!it.contains("pluginManagement {")) {
                 """
                 |$DEFAULT_GROOVY_SETTINGS_FILE
-                |                    
+                |                  
                 |$it
                 |""".trimMargin()
             } else {
@@ -571,6 +600,79 @@ internal fun Path.addPluginManagementToSettings() {
 
     if (Files.exists(resolve("buildSrc"))) {
         resolve("buildSrc").addPluginManagementToSettings()
+    }
+}
+
+
+internal fun Path.addDependencyManagementToSettings(
+    gradleRepositoriesMode: RepositoriesMode = RepositoriesMode.PREFER_SETTINGS,
+    additionalDependencyRepositories: Set<String>,
+    localRepo: Path? = null,
+) {
+    val buildGradle = resolve("build.gradle")
+    val buildGradleKts = resolve("build.gradle.kts")
+    val settingsGradle = resolve("settings.gradle")
+    val settingsGradleKts = resolve("settings.gradle.kts")
+    when {
+        Files.exists(settingsGradle) -> settingsGradle.modify {
+            if (!it.contains("dependencyManagement {")) {
+                """
+                |$it
+                |
+                |${
+                    getGroovyDependencyManagementBlock(
+                        gradleRepositoriesMode,
+                        additionalDependencyRepositories,
+                        localRepo
+                    )
+                }
+                |""".trimMargin()
+            } else {
+                it
+            }
+        }
+
+        Files.exists(settingsGradleKts) -> settingsGradleKts.modify {
+            if (!it.contains("dependencyManagement {")) {
+                """
+                |$it
+                |
+                |${
+                    getKotlinDependencyManagementBlock(
+                        gradleRepositoriesMode,
+                        additionalDependencyRepositories,
+                        localRepo
+                    )
+                } 
+                """.trimMargin()
+            } else {
+                it
+            }
+        }
+
+        Files.exists(buildGradle) -> settingsGradle.toFile()
+            .writeText(
+                getGroovyDependencyManagementBlock(
+                    gradleRepositoriesMode,
+                    additionalDependencyRepositories,
+                    localRepo
+                )
+            )
+
+        Files.exists(buildGradleKts) -> settingsGradleKts.toFile()
+            .writeText(
+                getKotlinDependencyManagementBlock(
+                    gradleRepositoriesMode,
+                    additionalDependencyRepositories,
+                    localRepo
+                )
+            )
+
+        else -> error("No build-file or settings file found")
+    }
+
+    if (Files.exists(resolve("buildSrc"))) {
+        resolve("buildSrc").addDependencyManagementToSettings(gradleRepositoriesMode, additionalDependencyRepositories, localRepo)
     }
 }
 
@@ -719,7 +821,7 @@ private fun TestProject.configureSingleNativeTargetInSubFolders(preset: String =
         }
 }
 
-private fun TestProject.configureLocalRepository(localRepoDir: Path) {
+private fun GradleProject.configureLocalRepository(localRepoDir: Path) {
     projectPath.toFile().walkTopDown()
         .filter { it.isFile && it.name in buildFileNames }
         .forEach { file ->
@@ -774,3 +876,16 @@ internal fun TestProject.suppressDependencySourcesConfigurations() {
         """.trimIndent()
     }
 }
+
+/**
+ * Represents different types of dependency management provided to tests.
+ */
+sealed interface DependencyManagement {
+    class DefaultDependencyManagement(val additionalRepos: Set<String> = emptySet()) : DependencyManagement
+    data object DisabledDependencyManagement : DependencyManagement
+}
+
+/**
+ * Resolves the temporary local repository path for the test with specified Gradle version.
+ */
+fun KGPBaseTest.defaultLocalRepo(gradleVersion: GradleVersion) = workingDir.resolve(gradleVersion.version).resolve("repo")

@@ -23,11 +23,11 @@ FILE fqName:<root> fileName:/internalStdlibOverride.kt
           RETURN type=kotlin.Nothing from='public open fun <get-entries> (): kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.Int, kotlin.Int>> declared in <root>.MyMap'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:entries type:kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.Int, kotlin.Int>> visibility:private [final]' type=kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.Int, kotlin.Int>> origin=null
               receiver: GET_VAR '<this>: <root>.MyMap declared in <root>.MyMap.<get-entries>' type=<root>.MyMap origin=null
-    FUN name:containsEntry visibility:internal modality:FINAL <> ($this:<root>.MyMap, entry:kotlin.collections.Map.Entry<*, *>?) returnType:kotlin.Boolean
+    FUN name:containsEntry visibility:public modality:FINAL <> ($this:<root>.MyMap, entry:kotlin.collections.Map.Entry<*, *>?) returnType:kotlin.Boolean
       $this: VALUE_PARAMETER name:<this> type:<root>.MyMap
       VALUE_PARAMETER name:entry index:0 type:kotlin.collections.Map.Entry<*, *>?
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='internal final fun containsEntry (entry: kotlin.collections.Map.Entry<*, *>?): kotlin.Boolean declared in <root>.MyMap'
+        RETURN type=kotlin.Nothing from='public final fun containsEntry (entry: kotlin.collections.Map.Entry<*, *>?): kotlin.Boolean declared in <root>.MyMap'
           CONST Boolean type=kotlin.Boolean value=false
     FUN FAKE_OVERRIDE name:containsKey visibility:public modality:OPEN <> ($this:kotlin.collections.AbstractMap<kotlin.Int, kotlin.Int>, key:kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:

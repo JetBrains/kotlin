@@ -10,10 +10,9 @@ import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.JpsPluginSettings
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
-import kotlin.reflect.KClass
-import kotlin.reflect.KClassifier
-import kotlin.reflect.KType
+import kotlin.reflect.*
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.superclasses
 
 private val CLASSES_TO_PROCESS: List<KClass<*>> = listOf(
@@ -106,12 +105,18 @@ private fun generateRec(
                         val arrayElementType = type.arguments.single().type!!
                         val nullableMarker = if (type.isMarkedNullable) "?" else ""
                         when (arrayElementType.classifier) {
-                            String::class -> println("to.${property.name} = from.${property.name}${nullableMarker}.copyOf()")
+                            String::class -> {
+                                deprecatePropertyIfNecessary(property)
+                                println("to.${property.name} = from.${property.name}${nullableMarker}.copyOf()")
+                            }
                             else -> error("Unsupported array element type $arrayElementType (member '${property.name}' of $fqn)")
                         }
                     }
 
-                    isSupportedImmutable(type) -> println("to.${property.name} = from.${property.name}")
+                    isSupportedImmutable(type) -> {
+                        deprecatePropertyIfNecessary(property)
+                        println("to.${property.name} = from.${property.name}")
+                    }
 
                     else -> error("Unsupported type to copy: $type (member '${property.name}' of $fqn)")
                 }
@@ -121,6 +126,12 @@ private fun generateRec(
             println("return to")
         }
         println("}")
+    }
+}
+
+private fun Printer.deprecatePropertyIfNecessary(property: KProperty1<*, *>) {
+    if (property.hasAnnotation<Deprecated>()) {
+        println("@Suppress(\"DEPRECATION\")")
     }
 }
 

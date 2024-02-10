@@ -108,10 +108,7 @@ class IncrementalJsCompilerRunner(
         IncrementalJsCachesManager(icContext, if (!args.isIrBackendEnabled()) JsSerializerProtocol else KlibMetadataSerializerProtocol, cacheDirectory)
 
     override fun destinationDir(args: K2JSCompilerArguments): File {
-        return if (args.isIrBackendEnabled())
-            File(args.outputDir!!)
-        else
-            File(args.outputFile!!).parentFile
+        return File(args.outputDir!!)
     }
 
     override fun calculateSourcesToCompile(

@@ -1,0 +1,4 @@
+Message:
+assertTrue(1 != 1) { "Message:" }
+             |
+             false ==> expected: <true> but was: <false>

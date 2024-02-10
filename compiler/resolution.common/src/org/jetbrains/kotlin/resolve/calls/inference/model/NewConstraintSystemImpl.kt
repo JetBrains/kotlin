@@ -774,6 +774,7 @@ class NewConstraintSystemImpl(
         return storage
     }
 
+    @K2Only
     val usesOuterCs: Boolean get() = storage.usesOuterCs
 
     // PostponedArgumentsAnalyzer.Context

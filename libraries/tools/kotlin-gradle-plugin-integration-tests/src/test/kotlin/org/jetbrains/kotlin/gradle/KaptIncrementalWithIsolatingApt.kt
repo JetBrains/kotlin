@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.incapt.IncrementalBinaryIsolatingProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessorReferencingClasspath
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
@@ -24,7 +23,7 @@ import java.util.zip.ZipOutputStream
 import kotlin.io.path.*
 import kotlin.test.assertEquals
 
-@DisplayName("K1 Kapt incremental tests with isolating apt")
+@DisplayName("Kapt incremental tests with isolating apt")
 open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
@@ -34,7 +33,7 @@ open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             incrementalKapt = true,
             includeCompileClasspath = false
         )
-    ).copyEnsuringK1()
+    )
 
     override fun KGPBaseTest.kaptProject(
         gradleVersion: GradleVersion,
@@ -319,16 +318,14 @@ open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
                 }
 
             build(":mylibrary:assembleDebug") {
-                if (isIncrementalStubGenerationSupported) {
-                    assertEquals(
-                        listOf(
-                            "baseLibrary/build/tmp/kapt3/stubs/debug/error/NonExistentClass.java",
-                            "mylibrary/src/main/java/com/example/lib/ExampleParcel.java",
-                            "baseLibrary/src/main/java/com/example/lib2/basemodule/BaseClassParcel.java",
-                        ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
-                        getProcessedSources(output)
-                    )
-                }
+                assertEquals(
+                    listOf(
+                        "baseLibrary/build/tmp/kapt3/stubs/debug/error/NonExistentClass.java",
+                        "mylibrary/src/main/java/com/example/lib/ExampleParcel.java",
+                        "baseLibrary/src/main/java/com/example/lib2/basemodule/BaseClassParcel.java",
+                    ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
+                    getProcessedSources(output)
+                )
             }
         }
     }
@@ -440,19 +437,9 @@ open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
     }
 }
 
-@DisplayName("K2 Kapt incremental tests with isolating apt")
-class K2KaptIncrementalWithIsolatingApt : KaptIncrementalWithIsolatingApt() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
-}
-
-@DisplayName("K1 Kapt incremental tests with isolating apt with disabled precise compilation outputs backup")
-open class KaptIncrementalWithIsolatingAptAndWithoutPreciseBackup : KaptIncrementalWithIsolatingApt() {
+@DisplayName("Kapt incremental tests with isolating apt with disabled precise compilation outputs backup")
+class KaptIncrementalWithIsolatingAptAndWithoutPreciseBackup : KaptIncrementalWithIsolatingApt() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
-}
-
-@DisplayName("K2 Kapt incremental tests with isolating apt with disabled precise compilation outputs backup")
-class K2KaptIncrementalWithIsolatingAptAndWithoutPreciseBackup : KaptIncrementalWithIsolatingAptAndWithoutPreciseBackup() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }
 
 private const val patternApt = "Processing java sources with annotation processors:"

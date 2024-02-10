@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
@@ -271,7 +268,7 @@ class FirStatusResolver(
             } else {
                 it
             }
-        } ?: resolveModality(declaration, containingClass)
+        } ?: resolveModality(declaration, containingProperty, containingClass)
         if (overriddenStatuses.isNotEmpty()) {
             for (modifier in MODIFIERS_FROM_OVERRIDDEN) {
                 status[modifier] = status[modifier] || overriddenStatuses.fold(false) { acc, overriddenStatus ->
@@ -355,28 +352,50 @@ class FirStatusResolver(
     }
 
     private fun contradictsWith(type: ConeKotlinType, requiredVariance: Variance): Boolean {
-        if (type is ConeTypeParameterType) {
-            return !type.lookupTag.typeParameterSymbol.fir.variance.allowsPosition(requiredVariance)
-        }
-        // TODO: handle other types (like flexible, DNN, captured, ...) KT-62134
-        if (type is ConeClassLikeType) {
-            val classLike = type.lookupTag.toSymbol(session)?.fir
-            for ((index, argument) in type.typeArguments.withIndex()) {
-                val typeParameterRef = classLike?.typeParameters?.getOrNull(index)
-                if (typeParameterRef !is FirTypeParameter) continue
-                val requiredVarianceForArgument = when (
-                    EnrichedProjectionKind.getEffectiveProjectionKind(typeParameterRef.variance, argument.variance)
-                ) {
-                    EnrichedProjectionKind.OUT -> requiredVariance
-                    EnrichedProjectionKind.IN -> requiredVariance.opposite()
-                    EnrichedProjectionKind.INV -> Variance.INVARIANT
-                    EnrichedProjectionKind.STAR -> continue // CONFLICTING_PROJECTION error was reported
+        when (type) {
+            is ConeLookupTagBasedType -> {
+                if (type is ConeTypeParameterType) {
+                    return !type.lookupTag.typeParameterSymbol.fir.variance.allowsPosition(requiredVariance)
                 }
-                val argType = argument.type ?: continue
-                if (contradictsWith(argType, requiredVarianceForArgument)) {
-                    return true
+                if (type is ConeClassLikeType) {
+                    val classLike = type.lookupTag.toSymbol(session)?.fir
+                    for ((index, argument) in type.typeArguments.withIndex()) {
+                        val typeParameterRef = classLike?.typeParameters?.getOrNull(index)
+                        if (typeParameterRef !is FirTypeParameter) continue
+                        val requiredVarianceForArgument = when (
+                            EnrichedProjectionKind.getEffectiveProjectionKind(typeParameterRef.variance, argument.variance)
+                        ) {
+                            EnrichedProjectionKind.OUT -> requiredVariance
+                            EnrichedProjectionKind.IN -> requiredVariance.opposite()
+                            EnrichedProjectionKind.INV -> Variance.INVARIANT
+                            EnrichedProjectionKind.STAR -> continue // CONFLICTING_PROJECTION error was reported
+                        }
+                        val argType = argument.type ?: continue
+                        if (contradictsWith(argType, requiredVarianceForArgument)) {
+                            return true
+                        }
+                    }
                 }
             }
+            is ConeFlexibleType -> {
+                return contradictsWith(type.lowerBound, requiredVariance)
+            }
+            is ConeDefinitelyNotNullType -> {
+                return contradictsWith(type.original, requiredVariance)
+            }
+            is ConeIntersectionType -> {
+                return type.intersectedTypes.any { contradictsWith(it, requiredVariance) }
+            }
+            is ConeCapturedType -> {
+                // Looks like not possible here
+                return false
+            }
+            is ConeIntegerConstantOperatorType,
+            is ConeIntegerLiteralConstantType,
+            is ConeStubTypeForChainInference,
+            is ConeStubTypeForTypeVariableInSubtyping,
+            is ConeTypeVariableType,
+            -> return false
         }
         return false
     }
@@ -415,11 +434,13 @@ class FirStatusResolver(
 
     private fun resolveModality(
         declaration: FirDeclaration,
+        containingProperty: FirProperty?,
         containingClass: FirClass?,
     ): Modality {
         return when (declaration) {
             is FirRegularClass -> if (declaration.classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
             is FirCallableDeclaration -> {
+                val containingPropertyModality = containingProperty?.modality
                 when {
                     containingClass == null -> Modality.FINAL
                     containingClass.classKind == ClassKind.INTERFACE -> {
@@ -429,6 +450,7 @@ class FirStatusResolver(
                             else -> Modality.OPEN
                         }
                     }
+                    declaration is FirPropertyAccessor && containingPropertyModality != null -> containingPropertyModality
                     declaration.isOverride -> Modality.OPEN
                     else -> Modality.FINAL
                 }

@@ -119,7 +119,7 @@ fun box() {
 // test.kt:26 box
 
 // EXPECTATIONS WASM
-// test.kt:14 $box (12, 14, 18, 18, 18, 18, 12)
+// test.kt:14 $box (12, 14, 17, 17, 17, 17, 12)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8)
 // ThrowHelpers.kt:29 $kotlin.wasm.internal.rangeCheck (6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19)
@@ -134,7 +134,7 @@ fun box() {
 // Array.kt:76 $kotlin.Array.set (5, 5, 5, 5, 5, 5, 5, 5, 5, 5)
 // String.kt:149 $kotlin.stringLiteral (11, 4, 11, 4, 11, 4, 11, 4, 11, 4, 11, 4, 11, 4, 11, 4, 11, 4, 11, 4)
 // test.kt:4 $D.<init> (13, 25, 39, 13, 25, 39, 13, 25, 39)
-// test.kt:15 $box (4, 13, 15, 19, 19, 19, 19, 13, 6, 6)
+// test.kt:15 $box (4, 13, 15, 18, 18, 18, 18, 13, 6, 6)
 // String.kt:143 $kotlin.stringLiteral (15, 8, 15, 8, 15, 8)
 // String.kt:98 $kotlin.String.equals
 // String.kt:99 $kotlin.String.equals (12, 35, 28)
@@ -248,7 +248,7 @@ fun box() {
 // Number2String.kt:61 $kotlin.wasm.internal.utoa32 (28, 14)
 // Number2String.kt:63 $kotlin.wasm.internal.utoa32 (18, 23, 35, 4)
 // Number2String.kt:69 $kotlin.wasm.internal.utoaDecSimple (11, 23, 11, 11, 4)
-// Assertions.kt:14 $kotlin.assert (11, 18, 4, 11, 18, 4, 11, 18, 4, 11, 18, 4)
+// Assertions.kt:14 $kotlin.assert (11, 4, 11, 4, 11, 4, 11, 4)
 // Assertions.kt:21 $kotlin.assert (9, 8, 9, 8, 9, 8, 9, 8)
 // Assertions.kt:25 $kotlin.assert (1, 1, 1, 1)
 // Assertions.kt:15 $kotlin.assert (1, 1, 1, 1)
@@ -305,15 +305,15 @@ fun box() {
 // test.kt:18 $box (17, 9, 9, 17, 12, 12)
 // test.kt:1 $D.component1
 // test.kt:19 $box (4, 6, 6, 6, 6, 6, 6)
-// test.kt:20 $box (12, 14, 18, 18, 18, 18, 12)
+// test.kt:20 $box (12, 14, 17, 17, 17, 17, 12)
 // test.kt:6 $E.<init> (13, 25, 13, 25, 13, 25)
 // test.kt:11 $E.<init> (1, 1, 1)
-// test.kt:21 $box (4, 13, 15, 19, 19, 19, 19, 13, 6, 6)
+// test.kt:21 $box (4, 13, 15, 18, 18, 18, 18, 13, 6, 6)
 // test.kt:8 $E.equals (39, 44)
 // test.kt:22 $box (4, 6, 6)
 // test.kt:9 $E.hashCode (30, 32)
 // test.kt:23 $box (4, 6, 6)
-// test.kt:7 $E.toString (31, 31, 31, 31, 33)
+// test.kt:7 $E.toString (30, 30, 30, 30, 34)
 // test.kt:24 $box (19, 9, 9, 19, 13, 13)
 // test.kt:1 $E.component1
 // test.kt:25 $box (4, 6, 6)

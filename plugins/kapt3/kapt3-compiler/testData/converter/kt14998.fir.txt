@@ -24,9 +24,9 @@ public final class Outer {
         super();
     }
 
-    public final void nonAbstract(@org.jetbrains.annotations.NotNull()
-    java.lang.String s, int i) {
+    public final void nonAbstract(@org.jetbrains.annotations.NotNull() java.lang.String s, int i) {
     }
+
 
     /**
      * private final inner class Outer.Inner : kotlin/Any {
@@ -51,12 +51,11 @@ public final class Outer {
     private final class Inner {
         @org.jetbrains.annotations.NotNull()
         private final java.lang.String foo = null;
+
         @org.jetbrains.annotations.NotNull()
         private final java.lang.String bar = null;
 
-        public Inner(@org.jetbrains.annotations.NotNull()
-        java.lang.String foo, @org.jetbrains.annotations.NotNull()
-        java.lang.String bar) {
+        public Inner(@org.jetbrains.annotations.NotNull() java.lang.String foo, @org.jetbrains.annotations.NotNull() java.lang.String bar) {
             super();
         }
 
@@ -70,7 +69,6 @@ public final class Outer {
             return null;
         }
     }
-
     /**
      * private final class Outer.Nested : kotlin/Any {
      *
@@ -94,12 +92,11 @@ public final class Outer {
     private static final class Nested {
         @org.jetbrains.annotations.NotNull()
         private final java.lang.String foo = null;
+
         @org.jetbrains.annotations.NotNull()
         private final java.lang.String bar = null;
 
-        public Nested(@org.jetbrains.annotations.NotNull()
-        java.lang.String foo, @org.jetbrains.annotations.NotNull()
-        java.lang.String bar) {
+        public Nested(@org.jetbrains.annotations.NotNull() java.lang.String foo, @org.jetbrains.annotations.NotNull() java.lang.String bar) {
             super();
         }
 

@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.GradleLoggerAdapter
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
@@ -294,7 +295,8 @@ internal constructor(
     K2MultiplatformCompilationTask,
     UsesBuildMetricsService,
     KotlinCompilationTask<KotlinNativeCompilerOptions>,
-    UsesBuildFusService {
+    UsesBuildFusService,
+    UsesKotlinNativeBundleBuildService {
 
     @get:Input
     override val outputKind = LIBRARY
@@ -332,7 +334,7 @@ internal constructor(
 
     @get:Nested
     internal val kotlinNativeProvider: Provider<KotlinNativeProvider> = project.provider {
-        KotlinNativeProvider(project, konanTarget)
+        KotlinNativeProvider(project, konanTarget, kotlinNativeBundleBuildService)
     }
 
     @Deprecated(
@@ -1033,7 +1035,7 @@ internal class CacheBuilder(
 
 @CacheableTask
 abstract class CInteropProcess @Inject internal constructor(params: Params) :
-    DefaultTask(), UsesBuildMetricsService {
+    DefaultTask(), UsesBuildMetricsService, UsesKotlinNativeBundleBuildService {
 
     internal class Params(
         val settings: DefaultCInteropSettings,
@@ -1091,13 +1093,17 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:Input
     val moduleName: String = project.klibModuleName(baseKlibName)
 
+    @Deprecated(
+        "Eager outputFile was replaced with lazy outputFileProvider",
+        replaceWith = ReplaceWith("outputFileProvider")
+    )
     @get:Internal
     val outputFile: File
         get() = outputFileProvider.get()
 
     @get:Nested
     internal val kotlinNativeProvider: Provider<KotlinNativeProvider> = project.provider {
-        KotlinNativeProvider(project, konanTarget)
+        KotlinNativeProvider(project, konanTarget, kotlinNativeBundleBuildService)
     }
 
     @Deprecated(
@@ -1199,7 +1205,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
         val args =
             mutableListOf<String>().apply {
-                addArg("-o", outputFile.absolutePath)
+                addArg("-o", outputFileProvider.get().absolutePath)
 
                 addArgIfNotNull("-target", konanTarget.visibleName)
                 if (definitionFile.isPresent) {
@@ -1233,7 +1239,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
             }
         addBuildMetricsForTaskAction(buildMetrics, languageVersion = null) {
-            outputFile.parentFile.mkdirs()
+            outputFileProvider.get().parentFile.mkdirs()
             KotlinNativeCInteropRunner.createExecutionContext(
                 task = this,
                 isInIdeaSync = isInIdeaSync,

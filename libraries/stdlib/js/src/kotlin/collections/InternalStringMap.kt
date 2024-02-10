@@ -173,6 +173,12 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
         return removingValue
     }
 
+    override fun removeKey(key: K): Boolean {
+        val index = findKeyIndex(key) ?: return false
+        removeKeyIndex(key, index)
+        return true
+    }
+
     internal open fun removeKeyIndex(key: K, removingIndex: Int) {
         jsDeleteProperty(backingMap.unsafeCast<Any>(), key as Any)
 

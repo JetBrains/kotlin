@@ -15,8 +15,13 @@ fun f(block: () -> Unit) {
 // test.kt:4 box
 // test.kt:5 box
 // test.kt:11 f
+// EXPECTATIONS ClassicFrontend JVM_IR
 // test.kt:6 invoke
 // test.kt:7 invoke
+// EXPECTATIONS FIR JVM_IR
+// test.kt:6 box$lambda$0
+// test.kt:7 box$lambda$0
+// EXPECTATIONS JVM_IR
 // test.kt:11 f
 // test.kt:12 f
 // test.kt:8 box

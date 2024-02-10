@@ -19,9 +19,10 @@ package kapt;
  */
 @kotlin.Metadata()
 public enum Options {
-    /*public static final*/ A /* = new Options() */,
-    /*public static final*/ B /* = new Options() */,
-    /*public static final*/ C /* = new Options() */;
+    A,
+    B,
+    C;
+
 
     Options() {
     }

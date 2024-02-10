@@ -5,7 +5,7 @@ build:
   [kotlinc] Compiling [[TestData]] => [[Temp]]
   [kotlinc] [TestData]/incorrectKotlinCode.kt:1:1: error: expecting a top level declaration
   [kotlinc] xxxx
-  [kotlinc] ^
+  [kotlinc] ^^^^
 
 ERR:
 

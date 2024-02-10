@@ -20,10 +20,6 @@ import javax.inject.Inject
 abstract class BinaryenExec
 @Inject
 constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
-    @Transient
-    @get:Internal
-    lateinit var binaryen: BinaryenRootExtension
-
     @get:Inject
     abstract val fs: FileSystemOperations
 
@@ -68,8 +64,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
             return project.registerTask(
                 name,
             ) {
-                it.binaryen = binaryen
-                it.executable = binaryen.requireConfigured().executablePath.absolutePath
+                it.executable = binaryen.requireConfigured().executable
                 it.dependsOn(binaryen.setupTaskProvider)
                 it.dependsOn(compilation.compileTaskProvider)
                 it.configuration()

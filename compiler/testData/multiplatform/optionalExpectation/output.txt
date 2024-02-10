@@ -7,14 +7,14 @@ Exit code: OK
 Output:
 compiler/testData/multiplatform/optionalExpectation/common.kt:5:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect annotation class A()
-^
+^^^^^^
 compiler/testData/multiplatform/optionalExpectation/jvm.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 actual annotation class A
-^
+^^^^^^
 
 -- JS --
 Exit code: OK
 Output:
 compiler/testData/multiplatform/optionalExpectation/common.kt:5:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect annotation class A()
-^
+^^^^^^

@@ -12,9 +12,10 @@ package deprecated;
 @kotlin.Metadata()
 @kotlin.Deprecated(message = "Deprecated annotation")
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@java.lang.Deprecated()
+@java.lang.Deprecated
 public abstract @interface Anno {
 }
+
 
 ////////////////////
 
@@ -47,9 +48,9 @@ package deprecated;
 @kotlin.Metadata()
 @kotlin.Deprecated(message = "Deprecated class")
 @Anno()
-@java.lang.Deprecated()
+@java.lang.Deprecated
 public final class Foo {
-    @java.lang.Deprecated()
+    @java.lang.Deprecated
     private final int prop = 0;
 
     public Foo() {
@@ -57,11 +58,11 @@ public final class Foo {
     }
 
     @kotlin.Deprecated(message = "Deprecated function")
-    @java.lang.Deprecated()
+    @java.lang.Deprecated
     public final void foo(int a) {
     }
 
-    @java.lang.Deprecated()
+    @java.lang.Deprecated
     public final int getProp() {
         return 0;
     }
@@ -72,13 +73,13 @@ public final class Foo {
     }
 
     @kotlin.Deprecated(message = "Deprecated getter")
-    @java.lang.Deprecated()
+    @java.lang.Deprecated
     public final int getFoo() {
         return 0;
     }
 
     @kotlin.Deprecated(message = "Deprecated setter")
-    @java.lang.Deprecated()
+    @java.lang.Deprecated
     public final void setFoo(int value) {
     }
 }

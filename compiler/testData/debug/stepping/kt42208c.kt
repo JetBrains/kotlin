@@ -52,7 +52,6 @@ fun baz(v:(() -> Unit)) {
 // EXPECTATIONS WASM
 // test.kt:1 $box
 // test.kt:6 $box (8, 4)
-// test1.kt:12 $box (19, 19)
 // test1.kt:13 $box (1, 1)
 // test3.kt:16 $baz (4, 4)
 // test.kt:10 $box$lambda.invoke

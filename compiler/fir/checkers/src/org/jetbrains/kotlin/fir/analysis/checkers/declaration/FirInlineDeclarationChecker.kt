@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -91,7 +93,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             ) {
                 reporter.reportOn(
                     source,
-                    FirErrors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE,
+                    getNonPublicCallFromPublicInlineFactory(accessExpression, source, context),
                     inlineFunction.symbol,
                     accessedSymbol,
                     context
@@ -104,6 +106,24 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 isCalledFunPublicOrPublishedApi,
                 accessedDeclarationEffectiveVisibility
             )
+        }
+
+        private fun getNonPublicCallFromPublicInlineFactory(
+            accessExpression: FirStatement,
+            source: KtSourceElement,
+            context: CheckerContext,
+        ): KtDiagnosticFactory2<FirBasedSymbol<*>, FirBasedSymbol<*>> {
+            if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitPrivateOperatorCallInInline)) {
+                val isDelegatedPropertyAccessor = source.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
+                val isForLoopButNotIteratorCall = source.kind == KtFakeSourceElementKind.DesugaredForLoop &&
+                        accessExpression.toReference(context.session)?.symbol?.memberDeclarationNameOrNull != OperatorNameConventions.ITERATOR
+
+                if (isDelegatedPropertyAccessor || isForLoopButNotIteratorCall) {
+                    return FirErrors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE_DEPRECATION
+                }
+            }
+
+            return FirErrors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE
         }
 
         private fun EffectiveVisibility.isReachableDueToLocalDispatchReceiver(access: FirStatement, context: CheckerContext): Boolean {

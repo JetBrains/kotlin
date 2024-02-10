@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.config
 
 import com.intellij.openapi.util.io.FileUtilRt
@@ -237,7 +239,6 @@ fun CommonCompilerArguments.convertPathsToSystemIndependent() {
             jdkHome = jdkHome?.let(FileUtilRt::toSystemIndependentName)
             kotlinHome = kotlinHome?.let(FileUtilRt::toSystemIndependentName)
             friendPaths?.forEachIndexed { index, s -> friendPaths!![index] = FileUtilRt.toSystemIndependentName(s) }
-            declarationsOutputPath = declarationsOutputPath?.let(FileUtilRt::toSystemIndependentName)
         }
 
         is K2JSCompilerArguments -> {

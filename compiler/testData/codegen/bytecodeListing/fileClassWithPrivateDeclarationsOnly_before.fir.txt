@@ -1,0 +1,11 @@
+@kotlin.Metadata
+public final class FileClassWithPrivateDeclarationsOnly_beforeKt {
+    // source: 'fileClassWithPrivateDeclarationsOnly_before.kt'
+    private final static @org.jetbrains.annotations.NotNull field a: kotlin.Unit
+    private final static @org.jetbrains.annotations.NotNull field b$delegate: kotlin.Lazy
+    static method <clinit>(): void
+    private final static method b_delegate$lambda$0(): kotlin.Unit
+    private final static method f(): void
+    public final static @kotlin.internal.InlineOnly method g(): void
+    private final static method getB(): kotlin.Unit
+}

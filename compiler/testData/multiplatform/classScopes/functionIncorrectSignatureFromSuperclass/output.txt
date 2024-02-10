@@ -13,4 +13,4 @@ compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperc
         fun function(b: ByteArray): Long
 
 actual class Foo : Base()
-             ^
+             ^^^

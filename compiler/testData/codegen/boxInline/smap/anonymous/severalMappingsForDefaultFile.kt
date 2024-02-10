@@ -1,7 +1,7 @@
+// IGNORE_INLINER_K2: IR
 // FILE: 1.kt
 // NO_SMAP_DUMP
 package test
-
 
 inline fun annotatedWith2(crossinline predicate: () -> Boolean)
     { val lambda = { any { predicate() } }; lambda() }

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import java.io.File
-import java.util.*
 
 /**
  * A facade for invoking compilation and related stuff (such as [calculateClasspathSnapshot]) in Kotlin compiler.
@@ -27,7 +26,12 @@ import java.util.*
 @ExperimentalBuildToolsApi
 public interface CompilationService {
     /**
-     * TODO KT-57565
+     * Calculates JVM classpath snapshot for [classpathEntry] used for detecting changes in incremental compilation with specified [granularity].
+     *
+     * The [ClassSnapshotGranularity.CLASS_LEVEL] granularity should be preferred for rarely changing dependencies as more lightweight in terms of the resulting snapshot size.
+     *
+     * @param classpathEntry path to existent classpath entry
+     * @param granularity determines granularity of tracking.
      */
     public fun calculateClasspathSnapshot(classpathEntry: File, granularity: ClassSnapshotGranularity): ClasspathEntrySnapshot
 
@@ -58,7 +62,7 @@ public interface CompilationService {
         strategyConfig: CompilerExecutionStrategyConfiguration,
         compilationConfig: JvmCompilationConfiguration,
         sources: List<File>,
-        arguments: List<String>
+        arguments: List<String>,
     ): CompilationResult
 
     /**
@@ -77,6 +81,13 @@ public interface CompilationService {
      * @return A collection of strings representing the custom Kotlin script filename extensions.
      */
     public fun getCustomKotlinScriptFilenameExtensions(classpath: List<File>): Collection<String>
+
+    /**
+     * Returns the version of the Kotlin compiler used to run compilation.
+     *
+     * @return A string representing the version of the Kotlin compiler, for example `2.0.0-Beta4`.
+     */
+    public fun getCompilerVersion(): String
 
     @ExperimentalBuildToolsApi
     public companion object {

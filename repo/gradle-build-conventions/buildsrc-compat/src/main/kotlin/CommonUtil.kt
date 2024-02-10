@@ -5,6 +5,7 @@ import groovy.lang.Closure
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.CopySourceSpec
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.JavaExec
@@ -80,9 +81,9 @@ fun Project.findJavaPluginExtension(): JavaPluginExtension? = extensions.findByT
 
 fun JavaExec.pathRelativeToWorkingDir(file: File): String = file.relativeTo(workingDir).invariantSeparatorsPath
 
-fun Task.singleOutputFile(): File = when (this) {
+fun Task.singleOutputFile(layout: ProjectLayout): File = when (this) {
     is AbstractArchiveTask -> archiveFile.get().asFile
-    is ProGuardTask -> project.file(outJarFiles.single()!!)
+    is ProGuardTask -> layout.files(outJarFiles.single()!!).singleFile
     else -> outputs.files.singleFile
 }
 

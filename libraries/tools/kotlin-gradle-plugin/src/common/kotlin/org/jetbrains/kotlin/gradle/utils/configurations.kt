@@ -20,7 +20,10 @@ const val RUNTIME = "runtime"
 internal const val INTRANSITIVE = "intransitive"
 private val gradleVersionWithNewApi = GradleVersion.version("8.4")
 
-internal fun ConfigurationContainer.createResolvable(name: String): Configuration = create(name).apply {
+internal fun ConfigurationContainer.createResolvable(
+    name: String,
+    configurationOnCreate: Configuration.() -> Unit = {},
+): Configuration = create(name, configurationOnCreate).apply {
     isCanBeConsumed = false
 }
 
@@ -42,8 +45,11 @@ internal fun ConfigurationContainer.findResolvable(name: String): Configuration?
     }
 }
 
-internal fun ConfigurationContainer.maybeCreateResolvable(name: String): Configuration =
-    findResolvable(name) ?: createResolvable(name)
+internal fun ConfigurationContainer.maybeCreateResolvable(
+    name: String,
+    configurationOnCreate: Configuration.() -> Unit = {},
+): Configuration =
+    findResolvable(name) ?: createResolvable(name, configurationOnCreate)
 
 internal fun ConfigurationContainer.detachedResolvable(vararg dependencies: Dependency) =
     detachedConfiguration(*dependencies).apply {
@@ -67,7 +73,7 @@ internal fun ConfigurationContainer.maybeCreateConsumable(name: String): Configu
 
 internal fun ConfigurationContainer.createDependencyScope(
     name: String,
-    configuration: Configuration.() -> Unit = {}
+    configuration: Configuration.() -> Unit = {},
 ): NamedDomainObjectProvider<out Configuration> =
     if (GradleVersion.current() >= gradleVersionWithNewApi) {
         dependencyScope(name, configuration)
@@ -91,5 +97,5 @@ internal fun ConfigurationContainer.findDependencyScope(name: String): Configura
 
 internal fun ConfigurationContainer.maybeCreateDependencyScope(
     name: String,
-    configurationOnCreate: Configuration.() -> Unit = {}
+    configurationOnCreate: Configuration.() -> Unit = {},
 ): Configuration = findDependencyScope(name) ?: createDependencyScope(name, configurationOnCreate).get()

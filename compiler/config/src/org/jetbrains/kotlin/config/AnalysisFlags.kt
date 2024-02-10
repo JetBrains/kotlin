@@ -31,9 +31,6 @@ object AnalysisFlags {
     val ignoreDataFlowInAssert by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val allowResultReturnType by AnalysisFlag.Delegates.Boolean
-
-    @JvmStatic
     val explicitApiMode by AnalysisFlag.Delegates.ApiModeDisabledByDefault
 
     @JvmStatic
@@ -50,9 +47,6 @@ object AnalysisFlags {
 
     @JvmStatic
     val allowKotlinPackage by AnalysisFlag.Delegates.Boolean
-
-    @JvmStatic
-    val builtInsFromSources by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
     val muteExpectActualClassesWarning by AnalysisFlag.Delegates.Boolean

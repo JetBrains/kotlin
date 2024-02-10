@@ -18,8 +18,8 @@ public abstract @interface Anno1 {
     public abstract java.lang.String value();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final enum class Enum1 : kotlin/Enum<Enum1> {
@@ -38,8 +38,9 @@ public abstract @interface Anno1 {
  */
 @kotlin.Metadata()
 public enum Enum1 {
-    /*public static final*/ BLACK /* = new Enum1() */,
-    /*public static final*/ WHITE /* = new Enum1() */;
+    BLACK,
+    WHITE;
+
 
     Enum1() {
     }
@@ -50,8 +51,8 @@ public enum Enum1 {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final enum class Enum2 : kotlin/Enum<Enum2> {
@@ -89,15 +90,15 @@ public enum Enum1 {
  */
 @kotlin.Metadata()
 public enum Enum2 {
-    /*public static final*/ RED /* = new Enum2() */,
-    /*public static final*/ WHITE /* = new Enum2() */;
+    RED,
+    WHITE;
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String col = null;
+
     private final int col2 = 0;
 
-    Enum2(@Anno1(value = "first")
-    java.lang.String col, @Anno1(value = "second")
-    int col2) {
+    Enum2(@Anno1(value = "first") java.lang.String col, @Anno1(value = "second") int col2) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -126,8 +127,8 @@ public enum Enum2 {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public abstract interface I : kotlin/Any {
@@ -139,7 +140,6 @@ public enum Enum2 {
  */
 @kotlin.Metadata()
 public abstract interface I {
-
     /**
      * public final enum class I.Nested : kotlin/Enum<I.Nested> {
      *
@@ -155,7 +155,8 @@ public abstract interface I {
      */
     @kotlin.Metadata()
     public static enum Nested {
-        /*public static final*/ WHITE /* = new Nested() */;
+        WHITE;
+
 
         Nested() {
         }
@@ -167,8 +168,8 @@ public abstract interface I {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final enum class Nested1 : kotlin/Enum<Nested1> {
@@ -185,7 +186,8 @@ public abstract interface I {
  */
 @kotlin.Metadata()
 public enum Nested1 {
-    /*public static final*/ WHITE /* = new Nested1() */;
+    WHITE;
+
 
     Nested1() {
     }

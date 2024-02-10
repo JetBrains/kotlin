@@ -1,5 +1,5 @@
 warning: API version 1.6 is deprecated and its support will be removed in a future version of Kotlin
 compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:2:15: error: this declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
     Regex("").matchAt("123", 0)
-              ^
+              ^^^^^^^
 COMPILATION_ERROR

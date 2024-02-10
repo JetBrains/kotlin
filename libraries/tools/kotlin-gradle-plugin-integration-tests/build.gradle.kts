@@ -37,6 +37,11 @@ dependencies {
             requireCapability("org.jetbrains.kotlin:kotlin-lombok-common")
         }
     }
+    testImplementation(project(":kotlin-power-assert")) {
+        capabilities {
+            requireCapability("org.jetbrains.kotlin:kotlin-power-assert-common")
+        }
+    }
     testImplementation(project(":kotlin-sam-with-receiver")) {
         capabilities {
             requireCapability("org.jetbrains.kotlin:kotlin-sam-with-receiver-common")

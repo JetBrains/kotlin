@@ -1,0 +1,169 @@
+STATUS:
+TARGET: public open [<synthetic> STATUS] var something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] BaseKotlin.class
+    public open [ResolvedTo(RAW_FIR)] class BaseKotlin : BaseJava {
+        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseKotlin] constructor(): R|BaseKotlin| {
+            LAZY_super<<implicit>>
+        }
+
+        public open [ResolvedTo(RAW_FIR)] fun getSomething(): kotlin.String { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|BaseKotlin|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+TARGET: public open [<synthetic> EXPECT_ACTUAL_MATCHING] var something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public [<synthetic> ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] BaseKotlin.class
+    public open [ResolvedTo(RAW_FIR)] class BaseKotlin : BaseJava {
+        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseKotlin] constructor(): R|BaseKotlin| {
+            LAZY_super<<implicit>>
+        }
+
+        public open [ResolvedTo(RAW_FIR)] fun getSomething(): kotlin.String { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|BaseKotlin|>
+        }
+
+        public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun setSomething([ResolvedTo(EXPECT_ACTUAL_MATCHING)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+TARGET: public open [<synthetic> CONTRACTS] var something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public [<synthetic> ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] s: R|kotlin/String|): R|kotlin/Unit| {
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] BaseKotlin.class
+    public open [ResolvedTo(RAW_FIR)] class BaseKotlin : BaseJava {
+        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseKotlin] constructor(): R|BaseKotlin| {
+            LAZY_super<<implicit>>
+        }
+
+        public open [ResolvedTo(RAW_FIR)] fun getSomething(): kotlin.String { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|BaseKotlin|>
+        }
+
+        public open override [ResolvedTo(CONTRACTS)] fun setSomething([ResolvedTo(CONTRACTS)] s: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: public open [<synthetic> IMPLICIT_TYPES_BODY_RESOLVE] var something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit| {
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] BaseKotlin.class
+    public open [ResolvedTo(RAW_FIR)] class BaseKotlin : BaseJava {
+        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseKotlin] constructor(): R|BaseKotlin| {
+            LAZY_super<<implicit>>
+        }
+
+        public open [ResolvedTo(RAW_FIR)] fun getSomething(): kotlin.String { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|BaseKotlin|>
+        }
+
+        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun setSomething([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+TARGET: public open [<synthetic> ANNOTATION_ARGUMENTS] var something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|): R|kotlin/Unit| {
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] BaseKotlin.class
+    public open [ResolvedTo(RAW_FIR)] class BaseKotlin : BaseJava {
+        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseKotlin] constructor(): R|BaseKotlin| {
+            LAZY_super<<implicit>>
+        }
+
+        public open [ResolvedTo(RAW_FIR)] fun getSomething(): kotlin.String { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|BaseKotlin|>
+        }
+
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun setSomething([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }
+
+BODY_RESOLVE:
+TARGET: public open [<synthetic> BODY_RESOLVE] var something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public [<synthetic> ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit| {
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] BaseKotlin.class
+    public open [ResolvedTo(RAW_FIR)] class BaseKotlin : BaseJava {
+        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseKotlin] constructor(): R|BaseKotlin| {
+            LAZY_super<<implicit>>
+        }
+
+        public open [ResolvedTo(RAW_FIR)] fun getSomething(): kotlin.String { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|BaseKotlin|>
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun setSomething([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class Derived : R|BaseKotlin| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            super<R|BaseKotlin|>()
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun setSomething([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }

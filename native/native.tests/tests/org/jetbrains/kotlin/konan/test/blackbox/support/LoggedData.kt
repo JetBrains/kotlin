@@ -93,17 +93,28 @@ internal abstract class LoggedData {
     abstract class CompilerCall : LoggedData()
 
     class CInteropParameters(
-        private val extraArgs: Array<String>,
+        private val args: List<String>,
         private val defFile: File,
         private val environment: JVMEnvironment = JVMEnvironment() // Capture environment.
     ) : LoggedData() {
         override fun computeText() = buildString {
-            appendArguments("CINTEROP INVOCATION EXTRA ARGUMENTS:", extraArgs.toList())
+            appendLine("TEST DEF FILE: ${defFile.canonicalPath}")
+            appendArguments("CINTEROP INVOCATION ARGUMENTS:", args)
             appendLine()
             appendLine(environment)
+        }
+    }
 
+    class SwiftCParameters(
+        private val args: List<String>,
+        private val sources: List<File>,
+        private val environment: JVMEnvironment = JVMEnvironment() // Capture environment.
+    ) : LoggedData() {
+        override fun computeText() = buildString {
+            appendList("TEST SWIFT SOURCES:", sources.map { it.absolutePath })
+            appendArguments("SWIFTC INVOCATION ARGUMENTS:", args)
             appendLine()
-            appendLine("TEST DEF FILE: ${defFile.canonicalPath}")
+            appendLine(environment)
         }
     }
 

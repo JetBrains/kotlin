@@ -38,12 +38,6 @@ abstract class SirTransformerVoid : SirTransformer<Nothing?>() {
     final override fun transformDeclaration(declaration: SirDeclaration, data: Nothing?): SirDeclaration =
         transformDeclaration(declaration)
 
-    open fun transformForeignDeclaration(declaration: SirForeignDeclaration): SirDeclaration =
-        transformDeclaration(declaration)
-
-    final override fun transformForeignDeclaration(declaration: SirForeignDeclaration, data: Nothing?): SirDeclaration =
-        transformForeignDeclaration(declaration)
-
     open fun transformNamedDeclaration(declaration: SirNamedDeclaration): SirDeclaration =
         transformDeclaration(declaration)
 
@@ -74,9 +68,33 @@ abstract class SirTransformerVoid : SirTransformer<Nothing?>() {
     final override fun transformFunction(function: SirFunction, data: Nothing?): SirDeclaration =
         transformFunction(function)
 
-    open fun transformForeignFunction(function: SirForeignFunction): SirDeclaration =
-        transformCallable(function)
+    open fun transformAccessor(accessor: SirAccessor): SirDeclaration =
+        transformCallable(accessor)
 
-    final override fun transformForeignFunction(function: SirForeignFunction, data: Nothing?): SirDeclaration =
-        transformForeignFunction(function)
+    final override fun transformAccessor(accessor: SirAccessor, data: Nothing?): SirDeclaration =
+        transformAccessor(accessor)
+
+    open fun transformGetter(getter: SirGetter): SirDeclaration =
+        transformAccessor(getter)
+
+    final override fun transformGetter(getter: SirGetter, data: Nothing?): SirDeclaration =
+        transformGetter(getter)
+
+    open fun transformSetter(setter: SirSetter): SirDeclaration =
+        transformAccessor(setter)
+
+    final override fun transformSetter(setter: SirSetter, data: Nothing?): SirDeclaration =
+        transformSetter(setter)
+
+    open fun transformVariable(variable: SirVariable): SirDeclaration =
+        transformDeclaration(variable)
+
+    final override fun transformVariable(variable: SirVariable, data: Nothing?): SirDeclaration =
+        transformVariable(variable)
+
+    open fun transformImport(import: SirImport): SirDeclaration =
+        transformDeclaration(import)
+
+    final override fun transformImport(import: SirImport, data: Nothing?): SirDeclaration =
+        transformImport(import)
 }

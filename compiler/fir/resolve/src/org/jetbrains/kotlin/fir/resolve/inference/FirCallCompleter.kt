@@ -53,7 +53,7 @@ class FirCallCompleter(
     private val inferenceSession
         get() = transformer.context.inferenceSession
 
-    val completer = ConstraintSystemCompleter(components, transformer.context)
+    val completer = ConstraintSystemCompleter(components)
 
     fun <T> completeCall(
         call: T,
@@ -182,8 +182,8 @@ class FirCallCompleter(
             listOf(call),
             initialType,
             transformer.resolutionContext
-        ) {
-            analyzer.analyze(candidate.system, it, candidate)
+        ) { atom, withPCLASession ->
+            analyzer.analyze(candidate.system, atom, candidate, withPCLASession)
         }
     }
 

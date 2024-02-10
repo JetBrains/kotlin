@@ -9,16 +9,18 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Kotlin.STABLE_RELEASE
 import org.jetbrains.kotlin.gradle.util.capitalize
+import org.jetbrains.kotlin.gradle.util.replaceFirst
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.test.assertContains
 
-
+@OsCondition(supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.LINUX]) // disabled for Windows because of tmp dir problem: KT-62761
 @DisplayName("This test class contains different scenarios with downloading Kotlin Native Compiler during build.")
 @NativeGradlePluginTests
 class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
@@ -79,25 +81,56 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("KT-65222: Kotlin Native must be downloaded during even if klib dir exists")
+    @DisplayName(
+        "KT-65222, KT-65347: check that commonize native distribution depends on downloaded k/n bundle " +
+                "and downloaded bundle does not erase installed caches"
+    )
     @GradleTest
-    fun shouldDownloadKotlinNativeWithExistingKlibDir(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
+    fun checkCommonizeNativeDistributionWithPlatform(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
         nativeProject(
-            "native-simple-project",
+            "commonize-native-distribution",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 konanDataDir = konanTemp,
             ),
         ) {
-            build(":commonizeNativeDistribution") {
-                assertDirectoryExists(konanTemp.resolve(STABLE_VERSION_DIR_NAME).resolve("klib"))
-                assertDirectoryDoesNotExist(konanTemp.resolve(STABLE_VERSION_DIR_NAME).resolve("bin"))
+            build(":compileNativeMainKotlinMetadata") {
+                assertDirectoryExists(konanTemp.resolve(STABLE_VERSION_DIR_NAME).resolve("klib").resolve("platform"))
+                assertDirectoryExists(konanTemp.resolve(STABLE_VERSION_DIR_NAME).resolve("bin"))
             }
-            build("assemble") {
-                assertOutputDoesNotContain(DOWNLOAD_KONAN_FINISHED_LOG)
-                assertOutputContains(UNPUCK_KONAN_FINISHED_LOG)
-                assertOutputDoesNotContain("Please wait while Kotlin/Native")
-            }
+        }
+    }
+
+    @DisplayName("KT-65617: check that `addKotlinNativeBundleConfiguration` does not configure dependencies after configuration has been resolved")
+    @GradleTest
+    fun checkThatKonanConfigurationCouldBeConfiguredOnlyOnce(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
+        nativeProject(
+            "commonize-native-distribution",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                konanDataDir = konanTemp,
+            ),
+        ) {
+            buildGradleKts.replaceFirst(
+                "plugins {",
+                """
+                @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+                import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat
+                plugins {
+                """.trimIndent()
+            )
+            buildGradleKts.appendText(
+                """
+                    
+                tasks.create("taskWithConfigurationResolvedConfiguration") {
+                    dependsOn(":commonizeNativeDistribution")
+                    doFirst {
+                        KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration(project.rootProject)
+                    }
+                }
+                """.trimIndent()
+            )
+            build(":commonizeNativeDistribution", "taskWithConfigurationResolvedConfiguration")
         }
     }
 

@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -59,6 +60,7 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
         klass: KClass<out ComponentRegistrar>,
         expectedExitCode: ExitCode = ExitCode.OK,
         extras: List<String> = emptyList(),
+        messageRenderer: MessageRenderer? = null,
     ) {
         val mainKt = tmpdir.resolve(src.name).apply {
             writeText(src.content)
@@ -70,7 +72,7 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
             "-d", tmpdir.resolve("out").absolutePath
         )
 
-        val (output, exitCode) = CompilerTestUtil.executeCompiler(compiler, args + outputPath + extras)
+        val (output, exitCode) = CompilerTestUtil.executeCompiler(compiler, args + outputPath + extras, messageRenderer)
         assertEquals(expectedExitCode, exitCode, output)
     }
 

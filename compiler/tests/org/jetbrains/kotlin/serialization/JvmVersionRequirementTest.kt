@@ -66,7 +66,7 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
     fun testAllJvmDefault() {
         doTest(
             VersionRequirement.Version(1, 4, 0), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
-            analysisFlags = mapOf(JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.ALL_INCOMPATIBLE),
+            analysisFlags = mapOf(JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.ALL),
             fqNamesWithRequirements = listOf(
                 "test.Base",
                 "test.Derived",

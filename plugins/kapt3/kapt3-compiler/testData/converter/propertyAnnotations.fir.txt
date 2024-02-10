@@ -12,8 +12,8 @@
 public abstract @interface Anno {
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class Anno2 : kotlin/Annotation {
@@ -31,8 +31,8 @@ public abstract @interface Anno {
 public abstract @interface Anno2 {
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Test : kotlin/Any {

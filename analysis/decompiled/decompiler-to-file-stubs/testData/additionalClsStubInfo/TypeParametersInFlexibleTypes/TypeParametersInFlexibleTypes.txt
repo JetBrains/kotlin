@@ -7,7 +7,7 @@ KotlinStub$CLASS[classId=test/TypeParametersInFlexibleTypes, fqName=test.TypePar
   KotlinStub$TYPE_PARAMETER_LIST
     KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
     KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=D]
-  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=TypeParametersInFlexibleTypes]
+  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=TypeParametersInFlexibleTypes]
     KotlinStub$MODIFIER_LIST[public]
     KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=javaClass]

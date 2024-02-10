@@ -87,7 +87,7 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
     }
 
     private val nodeExecutable by lazy {
-        nodeJs.requireConfigured().nodeExecutable
+        nodeJs.requireConfigured().executable
     }
 
     fun useTool(

@@ -5,5 +5,5 @@
 // -- Module: <m3> --
 /m3.kt:24:17: error: unresolved reference: Some
     foo { some: Some, _ -> }
-                ^
+                ^^^^
 

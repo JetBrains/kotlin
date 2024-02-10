@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // ENABLE_IR_FAKE_OVERRIDE_GENERATION
 // KT-64692
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
 
 // test data differs - no getOrDefault in AbstractMap for non-jvm.
 // IGNORE_BACKEND: NATIVE, JS, JS_IR, JS_IR_ES6, WASM

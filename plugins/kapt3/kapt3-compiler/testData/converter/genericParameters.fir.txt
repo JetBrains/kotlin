@@ -27,12 +27,11 @@
 public final class MappedList<T extends java.lang.Object, R extends java.lang.Object> extends kotlin.collections.AbstractList<R> implements java.util.List<R>, kotlin.jvm.internal.markers.KMappedMarker {
     @org.jetbrains.annotations.NotNull()
     private final java.util.List<T> list = null;
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.jvm.functions.Function1<T, R> function = null;
 
-    public MappedList(@org.jetbrains.annotations.NotNull()
-    java.util.List<? extends T> list, @org.jetbrains.annotations.NotNull()
-    kotlin.jvm.functions.Function1<? super T, ? extends R> function) {
+    public MappedList(@org.jetbrains.annotations.NotNull() java.util.List<? extends T> list, @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<? super T, ? extends R> function) {
         super();
     }
 

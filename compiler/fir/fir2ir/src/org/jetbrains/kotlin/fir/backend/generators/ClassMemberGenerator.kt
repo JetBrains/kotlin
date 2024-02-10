@@ -347,7 +347,7 @@ internal class ClassMemberGenerator(
                     declarationStorage.leaveScope(this.symbol)
                 }
             }
-            if (containingClass != null) {
+            if (containingClass != null && !components.configuration.useIrFakeOverrideBuilder) {
                 this.overriddenSymbols = property.generateOverriddenAccessorSymbols(containingClass, isGetter)
             }
 

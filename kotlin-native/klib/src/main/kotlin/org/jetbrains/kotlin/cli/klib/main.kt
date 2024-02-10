@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolverByName
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import org.jetbrains.kotlin.konan.util.KonanHomeProvider
+import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
@@ -447,10 +447,10 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
         val defaultModules = mutableListOf<ModuleDescriptorImpl>()
         if (!module.isNativeStdlib()) {
             val resolver = resolverByName(
-                    emptyList(),
-                    distributionKlib = Distribution(KonanHomeProvider.determineKonanHome()).klib,
-                    skipCurrentDir = true,
-                    logger = KlibToolLogger
+                emptyList(),
+                distributionKlib = Distribution(KotlinNativePaths.homePath.absolutePath).klib,
+                skipCurrentDir = true,
+                logger = KlibToolLogger
             )
             resolver.defaultLinks(false, true, true).mapTo(defaultModules) {
                 KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptor(it, versionSpec, storageManager, module.builtIns, null)

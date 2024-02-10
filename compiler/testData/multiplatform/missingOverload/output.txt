@@ -13,4 +13,4 @@ compiler/testData/multiplatform/missingOverload/jvm.kt:1:14: error: 'actual clas
         actual fun f(s: String): Unit
 
 actual class Foo {
-             ^
+             ^^^

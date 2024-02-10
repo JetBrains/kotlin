@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.generators.tests.native.swift.sir
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.sir.analysisapi.AbstractKotlinSirContextTest
 import org.jetbrains.kotlin.sir.bridge.AbstractKotlinSirBridgeTest
 import org.jetbrains.kotlin.swiftexport.standalone.AbstractSwiftRunnerTest
 
@@ -14,16 +13,6 @@ import org.jetbrains.kotlin.swiftexport.standalone.AbstractSwiftRunnerTest
 fun main() {
     System.setProperty("java.awt.headless", "true")
     generateTestGroupSuiteWithJUnit5 {
-        testGroup(
-            "native/swift/sir-analysis-api/tests-gen/",
-            "native/swift/sir-analysis-api/testData"
-        ) {
-            testClass<AbstractKotlinSirContextTest>(
-                suiteTestClassName = "SirAnalysisGeneratedTests"
-            ) {
-                model("", recursive = false)
-            }
-        }
         testGroup(
             "native/swift/sir-compiler-bridge/tests-gen/",
             "native/swift/sir-compiler-bridge/testData"

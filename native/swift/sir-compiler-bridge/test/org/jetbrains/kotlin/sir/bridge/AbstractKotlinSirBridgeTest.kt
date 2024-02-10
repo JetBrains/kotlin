@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.builder.buildFunction
+import org.jetbrains.kotlin.sir.builder.buildGetter
+import org.jetbrains.kotlin.sir.builder.buildSetter
+import org.jetbrains.kotlin.sir.builder.buildVariable
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -86,11 +89,48 @@ private fun readRequestFromFile(file: File): BridgeRequest {
             )
         }
     }
-    val function = buildFunction {
-        this.name = fqName.last()
-        this.returnType = returnType
-        this.parameters += parameters
-        this.isStatic = false
+
+    val kind = BridgeRequestKind.valueOf(properties.getProperty("kind", "FUNCTION"))
+
+    val callable = when (kind) {
+        BridgeRequestKind.FUNCTION -> buildFunction {
+            this.name = fqName.last()
+            this.returnType = returnType
+            this.parameters += parameters
+            this.isStatic = false
+        }
+        BridgeRequestKind.PROPERTY_GETTER -> {
+            val getter = buildGetter()
+
+            getter.parent = buildVariable {
+                this.name = fqName.last()
+                this.type = returnType
+                check(parameters.isEmpty())
+                this.isStatic = false
+                this.getter = getter
+            }
+
+            getter
+        }
+        BridgeRequestKind.PROPERTY_SETTER -> {
+            val setter = buildSetter()
+
+            setter.parent = buildVariable {
+                this.name = fqName.last()
+                this.type = returnType
+                check(parameters.isEmpty())
+                this.isStatic = false
+                this.getter = buildGetter()
+                this.setter = setter
+            }
+
+            setter
+        }
     }
-    return BridgeRequest(function, bridgeName, fqName)
+
+    return BridgeRequest(callable, bridgeName, fqName)
+}
+
+private enum class BridgeRequestKind {
+    FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER
 }

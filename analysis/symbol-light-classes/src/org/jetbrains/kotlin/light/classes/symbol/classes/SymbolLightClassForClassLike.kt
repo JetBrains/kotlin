@@ -158,7 +158,12 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
 
     override val originKind: LightClassOriginKind get() = LightClassOriginKind.SOURCE
 
-    override fun getQualifiedName(): String? = classOrObjectDeclaration?.fqName?.asString()
+    override fun getQualifiedName(): String? {
+        val classOrObjectFqName = classOrObjectDeclaration?.fqName
+            ?: withClassOrObjectSymbol { s -> s.classIdIfNonLocal?.asSingleFqName() }
+
+        return classOrObjectFqName?.toString()
+    }
 
     override fun getInterfaces(): Array<PsiClass> = PsiClassImplUtil.getInterfaces(this)
     override fun getSuperClass(): PsiClass? = PsiClassImplUtil.getSuperClass(this)

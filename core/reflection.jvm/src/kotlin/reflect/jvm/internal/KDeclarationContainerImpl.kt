@@ -252,19 +252,18 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         })
 
     private fun addParametersAndMasks(result: MutableList<Class<*>>, valueParameters: List<Class<*>>, isConstructor: Boolean) {
-        result.addAll(valueParameters)
-        repeat((valueParameters.size + Integer.SIZE - 1) / Integer.SIZE) {
+        // Constructors that include parameters of inline class types contain an extra trailing DEFAULT_CONSTRUCTOR_MARKER parameter,
+        // which should be excluded when calculating mask size.
+        val withoutMarker =
+            if (valueParameters.lastOrNull() == DEFAULT_CONSTRUCTOR_MARKER) valueParameters.subList(0, valueParameters.size - 1)
+            else valueParameters
+
+        result.addAll(withoutMarker)
+        repeat((withoutMarker.size + Integer.SIZE - 1) / Integer.SIZE) {
             result.add(Integer.TYPE)
         }
 
-        if (isConstructor) {
-            // Constructors that include the value class as an argument will include DEFAULT_CONSTRUCTOR_MARKER as an argument,
-            // regardless of whether there is a default argument.
-            // On the other hand, when searching for the default constructor,
-            // DEFAULT_CONSTRUCTOR_MARKER needs to be present only at the end, so it is removed here.
-            result.remove(DEFAULT_CONSTRUCTOR_MARKER)
-            result.add(DEFAULT_CONSTRUCTOR_MARKER)
-        } else result.add(Any::class.java)
+        result.add(if (isConstructor) DEFAULT_CONSTRUCTOR_MARKER else Any::class.java)
     }
 
     private class FunctionJvmDescriptor(val parameters: List<Class<*>>, val returnType: Class<*>?)

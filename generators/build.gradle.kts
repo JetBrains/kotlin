@@ -65,6 +65,7 @@ dependencies {
     testApi(projectTests(":kotlin-allopen-compiler-plugin"))
     testApi(projectTests(":kotlin-noarg-compiler-plugin"))
     testApi(projectTests(":kotlin-lombok-compiler-plugin"))
+    testApi(projectTests(":kotlin-power-assert-compiler-plugin"))
     testApi(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
     testApi(projectTests(":kotlin-assignment-compiler-plugin"))
     testApi(projectTests(":kotlinx-serialization-compiler-plugin"))

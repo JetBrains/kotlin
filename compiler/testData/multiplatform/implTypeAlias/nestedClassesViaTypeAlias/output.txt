@@ -7,10 +7,10 @@ Exit code: OK
 Output:
 compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias/common.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect class ByTypeAlias {
-^
+^^^^^^
 compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias/common.kt:2:15: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
     interface Nested
-              ^
+              ^^^^^^
 compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias/jvm.kt:5:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 actual typealias ByTypeAlias = ByTypeAliasImpl
-^
+^^^^^^

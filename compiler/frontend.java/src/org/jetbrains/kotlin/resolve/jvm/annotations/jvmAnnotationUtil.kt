@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.resolve.jvm.annotations
 
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
@@ -68,7 +71,7 @@ fun CallableMemberDescriptor.isCompiledToJvmDefault(jvmDefault: JvmDefaultMode):
 //    }
 
     if (directMember.annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)) return true
-    if (clazz !is DeserializedClassDescriptor) return jvmDefault.forAllMethodsWithBody
+    if (clazz !is DeserializedClassDescriptor) return jvmDefault.isEnabled
     return JvmProtoBufUtil.isNewPlaceForBodyGeneration(clazz.classProto)
 }
 

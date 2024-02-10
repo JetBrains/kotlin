@@ -40,9 +40,11 @@ class Fir2IrComponentsStorage(
     override val signatureComposer: FirBasedSignatureComposer = commonMemberStorage.firSignatureComposer
     override val symbolTable: SymbolTable = commonMemberStorage.symbolTable
 
-    override val converter: Fir2IrConverter = Fir2IrConverter(moduleDescriptor, this)
+    private val conversionScope = Fir2IrConversionScope(configuration)
 
-    override val classifierStorage: Fir2IrClassifierStorage = Fir2IrClassifierStorage(this, commonMemberStorage)
+    override val converter: Fir2IrConverter = Fir2IrConverter(moduleDescriptor, this, conversionScope)
+
+    override val classifierStorage: Fir2IrClassifierStorage = Fir2IrClassifierStorage(this, commonMemberStorage, conversionScope)
     override val declarationStorage: Fir2IrDeclarationStorage = Fir2IrDeclarationStorage(this, moduleDescriptor, commonMemberStorage)
 
     override val callablesGenerator: Fir2IrCallableDeclarationsGenerator = Fir2IrCallableDeclarationsGenerator(this)
@@ -58,8 +60,7 @@ class Fir2IrComponentsStorage(
 
     override val irProviders: List<IrProvider> = listOf(FirIrProvider(this))
 
-    override val typeConverter: Fir2IrTypeConverter = Fir2IrTypeConverter(this)
-    private val conversionScope = Fir2IrConversionScope(configuration)
+    override val typeConverter: Fir2IrTypeConverter = Fir2IrTypeConverter(this, conversionScope)
 
     val fir2IrVisitor: Fir2IrVisitor = Fir2IrVisitor(this, conversionScope)
 

@@ -234,7 +234,7 @@ val intermediate = when {
 val result by task<Jar> {
     dependsOn(intermediate)
     from {
-        zipTree(intermediate.get().singleOutputFile())
+        zipTree(intermediate.get().singleOutputFile(layout))
     }
     from(zipTree(provider { reflectShadowJar.get().archiveFile.get().asFile })) {
         include("META-INF/versions/**")

@@ -9,5 +9,5 @@ compiler or generated code. Use it at your own risk!
 
 compiler/testData/cli/jvm/languageVersion.kt:5:23: error: KSuspendFunctionN interfaces are not allowed as supertypes
 abstract class Some : KSuspendFunction0<Unit>
-                      ^
+                      ^^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

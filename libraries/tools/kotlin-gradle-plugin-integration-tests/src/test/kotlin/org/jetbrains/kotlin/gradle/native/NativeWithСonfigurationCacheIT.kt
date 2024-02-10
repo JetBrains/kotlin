@@ -23,10 +23,17 @@ class NativeWithConfigurationCacheIT : KGPBaseTest() {
     @GradleTest
     fun testConfigurationCacheReusedSecondTime(gradleVersion: GradleVersion) {
         nativeProject(
-            "native-with-configuration-cache", gradleVersion, buildOptions = defaultBuildOptions.withBundledKotlinNative().copy(
+            "native-with-configuration-cache",
+            gradleVersion,
+            dependencyManagement = DependencyManagement.DisabledDependencyManagement,
+            buildOptions = defaultBuildOptions.copy(
                 // We need to download compiler on the first build, that is why we are setting custom konan home dir without any compiler inside
                 konanDataDir = workingDir.resolve(".konan"),
-            )
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    version = null,
+                    distributionDownloadFromMaven = false, // please, remove the whole test, when this flag will be removed
+                ),
+            ),
         ) {
             build(
                 "help"

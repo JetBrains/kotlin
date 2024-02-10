@@ -1761,6 +1761,12 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         }
 
         @Test
+        @TestMetadata("posptonedPCLACallInsideStringInterpolation.kt")
+        public void testPosptonedPCLACallInsideStringInterpolation() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/posptonedPCLACallInsideStringInterpolation.kt");
+        }
+
+        @Test
         @TestMetadata("primitiveComparisons.kt")
         public void testPrimitiveComparisons() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/primitiveComparisons.kt");

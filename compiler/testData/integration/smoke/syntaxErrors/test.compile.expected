@@ -2,9 +2,9 @@
 ERR:
 test.kt:4:13: error: classifier 'class System : Any' does not have a companion object, so it cannot be used as an expression.
     val s = System.in
-            ^
+            ^^^^^^
 test.kt:4:20: error: syntax error: Expecting an element.
     val s = System.in
-                   ^
+                   ^^
 
 Return code: 1

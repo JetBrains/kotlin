@@ -67,7 +67,7 @@ class P<P1 : Any?, P2 : Any?> {
 
 val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
   field = { // BLOCK
-    local class <no name provided> : IDelegate1<Value<T, CR<T>>, P<T, T>> {
+    local class <no name provided> : IDelegate1<Value<Any?, CR<Any?>>, P<Any?, Any?>> {
       constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
@@ -78,20 +78,20 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
         return t
       }
 
-      fun <F12T : IR<T>> qux12(t: F12T): T {
+      fun <F12T : IR<Any?>> qux12(t: F12T): Any? {
         return t.foo()
       }
 
-      private val Value<T, CR<T>>.deepO: T /* by */
+      private val Value<Any?, CR<Any?>>.deepO: Any? /* by */
         field = { // BLOCK
-          local class <no name provided> : IDelegate1<Value<T, CR<T>>, T> {
+          local class <no name provided> : IDelegate1<Value<Any?, CR<Any?>>, Any?> {
             constructor() /* primary */ {
               super/*Any*/()
               /* <init>() */
 
             }
 
-            override operator fun getValue(t: Value<T, CR<T>>, p: KProperty<*>): T {
+            override operator fun getValue(t: Value<Any?, CR<Any?>>, p: KProperty<*>): Any? {
               return t.<get-value1>()
             }
 
@@ -99,7 +99,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
               return t
             }
 
-            fun <F22T : IR<T>> qux22(t: F22T): T {
+            fun <F22T : IR<Any?>> qux22(t: F22T): Any? {
               return t.foo()
             }
 
@@ -107,20 +107,20 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
 
           <no name provided>()
         }
-        private get(): T {
-          return <this>.#deepO$delegate.getValue(t = <this>, p = <no name provided>::deepO)
+        private get(): Any? {
+          return <this> /*as <no name provided><Any?> */.#deepO$delegate.getValue(t = <this>, p = <no name provided>::deepO)
         }
 
-      private val Value<T, CR<T>>.deepK: T /* by */
+      private val Value<Any?, CR<Any?>>.deepK: Any? /* by */
         field = { // BLOCK
-          local class <no name provided> : IDelegate1<Value<T, CR<T>>, T> {
+          local class <no name provided> : IDelegate1<Value<Any?, CR<Any?>>, Any?> {
             constructor() /* primary */ {
               super/*Any*/()
               /* <init>() */
 
             }
 
-            override operator fun getValue(t: Value<T, CR<T>>, p: KProperty<*>): T {
+            override operator fun getValue(t: Value<Any?, CR<Any?>>, p: KProperty<*>): Any? {
               return t.<get-value2>().foo()
             }
 
@@ -128,12 +128,12 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
 
           <no name provided>()
         }
-        private get(): T {
-          return <this>.#deepK$delegate.getValue(t = <this>, p = <no name provided>::deepK)
+        private get(): Any? {
+          return <this> /*as <no name provided><Any?> */.#deepK$delegate.getValue(t = <this>, p = <no name provided>::deepK)
         }
 
-      override operator fun getValue(t: Value<T, CR<T>>, p: KProperty<*>): P<T, T> {
-        return P<T, T>(p1 = (<this>, t).<get-deepO>(), p2 = (<this>, t).<get-deepK>())
+      override operator fun getValue(t: Value<Any?, CR<Any?>>, p: KProperty<*>): P<Any?, Any?> {
+        return P<Any?, Any?>(p1 = (<this> /*as <no name provided><Any?> */, t).<get-deepO>(), p2 = (<this> /*as <no name provided><Any?> */, t).<get-deepK>())
       }
 
     }
@@ -143,3 +143,4 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
   get(): P<T, T> {
     return #additionalText$delegate.getValue(t = <this>, p = ::additionalText/*<T>()*/)
   }
+

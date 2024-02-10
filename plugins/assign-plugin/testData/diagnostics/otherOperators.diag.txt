@@ -1,77 +1,77 @@
-/otherOperators.kt:21:16: error: unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
+/otherOperators.kt:21:16: error: unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
 public operator fun String?.plus(other: Any?): String defined in kotlin
     task.input += StringProperty("Fail")
-               ^
-/otherOperators.kt:22:21: error: unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
+               ^^
+/otherOperators.kt:22:21: error: unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
 public operator fun String?.plus(other: Any?): String defined in kotlin
     nullTask?.input += StringProperty("Fail")
-                    ^
+                    ^^
 /otherOperators.kt:25:16: error: unresolved reference: <=
     task.input <= StringProperty("Fail")
-               ^
+               ^^
 /otherOperators.kt:26:21: error: unresolved reference: <=
     nullTask?.input <= StringProperty("Fail")
-                    ^
+                    ^^
 /otherOperators.kt:29:16: error: unresolved reference: >=
     task.input >= StringProperty("Fail")
-               ^
+               ^^
 /otherOperators.kt:30:21: error: unresolved reference: >=
     nullTask?.input >= StringProperty("Fail")
-                    ^
+                    ^^
 /otherOperators.kt:33:15: error: unresolved reference: task.input[0]
     task.input[0] = StringProperty("Fail")
               ^
 /otherOperators.kt:33:15: error: no set method providing array access
     task.input[0] = StringProperty("Fail")
-              ^
+              ^^^
 /otherOperators.kt:34:20: error: unresolved reference: nullTask?.input[0]
     nullTask?.input[0] = StringProperty("Fail")
                    ^
 /otherOperators.kt:34:20: error: no set method providing array access
     nullTask?.input[0] = StringProperty("Fail")
-                   ^
+                   ^^^
 /otherOperators.kt:37:15: error: unresolved reference: task.input[0, 0]
     task.input[0, 0] = StringProperty("Fail")
               ^
 /otherOperators.kt:37:15: error: no set method providing array access
     task.input[0, 0] = StringProperty("Fail")
-              ^
+              ^^^^^^
 /otherOperators.kt:38:20: error: unresolved reference: nullTask?.input[0, 0]
     nullTask?.input[0, 0] = StringProperty("Fail")
                    ^
 /otherOperators.kt:38:20: error: no set method providing array access
     nullTask?.input[0, 0] = StringProperty("Fail")
-                   ^
+                   ^^^^^^
 /otherOperators.kt:41:15: error: unresolved reference: task.input[0, 0, 0]
     task.input[0, 0, 0] = StringProperty("Fail")
               ^
 /otherOperators.kt:41:15: error: no set method providing array access
     task.input[0, 0, 0] = StringProperty("Fail")
-              ^
+              ^^^^^^^^^
 /otherOperators.kt:42:20: error: unresolved reference: nullTask?.input[0, 0, 0]
     nullTask?.input[0, 0, 0] = StringProperty("Fail")
                    ^
 /otherOperators.kt:42:20: error: no set method providing array access
     nullTask?.input[0, 0, 0] = StringProperty("Fail")
-                   ^
+                   ^^^^^^^^^
 /otherOperators.kt:45:5: error: 'operator' modifier is required on 'get' in 'StringProperty'
     task.input[0] += StringProperty("Fail")
-    ^
+    ^^^^^^^^^^^^^
 /otherOperators.kt:45:15: error: no set method providing array access
     task.input[0] += StringProperty("Fail")
-              ^
+              ^^^
 /otherOperators.kt:45:16: error: too many arguments for public final fun get(): String defined in StringProperty
     task.input[0] += StringProperty("Fail")
                ^
 /otherOperators.kt:46:5: error: 'operator' modifier is required on 'get' in 'StringProperty'
     nullTask?.input[0] += StringProperty("Fail")
-    ^
+    ^^^^^^^^^^^^^^^^^^
 /otherOperators.kt:46:5: error: only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type StringProperty?
     nullTask?.input[0] += StringProperty("Fail")
-    ^
+    ^^^^^^^^^^^^^^^^^^
 /otherOperators.kt:46:20: error: no set method providing array access
     nullTask?.input[0] += StringProperty("Fail")
-                   ^
+                   ^^^
 /otherOperators.kt:46:21: error: too many arguments for public final fun get(): String defined in StringProperty
     nullTask?.input[0] += StringProperty("Fail")
                     ^
@@ -80,10 +80,11 @@ public operator fun String?.plus(other: Any?): String defined in kotlin
         ^
 /otherOperators.kt:50:9: error: no set method providing array access
     task[0] = StringProperty("Fail")
-        ^
+        ^^^
 /otherOperators.kt:53:10: error: variable expected
     task.get(0) = StringProperty("Fail")
-         ^
+         ^^^^^^
 /otherOperators.kt:54:15: error: variable expected
     nullTask?.get(0) = StringProperty("Fail")
-              ^
+              ^^^^^^
+

@@ -12,7 +12,11 @@ fun box() {
 // EXPECTATIONS JVM_IR
 // test.kt:7 box
 // test.kt:4 eval
+// EXPECTATIONS ClassicFrontend JVM_IR
 // test.kt:8 invoke
+// EXPECTATIONS FIR JVM_IR
+// test.kt:8 box$lambda$0
+// EXPECTATIONS JVM_IR
 // test.kt:4 eval
 // test.kt:7 box
 // test.kt:10 box
@@ -25,9 +29,9 @@ fun box() {
 
 // EXPECTATIONS WASM
 // test.kt:1 $box
-// test.kt:7 $box (9, 4)
+// test.kt:7 $box
 // test.kt:4 $eval (27, 30)
-// test.kt:8 $box$lambda.invoke (9, 9, 9, 9)
+// test.kt:8 $box$lambda.invoke (8, 8, 8, 8)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8)
 // ThrowHelpers.kt:29 $kotlin.wasm.internal.rangeCheck (6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19)

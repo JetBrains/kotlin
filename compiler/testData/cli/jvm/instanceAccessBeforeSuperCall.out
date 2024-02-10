@@ -1,19 +1,19 @@
 compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:2:26: error: cannot access '<this>' before the instance has been initialized.
     constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
-                         ^
+                         ^^^^^^^^^^
 compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:2:51: error: cannot access '<this>' before the instance has been initialized.
     constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
-                                                  ^
+                                                  ^^^^
 compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:2:74: error: cannot access '<this>' before the instance has been initialized.
     constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
-                                                                         ^
+                                                                         ^^^^^
 compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:7:20: error: 'this' is not defined in this context.
 class B(other: B = this)
-                   ^
+                   ^^^^
 compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:10:32: error: argument type mismatch: actual type is 'kotlin.Function0<ERROR CLASS: Unknown return lambda parameter type>', but 'kotlin.Int' was expected.
     constructor(x: Int) : this({
                                ^
 compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:12:9: error: cannot access '<this>' before the instance has been initialized.
         this
-        ^
+        ^^^^
 COMPILATION_ERROR

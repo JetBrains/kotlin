@@ -86,6 +86,11 @@
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-power-assert</artifactId>
+        <version>ArtifactsTest.version</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-sam-with-receiver</artifactId>
         <version>ArtifactsTest.version</version>
       </dependency>

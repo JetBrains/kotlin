@@ -15,8 +15,8 @@ public abstract interface Named {
     public abstract java.lang.String getName();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Product2 : Named {
@@ -45,12 +45,10 @@ public final class Product2 implements Named {
         return null;
     }
 
-    public void setName(@org.jetbrains.annotations.Nullable()
-    java.lang.String p0) {
+    public void setName(@org.jetbrains.annotations.Nullable() java.lang.String p0) {
     }
 
-    public Product2(@org.jetbrains.annotations.NotNull()
-    java.lang.String otherName) {
+    public Product2(@org.jetbrains.annotations.NotNull() java.lang.String otherName) {
         super();
     }
 }

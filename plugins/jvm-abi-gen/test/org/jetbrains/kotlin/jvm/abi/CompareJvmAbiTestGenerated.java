@@ -140,9 +140,44 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/lambdas/");
     }
 
+    @TestMetadata("multifileClass")
+    public void testMultifileClass() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/multifileClass/");
+    }
+
+    @TestMetadata("nestedPrivateClasses")
+    public void testNestedPrivateClasses() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/nestedPrivateClasses/");
+    }
+
     @TestMetadata("parameterName")
     public void testParameterName() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/parameterName/");
+    }
+
+    @TestMetadata("preserveDeclarationOrder")
+    public void testPreserveDeclarationOrder() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/preserveDeclarationOrder/");
+    }
+
+    @TestMetadata("privateInterfaceDefaultImplementation")
+    public void testPrivateInterfaceDefaultImplementation() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/privateInterfaceDefaultImplementation/");
+    }
+
+    @TestMetadata("privateOuterClassForEffectivelyVisibleInterface")
+    public void testPrivateOuterClassForEffectivelyVisibleInterface() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/privateOuterClassForEffectivelyVisibleInterface/");
+    }
+
+    @TestMetadata("privateTopLevelClasses")
+    public void testPrivateTopLevelClasses() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/privateTopLevelClasses/");
+    }
+
+    @TestMetadata("privateTopLevelClassesWithoutOption")
+    public void testPrivateTopLevelClassesWithoutOption() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/privateTopLevelClassesWithoutOption/");
     }
 
     @TestMetadata("privateTypealias")

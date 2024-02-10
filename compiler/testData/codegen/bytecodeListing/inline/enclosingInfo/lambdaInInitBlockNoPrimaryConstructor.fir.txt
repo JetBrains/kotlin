@@ -1,0 +1,19 @@
+@kotlin.Metadata
+public interface A {
+    // source: 'lambdaInInitBlockNoPrimaryConstructor.kt'
+}
+
+@kotlin.Metadata
+public interface B {
+    // source: 'lambdaInInitBlockNoPrimaryConstructor.kt'
+}
+
+@kotlin.Metadata
+public final class E {
+    // source: 'lambdaInInitBlockNoPrimaryConstructor.kt'
+    private final field irrelevantField: int
+    public method <init>(@org.jetbrains.annotations.NotNull p0: A): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: B): void
+    private final static method _init_$lambda$0(): kotlin.Unit
+    public final method getIrrelevantField(): int
+}

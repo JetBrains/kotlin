@@ -19,8 +19,8 @@ public abstract @interface Anno {
     public abstract Color color();
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final enum class Color : kotlin/Enum<Color> {
@@ -39,7 +39,8 @@ public abstract @interface Anno {
  */
 @kotlin.Metadata()
 public enum Color {
-    /*public static final*/ BLACK /* = new Color() */;
+    BLACK;
+
 
     Color() {
     }

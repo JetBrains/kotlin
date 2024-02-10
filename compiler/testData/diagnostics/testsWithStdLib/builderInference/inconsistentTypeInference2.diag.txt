@@ -1,3 +1,4 @@
 /inconsistentTypeInference2.kt:7:17: error: type mismatch: inferred type is String but Int was expected
         println(this.plus(1)[0])
-                ^
+                ^^^^
+

@@ -394,9 +394,9 @@ open class FirDeclarationsResolveTransformer(
                 if (isImplicitTypedProperty) {
                     property.resolveSetter(mayResolveSetterBody = true, shouldResolveEverything = shouldResolveEverything)
                 }
-
-                dataFlowAnalyzer.exitDelegateExpression(delegateContainer)
             }
+
+            dataFlowAnalyzer.exitDelegateExpression(delegateContainer)
         }
     }
 

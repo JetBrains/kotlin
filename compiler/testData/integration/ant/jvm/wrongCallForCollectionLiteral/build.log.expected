@@ -7,10 +7,10 @@ build:
     [javac] Compiling [[TestData]] => [[Temp]/classes]
     [javac] [TestData]/literals.kt:6:9: error: argument type mismatch: actual type is 'kotlin.FloatArray', but 'kotlin.IntArray' was expected.
     [javac] @AnnInt([1, 2])
-    [javac]         ^
+    [javac]         ^^^^^^
     [javac] [TestData]/literals.kt:9:9: error: argument type mismatch: actual type is 'kotlin.FloatArray', but 'kotlin.IntArray' was expected.
     [javac] @AnnInt(intArrayOf(1, 2))
-    [javac]         ^
+    [javac]         ^^^^^^^^^^^^^^^^
 
 ERR:
 

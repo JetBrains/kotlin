@@ -1,0 +1,58 @@
+/**
+ * public final enum class E : kotlin/Enum<E> {
+ *
+ *   // signature: <init>(Ljava/lang/String;ILI;)V
+ *   private constructor(i: I)
+ *
+ *   // field: i:LI;
+ *   // getter: getI()LI;
+ *   public final val i: I
+ *     public final get
+ *
+ *   E1,
+ *
+ *   E2,
+ *
+ *   E3,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public enum E {
+    E1,
+    E2,
+    E3;
+
+    @org.jetbrains.annotations.NotNull()
+    private final I i = null;
+
+    E(I i) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final I getI() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<E> getEntries() {
+        return null;
+    }
+}
+
+
+////////////////////
+
+/**
+ * public abstract interface I : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface I {
+}

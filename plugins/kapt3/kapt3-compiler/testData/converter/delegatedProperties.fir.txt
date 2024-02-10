@@ -44,14 +44,19 @@ package test;
 public final class A {
     @org.jetbrains.annotations.NotNull()
     private final kotlin.Lazy x$delegate = null;
+
     @org.jetbrains.annotations.NotNull()
     private final test.C<java.lang.String> z$delegate = null;
+
     @org.jetbrains.annotations.NotNull()
     private final test.C<java.lang.String> y$delegate = null;
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.Lazy<test.C<java.lang.String>> a$delegate = null;
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.Lazy<test.C<java.lang.String>> b$delegate = null;
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.reflect.KProperty0<test.C<java.lang.String>> c$delegate = null;
 
@@ -94,6 +99,7 @@ public final class A {
     }
 }
 
+
 ////////////////////
 
 package test;
@@ -117,9 +123,7 @@ public class C<T extends java.lang.Object> {
         super();
     }
 
-    public final T getValue(@org.jetbrains.annotations.Nullable()
-    java.lang.Object p1, @org.jetbrains.annotations.Nullable()
-    java.lang.Object p2) {
+    public final T getValue(@org.jetbrains.annotations.Nullable() java.lang.Object p1, @org.jetbrains.annotations.Nullable() java.lang.Object p2) {
         return null;
     }
 }

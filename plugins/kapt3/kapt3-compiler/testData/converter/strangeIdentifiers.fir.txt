@@ -26,10 +26,11 @@ public abstract @interface Anno {
     public abstract StrangeEnum size();
 
     public abstract java.lang.String name();
+
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final enum class StrangeEnum : kotlin/Enum<StrangeEnum> {
@@ -57,7 +58,8 @@ public abstract @interface Anno {
  */
 @kotlin.Metadata()
 public enum StrangeEnum {
-    /*public static final*/ InvalidFieldName /* = new StrangeEnum() */;
+    InvalidFieldName;
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String size = null;
 
@@ -75,8 +77,8 @@ public enum StrangeEnum {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Test : kotlin/Any {
@@ -115,6 +117,7 @@ public enum StrangeEnum {
 public final class Test {
     public final java.lang.String simpleName = null;
 
+
     public Test() {
         super();
     }
@@ -124,17 +127,16 @@ public final class Test {
         return null;
     }
 
+
     public final void simpleFun() {
     }
 
     @Anno(name = "Woofwoof", size = StrangeEnum.InvalidFieldName)
-    public final void simpleFun2(@org.jetbrains.annotations.NotNull()
-    java.lang.String a, @org.jetbrains.annotations.NotNull()
-    java.lang.String b) {
+    public final void simpleFun2(@org.jetbrains.annotations.NotNull() java.lang.String a, @org.jetbrains.annotations.NotNull() java.lang.String b) {
     }
 
-    public final void strangeFun4(@org.jetbrains.annotations.NotNull()
-    java.lang.String a, @org.jetbrains.annotations.NotNull()
-    java.lang.String p1_949560896) {
+
+    public final void strangeFun4(@org.jetbrains.annotations.NotNull() java.lang.String a, @org.jetbrains.annotations.NotNull() java.lang.String p1_949560896) {
     }
+
 }

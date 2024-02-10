@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -37,11 +37,7 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmNameAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.isHiddenOrSynthetic
-import org.jetbrains.kotlin.light.classes.symbol.annotations.toOptionalFilter
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.copy
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
@@ -548,7 +544,7 @@ internal fun KtSymbolWithMembers.createInnerClasses(
     // we can't prohibit creating light classes with null names either since they can contain members
 
     getStaticDeclaredMemberScope().getClassifierSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapTo(result) {
-        val classOrObjectDeclaration = it.psiSafe<KtClassOrObject>()
+        val classOrObjectDeclaration = it.sourcePsiSafe<KtClassOrObject>()
         if (classOrObjectDeclaration != null) {
             createLightClassNoCache(classOrObjectDeclaration, containingClass.ktModule)
         } else {
@@ -560,11 +556,11 @@ internal fun KtSymbolWithMembers.createInnerClasses(
         ?.let { getModule(it) as? KtSourceModule }
         ?.languageVersionSettings
         ?.getFlag(JvmAnalysisFlags.jvmDefaultMode)
-        ?: JvmDefaultMode.DEFAULT
+        ?: JvmDefaultMode.DISABLE
 
     if (containingClass is SymbolLightClassForInterface &&
         classOrObject?.hasInterfaceDefaultImpls == true &&
-        jvmDefaultMode != JvmDefaultMode.ALL_INCOMPATIBLE
+        jvmDefaultMode != JvmDefaultMode.ALL
     ) {
         result.add(SymbolLightClassForInterfaceDefaultImpls(containingClass))
     }

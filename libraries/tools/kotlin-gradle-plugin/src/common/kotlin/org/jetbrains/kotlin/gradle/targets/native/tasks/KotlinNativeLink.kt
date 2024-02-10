@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -56,7 +57,8 @@ constructor(
 ) : AbstractKotlinCompileTool<K2NativeCompilerArguments>(objectFactory),
     UsesKonanPropertiesBuildService,
     UsesBuildMetricsService,
-    KotlinToolTask<KotlinCommonCompilerToolOptions> {
+    KotlinToolTask<KotlinCommonCompilerToolOptions>,
+    UsesKotlinNativeBundleBuildService {
 
     @Deprecated("Visibility will be lifted to private in the future releases")
     @get:Internal
@@ -112,6 +114,7 @@ constructor(
         project.getKonanCacheKind(konanTarget)
     }
 
+    @Suppress("unused")
     @get:Input
     internal val useEmbeddableCompilerJar: Boolean = project.nativeUseEmbeddableCompilerJar
 
@@ -201,7 +204,10 @@ constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val xcodeVersion = objectFactory.fileProperty()
 
-    private val externalDependenciesArgs by lazy { ExternalDependenciesBuilder(project, compilation).buildCompilerArgs() }
+    private val externalDependenciesArgs by lazy {
+        @Suppress("DEPRECATION")
+        ExternalDependenciesBuilder(project, compilation).buildCompilerArgs()
+    }
 
     private val cacheBuilderSettings by lazy {
         CacheBuilder.Settings.createWithProject(
@@ -358,7 +364,7 @@ constructor(
 
     @get:Nested
     internal val kotlinNativeProvider: Provider<KotlinNativeProvider> = project.provider {
-        KotlinNativeProvider(project, konanTarget)
+        KotlinNativeProvider(project, konanTarget, kotlinNativeBundleBuildService)
     }
 
     @Deprecated(

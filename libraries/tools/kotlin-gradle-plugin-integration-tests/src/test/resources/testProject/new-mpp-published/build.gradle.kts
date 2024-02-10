@@ -5,7 +5,7 @@ plugins {
 
 repositories {
     mavenLocal()
-    maven("../repo")
+    maven("<localRepo>")
     mavenCentral()
 }
 
@@ -90,6 +90,6 @@ kotlin {
 
 publishing {
     repositories {
-        maven("../repo")
+        maven("<localRepo>")
     }
 }

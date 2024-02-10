@@ -288,7 +288,7 @@ val deprecatedTargetMap = mapOf<KtKeywordToken, Set<KotlinTarget>>()
 
 val deprecatedParentTargetMap = mapOf<KtKeywordToken, Set<KotlinTarget>>()
 
-val deprecatedModifierMap = mapOf(
+val deprecatedKmpModifierMap = mapOf(
     HEADER_KEYWORD to EXPECT_KEYWORD,
     IMPL_KEYWORD to ACTUAL_KEYWORD
 )

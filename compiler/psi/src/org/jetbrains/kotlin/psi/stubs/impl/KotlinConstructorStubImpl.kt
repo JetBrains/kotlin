@@ -18,6 +18,7 @@ class KotlinConstructorStubImpl<T : KtConstructor<T>>(
     private val containingClassName: StringRef?,
     private val hasBody: Boolean,
     private val isDelegatedCallToThis: Boolean,
+    private val isExplicitDelegationCall: Boolean,
 ) : KotlinStubBaseImpl<T>(parent, elementType), KotlinConstructorStub<T> {
     override fun getFqName() = null
     override fun getName() = StringRef.toString(containingClassName)
@@ -25,4 +26,5 @@ class KotlinConstructorStubImpl<T : KtConstructor<T>>(
     override fun isExtension() = false
     override fun hasBody() = hasBody
     override fun isDelegatedCallToThis() = isDelegatedCallToThis
+    override fun isExplicitDelegationCall() = isExplicitDelegationCall
 }

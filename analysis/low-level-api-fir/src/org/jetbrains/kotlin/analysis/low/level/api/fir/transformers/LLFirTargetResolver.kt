@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -42,26 +43,38 @@ internal abstract class LLFirTargetResolver(
 ) : LLFirResolveTargetVisitor {
     val resolveTargetSession: LLFirSession get() = resolveTarget.session
 
-    private val _nestedClassesStack = mutableListOf<FirRegularClass>()
+    private val _containingDeclarations = mutableListOf<FirDeclaration>()
 
-    val nestedClassesStack: List<FirRegularClass> get() = _nestedClassesStack
+    val containingDeclarations: List<FirDeclaration> get() = _containingDeclarations
 
     /**
      * @param context used as a context in the case of exception
-     * @return the last class from [nestedClassesStack]
+     * @return the last class from [containingDeclarations]
      */
-    fun containingClass(context: FirElement): FirRegularClass = nestedClassesStack.lastOrNull()
-        ?: errorWithAttachment("Containing class is not found") {
+    fun containingClass(context: FirElement): FirRegularClass {
+        val containingDeclaration = containingDeclarations.lastOrNull() ?: errorWithAttachment("Containing declaration is not found") {
             withFirEntry("context", context)
+            withEntry("originalTarget", resolveTarget.toString())
         }
 
-    protected inline fun withClassInStack(clazz: FirRegularClass, action: () -> Unit) {
-        _nestedClassesStack += clazz
-        action()
-        val removed = _nestedClassesStack.removeLast()
-        checkWithAttachment(removed === clazz, { "Unexpected state"}) {
-            withFirEntry("expected", clazz)
-            withFirEntry("actual", removed)
+        requireWithAttachment(
+            containingDeclaration is FirRegularClass,
+            { "${FirRegularClass::class.simpleName} expected, but ${containingDeclaration::class.simpleName} found" },
+        )
+
+        return containingDeclaration
+    }
+
+    protected inline fun withContainingDeclaration(declaration: FirDeclaration, action: () -> Unit) {
+        _containingDeclarations += declaration
+        try {
+            action()
+        } finally {
+            val removed = _containingDeclarations.removeLast()
+            checkWithAttachment(removed === declaration, { "Unexpected state" }) {
+                withFirEntry("expected", declaration)
+                withFirEntry("actual", removed)
+            }
         }
     }
 
@@ -129,23 +142,39 @@ internal abstract class LLFirTargetResolver(
         }
     }
 
-    override fun withFile(firFile: FirFile, action: () -> Unit) {
+    final override fun withFile(firFile: FirFile, action: () -> Unit) {
+        withContainingDeclaration(firFile) {
+            @Suppress("DEPRECATION_ERROR")
+            withContainingFile(firFile, action)
+        }
+    }
+
+    @Deprecated("Should never be called directly, only for override purposes, please use withFile", level = DeprecationLevel.ERROR)
+    protected open fun withContainingFile(firFile: FirFile, action: () -> Unit) {
         action()
     }
 
-    override fun withScript(firScript: FirScript, action: () -> Unit) {
+    final override fun withScript(firScript: FirScript, action: () -> Unit) {
+        withContainingDeclaration(firScript) {
+            @Suppress("DEPRECATION_ERROR")
+            withContainingScript(firScript, action)
+        }
+    }
+
+    @Deprecated("Should never be called directly, only for override purposes, please use withScript", level = DeprecationLevel.ERROR)
+    protected open fun withContainingScript(firScript: FirScript, action: () -> Unit) {
         action()
     }
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
-    protected open fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
+    protected open fun withContainingRegularClass(firClass: FirRegularClass, action: () -> Unit) {
         action()
     }
 
-    @Suppress("DEPRECATION_ERROR")
     final override fun withRegularClass(firClass: FirRegularClass, action: () -> Unit) {
-        withClassInStack(firClass) {
-            withRegularClassImpl(firClass, action)
+        withContainingDeclaration(firClass) {
+            @Suppress("DEPRECATION_ERROR")
+            withContainingRegularClass(firClass, action)
         }
     }
 

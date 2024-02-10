@@ -469,6 +469,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         }
 
         @Test
+        @TestMetadata("fakeOverrideModality.kt")
+        public void testFakeOverrideModality() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/fakeOverrideModality.kt");
+        }
+
+        @Test
         @TestMetadata("fakeOverrides.kt")
         public void testFakeOverrides() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/fakeOverrides.kt");
@@ -538,6 +544,18 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         @TestMetadata("kt52677.kt")
         public void testKt52677() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/kt52677.kt");
+        }
+
+        @Test
+        @TestMetadata("kt65236.kt")
+        public void testKt65236() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/kt65236.kt");
+        }
+
+        @Test
+        @TestMetadata("kt65432.kt")
+        public void testKt65432() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/kt65432.kt");
         }
 
         @Test
@@ -1986,6 +2004,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         @TestMetadata("outerClassInstanceReference.kt")
         public void testOuterClassInstanceReference() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/outerClassInstanceReference.kt");
+        }
+
+        @Test
+        @TestMetadata("posptonedPCLACallInsideStringInterpolation.kt")
+        public void testPosptonedPCLACallInsideStringInterpolation() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/posptonedPCLACallInsideStringInterpolation.kt");
         }
 
         @Test

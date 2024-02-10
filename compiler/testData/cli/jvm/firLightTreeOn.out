@@ -1,13 +1,13 @@
 compiler/testData/cli/jvm/firLightTree.kt:2:5: error: variable expected.
     this += "Alpha"
-    ^
+    ^^^^
 compiler/testData/cli/jvm/firLightTree.kt:3:15: error: classifier 'class System : Any' does not have a companion object, so it cannot be used as an expression.
     java.lang.System = null
-              ^
+              ^^^^^^
 compiler/testData/cli/jvm/firLightTree.kt:3:15: error: variable expected.
     java.lang.System = null
-              ^
+              ^^^^^^
 compiler/testData/cli/jvm/firLightTree.kt:3:24: error: null cannot be a value of a non-null type 'kotlin.Unit'.
     java.lang.System = null
-                       ^
+                       ^^^^
 COMPILATION_ERROR

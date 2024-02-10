@@ -3288,6 +3288,12 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val referencedDeclaration: KtSymbol
     }
 
+    interface NonPublicCallFromPublicInlineDeprecation : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NonPublicCallFromPublicInlineDeprecation::class
+        val inlineDeclaration: KtSymbol
+        val referencedDeclaration: KtSymbol
+    }
+
     interface ProtectedConstructorCallFromPublicInline : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ProtectedConstructorCallFromPublicInline::class
         val inlineDeclaration: KtSymbol

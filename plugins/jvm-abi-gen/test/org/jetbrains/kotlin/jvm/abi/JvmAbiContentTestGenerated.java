@@ -55,6 +55,11 @@ public class JvmAbiContentTestGenerated extends AbstractJvmAbiContentTest {
         runTest("plugins/jvm-abi-gen/testData/content/class/");
     }
 
+    @TestMetadata("effectivelyPrivateAnnotation")
+    public void testEffectivelyPrivateAnnotation() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/content/effectivelyPrivateAnnotation/");
+    }
+
     @TestMetadata("innerClasses")
     public void testInnerClasses() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/content/innerClasses/");
@@ -63,6 +68,11 @@ public class JvmAbiContentTestGenerated extends AbstractJvmAbiContentTest {
     @TestMetadata("kt50005")
     public void testKt50005() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/content/kt50005/");
+    }
+
+    @TestMetadata("preserveDeclarationOrderKeepsClassIntact")
+    public void testPreserveDeclarationOrderKeepsClassIntact() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/content/preserveDeclarationOrderKeepsClassIntact/");
     }
 
     @TestMetadata("whenMapping")

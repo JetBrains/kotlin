@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.DUMMY_FRAMEWORK_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_IMPORT_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SPEC_TASK_NAME
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.SYNC_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
@@ -45,6 +46,7 @@ class CocoaPodsIT : KGPBaseTest() {
     private val podspecTaskName = ":$POD_SPEC_TASK_NAME"
     private val podImportTaskName = ":$POD_IMPORT_TASK_NAME"
     private val podInstallTaskName = ":${KotlinCocoapodsPlugin.POD_INSTALL_TASK_NAME}"
+    private val syncTaskName = ":$SYNC_TASK_NAME"
 
     private val defaultPodName = "AFNetworking"
 
@@ -131,14 +133,56 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Dummy UTD")
     @GradleTest
     fun testDummyUTD(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+        val buildOptions = defaultBuildOptions.copy(
+            nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                cocoapodsPlatform = "iphonesimulator",
+                cocoapodsArchs = "x86_64",
+                cocoapodsConfiguration = "Debug"
+            )
+        )
+
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion, buildOptions = buildOptions) {
+
+            buildGradleKts.addCocoapodsBlock(
+                """
+                    framework {
+                        baseName = "shared"
+                        isStatic = false
+                    }
+                """.trimIndent()
+            )
 
             buildWithCocoapodsWrapper(dummyTaskName) {
+                assertDirectoryInProjectExists("build/cocoapods/framework/shared.framework")
+                assertDirectoryInProjectExists("build/cocoapods/framework/shared.framework.dSYM")
                 assertTasksExecuted(dummyTaskName)
             }
+
             buildWithCocoapodsWrapper(dummyTaskName) {
                 assertTasksUpToDate(dummyTaskName)
             }
+
+            buildWithCocoapodsWrapper(syncTaskName) {
+                assertTasksExecuted(syncTaskName)
+            }
+
+            val frameworkResult = runProcess(
+                listOf("dwarfdump", "--uuid", "shared.framework/shared"),
+                projectPath.resolve("build/cocoapods/framework/").toFile()
+            )
+
+            val dsymResult = runProcess(
+                listOf("dwarfdump", "--uuid", "shared.framework.dSYM"),
+                projectPath.resolve("build/cocoapods/framework/").toFile()
+            )
+
+            assertContains(frameworkResult.output, "UUID:")
+            assertContains(dsymResult.output, "UUID:")
+
+            val frameworkUUID = frameworkResult.output.split(" ").getOrNull(1)
+            val dsymUUID = dsymResult.output.split(" ").getOrNull(1)
+
+            assertEquals(frameworkUUID, dsymUUID)
         }
     }
 
@@ -154,8 +198,6 @@ class CocoaPodsIT : KGPBaseTest() {
         )
 
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion, buildOptions = buildOptions) {
-            val syncTaskName = ":syncFramework"
-
             buildGradleKts.addCocoapodsBlock(
                 """
                     framework {
@@ -195,8 +237,6 @@ class CocoaPodsIT : KGPBaseTest() {
         )
 
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion, buildOptions = buildOptions) {
-            val syncTaskName = ":syncFramework"
-
             buildGradleKts.addCocoapodsBlock(
                 """
                     framework {

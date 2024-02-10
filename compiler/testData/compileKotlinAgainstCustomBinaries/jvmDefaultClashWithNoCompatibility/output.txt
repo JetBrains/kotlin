@@ -1,4 +1,4 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/jvmDefaultClashWithNoCompatibility/source.kt:12:7: error: explicit override is required for 'public open fun evaluate(): Any? defined in KotlinEvaluatableUElement' in the '-Xjvm-default=all-compatibility' mode. Otherwise, implicit class override 'public open fun evaluate(): Any? defined in KotlinAbstractUExpression' (compiled in the old -Xjvm-default mode) is not fully overridden and would be incorrectly called at runtime
 class KotlinUBinaryExpressionWithType : KotlinAbstractUExpression(), KotlinEvaluatableUElement {}
-      ^
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

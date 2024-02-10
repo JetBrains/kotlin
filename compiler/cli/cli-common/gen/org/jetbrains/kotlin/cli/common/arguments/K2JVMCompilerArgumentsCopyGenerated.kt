@@ -19,7 +19,6 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.buildFile = from.buildFile
     to.classpath = from.classpath
     to.compileJava = from.compileJava
-    to.declarationsOutputPath = from.declarationsOutputPath
     to.defaultScriptExtension = from.defaultScriptExtension
     to.destination = from.destination
     to.disableStandardScript = from.disableStandardScript
@@ -78,6 +77,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.typeEnhancementImprovementsInStrictMode = from.typeEnhancementImprovementsInStrictMode
     to.useFastJarFileSystem = from.useFastJarFileSystem
     to.useJavac = from.useJavac
+    to.useKapt4 = from.useKapt4
     to.useOldBackend = from.useOldBackend
     to.useOldClassFilesReading = from.useOldClassFilesReading
     to.useOldInlineClassesManglingScheme = from.useOldInlineClassesManglingScheme

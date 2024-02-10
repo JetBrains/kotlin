@@ -5,36 +5,36 @@ build:
     [javac] Compiling 2 source files to [Temp]
     [javac] Compiling [[TestData]] => [[Temp]]
     [javac] [TestData]/incorrectKotlinCode.kt:4:1: error: parameter name expected
-    [javac]
+    [javac] 
     [javac] ^
     [javac] [TestData]/incorrectKotlinCode.kt:4:1: error: expecting comma or ')'
-    [javac]
+    [javac] 
     [javac] ^
     [javac] [TestData]/incorrectKotlinCode.kt:4:1: error: expecting ')'
-    [javac]
+    [javac] 
     [javac] ^
     [javac] [TestData]/incorrectKotlinCode.kt:4:1: error: a type annotation is required on a value parameter.
-    [javac]
+    [javac] 
     [javac] ^
     [javac] [TestData]/incorrectKotlinCode.kt:3:1: error: function 'main' must have a body.
     [javac] fun main(
-    [javac] ^
+    [javac] ^^^^^^^^^
   [kotlinc] Compiling [[TestData]] => [[Temp]]
   [kotlinc] [TestData]/incorrectKotlinCode.kt:4:1: error: parameter name expected
-  [kotlinc]
+  [kotlinc] 
   [kotlinc] ^
   [kotlinc] [TestData]/incorrectKotlinCode.kt:4:1: error: expecting comma or ')'
-  [kotlinc]
+  [kotlinc] 
   [kotlinc] ^
   [kotlinc] [TestData]/incorrectKotlinCode.kt:4:1: error: expecting ')'
-  [kotlinc]
+  [kotlinc] 
   [kotlinc] ^
   [kotlinc] [TestData]/incorrectKotlinCode.kt:4:1: error: a type annotation is required on a value parameter.
-  [kotlinc]
+  [kotlinc] 
   [kotlinc] ^
   [kotlinc] [TestData]/incorrectKotlinCode.kt:3:1: error: function 'main' must have a body.
   [kotlinc] fun main(
-  [kotlinc] ^
+  [kotlinc] ^^^^^^^^^
 
 BUILD SUCCESSFUL
 Total time: [time]

@@ -34,7 +34,13 @@ abstract class AbstractNativeObjCExportTest : AbstractNativeSimpleTest() {
             .map { testPathFull.resolve(it) }
         ktSources.forEach { muteTestIfNecessary(it) }
 
-        val testCase: TestCase = generateObjCFrameworkTestCase(testPathFull, ktSources)
+        val testCase: TestCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE,
+            TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT),
+            testPathFull.name,
+            ktSources,
+            TestCompilerArgs(listOf("-Xexport-kdoc"))
+        )
         val objCFramework: ObjCFramework = testCase.toObjCFramework().assertSuccess().resultingArtifact
 
         val mainHeaderContents = objCFramework.mainHeader.readText()
@@ -57,23 +63,5 @@ abstract class AbstractNativeObjCExportTest : AbstractNativeSimpleTest() {
 
     private fun TestCase.toObjCFramework(): TestCompilationResult<out ObjCFramework> {
         return testCompilationFactory.testCaseToObjCFrameworkCompilation(this, testRunSettings).result
-    }
-
-    private fun generateObjCFrameworkTestCase(testPathFull: File, sources: List<File>): TestCase {
-        val moduleName: String = testPathFull.name
-        val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
-        sources.forEach { module.files += TestFile.createCommitted(it, module) }
-
-        return TestCase(
-            id = TestCaseId.Named(moduleName),
-            kind = TestKind.STANDALONE,
-            modules = setOf(module),
-            freeCompilerArgs = TestCompilerArgs(listOf("-Xexport-kdoc")),
-            nominalPackageName = PackageName(moduleName),
-            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
-            extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT)
-        ).apply {
-            initialize(null, null)
-        }
     }
 }

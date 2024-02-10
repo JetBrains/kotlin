@@ -13,10 +13,6 @@
  */
 @kotlin.Metadata()
 public final class AnonymousDelegateKt {
-
-    public AnonymousDelegateKt() {
-        super();
-    }
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.Object delegate$delegate = null;
 
@@ -25,13 +21,12 @@ public final class AnonymousDelegateKt {
         return null;
     }
 
-    public static final void setDelegate(@org.jetbrains.annotations.NotNull()
-    java.lang.Object delegate) {
+    public static final void setDelegate(@org.jetbrains.annotations.NotNull() java.lang.Object delegate) {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class ConcreteDelegate : kotlin/Any {
@@ -52,15 +47,13 @@ public final class ConcreteDelegate {
         super();
     }
 
-    public final int getValue(@org.jetbrains.annotations.Nullable()
-    java.lang.Object t, @org.jetbrains.annotations.NotNull()
-    kotlin.reflect.KProperty<?> p) {
+    public final int getValue(@org.jetbrains.annotations.Nullable() java.lang.Object t, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?> p) {
         return 0;
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Test : kotlin/Any {
@@ -99,10 +92,13 @@ public final class ConcreteDelegate {
 public final class Test {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Object broken$delegate = null;
+
     @org.jetbrains.annotations.NotNull()
     private final java.io.Serializable overridden$delegate = null;
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.Lazy<java.lang.Runnable> lazyProp$delegate = null;
+
     @org.jetbrains.annotations.NotNull()
     private final ConcreteDelegate concreteDelegate$delegate = null;
 
@@ -115,8 +111,7 @@ public final class Test {
         return null;
     }
 
-    public final void setBroken(@org.jetbrains.annotations.NotNull()
-    java.lang.Object broken) {
+    public final void setBroken(@org.jetbrains.annotations.NotNull() java.lang.Object broken) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -124,8 +119,7 @@ public final class Test {
         return null;
     }
 
-    public final void setOverridden(@org.jetbrains.annotations.NotNull()
-    java.lang.Object overridden) {
+    public final void setOverridden(@org.jetbrains.annotations.NotNull() java.lang.Object overridden) {
     }
 
     private final java.lang.Runnable getLazyProp() {

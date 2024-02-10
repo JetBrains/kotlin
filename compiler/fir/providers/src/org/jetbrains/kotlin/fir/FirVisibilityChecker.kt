@@ -163,6 +163,17 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         derivedClassModuleData: FirModuleData,
         packageNameOfDerivedClass: FqName,
         candidateInBaseClass: FirMemberDeclaration,
+    ): Boolean = isSpecificDeclarationVisibleForOverriding(
+        derivedClassModuleData,
+        packageNameOfDerivedClass,
+        // It is important for package-private visiblity as fake override can be in another package
+        if (candidateInBaseClass is FirCallableDeclaration) candidateInBaseClass.originalOrSelf() else candidateInBaseClass,
+    )
+
+    private fun isSpecificDeclarationVisibleForOverriding(
+        derivedClassModuleData: FirModuleData,
+        packageNameOfDerivedClass: FqName,
+        candidateInBaseClass: FirMemberDeclaration,
     ): Boolean = when (candidateInBaseClass.visibility) {
         Visibilities.Internal -> {
             candidateInBaseClass.moduleData == derivedClassModuleData ||

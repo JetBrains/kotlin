@@ -27,21 +27,30 @@ class ArtifactsTest {
     private val localRepoPath = Paths.get(mavenLocal, "org/jetbrains/kotlin")
     private val expectedRepoPath = Paths.get("repo/artifacts-tests/src/test/resources/org/jetbrains/kotlin")
 
+    /**
+     * Kotlin native bundles are present in TC artifacts but should not be checked until kotlin native enabled project-wide
+     */
+    private val nativeBundles = setOf(
+        "kotlin-native",
+        "kotlin-native-compiler-embeddable",
+        "kotlin-native-prebuilt",
+    )
+
     private val excludedProjects = setOf(
-        "annotation-processor-example",
         "android-test-fixes",
-        "org.jetbrains.kotlin.gradle-subplugin-example.gradle.plugin",
+        "annotation-processor-example",
+        "fus-statistics-gradle-plugin",
         "gradle-warnings-detector",
         "kotlin-compiler-args-properties",
-        "fus-statistics-gradle-plugin",
         "kotlin-gradle-plugin-tcs-android",
         "kotlin-gradle-subplugin-example",
         "kotlin-java-example",
         "kotlin-maven-plugin-test",
+        "org.jetbrains.kotlin.fus-statistics-gradle-plugin.gradle.plugin",
+        "org.jetbrains.kotlin.gradle-subplugin-example.gradle.plugin",
         "org.jetbrains.kotlin.test.fixes.android.gradle.plugin",
         "org.jetbrains.kotlin.test.gradle-warnings-detector.gradle.plugin",
         "org.jetbrains.kotlin.test.kotlin-compiler-args-properties.gradle.plugin",
-        "org.jetbrains.kotlin.fus-statistics-gradle-plugin.gradle.plugin",
     )
 
     @TestFactory
@@ -50,8 +59,10 @@ class ArtifactsTest {
             val expectedPomPath = actual.toExpectedPath()
             DynamicTest.dynamicTest(expectedPomPath.fileName.toString()) {
                 if ("${expectedPomPath.parent.fileName}" !in excludedProjects) {
-                    val actualString = actual.toFile().readText().replace(kotlinVersion, "ArtifactsTest.version")
-                    assertEqualsToFile(expectedPomPath, actualString)
+                    if ("${expectedPomPath.parent.fileName}" !in nativeBundles) {
+                        val actualString = actual.toFile().readText().replace(kotlinVersion, "ArtifactsTest.version")
+                        assertEqualsToFile(expectedPomPath, actualString)
+                    }
                 } else {
                     if (isTeamCityBuild) fail("Excluded project in actual artifacts: $actual")
                 }

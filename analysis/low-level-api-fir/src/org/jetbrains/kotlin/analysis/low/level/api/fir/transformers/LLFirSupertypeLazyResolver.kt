@@ -91,7 +91,7 @@ private class LLFirSuperTypeTargetResolver(
     }
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
-    override fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
+    override fun withContainingRegularClass(firClass: FirRegularClass, action: () -> Unit) {
         supertypeResolver.withClass(firClass) {
             doResolveWithoutLock(firClass)
             action()

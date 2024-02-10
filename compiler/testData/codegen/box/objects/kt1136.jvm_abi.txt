@@ -7,12 +7,6 @@ MODULE main
 						java/util/ArrayList<kotlin/String> /* = kotlin/collections/ArrayList^<kotlin/String> */
 					K2
 						java/util/ArrayList<kotlin/String>
-			PROPERTY workerThread
-				Property: class.metadata.property.returnType
-					K1
-						.SomeClass$workerThread$1
-					K2
-						.SomeClass.<no name provided>
 	CLASS SomeClass$Inner.class
 		CLASS METADATA
 			PROPERTY getCopy()Ljava/util/ArrayList;

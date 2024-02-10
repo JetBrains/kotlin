@@ -55,6 +55,12 @@ bitcode {
             }
         }
 
+        testsGroup("main_test") {
+            testedModules.addAll("main")
+            // TODO(KT-53776): Some tests depend on allocator being legacy.
+            testSupportModules.addAll("mm", "noop_externalCallsChecker", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+        }
+
         module("mimalloc") {
             sourceSets {
                 main {
@@ -163,6 +169,11 @@ bitcode {
             }
         }
 
+        testsGroup("common_alloc_test") {
+            testedModules.addAll("common_alloc")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "custom_alloc", "common_gc", "noop_gc_custom", "common_gcScheduler", "manual_gcScheduler", "objc")
+        }
+
         module("std_alloc") {
             srcRoot.set(layout.projectDirectory.dir("src/alloc/std"))
             headersDirs.from(files("src/alloc/common/cpp", "src/alloc/legacy/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
@@ -183,6 +194,12 @@ bitcode {
             compilerArgs.add("-DCUSTOM_ALLOCATOR")
         }
 
+        testsGroup("custom_alloc_test") {
+            testedModules.addAll("custom_alloc")
+            // TODO(KT-53776): Some tests depend on GC not being noop.
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "concurrent_ms_gc_custom", "common_gcScheduler", "manual_gcScheduler", "objc")
+        }
+
         module("mimalloc_alloc") {
             srcRoot.set(layout.projectDirectory.dir("src/alloc/mimalloc"))
             headersDirs.from(files("src/mimalloc/c/include", "src/alloc/common/cpp", "src/alloc/legacy/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
@@ -201,6 +218,16 @@ bitcode {
                 test {}
                 testFixtures {}
             }
+        }
+
+        testsGroup("mimalloc_legacy_alloc_test") {
+            testedModules.addAll("legacy_alloc")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "mimalloc_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "mimalloc")
+        }
+
+        testsGroup("std_legacy_alloc_test") {
+            testedModules.addAll("legacy_alloc")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "std_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
         }
 
         module("exceptionsSupport") {
@@ -256,6 +283,11 @@ bitcode {
             }
         }
 
+        testsGroup("mm_test") {
+            testedModules.addAll("mm")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc_custom", "common_gcScheduler", "manual_gcScheduler", "objc")
+        }
+
         module("common_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/common"))
             headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
@@ -263,6 +295,11 @@ bitcode {
                 main {}
                 test {}
             }
+        }
+
+        testsGroup("common_gc_test") {
+            testedModules.addAll("common_gc")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "noop_gc_custom", "common_gcScheduler", "manual_gcScheduler", "objc")
         }
 
         module("noop_gc") {
@@ -292,6 +329,11 @@ bitcode {
             }
         }
 
+        testsGroup("stms_gc_test") {
+            testedModules.addAll("same_thread_ms_gc")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+        }
+
         module("same_thread_ms_gc_custom") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/stms"))
             headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp", "src/alloc/custom/cpp"))
@@ -303,6 +345,11 @@ bitcode {
             compilerArgs.add("-DCUSTOM_ALLOCATOR")
         }
 
+        testsGroup("stms_gc_custom_test") {
+            testedModules.addAll("same_thread_ms_gc_custom")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+        }
+
         module("pmcs_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/pmcs"))
             headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))
@@ -310,6 +357,11 @@ bitcode {
                 main {}
                 test {}
             }
+        }
+
+        testsGroup("pmcs_gc_test") {
+            testedModules.addAll("pmcs_gc")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
         }
 
         module("pmcs_gc_custom") {
@@ -323,6 +375,11 @@ bitcode {
             compilerArgs.add("-DCUSTOM_ALLOCATOR")
         }
 
+        testsGroup("pmcs_gc_custom_test") {
+            testedModules.addAll("pmcs_gc_custom")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+        }
+
         module("concurrent_ms_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/cms"))
             headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))
@@ -330,6 +387,11 @@ bitcode {
                 main {}
                 test {}
             }
+        }
+
+        testsGroup("cms_gc_test") {
+            testedModules.addAll("concurrent_ms_gc")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
         }
 
         module("concurrent_ms_gc_custom") {
@@ -343,6 +405,11 @@ bitcode {
             compilerArgs.add("-DCUSTOM_ALLOCATOR")
         }
 
+        testsGroup("cms_gc_custom_test") {
+            testedModules.addAll("concurrent_ms_gc_custom")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+        }
+
         module("common_gcScheduler") {
             srcRoot.set(layout.projectDirectory.dir("src/gcScheduler/common"))
             headersDirs.from(files("src/alloc/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
@@ -350,6 +417,11 @@ bitcode {
                 main {}
                 test {}
             }
+        }
+
+        testsGroup("common_gcScheduler_test") {
+            testedModules.addAll("common_gcScheduler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc_custom", "manual_gcScheduler", "objc")
         }
 
         module("manual_gcScheduler") {
@@ -369,6 +441,11 @@ bitcode {
             }
         }
 
+        testsGroup("adaptive_gcScheduler_test") {
+            testedModules.addAll("adaptive_gcScheduler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc_custom", "common_gcScheduler", "objc")
+        }
+
         module("aggressive_gcScheduler") {
             srcRoot.set(layout.projectDirectory.dir("src/gcScheduler/aggressive"))
             headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
@@ -376,6 +453,11 @@ bitcode {
                 main {}
                 test {}
             }
+        }
+
+        testsGroup("aggressive_gcScheduler_test") {
+            testedModules.addAll("aggressive_gcScheduler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc_custom", "common_gcScheduler", "objc")
         }
 
         module("impl_externalCallsChecker") {
@@ -401,73 +483,6 @@ bitcode {
                 main {}
             }
             onlyIf { target.family.isAppleFamily }
-        }
-
-        testsGroup("custom_alloc_runtime_tests") {
-            testedModules.addAll("custom_alloc")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "concurrent_ms_gc_custom", "objc")
-        }
-
-        testsGroup("experimentalMM_stms_mimalloc_runtime_tests") {
-            testedModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "same_thread_ms_gc", "mimalloc", "mimalloc_alloc", "legacy_alloc", "objc")
-        }
-
-        testsGroup("experimentalMM_stms_std_alloc_runtime_tests") {
-            testedModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "same_thread_ms_gc", "std_alloc", "legacy_alloc", "objc")
-        }
-
-        testsGroup("experimentalMM_stms_custom_alloc_runtime_tests") {
-            testedModules.addAll("mm", "same_thread_ms_gc_custom")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "custom_alloc", "objc")
-        }
-
-        testsGroup("experimentalMM_pmcs_mimalloc_runtime_tests") {
-            testedModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "pmcs_gc", "mimalloc", "mimalloc_alloc", "legacy_alloc", "objc")
-        }
-
-        testsGroup("experimentalMM_pmcs_std_alloc_runtime_tests") {
-            testedModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "pmcs_gc", "std_alloc", "legacy_alloc", "objc")
-        }
-
-        testsGroup("experimentalMM_pmcs_custom_alloc_runtime_tests") {
-            testedModules.addAll("mm", "pmcs_gc_custom")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "custom_alloc", "objc")
-        }
-
-        testsGroup("experimentalMM_cms_mimalloc_runtime_tests") {
-            testedModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "concurrent_ms_gc", "mimalloc", "mimalloc_alloc", "legacy_alloc", "objc")
-        }
-
-        testsGroup("experimentalMM_cms_std_alloc_runtime_tests") {
-            testedModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "concurrent_ms_gc", "std_alloc", "legacy_alloc", "objc")
-        }
-
-        testsGroup("experimentalMM_cms_custom_alloc_runtime_tests") {
-            testedModules.addAll("mm", "concurrent_ms_gc_custom")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "custom_alloc", "objc")
-        }
-
-        testsGroup("experimentalMM_noop_mimalloc_runtime_tests") {
-            testedModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "noop_gc", "mimalloc", "mimalloc_alloc", "legacy_alloc", "objc")
-        }
-
-        testsGroup("experimentalMM_noop_std_alloc_runtime_tests") {
-            testedModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "noop_gc", "std_alloc", "legacy_alloc", "objc")
-        }
-
-        testsGroup("experimentalMM_noop_custom_alloc_runtime_tests") {
-            testedModules.addAll("mm", "noop_gc_custom")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "custom_alloc", "objc")
-        }
-
-        testsGroup("aggressive_gcScheduler_runtime_tests") {
-            testedModules.addAll("aggressive_gcScheduler")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "common_gcScheduler", "noop_gc", "std_alloc", "legacy_alloc", "objc")
-        }
-
-        testsGroup("adaptive_gcScheduler_runtime_tests") {
-            testedModules.addAll("adaptive_gcScheduler")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "common_gcScheduler", "noop_gc", "std_alloc", "legacy_alloc", "objc")
         }
     }
 }
@@ -593,7 +608,7 @@ konanArtifacts {
 val stdlibTask = tasks.register<Copy>("nativeStdlib") {
     require(::stdlibBuildTask.isInitialized)
 
-    from(stdlibBuildTask.map { it.outputs })
+    from(stdlibBuildTask.map { it.outputs.files })
     into(project.layout.buildDirectory.dir("nativeStdlib"))
 
     eachFile {
@@ -627,6 +642,8 @@ cacheableTargetNames.forEach { targetName ->
         cacheRoot = project.layout.buildDirectory.dir("cache/$targetName").get().asFile.absolutePath
 
         dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
+        // stdlib cache links in runtime modules from the K/N distribution.
+        inputs.dir("$distDir/konan/targets/$targetName/native")
     }
 }
 

@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.WasmSymbols
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.utils.associatedObject
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -33,10 +34,12 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  * @Key(OBJ::class)
  * class C
  *
- * add initializer expression into initAssociatedObjects() body:
- * internal fun initAssociatedObjects(mapToInit: MutableMap<Int, MutableMap<Int, Any>>) {
+ * add getter expression into tryGetAssociatedObject body:
+ * internal fun tryGetAssociatedObject(klassId: Int, keyId: Int): Any? {
  *   ...
- *   addAssociatedObject(mapToInit, C.klassId, Key.klassId, OBJ)
+ *   if (C.klassId == klassId) if (Key.klassId == keyId) return OBJ
+ *   ...
+ *   return null
  * }
  */
 class AssociatedObjectsLowering(val context: WasmBackendContext) : FileLoweringPass {
@@ -45,7 +48,7 @@ class AssociatedObjectsLowering(val context: WasmBackendContext) : FileLoweringP
     }
 
     private val visitor = object : IrElementVisitorVoid {
-        val initFunctionStatements = (context.wasmSymbols.initAssociatedObjects.owner.body as IrBlockBody).statements
+        val tryGetAssociatedObject = (context.wasmSymbols.tryGetAssociatedObject.owner.body as IrBlockBody).statements
 
         override fun visitElement(element: IrElement) {
             if (element is IrClass) {
@@ -62,49 +65,44 @@ class AssociatedObjectsLowering(val context: WasmBackendContext) : FileLoweringP
                 if (klassAnnotation.valueArgumentsCount != 1) continue
                 val associatedObject = klassAnnotation.associatedObject() ?: continue
 
-                val builder = cachedBuilder ?: context.createIrBuilder(context.wasmSymbols.initAssociatedObjects)
+                val builder = cachedBuilder ?: context.createIrBuilder(context.wasmSymbols.tryGetAssociatedObject)
                 cachedBuilder = builder
 
-                val addCall = builder.createAssociatedObjectAdd(
+                val selector = builder.createAssociatedObjectSelector(
                     wasmSymbols = context.wasmSymbols,
                     irBuiltIns = context.irBuiltIns,
                     targetClass = declaration.symbol,
                     keyAnnotation = annotationClass.symbol,
                     associatedObject = associatedObject.symbol
                 )
-                initFunctionStatements.add(addCall)
+                tryGetAssociatedObject.add(0, selector)
             }
         }
     }
 }
 
-private fun IrBuilderWithScope.createAssociatedObjectAdd(
+private fun IrBuilderWithScope.createAssociatedObjectSelector(
     wasmSymbols: WasmSymbols,
     irBuiltIns: IrBuiltIns,
     targetClass: IrClassSymbol,
     keyAnnotation: IrClassSymbol,
     associatedObject: IrClassSymbol
-): IrCall = buildStatement(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-    irCall(wasmSymbols.addAssociatedObject, irBuiltIns.unitType).also { addCall ->
-        addCall.putValueArgument(
-            0,
-            irGet(wasmSymbols.initAssociatedObjects.owner.valueParameters[0])
-        )
-        addCall.putValueArgument(
-            1,
-            irCall(wasmSymbols.wasmTypeId, irBuiltIns.intType).also {
-                it.putTypeArgument(0, targetClass.defaultType)
-            }
-        )
-        addCall.putValueArgument(
-            2,
-            irCall(wasmSymbols.wasmTypeId, irBuiltIns.intType).also {
-                it.putTypeArgument(0, keyAnnotation.defaultType)
-            }
-        )
-        addCall.putValueArgument(
-            3,
-            irGetObjectValue(irBuiltIns.anyType, associatedObject)
-        )
+): IrStatement {
+    val classIdParam = irGet(wasmSymbols.tryGetAssociatedObject.owner.valueParameters[0])
+    val keyIdParam = irGet(wasmSymbols.tryGetAssociatedObject.owner.valueParameters[1])
+
+    val classId = irCall(wasmSymbols.wasmTypeId, irBuiltIns.intType).also {
+        it.putTypeArgument(0, targetClass.defaultType)
     }
+    val keyId = irCall(wasmSymbols.wasmTypeId, irBuiltIns.intType).also {
+        it.putTypeArgument(0, keyAnnotation.defaultType)
+    }
+
+    return irIfThen(
+        condition = irEquals(classIdParam, classId),
+        thenPart = irIfThen(
+            condition = irEquals(keyIdParam, keyId),
+            thenPart = irReturn(irGetObjectValue(irBuiltIns.anyType, associatedObject))
+        )
+    )
 }

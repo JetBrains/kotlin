@@ -7,7 +7,7 @@ PsiJetFileStubImpl[package=p]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=true, isOutVariance=false, name=I]
         MODIFIER_LIST[in]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=PrivateToThis]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=PrivateToThis]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY

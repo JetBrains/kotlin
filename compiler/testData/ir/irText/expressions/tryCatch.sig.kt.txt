@@ -1,4 +1,10 @@
 // CHECK:
+//   Mangled name: #println(){}
+//   Public signature: /println|917930009141132257[0]
+//   Public signature debug description: println(){}
+fun println(): Unit
+
+// CHECK:
 //   Mangled name: #test1(){}
 //   Public signature: /test1|4297044443957252634[0]
 //   Public signature debug description: test1(){}

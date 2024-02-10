@@ -403,17 +403,17 @@ class MapTest {
         assertEquals(3, filteredByValue["b"])
     }
 
+    class SimpleEntry<out K, out V>(override val key: K, override val value: V) : Map.Entry<K, V> {
+        override fun toString(): String = "$key=$value"
+        override fun hashCode(): Int = key.hashCode() xor value.hashCode()
+        override fun equals(other: Any?): Boolean =
+            other is Map.Entry<*, *> && key == other.key && value == other.value
+    }
+
     @Test
     fun entriesCovariantContains() {
         // Based on https://youtrack.jetbrains.com/issue/KT-42428.
         fun doTest(implName: String, map: Map<String, Int>, key: String, value: Int) {
-            class SimpleEntry<out K, out V>(override val key: K, override val value: V) : Map.Entry<K, V> {
-                override fun toString(): String = "$key=$value"
-                override fun hashCode(): Int = key.hashCode() xor value.hashCode()
-                override fun equals(other: Any?): Boolean =
-                    other is Map.Entry<*, *> && key == other.key && value == other.value
-            }
-
             val mapDescription = "$implName: ${map::class}"
 
             assertTrue(map.keys.contains(key), mapDescription)
@@ -448,13 +448,6 @@ class MapTest {
     @Test
     fun entriesCovariantRemove() {
         fun doTest(implName: String, map: MutableMap<String, Int>, key: String, value: Int) {
-            class SimpleEntry<out K, out V>(override val key: K, override val value: V) : Map.Entry<K, V> {
-                override fun toString(): String = "$key=$value"
-                override fun hashCode(): Int = key.hashCode() xor value.hashCode()
-                override fun equals(other: Any?): Boolean =
-                    other is Map.Entry<*, *> && key == other.key && value == other.value
-            }
-
             val mapDescription = "$implName: ${map::class}"
 
             assertTrue(map.entries.toMutableSet().remove(SimpleEntry(key, value) as Map.Entry<*, *>), "$mapDescription: reference")
@@ -476,6 +469,57 @@ class MapTest {
 
         doTest("stringMapOf", mapLetterToIndex.toMap(stringMapOf()), "x", 23)
         doTest("linkedStringMapOf", mapLetterToIndex.toMap(linkedStringMapOf()), "w", 22)
+    }
+
+    @Test
+    fun nullKeyAndValue() {
+        fun doTest(implName: String, map: MutableMap<String?, Int?>, key: String?, value: Int?) {
+            val mapDescription = "$implName: ${map::class}, key=$key, value=$value"
+
+            map[key] = value
+
+            assertTrue(map.contains(key), "$mapDescription: contains")
+            assertTrue(map.containsKey(key), "$mapDescription: containsKey")
+            assertTrue(map.containsValue(value), "$mapDescription: containsValue")
+            assertTrue(map.keys.contains(key), "$mapDescription: keys.contains")
+            assertTrue(map.values.contains(value), "$mapDescription: values.contains")
+            assertTrue(map.entries.contains(SimpleEntry(key, value) as Map.Entry<*, *>), "$mapDescription: entries.contains")
+
+            assertEquals(value, map.remove(key), "$mapDescription: remove")
+
+            map[key] = value
+            assertTrue(map.keys.remove(key), "$mapDescription: keys.remove")
+
+            map[key] = value
+            assertTrue(map.values.remove(value), "$mapDescription: values.remove")
+
+            map[key] = value
+            assertTrue(map.entries.remove(SimpleEntry(key, value) as Map.Entry<*, *>), "$mapDescription: entries.remove")
+        }
+
+        val mapLetterToIndex = ('a'..'z').mapIndexed { i, c -> "$c" to i }.toMap()
+        val combinations = listOf(
+            "A" to null,
+            null to 100,
+            null to null,
+        )
+
+        for ((key, value) in combinations) {
+            doTest("default mutable", mapLetterToIndex.toMutableMap(), key, value)
+            doTest("HashMap", mapLetterToIndex.toMap(HashMap()), key, value)
+            doTest("LinkedHashMap", mapLetterToIndex.toMap(LinkedHashMap()), key, value)
+
+            buildMap {
+                putAll(mapLetterToIndex)
+                doTest("MapBuilder", this, key, value)
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            if (key != null) {
+                doTest("stringMapOf", mapLetterToIndex.toMap(stringMapOf()) as MutableMap<String?, Int?>, key, value)
+                doTest("linkedStringMapOf", mapLetterToIndex.toMap(linkedStringMapOf()) as MutableMap<String?, Int?>, key, value)
+            }
+        }
     }
 
     @Test

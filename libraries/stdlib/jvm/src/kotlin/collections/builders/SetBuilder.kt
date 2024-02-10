@@ -34,7 +34,7 @@ internal class SetBuilder<E> internal constructor(
     override fun contains(element: E): Boolean = backing.containsKey(element)
     override fun clear() = backing.clear()
     override fun add(element: E): Boolean = backing.addKey(element) >= 0
-    override fun remove(element: E): Boolean = backing.removeKey(element) >= 0
+    override fun remove(element: E): Boolean = backing.removeKey(element)
     override fun iterator(): MutableIterator<E> = backing.keysIterator()
 
     override fun addAll(elements: Collection<E>): Boolean {

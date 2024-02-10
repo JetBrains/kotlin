@@ -407,7 +407,11 @@ class GeneralNativeIT : KGPBaseTest() {
     @DisplayName("Transitive export is not required for exporting variant")
     @GradleTest
     fun testTransitiveExportIsNotRequiredForExportingVariant(gradleVersion: GradleVersion) {
-        project("native-binaries/export-published-lib", gradleVersion) {
+        project(
+            "native-binaries/export-published-lib",
+            gradleVersion,
+            localRepoDir = defaultLocalRepo(gradleVersion)
+        ) {
             val headerPath = "shared/build/bin/linuxX64/debugStatic/libshared_api.h"
 
             build(":lib:publish")
@@ -802,7 +806,11 @@ class GeneralNativeIT : KGPBaseTest() {
     @DisplayName("Checks builds with cinterop tool")
     @GradleTest
     fun testCinterop(gradleVersion: GradleVersion) {
-        nativeProject("native-cinterop", gradleVersion, configureSubProjects = true) {
+        nativeProject(
+            "native-cinterop",
+            gradleVersion, configureSubProjects = true,
+            localRepoDir = defaultLocalRepo(gradleVersion)
+        ) {
             fun libraryFiles(projectName: String, cinteropName: String) = listOf(
                 projectPath.resolve("$projectName/build/classes/kotlin/host/main/cinterop/${projectName}-cinterop-$cinteropName.klib"),
                 projectPath.resolve("$projectName/build/classes/kotlin/host/main/klib/${projectName}.klib"),
@@ -969,7 +977,11 @@ class GeneralNativeIT : KGPBaseTest() {
     @DisplayName("Checks citerop configuration variant aware resolution")
     @GradleTest
     fun testCinteropConfigurationsVariantAwareResolution(gradleVersion: GradleVersion) {
-        nativeProject("native-cinterop", gradleVersion, configureSubProjects = true) {
+        nativeProject(
+            "native-cinterop",
+            gradleVersion, configureSubProjects = true,
+            localRepoDir = defaultLocalRepo(gradleVersion)
+        ) {
             build(":publishedLibrary:publish")
 
             build(":dependencyInsight", "--configuration", "hostTestCInterop", "--dependency", "org.example:publishedLibrary") {
@@ -998,7 +1010,10 @@ class GeneralNativeIT : KGPBaseTest() {
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     @GradleTest
     fun shouldAllowToOverrideDownloadUrl(gradleVersion: GradleVersion, @TempDir customKonanDir: Path) {
-        nativeProject("native-parallel", gradleVersion) {
+        nativeProject(
+            "native-parallel", gradleVersion,
+            dependencyManagement = DependencyManagement.DisabledDependencyManagement
+        ) {
             gradleProperties.appendText(
                 """
                 
@@ -1011,6 +1026,9 @@ class GeneralNativeIT : KGPBaseTest() {
             buildAndFail(
                 "build",
                 buildOptions = defaultBuildOptions.copy(
+                    nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                        distributionDownloadFromMaven = false // please remove this test, when this flag will be removed
+                    ),
                     konanDataDir = customKonanDir.toAbsolutePath()
                 )
             ) {

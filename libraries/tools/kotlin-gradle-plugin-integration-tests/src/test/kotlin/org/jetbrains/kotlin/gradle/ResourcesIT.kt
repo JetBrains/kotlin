@@ -149,7 +149,7 @@ class ResourcesIT : KGPBaseTest() {
             xResFile.parentFile.mkdirs()
             xResFile.writeText("some resource")
 
-            build("processXResources", enableGradleDebug = true) {
+            build("processXResources") {
                 assertTasksExecuted(":customResGenerator1")
                 assertFileInProjectExists("build/custom-res-1/myres.txt")
             }

@@ -2,12 +2,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-repositories {
-    mavenLocal()
-    maven("../repo")
-    mavenCentral()
-}
-
 kotlin {
     jvm()
     linuxX64 {

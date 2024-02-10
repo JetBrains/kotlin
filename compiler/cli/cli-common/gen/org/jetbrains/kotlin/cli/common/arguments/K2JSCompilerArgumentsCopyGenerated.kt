@@ -15,7 +15,6 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.errorTolerancePolicy = from.errorTolerancePolicy
     to.extensionFunctionsInExternals = from.extensionFunctionsInExternals
     to.fakeOverrideValidator = from.fakeOverrideValidator
-    to.forceDeprecatedLegacyCompilerUsage = from.forceDeprecatedLegacyCompilerUsage
     to.friendModules = from.friendModules
     to.friendModulesDisabled = from.friendModulesDisabled
     to.generateDts = from.generateDts
@@ -45,16 +44,15 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.irSafeExternalBooleanDiagnostic = from.irSafeExternalBooleanDiagnostic
     to.libraries = from.libraries
     to.main = from.main
+    @Suppress("DEPRECATION")
     to.metaInfo = from.metaInfo
-    to.metadataOnly = from.metadataOnly
     to.moduleKind = from.moduleKind
     to.moduleName = from.moduleName
     to.noStdlib = from.noStdlib
     to.optimizeGeneratedJs = from.optimizeGeneratedJs
     to.outputDir = from.outputDir
+    @Suppress("DEPRECATION")
     to.outputFile = from.outputFile
-    to.outputPostfix = from.outputPostfix
-    to.outputPrefix = from.outputPrefix
     to.partialLinkageLogLevel = from.partialLinkageLogLevel
     to.partialLinkageMode = from.partialLinkageMode
     to.platformArgumentsProviderJsExpression = from.platformArgumentsProviderJsExpression

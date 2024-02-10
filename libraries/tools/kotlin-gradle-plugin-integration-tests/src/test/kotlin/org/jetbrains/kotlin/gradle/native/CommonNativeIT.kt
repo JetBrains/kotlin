@@ -58,7 +58,11 @@ class CommonNativeIT : KGPBaseTest() {
         appTargets: List<String>,
         gradleVersion: GradleVersion,
     ) {
-        nativeProject(projectName.withPrefix, gradleVersion) {
+        nativeProject(
+            projectName.withPrefix,
+            gradleVersion,
+            localRepoDir = defaultLocalRepo(gradleVersion)
+        ) {
 
             configureJvmMemory()
 

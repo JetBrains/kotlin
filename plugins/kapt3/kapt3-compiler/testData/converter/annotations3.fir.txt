@@ -15,8 +15,8 @@ public final class B {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final object BParceler : Parceler<B> {
@@ -37,8 +37,8 @@ public final class BParceler implements Parceler<B> {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class C : kotlin/Any {
@@ -57,8 +57,8 @@ public final class C {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final object CParceler : Parceler<C> {
@@ -79,8 +79,8 @@ public final class CParceler implements Parceler<C> {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public abstract interface Parceler<T#0 (* T *)> : kotlin/Any {
@@ -92,8 +92,8 @@ public final class CParceler implements Parceler<C> {
 public abstract interface Parceler<T extends java.lang.Object> {
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Test : kotlin/Any {
@@ -114,8 +114,8 @@ public final class Test {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final annotation class TypeParceler<T#0 (* T *), T#1 (* P *) : Parceler<in T#0>> : kotlin/Annotation {
@@ -134,7 +134,6 @@ public final class Test {
 @java.lang.annotation.Repeatable(value = TypeParceler.Container.class)
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
 public abstract @interface TypeParceler<T extends java.lang.Object, P extends Parceler<? super T>> {
-
     /**
      * public final annotation class TypeParceler<T#0 (* T *), T#1 (* P *) : Parceler<in T#0>> : kotlin/Annotation {
      *

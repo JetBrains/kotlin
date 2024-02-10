@@ -1,0 +1,138 @@
+/**
+ * public final class State : kotlin/Any {
+ *
+ *   // signature: <init>(IJLjava/lang/String;)V
+ *   public constructor(someInt: kotlin/Int, someLong: kotlin/Long, someString: kotlin/String (* = ... *))
+ *
+ *   // field: someInt:I
+ *   // getter: getSomeInt()I
+ *   public final val someInt: kotlin/Int
+ *     public final get
+ *
+ *   // field: someLong:J
+ *   // getter: getSomeLong()J
+ *   public final val someLong: kotlin/Long
+ *     public final get
+ *
+ *   // field: someString:Ljava/lang/String;
+ *   // getter: getSomeString()Ljava/lang/String;
+ *   public final val someString: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class State {
+    private final int someInt = 0;
+
+    private final long someLong = 0L;
+
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String someString = null;
+
+    @kotlin.jvm.JvmOverloads()
+    public State(int someInt, long someLong) {
+        super();
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    public State(int someInt, long someLong, @org.jetbrains.annotations.NotNull() java.lang.String someString) {
+        super();
+    }
+
+    public final int getSomeInt() {
+        return 0;
+    }
+
+    public final long getSomeLong() {
+        return 0L;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getSomeString() {
+        return null;
+    }
+}
+
+
+////////////////////
+
+/**
+ * public final class State2 : kotlin/Any {
+ *
+ *   // signature: <init>(IJLjava/lang/String;)V
+ *   public constructor(someInt: kotlin/Int, someLong: kotlin/Long (* = ... *), someString: kotlin/String (* = ... *))
+ *
+ *   // signature: methodWithoutArgs()V
+ *   public final fun methodWithoutArgs(): kotlin/Unit
+ *
+ *   // signature: someMethod(Ljava/lang/String;)V
+ *   public final fun someMethod(str: kotlin/String): kotlin/Unit
+ *
+ *   // signature: test(IJLjava/lang/String;)I
+ *   public final fun test(someInt: kotlin/Int, someLong: kotlin/Long (* = ... *), someString: kotlin/String (* = ... *)): kotlin/Int
+ *
+ *   // field: someInt:I
+ *   public final val someInt: kotlin/Int
+ *     public final get
+ *
+ *   // field: someLong:J
+ *   public final val someLong: kotlin/Long
+ *     public final get
+ *
+ *   // field: someString:Ljava/lang/String;
+ *   public final val someString: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class State2 {
+    @kotlin.jvm.JvmField()
+    public final int someInt = 0;
+
+    @kotlin.jvm.JvmField()
+    public final long someLong = 0L;
+
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String someString = null;
+
+    @kotlin.jvm.JvmOverloads()
+    public State2(int someInt) {
+        super();
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    public State2(int someInt, long someLong) {
+        super();
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    public State2(int someInt, long someLong, @org.jetbrains.annotations.NotNull() java.lang.String someString) {
+        super();
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    public final int test(int someInt) {
+        return 0;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    public final int test(int someInt, long someLong) {
+        return 0;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    public final int test(int someInt, long someLong, @org.jetbrains.annotations.NotNull() java.lang.String someString) {
+        return 0;
+    }
+
+    public final void someMethod(@org.jetbrains.annotations.NotNull() java.lang.String str) {
+    }
+
+    public final void methodWithoutArgs() {
+    }
+}

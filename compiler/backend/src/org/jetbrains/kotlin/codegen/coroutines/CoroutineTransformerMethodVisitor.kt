@@ -1325,12 +1325,28 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
     }
 
     for (variable in oldLvt) {
-        // $continuation and $result are dead, but they are used by debugger, as well as fake inliner variables
-        // For example, $continuation is used to create async stack trace
+        // $continuation, $completion and $result are dead, but they are used by debugger, as well as fake inliner variables
+        // $continuation is used to create async stack trace
         if (variable.name == CONTINUATION_VARIABLE_NAME ||
             variable.name == SUSPEND_CALL_RESULT_NAME ||
             isFakeLocalVariableForInline(variable.name)
         ) {
+            method.localVariables.add(variable)
+            continue
+        }
+        // $completion is used for stepping
+        if (variable.name == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME) {
+            // There can be multiple $completion variables because of inlining, do not duplicate them
+            if (method.localVariables.any { it.name == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME }) continue
+
+            // $completion should behave like ordinary parameter - span the whole function,
+            // unlike other parameters, it is safe to do so, since it always will have some value
+            // either completion (when there was no suspension) or continuation, when there was suspension.
+            // It is OK to have this discrepancy, since debugger walks through completion chain and to them
+            // there is no difference whether there is an additional link in the chain.
+            variable.start = method.getOrCreateStartingLabel()
+            variable.end = method.getOrCreateEndingLabel()
+            variable.index = getLastParameterIndex(method.desc, method.access)
             method.localVariables.add(variable)
             continue
         }
@@ -1340,6 +1356,22 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
             continue
         }
     }
+}
+
+fun MethodNode.getOrCreateStartingLabel(): LabelNode {
+    val first = instructions.first
+    if (first is LabelNode) return first
+    val result = LabelNode()
+    instructions.insertBefore(first, result)
+    return result
+}
+
+fun MethodNode.getOrCreateEndingLabel(): LabelNode {
+    val last = instructions.last
+    if (last is LabelNode) return last
+    val result = LabelNode()
+    instructions.insert(last, result)
+    return result
 }
 
 /* We cannot extend a record if there is STORE instruction or a control-flow merge.

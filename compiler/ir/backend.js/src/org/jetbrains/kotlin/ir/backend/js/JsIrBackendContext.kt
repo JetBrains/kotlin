@@ -196,6 +196,9 @@ class JsIrBackendContext(
     override val coroutineSymbols =
         JsCommonCoroutineSymbols(symbolTable, module, this)
 
+    override val jsPromiseSymbol: IrClassSymbol?
+        get() = intrinsics.promiseClassSymbol
+
     override val enumEntries = getIrClass(ENUMS_PACKAGE_FQNAME.child(Name.identifier("EnumEntries")))
     override val createEnumEntries = getFunctions(ENUMS_PACKAGE_FQNAME.child(Name.identifier("enumEntries")))
         .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == false }

@@ -90,7 +90,11 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
     @GradleTest
     fun testCinterops(gradleVersion: GradleVersion) {
-        project(projectName = "cinteropImport", gradleVersion = gradleVersion) {
+        project(
+            projectName = "cinteropImport",
+            gradleVersion = gradleVersion,
+            localRepoDir = defaultLocalRepo(gradleVersion)
+        ) {
             build(":dep-with-cinterop:publishAllPublicationsToBuildRepository")
 
             resolveIdeDependencies("dep-with-cinterop") { dependencies ->
@@ -328,7 +332,11 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
     fun `test dependency on java testFixtures and feature source sets`(gradleVersion: GradleVersion) {
-        project("kt-60053-dependencyOn-testFixtures", gradleVersion) {
+        project(
+            "kt-60053-dependencyOn-testFixtures",
+            gradleVersion,
+            localRepoDir = defaultLocalRepo(gradleVersion)
+        ) {
             build("publish")
 
             resolveIdeDependencies(":consumer") { dependencies ->
@@ -395,7 +403,11 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2)
     @GradleTest
     fun `test resolve sources for dependency with multiple capabilities`(gradleVersion: GradleVersion) {
-        project("kt-63226-multiple-capabilities", gradleVersion) {
+        project(
+            "kt-63226-multiple-capabilities",
+            gradleVersion,
+            localRepoDir = workingDir.resolve(gradleVersion.version),
+        ) {
             build(":producer:publish")
 
             resolveIdeDependencies(":consumer") { dependencies ->

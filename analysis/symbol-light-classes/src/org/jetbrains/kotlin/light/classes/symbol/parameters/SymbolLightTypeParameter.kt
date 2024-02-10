@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,6 @@ import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.analysis.api.types.KtErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
@@ -37,7 +36,6 @@ internal class SymbolLightTypeParameter private constructor(
     private val parent: SymbolLightTypeParameterList,
     private val index: Int,
     private val typeParameterSymbolPointer: KtSymbolPointer<KtTypeParameterSymbol>,
-    private val typeParameterDeclaration: KtTypeParameter?,
     override val kotlinOrigin: KtTypeParameter?,
 ) : LightElement(parent.manager, KotlinLanguage.INSTANCE), PsiTypeParameter,
     KtLightDeclaration<KtTypeParameter, PsiTypeParameter> {
@@ -51,8 +49,7 @@ internal class SymbolLightTypeParameter private constructor(
         parent = parent,
         index = index,
         typeParameterSymbolPointer = with(ktAnalysisSession) { typeParameterSymbol.createPointer() },
-        typeParameterDeclaration = typeParameterSymbol.sourcePsiSafe(),
-        kotlinOrigin = typeParameterSymbol.psiSafe(),
+        kotlinOrigin = typeParameterSymbol.sourcePsiSafe(),
     )
 
     private val ktModule: KtModule get() = parent.ktModule
@@ -68,7 +65,6 @@ internal class SymbolLightTypeParameter private constructor(
         parent,
         index,
         typeParameterSymbolPointer,
-        typeParameterDeclaration,
         kotlinOrigin,
     )
 
@@ -162,7 +158,7 @@ internal class SymbolLightTypeParameter private constructor(
     //End of PsiClass simple implementation
 
     private val _name: String by lazyPub {
-        typeParameterDeclaration?.name ?: withTypeParameterSymbol { it.name.asString() }
+        kotlinOrigin?.name ?: withTypeParameterSymbol { it.name.asString() }
     }
 
     override fun getName(): String = _name
@@ -179,25 +175,24 @@ internal class SymbolLightTypeParameter private constructor(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is SymbolLightTypeParameter || other.ktModule != ktModule || other.index != index) return false
-        if (typeParameterDeclaration != null || other.typeParameterDeclaration != null) {
-            return other.typeParameterDeclaration == typeParameterDeclaration
+        if (kotlinOrigin != null || other.kotlinOrigin != null) {
+            return other.kotlinOrigin == kotlinOrigin
         }
 
-        return other.kotlinOrigin == kotlinOrigin &&
-                compareSymbolPointers(typeParameterSymbolPointer, other.typeParameterSymbolPointer) &&
+        return compareSymbolPointers(typeParameterSymbolPointer, other.typeParameterSymbolPointer) &&
                 other.parent == parent
     }
 
-    override fun hashCode(): Int = typeParameterDeclaration?.hashCode() ?: name.hashCode()
+    override fun hashCode(): Int = kotlinOrigin?.hashCode() ?: name.hashCode()
     override fun isEquivalentTo(another: PsiElement): Boolean {
         return basicIsEquivalentTo(this, another) || isOriginEquivalentTo(another)
     }
 
-    override fun getText(): String? = typeParameterDeclaration?.text
-    override fun getTextRange(): TextRange? = typeParameterDeclaration?.textRange
+    override fun getText(): String? = kotlinOrigin?.text
+    override fun getTextRange(): TextRange? = kotlinOrigin?.textRange
     override fun getContainingFile(): PsiFile = parent.containingFile
-    override fun getTextOffset(): Int = typeParameterDeclaration?.startOffset ?: -1
-    override fun getStartOffsetInParent(): Int = typeParameterDeclaration?.startOffsetInParent ?: -1
+    override fun getTextOffset(): Int = kotlinOrigin?.startOffset ?: -1
+    override fun getStartOffsetInParent(): Int = kotlinOrigin?.startOffsetInParent ?: -1
 
-    override fun isValid(): Boolean = super.isValid() && typeParameterDeclaration?.isValid ?: typeParameterSymbolPointer.isValid(ktModule)
+    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: typeParameterSymbolPointer.isValid(ktModule)
 }

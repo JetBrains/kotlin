@@ -58,12 +58,6 @@ class SirComparator(val options: Set<Options> = emptySet()) : SirVisitor<Boolean
                 data.returnType == function.returnType &&
                 visitDeclaration(function, data)
     }
-
-    override fun visitForeignFunction(foreignFunction: SirForeignFunction, data: SirElement): Boolean {
-        return data is SirForeignFunction &&
-                areEqual(data.origin, foreignFunction.origin) &&
-                visitDeclaration(foreignFunction, data)
-    }
 }
 
 private fun SirComparator.areEqual(lhs: List<SirElement>, rhs: List<SirElement>): Boolean {

@@ -1,15 +1,10 @@
 plugins {
-	kotlin("multiplatform").version("<pluginMarkerVersion>")
+	kotlin("multiplatform")
 	id("maven-publish")
 }
 
 group = "com.example"
 version = "1.0"
-
-repositories {
-	mavenLocal()
-	mavenCentral()
-}
 
 kotlin {
 	jvm()
@@ -65,7 +60,7 @@ kotlin {
 
 publishing {
 	repositories {
-		maven("$rootDir/repo")
+		maven("<localRepo>")
 	}
 }
 

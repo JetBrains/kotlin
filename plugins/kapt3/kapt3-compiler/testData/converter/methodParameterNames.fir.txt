@@ -20,8 +20,7 @@ public abstract class Cls {
         super();
     }
 
-    public abstract void foo(@org.jetbrains.annotations.NotNull()
-    java.lang.String abc);
+    public abstract void foo(@org.jetbrains.annotations.NotNull() java.lang.String abc);
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String bar(int bcd) {
@@ -29,8 +28,8 @@ public abstract class Cls {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public abstract interface Intf : kotlin/Any {
@@ -47,8 +46,7 @@ public abstract class Cls {
 @kotlin.Metadata()
 public abstract interface Intf {
 
-    public abstract void foo(@org.jetbrains.annotations.NotNull()
-    java.lang.String abc);
+    public abstract void foo(@org.jetbrains.annotations.NotNull() java.lang.String abc);
 
     @org.jetbrains.annotations.NotNull()
     public default java.lang.String bar(int bcd) {

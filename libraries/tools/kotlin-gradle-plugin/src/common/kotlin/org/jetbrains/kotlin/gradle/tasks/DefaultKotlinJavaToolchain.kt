@@ -16,6 +16,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Internal
 import org.gradle.internal.jvm.Jvm
 import org.gradle.jvm.toolchain.*
@@ -32,6 +33,7 @@ import javax.inject.Inject
 internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     private val objects: ObjectFactory,
     projectLayout: ProjectLayout,
+    providerFactory: ProviderFactory,
     jvmCompilerOptions: () -> KotlinJvmCompilerOptions?
 ) : KotlinJavaToolchain {
 
@@ -86,13 +88,14 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
         .chainedFinalizeValueOnRead()
 
     private fun getToolsJarFromJvm(
+        providerFactory: ProviderFactory,
         jvmProvider: Provider<Jvm>,
         javaVersionProvider: Provider<JavaVersion>
     ): Provider<File?> {
         return objects
             .propertyWithConvention(
                 javaVersionProvider.flatMap { javaVersion ->
-                    jvmProvider.map { jvm ->
+                    jvmProvider.mapOrNull(providerFactory) { jvm ->
                         jvm.toolsJar.also {
                             if (it == null && javaVersion < JavaVersion.VERSION_1_9) {
                                 throw GradleException(
@@ -107,10 +110,11 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     }
 
     @get:Internal
-    internal val jdkToolsJar: Provider<File?> = getToolsJarFromJvm(buildJvm, javaVersion)
+    internal val jdkToolsJar: Provider<File?> = getToolsJarFromJvm(providerFactory, buildJvm, javaVersion)
 
     @get:Internal
     internal val currentJvmJdkToolsJar: Provider<File?> = getToolsJarFromJvm(
+        providerFactory,
         gradleJvm,
         gradleJvm.map {
             // Current JVM should always have java version

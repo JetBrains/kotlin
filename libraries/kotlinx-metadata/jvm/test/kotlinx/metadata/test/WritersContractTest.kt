@@ -15,7 +15,7 @@ import kotlin.test.assertFailsWith
 
 class WritersContractTest {
     val classMd = WritersContractTest::class.java.getMetadata()
-    val l: () -> Unit = {}
+    val l: () -> Unit = @JvmSerializableLambda {}
     val lambdaMd = l::class.java.getMetadata()
     val fileFacadeMd = Class.forName("kotlinx.metadata.test.testdata.FileFacade").getMetadata()
     val multiFileFacadeMd = Class.forName("kotlinx.metadata.test.testdata.MultiFileClassFacade").getMetadata()

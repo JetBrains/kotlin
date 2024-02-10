@@ -7,10 +7,10 @@ Exit code: OK
 Output:
 compiler/testData/multiplatform/implTypeAlias/discriminateHeaderClassInFavorOfTypeAlias/common.kt:3:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect class A
-^
+^^^^^^
 compiler/testData/multiplatform/implTypeAlias/discriminateHeaderClassInFavorOfTypeAlias/jvm.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 actual typealias A = AImpl
-^
+^^^^^^
 
 -- JVM (2) --
 Exit code: OK

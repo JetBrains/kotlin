@@ -1,0 +1,4 @@
+Not equal
+assert(1 == 2, lambda)
+         |
+         false

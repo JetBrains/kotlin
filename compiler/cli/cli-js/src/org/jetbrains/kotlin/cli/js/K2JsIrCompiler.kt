@@ -711,10 +711,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             }
         }
 
-        if (arguments.metaInfo) {
-            configuration.put(JSConfigurationKeys.META_INFO, true)
-        }
-
         configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, arguments.typedArrays)
 
         configuration.put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, arguments.friendModulesDisabled)

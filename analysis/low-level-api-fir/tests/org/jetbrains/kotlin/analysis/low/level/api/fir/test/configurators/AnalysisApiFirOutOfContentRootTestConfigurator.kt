@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.getAnalyzerServices
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
 object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirSourceLikeTestConfigurator(false) {
@@ -38,12 +40,16 @@ object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirSourceLike
         }
     }
 
-    override fun prepareFilesInModule(files: List<PsiFile>, module: TestModule, testServices: TestServices) {
-        if (Directives.SKIP_WHEN_OUT_OF_CONTENT_ROOT in module.directives) {
+    override fun createModules(
+        moduleStructure: TestModuleStructure,
+        testServices: TestServices,
+        project: Project
+    ): KtModuleProjectStructure {
+        if (Directives.SKIP_WHEN_OUT_OF_CONTENT_ROOT in moduleStructure.allDirectives) {
             throw SkipWhenOutOfContentRootException()
         }
 
-        super.prepareFilesInModule(files, module, testServices)
+        return super.createModules(moduleStructure, testServices, project)
     }
 
     object Directives : SimpleDirectivesContainer() {

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -72,6 +73,9 @@ class WasmBackendContext(
 
     override val coroutineSymbols =
         JsCommonCoroutineSymbols(symbolTable, module,this)
+
+    override val jsPromiseSymbol: IrClassSymbol?
+        get() = if (isWasmJsTarget) wasmSymbols.jsRelatedSymbols.jsPromise else null
 
     val innerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
 

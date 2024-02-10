@@ -73,7 +73,7 @@ KtKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
-    modality: FINAL
+    modality: ABSTRACT
     origin: SOURCE
     receiverParameter: null
     returnType: KtUsualClassType:

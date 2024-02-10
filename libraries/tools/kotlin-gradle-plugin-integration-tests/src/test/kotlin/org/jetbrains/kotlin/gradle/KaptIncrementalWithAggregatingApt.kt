@@ -20,7 +20,7 @@ import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@DisplayName("K1 Kapt incremental tests with aggregating apt")
+@DisplayName("Kapt incremental tests with aggregating apt")
 open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
@@ -390,16 +390,8 @@ open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
     }
 }
 
-@DisplayName("K2 Kapt incremental tests with aggregating apt")
-class K2KaptIncrementalWithAggregatingApt: KaptIncrementalWithAggregatingApt() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
-}
 
-@DisplayName("K1 Kapt incremental tests with aggregating apt with disabled precise compilation outputs backup")
-open class KaptIncrementalWithAggregatingAptAndWithoutPreciseBackup : KaptIncrementalWithAggregatingApt() {
+@DisplayName("Kapt incremental tests with aggregating apt with disabled precise compilation outputs backup")
+class KaptIncrementalWithAggregatingAptAndWithoutPreciseBackup : KaptIncrementalWithAggregatingApt() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
-}
-
-class K2KaptIncrementalWithAggregatingAptAndWithoutPreciseBackup: KaptIncrementalWithAggregatingAptAndWithoutPreciseBackup() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }

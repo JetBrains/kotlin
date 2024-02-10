@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli
 
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
@@ -42,16 +43,17 @@ class FriendPathsTest : TestCaseWithTmpdir() {
         doTestFriendPaths(File(tmpdir, "lib").relativeTo(File("").absoluteFile))
     }
 
-    private fun doTestFriendPaths(libDest: File) {
+    private fun doTestFriendPaths(libDest: File, messageRenderer: MessageRenderer? = null) {
         val libSrc = File(getTestDataDirectory(), "lib.kt")
-        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path))
+        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path), messageRenderer)
 
         CompilerTestUtil.executeCompilerAssertSuccessful(
             K2JVMCompiler(),
             listOf(
                 "-d", tmpdir.path, "-cp", libDest.path, File(getTestDataDirectory(), "usage.kt").path,
                 "-Xfriend-paths=${libDest.path}"
-            )
+            ),
+            messageRenderer,
         )
     }
 }

@@ -16,6 +16,7 @@
 public abstract interface Intf {
     @org.jetbrains.annotations.NotNull()
     public static final Intf.Companion Companion = null;
+
     public static final int WHITE = 2;
 
     public default int getColor() {
@@ -43,6 +44,7 @@ public abstract interface Intf {
     @kotlin.Metadata()
     public static final class Companion {
         private static final int BLACK = 1;
+
         public static final int WHITE = 2;
 
         private Companion() {
@@ -55,8 +57,8 @@ public abstract interface Intf {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public abstract interface IntfWithDefaultImpls : kotlin/Any {
@@ -74,8 +76,8 @@ public abstract interface IntfWithDefaultImpls {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public abstract interface IntfWithoutDefaultImpls : kotlin/Any {

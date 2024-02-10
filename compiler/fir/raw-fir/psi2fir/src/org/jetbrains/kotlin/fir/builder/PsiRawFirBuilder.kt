@@ -2006,14 +2006,12 @@ open class PsiRawFirBuilder(
                     }
                     dispatchReceiverType = owner.obtainDispatchReceiverForConstructor()
                     contextReceivers.addAll(convertContextReceivers(owner.contextReceivers))
-                    val delegationCall = getDelegationCall()
-                    val hasExplicitDelegationCall = delegationCall.textLength > 0
-                    if (!owner.hasModifier(EXTERNAL_KEYWORD) || hasExplicitDelegationCall) {
+                    if (!owner.hasModifier(EXTERNAL_KEYWORD) || isExplicitDelegationCall()) {
                         delegatedConstructor = buildOrLazyDelegatedConstructorCall(
                             isThis = isDelegatedCallToThis(),
                             constructedTypeRef = delegatedTypeRef,
                         ) {
-                            delegationCall.convert(delegatedTypeRef)
+                            getDelegationCall().convert(delegatedTypeRef)
                         }
                     }
                     this@PsiRawFirBuilder.context.firFunctionTargets += target

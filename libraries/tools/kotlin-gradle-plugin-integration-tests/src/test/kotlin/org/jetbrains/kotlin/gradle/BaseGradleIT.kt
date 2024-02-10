@@ -274,7 +274,6 @@ abstract class BaseGradleIT {
         val showDiagnosticsStacktrace: Boolean? = false, // false by default to not clutter the testdata + stacktraces change often
         val stacktraceMode: String? = StacktraceOption.FULL_STACKTRACE_LONG_OPTION,
         val konanDataDir: Path = konanDir,
-        // TODO(Dmitrii Krasnov): we can remove this, when downloading konan from maven local will be possible KT-63198
         val distributionDownloadFromMaven: Boolean? = false,
     ) {
         val safeAndroidGradlePluginVersion: AGPVersion

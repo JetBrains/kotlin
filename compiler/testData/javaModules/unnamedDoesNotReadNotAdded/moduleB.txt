@@ -1,7 +1,7 @@
 compiler/testData/javaModules/unnamedDoesNotReadNotAdded/moduleB/usage.kt:1:8: error: unresolved reference: foo
 import foo.Foo
-       ^
+       ^^^
 compiler/testData/javaModules/unnamedDoesNotReadNotAdded/moduleB/usage.kt:4:5: error: unresolved reference: Foo
     Foo()
-    ^
+    ^^^
 COMPILATION_ERROR

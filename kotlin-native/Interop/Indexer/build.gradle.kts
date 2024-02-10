@@ -139,9 +139,9 @@ sourceSets {
 dependencies {
     api(project(":kotlin-stdlib"))
     api(project(":kotlin-native:Interop:Runtime"))
-    api(project(":kotlin-native:utilities:basic-utils"))
 
     testImplementation(kotlin("test-junit"))
+    testImplementation(project(":compiler:util"))
 }
 
 val nativelibs = project.tasks.register<Copy>("nativelibs") {

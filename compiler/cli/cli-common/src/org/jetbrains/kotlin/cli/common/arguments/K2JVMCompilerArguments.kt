@@ -314,17 +314,6 @@ This can be used in the event of problems with the new implementation."""
         }
 
     @Argument(
-        value = "-Xdump-declarations-to",
-        valueDescription = "<path>",
-        description = "Path to the JSON file where Java-to-Kotlin declaration mappings should be dumped."
-    )
-    var declarationsOutputPath: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xsuppress-missing-builtins-error",
         description = """Suppress the "cannot access built-in declaration" error (useful with '-no-stdlib')."""
     )
@@ -477,7 +466,7 @@ The default value is 'warn'."""
                                  and the class is not annotated with '@JvmDefaultWithoutCompatibility' (see KT-39603 for more details).
 -Xjvm-default=disable            Default behavior. Do not generate JVM default methods."""
     )
-    var jvmDefault: String = JvmDefaultMode.DEFAULT.description
+    var jvmDefault: String = JvmDefaultMode.DISABLE.description
         set(value) {
             checkFrozen()
             field = value
@@ -847,6 +836,16 @@ This option is deprecated and will be deleted in future versions."""
             field = value
         }
 
+    @Argument(
+        value = "-Xuse-kapt4",
+        description = "Enable the experimental KAPT 4."
+    )
+    var useKapt4 = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
@@ -857,18 +856,13 @@ This option is deprecated and will be deleted in future versions."""
             result[JvmAnalysisFlags.jvmDefaultMode] = it
         } ?: collector.report(
             CompilerMessageSeverity.ERROR,
-            "Unknown -Xjvm-default mode: $jvmDefault, supported modes: ${
-                JvmDefaultMode.values().mapNotNull { mode ->
-                    mode.description.takeIf { JvmDefaultMode.fromStringOrNull(it) != null }
-                }
-            }"
+            "Unknown -Xjvm-default mode: $jvmDefault, supported modes: ${JvmDefaultMode.values().map(JvmDefaultMode::description)}"
         )
         result[JvmAnalysisFlags.inheritMultifileParts] = inheritMultifileParts
         result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
         result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
         result[JvmAnalysisFlags.enableJvmPreview] = enableJvmPreview
         result[AnalysisFlags.allowUnstableDependencies] = allowUnstableDependencies
-        result[JvmAnalysisFlags.disableUltraLightClasses] = disableUltraLightClasses
         result[JvmAnalysisFlags.useIR] = !useOldBackend
         return result
     }
@@ -881,7 +875,7 @@ This option is deprecated and will be deleted in future versions."""
         if (enhanceTypeParameterTypesToDefNotNull) {
             result[LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated] = LanguageFeature.State.ENABLED
         }
-        if (JvmDefaultMode.fromStringOrNull(jvmDefault)?.forAllMethodsWithBody == true) {
+        if (JvmDefaultMode.fromStringOrNull(jvmDefault)?.isEnabled == true) {
             result[LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride] = LanguageFeature.State.ENABLED
             result[LanguageFeature.AbstractClassMemberNotImplementedWithIntermediateAbstractClass] = LanguageFeature.State.ENABLED
         }

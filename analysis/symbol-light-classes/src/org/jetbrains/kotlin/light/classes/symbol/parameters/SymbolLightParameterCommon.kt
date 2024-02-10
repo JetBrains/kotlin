@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,6 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class SymbolLightParameterCommon(
     protected val parameterSymbolPointer: KtSymbolPointer<KtValueParameterSymbol>,
-    protected val parameterDeclaration: KtParameter?,
     private val containingMethod: SymbolLightMethodBase,
     override val kotlinOrigin: KtParameter?,
 ) : SymbolLightParameterBase(containingMethod) {
@@ -31,9 +29,8 @@ internal abstract class SymbolLightParameterCommon(
         containingMethod: SymbolLightMethodBase,
     ) : this(
         parameterSymbolPointer = with(ktAnalysisSession) { parameterSymbol.createPointer() },
-        parameterDeclaration = parameterSymbol.sourcePsiSafe(),
         containingMethod = containingMethod,
-        kotlinOrigin = parameterSymbol.psiSafe(),
+        kotlinOrigin = parameterSymbol.sourcePsiSafe(),
     )
 
     private val _name: String by lazyPub {
@@ -73,7 +70,7 @@ internal abstract class SymbolLightParameterCommon(
         }
     }
 
-    override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, parameterDeclaration)
+    override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, kotlinOrigin)
 
     private val _type by lazyPub {
         parameterSymbolPointer.withSymbol(ktModule) { parameterSymbol ->
@@ -109,13 +106,13 @@ internal abstract class SymbolLightParameterCommon(
         if (this === other) return true
         if (other !is SymbolLightParameterCommon || other.ktModule != ktModule) return false
 
-        if (parameterDeclaration != null || other.parameterDeclaration != null) {
-            return parameterDeclaration == other.parameterDeclaration
+        if (kotlinOrigin != null || other.kotlinOrigin != null) {
+            return kotlinOrigin == other.kotlinOrigin
         }
 
         return compareSymbolPointers(parameterSymbolPointer, other.parameterSymbolPointer)
     }
 
-    override fun hashCode(): Int = parameterDeclaration?.hashCode() ?: _name.hashCode()
-    override fun isValid(): Boolean = super.isValid() && parameterDeclaration?.isValid ?: parameterSymbolPointer.isValid(ktModule)
+    override fun hashCode(): Int = kotlinOrigin?.hashCode() ?: _name.hashCode()
+    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: parameterSymbolPointer.isValid(ktModule)
 }

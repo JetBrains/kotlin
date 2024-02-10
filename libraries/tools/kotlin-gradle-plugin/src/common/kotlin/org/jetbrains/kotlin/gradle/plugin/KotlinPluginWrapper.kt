@@ -20,6 +20,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
@@ -45,6 +46,8 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArt
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
 import org.jetbrains.kotlin.gradle.utils.*
@@ -85,6 +88,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         }
 
         BuildMetricsService.registerIfAbsent(project)
+        KotlinNativeBundleBuildService.registerIfAbsent(project)
     }
 
     private fun addKotlinCompilerConfiguration(project: Project) {
@@ -99,10 +103,17 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         project
             .configurations
             .maybeCreateResolvable(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
-            .defaultDependencies {
-                it.add(
-                    project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL:${project.getKotlinPluginVersion()}")
-                )
+            .also {
+                project.dependencies.add(it.name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL")
+                it.withDependencies { dependencies ->
+                    dependencies
+                        .withType<ExternalDependency>()
+                        .configureEach { dependency ->
+                            dependency.version { versionConstraint ->
+                                versionConstraint.strictly(project.kotlinExtension.compilerVersion.get())
+                            }
+                        }
+                }
             }
         project
             .tasks
@@ -116,19 +127,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
                         }
                         project.configurations.named(classpathConfiguration)
                     }
-                )
-            }
-    }
-
-    private fun addKotlinNativeBundleConfiguration(project: Project) {
-        project.configurations
-            .maybeCreateResolvable(KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME).also { configuration ->
-                configuration.defaultDependencies {
-                    it.add(project.dependencies.create(NativeCompilerDownloader.getCompilerDependencyNotation(project)))
-                }
-                configuration.attributes.setAttribute(
-                    KotlinNativeBundleArtifactFormat.attribute,
-                    KotlinNativeBundleArtifactFormat.KotlinNativeBundleArtifactsTypes.DIRECTORY
                 )
             }
     }

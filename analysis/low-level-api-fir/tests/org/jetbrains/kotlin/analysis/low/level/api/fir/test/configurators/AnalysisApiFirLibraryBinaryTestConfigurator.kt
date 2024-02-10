@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisAp
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
@@ -34,6 +35,7 @@ object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator
         builder.apply {
             useAdditionalService<KtModuleFactory> { KtLibraryBinaryModuleFactory }
             configureLibraryCompilationSupport(this)
+            configureOptionalTestCompilerPlugin()
         }
     }
 

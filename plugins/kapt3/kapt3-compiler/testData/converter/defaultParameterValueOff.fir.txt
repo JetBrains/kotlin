@@ -15,8 +15,9 @@
  */
 @kotlin.Metadata()
 public enum Em {
-    /*public static final*/ FOO /* = new Em() */,
-    /*public static final*/ BAR /* = new Em() */;
+    FOO,
+    BAR;
+
 
     Em() {
     }
@@ -27,8 +28,8 @@ public enum Em {
     }
 }
 
-////////////////////
 
+////////////////////
 
 /**
  * public final class Foo : kotlin/Any {
@@ -135,30 +136,47 @@ public enum Em {
 @kotlin.Metadata()
 public final class Foo {
     private final boolean z = false;
+
     private final byte b = 0;
+
     private final char c = '\u0000';
+
     private final char c2 = '\u0000';
+
     private final short sh = 0;
+
     private final int i = 0;
+
     private final long l = 0L;
+
     private final float f = 0.0F;
+
     private final double d = 0.0;
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String s = null;
+
     @org.jetbrains.annotations.NotNull()
     private final int[] iarr = null;
+
     @org.jetbrains.annotations.NotNull()
     private final long[] larr = null;
+
     @org.jetbrains.annotations.NotNull()
     private final double[] darr = null;
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String[] sarr = null;
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Class<?> cl = null;
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Class<?>[] clarr = null;
+
     @org.jetbrains.annotations.NotNull()
     private final Em em = null;
+
     @org.jetbrains.annotations.NotNull()
     private final Em[] emarr = null;
 
@@ -166,16 +184,7 @@ public final class Foo {
         super();
     }
 
-    public Foo(boolean z, byte b, char c, char c2, short sh, int i, long l, float f, double d, @org.jetbrains.annotations.NotNull()
-    java.lang.String s, @org.jetbrains.annotations.NotNull()
-    int[] iarr, @org.jetbrains.annotations.NotNull()
-    long[] larr, @org.jetbrains.annotations.NotNull()
-    double[] darr, @org.jetbrains.annotations.NotNull()
-    java.lang.String[] sarr, @org.jetbrains.annotations.NotNull()
-    java.lang.Class<?> cl, @org.jetbrains.annotations.NotNull()
-    java.lang.Class<?>[] clarr, @org.jetbrains.annotations.NotNull()
-    Em em, @org.jetbrains.annotations.NotNull()
-    Em[] emarr) {
+    public Foo(boolean z, byte b, char c, char c2, short sh, int i, long l, float f, double d, @org.jetbrains.annotations.NotNull() java.lang.String s, @org.jetbrains.annotations.NotNull() int[] iarr, @org.jetbrains.annotations.NotNull() long[] larr, @org.jetbrains.annotations.NotNull() double[] darr, @org.jetbrains.annotations.NotNull() java.lang.String[] sarr, @org.jetbrains.annotations.NotNull() java.lang.Class<?> cl, @org.jetbrains.annotations.NotNull() java.lang.Class<?>[] clarr, @org.jetbrains.annotations.NotNull() Em em, @org.jetbrains.annotations.NotNull() Em[] emarr) {
         super();
     }
 

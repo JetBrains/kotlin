@@ -302,7 +302,7 @@ internal class StatementGenerator(
             1 -> {
                 val first = entries.first()
                 if (first is IrConst<*> && first.kind == IrConstKind.String)
-                    first
+                    IrConstImpl.string(startOffset, endOffset, first.type, first.value as String)
                 else
                     IrStringConcatenationImpl(startOffset, endOffset, resultType, listOf(first))
             }

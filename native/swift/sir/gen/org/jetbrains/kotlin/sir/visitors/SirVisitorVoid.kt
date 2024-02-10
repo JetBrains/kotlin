@@ -46,14 +46,6 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
         visitElement(declaration)
     }
 
-    final override fun visitForeignDeclaration(declaration: SirForeignDeclaration, data: Nothing?) {
-        visitForeignDeclaration(declaration)
-    }
-
-    open fun visitForeignDeclaration(declaration: SirForeignDeclaration) {
-        visitDeclaration(declaration)
-    }
-
     final override fun visitNamedDeclaration(declaration: SirNamedDeclaration, data: Nothing?) {
         visitNamedDeclaration(declaration)
     }
@@ -94,11 +86,43 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
         visitCallable(function)
     }
 
-    final override fun visitForeignFunction(function: SirForeignFunction, data: Nothing?) {
-        visitForeignFunction(function)
+    final override fun visitAccessor(accessor: SirAccessor, data: Nothing?) {
+        visitAccessor(accessor)
     }
 
-    open fun visitForeignFunction(function: SirForeignFunction) {
-        visitCallable(function)
+    open fun visitAccessor(accessor: SirAccessor) {
+        visitCallable(accessor)
+    }
+
+    final override fun visitGetter(getter: SirGetter, data: Nothing?) {
+        visitGetter(getter)
+    }
+
+    open fun visitGetter(getter: SirGetter) {
+        visitAccessor(getter)
+    }
+
+    final override fun visitSetter(setter: SirSetter, data: Nothing?) {
+        visitSetter(setter)
+    }
+
+    open fun visitSetter(setter: SirSetter) {
+        visitAccessor(setter)
+    }
+
+    final override fun visitVariable(variable: SirVariable, data: Nothing?) {
+        visitVariable(variable)
+    }
+
+    open fun visitVariable(variable: SirVariable) {
+        visitDeclaration(variable)
+    }
+
+    final override fun visitImport(import: SirImport, data: Nothing?) {
+        visitImport(import)
+    }
+
+    open fun visitImport(import: SirImport) {
+        visitDeclaration(import)
     }
 }

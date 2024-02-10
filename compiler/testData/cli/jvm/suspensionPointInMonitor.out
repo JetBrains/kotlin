@@ -1,7 +1,7 @@
 compiler/testData/cli/jvm/suspensionPointInMonitor.kt:26:13: error: the 'suspensionPoint' suspension point is inside a critical section.
             suspensionPoint()
-            ^
+            ^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/suspensionPointInMonitor.kt:60:17: error: the 'suspensionPoint' suspension point is inside a critical section.
                 suspensionPoint()
-                ^
+                ^^^^^^^^^^^^^^^
 COMPILATION_ERROR

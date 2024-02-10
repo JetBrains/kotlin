@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.standalone.builders
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
@@ -13,12 +14,17 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModu
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sir.SirModule
-import org.jetbrains.kotlin.sir.analysisapi.SirGenerator
+import org.jetbrains.kotlin.sir.builder.buildImport
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportInput
+import org.jetbrains.sir.passes.builder.buildSirDeclarationList
 
 @OptIn(KtAnalysisApiInternals::class)
-internal fun buildSwiftModule(input: SwiftExportInput, shouldSortInputFiles: Boolean): SirModule {
+internal fun buildSwiftModule(
+    input: SwiftExportInput,
+    shouldSortInputFiles: Boolean,
+    bridgeModuleName: String,
+): SirModule {
     val session = buildStandaloneAnalysisAPISession {
         registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
 
@@ -43,13 +49,17 @@ internal fun buildSwiftModule(input: SwiftExportInput, shouldSortInputFiles: Boo
         ktFiles = ktFiles.sortedBy { it.name }
     }
 
-    return buildModule {
-        name = sourceModule.moduleName
-        val sirFactory = SirGenerator()
-        ktFiles.forEach { file ->
-            declarations += sirFactory.build(file)
+    return analyze(sourceModule) {
+        buildModule {
+            name = sourceModule.moduleName
+            declarations += buildImport {
+                moduleName = bridgeModuleName
+            }
+            ktFiles.forEach { file ->
+                declarations += buildSirDeclarationList(file)
+            }
+        }.apply {
+            declarations.forEach { it.parent = this }
         }
-    }.apply {
-        declarations.forEach { it.parent = this }
     }
 }

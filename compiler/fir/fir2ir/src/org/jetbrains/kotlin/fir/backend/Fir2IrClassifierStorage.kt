@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 class Fir2IrClassifierStorage(
     private val components: Fir2IrComponents,
-    commonMemberStorage: Fir2IrCommonMemberStorage
+    commonMemberStorage: Fir2IrCommonMemberStorage,
+    private val conversionScope: Fir2IrConversionScope,
 ) : Fir2IrComponents by components {
     private val classCache: MutableMap<FirRegularClass, IrClass> = commonMemberStorage.classCache
 
@@ -287,19 +288,26 @@ class Fir2IrClassifierStorage(
         // Before the call it's not possible, because f/o binding for regular classes isn't done yet
         processMembersOfClassesOnTheFlyImmediately = true
         for ((klass, irClass) in localClassesCreatedOnTheFly) {
-            converter.processClassMembers(klass, irClass)
-            // See the problem from KT-57441
-//            class Wrapper {
-//                private val dummy = object: Bar {}
-//                private val bar = object: Bar by dummy {}
-//            }
-//            interface Bar {
-//                val foo: String
-//                    get() = ""
-//            }
-            // When we are building bar.foo fake override, we should call dummy.foo,
-            // so we should have object : Bar.foo fake override to be built and bound.
-            converter.bindFakeOverridesInClass(irClass)
+            conversionScope.withContainingFirClass(klass) {
+                classifiersGenerator.processClassHeader(klass, irClass)
+                converter.processClassMembers(klass, irClass)
+                // See the problem from KT-57441
+                //
+                // ```kt
+                // class Wrapper {
+                //     private val dummy = object: Bar {}
+                //     private val bar = object: Bar by dummy {}
+                // }
+                // interface Bar {
+                //     val foo: String
+                //         get() = ""
+                // }
+                // ```
+                //
+                // When we are building bar.foo fake override, we should call dummy.foo,
+                // so we should have object : Bar.foo fake override to be built and bound.
+                converter.bindFakeOverridesInClass(irClass)
+            }
         }
         localClassesCreatedOnTheFly.clear()
     }
@@ -350,7 +358,7 @@ class Fir2IrClassifierStorage(
         } else {
             irParent.origin
         }
-        val symbol = createEnumEntrySymbol(enumEntry)
+        val symbol = IrEnumEntrySymbolImpl()
         return classifiersGenerator.createIrEnumEntry(
             enumEntry,
             irParent = irParent,
@@ -361,31 +369,15 @@ class Fir2IrClassifierStorage(
         }
     }
 
-    private fun createEnumEntrySymbol(enumEntry: FirEnumEntry): IrEnumEntrySymbol {
-        val signature = signatureComposer.composeSignature(enumEntry)
-        return when {
-            signature != null -> symbolTable.referenceEnumEntry(signature)
-            else -> IrEnumEntrySymbolImpl()
-        }
-    }
-
     // ------------------------------------ typealiases ------------------------------------
 
     fun createAndCacheIrTypeAlias(
         typeAlias: FirTypeAlias,
         parent: IrDeclarationParent
     ): IrTypeAlias {
-        val symbol = createTypeAliasSymbol(typeAlias)
+        val symbol = IrTypeAliasSymbolImpl()
         return classifiersGenerator.createIrTypeAlias(typeAlias, parent, symbol).also {
             typeAliasCache[typeAlias] = it
-        }
-    }
-
-    private fun createTypeAliasSymbol(typeAlias: FirTypeAlias): IrTypeAliasSymbol {
-        val signature = signatureComposer.composeSignature(typeAlias)
-        return when {
-            signature != null -> symbolTable.referenceTypeAlias(signature)
-            else -> IrTypeAliasSymbolImpl()
         }
     }
 
@@ -405,7 +397,7 @@ class Fir2IrClassifierStorage(
             firTypeAlias.origin
         )!!
 
-        val symbol = createTypeAliasSymbol(firTypeAlias)
+        val symbol = IrTypeAliasSymbolImpl()
         val irTypeAlias = lazyDeclarationsGenerator.createIrLazyTypeAlias(firTypeAlias, irParent, symbol)
         typeAliasCache[firTypeAlias] = irTypeAlias
         irTypeAlias.prepareTypeParameters()

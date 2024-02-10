@@ -131,7 +131,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Settings : AbstractSettings<
         destinationHashFile: File,
         dist: File,
         fileHasher: FileHasher,
-        extract: (File, File) -> Unit,
+        extract: (File) -> Unit,
     ) {
         var distHash: String? = null
         val upToDate = destinationHashFile.let { file ->
@@ -154,7 +154,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Settings : AbstractSettings<
             destination.deleteRecursively()
         }
 
-        extract(dist, destination.parentFile)
+        extract(dist)
 
         destinationHashFile.writeText(
             CACHE_VERSION +
@@ -165,7 +165,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Settings : AbstractSettings<
         )
     }
 
-    abstract fun extract(archive: File, destination: File)
+    abstract fun extract(archive: File)
 
     companion object {
         const val CACHE_VERSION = "2"

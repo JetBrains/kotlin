@@ -1,4 +1,4 @@
 compiler/testData/cli/jvm/readingConfigFromEnvironment/appendingArgs.kt:4:13: warning: [DIVISION_BY_ZERO] Division by zero.
     val x = arg / 0
-            ^
+            ^^^^^^^
 OK

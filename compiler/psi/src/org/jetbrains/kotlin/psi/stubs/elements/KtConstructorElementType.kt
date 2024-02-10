@@ -12,7 +12,6 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
-import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService.Companion.getInstance
 import java.io.IOException
 
 abstract class KtConstructorElementType<T : KtConstructor<T>>(
@@ -25,14 +24,18 @@ abstract class KtConstructorElementType<T : KtConstructor<T>>(
         nameRef: StringRef?,
         hasBody: Boolean,
         isDelegatedCallToThis: Boolean,
+        isExplicitDelegationCall: Boolean,
     ): KotlinConstructorStub<T>
 
     protected abstract fun isDelegatedCallToThis(constructor: T): Boolean
 
+    protected abstract fun isExplicitDelegationCall(constructor: T): Boolean
+
     override fun createStub(psi: T, parentStub: StubElement<*>): KotlinConstructorStub<T> {
         val hasBody = psi.hasBody()
         val isDelegatedCallToThis = isDelegatedCallToThis(psi)
-        return newStub(parentStub, StringRef.fromString(psi.name), hasBody, isDelegatedCallToThis)
+        val isExplicitDelegationCall = isExplicitDelegationCall(psi)
+        return newStub(parentStub, StringRef.fromString(psi.name), hasBody, isDelegatedCallToThis, isExplicitDelegationCall)
     }
 
     @Throws(IOException::class)
@@ -40,6 +43,7 @@ abstract class KtConstructorElementType<T : KtConstructor<T>>(
         dataStream.writeName(stub.name)
         dataStream.writeBoolean(stub.hasBody())
         dataStream.writeBoolean(stub.isDelegatedCallToThis())
+        dataStream.writeBoolean(stub.isExplicitDelegationCall())
     }
 
     @Throws(IOException::class)
@@ -47,7 +51,8 @@ abstract class KtConstructorElementType<T : KtConstructor<T>>(
         val name = dataStream.readName()
         val hasBody = dataStream.readBoolean()
         val isDelegatedCallToThis = dataStream.readBoolean()
-        return newStub(parentStub, name, hasBody, isDelegatedCallToThis)
+        val isExplicitDelegationCall = dataStream.readBoolean()
+        return newStub(parentStub, name, hasBody, isDelegatedCallToThis, isExplicitDelegationCall)
     }
 
     override fun indexStub(stub: KotlinConstructorStub<T>, sink: IndexSink) {

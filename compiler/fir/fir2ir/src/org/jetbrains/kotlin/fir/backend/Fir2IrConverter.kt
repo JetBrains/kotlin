@@ -61,7 +61,8 @@ import org.jetbrains.kotlin.psi.KtFile
 
 class Fir2IrConverter(
     private val moduleDescriptor: FirModuleDescriptor,
-    private val components: Fir2IrComponents
+    private val components: Fir2IrComponents,
+    private val conversionScope: Fir2IrConversionScope,
 ) : Fir2IrComponents by components {
 
     private val generatorExtensions = session.extensionService.declarationGenerators
@@ -137,15 +138,19 @@ class Fir2IrConverter(
 
     fun processLocalClassAndNestedClassesOnTheFly(klass: FirClass, parent: IrDeclarationParent): IrClass {
         val irClass = registerClassAndNestedClasses(klass, parent)
-        processClassAndNestedClassHeaders(klass)
+        conversionScope.withContainingFirClass(klass) {
+            processClassAndNestedClassHeaders(klass)
+        }
         return irClass
     }
 
     fun processLocalClassAndNestedClasses(klass: FirClass, parent: IrDeclarationParent): IrClass {
         val irClass = registerClassAndNestedClasses(klass, parent)
-        processClassAndNestedClassHeaders(klass)
-        processClassMembers(klass, irClass)
-        bindFakeOverridesInClass(irClass)
+        conversionScope.withContainingFirClass(klass) {
+            processClassAndNestedClassHeaders(klass)
+            processClassMembers(klass, irClass)
+            bindFakeOverridesInClass(irClass)
+        }
         return irClass
     }
 

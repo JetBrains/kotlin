@@ -1,0 +1,34 @@
+package test;
+
+/**
+ * multi-file class {
+ *   // test/M1__AKt
+ *   // test/M1__BKt
+ * }
+ */
+@kotlin.Metadata()
+public final class M1 {
+
+    public static final void bar() {
+    }
+
+    public static final void foo() {
+    }
+}
+
+
+////////////////////
+
+package test;
+
+/**
+ * multi-file class {
+ *   // test/M2__CKt
+ * }
+ */
+@kotlin.Metadata()
+public final class M2 {
+
+    public static final void baz() {
+    }
+}

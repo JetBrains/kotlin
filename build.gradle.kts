@@ -521,6 +521,7 @@ val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin-tcs-android",
     ":kotlin-allopen",
     ":kotlin-noarg",
+    ":kotlin-power-assert",
     ":kotlin-sam-with-receiver",
     ":kotlin-parcelize-compiler",
     ":kotlin-lombok",
@@ -880,6 +881,7 @@ tasks {
         dependsOn(":kotlin-lombok-compiler-plugin:test")
         dependsOn(":kotlin-noarg-compiler-plugin:test")
         dependsOn(":kotlin-sam-with-receiver-compiler-plugin:test")
+        dependsOn(":kotlin-power-assert-compiler-plugin:test")
     }
 
     register("toolsTest") {

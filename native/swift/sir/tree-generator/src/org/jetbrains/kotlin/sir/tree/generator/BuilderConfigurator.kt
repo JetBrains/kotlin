@@ -22,5 +22,9 @@ class BuilderConfigurator(elements: List<Element>) : AbstractSwiftIrTreeBuilderC
         configureFieldInAllLeafBuilders("visibility") {
             default(it, "SirVisibility.PUBLIC")
         }
+
+        builder(setter) {
+            default("parameterName", "\"newValue\"")
+        }
     }
 }

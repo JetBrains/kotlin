@@ -326,10 +326,6 @@ class GenerationState private constructor(
                         ).apply { duplicateSignatureFactory = this }
                 },
                 { BuilderFactoryForDuplicateClassNameDiagnostics(it, this) },
-                {
-                    configuration.get(JVMConfigurationKeys.DECLARATIONS_JSON_PATH)
-                        ?.let { destination -> SignatureDumpingBuilderFactory(it, File(destination)) } ?: it
-                }
             )
             .wrapWith(loadClassBuilderInterceptors()) { classBuilderFactory, extension ->
                 extension.interceptClassBuilderFactory(classBuilderFactory, originalFrontendBindingContext, diagnostics)

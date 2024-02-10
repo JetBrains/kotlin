@@ -26,6 +26,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("candidateNotSuccessfulButNoContradiction.kt")
+    public void testCandidateNotSuccessfulButNoContradiction() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/candidateNotSuccessfulButNoContradiction.kt");
+    }
+
+    @Test
     @TestMetadata("dynamicUnresolved.kt")
     public void testDynamicUnresolved() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicUnresolved.kt");

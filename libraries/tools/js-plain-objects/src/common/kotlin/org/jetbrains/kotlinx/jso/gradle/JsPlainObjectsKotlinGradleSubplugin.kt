@@ -26,7 +26,7 @@ class JsPlainObjectsKotlinGradleSubplugin : KotlinCompilerPluginSupportPlugin {
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean =
-        kotlinCompilation.target.isJs() || kotlinCompilation.target.isWasm()
+        kotlinCompilation.target.isJs()
 
     override fun applyToCompilation(
         kotlinCompilation: KotlinCompilation<*>
@@ -43,6 +43,4 @@ class JsPlainObjectsKotlinGradleSubplugin : KotlinCompilerPluginSupportPlugin {
     override fun getCompilerPluginId() = "org.jetbrains.kotlinx.js-plain-objects"
 
     private fun KotlinTarget.isJs() = platformType == KotlinPlatformType.js
-
-    private fun KotlinTarget.isWasm() = platformType == KotlinPlatformType.wasm
 }
