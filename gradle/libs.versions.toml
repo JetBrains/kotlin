@@ -74,6 +74,8 @@ android-gradle-plugin-builder = { module = "com.android.tools.build:builder", ve
 android-gradle-plugin-builder-model = { module = "com.android.tools.build:builder-model", version.ref = "android-gradle-plugin" }
 android-tools-common = { module = "com.android.tools:common", version.ref = "android-tools" }
 
+robolectric = { module = "org.robolectric:robolectric", version = "4.11.1" }
+
 [plugins]
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
 gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node" }
