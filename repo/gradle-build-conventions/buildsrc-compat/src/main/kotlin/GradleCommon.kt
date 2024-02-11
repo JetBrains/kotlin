@@ -692,6 +692,7 @@ fun Project.configureDokkaPublication(
             }
             dokkaTask.configure {
                 description = "Generates documentation in 'javadoc' format for '${variantSourceSet.javadocTaskName}' variant"
+                notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
 
                 plugins.dependencies.add(
                     project.dependencies.create("org.jetbrains.dokka:javadoc-plugin:${DokkaVersion.version}")
