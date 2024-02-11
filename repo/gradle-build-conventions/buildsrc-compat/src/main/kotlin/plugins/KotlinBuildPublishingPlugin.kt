@@ -194,6 +194,7 @@ fun TaskProvider<PublishToMavenRepository>.configureRepository() =
 
 private fun PublishToMavenRepository.configureRepository() {
     dependsOn(project.rootProject.tasks.named("preparePublication"))
+    notCompatibleWithConfigurationCache("Uses Task.project and Task.extensions")
     doFirst {
         val preparePublication = project.rootProject.tasks.named("preparePublication").get()
         val username: String? by preparePublication.extra
