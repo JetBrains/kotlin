@@ -90,10 +90,6 @@ fun serializeTask(name: String, sourcesTask: TaskProvider<*>, inDirs: List<Any>)
                 *inputDirectories.map(::pathRelativeToWorkingDir).toTypedArray()
             )
         }
-
-        doFirst {
-            if (logger.isInfoEnabled) jvmArguments.add("-Dkotlin.builtins.serializer.log=true")
-        }
     }
 
 val serialize = serializeTask("serialize", prepareSources, listOf(builtinsSrc, builtinsNative, prepareSources.map { it.destinationDir }, prepareRangeSources.map { it.destinationDir }))
