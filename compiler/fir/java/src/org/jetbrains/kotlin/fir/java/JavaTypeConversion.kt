@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
@@ -46,57 +47,63 @@ enum class FirJavaTypeConversionMode {
 
 fun FirTypeRef.resolveIfJavaType(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
+    source: KtSourceElement?,
     mode: FirJavaTypeConversionMode = FirJavaTypeConversionMode.DEFAULT
 ): FirTypeRef = when (this) {
     is FirResolvedTypeRef -> this
-    is FirJavaTypeRef -> type.toFirResolvedTypeRef(session, javaTypeParameterStack, mode)
+    is FirJavaTypeRef -> type.toFirResolvedTypeRef(session, javaTypeParameterStack, source, mode)
     else -> this
 }
 
 internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
+    source: KtSourceElement?,
     mode: FirJavaTypeConversionMode = FirJavaTypeConversionMode.DEFAULT
 ): ConeKotlinType =
-    (resolveIfJavaType(session, javaTypeParameterStack, mode) as? FirResolvedTypeRef)?.type
+    (resolveIfJavaType(session, javaTypeParameterStack, source, mode) as? FirResolvedTypeRef)?.type
         ?: ConeErrorType(ConeSimpleDiagnostic("Type reference in Java not resolved: ${this::class.java}", DiagnosticKind.Java))
 
-internal fun JavaType.toFirJavaTypeRef(session: FirSession): FirJavaTypeRef = buildJavaTypeRef {
-    annotationBuilder = { convertAnnotationsToFir(session) }
+internal fun JavaType.toFirJavaTypeRef(session: FirSession, source: KtSourceElement?): FirJavaTypeRef = buildJavaTypeRef {
+    annotationBuilder = { convertAnnotationsToFir(session, source) }
     type = this@toFirJavaTypeRef
+    this.source = source
 }
 
 internal fun JavaType?.toFirResolvedTypeRef(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
+    source: KtSourceElement?,
     mode: FirJavaTypeConversionMode = FirJavaTypeConversionMode.DEFAULT
 ): FirResolvedTypeRef {
     return buildResolvedTypeRef {
-        type = toConeKotlinType(session, javaTypeParameterStack, mode)
+        type = toConeKotlinType(session, javaTypeParameterStack, mode, source)
             .let { if (mode == FirJavaTypeConversionMode.SUPERTYPE) it.lowerBoundIfFlexible() else it }
         annotations += type.attributes.customAnnotations
+        this.source = source
     }
 }
 
 private fun JavaType?.toConeKotlinType(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
-    mode: FirJavaTypeConversionMode,
+    mode: FirJavaTypeConversionMode, source: KtSourceElement?,
     additionalAnnotations: Collection<JavaAnnotation>? = null
 ): ConeKotlinType =
-    toConeTypeProjection(session, javaTypeParameterStack, Variance.INVARIANT, mode, additionalAnnotations).type
+    toConeTypeProjection(session, javaTypeParameterStack, Variance.INVARIANT, mode, source, additionalAnnotations).type
         ?: StandardClassIds.Any.toConeFlexibleType(emptyArray(), emptyArray(), ConeAttributes.Empty)
 
 private fun JavaType?.toConeTypeProjection(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
     parameterVariance: Variance, mode: FirJavaTypeConversionMode,
+    source: KtSourceElement?,
     additionalAnnotations: Collection<JavaAnnotation>? = null
 ): ConeTypeProjection {
     val attributes = if (this != null && (annotations.isNotEmpty() || additionalAnnotations != null)) {
         val convertedAnnotations = buildList {
             if (annotations.isNotEmpty()) {
-                addAll(this@toConeTypeProjection.convertAnnotationsToFir(session))
+                addAll(this@toConeTypeProjection.convertAnnotationsToFir(session, source))
             }
 
             if (additionalAnnotations != null) {
-                addAll(additionalAnnotations.convertAnnotationsToFir(session))
+                addAll(additionalAnnotations.convertAnnotationsToFir(session, source))
             }
         }
 
@@ -107,11 +114,11 @@ private fun JavaType?.toConeTypeProjection(
 
     return when (this) {
         is JavaClassifierType -> {
-            val lowerBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes)
+            val lowerBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, source)
             if (mode.insideAnnotation) {
                 return lowerBound
             }
-            val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, lowerBound)
+            val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, source, lowerBound)
 
             val finalLowerBound = when {
                 !session.languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN) ->
@@ -136,7 +143,7 @@ private fun JavaType?.toConeTypeProjection(
                     StandardClassIds.byName(componentType.type!!.arrayTypeName.identifier) to arrayOf()
 
                 else ->
-                    StandardClassIds.Array to arrayOf(componentType.toConeKotlinType(session, javaTypeParameterStack, mode))
+                    StandardClassIds.Array to arrayOf(componentType.toConeKotlinType(session, javaTypeParameterStack, mode, source))
             }
             val argumentsWithOutProjection = Array(arguments.size) { ConeKotlinTypeProjectionOut(arguments[it]) }
             when (mode) {
@@ -162,7 +169,7 @@ private fun JavaType?.toConeTypeProjection(
                 ConeStarProjection
             } else {
                 val nullabilityAnnotationOnWildcard = extractNullabilityAnnotationOnBoundedWildcard(this)?.let(::listOf)
-                val boundType = bound.toConeKotlinType(session, javaTypeParameterStack, mode, nullabilityAnnotationOnWildcard)
+                val boundType = bound.toConeKotlinType(session, javaTypeParameterStack, mode, source, nullabilityAnnotationOnWildcard)
                 if (isExtends) ConeKotlinTypeProjectionOut(boundType) else ConeKotlinTypeProjectionIn(boundType)
             }
         }
@@ -179,6 +186,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
     javaTypeParameterStack: JavaTypeParameterStack,
     mode: FirJavaTypeConversionMode,
     attributes: ConeAttributes,
+    source: KtSourceElement?,
     lowerBound: ConeLookupTagBasedType? = null
 ): ConeLookupTagBasedType {
     return when (val classifier = classifier) {
@@ -219,7 +227,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                         val newMode = if (mode.insideAnnotation) FirJavaTypeConversionMode.DEFAULT else mode
                         val argument = typeArguments[index]
                         val variance = typeParameterSymbols?.getOrNull(index)?.fir?.variance ?: Variance.INVARIANT
-                        argument.toConeTypeProjection(session, javaTypeParameterStack, variance, newMode)
+                        argument.toConeTypeProjection(session, javaTypeParameterStack, variance, newMode, source)
                     }
                 }
 

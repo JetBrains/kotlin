@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.java.scopes
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
 import org.jetbrains.kotlin.fir.declarations.*
@@ -233,7 +235,9 @@ class JavaClassUseSiteMemberScope(
             if (candidate.valueParameters.size != receiverCount) return@factory null
             if (!checkValueParameters(candidate)) return@factory null
 
-            val candidateReturnType = candidate.returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
+            val candidateReturnType = candidate.returnTypeRef.toConeKotlinTypeProbablyFlexible(
+                session, typeParameterStack, source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+            )
 
             candidateSymbol.takeIf {
                 when {
@@ -259,10 +263,13 @@ class JavaClassUseSiteMemberScope(
             if (candidate.valueParameters.size != receiverCount + 1) return@factory null
             if (!checkValueParameters(candidate)) return@factory null
 
-            if (!candidate.returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack).isUnit) return@factory null
+            val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+            if (!candidate.returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack, fakeSource).isUnit) {
+                return@factory null
+            }
 
             val parameterType =
-                candidate.valueParameters.last().returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
+                candidate.valueParameters.last().returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack, fakeSource)
 
             candidateSymbol.takeIf {
                 candidate.isAcceptableAsAccessorOverride() && AbstractTypeChecker.equalTypes(
@@ -274,9 +281,12 @@ class JavaClassUseSiteMemberScope(
 
     private fun FirPropertySymbol.checkValueParameters(candidate: FirSimpleFunction): Boolean {
         var parameterIndex = 0
+        val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+
         for (contextReceiver in this.resolvedContextReceivers) {
             if (contextReceiver.typeRef.coneType.computeJvmDescriptorRepresentation() !=
-                candidate.valueParameters[parameterIndex++].returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
+                candidate.valueParameters[parameterIndex++].returnTypeRef
+                    .toConeKotlinTypeProbablyFlexible(session, typeParameterStack, fakeSource)
                     .computeJvmDescriptorRepresentation()
             ) {
                 return false
@@ -285,7 +295,8 @@ class JavaClassUseSiteMemberScope(
 
         return receiverParameter == null ||
                 receiverParameter!!.typeRef.coneType.computeJvmDescriptorRepresentation() ==
-                candidate.valueParameters[parameterIndex].returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
+                candidate.valueParameters[parameterIndex].returnTypeRef
+                    .toConeKotlinTypeProbablyFlexible(session, typeParameterStack, fakeSource)
                     .computeJvmDescriptorRepresentation()
     }
 
@@ -395,7 +406,7 @@ class JavaClassUseSiteMemberScope(
         val owner = ownerClassLookupTag.toSymbol(session)?.fir as? FirJavaClass ?: return this
         val continuationParameterType = continuationParameter
             .returnTypeRef
-            .resolveIfJavaType(session, owner.javaTypeParameterStack)
+            .resolveIfJavaType(session, owner.javaTypeParameterStack, source?.fakeElement(KtFakeSourceElementKind.Enhancement))
             .coneTypeSafe<ConeKotlinType>()
             ?.lowerBoundIfFlexible() as? ConeClassLikeType
             ?: return this
@@ -893,7 +904,9 @@ class JavaClassUseSiteMemberScope(
     }
 
     private fun FirTypeRef.probablyJavaTypeRefToConeType(): ConeKotlinType {
-        return toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
+        return toConeKotlinTypeProbablyFlexible(
+                session, typeParameterStack, source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+            )
     }
 
     // It's either overrides Collection.contains(Object) or Collection.containsAll(Collection<?>) or similar methods
@@ -905,7 +918,9 @@ class JavaClassUseSiteMemberScope(
         if (!this.isJavaOrEnhancement) return false
 
         val valueParameter = fir.valueParameters.first()
-        val parameterType = valueParameter.returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
+        val parameterType = valueParameter.returnTypeRef.toConeKotlinTypeProbablyFlexible(
+            session, typeParameterStack, valueParameter.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+        )
         val upperBound = parameterType.upperBoundIfFlexible()
         if (upperBound !is ConeClassLikeType) return false
 
@@ -952,7 +967,8 @@ class JavaClassUseSiteMemberScope(
         return computeJvmDescriptor(customName, includeReturnType) {
             it.toConeKotlinTypeProbablyFlexible(
                 session,
-                typeParameterStack
+                typeParameterStack,
+                source?.fakeElement(KtFakeSourceElementKind.Enhancement),
             )
         }
     }

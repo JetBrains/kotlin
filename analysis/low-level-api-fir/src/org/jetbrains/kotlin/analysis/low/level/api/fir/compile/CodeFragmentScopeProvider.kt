@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
@@ -61,7 +60,7 @@ class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionCom
             type = javaType
         }
 
-        javaTypeRef.resolveIfJavaType(session, JavaTypeParameterStack.EMPTY)
+        javaTypeRef.resolveIfJavaType(session, JavaTypeParameterStack.EMPTY, source = null)
     }
 
     fun getExtraScopes(codeFragment: KtCodeFragment): List<FirLocalScope> {

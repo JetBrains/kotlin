@@ -248,6 +248,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // with a fake source which refers to containing class
     object ImplicitJavaAnnotationConstructor : KtFakeSourceElementKind()
 
+    // for FIR elements from Java enhancement
+    object Enhancement : KtFakeSourceElementKind()
+
     // for java annotations constructor implicit parameters are generated
     // with a fake source which refers to declared annotation methods
     object ImplicitAnnotationAnnotationConstructorParameter : KtFakeSourceElementKind()
