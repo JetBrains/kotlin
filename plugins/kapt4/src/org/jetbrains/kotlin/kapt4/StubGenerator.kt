@@ -435,12 +435,14 @@ private class StubGenerator(
             }
 
             private fun Printer.printTypeSignature(type: PsiType, annotated: Boolean) {
-                printWithNoIndent(
-                    (if (type is PsiClassType && isErroneous(type)) type.rawType() else type)
-                        .getCanonicalText(annotated)
-                        .replace('$', '.')
-                        .replace(",", ", ")
-                )
+                var typeToPrint = if (type is PsiEllipsisType) type.componentType else type
+                if (typeToPrint is PsiClassType && isErroneous(typeToPrint)) typeToPrint = typeToPrint.rawType()
+                val repr = typeToPrint.getCanonicalText(annotated)
+                    .replace('$', '.') // Some mapped and marker types contain $ for some reason
+                    .replace("..", ".$") // Fixes KT-65399 and similar issues with synthetic classes with names starting with $
+                    .replace(",", ", ") // Type parameters
+                printWithNoIndent(repr)
+                if (type is PsiEllipsisType) printWithNoIndent("...")
             }
 
             private fun Printer.printTypeParams(typeParameters: Array<PsiTypeParameter>) {

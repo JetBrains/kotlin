@@ -512,6 +512,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("kt65399.kt")
+    public void testKt65399() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt65399.kt");
+    }
+
+    @Test
     @TestMetadata("kt65453.kt")
     public void testKt65453() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt65453.kt");
