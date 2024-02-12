@@ -12,6 +12,12 @@ interface HeaderGenerator {
 
     data class Configuration(
         val frameworkName: String = "",
+
+        /**
+         * Base declaration stubs do not change and have dedicated tests.
+         * We do not generate them by default to keep test data easier to read.
+         */
+        val generateBaseDeclarationStubs: Boolean = false,
     )
 
     fun generateHeaders(root: File, configuration: Configuration = Configuration()): ObjCHeader

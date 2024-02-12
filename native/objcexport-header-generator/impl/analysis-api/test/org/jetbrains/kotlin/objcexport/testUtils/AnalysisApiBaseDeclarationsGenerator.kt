@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.objcexport.testUtils
 
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 import org.jetbrains.kotlin.backend.konan.tests.ObjCExportBaseDeclarationsTest
+import org.jetbrains.kotlin.objcexport.KtObjCExportConfiguration
+import org.jetbrains.kotlin.objcexport.KtObjCExportSession
+import org.jetbrains.kotlin.objcexport.objCBaseDeclarations
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
@@ -23,6 +26,8 @@ class AnalysisApiBaseDeclarationsGeneratorExtension : ParameterResolver {
 
 object AnalysisApiBaseDeclarationsGenerator : ObjCExportBaseDeclarationsTest.BaseDeclarationsGenerator {
     override fun invoke(topLevelPrefix: String): List<ObjCTopLevel> {
-        TODO("Analysis Api based 'base declaration generation' in not yet implemented")
+        return KtObjCExportSession(KtObjCExportConfiguration(topLevelPrefix)) {
+            objCBaseDeclarations()
+        }
     }
 }

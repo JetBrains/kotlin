@@ -127,6 +127,10 @@ fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
         classForwardDeclarations.add(errorForwardClass)
     }
 
+    if (configuration.generateBaseDeclarationStubs) {
+        stubs.addAll(0, objCBaseDeclarations())
+    }
+
     return ObjCHeader(
         stubs = stubs,
         classForwardDeclarations = classForwardDeclarations,
