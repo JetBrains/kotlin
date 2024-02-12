@@ -578,7 +578,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     private boolean isCompanionObjectAllowed() {
-        return !(getKind().isSingleton() || isInner() || DescriptorUtils.isLocal(this));
+        return !(getKind().isSingleton()/* || isInner() || DescriptorUtils.isLocal(this)*/);
     }
 
     @NotNull
