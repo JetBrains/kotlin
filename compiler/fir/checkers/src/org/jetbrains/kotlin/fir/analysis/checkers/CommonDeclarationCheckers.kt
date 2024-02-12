@@ -10,10 +10,6 @@ import org.jetbrains.kotlin.fir.analysis.cfa.FirCallsEffectAnalyzer
 import org.jetbrains.kotlin.fir.analysis.cfa.FirPropertyInitializationAnalyzer
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnonymousFunctionParametersChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirInlinedLambdaNonSourceAnnotationsChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependencySupertypeChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirSuspendAnonymousFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.*
 
 object CommonDeclarationCheckers : DeclarationCheckers() {
@@ -36,7 +32,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirOptInMarkedDeclarationChecker,
             FirExpectConsistencyChecker,
             FirOptionalExpectationDeclarationChecker,
-            FirMissingDependencySupertypeChecker.ForDeclarations,
+            FirMissingDependencySupertypeInDeclarationsChecker,
             FirContextReceiversDeclarationChecker,
         )
 
