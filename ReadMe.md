@@ -143,11 +143,16 @@ sed -i -e '/<components>/,/<\/components>/d' gradle/verification-metadata.xml
 ./gradlew -i --write-verification-metadata sha256,md5 -Pkotlin.native.enabled=true resolveDependencies
 ```
 
-*`resolveDependencies` task resolves dependencies for all platforms including dependencies downloaded by plugins*
+*`resolveDependencies` task resolves dependencies for all platforms including dependencies downloaded by plugins.*
 
-- If you’re adding a dependency with OS mentioning in an artifact name (`darwin`, `mac`, `osx`, `linux`, `windows`), remember to add them to 
+Keep in mind:
+
+- If you’re adding a dependency with OS mentioned in an artifact name (`darwin`, `mac`, `osx`, `linux`, `windows`), remember to add them to 
   `implicitDependencies` configuration or update `resolveDependencies` task if needed. `resolveDependencies` should resolve all dependencies
   including dependencies for different platforms.
+- If you have a `local.properties` file in your Kotlin project folder, make sure that it doesn't contain `kotlin.native.enabled=false`.
+  Otherwise, native-only dependencies may not be added to the verification metadata. This is because `local.properties` has higher 
+  precedence than the `-Pkotlin.native.enabled=true` specified in the Gradle command.
 
 ## Using -dev and -SNAPSHOT versions
 
