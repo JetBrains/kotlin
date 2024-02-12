@@ -11,7 +11,6 @@ import org.intellij.lang.annotations.RegExp
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
-import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.build
@@ -117,57 +116,16 @@ fun interface WithSourceSetCommonizerDependencies {
     fun getCommonizerDependencies(sourceSetName: String): SourceSetCommonizerDependencies
 }
 
-fun BaseGradleIT.reportSourceSetCommonizerDependencies(
-    project: BaseGradleIT.Project,
-    subproject: String? = null,
-    options: BaseGradleIT.BuildOptions = defaultBuildOptions(),
-    test: WithSourceSetCommonizerDependencies.(compiledProject: BaseGradleIT.CompiledProject) -> Unit
-) = with(project) {
-
-    if (!projectDir.exists()) {
-        setupWorkingDir()
-    }
-
-    gradleBuildScript(subproject).apply {
-        appendText("\n\n")
-        appendText(taskSourceCode)
-        appendText("\n\n")
-    }
-
-    val taskName = buildString {
-        if (subproject != null) append(":$subproject")
-        append(":reportCommonizerSourceSetDependencies")
-    }
-
-    build(taskName, options = options) {
-        assertSuccessful()
-
-        val dependencyReports = output.lineSequence().filter { line -> line.contains("SourceSetCommonizerDependencyReport") }.toList()
-
-        val withSourceSetCommonizerDependencies = WithSourceSetCommonizerDependencies { sourceSetName ->
-            val reportMarker = "Report[$sourceSetName]"
-
-            val reportForSourceSet = dependencyReports.firstOrNull { line -> line.contains(reportMarker) }
-                ?: fail("Missing dependency report for $sourceSetName")
-
-            val files = reportForSourceSet.split(reportMarker, limit = 2).last().split("|#+#|")
-                .map(String::trim).filter(String::isNotEmpty).map(::File)
-
-            val dependencies = files.mapNotNull { file -> createSourceSetCommonizerDependencyOrNull(sourceSetName, file) }.toSet()
-            SourceSetCommonizerDependencies(sourceSetName, dependencies)
-        }
-
-        withSourceSetCommonizerDependencies.test(this)
-    }
-}
-
 fun TestProject.reportSourceSetCommonizerDependencies(
     subproject: String? = null,
     options: BuildOptions = this.buildOptions,
     test: WithSourceSetCommonizerDependencies.(compiledProject: BuildResult) -> Unit,
 ) {
-
-    buildGradleKts.appendText("\n\n$taskSourceCode\n\n")
+    if (subproject != null) {
+        subProject(subproject).buildGradleKts.appendText(taskSourceCode)
+    } else {
+        buildGradleKts.appendText(taskSourceCode)
+    }
 
     val taskName = buildString {
         if (subproject != null) append(":$subproject")
@@ -213,6 +171,7 @@ private val File.parentsClosure: Set<File> get() = this.linearClosure { it.paren
 private const val dollar = "\$"
 
 private val taskSourceCode = """
+
 tasks.register("reportCommonizerSourceSetDependencies") {
     kotlin.sourceSets.withType(org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet::class).all {
         inputs.files(configurations.getByName(intransitiveMetadataConfigurationName))
@@ -229,4 +188,5 @@ tasks.register("reportCommonizerSourceSetDependencies") {
         }
     }
 }
+
 """.trimIndent()

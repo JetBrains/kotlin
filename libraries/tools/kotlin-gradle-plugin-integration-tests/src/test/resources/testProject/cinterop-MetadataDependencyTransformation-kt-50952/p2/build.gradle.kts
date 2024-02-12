@@ -1,12 +1,6 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 
-repositories {
-    maven {
-        url = rootProject.buildDir.resolve("repo").toURI()
-    }
-}
-
 plugins {
     kotlin("multiplatform")
 }

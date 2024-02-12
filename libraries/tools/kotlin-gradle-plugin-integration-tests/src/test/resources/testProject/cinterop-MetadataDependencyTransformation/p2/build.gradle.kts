@@ -9,12 +9,6 @@ class SourceSetHierarchyBuilder(private val node: KotlinSourceSet) {
     operator fun KotlinSourceSet.unaryMinus() = this.dependsOn(node)
 }
 
-repositories {
-    maven {
-        url = rootProject.buildDir.resolve("repo").toURI()
-    }
-}
-
 plugins {
     kotlin("multiplatform")
 }
