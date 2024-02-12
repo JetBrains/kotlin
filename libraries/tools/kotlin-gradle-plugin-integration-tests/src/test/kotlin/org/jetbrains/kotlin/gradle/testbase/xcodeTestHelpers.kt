@@ -12,12 +12,19 @@ import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.test.assertEquals
 
+internal enum class XcodeBuildMode {
+    NORMAL,
+    TEST
+}
 
-fun TestProject.buildXcodeProject(
+internal fun TestProject.buildXcodeProject(
     xcodeproj: Path,
     scheme: String = "iosApp",
     configuration: String = "Debug",
-    destination: String = "generic/platform=iOS Simulator"
+    destination: String = "generic/platform=iOS Simulator",
+    sdk: String = "iphonesimulator",
+    buildMode: XcodeBuildMode = XcodeBuildMode.NORMAL,
+    extraArguments: Map<String, Any> = emptyMap(),
 ) {
     prepareForXcodebuild()
 
@@ -25,11 +32,14 @@ fun TestProject.buildXcodeProject(
         xcodeproj = xcodeproj,
         scheme = scheme,
         configuration = configuration,
+        sdk = sdk,
         destination = destination,
+        buildMode = buildMode,
+        extraArguments = extraArguments
     )
 }
 
-fun TestProject.xcodebuild(
+internal fun TestProject.xcodebuild(
     workingDir: Path = projectPath,
     xcodeproj: Path? = null,
     workspace: Path? = null,
@@ -38,6 +48,8 @@ fun TestProject.xcodebuild(
     sdk: String? = null,
     arch: String? = null,
     destination: String? = null,
+    buildMode: XcodeBuildMode = XcodeBuildMode.NORMAL,
+    extraArguments: Map<String, Any> = emptyMap(),
     derivedDataPath: Path? = projectPath.resolve("xcodeDerivedData"),
 ) {
     xcodebuild(
@@ -46,6 +58,12 @@ fun TestProject.xcodebuild(
                 if (value != null) {
                     add(this)
                     add(value.toString())
+                }
+            }
+
+            infix fun String.eq(value: Any?) {
+                if (value != null) {
+                    add("${this}=$value")
                 }
             }
 
@@ -58,12 +76,20 @@ fun TestProject.xcodebuild(
             "-arch" set arch
             "-destination" set destination
             "-derivedDataPath" set derivedDataPath
+
+            extraArguments.forEach {
+                it.key eq it.value
+            }
+
+            if (buildMode == XcodeBuildMode.TEST) {
+                add("test")
+            }
         },
         workingDir,
     )
 }
 
-fun TestProject.prepareForXcodebuild() {
+internal fun TestProject.prepareForXcodebuild() {
     overrideMavenLocalIfNeeded()
 
     gradleProperties
