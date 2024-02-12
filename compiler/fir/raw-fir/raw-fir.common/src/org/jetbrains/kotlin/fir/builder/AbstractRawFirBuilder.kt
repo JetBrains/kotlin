@@ -1214,6 +1214,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
             val propertyReturnTypeRef =
                 createParameterTypeRefWithSourceKind(firProperty, KtFakeSourceElementKind.DataClassGeneratedMembers)
             valueParameters += buildValueParameter {
+                resolvePhase = this@createDataClassCopyFunction.resolvePhase
                 source = parameterSource
                 containingFunctionSymbol = this@buildSimpleFunction.symbol
                 moduleData = this@createDataClassCopyFunction.moduleData
