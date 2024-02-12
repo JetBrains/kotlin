@@ -2348,6 +2348,16 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     }
 
     @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides")
+    @TestDataPath("$PROJECT_ROOT")
+    public class FakeOverrides {
+        @Test
+        public void testAllFilesPresentInFakeOverrides() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/ir/irText/firProblems")
     @TestDataPath("$PROJECT_ROOT")
     public class FirProblems {
