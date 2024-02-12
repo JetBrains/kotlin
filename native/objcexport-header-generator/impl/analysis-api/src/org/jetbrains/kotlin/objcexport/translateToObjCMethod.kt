@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSelectors
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFunctionMethodBridge
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.isArrayConstructor
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
 import org.jetbrains.kotlin.psi.KtFile
 
 internal val KtCallableSymbol.isConstructor: Boolean
@@ -25,6 +23,7 @@ fun KtFunctionSymbol.translateToObjCMethod(
 ): ObjCMethod? {
     if (!isVisibleInObjC()) return null
     if (anyMethodSelectors.containsKey(this.name)) return null //temp, find replacement for org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.isReal
+    if (isClone) return null
 
     return buildObjCMethod()
 }
@@ -78,7 +77,7 @@ internal fun KtFunctionLikeSymbol.buildObjCMethod(
     return ObjCMethod(
         comment = comment,
         origin = getObjCExportStubOrigin(),
-        isInstanceMethod = bridge.isInstance || isConstructor,
+        isInstanceMethod = bridge.isInstance,
         returnType = returnType,
         selectors = selectors,
         parameters = parameters,
@@ -280,7 +279,7 @@ private fun String.mangleIfSpecialFamily(prefix: String): String {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.startsWithWords]
  */
 private fun String.startsWithWords(words: String) = this.startsWith(words) &&
-    (this.length == words.length || !this[words.length].isLowerCase())
+        (this.length == words.length || !this[words.length].isLowerCase())
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.MethodBrideExtensionsKt.valueParametersAssociated]
@@ -322,7 +321,7 @@ fun KtFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): 
             if (!returnBridge.successMayBeZero) {
                 check(
                     successReturnType is ObjCNonNullReferenceType
-                        || (successReturnType is ObjCPointerType && !successReturnType.nullable)
+                            || (successReturnType is ObjCPointerType && !successReturnType.nullable)
                 ) {
                     "Unexpected return type: $successReturnType in $this"
                 }

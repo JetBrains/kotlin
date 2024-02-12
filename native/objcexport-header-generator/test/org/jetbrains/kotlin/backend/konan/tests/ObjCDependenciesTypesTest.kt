@@ -26,8 +26,6 @@ class ObjCDependenciesTypesTest(
 ) {
 
     /**
-     * - Wrong translation of constructors KT-65365
-     * - Bad parsing of versions (SinceKotlin Annotation)
      * - Missing implementation of mangling
      */
     @Test
@@ -41,14 +39,27 @@ class ObjCDependenciesTypesTest(
         doTest(dependenciesDir.resolve("iterator"))
     }
 
+    @Test
+    fun `test - array`() {
+        doTest(dependenciesDir.resolve("array"))
+    }
+
     /**
-     * - Wrong translation of constructors KT-65365
-     * - Exposing unwanted 'clone' method KT-65629
+     * Fails because of KT-65709
      */
     @Test
     @TodoAnalysisApi
-    fun `test - array`() {
-        doTest(dependenciesDir.resolve("array"))
+    fun `test - arrayList`() {
+        doTest(dependenciesDir.resolve("arrayList"))
+    }
+
+    /**
+     * Int* type conversion issue: KT-65687
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - implementIterator`() {
+        doTest(dependenciesDir.resolve("implementIterator"))
     }
 
     private fun doTest(root: File) {

@@ -102,6 +102,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    fun `test - classExtendsAbstractClass`() {
+        doTest(headersTestDataDir.resolve("classExtendsAbstractClass"))
+    }
+
+    @Test
     @TodoAnalysisApi
     fun `test - interfaceImplementingInterface`() {
         doTest(headersTestDataDir.resolve("interfaceImplementingInterface"))
@@ -256,6 +261,20 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @TodoAnalysisApi
     fun `test - objectWithGenericSuperclass`() {
         doTest(headersTestDataDir.resolve("objectWithGenericSuperclass"))
+    }
+
+    @Test
+    fun `test - since version annotation`() {
+        doTest(headersTestDataDir.resolve("sinceVersionAnnotation"))
+    }
+
+    /**
+     * - requires mangling
+     */
+    @TodoAnalysisApi
+    @Test
+    fun `test - constructors`() {
+        doTest(headersTestDataDir.resolve("constructors"))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {

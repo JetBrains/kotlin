@@ -61,6 +61,6 @@ fun KtScope.getPropertyOrFail(name: String): KtPropertySymbol {
 }
 
 context(KtAnalysisSession)
-fun KtClassOrObjectSymbol.getFunctionOrFail(name: String) : KtFunctionSymbol {
+fun KtClassOrObjectSymbol.getFunctionOrFail(name: String): KtFunctionSymbol {
     return this.getMemberScope().getFunctionOrFail(name)
 }

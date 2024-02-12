@@ -51,6 +51,7 @@ fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
                         KtClassKind.INTERFACE -> symbol.translateToObjCProtocol()
                         KtClassKind.CLASS -> symbol.translateToObjCClass()
                         KtClassKind.OBJECT -> symbol.translateToObjCObject()
+                        KtClassKind.ENUM_CLASS -> symbol.translateToObjCClass()
                         else -> return result
                     } ?: return result
 

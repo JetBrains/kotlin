@@ -8,11 +8,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.hasExportForCompilerAnnotation
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
-    require(classKind == KtClassKind.CLASS)
+    require(classKind == KtClassKind.CLASS || classKind == KtClassKind.ENUM_CLASS)
     if (!isVisibleInObjC()) return null
 
     val enumKind = this.classKind == KtClassKind.ENUM_CLASS
@@ -26,8 +27,9 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
 
     val superClass = translateSuperClass()
     val superProtocols: List<String> = superProtocols()
+    val constructors = getMemberScope().getConstructors().filter { !it.hasExportForCompilerAnnotation }
 
-    val members: List<ObjCExportStub> = getMemberScope().getCallableSymbols().plus(getMemberScope().getConstructors())
+    val members: List<ObjCExportStub> = getMemberScope().getCallableSymbols().plus(constructors)
         .sortedWith(StableCallableOrder)
         .flatMap { it.translateToObjCExportStubs() }
         .toList()

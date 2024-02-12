@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -97,10 +95,14 @@ private fun renderAnnotation(clazz: ClassId, arguments: List<KtNamedAnnotationVa
         append(clazz.asSingleFqName())
         if (arguments.isNotEmpty()) {
             append('(')
-            arguments.joinTo(this)
+            arguments.joinTo(this) { arg -> arg.render() }
             append(')')
         }
     }
+}
+
+private fun KtNamedAnnotationValue.render(): String {
+    return "$name=${expression.renderAsSourceCode()}"
 }
 
 /**

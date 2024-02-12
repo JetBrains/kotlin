@@ -47,7 +47,7 @@ context(KtAnalysisSession)
 private val KtCallableSymbol.receiverType: MethodBridgeReceiver
     get() = if (isArrayConstructor) {
         MethodBridgeReceiver.Factory
-    } else if (isTopLevel) {
+    } else if (!isConstructor && isTopLevel) {
         MethodBridgeReceiver.Static
     } else {
         MethodBridgeReceiver.Instance
