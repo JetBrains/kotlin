@@ -38,6 +38,12 @@ abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTypeParameter(this, data)
 
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrTypeParameter =
-        accept(transformer, data) as IrTypeParameter
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrTypeParameter {
+        val new = accept(transformer, data)
+        if (new === this)
+             return this
+        else
+             return new as IrTypeParameter
+    }
+
 }

@@ -30,6 +30,11 @@ abstract class IrFunctionExpression : IrExpression() {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        function = function.transform(transformer, data) as IrSimpleFunction
+        val function = this.function
+        function.transform(transformer, data).let { new ->
+            if (new !== function) {
+                this.function = new as IrSimpleFunction
+            }
+        }
     }
 }

@@ -18,6 +18,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.body]
  */
 abstract class IrBody : IrElementBase(), IrElement {
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBody =
-        accept(transformer, data) as IrBody
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBody {
+        val new = accept(transformer, data)
+        if (new === this)
+             return this
+        else
+             return new as IrBody
+    }
+
 }

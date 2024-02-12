@@ -46,8 +46,23 @@ abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWith
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        delegate = delegate.transform(transformer, data) as IrVariable
-        getter = getter.transform(transformer, data) as IrSimpleFunction
-        setter = setter?.transform(transformer, data) as IrSimpleFunction?
+        val delegate = this.delegate
+        delegate.transform(transformer, data).let { new ->
+            if (new !== delegate) {
+                this.delegate = new as IrVariable
+            }
+        }
+        val getter = this.getter
+        getter.transform(transformer, data).let { new ->
+            if (new !== getter) {
+                this.getter = new as IrSimpleFunction
+            }
+        }
+        val setter = this.setter
+        setter?.transform(transformer, data)?.let { new ->
+            if (new !== setter) {
+                this.setter = new as IrSimpleFunction?
+            }
+        }
     }
 }

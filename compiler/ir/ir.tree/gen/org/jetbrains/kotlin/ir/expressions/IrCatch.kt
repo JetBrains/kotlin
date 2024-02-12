@@ -27,8 +27,14 @@ abstract class IrCatch : IrElementBase(), IrElement {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitCatch(this, data)
 
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrCatch =
-        accept(transformer, data) as IrCatch
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrCatch {
+        val new = accept(transformer, data)
+        if (new === this)
+             return this
+        else
+             return new as IrCatch
+    }
+
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         catchParameter.accept(visitor, data)
@@ -36,7 +42,17 @@ abstract class IrCatch : IrElementBase(), IrElement {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        catchParameter = catchParameter.transform(transformer, data) as IrVariable
-        result = result.transform(transformer, data)
+        val catchParameter = this.catchParameter
+        catchParameter.transform(transformer, data).let { new ->
+            if (new !== catchParameter) {
+                this.catchParameter = new as IrVariable
+            }
+        }
+        val result = this.result
+        result.transform(transformer, data).let { new ->
+            if (new !== result) {
+                this.result = new
+            }
+        }
     }
 }

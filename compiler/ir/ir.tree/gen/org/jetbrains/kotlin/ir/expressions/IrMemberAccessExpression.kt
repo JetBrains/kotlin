@@ -65,8 +65,18 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        dispatchReceiver = dispatchReceiver?.transform(transformer, data)
-        extensionReceiver = extensionReceiver?.transform(transformer, data)
+        val dispatchReceiver = this.dispatchReceiver
+        dispatchReceiver?.transform(transformer, data)?.let { new ->
+            if (new !== dispatchReceiver) {
+                this.dispatchReceiver = new
+            }
+        }
+        val extensionReceiver = this.extensionReceiver
+        extensionReceiver?.transform(transformer, data)?.let { new ->
+            if (new !== extensionReceiver) {
+                this.extensionReceiver = new
+            }
+        }
         valueArguments.transformInPlace(transformer, data)
     }
 }

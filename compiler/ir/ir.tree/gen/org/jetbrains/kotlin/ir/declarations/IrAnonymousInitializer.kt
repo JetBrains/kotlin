@@ -38,6 +38,11 @@ abstract class IrAnonymousInitializer : IrDeclarationBase() {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        body = body.transform(transformer, data) as IrBlockBody
+        val body = this.body
+        body.transform(transformer, data).let { new ->
+            if (new !== body) {
+                this.body = new as IrBlockBody
+            }
+        }
     }
 }

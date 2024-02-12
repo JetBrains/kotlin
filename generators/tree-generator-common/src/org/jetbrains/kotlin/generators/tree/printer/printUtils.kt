@@ -301,9 +301,19 @@ fun SmartPrinter.printTransformMethod(
         override = !element.isRootElement,
     )
     if (implementation != null) {
-        println(" =")
-        withIndent {
-            print(implementation, " as ", returnType.render())
+        if (returnType is TypeParameterRef) {
+            println(" =")
+            withIndent {
+                print(implementation, " as ", returnType.render())
+            }
+        } else {
+            printBlock {
+                println("val new = $implementation")
+                println("if (new === this)")
+                println("     return this")
+                println("else")
+                println("     return new as ${returnType.render()}")
+            }
         }
     }
     println()

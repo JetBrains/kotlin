@@ -34,8 +34,18 @@ abstract class IrTry : IrExpression() {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        tryResult = tryResult.transform(transformer, data)
+        val tryResult = this.tryResult
+        tryResult.transform(transformer, data).let { new ->
+            if (new !== tryResult) {
+                this.tryResult = new
+            }
+        }
         catches.transformInPlace(transformer, data)
-        finallyExpression = finallyExpression?.transform(transformer, data)
+        val finallyExpression = this.finallyExpression
+        finallyExpression?.transform(transformer, data)?.let { new ->
+            if (new !== finallyExpression) {
+                this.finallyExpression = new
+            }
+        }
     }
 }

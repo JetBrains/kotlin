@@ -39,6 +39,11 @@ abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithName, IrDecla
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        typeParameters = typeParameters.transformIfNeeded(transformer, data)
+        val typeParameters = this.typeParameters
+        typeParameters.transformIfNeeded(transformer, data).let { new ->
+            if (new !== typeParameters) {
+                this.typeParameters = new
+            }
+        }
     }
 }

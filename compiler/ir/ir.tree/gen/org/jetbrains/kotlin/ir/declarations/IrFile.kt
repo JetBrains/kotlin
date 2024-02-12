@@ -29,8 +29,14 @@ abstract class IrFile : IrPackageFragment(), IrMetadataSourceOwner, IrMutableAnn
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFile(this, data)
 
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrFile =
-        accept(transformer, data) as IrFile
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrFile {
+        val new = accept(transformer, data)
+        if (new === this)
+             return this
+        else
+             return new as IrFile
+    }
+
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }

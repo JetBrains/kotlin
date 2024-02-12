@@ -26,7 +26,17 @@ abstract class IrDoWhileLoop : IrLoop() {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        body = body?.transform(transformer, data)
-        condition = condition.transform(transformer, data)
+        val body = this.body
+        body?.transform(transformer, data)?.let { new ->
+            if (new !== body) {
+                this.body = new
+            }
+        }
+        val condition = this.condition
+        condition.transform(transformer, data).let { new ->
+            if (new !== condition) {
+                this.condition = new
+            }
+        }
     }
 }

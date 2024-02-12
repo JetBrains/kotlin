@@ -26,6 +26,12 @@ abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement, IrA
 
     abstract var type: IrType
 
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpression =
-        accept(transformer, data) as IrExpression
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpression {
+        val new = accept(transformer, data)
+        if (new === this)
+             return this
+        else
+             return new as IrExpression
+    }
+
 }

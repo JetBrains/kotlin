@@ -64,10 +64,35 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         statements.transformInPlace(transformer, data)
-        thisReceiver = thisReceiver?.transform(transformer, data)
-        explicitCallParameters = explicitCallParameters.transformIfNeeded(transformer, data)
-        implicitReceiversParameters = implicitReceiversParameters.transformIfNeeded(transformer, data)
-        providedPropertiesParameters = providedPropertiesParameters.transformIfNeeded(transformer, data)
-        earlierScriptsParameter = earlierScriptsParameter?.transform(transformer, data)
+        val thisReceiver = this.thisReceiver
+        thisReceiver?.transform(transformer, data)?.let { new ->
+            if (new !== thisReceiver) {
+                this.thisReceiver = new
+            }
+        }
+        val explicitCallParameters = this.explicitCallParameters
+        explicitCallParameters.transformIfNeeded(transformer, data).let { new ->
+            if (new !== explicitCallParameters) {
+                this.explicitCallParameters = new
+            }
+        }
+        val implicitReceiversParameters = this.implicitReceiversParameters
+        implicitReceiversParameters.transformIfNeeded(transformer, data).let { new ->
+            if (new !== implicitReceiversParameters) {
+                this.implicitReceiversParameters = new
+            }
+        }
+        val providedPropertiesParameters = this.providedPropertiesParameters
+        providedPropertiesParameters.transformIfNeeded(transformer, data).let { new ->
+            if (new !== providedPropertiesParameters) {
+                this.providedPropertiesParameters = new
+            }
+        }
+        val earlierScriptsParameter = this.earlierScriptsParameter
+        earlierScriptsParameter?.transform(transformer, data)?.let { new ->
+            if (new !== earlierScriptsParameter) {
+                this.earlierScriptsParameter = new
+            }
+        }
     }
 }

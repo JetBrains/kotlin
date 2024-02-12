@@ -39,7 +39,17 @@ abstract class IrEnumEntry : IrDeclarationBase(), IrDeclarationWithName {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        initializerExpression = initializerExpression?.transform(transformer, data)
-        correspondingClass = correspondingClass?.transform(transformer, data) as IrClass?
+        val initializerExpression = this.initializerExpression
+        initializerExpression?.transform(transformer, data)?.let { new ->
+            if (new !== initializerExpression) {
+                this.initializerExpression = new
+            }
+        }
+        val correspondingClass = this.correspondingClass
+        correspondingClass?.transform(transformer, data)?.let { new ->
+            if (new !== correspondingClass) {
+                this.correspondingClass = new as IrClass?
+            }
+        }
     }
 }

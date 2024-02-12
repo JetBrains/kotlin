@@ -23,14 +23,25 @@ abstract class IrSpreadElement : IrElementBase(), IrVarargElement {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitSpreadElement(this, data)
 
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrSpreadElement =
-        accept(transformer, data) as IrSpreadElement
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrSpreadElement {
+        val new = accept(transformer, data)
+        if (new === this)
+             return this
+        else
+             return new as IrSpreadElement
+    }
+
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         expression.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        expression = expression.transform(transformer, data)
+        val expression = this.expression
+        expression.transform(transformer, data).let { new ->
+            if (new !== expression) {
+                this.expression = new
+            }
+        }
     }
 }

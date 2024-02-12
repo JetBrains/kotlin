@@ -30,7 +30,17 @@ abstract class IrSuspendableExpression : IrExpression() {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        suspensionPointId = suspensionPointId.transform(transformer, data)
-        result = result.transform(transformer, data)
+        val suspensionPointId = this.suspensionPointId
+        suspensionPointId.transform(transformer, data).let { new ->
+            if (new !== suspensionPointId) {
+                this.suspensionPointId = new
+            }
+        }
+        val result = this.result
+        result.transform(transformer, data).let { new ->
+            if (new !== result) {
+                this.result = new
+            }
+        }
     }
 }

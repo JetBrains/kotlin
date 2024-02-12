@@ -27,6 +27,11 @@ abstract class IrConstantPrimitive : IrConstantValue() {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        value = value.transform(transformer, data) as IrConst<*>
+        val value = this.value
+        value.transform(transformer, data).let { new ->
+            if (new !== value) {
+                this.value = new as IrConst<*>
+            }
+        }
     }
 }

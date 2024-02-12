@@ -42,6 +42,11 @@ abstract class IrVariable : IrDeclarationBase(), IrValueDeclaration {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        initializer = initializer?.transform(transformer, data)
+        val initializer = this.initializer
+        initializer?.transform(transformer, data)?.let { new ->
+            if (new !== initializer) {
+                this.initializer = new
+            }
+        }
     }
 }

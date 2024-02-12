@@ -31,7 +31,12 @@ abstract class IrErrorCallExpression : IrErrorExpression() {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        explicitReceiver = explicitReceiver?.transform(transformer, data)
+        val explicitReceiver = this.explicitReceiver
+        explicitReceiver?.transform(transformer, data)?.let { new ->
+            if (new !== explicitReceiver) {
+                this.explicitReceiver = new
+            }
+        }
         arguments.transformInPlace(transformer, data)
     }
 }

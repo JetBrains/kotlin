@@ -26,8 +26,14 @@ abstract class IrBranch : IrElementBase(), IrElement {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitBranch(this, data)
 
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBranch =
-        accept(transformer, data) as IrBranch
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBranch {
+        val new = accept(transformer, data)
+        if (new === this)
+             return this
+        else
+             return new as IrBranch
+    }
+
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         condition.accept(visitor, data)
@@ -35,7 +41,17 @@ abstract class IrBranch : IrElementBase(), IrElement {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        condition = condition.transform(transformer, data)
-        result = result.transform(transformer, data)
+        val condition = this.condition
+        condition.transform(transformer, data).let { new ->
+            if (new !== condition) {
+                this.condition = new
+            }
+        }
+        val result = this.result
+        result.transform(transformer, data).let { new ->
+            if (new !== result) {
+                this.result = new
+            }
+        }
     }
 }

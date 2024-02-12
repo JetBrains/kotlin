@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.SingleField
 import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.withIndent
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 private val transformIfNeeded = ArbitraryImportable("$BASE_PACKAGE.util", "transformIfNeeded")
@@ -100,28 +101,42 @@ internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<El
             if (!element.isRootElement) {
                 printBlock {
                     for (child in element.transformableChildren) {
-                        print(child.name)
-                        when (child) {
-                            is SingleField -> {
-                                print(" = ", child.name, child.call())
-                                print("transform(transformer, data)")
-                                val elementRef = child.typeRef as GenericElementRef<*>
-                                if (!elementRef.element.hasTransformMethod) {
-                                    print(" as ", elementRef.render())
-                                }
-                                println()
-                            }
-                            is ListField -> {
-                                if (child.isMutable) {
-                                    print(" = ", child.name, child.call())
+                        if (child is SingleField || child is org.jetbrains.kotlin.generators.tree.ListField && child.isMutable) {
+                            println("val ", child.name, " = ", "this.", child.name)
+                            print(child.name, child.call())
+
+                            when (child) {
+                                is ListField -> {
                                     addImport(transformIfNeeded)
-                                    println("transformIfNeeded(transformer, data)")
-                                } else {
-                                    addImport(transformInPlace)
-                                    print(child.call())
-                                    println("transformInPlace(transformer, data)")
+                                    print("transformIfNeeded(transformer, data)")
+                                }
+                                is SingleField -> {
+                                    print("transform(transformer, data)")
                                 }
                             }
+                            println(child.call(), "let { new ->")
+
+                            withIndent {
+                                print("if (new !== ${child.name})")
+                                printBlock {
+                                    print("this.", child.name, " = new")
+
+                                    if (child is SingleField) {
+                                        val elementRef = child.typeRef as GenericElementRef<*>
+                                        if (!elementRef.element.hasTransformMethod) {
+                                            print(" as ", elementRef.render())
+                                        }
+                                    }
+
+                                    println()
+                                }
+                            }
+                            println("}")
+                        } else if (child is ListField) {
+                            print(child.name)
+                            addImport(transformInPlace)
+                            print(child.call())
+                            println("transformInPlace(transformer, data)")
                         }
                     }
                 }

@@ -80,8 +80,18 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrD
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        typeParameters = typeParameters.transformIfNeeded(transformer, data)
+        val typeParameters = this.typeParameters
+        typeParameters.transformIfNeeded(transformer, data).let { new ->
+            if (new !== typeParameters) {
+                this.typeParameters = new
+            }
+        }
         declarations.transformInPlace(transformer, data)
-        thisReceiver = thisReceiver?.transform(transformer, data)
+        val thisReceiver = this.thisReceiver
+        thisReceiver?.transform(transformer, data)?.let { new ->
+            if (new !== thisReceiver) {
+                this.thisReceiver = new
+            }
+        }
     }
 }

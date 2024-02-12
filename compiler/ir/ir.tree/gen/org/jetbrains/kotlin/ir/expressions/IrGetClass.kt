@@ -27,6 +27,11 @@ abstract class IrGetClass : IrExpression() {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        argument = argument.transform(transformer, data)
+        val argument = this.argument
+        argument.transform(transformer, data).let { new ->
+            if (new !== argument) {
+                this.argument = new
+            }
+        }
     }
 }

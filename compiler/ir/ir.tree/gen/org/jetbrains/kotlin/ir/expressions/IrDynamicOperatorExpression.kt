@@ -33,7 +33,12 @@ abstract class IrDynamicOperatorExpression : IrDynamicExpression() {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        receiver = receiver.transform(transformer, data)
+        val receiver = this.receiver
+        receiver.transform(transformer, data).let { new ->
+            if (new !== receiver) {
+                this.receiver = new
+            }
+        }
         arguments.transformInPlace(transformer, data)
     }
 }

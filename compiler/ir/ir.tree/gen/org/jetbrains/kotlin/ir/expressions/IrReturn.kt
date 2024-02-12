@@ -30,6 +30,11 @@ abstract class IrReturn : IrExpression() {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        value = value.transform(transformer, data)
+        val value = this.value
+        value.transform(transformer, data).let { new ->
+            if (new !== value) {
+                this.value = new
+            }
+        }
     }
 }

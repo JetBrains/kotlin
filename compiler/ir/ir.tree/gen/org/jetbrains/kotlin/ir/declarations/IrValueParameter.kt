@@ -70,14 +70,25 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitValueParameter(this, data)
 
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrValueParameter =
-        accept(transformer, data) as IrValueParameter
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrValueParameter {
+        val new = accept(transformer, data)
+        if (new === this)
+             return this
+        else
+             return new as IrValueParameter
+    }
+
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         defaultValue?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        defaultValue = defaultValue?.transform(transformer, data)
+        val defaultValue = this.defaultValue
+        defaultValue?.transform(transformer, data)?.let { new ->
+            if (new !== defaultValue) {
+                this.defaultValue = new
+            }
+        }
     }
 }
