@@ -69,6 +69,9 @@ interface ObjCExportNamer {
 
         val reportNameCollisions: Boolean
             get() = false
+
+        val errorOnNameCollisions: Boolean
+            get() = false
     }
 
     val topLevelNamePrefix: String
@@ -309,6 +312,7 @@ class ObjCExportNamerImpl(
         disableSwiftMemberNameMangling: Boolean = false,
         ignoreInterfaceMethodCollisions: Boolean = false,
         reportNameCollisions: Boolean = false,
+        errorOnNameCollisions: Boolean = false,
     ) : this(
         object : ObjCExportNamer.Configuration {
             override val topLevelNamePrefix: String
@@ -328,6 +332,9 @@ class ObjCExportNamerImpl(
 
             override val reportNameCollisions: Boolean
                 get() = reportNameCollisions
+
+            override val errorOnNameCollisions: Boolean
+                get() = errorOnNameCollisions
         },
         builtIns,
         mapper,
@@ -863,11 +870,19 @@ class ObjCExportNamerImpl(
                     return it
                 }
 
-                if (configuration.reportNameCollisions && !reportedCollision) {
-                    if (element is DeclarationDescriptor) {
-                        problemCollector.reportWarning(element, "name is mangled when generating Objective-C header")
-                    } else {
-                        problemCollector.reportWarning("name \"$it\" is mangled when generating Objective-C header")
+                if (!reportedCollision) {
+                    if (configuration.errorOnNameCollisions) {
+                        if (element is DeclarationDescriptor) {
+                            problemCollector.reportError(element, "name is mangled when generating Objective-C header")
+                        } else {
+                            problemCollector.reportError("name \"$it\" is mangled when generating Objective-C header")
+                        }
+                    } else if (configuration.reportNameCollisions) {
+                        if (element is DeclarationDescriptor) {
+                            problemCollector.reportWarning(element, "name is mangled when generating Objective-C header")
+                        } else {
+                            problemCollector.reportWarning("name \"$it\" is mangled when generating Objective-C header")
+                        }
                     }
                     reportedCollision = true
                 }

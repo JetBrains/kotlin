@@ -37,6 +37,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val objcExportReportNameCollisions by booleanOption()
 
+    val objcExportErrorOnNameCollisions by booleanOption()
+
     val gc by option<GC>(shortcut = { it.shortcut })
 
     val gcSchedulerType by option<GCSchedulerType>(hideValue = { it.deprecatedWithReplacement != null })

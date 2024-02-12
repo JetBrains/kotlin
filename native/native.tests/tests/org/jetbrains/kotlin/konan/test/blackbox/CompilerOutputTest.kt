@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.test.assertIs
 
 abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     @Test
@@ -107,6 +108,32 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         val goldenData = rootDir.resolve("output.txt")
 
         KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput())
+    }
+
+    @Test
+    fun testObjCExportDiagnosticsErrors() {
+        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
+
+        val rootDir = File("native/native.tests/testData/compilerOutput/ObjCExportDiagnostics")
+        val settings = testRunSettings
+        val lib1 = compileLibrary(settings, rootDir.resolve("lib1.kt")).assertSuccess().resultingArtifact
+        val lib2 = compileLibrary(settings, rootDir.resolve("lib2.kt")).assertSuccess().resultingArtifact
+
+        val freeCompilerArgs = TestCompilerArgs(
+            "-Xinclude=${lib1.path}",
+            "-Xinclude=${lib2.path}",
+            "-Xbinary=objcExportErrorOnNameCollisions=true"
+        )
+        val expectedArtifact = TestCompilationArtifact.ObjCFramework(buildDir, "testObjCExportDiagnosticsErrors")
+
+        val compilationResult = ObjCFrameworkCompilation(
+            settings,
+            freeCompilerArgs,
+            sourceModules = emptyList(),
+            dependencies = emptyList(),
+            expectedArtifact
+        ).result
+        assertIs<TestCompilationResult.Failure>(compilationResult)
     }
 
     internal fun compileLibrary(
