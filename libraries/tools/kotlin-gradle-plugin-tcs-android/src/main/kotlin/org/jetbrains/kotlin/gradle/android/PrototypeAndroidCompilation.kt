@@ -17,6 +17,10 @@ class PrototypeAndroidCompilation(delegate: Delegate) : DecoratedExternalKotlinC
     override val kotlinOptions: KotlinCommonOptions
         get() = super.kotlinOptions as KotlinJvmOptions
 
+    @Deprecated(
+        "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
+                "    compilerOptions {}\n}"
+    )
     @Suppress("UNCHECKED_CAST")
     override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions>
         get() = super.compilerOptions as HasCompilerOptions<KotlinJvmCompilerOptions>

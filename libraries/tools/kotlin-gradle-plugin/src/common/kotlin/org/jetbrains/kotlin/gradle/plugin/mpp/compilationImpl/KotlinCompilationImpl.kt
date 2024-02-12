@@ -172,6 +172,10 @@ internal class KotlinCompilationImpl constructor(
     override val kotlinOptions: KotlinCommonOptions
         get() = params.kotlinOptions
 
+    @Deprecated(
+        "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
+                "    compilerOptions {}\n}"
+    )
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
     override val compilerOptions: DeprecatedHasCompilerOptions<*>
         get() = params.compilerOptions

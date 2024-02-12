@@ -35,6 +35,7 @@ internal object KotlinCompilationLanguageSettingsConfigurator : KotlinCompilatio
             return
         }
 
+        @Suppress("DEPRECATION")
         languageSettingsBuilder
             .compilationCompilerOptions
             .complete(compilation.compilerOptions.options)

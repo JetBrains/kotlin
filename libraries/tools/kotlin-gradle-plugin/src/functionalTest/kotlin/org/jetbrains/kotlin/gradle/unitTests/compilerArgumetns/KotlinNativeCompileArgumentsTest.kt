@@ -92,6 +92,7 @@ class KotlinNativeCompileArgumentsTest {
         val kotlin = project.multiplatformExtension
         val linuxX64Target = kotlin.linuxX64()
         linuxX64Target.compilations.all {
+            @Suppress("DEPRECATION")
             it.compilerOptions.options.apply {
                 optIn.add("my.OptIn")
                 optIn.add("my.other.OptIn")

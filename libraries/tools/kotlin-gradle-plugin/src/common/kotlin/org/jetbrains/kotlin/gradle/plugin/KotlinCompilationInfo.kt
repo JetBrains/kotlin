@@ -57,7 +57,7 @@ internal sealed class KotlinCompilationInfo {
         override val moduleName: String
             get() = origin.moduleNameForCompilation().get()
 
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
         override val compilerOptions: DeprecatedHasCompilerOptions<*>
             get() = origin.compilerOptions
 

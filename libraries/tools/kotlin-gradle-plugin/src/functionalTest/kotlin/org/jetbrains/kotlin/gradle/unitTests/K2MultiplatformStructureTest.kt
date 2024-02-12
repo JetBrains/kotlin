@@ -105,6 +105,7 @@ class K2MultiplatformStructureTest {
 
         /* Enable K2 if necessary */
         if (KotlinVersion.DEFAULT < KotlinVersion.KOTLIN_2_0) {
+            @Suppress("Deprecation")
             compilation.compilerOptions.options.languageVersion.set(KotlinVersion.KOTLIN_2_0)
         }
 

@@ -62,6 +62,7 @@ class KotlinJvmWithJavaTargetPreset(
         }
 
         target.compilations.configureEach {
+            @Suppress("DEPRECATION")
             it.compilerOptions.options.moduleName.convention(
                 it.moduleNameForCompilation()
             )

@@ -6,7 +6,6 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
@@ -27,16 +26,13 @@ open class KotlinJvmAndroidCompilation @Inject internal constructor(
 
     override val target: KotlinAndroidTarget = compilation.target as KotlinAndroidTarget
 
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
+                "    compilerOptions {}\n}"
+    )
     override val compilerOptions: DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> =
         compilation.compilerOptions.castCompilerOptionsType()
-
-    internal fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
-        compilerOptions.configure(configure)
-    }
-
-    internal fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
-        configure.execute(compilerOptions.options)
-    }
 
     internal val testedVariantArtifacts: Property<FileCollection> =
         compilation.project.objects.property(FileCollection::class.java)

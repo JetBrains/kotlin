@@ -14,6 +14,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescriptor.TargetFactory
 
 class FakeCompilation(delegate: Delegate) : DecoratedExternalKotlinCompilation(delegate) {
+    @Deprecated(
+        "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
+                "    compilerOptions {}\n}"
+    )
     @Suppress("UNCHECKED_CAST", "DEPRECATION")
     override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions>
         get() = super.compilerOptions as HasCompilerOptions<KotlinJvmCompilerOptions>

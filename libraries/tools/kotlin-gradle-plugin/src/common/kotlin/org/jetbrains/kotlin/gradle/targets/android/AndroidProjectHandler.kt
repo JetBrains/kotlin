@@ -188,7 +188,7 @@ internal class AndroidProjectHandler(
             task.destinationDirectory.set(project.layout.buildDirectory.dir("tmp/kotlin-classes/$variantDataName"))
             task.description = "Compiles the $variantDataName kotlin."
         }
-        val kotlinTask = tasksProvider.registerKotlinJVMTask(
+        @Suppress("DEPRECATION") val kotlinTask = tasksProvider.registerKotlinJVMTask(
             project,
             compilation.compileKotlinTaskName,
             compilation.compilerOptions.options,

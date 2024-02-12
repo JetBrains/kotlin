@@ -57,6 +57,7 @@ abstract class KotlinJsIrSubTarget(
     internal fun configure() {
         target.compilations.all {
             val npmProject = it.npmProject
+            @Suppress("DEPRECATION")
             it.compilerOptions.options.freeCompilerArgs.add("$PER_MODULE_OUTPUT_NAME=${npmProject.name}")
         }
 

@@ -34,7 +34,7 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
 
         configureTask { kaptGenerateStubsTask ->
             // Syncing compiler options from related KotlinJvmCompile task
-            val jvmCompilerOptions = compilation.compilerOptions.options as KotlinJvmCompilerOptions
+            @Suppress("DEPRECATION") val jvmCompilerOptions = compilation.compilerOptions.options as KotlinJvmCompilerOptions
             KotlinJvmCompilerOptionsHelper.syncOptionsAsConvention(
                 from = jvmCompilerOptions,
                 into = kaptGenerateStubsTask.compilerOptions

@@ -75,7 +75,7 @@ private fun Project.createLinkTask(binary: NativeBinary) {
     // workaround for too late compilation compilerOptions creation
     // which leads to not able run project.afterEvaluate because of wrong context
     // this afterEvaluate comes from NativeCompilerOptions
-    val compilationCompilerOptions = binary.compilation.compilerOptions
+    @Suppress("DEPRECATION") val compilationCompilerOptions = binary.compilation.compilerOptions
     val konanPropertiesBuildService = KonanPropertiesBuildService.registerIfAbsent(project)
     val xcodeVersionTask = XcodeVersionTask.locateOrRegister(project)
     val linkTask = registerTask<KotlinNativeLink>(

@@ -97,6 +97,7 @@ class KotlinCompileArgumentsTest {
         kotlin.jvm()
 
         val jvmMainCompilation = kotlin.jvm().compilations.getByName("main")
+        @Suppress("DEPRECATION")
         jvmMainCompilation.compilerOptions.options.languageVersion.set(KotlinVersion.KOTLIN_2_0)
 
         project.evaluate()
@@ -116,6 +117,7 @@ class KotlinCompileArgumentsTest {
         val kotlin = project.multiplatformExtension
         kotlin.jvm()
         val compilation = kotlin.jvm().compilations.main
+        @Suppress("DEPRECATION")
         compilation.compilerOptions.options.languageVersion.set(KotlinVersion.KOTLIN_2_0)
         val compileTask = compilation.compileTaskProvider.get() as KotlinCompile
 

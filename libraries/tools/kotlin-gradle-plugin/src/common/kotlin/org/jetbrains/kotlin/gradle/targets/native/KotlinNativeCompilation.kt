@@ -40,17 +40,13 @@ abstract class AbstractKotlinNativeCompilation internal constructor(
     override val compileTaskProvider: TaskProvider<KotlinNativeCompile>
         get() = compilation.compileTaskProvider as TaskProvider<KotlinNativeCompile>
 
-    @Suppress("UNCHECKED_CAST")
+    @Deprecated(
+        "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
+                "    compilerOptions {}\n}"
+    )
+    @Suppress("UNCHECKED_CAST", "DEPRECATION")
     override val compilerOptions: DeprecatedHasCompilerOptions<KotlinNativeCompilerOptions>
         get() = compilation.compilerOptions as DeprecatedHasCompilerOptions<KotlinNativeCompilerOptions>
-
-    internal fun compilerOptions(configure: KotlinNativeCompilerOptions.() -> Unit) {
-        compilerOptions.configure(configure)
-    }
-
-    internal fun compilerOptions(configure: Action<KotlinNativeCompilerOptions>) {
-        configure.execute(compilerOptions.options)
-    }
 
     internal val useGenericPluginArtifact: Boolean
         get() = project.nativeUseEmbeddableCompilerJar
@@ -63,6 +59,11 @@ open class KotlinNativeCompilation @Inject internal constructor(
     final override val target: KotlinNativeTarget
         get() = compilation.target as KotlinNativeTarget
 
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
+                "    compilerOptions {}\n}"
+    )
     override val compilerOptions: NativeCompilerOptions
         get() = super.compilerOptions as NativeCompilerOptions
 
