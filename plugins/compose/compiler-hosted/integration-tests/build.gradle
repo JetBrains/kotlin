@@ -68,8 +68,8 @@ androidXMultiplatform {
             dependencies {
                 implementation(libs.kotlinMetadataJvm)
                 implementation(libs.robolectric)
-                implementation("androidx.activity:activity-ktx:1.9.0-alpha01")
-                implementation("androidx.core:core-ktx:1.13.0-alpha03")
+                implementation("androidx.activity:activity-ktx:1.9.0-alpha03")
+                implementation("androidx.core:core-ktx:1.13.0-alpha05")
                 runtimeOnly(
                         project(":compose:compiler:compiler-hosted:integration-tests:kotlin-compiler-repackaged")
                 )
