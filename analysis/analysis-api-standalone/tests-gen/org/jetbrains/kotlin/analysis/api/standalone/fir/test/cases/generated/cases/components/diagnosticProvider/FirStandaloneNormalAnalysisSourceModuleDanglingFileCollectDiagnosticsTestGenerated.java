@@ -53,6 +53,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
     }
 
     @Test
+    @TestMetadata("danglingAnnotationInMiddle.kt")
+    public void testDanglingAnnotationInMiddle() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/danglingAnnotationInMiddle.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationInMiddleWithComment.kt")
+    public void testDanglingAnnotationInMiddleWithComment() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/danglingAnnotationInMiddleWithComment.kt");
+    }
+
+    @Test
     @TestMetadata("declarationErrors.kt")
     public void testDeclarationErrors() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/declarationErrors.kt");

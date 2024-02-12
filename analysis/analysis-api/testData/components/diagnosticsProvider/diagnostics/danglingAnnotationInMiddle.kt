@@ -1,0 +1,2 @@
+@MyAnn
+fin class Foo

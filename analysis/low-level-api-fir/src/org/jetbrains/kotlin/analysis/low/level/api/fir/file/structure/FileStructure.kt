@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -73,7 +74,7 @@ internal class FileStructure private constructor(
             container = declaration
         } else {
             val modifierList = PsiTreeUtil.getParentOfType(element, KtModifierList::class.java, false)
-            container = if (modifierList != null && modifierList.nextSibling is PsiErrorElement) {
+            container = if (modifierList != null && modifierList.getNextSiblingIgnoringWhitespaceAndComments() is PsiErrorElement) {
                 modifierList
             } else {
                 element.containingKtFile
@@ -207,7 +208,9 @@ internal class FileStructure private constructor(
             RootStructureElement(firFile, moduleComponents)
         }
         container is KtDeclaration -> createDeclarationStructure(container)
-        container is KtModifierList && container.nextSibling is PsiErrorElement -> createDanglingModifierListStructure(container)
+        container is KtModifierList && container.getNextSiblingIgnoringWhitespaceAndComments() is PsiErrorElement -> {
+            createDanglingModifierListStructure(container)
+        }
         else -> errorWithAttachment("Invalid container ${container::class}") {
             withPsiEntry("container", container)
         }
