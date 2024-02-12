@@ -106,6 +106,7 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 
     val parcelizeRuntimeForTestsConf: FileCollection = parcelizeRuntimeForTests
     val robolectricClasspathConf: FileCollection = robolectricClasspath
+    val robolectricDependencyDir: Provider<Directory> = robolectricDependencyDir
     val layoutLibConf: FileCollection = layoutLib
     val layoutLibApiConf: FileCollection = layoutLibApi
     doFirst {
