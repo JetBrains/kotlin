@@ -109,6 +109,12 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
   }
 
   @Test
+  @TestMetadata("objCNameWithTwoModules.kt")
+  public void testObjCNameWithTwoModules() {
+    runTest("compiler/testData/diagnostics/nativeTests/objCNameWithTwoModules.kt");
+  }
+
+  @Test
   @TestMetadata("objCRefinement.kt")
   public void testObjCRefinement() {
     runTest("compiler/testData/diagnostics/nativeTests/objCRefinement.kt");

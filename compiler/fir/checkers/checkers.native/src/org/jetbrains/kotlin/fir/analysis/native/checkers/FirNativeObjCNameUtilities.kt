@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.retrieveDirectOverriddenOf
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -30,15 +31,17 @@ object FirNativeObjCNameUtilities {
     private val swiftNameName = Name.identifier("swiftName")
     private val exactName = Name.identifier("exact")
 
-    fun FirBasedSymbol<*>.getObjCNames(session: FirSession): List<ObjCName?> = when (this) {
-        is FirFunctionSymbol<*> -> buildList {
-            add((this@getObjCNames as FirBasedSymbol<*>).getObjCName(session))
-            add(resolvedReceiverTypeRef?.getObjCName(session))
-            add(receiverParameter?.getObjCName(session))
-            valueParameterSymbols.forEach { add(it.getObjCName(session)) }
+    fun FirBasedSymbol<*>.getObjCNames(session: FirSession): List<ObjCName?> {
+        lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
+        return when (this) {
+            is FirFunctionSymbol<*> -> buildList {
+                add((this@getObjCNames as FirBasedSymbol<*>).getObjCName(session))
+                add(resolvedReceiverTypeRef?.getObjCName(session))
+                add(receiverParameter?.getObjCName(session))
+                valueParameterSymbols.forEach { add(it.getObjCName(session)) }
+            }
+            else -> listOf(getObjCName(session))
         }
-
-        else -> listOf(getObjCName(session))
     }
 
     private fun FirAnnotationContainer.getObjCName(session: FirSession): ObjCName? =
