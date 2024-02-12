@@ -149,6 +149,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
     }
 
     @Test
+    @TestMetadata("libraryDataClassCopy.kt")
+    public void testLibraryDataClassCopy() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/libraryDataClassCopy.kt");
+    }
+
+    @Test
+    @TestMetadata("libraryDataClassCopyReversedOrder.kt")
+    public void testLibraryDataClassCopyReversedOrder() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/libraryDataClassCopyReversedOrder.kt");
+    }
+
+    @Test
     @TestMetadata("overrideProtectedClassReturnFromLibrary.kt")
     public void testOverrideProtectedClassReturnFromLibrary() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/overrideProtectedClassReturnFromLibrary.kt");
