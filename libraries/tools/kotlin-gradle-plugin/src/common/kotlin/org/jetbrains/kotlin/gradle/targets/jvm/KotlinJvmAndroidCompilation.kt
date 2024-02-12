@@ -13,7 +13,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -27,7 +27,7 @@ open class KotlinJvmAndroidCompilation @Inject internal constructor(
 
     override val target: KotlinAndroidTarget = compilation.target as KotlinAndroidTarget
 
-    override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions> =
+    override val compilerOptions: DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> =
         compilation.compilerOptions.castCompilerOptionsType()
 
     internal fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {

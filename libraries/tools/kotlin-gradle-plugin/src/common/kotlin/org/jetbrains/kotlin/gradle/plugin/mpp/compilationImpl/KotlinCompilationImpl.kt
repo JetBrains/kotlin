@@ -41,7 +41,7 @@ internal class KotlinCompilationImpl constructor(
         val compilationTaskNames: KotlinCompilationTaskNamesContainer,
         val processResourcesTaskName: String?,
         val output: KotlinCompilationOutput,
-        val compilerOptions: HasCompilerOptions<*>,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") val compilerOptions: DeprecatedHasCompilerOptions<*>,
         val kotlinOptions: KotlinCommonOptions,
         val compilationAssociator: KotlinCompilationAssociator,
         val compilationFriendPathsResolver: KotlinCompilationFriendPathsResolver,
@@ -172,7 +172,8 @@ internal class KotlinCompilationImpl constructor(
     override val kotlinOptions: KotlinCommonOptions
         get() = params.kotlinOptions
 
-    override val compilerOptions: HasCompilerOptions<*>
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+    override val compilerOptions: DeprecatedHasCompilerOptions<*>
         get() = params.compilerOptions
 
     //endregion

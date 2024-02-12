@@ -33,7 +33,7 @@ open class KotlinJvmCompilation @Inject internal constructor(
 
     final override val target: KotlinJvmTarget = compilation.target as KotlinJvmTarget
 
-    override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions> =
+    override val compilerOptions: DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> =
         compilation.compilerOptions.castCompilerOptionsType()
 
     internal fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {

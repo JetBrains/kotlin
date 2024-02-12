@@ -15,10 +15,8 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
-import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
@@ -28,7 +26,7 @@ abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO 
     project: Project,
     override val platformType: KotlinPlatformType,
     override val targetName: String,
-    compilerOptionsFactory: () -> HasCompilerOptions<CO>,
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") compilerOptionsFactory: () -> DeprecatedHasCompilerOptions<CO>,
     kotlinOptionsFactory: (CO) -> KotlinOptionsType
 ) : AbstractKotlinTarget(project),
     HasConfigurableCompilerOptions<KotlinJvmCompilerOptions> {

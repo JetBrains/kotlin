@@ -59,6 +59,7 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
 
     val compileKotlinTaskName: String
 
+    @Suppress("DEPRECATION")
     val compilerOptions: HasCompilerOptions<*>
 
     @Deprecated(

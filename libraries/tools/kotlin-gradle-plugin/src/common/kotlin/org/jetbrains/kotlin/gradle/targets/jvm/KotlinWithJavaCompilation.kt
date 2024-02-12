@@ -26,8 +26,8 @@ open class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions, CO
     DeprecatedKotlinCompilationWithResources<KotlinOptionsType> {
 
     @Suppress("UNCHECKED_CAST")
-    override val compilerOptions: HasCompilerOptions<CO> =
-        compilation.compilerOptions as HasCompilerOptions<CO>
+    override val compilerOptions: DeprecatedHasCompilerOptions<CO> =
+        compilation.compilerOptions as DeprecatedHasCompilerOptions<CO>
 
     internal fun compilerOptions(configure: CO.() -> Unit) {
         compilerOptions.configure(configure)

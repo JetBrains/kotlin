@@ -12,8 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
@@ -42,8 +41,8 @@ abstract class AbstractKotlinNativeCompilation internal constructor(
         get() = compilation.compileTaskProvider as TaskProvider<KotlinNativeCompile>
 
     @Suppress("UNCHECKED_CAST")
-    override val compilerOptions: HasCompilerOptions<KotlinNativeCompilerOptions>
-        get() = compilation.compilerOptions as HasCompilerOptions<KotlinNativeCompilerOptions>
+    override val compilerOptions: DeprecatedHasCompilerOptions<KotlinNativeCompilerOptions>
+        get() = compilation.compilerOptions as DeprecatedHasCompilerOptions<KotlinNativeCompilerOptions>
 
     internal fun compilerOptions(configure: KotlinNativeCompilerOptions.() -> Unit) {
         compilerOptions.configure(configure)

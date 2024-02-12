@@ -31,14 +31,14 @@ internal open class Kotlin2JsPlugin(
         Kotlin2JsSourceSetProcessor(tasksProvider, KotlinCompilationInfo(compilation))
 
     override fun apply(project: Project) {
-        @Suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION")
         val target = project.objects.newInstance(
             KotlinWithJavaTarget::class.java,
             project,
             KotlinPlatformType.js,
             targetName,
             {
-                object : HasCompilerOptions<KotlinJsCompilerOptions> {
+                object : DeprecatedHasCompilerOptions<KotlinJsCompilerOptions> {
                     override val options: KotlinJsCompilerOptions = project.objects
                         .newInstance(KotlinJsCompilerOptionsDefault::class.java)
                         .configureExperimentalTryNext(project)

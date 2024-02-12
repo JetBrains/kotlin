@@ -32,14 +32,14 @@ class KotlinJvmWithJavaTargetPreset(
 
         project.plugins.apply(JavaPlugin::class.java)
 
-        @Suppress("UNCHECKED_CAST", "DEPRECATION")
+        @Suppress("UNCHECKED_CAST", "DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION")
         val target = (project.objects.newInstance(
             KotlinWithJavaTarget::class.java,
             project,
             KotlinPlatformType.jvm,
             name,
             {
-                object : HasCompilerOptions<KotlinJvmCompilerOptions> {
+                object : DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> {
                     override val options: KotlinJvmCompilerOptions = project.objects
                         .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
                         .configureExperimentalTryNext(project)
