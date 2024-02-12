@@ -139,6 +139,10 @@ abstract class WasmExpressionBuilder {
         buildInstrWithNoLocation(WasmOp.CATCH, WasmImmediate.TagIdx(tagIdx))
     }
 
+    fun buildCatchAll() {
+        buildInstrWithNoLocation(WasmOp.CATCH_ALL)
+    }
+
     fun buildBrIf(absoluteBlockLevel: Int, location: SourceLocation) {
         buildBrInstr(WasmOp.BR_IF, absoluteBlockLevel, location)
     }

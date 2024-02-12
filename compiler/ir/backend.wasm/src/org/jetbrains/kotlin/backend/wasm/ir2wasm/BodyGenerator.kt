@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.WasmSymbols
+import org.jetbrains.kotlin.backend.wasm.lower.JsExceptionRevealOrigin
 import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.backend.wasm.utils.isCanonical
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -675,16 +676,7 @@ class BodyGenerator(
         functionContext.stepOutLastInlinedFunction()
     }
 
-    override fun visitContainerExpression(expression: IrContainerExpression) {
-        val statements = expression.statements
-
-        if (statements.isEmpty()) {
-            if (expression.type == irBuiltIns.unitType) {
-                body.buildGetUnit()
-            }
-            return
-        }
-
+    private fun processContainerExpression(expression: IrContainerExpression) {
         if (expression is IrReturnableBlock) {
             val inlineFunction = expression.symbol.owner.inlineFunction
             val correspondingProperty = (inlineFunction as? IrSimpleFunction)?.correspondingPropertySymbol
@@ -698,6 +690,7 @@ class BodyGenerator(
             )
         }
 
+        val statements = expression.statements
         statements.forEachIndexed { i, statement ->
             if (i != statements.lastIndex) {
                 generateStatement(statement)
@@ -716,6 +709,32 @@ class BodyGenerator(
         if (expression is IrReturnableBlock) {
             body.buildEnd()
             body.commentGroupEnd()
+        }
+    }
+
+    override fun visitContainerExpression(expression: IrContainerExpression) {
+        if (expression.statements.isEmpty()) {
+            if (expression.type == irBuiltIns.unitType) {
+                body.buildGetUnit()
+            }
+            return
+        }
+
+        if (context.backendContext.isWasmJsTarget && expression.origin == JsExceptionRevealOrigin.JS_EXCEPTION_REVEAL) {
+            body.buildTry(null, context.transformBlockResultType(expression.type))
+            processContainerExpression(expression)
+            val revealLocation = SourceLocation.NoLocation("JS exception reveal")
+            body.buildCatch(functionContext.tagIdx)
+            body.buildInstr(WasmOp.RETHROW, revealLocation, WasmImmediate.LabelIdx(0))
+            body.buildCatchAll()
+            body.buildCall(
+                symbol = context.referenceFunction(context.backendContext.wasmSymbols.jsRelatedSymbols.throwJsException),
+                location = revealLocation
+            )
+            body.buildUnreachable(revealLocation)
+            body.buildEnd()
+        } else {
+            processContainerExpression(expression)
         }
     }
 
