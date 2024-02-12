@@ -25,6 +25,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
     }
 
     @Test
+    @TestMetadata("dataClass.kt")
+    public void testDataClass() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/dataClass.kt");
+    }
+
+    @Test
     @TestMetadata("delegate.kt")
     public void testDelegate() throws Exception {
         runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/delegate.kt");
