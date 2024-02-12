@@ -54,7 +54,7 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind
                 reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "expression", context)
             }
 
-            checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter)
+            checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter, annotation.source)
 
             existingTargetsForAnnotation.add(useSiteTarget)
         }

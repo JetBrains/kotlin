@@ -22,6 +22,14 @@
   context -> FirPropertySymbol second/SubClass.resolveMe
   anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
 
+@R|second/Anno|(<strcat>(String(nested right receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested right receiver type ), constant#))  F>
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(<strcat>(String(nested nested right receiver type ), constant#))  F
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
 @R|second/Anno|(<strcat>(String(nested left receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested left receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>
   context -> FirPropertySymbol second/SubClass.resolveMe
   anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
@@ -37,14 +45,6 @@
 @R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String
   context -> FirPropertySymbol second/SubClass.resolveMe
   anchor -> [FirRegularClassSymbol second/SubClass]
-
-@R|second/Anno|(<strcat>(String(nested right receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested right receiver type ), constant#))  F>
-  context -> FirPropertySymbol second/SubClass.resolveMe
-  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
-
-@R|second/Anno|(<strcat>(String(nested nested right receiver type ), constant#))  F
-  context -> FirPropertySymbol second/SubClass.resolveMe
-  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
 
 @R|second/Anno|(<strcat>(String(explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>?
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe

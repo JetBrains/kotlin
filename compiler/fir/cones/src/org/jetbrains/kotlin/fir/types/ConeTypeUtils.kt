@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.SmartSet
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
 val ConeKotlinType.isNullable: Boolean get() = nullability != ConeNullability.NOT_NULL
 val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullability.NULLABLE
@@ -18,19 +19,28 @@ val ConeKotlinType.classId: ClassId? get() = (this as? ConeClassLikeType)?.looku
 
 /**
  * Recursively visits each [ConeKotlinType] inside (including itself) and performs the given action.
+ * Doesn't give guarantees on the traversal order.
  */
-fun ConeKotlinType.forEachType(action: (ConeKotlinType) -> Unit) {
-    action(this)
+inline fun ConeKotlinType.forEachType(
+    prepareType: (ConeKotlinType) -> ConeKotlinType = { it },
+    action: (ConeKotlinType) -> Unit,
+) {
+    val stack = mutableListOf(this)
 
-    return when (this) {
-        is ConeFlexibleType -> {
-            lowerBound.forEachType(action)
-            upperBound.forEachType(action)
+    while (stack.isNotEmpty()) {
+        val next = stack.popLast().let(prepareType)
+        action(next)
+
+        when (next) {
+            is ConeFlexibleType -> {
+                stack.add(next.lowerBound)
+                stack.add(next.upperBound)
+            }
+
+            is ConeDefinitelyNotNullType -> stack.add(next.original)
+            is ConeIntersectionType -> stack.addAll(next.intersectedTypes)
+            else -> next.typeArguments.forEach { if (it is ConeKotlinTypeProjection) stack.add(it.type) }
         }
-
-        is ConeDefinitelyNotNullType -> original.forEachType(action)
-        is ConeIntersectionType -> intersectedTypes.forEach { it.forEachType(action) }
-        else -> typeArguments.forEach { if (it is ConeKotlinTypeProjection) it.type.forEachType(action) }
     }
 }
 

@@ -199,3 +199,6 @@ fun FirTypeAlias.fullyExpandedConeType(useSiteSession: FirSession): ConeClassLik
 fun FirTypeAlias.fullyExpandedClass(session: FirSession): FirClassLikeDeclaration? {
     return fullyExpandedConeType(session)?.toSymbol(session)?.fir
 }
+
+inline fun ConeKotlinType.forEachExpandedType(session: FirSession, action: (ConeKotlinType) -> Unit) =
+    forEachType(prepareType = { it.fullyExpandedType(session) }, action = action)

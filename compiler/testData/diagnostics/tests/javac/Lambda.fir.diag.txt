@@ -6,9 +6,9 @@
 
 /Call.kt:(294,296): error: Cannot access class 'com.result.B'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(316,334): warning: Cannot access class 'com.result.Owner.Nested' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
-
 /Call.kt:(316,334): warning: Cannot access class 'com.result.Owner.Nested.VeryNested' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+
+/Call.kt:(316,334): warning: Cannot access class 'com.result.Owner.Nested' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
 
 /Call.kt:(337,345): warning: Cannot access class 'com.result.Owner.Nested' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
 

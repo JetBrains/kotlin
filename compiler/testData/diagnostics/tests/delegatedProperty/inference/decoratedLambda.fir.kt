@@ -8,10 +8,10 @@ fun <P2> xComponent(
 operator fun <P1> ((prop1: P1) -> Unit).getValue(
     thisRef: Any?,
     property: KProperty<*>
-): (<!REPEATED_ANNOTATION!>prop1: P1<!>) -> Unit = this
+): (prop1: P1) -> Unit = this
 
-val pdfDocumentViewer by xComponent { _: String? ->
-}
+val pdfDocumentViewer by <!REPEATED_ANNOTATION!>xComponent { _: String? ->
+}<!>
 
 fun xPDFDocumentViewer(
     href: String?

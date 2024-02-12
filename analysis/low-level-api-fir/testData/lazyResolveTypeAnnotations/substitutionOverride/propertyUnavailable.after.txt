@@ -22,6 +22,14 @@
   context -> FirPropertySymbol second/SubClass.resolveMe
   anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
 
+@R|second/Anno|(position = <strcat>(String(nested right receiver type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested right receiver type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  F>
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(nested nested right receiver type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  F
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
 @R|second/Anno|(position = <strcat>(String(nested left receiver type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(type argument: ), <Unresolved name: constant>#))  @R|second/Anno|(position = <strcat>(String(nested nested left receiver type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), <Unresolved name: constant>#))  kotlin/String>>>
   context -> FirPropertySymbol second/SubClass.resolveMe
   anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
@@ -37,14 +45,6 @@
 @R|second/Anno|(position = <strcat>(String(nested nested type argument: ), <Unresolved name: constant>#))  kotlin/String
   context -> FirPropertySymbol second/SubClass.resolveMe
   anchor -> [FirRegularClassSymbol second/SubClass]
-
-@R|second/Anno|(position = <strcat>(String(nested right receiver type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested right receiver type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  F>
-  context -> FirPropertySymbol second/SubClass.resolveMe
-  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
-
-@R|second/Anno|(position = <strcat>(String(nested nested right receiver type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  F
-  context -> FirPropertySymbol second/SubClass.resolveMe
-  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
 
 @R|second/Anno|(position = <strcat>(String(return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), <Unresolved name: constant>#))  @R|second/Anno|(position = <strcat>(String(nested nested return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), <Unresolved name: constant>#))  kotlin/String>>>>
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe

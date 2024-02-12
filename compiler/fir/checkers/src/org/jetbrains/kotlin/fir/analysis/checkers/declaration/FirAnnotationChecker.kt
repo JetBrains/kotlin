@@ -25,11 +25,13 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.packageFqName
+import org.jetbrains.kotlin.fir.resolve.forEachExpandedType
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.keysToMap
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -87,7 +89,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
             checkDeprecatedCalls(deprecatedSinceKotlin, deprecated, context, reporter)
         }
 
-        checkRepeatedAnnotations(declaration, context, reporter)
+        checkDeclaredRepeatedAnnotations(declaration, context, reporter)
 
         if (declaration is FirCallableDeclaration) {
             if (declaration is FirProperty) {
@@ -95,10 +97,10 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
             }
 
             if (declaration.source?.kind is KtRealSourceElementKind) {
-                checkRepeatedAnnotations(declaration.returnTypeRef.coneTypeSafe(), context, reporter)
+                checkAllRepeatedAnnotations(declaration.returnTypeRef, context, reporter)
             }
         } else if (declaration is FirTypeAlias) {
-            checkRepeatedAnnotations(declaration.expandedTypeRef.coneType, context, reporter)
+            checkAllRepeatedAnnotations(declaration.expandedTypeRef, context, reporter)
         }
     }
 
@@ -323,26 +325,28 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         }
     }
 
-    private fun checkRepeatedAnnotations(
+    private fun checkDeclaredRepeatedAnnotations(
         annotationContainer: FirAnnotationContainer,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        checkRepeatedAnnotation(annotationContainer, annotationContainer.annotations, context, reporter)
+        val annotationSources = annotationContainer.annotations.keysToMap { it.source }
+        checkRepeatedAnnotation(
+            annotationContainer, annotationContainer.annotations, context, reporter,
+            annotationSources, defaultSource = null,
+        )
     }
 
-    private fun checkRepeatedAnnotations(
-        type: ConeKotlinType?,
+    private fun checkAllRepeatedAnnotations(
+        typeRef: FirTypeRef,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
-        if (type == null) return
-        val fullyExpandedType = type.fullyExpandedType(context.session)
-        checkRepeatedAnnotation(null, fullyExpandedType.attributes.customAnnotations, context, reporter)
-        for (typeArgument in fullyExpandedType.typeArguments) {
-            if (typeArgument is ConeKotlinType) {
-                checkRepeatedAnnotations(typeArgument, context, reporter)
-            }
+        val annotationSources = typeRef.annotations.keysToMap { it.source }
+        val useSiteSource = typeRef.source
+
+        typeRef.coneType.forEachExpandedType(context.session) { type ->
+            checkRepeatedAnnotation(null, type.attributes.customAnnotations, context, reporter, annotationSources, useSiteSource)
         }
     }
 

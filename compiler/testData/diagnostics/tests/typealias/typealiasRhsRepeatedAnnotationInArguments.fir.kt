@@ -3,4 +3,4 @@ annotation class A
 
 typealias Gen<T> = List<@A T>
 
-typealias Test1 = Gen<<!REPEATED_ANNOTATION!>@A<!> Int>
+typealias Test1 = <!REPEATED_ANNOTATION!>Gen<@A Int><!>

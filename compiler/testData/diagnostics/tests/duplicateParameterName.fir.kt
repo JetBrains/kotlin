@@ -17,7 +17,7 @@ inline fun <T, R> Flow<T>.flatMapLatest(crossinline transform: suspend (value: T
 
 fun <T> flowOf(value: T): Flow<T> = Flow { collector -> collector.emit(value) }
 
-inline fun <T, R> Flow<T>.map(crossinline transform: suspend (<!REPEATED_ANNOTATION, REPEATED_ANNOTATION, REPEATED_ANNOTATION, REPEATED_ANNOTATION!>value: T<!>) -> R): Flow<R> = Flow { collector ->
+inline fun <T, R> Flow<T>.map(crossinline transform: suspend (value: T) -> R): Flow<R> = Flow { collector ->
     collect { collector.emit(transform(it)) }
 }
 
@@ -33,9 +33,9 @@ internal suspend fun init(
     state: Flow<Playable>
 ) {
     state
-        .flatMapLatest { playable ->
-            flowOf(playable).map { Triple(it, playable, queueState.playbackEntity.stationId) }
-        }
-        .collect { (likeState, playable, stationId) ->
+        .flatMapLatest <!REPEATED_ANNOTATION!>{ playable ->
+            flowOf(playable).map <!REPEATED_ANNOTATION!>{ Triple(it, playable, queueState.playbackEntity.stationId) }<!>
+        }<!>
+        .collect { <!REPEATED_ANNOTATION!>(<!REPEATED_ANNOTATION!>likeState<!>, playable, stationId)<!> ->
         }
 }

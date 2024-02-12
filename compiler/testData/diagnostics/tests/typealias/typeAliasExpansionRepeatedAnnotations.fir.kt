@@ -6,8 +6,8 @@ typealias AI = AInt
 
 typealias Test1 = <!REPEATED_ANNOTATION!>@A<!> AInt
 typealias Test2 = <!REPEATED_ANNOTATION!>@A<!> AI
-typealias Test3 = List<<!REPEATED_ANNOTATION!>@A<!> AInt>
-typealias Test4 = List<<!REPEATED_ANNOTATION!>@A<!> AI>
+typealias Test3 = <!REPEATED_ANNOTATION!>List<@A AInt><!>
+typealias Test4 = <!REPEATED_ANNOTATION!>List<@A AI><!>
 
 val testProperty1: <!REPEATED_ANNOTATION!>@A<!> AInt = 0
 val testProperty2: <!REPEATED_ANNOTATION!>@A<!> AI = 0

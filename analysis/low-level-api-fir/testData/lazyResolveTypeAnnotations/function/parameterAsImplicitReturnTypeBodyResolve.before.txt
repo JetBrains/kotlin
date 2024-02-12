@@ -30,11 +30,11 @@
   context -> FirValueParameterSymbol <local>/i from FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirNamedFunctionSymbol /foo]
 
-@R|Anno|(position = <strcat>(String(anonymousFunction parameter type ), R|/prop|))  kotlin/Int
+@R|Anno|(position = <strcat>(String(anonymousFunction return type ), R|/prop|))  kotlin/Int
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirNamedFunctionSymbol /foo]
 
-@R|Anno|(position = <strcat>(String(anonymousFunction return type ), R|/prop|))  kotlin/Int
+@R|Anno|(position = <strcat>(String(anonymousFunction parameter type ), R|/prop|))  kotlin/Int
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirNamedFunctionSymbol /foo]
 
