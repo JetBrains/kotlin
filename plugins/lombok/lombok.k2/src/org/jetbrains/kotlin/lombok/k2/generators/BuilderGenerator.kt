@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.lombok.k2.generators
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
@@ -188,12 +190,13 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
         val valueParameters: List<ConeLombokValueParameter>
 
         val fallbackParameterType = DummyJavaClassType.ObjectType.takeIf { javaClassifierType.isRaw }
+        val source = builderClassSymbol.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
 
         when (typeName) {
             in LombokNames.SUPPORTED_COLLECTIONS -> {
                 val parameterType = javaClassifierType.parameterType(0) ?: fallbackParameterType ?: return
                 valueParameters = listOf(
-                    ConeLombokValueParameter(nameInSingularForm, parameterType.toRef())
+                    ConeLombokValueParameter(nameInSingularForm, parameterType.toRef(source))
                 )
 
                 val baseType = when (typeName) {
@@ -203,20 +206,20 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
 
                 addMultipleParameterType = DummyJavaClassType(baseType, typeArguments = listOf(parameterType))
                     .withProperNullability(singular.allowNull)
-                    .toRef()
+                    .toRef(source)
             }
 
             in LombokNames.SUPPORTED_MAPS -> {
                 val keyType = javaClassifierType.parameterType(0) ?: fallbackParameterType ?: return
                 val valueType = javaClassifierType.parameterType(1) ?: fallbackParameterType ?: return
                 valueParameters = listOf(
-                    ConeLombokValueParameter(Name.identifier("key"), keyType.toRef()),
-                    ConeLombokValueParameter(Name.identifier("value"), valueType.toRef()),
+                    ConeLombokValueParameter(Name.identifier("key"), keyType.toRef(source)),
+                    ConeLombokValueParameter(Name.identifier("value"), valueType.toRef(source)),
                 )
 
                 addMultipleParameterType = DummyJavaClassType(JavaClasses.Map, typeArguments = listOf(keyType, valueType))
                     .withProperNullability(singular.allowNull)
-                    .toRef()
+                    .toRef(source)
             }
 
             in LombokNames.SUPPORTED_TABLES -> {
@@ -225,15 +228,15 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
                 val valueType = javaClassifierType.parameterType(2) ?: fallbackParameterType ?: return
 
                 valueParameters = listOf(
-                    ConeLombokValueParameter(Name.identifier("rowKey"), rowKeyType.toRef()),
-                    ConeLombokValueParameter(Name.identifier("columnKey"), columnKeyType.toRef()),
-                    ConeLombokValueParameter(Name.identifier("value"), valueType.toRef()),
+                    ConeLombokValueParameter(Name.identifier("rowKey"), rowKeyType.toRef(source)),
+                    ConeLombokValueParameter(Name.identifier("columnKey"), columnKeyType.toRef(source)),
+                    ConeLombokValueParameter(Name.identifier("value"), valueType.toRef(source)),
                 )
 
                 addMultipleParameterType = DummyJavaClassType(
                     JavaClasses.Table,
                     typeArguments = listOf(rowKeyType, columnKeyType, valueType)
-                ).withProperNullability(singular.allowNull).toRef()
+                ).withProperNullability(singular.allowNull).toRef(source)
             }
 
             else -> return

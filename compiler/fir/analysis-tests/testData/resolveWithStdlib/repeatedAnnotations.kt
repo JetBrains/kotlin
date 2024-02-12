@@ -2,6 +2,7 @@
 import java.util.List;
 
 public class Some {
+    // Note that this source is incorrect Java code
     public static List<@SomeAnn(1) @SomeAnn(2) String> foo() {
         return null;
     }
@@ -22,12 +23,12 @@ fun <T> foo(bar: () -> T) {
 
 @Target(AnnotationTarget.TYPE)
 annotation class Ann
-
-fun baz(): @Ann <!REPEATED_ANNOTATION!>@Ann<!> String = "12"
+<!REPEATED_ANNOTATION, REPEATED_ANNOTATION!>
+fun baz(): @Ann <!REPEATED_ANNOTATION, REPEATED_ANNOTATION!>@Ann<!> String = "12"
 fun qux() = Some.foo()[0]
 
 fun test() {
-    foo({ Some.foo()[0] })
+    foo({<!> Some.foo()[0] })
     foo({ baz() })
     foo({ qux() })
     foo(fun(): @Ann <!REPEATED_ANNOTATION!>@Ann<!> String {

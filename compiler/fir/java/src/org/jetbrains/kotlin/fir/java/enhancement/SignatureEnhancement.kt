@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java.enhancement
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -265,10 +266,11 @@ class FirSignatureEnhancement(
         isIntersectionOverride: Boolean,
         precomputedOverridden: List<FirCallableDeclaration>?,
     ): FirFunctionSymbol<*> {
+        val fakeSource = firMethod.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         val predefinedEnhancementInfo =
             SignatureBuildingComponents.signature(
                 owner.symbol.classId,
-                firMethod.computeJvmDescriptor { it.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack) }
+                firMethod.computeJvmDescriptor { it.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack, fakeSource) }
             ).let { signature ->
                 PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[signature]
             }
@@ -488,7 +490,10 @@ class FirSignatureEnhancement(
      *
      * See the usages of FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND
      */
-    fun performFirstRoundOfBoundsResolution(typeParameters: List<FirTypeParameterRef>): Pair<List<List<FirTypeRef>>, List<FirTypeParameterRef>> {
+    fun performFirstRoundOfBoundsResolution(
+        typeParameters: List<FirTypeParameterRef>,
+        source: KtSourceElement?,
+    ): Pair<List<List<FirTypeRef>>, List<FirTypeParameterRef>> {
         val initialBounds: MutableList<List<FirTypeRef>> = mutableListOf()
         val typeParametersCopy = ArrayList<FirTypeParameterRef>(typeParameters.size)
         for (typeParameter in typeParameters) {
@@ -498,7 +503,9 @@ class FirSignatureEnhancement(
                     // TODO: we should create a new symbol to avoid clashing (KT-60445)
                     bounds.clear()
                     typeParameter.bounds.mapTo(bounds) {
-                        it.resolveIfJavaType(session, javaTypeParameterStack, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND)
+                        it.resolveIfJavaType(
+                            session, javaTypeParameterStack, source, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND
+                        )
                     }
                 }
             } else {
@@ -521,12 +528,15 @@ class FirSignatureEnhancement(
     private fun performSecondRoundOfBoundsResolution(
         typeParameters: List<FirTypeParameterRef>,
         initialBounds: List<List<FirTypeRef>>,
+        source: KtSourceElement?,
     ) {
         var currentIndex = 0
         for (typeParameter in typeParameters) {
             if (typeParameter is FirTypeParameter) {
                 typeParameter.replaceBounds(initialBounds[currentIndex].map {
-                    it.resolveIfJavaType(session, javaTypeParameterStack, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_AFTER_FIRST_ROUND)
+                    it.resolveIfJavaType(
+                        session, javaTypeParameterStack, source, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_AFTER_FIRST_ROUND
+                    )
                 })
 
                 currentIndex++
@@ -547,8 +557,9 @@ class FirSignatureEnhancement(
         typeParameters: List<FirTypeParameterRef>,
         // The state of bounds before the first round
         initialBounds: List<List<FirTypeRef>>,
+        source: KtSourceElement?,
     ) {
-        performSecondRoundOfBoundsResolution(typeParameters, initialBounds)
+        performSecondRoundOfBoundsResolution(typeParameters, initialBounds, source)
 
         // Type parameters can have interdependencies between them. Assuming that there are no top-level cycles
         // (`A : B, B : A` - invalid), the cycles can still appear when type parameters use each other in argument
@@ -563,8 +574,8 @@ class FirSignatureEnhancement(
     }
 
     private fun enhanceTypeParameterBoundsForMethod(firMethod: FirFunction): List<FirTypeParameterRef> {
-        val (initialBounds, copiedParameters) = performFirstRoundOfBoundsResolution(firMethod.typeParameters)
-        enhanceTypeParameterBoundsAfterFirstRound(copiedParameters, initialBounds)
+        val (initialBounds, copiedParameters) = performFirstRoundOfBoundsResolution(firMethod.typeParameters, firMethod.source)
+        enhanceTypeParameterBoundsAfterFirstRound(copiedParameters, initialBounds, firMethod.source)
         return copiedParameters
     }
 
@@ -829,8 +840,8 @@ class FirSignatureEnhancement(
         typeRef: FirTypeRef, typeRefsFromOverridden: List<FirTypeRef>,
         mode: FirJavaTypeConversionMode, predefined: TypeEnhancementInfo? = null,
     ): FirResolvedTypeRef {
-        val typeWithoutEnhancement = typeRef.toConeKotlinType(mode)
-        val typesFromOverridden = typeRefsFromOverridden.map { it.toConeKotlinType(mode) }
+        val typeWithoutEnhancement = typeRef.toConeKotlinType(mode, typeRef.source)
+        val typesFromOverridden = typeRefsFromOverridden.map { it.toConeKotlinType(mode, typeRef.source) }
         val qualifiers = typeWithoutEnhancement.computeIndexedQualifiers(typesFromOverridden, predefined)
         return buildResolvedTypeRef {
             type = typeWithoutEnhancement.enhance(session, qualifiers) ?: typeWithoutEnhancement
@@ -839,8 +850,8 @@ class FirSignatureEnhancement(
         }
     }
 
-    private fun FirTypeRef.toConeKotlinType(mode: FirJavaTypeConversionMode): ConeKotlinType =
-        toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack, mode)
+    private fun FirTypeRef.toConeKotlinType(mode: FirJavaTypeConversionMode, source: KtSourceElement?): ConeKotlinType =
+        toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack, source, mode)
 }
 
 /**
