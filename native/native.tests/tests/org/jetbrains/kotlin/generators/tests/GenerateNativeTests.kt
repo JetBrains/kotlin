@@ -508,6 +508,11 @@ fun main() {
             ) {
                 model("SwiftExport", pattern = "^([^_](.+))$", recursive = false)
             }
+            testClass<AbstractNativeSwiftExportTest>(
+                suiteTestClassName = "SwiftExportTestGenerated",
+            ) {
+                model("SwiftExport", pattern = "^([^_](.+))$", recursive = false)
+            }
         }
     }
 }
