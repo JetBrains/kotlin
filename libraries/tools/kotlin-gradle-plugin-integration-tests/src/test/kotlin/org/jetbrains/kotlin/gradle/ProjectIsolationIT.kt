@@ -24,6 +24,8 @@ class ProjectIsolationIT : KGPBaseTest() {
         project(
             projectName = "instantExecution",
             gradleVersion = gradleVersion,
+            // we can remove this line, when the min version of Gradle be at least 8.1
+            dependencyManagement = DependencyManagement.DisabledDependencyManagement
         ) {
             build(":main-project:compileKotlin")
         }

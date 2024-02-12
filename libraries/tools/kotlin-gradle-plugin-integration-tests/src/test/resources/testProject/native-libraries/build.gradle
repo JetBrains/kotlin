@@ -13,10 +13,6 @@ buildscript {
 
 apply plugin: 'kotlin-multiplatform'
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
 
 kotlin {
     targets {
