@@ -116,16 +116,21 @@ internal class FirElementBuilder(
         resolveAndFindFirForAnchor: (FirAnnotationContainer, T) -> FirElement?,
     ): FirElement? {
         val anchorElement = anchorElementProvider(element) ?: return null
-        val declaration = annotatedElementProvider(anchorElement) ?: return null
-        val nonLocalDeclaration = declaration.getNonLocalContainingOrThisDeclaration()
-        if (declaration != nonLocalDeclaration) return null
+        val annotationElement = annotatedElementProvider(anchorElement) ?: return null
 
-        val firDeclaration = nonLocalDeclaration.findSourceNonLocalFirDeclaration(
-            firFileBuilder = moduleComponents.firFileBuilder,
-            provider = moduleComponents.session.firProvider,
-        )
+        val firAnnotationContainer = if (annotationElement is KtFile) {
+            moduleComponents.firFileBuilder.buildRawFirFileWithCaching(annotationElement)
+        } else {
+            val nonLocalDeclaration = annotationElement.getNonLocalContainingOrThisDeclaration()
+            if (annotationElement != nonLocalDeclaration) return null
 
-        val anchorFir = resolveAndFindFirForAnchor(firDeclaration, anchorElement) ?: return null
+            nonLocalDeclaration.findSourceNonLocalFirDeclaration(
+                firFileBuilder = moduleComponents.firFileBuilder,
+                provider = moduleComponents.session.firProvider,
+            )
+        }
+
+        val anchorFir = resolveAndFindFirForAnchor(firAnnotationContainer, anchorElement) ?: return null
         // We use identity comparison here intentionally to check that it is exactly the object we want to find
         if (element === anchorElement) return anchorFir
 
@@ -136,6 +141,7 @@ internal class FirElementBuilder(
         val modifierList = when (val parent = parent) {
             is KtModifierList -> parent
             is KtAnnotation -> parent.parent as? KtModifierList
+            is KtFileAnnotationList -> return parent.parent as? KtFile
             else -> null
         }
 
