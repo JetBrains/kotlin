@@ -199,8 +199,7 @@ internal class FileStructure private constructor(
         }
         container is KtFile -> {
             val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
-            firFile.lazyResolveToPhase(FirResolvePhase.IMPORTS)
-            firFile.annotationsContainer?.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            firFile.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
             RootStructureElement(firFile, moduleComponents)
         }

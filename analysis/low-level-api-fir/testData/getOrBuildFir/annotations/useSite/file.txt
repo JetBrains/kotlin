@@ -6,7 +6,7 @@ FIR element rendered:
 @FILE:R|Ann|[Types]()
 
 FIR FILE:
-FILE: [ResolvedTo(IMPORTS)] file.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] file.kt
     @FILE:R|Ann|[Types]()
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {

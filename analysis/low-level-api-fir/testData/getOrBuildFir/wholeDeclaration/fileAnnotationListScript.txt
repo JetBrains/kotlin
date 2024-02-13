@@ -7,7 +7,7 @@ FIR element rendered:
 [ResolvedTo(BODY_RESOLVE)] annotations container
 
 FIR FILE:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotationListScript.kts
+FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotationListScript.kts
     @FILE:R|kotlin/Suppress|[Types](names = vararg(String()))
     [ResolvedTo(BODY_RESOLVE)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)

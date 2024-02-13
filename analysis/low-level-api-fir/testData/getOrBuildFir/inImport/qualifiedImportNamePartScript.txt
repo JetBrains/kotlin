@@ -6,7 +6,7 @@ FIR element rendered:
 import a.b.c
 
 FIR FILE:
-FILE: [ResolvedTo(IMPORTS)] qualifiedImportNamePartScript.kts
+FILE: [ResolvedTo(BODY_RESOLVE)] qualifiedImportNamePartScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-qualifiedImportNamePartScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|

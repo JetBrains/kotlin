@@ -7,6 +7,6 @@ FIR element rendered:
 [ResolvedTo(BODY_RESOLVE)] annotations container
 
 FIR FILE:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotationList.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotationList.kt
     @FILE:R|kotlin/Suppress|[Types](names = vararg(String()))
     [ResolvedTo(BODY_RESOLVE)] annotations container

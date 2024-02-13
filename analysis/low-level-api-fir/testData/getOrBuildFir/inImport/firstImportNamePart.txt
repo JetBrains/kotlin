@@ -6,4 +6,4 @@ FIR element rendered:
 import a.b.c
 
 FIR FILE:
-FILE: [ResolvedTo(IMPORTS)] firstImportNamePart.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] firstImportNamePart.kt
