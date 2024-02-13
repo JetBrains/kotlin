@@ -38,6 +38,7 @@ val irTypeType = type(types, "IrType")
 val irFactoryType = type(declarations, "IrFactory")
 val stageControllerType = type(declarations, "StageController", TypeKind.Class)
 val idSignatureType = type(util, "IdSignature", TypeKind.Class)
+val irImplementationDetailType = type(tree, "IrImplementationDetail", TypeKind.Class)
 
 val symbolType = type(symbols, "IrSymbol")
 val packageFragmentSymbolType = type(symbols, "IrPackageFragmentSymbol")

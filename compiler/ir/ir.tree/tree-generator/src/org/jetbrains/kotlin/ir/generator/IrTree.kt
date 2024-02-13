@@ -100,7 +100,7 @@ object IrTree : AbstractTreeBuilder() {
     val declaration: Element by element(Declaration) {
         parent(statement)
         parent(symbolOwner)
-        parent(mutableAnnotationContainerType)
+        parent(mutableAnnotationContainer)
 
         +descriptor("DeclarationDescriptor")
         +field("origin", type(Packages.declarations, "IrDeclarationOrigin"))
@@ -320,6 +320,14 @@ object IrTree : AbstractTreeBuilder() {
         }
         // null <=> this element wasn't inlined
         +field("originalBeforeInline", attributeContainer, nullable = true, isChild = false) {
+            skipInIrFactory()
+        }
+    }
+    val mutableAnnotationContainer: Element by element(Declaration) {
+        parent(type(Packages.declarations, "IrAnnotationContainer"))
+
+        +listField("annotations", constructorCall, mutability = Var, isChild = false) {
+            fromParent = true
             skipInIrFactory()
         }
     }
