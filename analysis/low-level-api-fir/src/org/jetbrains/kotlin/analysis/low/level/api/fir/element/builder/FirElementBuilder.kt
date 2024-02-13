@@ -14,14 +14,15 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStruct
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.requireTypeIntersectionWith
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
@@ -111,11 +112,11 @@ internal class FirElementBuilder(
     private inline fun <T : KtElement> getFirForNonBodyElement(
         element: KtElement,
         anchorElementProvider: (KtElement) -> T?,
-        declarationProvider: (T) -> KtDeclaration?,
-        resolveAndFindFirForAnchor: (FirDeclaration, T) -> FirElement?,
+        annotatedElementProvider: (T) -> KtAnnotated?,
+        resolveAndFindFirForAnchor: (FirAnnotationContainer, T) -> FirElement?,
     ): FirElement? {
         val anchorElement = anchorElementProvider(element) ?: return null
-        val declaration = declarationProvider(anchorElement) ?: return null
+        val declaration = annotatedElementProvider(anchorElement) ?: return null
         val nonLocalDeclaration = declaration.getNonLocalContainingOrThisDeclaration()
         if (declaration != nonLocalDeclaration) return null
 
@@ -131,23 +132,27 @@ internal class FirElementBuilder(
         return findElementInside(firElement = anchorFir, element = element, stopAt = anchorElement)
     }
 
-    private fun KtAnnotationEntry.owner(): KtDeclaration? {
-        val parent = parent
-        val modifierList = parent as? KtModifierList ?: (parent as? KtAnnotation)?.parent as? KtModifierList ?: return null
-        return modifierList.owner as? KtDeclaration
+    private fun KtAnnotationEntry.owner(): KtAnnotated? {
+        val modifierList = when (val parent = parent) {
+            is KtModifierList -> parent
+            is KtAnnotation -> parent.parent as? KtModifierList
+            else -> null
+        }
+
+        return modifierList?.owner as? KtDeclaration
     }
 
     private fun getFirForElementInsideAnnotations(element: KtElement): FirElement? = getFirForNonBodyElement(
         element = element,
         anchorElementProvider = { it.parentOfType<KtAnnotationEntry>(withSelf = true) },
-        declarationProvider = { it.owner() },
+        annotatedElementProvider = { it.owner() },
         resolveAndFindFirForAnchor = { declaration, anchor -> declaration.resolveAndFindAnnotation(anchor, goDeep = true) },
     )
 
     private fun getFirForElementInsideTypes(element: KtElement): FirElement? = getFirForNonBodyElement(
         element = element,
         anchorElementProvider = { it.parentsOfType<KtTypeReference>(withSelf = true).lastOrNull() },
-        declarationProvider = {
+        annotatedElementProvider = {
             when (val parent = it.parent) {
                 is KtDeclaration -> parent
                 is KtSuperTypeListEntry, is KtConstructorCalleeExpression, is KtTypeConstraint -> parent.parentOfType<KtDeclaration>()
@@ -179,7 +184,9 @@ internal class FirElementBuilder(
         return firElement
     }
 
-    private fun FirDeclaration.resolveAndFindTypeRefAnchor(typeReference: KtTypeReference): FirElement? {
+    private fun FirAnnotationContainer.resolveAndFindTypeRefAnchor(typeReference: KtTypeReference): FirElement? {
+        requireTypeIntersectionWith<FirElementWithResolveState>()
+
         lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
 
         if (this is FirCallableDeclaration) {
@@ -218,7 +225,12 @@ internal class FirElementBuilder(
         return null
     }
 
-    private fun FirDeclaration.resolveAndFindAnnotation(annotationEntry: KtAnnotationEntry, goDeep: Boolean = false): FirAnnotation? {
+    private fun FirAnnotationContainer.resolveAndFindAnnotation(
+        annotationEntry: KtAnnotationEntry,
+        goDeep: Boolean = false,
+    ): FirAnnotation? {
+        requireTypeIntersectionWith<FirElementWithResolveState>()
+
         lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
         findAnnotation(annotationEntry)?.let { return it }
 
