@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import com.android.build.gradle.api.TestVariant
-import com.android.build.gradle.api.UnitTestVariant
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -33,8 +31,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 import org.jetbrains.kotlin.gradle.targets.jvm.JvmCompilationsTestRunSource
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
-import org.jetbrains.kotlin.gradle.utils.forAllTargets
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.*
 
 private val Dependency.isKotlinTestRootDependency: Boolean
     get() = group == KOTLIN_MODULE_GROUP && name == KOTLIN_TEST_ROOT_MODULE_NAME
@@ -133,6 +130,8 @@ private fun KotlinCompilation<*>.kotlinTestCapabilityForJvmSourceSet(
     tasks: TaskContainer,
 ): Provider<String>? {
     val compilationTarget = target
+
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
     val testTaskList: List<TaskProvider<out Task>> = when {
         compilationTarget is KotlinTargetWithTests<*, *> -> compilationTarget
             .findTestRunsByCompilation(this)
@@ -144,8 +143,8 @@ private fun KotlinCompilation<*>.kotlinTestCapabilityForJvmSourceSet(
             listOfNotNull(tasks.locateTask(compilationTarget.testTaskName))
 
         this is KotlinJvmAndroidCompilation -> when (androidVariant) {
-            is UnitTestVariant -> listOfNotNull(tasks.locateTask(lowerCamelCaseName("test", androidVariant.name)))
-            is TestVariant -> listOfNotNull((androidVariant as TestVariant).connectedInstrumentTestProvider)
+            is DeprecatedAndroidUnitTestVariant -> listOfNotNull(tasks.locateTask(lowerCamelCaseName("test", androidVariant.name)))
+            is DeprecatedAndroidTestVariant -> listOfNotNull(androidVariant.connectedInstrumentTestProvider)
             else -> emptyList()
         }
 

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 class FirCompanionGenerationProcessor(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
+) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.COMPANION_GENERATION) {
     override val transformer: FirTransformer<Nothing?> = FirCompanionGenerationTransformer(session)
 }
 

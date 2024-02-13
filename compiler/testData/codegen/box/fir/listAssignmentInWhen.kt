@@ -1,5 +1,6 @@
 // ISSUE: KT-59748
 // WITH_STDLIB
+// DUMP_IR
 
 fun foo(list: MutableList<Any?>, condition: Boolean): Unit = when {
     condition -> list[0] = "OK"

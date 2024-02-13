@@ -20,14 +20,14 @@ class Yarn : NpmApiExecution<YarnEnvironment> {
 
     override fun prepareRootProject(
         nodeJs: NodeJsEnvironment,
-        yarn: YarnEnvironment,
+        packageManagerEnvironment: YarnEnvironment,
         rootProjectName: String,
         rootProjectVersion: String,
         subProjects: Collection<PreparedKotlinCompilationNpmResolution>,
     ) = yarnWorkspaces
         .prepareRootProject(
             nodeJs,
-            yarn,
+            packageManagerEnvironment,
             rootProjectName,
             rootProjectVersion,
             subProjects,
@@ -37,7 +37,7 @@ class Yarn : NpmApiExecution<YarnEnvironment> {
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsEnvironment,
-        yarn: YarnEnvironment,
+        packageManagerEnvironment: YarnEnvironment,
         npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
         cliArgs: List<String>
     ) {
@@ -46,7 +46,7 @@ class Yarn : NpmApiExecution<YarnEnvironment> {
                 services,
                 logger,
                 nodeJs,
-                yarn,
+                packageManagerEnvironment,
                 npmProjects,
                 cliArgs
             )

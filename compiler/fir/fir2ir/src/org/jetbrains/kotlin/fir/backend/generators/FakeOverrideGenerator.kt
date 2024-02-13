@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -28,6 +31,13 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
+@RequiresOptIn(
+    level = RequiresOptIn.Level.ERROR,
+    message = "This api is planned for deprecation. Make sure, you don't use it with useIrFakeOverrideBuilder=true and non-lazy classes"
+)
+annotation class FirBasedFakeOverrideGenerator
+
+@FirBasedFakeOverrideGenerator
 class FakeOverrideGenerator(
     private val components: Fir2IrComponents,
     private val conversionScope: Fir2IrConversionScope
@@ -99,11 +109,11 @@ class FakeOverrideGenerator(
             createFakeOverriddenIfNeeded(
                 firClass, irClass, isLocal, functionSymbol,
                 declarationStorage::getCachedIrFunctionSymbol,
-                { function, irParent, predefinedOrigin, isLocal ->
+                { function, irParent, isLocal ->
                     declarationStorage.createAndCacheIrFunction(
                         function,
                         irParent,
-                        predefinedOrigin,
+                        IrDeclarationOrigin.FAKE_OVERRIDE,
                         isLocal,
                         allowLazyDeclarationsCreation = true
                     )
@@ -135,11 +145,11 @@ class FakeOverrideGenerator(
                     createFakeOverriddenIfNeeded(
                         firClass, irClass, isLocal, propertyOrFieldSymbol,
                         declarationStorage::getCachedIrPropertySymbol,
-                        { property, irParent, predefinedOrigin, _ ->
+                        { property, irParent, _ ->
                             declarationStorage.createAndCacheIrProperty(
                                 property,
                                 irParent,
-                                predefinedOrigin,
+                                IrDeclarationOrigin.FAKE_OVERRIDE,
                                 allowLazyDeclarationsCreation = true
                             )
                         },
@@ -171,9 +181,7 @@ class FakeOverrideGenerator(
                     createFakeOverriddenIfNeeded(
                         firClass, irClass, isLocal, propertyOrFieldSymbol,
                         { field, _, _ -> declarationStorage.getCachedIrFieldStaticFakeOverrideSymbolByDeclaration(field) },
-                        { field, irParent, _, _ ->
-                            declarationStorage.getOrCreateIrField(field, irParent)
-                        },
+                        { field, irParent, _, -> declarationStorage.getOrCreateIrField(field, irParent) },
                         createFakeOverrideSymbol = { firField, _ ->
                             FirFakeOverrideGenerator.createSubstitutionOverrideField(
                                 session, firField,
@@ -284,7 +292,7 @@ class FakeOverrideGenerator(
         isLocal: Boolean,
         originalSymbol: FirCallableSymbol<*>,
         cachedIrDeclarationSymbol: (firDeclaration: D, dispatchReceiverLookupTag: ConeClassLikeLookupTag?, () -> IdSignature?) -> IS?,
-        createIrDeclaration: (firDeclaration: D, irParent: IrClass, origin: IrDeclarationOrigin, isLocal: Boolean) -> ID,
+        createIrDeclaration: (firDeclaration: D, irParent: IrClass, isLocal: Boolean) -> ID,
         createFakeOverrideSymbol: (firDeclaration: D, baseSymbol: S) -> S,
         baseSymbols: MutableMap<IS, List<S>>,
         result: MutableList<in ID>?,
@@ -333,12 +341,7 @@ class FakeOverrideGenerator(
         }?.takeIf {
             @OptIn(UnsafeDuringIrConstructionAPI::class)
             it.ownerIfBound()?.parent == irClass
-        } ?: createIrDeclaration(
-            fakeOverrideFirDeclaration,
-            irClass,
-            IrDeclarationOrigin.FAKE_OVERRIDE,
-            isLocal
-        ).symbol as IS
+        } ?: createIrDeclaration(fakeOverrideFirDeclaration, irClass, isLocal).symbol as IS
 
         baseSymbols[irSymbol] = baseFirSymbolsForFakeOverride
 
@@ -578,6 +581,7 @@ class FakeOverrideGenerator(
 }
 
 context(Fir2IrComponents)
+@FirBasedFakeOverrideGenerator
 internal fun FirProperty.generateOverriddenAccessorSymbols(containingClass: FirClass, isGetter: Boolean): List<IrSimpleFunctionSymbol> {
     val scope = containingClass.unsubstitutedScope()
     scope.processPropertiesByName(name) {}
@@ -607,6 +611,7 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(containingClass: FirC
 }
 
 context(Fir2IrComponents)
+@FirBasedFakeOverrideGenerator
 internal fun FirProperty.generateOverriddenPropertySymbols(containingClass: FirClass): List<IrPropertySymbol> {
     val superClasses = containingClass.getSuperTypesAsIrClasses()
     val overriddenSet = mutableSetOf<IrPropertySymbol>()
@@ -622,6 +627,7 @@ internal fun FirProperty.generateOverriddenPropertySymbols(containingClass: FirC
 }
 
 context(Fir2IrComponents)
+@FirBasedFakeOverrideGenerator
 internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(containingClass: FirClass): List<IrSimpleFunctionSymbol> {
     val superClasses = containingClass.getSuperTypesAsIrClasses()
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()

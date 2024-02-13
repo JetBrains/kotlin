@@ -37,6 +37,12 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("customSerializers.kt")
+    public void testCustomSerializers() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/diagnostics/customSerializers.kt");
+    }
+
+    @Test
     @TestMetadata("DuplicateSerialName.kt")
     public void testDuplicateSerialName() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/diagnostics/DuplicateSerialName.kt");
@@ -124,6 +130,12 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
     @TestMetadata("ParamIsNotProperty.kt")
     public void testParamIsNotProperty() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/diagnostics/ParamIsNotProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("ParametrizedExternalSerializers.kt")
+    public void testParametrizedExternalSerializers() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/diagnostics/ParametrizedExternalSerializers.kt");
     }
 
     @Test

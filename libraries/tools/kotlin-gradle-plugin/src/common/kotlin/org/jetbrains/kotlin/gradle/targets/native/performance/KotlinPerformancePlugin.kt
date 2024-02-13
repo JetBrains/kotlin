@@ -3,6 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+// TODO: remove this plugin via https://youtrack.jetbrains.com/issue/KT-65692/Remove-Kotlin-Native-Performance-plugin
+@file:Suppress("DEPRECATION", "PackageDirectoryMismatch")
+
 package org.jetbrains.kotlin.gradle.plugin.performance
 
 import org.gradle.api.Plugin

@@ -19389,6 +19389,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
         }
 
         @Test
+        @TestMetadata("kt65707.kt")
+        public void testKt65707() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/kt65707.kt");
+        }
+
+        @Test
         @TestMetadata("methodOfAnyFromInterface.kt")
         public void testMethodOfAnyFromInterface() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/methodOfAnyFromInterface.kt");
@@ -19520,6 +19526,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
         @TestMetadata("escape_analysis.kt")
         public void testEscape_analysis() throws Exception {
             runTest("compiler/testData/codegen/box/fileCheck/escape_analysis.kt");
+        }
+
+        @Test
+        @TestMetadata("filecheck_expected_failure.kt")
+        public void testFilecheck_expected_failure() throws Exception {
+            runTest("compiler/testData/codegen/box/fileCheck/filecheck_expected_failure.kt");
         }
 
         @Test

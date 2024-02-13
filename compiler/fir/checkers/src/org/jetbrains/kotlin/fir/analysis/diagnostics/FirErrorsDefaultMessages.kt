@@ -1319,7 +1319,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INFERENCE_ERROR, "Inference error.")
         map.put(ILLEGAL_PROJECTION_USAGE, "Illegal projection usage.")
         map.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections on type arguments of functions and properties are prohibited.")
-        map.put(UPPER_BOUND_VIOLATED, "Type argument is not within its bounds: should be subtype of ''{0}''.", RENDER_TYPE, RENDER_TYPE)
+        map.put(
+            UPPER_BOUND_VIOLATED,
+            "Type argument is not within its bounds: should be subtype of ''{0}''.{2}",
+            RENDER_TYPE,
+            RENDER_TYPE,
+            OPTIONAL_SENTENCE
+        )
         map.put(
             UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION,
             "Type argument is not within its bounds: should be subtype of ''{0}''.",

@@ -63,9 +63,6 @@ class CommonNativeIT : KGPBaseTest() {
             gradleVersion,
             localRepoDir = defaultLocalRepo(gradleVersion)
         ) {
-
-            configureJvmMemory()
-
             val libCompileTasks = libTargets.map { ":lib:compileKotlin${it.capitalize()}" }
             val appCompileTasks = appTargets.map { ":app:compileKotlin${it.capitalize()}" }
             val appLinkFrameworkTasks = appTargets.map { ":app:linkDebugFramework${it.capitalize()}" }

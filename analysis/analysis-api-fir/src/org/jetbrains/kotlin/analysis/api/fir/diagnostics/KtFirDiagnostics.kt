@@ -333,7 +333,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val reference: String
     }
 
-    interface DuplicateParameterNameInFunctionType : KtFirDiagnostic<KtTypeReference> {
+    interface DuplicateParameterNameInFunctionType : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = DuplicateParameterNameInFunctionType::class
     }
 
@@ -1533,6 +1533,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = UpperBoundViolated::class
         val expectedUpperBound: KtType
         val actualUpperBound: KtType
+        val extraMessage: String
     }
 
     interface UpperBoundViolatedInTypealiasExpansion : KtFirDiagnostic<PsiElement> {

@@ -212,7 +212,7 @@ private val ClassDescriptor.hasSerializableAnnotationWithArgs: Boolean
         return psi.valueArguments.isNotEmpty()
     }
 
-private fun Annotated.findSerializableAnnotationDeclaration(): KtAnnotationEntry? {
+internal fun Annotated.findSerializableAnnotationDeclaration(): KtAnnotationEntry? {
     val lazyDesc = annotations.findAnnotation(serializableAnnotationFqName) as? LazyAnnotationDescriptor
     return lazyDesc?.annotationEntry
 }

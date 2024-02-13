@@ -59,8 +59,8 @@ class ResultTypeResolver(
         return if (direction == ResolveDirection.TO_SUBTYPE) nothingType() else nullableAnyType()
     }
 
-    fun findResultType(c: Context, variableWithConstraints: VariableWithConstraints, direction: ResolveDirection, isForOnlyInputTypes: Boolean = false): KotlinTypeMarker {
-        findResultTypeOrNull(c, variableWithConstraints, direction, isForOnlyInputTypes)?.let { return it }
+    fun findResultType(c: Context, variableWithConstraints: VariableWithConstraints, direction: ResolveDirection): KotlinTypeMarker {
+        findResultTypeOrNull(c, variableWithConstraints, direction)?.let { return it }
 
         // no proper constraints
         return c.getDefaultType(direction, variableWithConstraints.constraints, variableWithConstraints.typeVariable)
@@ -70,7 +70,6 @@ class ResultTypeResolver(
         c: Context,
         variableWithConstraints: VariableWithConstraints,
         direction: ResolveDirection,
-        isForOnlyInputTypes: Boolean = false,
     ): KotlinTypeMarker? {
         val resultTypeFromEqualConstraint = findResultIfThereIsEqualsConstraint(c, variableWithConstraints)
         if (resultTypeFromEqualConstraint != null) {
@@ -85,7 +84,7 @@ class ResultTypeResolver(
             }
         }
 
-        val subType = c.findSubType(variableWithConstraints, isForOnlyInputTypes)
+        val subType = c.findSubType(variableWithConstraints)
         // Super type should be the most flexible, sub type should be the least one
         val superType = c.findSuperType(variableWithConstraints).makeFlexibleIfNecessary(c, variableWithConstraints.constraints)
 
@@ -210,11 +209,12 @@ class ResultTypeResolver(
         return constraints.singleOrNull { it.kind.isLower() }?.isNullabilityConstraint ?: false
     }
 
-    private fun Context.findSubType(variableWithConstraints: VariableWithConstraints, isForOnlyInputTypes: Boolean): KotlinTypeMarker? {
-        val lowerConstraintTypes = prepareLowerConstraints(variableWithConstraints.constraints, isForOnlyInputTypes)
+    private fun Context.findSubType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
+        val lowerConstraintTypes = prepareLowerConstraints(variableWithConstraints.constraints)
 
         if (lowerConstraintTypes.isNotEmpty()) {
             val types = sinkIntegerLiteralTypes(lowerConstraintTypes)
+            // TODO Improve handling of flexible types with recursive captured type arguments to not produce giant multi-level-deep types KT-65704
             var commonSuperType = computeCommonSuperType(types)
 
             if (commonSuperType.contains { it.asSimpleType()?.isStubTypeForVariableInSubtyping() == true }) {
@@ -268,7 +268,7 @@ class ResultTypeResolver(
     private fun Context.computeCommonSuperType(types: List<KotlinTypeMarker>): KotlinTypeMarker =
         with(NewCommonSuperTypeCalculator) { commonSuperType(types) }
 
-    private fun Context.prepareLowerConstraints(constraints: List<Constraint>, isForOnlyInputTypes: Boolean): List<KotlinTypeMarker> {
+    private fun Context.prepareLowerConstraints(constraints: List<Constraint>): List<KotlinTypeMarker> {
         var atLeastOneProper = false
         var atLeastOneNonProper = false
 
@@ -277,14 +277,7 @@ class ResultTypeResolver(
         for (constraint in constraints) {
             if (constraint.kind != ConstraintKind.LOWER) continue
 
-            var type = constraint.type
-
-            // The call to commonSuperTypes will replace arguments that have recursive supertypes with star projections,
-            // which will lead to a different resulting type than approximating it first.
-            // This breaks the @OnlyInputTypes check for captured types with recursive super types.
-            if (isForOnlyInputTypes && isK2 && hasRecursiveTypeParametersWithGivenSelfType(type.typeConstructor())) {
-                type = typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.InternalTypesApproximation) ?: type
-            }
+            val type = constraint.type
 
             lowerConstraintTypes.add(type)
 

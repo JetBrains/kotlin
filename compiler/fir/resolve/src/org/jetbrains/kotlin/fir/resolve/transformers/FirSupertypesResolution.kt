@@ -382,7 +382,7 @@ open class FirSupertypeResolverVisitor(
 
     private fun resolveSpecificClassLikeSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
-        resolveSuperTypeRefs: (FirTransformer<ScopeClassDeclaration>, ScopeClassDeclaration) -> List<FirResolvedTypeRef>,
+        resolveSuperTypeRefs: (FirSpecificTypeResolverTransformer, ScopeClassDeclaration) -> List<FirResolvedTypeRef>,
     ): List<FirResolvedTypeRef> {
         when (val status = supertypeComputationSession.getSupertypesComputationStatus(classLikeDeclaration)) {
             is SupertypeComputationStatus.Computed -> return status.supertypeRefs
@@ -487,7 +487,7 @@ open class FirSupertypeResolverVisitor(
     private fun addSupertypesFromExtensions(
         klass: FirClassLikeDeclaration,
         supertypeRefs: MutableList<FirResolvedTypeRef>,
-        typeResolveTransformer: FirTransformer<ScopeClassDeclaration>,
+        typeResolveTransformer: FirSpecificTypeResolverTransformer,
         scopeDeclaration: ScopeClassDeclaration,
     ) {
         if (supertypeGenerationExtensions.isEmpty()) return
@@ -502,11 +502,13 @@ open class FirSupertypeResolverVisitor(
     }
 
     private class TypeResolveServiceForPlugins(
-        val typeResolveTransformer: FirTransformer<ScopeClassDeclaration>,
+        val typeResolveTransformer: FirSpecificTypeResolverTransformer,
         val scopeDeclaration: ScopeClassDeclaration,
     ) : FirSupertypeGenerationExtension.TypeResolveService() {
         override fun resolveUserType(type: FirUserTypeRef): FirResolvedTypeRef {
-            return type.transform(typeResolveTransformer, scopeDeclaration)
+            return typeResolveTransformer.withBareTypes(allowed = true) {
+                type.transform(typeResolveTransformer, scopeDeclaration)
+            }
         }
     }
 
@@ -524,14 +526,7 @@ open class FirSupertypeResolverVisitor(
         }
 
         return resolveSpecificClassLikeSupertypes(typeAlias) { transformer, scope ->
-            val resolvedTypeRef = transformer.transformTypeRef(expandedTypeRef, scope) as? FirResolvedTypeRef
-                ?: return@resolveSpecificClassLikeSupertypes listOf(
-                    createErrorTypeRef(
-                        expandedTypeRef,
-                        "Unresolved expanded typeRef for ${typeAlias.symbol.classId}",
-                        DiagnosticKind.UnresolvedExpandedType
-                    )
-                )
+            val resolvedTypeRef = transformer.transformTypeRef(expandedTypeRef, scope)
 
             if (resolveRecursively) {
                 fun visitNestedTypeAliases(type: TypeArgumentMarker) {

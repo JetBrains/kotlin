@@ -677,6 +677,12 @@ public class FirStandaloneNormalAnalysisSourceModuleIsUsedAsExpressionTestGenera
     }
 
     @Test
+    @TestMetadata("delegatedSuperEntry.kt")
+    public void testDelegatedSuperEntry() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/delegatedSuperEntry.kt");
+    }
+
+    @Test
     @TestMetadata("destructuringDecl.kt")
     public void testDestructuringDecl() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/destructuringDecl.kt");

@@ -5,15 +5,62 @@
 
 package org.jetbrains.kotlin.objcexport
 
-interface KtObjCExportSession {
+import org.jetbrains.kotlin.utils.getOrPutNullable
+
+
+sealed interface KtObjCExportSession {
     val configuration: KtObjCExportConfiguration
+}
+
+private val KtObjCExportSession.private: KtObjCExportSessionPrivate
+    get() = when (this) {
+        is KtObjCExportSessionPrivate -> this
+    }
+
+private interface KtObjCExportSessionPrivate : KtObjCExportSession {
+    val cache: MutableMap<Any, Any?>
 }
 
 inline fun <T> KtObjCExportSession(
     configuration: KtObjCExportConfiguration,
     block: KtObjCExportSession.() -> T,
 ): T {
-    return object : KtObjCExportSession {
-        override val configuration: KtObjCExportConfiguration = configuration
-    }.block()
+    return KtObjCExportSessionImpl(configuration, hashMapOf()).block()
+}
+
+@PublishedApi
+internal class KtObjCExportSessionImpl(
+    override val configuration: KtObjCExportConfiguration,
+    override val cache: MutableMap<Any, Any?>,
+) : KtObjCExportSessionPrivate
+
+
+/**
+ * Will cache the given [computation] in the current [KtObjCExportSession].
+ * Example Usage: Caching the ObjC name of 'MutableSet'
+ *
+ * ```kotlin
+ * context(KtObjCExportSession)
+ * val mutableSetObjCName get() = cached("mutableSetOfObjCName") {
+ *     "MutableSet".getObjCKotlinStdlibClassOrProtocolName().objCName
+ *     //                       ^
+ *     //           Requires KtObjCExportSession
+ * }
+ * ```
+ */
+context(KtObjCExportSession)
+internal inline fun <reified T> cached(key: Any, noinline computation: () -> T): T {
+    return cached(T::class.java, key, computation)
+}
+
+/**
+ * @see cached
+ */
+context(KtObjCExportSession)
+private fun <T> cached(typeOfT: Class<T>, key: Any, computation: () -> T): T {
+    val value = private.cache.getOrPutNullable(key) {
+        computation()
+    }
+
+    return typeOfT.cast(value)
 }

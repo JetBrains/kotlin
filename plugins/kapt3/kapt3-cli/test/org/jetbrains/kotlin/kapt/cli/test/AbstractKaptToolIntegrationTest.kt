@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kapt.cli.test
 
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
 import org.jetbrains.kotlin.cli.common.arguments.readArgumentsFromArgFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -53,10 +54,10 @@ abstract class AbstractKaptToolIntegrationTest {
                     "javac" -> runJavac(section.args)
                     "java" -> runJava(section.args)
                     "output" -> {
-                        val output = File(tmpdir, "processOutput.txt").readText()
-                        val expected = section.content.trim()
-                        JUnit5Assertions.assertTrue(output.contains(expected)) {
-                            "Output\"$output\" doesn't contain the expected string \"$expected\""
+                        val output = convertLineSeparators(File(tmpdir, "processOutput.txt").readText().trim())
+                        val expected = convertLineSeparators(section.content.trim())
+                        JUnit5Assertions.assertEquals(expected, output) {
+                            "Output\"$output\" is different from the expected string \"$expected\""
                         }
                     }
                     "after" -> {}

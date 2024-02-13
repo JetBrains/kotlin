@@ -15821,6 +15821,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("filecheck_expected_failure.kt")
+            public void testFilecheck_expected_failure() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/filecheck_expected_failure.kt");
+            }
+
+            @Test
             @TestMetadata("force_arm_instruction_set.kt")
             public void testForce_arm_instruction_set() throws Exception {
                 runTest("compiler/testData/codegen/box/fileCheck/force_arm_instruction_set.kt");
@@ -15972,6 +15978,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @TestMetadata("direct.kt")
                 public void testDirect() throws Exception {
                     runTest("compiler/testData/codegen/box/fileCheck/cinterop/direct.kt");
+                }
+
+                @Test
+                @TestMetadata("signext_zeroext_interop.kt")
+                public void testSignext_zeroext_interop() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/cinterop/signext_zeroext_interop.kt");
                 }
             }
 

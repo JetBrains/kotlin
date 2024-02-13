@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.util.Logger
 import java.io.File
+import java.util.*
 
 enum class KonanCacheKind(val outputKind: CompilerOutputKind) {
     STATIC(CompilerOutputKind.STATIC_CACHE),
@@ -105,7 +106,7 @@ abstract class KonanCacheTask : DefaultTask() {
         val args = mutableListOf(
             "-g",
             "-target", target,
-            "-produce", cacheKind.outputKind.name.toLowerCase(),
+            "-produce", cacheKind.outputKind.name.lowercase(Locale.getDefault()),
             "-Xadd-cache=${originalKlib.asFile.get().absolutePath}",
             "-Xcache-directory=${cacheDirectory.absolutePath}"
         )

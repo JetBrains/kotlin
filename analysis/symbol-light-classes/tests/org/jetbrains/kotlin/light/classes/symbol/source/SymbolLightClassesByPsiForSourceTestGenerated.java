@@ -133,6 +133,36 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     }
 
     @Test
+    @TestMetadata("deprecatedHiddenProperty_accessors.kt")
+    public void testDeprecatedHiddenProperty_accessors() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/deprecatedHiddenProperty_accessors.kt");
+    }
+
+    @Test
+    @TestMetadata("deprecatedHiddenProperty_getter.kt")
+    public void testDeprecatedHiddenProperty_getter() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/deprecatedHiddenProperty_getter.kt");
+    }
+
+    @Test
+    @TestMetadata("deprecatedHiddenProperty_interface.kt")
+    public void testDeprecatedHiddenProperty_interface() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/deprecatedHiddenProperty_interface.kt");
+    }
+
+    @Test
+    @TestMetadata("deprecatedHiddenProperty_noAccessor.kt")
+    public void testDeprecatedHiddenProperty_noAccessor() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/deprecatedHiddenProperty_noAccessor.kt");
+    }
+
+    @Test
+    @TestMetadata("deprecatedHiddenProperty_setter.kt")
+    public void testDeprecatedHiddenProperty_setter() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/deprecatedHiddenProperty_setter.kt");
+    }
+
+    @Test
     @TestMetadata("dollarsInNameLocal.kt")
     public void testDollarsInNameLocal() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/dollarsInNameLocal.kt");

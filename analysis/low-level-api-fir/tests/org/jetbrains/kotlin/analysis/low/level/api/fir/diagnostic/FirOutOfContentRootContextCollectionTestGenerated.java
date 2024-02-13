@@ -103,6 +103,12 @@ public class FirOutOfContentRootContextCollectionTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("danglingAnnotationInMiddle.kt")
+    public void testDanglingAnnotationInMiddle() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationInMiddle.kt");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotationTopLevel.kt")
     public void testDanglingAnnotationTopLevel() throws Exception {
         runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationTopLevel.kt");

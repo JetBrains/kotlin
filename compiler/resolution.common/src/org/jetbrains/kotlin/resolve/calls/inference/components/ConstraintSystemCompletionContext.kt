@@ -36,7 +36,6 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
         variable: TypeVariableMarker,
         resultType: KotlinTypeMarker,
         position: FixVariableConstraintPosition<*>,
-        resultTypeForOnlyInputTypes: KotlinTypeMarker = resultType
     )
 
     abstract fun couldBeResolvedWithUnrestrictedBuilderInference(): Boolean

@@ -181,12 +181,6 @@ fun Project.configureKotlinCompilationOptions() {
             "-Xno-kotlin-nothing-value-exception",
         )
 
-        // TODO: fix remaining warnings and remove this property.
-        val tasksWithWarnings = listOf(
-            ":kotlin-gradle-plugin:compileCommonKotlin",
-            ":kotlin-native:build-tools:compileKotlin"
-        )
-
         val projectsWithEnabledContextReceivers: List<String> by rootProject.extra
         val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib: List<String> by rootProject.extra
 
@@ -197,9 +191,7 @@ fun Project.configureKotlinCompilationOptions() {
                 if (renderDiagnosticNames) {
                     freeCompilerArgs += "-Xrender-internal-diagnostic-names"
                 }
-                if (path !in tasksWithWarnings) {
-                    allWarningsAsErrors = !kotlinBuildProperties.disableWerror
-                }
+                allWarningsAsErrors = !kotlinBuildProperties.disableWerror
                 if (project.path in projectsWithEnabledContextReceivers) {
                     freeCompilerArgs += "-Xcontext-receivers"
                 }

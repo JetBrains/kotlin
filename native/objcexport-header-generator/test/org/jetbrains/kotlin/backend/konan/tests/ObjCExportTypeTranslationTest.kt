@@ -177,6 +177,12 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    fun `test - char`() {
+        val header = header("""val foo: Char get() = error("stub")""")
+        assertEquals("unichar", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
     fun `test - string`() {
         val header = header("""val foo: String get() = error("stub")""")
         assertEquals("NSString *", header.renderTypesOfSymbol("foo"))
@@ -327,7 +333,6 @@ class ObjCExportTypeTranslationTest(
 
         assertEquals("C *(^)(A *, B *) -> void", header.renderTypesOfSymbol("foo"))
     }
-
 
     @Test
     fun `test - function type - receiver`() {
@@ -504,6 +509,62 @@ class ObjCExportTypeTranslationTest(
         )
         assertEquals("ERROR *", header.renderTypesOfSymbol("property"))
         assertEquals("ERROR * -> ERROR *", header.renderTypesOfSymbol("function"))
+    }
+
+    @Test
+    fun `test - char - property`() {
+        val header = header(
+            """
+                val property : Char get() = error("stub")
+            """.trimIndent()
+        )
+
+        assertEquals("unichar", header.renderTypesOfSymbol("property"))
+    }
+
+    @Test
+    fun `test - char - function parameter`() {
+        val header = header(
+            """
+                fun foo(x: Char) = Unit
+            """.trimIndent()
+        )
+
+        assertEquals("unichar -> void", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - char - as return type`() {
+        val header = header(
+            """
+                fun foo(): Char = error("stub")
+            """.trimIndent()
+        )
+
+        assertEquals(" -> unichar", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - function type returning char`() {
+        val header = header(
+            """
+            val foo: () -> Char
+        """.trimIndent()
+        )
+
+        assertEquals("id (^)(void)", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - custom List implementation`() {
+        val header = header(
+            """
+                interface MyList<T>: List<T>
+                val foo: MyList<String> get() = error("stub")
+            """.trimIndent()
+        )
+
+        assertEquals("NSArray<NSString *> *", header.renderTypesOfSymbol("foo"))
     }
 
     private fun header(

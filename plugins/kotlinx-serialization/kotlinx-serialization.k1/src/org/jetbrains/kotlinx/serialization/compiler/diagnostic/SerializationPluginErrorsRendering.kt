@@ -119,6 +119,20 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             Renderers.RENDER_TYPE
         )
         MAP.put(
+            SerializationErrors.CUSTOM_SERIALIZER_PARAM_ILLEGAL_COUNT,
+            "Custom serializer ''{0}'' can not be used for ''{1}'' since it has an invalid number of parameters in primary constructor: {2}",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE,
+            CommonRenderers.STRING
+        )
+        MAP.put(
+            SerializationErrors.CUSTOM_SERIALIZER_PARAM_ILLEGAL_TYPE,
+            "Custom serializer ''{0}'' can not be used for ''{1}'', type of parameter ''{2}'' in serializer's primary constructor should be ''KSerializer''",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE,
+            CommonRenderers.STRING
+        )
+        MAP.put(
             SerializationErrors.TRANSIENT_MISSING_INITIALIZER,
             "This property is marked as @Transient and therefore must have an initializing expression"
         )
@@ -193,6 +207,14 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             "Cannot generate external serializer ''{0}'': class ''{1}'' is defined in another module",
             Renderers.RENDER_TYPE,
             Renderers.RENDER_TYPE
+        )
+
+        MAP.put(
+            SerializationErrors.EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR,
+            "Cannot generate external serializer ''{0}'': it must have a constructor with {2} value parameters, because class ''{1}'' has type parameters",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE,
+            CommonRenderers.STRING
         )
     }
 }

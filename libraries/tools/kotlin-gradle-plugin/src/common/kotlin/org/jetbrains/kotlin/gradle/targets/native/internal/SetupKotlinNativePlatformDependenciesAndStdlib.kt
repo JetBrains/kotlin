@@ -105,8 +105,11 @@ private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
  * must be synced.
  */
 private fun DefaultKotlinSourceSet.addDependencyForLegacyImport(libraries: FileCollection) {
-    val metadataConfigurationName =
-        if (project.isIntransitiveMetadataConfigurationEnabled) intransitiveMetadataConfigurationName
-        else implementationMetadataConfigurationName
+    @Suppress("DEPRECATION")
+    val metadataConfigurationName = if (project.isIntransitiveMetadataConfigurationEnabled) {
+        intransitiveMetadataConfigurationName
+    } else {
+        implementationMetadataConfigurationName
+    }
     project.dependencies.add(metadataConfigurationName, libraries)
 }

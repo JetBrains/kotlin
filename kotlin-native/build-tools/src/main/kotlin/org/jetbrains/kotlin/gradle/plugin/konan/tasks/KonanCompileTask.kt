@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.gradle.plugin.tasks
 
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Optional
 import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import java.io.File
+import java.util.*
 
 /**
  * A task compiling the target executable/library using Kotlin/Native compiler
@@ -141,7 +143,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     /** Args passed to the compiler at the first stage of two-stage compilation (klib building). */
     protected fun buildFirstStageArgs(klibPath: String) = mutableListOf<String>().apply {
         addArg("-output", klibPath)
-        addArg("-produce", CompilerOutputKind.LIBRARY.name.toLowerCase())
+        addArg("-produce", CompilerOutputKind.LIBRARY.name.lowercase(Locale.getDefault()))
 
         addAll(buildCommonArgs())
 
@@ -156,7 +158,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     /** Args passed to the compiler at the second stage of two-stage compilation (producing a final binary from the klib).  */
     protected fun buildSecondStageArgs(klibPath: String) = mutableListOf<String>().apply {
         addArg("-output", artifact.canonicalPath)
-        addArg("-produce", produce.name.toLowerCase())
+        addArg("-produce", produce.name.lowercase(Locale.getDefault()))
         addArgIfNotNull("-entry", entryPoint)
 
         addAll(buildCommonArgs())
@@ -205,7 +207,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     /** Args passed to the compiler if the two-stage compilation is disabled. */
     fun buildSingleStageArgs() = mutableListOf<String>().apply {
         addArg("-output", artifact.canonicalPath)
-        addArg("-produce", produce.name.toLowerCase())
+        addArg("-produce", produce.name.lowercase(Locale.getDefault()))
         addArgIfNotNull("-entry", entryPoint)
 
         addAll(buildCommonArgs())

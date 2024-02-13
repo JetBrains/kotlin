@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.test.blackbox.support.runner.doFileCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
 import org.jetbrains.kotlin.native.executors.runProcess
@@ -38,6 +39,45 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
     private val testSuiteDir = File("native/native.tests/testData/framework")
     private val extras = TestCase.NoTestRunnerExtras("There's no entrypoint in Swift program")
     private val testCompilationFactory = TestCompilationFactory()
+
+    @Test
+    fun testSignextZeroext() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val fileCheckStage = "CStubs"
+        val testDataFile = testSuiteDir.resolve("signext_zeroext_objc_export.kt")
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR,
+            extras,
+            "SignextZeroext",
+            listOf(testDataFile),
+            TestCompilerArgs(
+                listOf(
+                    "-Xbinary=bundleId=signextZeroext",
+                    "-Xsave-llvm-ir-after=$fileCheckStage",
+                    "-Xsave-llvm-ir-directory=${buildDir.absolutePath}",
+                )
+            ),
+            givenDependencies = emptySet(),
+            // KT-64879: TODO: refactor fileCheckMatcher out from TestRunChecks to another layer like TestExecutableChecks
+            checks = TestRunChecks.Default(Duration.ZERO)
+                .copy(fileCheckMatcher = TestRunCheck.FileCheckMatcher(testRunSettings, testDataFile))
+        )
+        val objCFrameworkCompilation = testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings)
+        objCFrameworkCompilation.result.assertSuccess()
+
+        val fileCheckDump = buildDir.resolve("out.$fileCheckStage.ll").also { assert(it.exists()) }
+        val result = doFileCheck(testCase.checks.fileCheckMatcher!!, fileCheckDump)
+        if (!(result.stdout.isEmpty() && result.stderr.isEmpty())) {
+            val shortOutText = result.stdout.lines().take(100)
+            val shortErrText = result.stderr.lines().take(100)
+            fail("FileCheck matching of ${fileCheckDump.absolutePath}\n" +
+                        "with '--check-prefixes ${testCase.checks.fileCheckMatcher.prefixes}'\n" +
+                        "failed with result=$result:\n" +
+                        shortOutText.joinToString("\n") + "\n" +
+                        shortErrText.joinToString("\n")
+            )
+        }
+    }
 
     @Test
     fun testValuesGenerics() {

@@ -32,7 +32,12 @@ object AnalysisApiHeaderGenerator : HeaderGenerator {
         val session = createStandaloneAnalysisApiSession(root.listFiles().orEmpty().filter { it.extension == "kt" })
         val (module, files) = session.modulesWithFiles.entries.single()
         return analyze(module) {
-            KtObjCExportSession(KtObjCExportConfiguration(frameworkName = configuration.frameworkName)) {
+            KtObjCExportSession(
+                KtObjCExportConfiguration(
+                    frameworkName = configuration.frameworkName,
+                    generateBaseDeclarationStubs = configuration.generateBaseDeclarationStubs
+                )
+            ) {
                 translateToObjCHeader(files.map { it as KtFile })
             }
         }

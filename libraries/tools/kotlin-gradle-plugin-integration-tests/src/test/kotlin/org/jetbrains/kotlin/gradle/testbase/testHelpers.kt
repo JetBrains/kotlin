@@ -90,19 +90,6 @@ private fun TestProject.formatEnvironmentForScript(envCommand: String): String {
 }
 
 /**
- *
- * Configures the JVM memory settings for the Gradle project.
- * @param memorySizeInGb The amount of memory to allocate to the JVM, in gigabytes.
- *                     Defaults to 1 gigabyte.
- */
-fun GradleProject.configureJvmMemory(memorySizeInGb: Number = 1) {
-    addPropertyToGradleProperties(
-        propertyName = "org.gradle.jvmargs",
-        mapOf("-Xmx" to "-Xmx${memorySizeInGb}g")
-    )
-}
-
-/**
  * Adds the given options to a Gradle property specified by name, in the project's Gradle properties file.
  * If the property does not exist, it is created.
  * @param propertyName The name of the Gradle property to modify or create.

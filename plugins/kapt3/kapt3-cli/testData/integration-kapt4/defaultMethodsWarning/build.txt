@@ -1,0 +1,18 @@
+# mkdir
+output/stubs
+
+# kapt
+-language-version 2.0
+-Xuse-kapt4
+-Kapt-mode=stubs
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-d output/classes
+-cp %KOTLIN_STDLIB%
+Test.kt
+
+# output
+warning: k2 kapt is an experimental feature. Use with caution.
+warning: [kapt] Support for interface methods with bodies in Kapt requires -Xjvm-default=all or -Xjvm-default=all-compatibility compiler option

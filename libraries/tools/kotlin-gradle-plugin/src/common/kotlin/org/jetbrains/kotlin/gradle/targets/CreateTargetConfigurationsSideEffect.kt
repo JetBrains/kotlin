@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.gradle.targets
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.categoryByName
-import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.configureSourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -29,8 +27,9 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
     val compileConfiguration = mainCompilation.internal.configurations.deprecatedCompileConfiguration
     val implementationConfiguration = configurations.maybeCreateDependencyScope(mainCompilation.implementationConfigurationName)
 
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
     val runtimeOnlyConfiguration = when (mainCompilation) {
-        is KotlinCompilationToRunnableFiles<*> -> configurations.maybeCreateDependencyScope(mainCompilation.runtimeOnlyConfigurationName)
+        is DeprecatedKotlinCompilationToRunnableFiles<*> -> configurations.maybeCreateDependencyScope(mainCompilation.runtimeOnlyConfigurationName)
         else -> null
     }
 
@@ -40,14 +39,16 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
         attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         extendsFrom(configurations.maybeCreateDependencyScope(mainCompilation.apiConfigurationName))
-        if (mainCompilation is KotlinCompilationToRunnableFiles) {
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+        if (mainCompilation is DeprecatedKotlinCompilationToRunnableFiles) {
             val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
             runtimeConfiguration?.let { extendsFrom(it) }
         }
         usesPlatformOf(target)
     }
 
-    if (mainCompilation is KotlinCompilationToRunnableFiles<*>) {
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+    if (mainCompilation is DeprecatedKotlinCompilationToRunnableFiles<*>) {
         configurations.maybeCreateConsumable(target.runtimeElementsConfigurationName).apply {
             description = "Elements of runtime for main."
             isVisible = false
@@ -55,8 +56,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
             attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
             extendsFrom(implementationConfiguration)
-            if (runtimeOnlyConfiguration != null)
-                extendsFrom(runtimeOnlyConfiguration)
+            extendsFrom(runtimeOnlyConfiguration)
             runtimeConfiguration?.let { extendsFrom(it) }
             usesPlatformOf(target)
         }
@@ -73,8 +73,10 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         val compileTestsConfiguration = testCompilation.internal.configurations.deprecatedCompileConfiguration
         val testImplementationConfiguration = configurations.maybeCreateDependencyScope(testCompilation.implementationConfigurationName)
+
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
         val testRuntimeOnlyConfiguration = when (testCompilation) {
-            is KotlinCompilationToRunnableFiles<*> -> configurations.maybeCreateDependencyScope(testCompilation.runtimeOnlyConfigurationName)
+            is DeprecatedKotlinCompilationToRunnableFiles<*> -> configurations.maybeCreateDependencyScope(testCompilation.runtimeOnlyConfigurationName)
             else -> null
         }
 
@@ -82,7 +84,10 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         testImplementationConfiguration.extendsFrom(implementationConfiguration)
         testRuntimeOnlyConfiguration?.extendsFrom(runtimeOnlyConfiguration)
 
-        if (mainCompilation is KotlinCompilationToRunnableFiles && testCompilation is KotlinCompilationToRunnableFiles) {
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+        if (mainCompilation is DeprecatedKotlinCompilationToRunnableFiles &&
+            testCompilation is DeprecatedKotlinCompilationToRunnableFiles
+        ) {
             val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
             val testRuntimeConfiguration = testCompilation.internal.configurations.deprecatedRuntimeConfiguration
             runtimeConfiguration?.let { testRuntimeConfiguration?.extendsFrom(it) }

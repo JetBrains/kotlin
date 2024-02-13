@@ -209,7 +209,7 @@ class Fir2IrImplicitCastInserter(
         }
 
         if (this is IrContainerExpression) {
-            insertImplicitCasts()
+            insertImplicitCasts(coerceLastExpressionToUnit = type.isUnit())
         }
 
         val expandedValueType = valueType.fullyExpandedType(session)

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.backend.generators.DataClassMembersGenerator
+import org.jetbrains.kotlin.fir.backend.generators.FirBasedFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.backend.generators.addDeclarationToParent
 import org.jetbrains.kotlin.fir.backend.generators.setParent
 import org.jetbrains.kotlin.fir.declarations.*
@@ -67,6 +68,7 @@ class Fir2IrConverter(
 
     private val generatorExtensions = session.extensionService.declarationGenerators
 
+    @FirBasedFakeOverrideGenerator
     private var wereSourcesFakeOverridesBound = false
     private val postponedDeclarationsForFakeOverridesBinding = mutableListOf<IrDeclaration>()
 
@@ -91,13 +93,18 @@ class Fir2IrConverter(
             processFileAndClassMembers(firFile)
         }
         //   4. Override processing which sets overridden symbols for everything inside non-local regular classes
-        for (firFile in allFirFiles) {
-            bindFakeOverridesInFile(firFile)
-        }
+        @OptIn(FirBasedFakeOverrideGenerator::class) // checked for useIrFakeOverrideBuilder
+        if (!configuration.useIrFakeOverrideBuilder) {
+            for (firFile in allFirFiles) {
+                bindFakeOverridesInFile(firFile)
+            }
 
-        wereSourcesFakeOverridesBound = true
-        fakeOverrideGenerator.bindOverriddenSymbols(postponedDeclarationsForFakeOverridesBinding)
-        postponedDeclarationsForFakeOverridesBinding.clear()
+            wereSourcesFakeOverridesBound = true
+            fakeOverrideGenerator.bindOverriddenSymbols(postponedDeclarationsForFakeOverridesBinding)
+            postponedDeclarationsForFakeOverridesBinding.clear()
+        } else {
+            require(postponedDeclarationsForFakeOverridesBinding.isEmpty())
+        }
 
         //   Do (3) and (4) for local classes encountered during (3)
         classifierStorage.processMembersOfClassesCreatedOnTheFly()
@@ -127,6 +134,7 @@ class Fir2IrConverter(
         }
     }
 
+    @FirBasedFakeOverrideGenerator
     fun bindFakeOverridesOrPostpone(declarations: List<IrDeclaration>) {
         // Do not run binding for lazy classes until all sources declarations are processed
         if (wereSourcesFakeOverridesBound) {
@@ -280,6 +288,7 @@ class Fir2IrConverter(
         }
 
         if (!configuration.useIrFakeOverrideBuilder) {
+            @OptIn(FirBasedFakeOverrideGenerator::class) // checked for useIrFakeOverrideBuilder
             fakeOverrideGenerator.computeFakeOverrides(klass, irClass, allDeclarations)
         }
 
@@ -372,6 +381,7 @@ class Fir2IrConverter(
         return irClass
     }
 
+    @FirBasedFakeOverrideGenerator
     private fun bindFakeOverridesInFile(file: FirFile) {
         val irFile = declarationStorage.getIrFile(file)
         // `irFile` definitely is not a lazy class
@@ -384,8 +394,10 @@ class Fir2IrConverter(
     }
 
     // `irClass` is a source class and definitely is not a lazy class
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    // checked for useIrFakeOverrideBuilder
+    @OptIn(UnsafeDuringIrConstructionAPI::class, FirBasedFakeOverrideGenerator::class)
     fun bindFakeOverridesInClass(klass: IrClass) {
+        if (configuration.useIrFakeOverrideBuilder) return
         require(klass !is Fir2IrLazyClass)
         fakeOverrideGenerator.bindOverriddenSymbols(klass.declarations)
         delegatedMemberGenerator.bindDelegatedMembersOverriddenSymbols(klass)

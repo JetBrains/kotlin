@@ -130,6 +130,9 @@ internal class KtFirExpressionInfoProvider(
             is KtValueArgument ->
                 parent.getArgumentExpression() == child
 
+            is KtDelegatedSuperTypeEntry ->
+                parent.delegateExpression == child
+
             // KtContainerNode are containers used in `KtIfExpressions`, and should be regarded
             // as parentheses for the purpose of this analysis.
             is KtContainerNode ->

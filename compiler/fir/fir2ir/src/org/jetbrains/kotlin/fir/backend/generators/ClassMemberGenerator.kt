@@ -216,6 +216,7 @@ internal class ClassMemberGenerator(
                  * recalculates this value from scratch. Also, it's quite meaningless in non-platform modules anyway.
                  */
                 if (!configuration.useIrFakeOverrideBuilder) {
+                    @OptIn(FirBasedFakeOverrideGenerator::class)
                     irFunction.overriddenSymbols = firFunction.generateOverriddenFunctionSymbols(containingClass)
                 }
             }
@@ -234,6 +235,7 @@ internal class ClassMemberGenerator(
              * recalculates this value from scratch. Also, it's quite meaningless in non-platform modules anyway.
              */
             if (!configuration.useIrFakeOverrideBuilder) {
+                @OptIn(FirBasedFakeOverrideGenerator::class) // checked for useIrFakeOverrideBuilder
                 irProperty.overriddenSymbols = property.generateOverriddenPropertySymbols(containingClass)
             }
         }
@@ -348,6 +350,7 @@ internal class ClassMemberGenerator(
                 }
             }
             if (containingClass != null && !components.configuration.useIrFakeOverrideBuilder) {
+                @OptIn(FirBasedFakeOverrideGenerator::class) // checked for useIrFakeOverrideBuilder
                 this.overriddenSymbols = property.generateOverriddenAccessorSymbols(containingClass, isGetter)
             }
 

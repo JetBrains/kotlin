@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.reflect.KClass
 
 /**
@@ -203,11 +204,17 @@ fun checkUpperBoundViolated(
                         stubTypesEqualToAnything = true
                     )
                 ) {
-                    val factory = when {
-                        isReportExpansionError && argumentTypeRef == null -> FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION
-                        else -> FirErrors.UPPER_BOUND_VIOLATED
+                    if (isReportExpansionError && argumentTypeRef == null) {
+                        reporter.reportOn(
+                            argumentSource, FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION, upperBound, argumentType.type, context
+                        )
+                    } else {
+                        val extraMessage = if(upperBound is ConeCapturedType) "Consider removing the explicit type arguments" else ""
+                        reporter.reportOn(
+                            argumentSource, FirErrors.UPPER_BOUND_VIOLATED,
+                            upperBound, argumentType.type, extraMessage, context
+                        )
                     }
-                    reporter.reportOn(argumentSource, factory, upperBound, argumentType.type, context)
                 } else {
                     // Only check if the original check was successful to prevent duplicate diagnostics
                     val additionalUpperBound = additionalUpperBoundsProvider?.getAdditionalUpperBound(upperBound)

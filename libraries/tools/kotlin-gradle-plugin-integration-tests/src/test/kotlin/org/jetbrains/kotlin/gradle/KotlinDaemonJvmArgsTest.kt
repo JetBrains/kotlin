@@ -19,7 +19,12 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
     @GradleTest
     @DisplayName("Kotlin daemon by default should inherit Gradle daemon max jvm heap size")
     internal fun shouldInheritGradleDaemonArgsByDefault(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion, enableKotlinDaemonMemoryLimitInMb = null) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
+            enableGradleDaemonMemoryLimitInMb = null,
+        ) {
             gradleProperties.append(
                 """
                 org.gradle.jvmargs = -Xmx758m
@@ -37,7 +42,12 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
     @DisplayName("Kotlin daemon should allow to define own jvm options via gradle daemon jvm args system property")
     @GradleTest
     internal fun shouldAllowToRedefineViaDGradleOption(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion, enableKotlinDaemonMemoryLimitInMb = null) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
+            enableGradleDaemonMemoryLimitInMb = null,
+        ) {
             gradleProperties.append(
                 """
                 org.gradle.jvmargs =-Xmx758m -Dkotlin.daemon.jvm.options=Xmx1g,Xms128m
@@ -55,7 +65,12 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
     @DisplayName("Jvm args defined in gradle.properties should override Gradle daemon jvm arguments inheritance")
     @GradleTest
     internal fun shouldUseArgumentsFromGradleProperties(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion, enableKotlinDaemonMemoryLimitInMb = null) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
+            enableGradleDaemonMemoryLimitInMb = null,
+        ) {
             gradleProperties.writeText(
                 """
                 org.gradle.jvmargs =-Xmx758m -Xms128m
@@ -74,7 +89,12 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
     @DisplayName("Should use arguments from extension DSL")
     @GradleTest
     internal fun shouldUseDslArguments(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion, enableKotlinDaemonMemoryLimitInMb = null) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
+            enableGradleDaemonMemoryLimitInMb = null,
+        ) {
             gradleProperties.append(
                 """
                 org.gradle.jvmargs =-Xmx758m -Xms128m
@@ -106,7 +126,8 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
         project(
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
-            enableKotlinDaemonMemoryLimitInMb = null
+            enableKotlinDaemonMemoryLimitInMb = null,
+            enableGradleDaemonMemoryLimitInMb = null,
         ) {
             gradleProperties.writeText(
                 """
@@ -145,7 +166,12 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
     @DisplayName("Should inherit Gradle memory settings if it is not set in Kotlin daemon jvm args")
     @GradleTest
     fun inheritGradleMemorySettingsIfKotlinArgsNotContain(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion, enableKotlinDaemonMemoryLimitInMb = null) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
+            enableGradleDaemonMemoryLimitInMb = null,
+        ) {
             gradleProperties.append(
                 """
                 org.gradle.jvmargs =-Xmx758m -Xms128m

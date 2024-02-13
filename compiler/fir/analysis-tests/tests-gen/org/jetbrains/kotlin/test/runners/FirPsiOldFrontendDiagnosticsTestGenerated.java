@@ -358,6 +358,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("duplicateParameterName.kt")
+        public void testDuplicateParameterName() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/duplicateParameterName.kt");
+        }
+
+        @Test
+        @TestMetadata("duplicateParameterNameSimplified.kt")
+        public void testDuplicateParameterNameSimplified() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/duplicateParameterNameSimplified.kt");
+        }
+
+        @Test
         @TestMetadata("emptyLhsClassLiterals.kt")
         public void testEmptyLhsClassLiterals() throws Exception {
             runTest("compiler/testData/diagnostics/tests/emptyLhsClassLiterals.kt");
@@ -18036,6 +18048,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("capturedUpperBound.kt")
+                public void testCapturedUpperBound() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedUpperBound.kt");
+                }
+
+                @Test
                 @TestMetadata("capturingFromArgumentOfFlexibleType.kt")
                 public void testCapturingFromArgumentOfFlexibleType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturingFromArgumentOfFlexibleType.kt");
@@ -18057,6 +18075,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 @TestMetadata("dontCheckNewCapturedTypeSpecificChecksForOldOnes.kt")
                 public void testDontCheckNewCapturedTypeSpecificChecksForOldOnes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/dontCheckNewCapturedTypeSpecificChecksForOldOnes.kt");
+                }
+
+                @Test
+                @TestMetadata("expectedTypeHasCapturedStarArgument.kt")
+                public void testExpectedTypeHasCapturedStarArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/expectedTypeHasCapturedStarArgument.kt");
                 }
 
                 @Test
