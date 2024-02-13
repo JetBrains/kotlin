@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 val ConeKotlinType.isArrayOrPrimitiveArray: Boolean
     get() = arrayElementTypeArgument() != null
@@ -33,30 +32,6 @@ fun ConeTypeProjection.createArrayType(nullable: Boolean = false, createPrimitiv
     }
 
     return StandardClassIds.Array.constructClassLikeType(arrayOf(this), nullable)
-}
-
-fun ConeKotlinType.arrayElementType(checkUnsignedArrays: Boolean = true): ConeKotlinType? {
-    return when (val argument = arrayElementTypeArgument(checkUnsignedArrays)) {
-        is ConeKotlinTypeProjection -> argument.type
-        else -> null
-    }
-}
-
-private fun ConeKotlinType.arrayElementTypeArgument(checkUnsignedArrays: Boolean = true): ConeTypeProjection? {
-    val type = this.lowerBoundIfFlexible()
-    if (type !is ConeClassLikeType) return null
-    val classId = type.lookupTag.classId
-    if (classId == StandardClassIds.Array) {
-        return type.typeArguments.first()
-    }
-    val elementType = StandardClassIds.elementTypeByPrimitiveArrayType[classId] ?: runIf(checkUnsignedArrays) {
-        StandardClassIds.elementTypeByUnsignedArrayType[classId]
-    }
-    if (elementType != null) {
-        return elementType.constructClassLikeType(emptyArray(), isNullable = false)
-    }
-
-    return null
 }
 
 fun ConeKotlinType.varargElementType(): ConeKotlinType {

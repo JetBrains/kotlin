@@ -42,7 +42,7 @@ object FirDiagnosticRenderers {
                 propertyAccessorRenderer = null,
                 callArgumentsRenderer = FirCallNoArgumentsRenderer(),
                 modifierRenderer = FirPartialModifierRenderer(),
-                valueParameterRenderer = FirValueParameterRendererNoDefaultValue(),
+                valueParameterRenderer = FirValueParameterRendererForReadability(),
                 declarationRenderer = FirDeclarationRenderer("local "),
                 annotationRenderer = FirAnnotationRendererForReadability(),
                 lineBreakAfterContextReceivers = false,
