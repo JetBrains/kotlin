@@ -20,45 +20,44 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-
 @OptIn(IrImplementationDetail::class)
-object IrErrorClassImpl : IrClassImpl(
+val IrErrorClassImpl = IrClassImpl(
     UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.ERROR_CLASS, IrClassSymbolImpl(),
     Name.special("<error>"), ClassKind.CLASS, DescriptorVisibilities.DEFAULT_VISIBILITY, Modality.FINAL
-) {
-    override var parent: IrDeclarationParent
-        get() = object : IrFile() {
-            override val startOffset: Int
-                get() = shouldNotBeCalled()
-            override val endOffset: Int
-                get() = shouldNotBeCalled()
-            override var annotations: List<IrConstructorCall>
-                get() = shouldNotBeCalled()
-                set(_) {}
+).apply {
+    parent = ErrorFile
+}
 
-            @UnsafeDuringIrConstructionAPI
-            override val declarations: MutableList<IrDeclaration>
-                get() = shouldNotBeCalled()
-            override val symbol: IrFileSymbol
-                get() = shouldNotBeCalled()
-            override var module: IrModuleFragment
-                get() = shouldNotBeCalled()
-                set(_) = shouldNotBeCalled()
-            override var fileEntry: IrFileEntry
-                get() = shouldNotBeCalled()
-                set(_) = shouldNotBeCalled()
-            override var metadata: MetadataSource?
-                get() = shouldNotBeCalled()
-                set(_) {}
+private object ErrorFile : IrFile() {
+    override val startOffset: Int
+        get() = shouldNotBeCalled()
+    override val endOffset: Int
+        get() = shouldNotBeCalled()
+    override var annotations: List<IrConstructorCall>
+        get() = shouldNotBeCalled()
+        set(_) {}
 
-            @ObsoleteDescriptorBasedAPI
-            override val packageFragmentDescriptor: PackageFragmentDescriptor
-                get() = shouldNotBeCalled()
-            override val moduleDescriptor: ModuleDescriptor
-                get() = shouldNotBeCalled()
-            override var packageFqName: FqName
-                get() = FqName.ROOT
-                set(_) = shouldNotBeCalled()
-        }
+    @UnsafeDuringIrConstructionAPI
+    override val declarations: MutableList<IrDeclaration>
+        get() = shouldNotBeCalled()
+    override val symbol: IrFileSymbol
+        get() = shouldNotBeCalled()
+    override var module: IrModuleFragment
+        get() = shouldNotBeCalled()
+        set(_) = shouldNotBeCalled()
+    override var fileEntry: IrFileEntry
+        get() = shouldNotBeCalled()
+        set(_) = shouldNotBeCalled()
+    override var metadata: MetadataSource?
+        get() = shouldNotBeCalled()
+        set(_) {}
+
+    @ObsoleteDescriptorBasedAPI
+    override val packageFragmentDescriptor: PackageFragmentDescriptor
+        get() = shouldNotBeCalled()
+    override val moduleDescriptor: ModuleDescriptor
+        get() = shouldNotBeCalled()
+    override var packageFqName: FqName
+        get() = FqName.ROOT
         set(_) = shouldNotBeCalled()
 }
