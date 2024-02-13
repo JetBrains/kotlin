@@ -62,6 +62,18 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
     }
 
     @Test
+  @TestMetadata("composableFunctionMultiModules.kt")
+  public void testComposableFunctionMultiModules() {
+    runTest("plugins/fir-plugin-prototype/testData/box/composableFunctionMultiModules.kt");
+  }
+
+  @Test
+  @TestMetadata("composableFunctionMultiModules2.kt")
+  public void testComposableFunctionMultiModules2() {
+    runTest("plugins/fir-plugin-prototype/testData/box/composableFunctionMultiModules2.kt");
+  }
+
+  @Test
     @TestMetadata("expectComposableFunction.kt")
     public void testExpectComposableFunction() throws Exception {
         runTest("plugins/fir-plugin-prototype/testData/box/expectComposableFunction.kt");
