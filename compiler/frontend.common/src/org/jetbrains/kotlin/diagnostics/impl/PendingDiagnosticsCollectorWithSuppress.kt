@@ -33,8 +33,11 @@ class PendingDiagnosticsCollectorWithSuppress(override val rawReport: (Boolean, 
         element: AbstractKtSourceElement,
         context: DiagnosticContext?
     ) {
+        if (pendingDiagnosticsByFilePath.isEmpty()) return
         val commitEverything = context == null
-        for ((path, pendingList) in pendingDiagnosticsByFilePath) {
+        val pendingIterator = pendingDiagnosticsByFilePath.iterator()
+        while (pendingIterator.hasNext()) {
+            val (path, pendingList) = pendingIterator.next()
             val committedList = _diagnosticsByFilePath.getOrPut(path) { mutableListOf() }
             val iterator = pendingList.iterator()
             while (iterator.hasNext()) {
@@ -55,6 +58,9 @@ class PendingDiagnosticsCollectorWithSuppress(override val rawReport: (Boolean, 
                         }
                     }
                 }
+            }
+            if (pendingList.isEmpty()) {
+                pendingIterator.remove()
             }
         }
     }
