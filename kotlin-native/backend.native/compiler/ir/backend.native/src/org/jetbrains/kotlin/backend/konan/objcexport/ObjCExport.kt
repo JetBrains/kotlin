@@ -129,8 +129,11 @@ internal fun createTestBundle(
         bundleDirectory: File
 ) {
     val name = bundleDirectory.name.removeSuffix(CompilerOutputKind.TEST_BUNDLE.suffix())
-    BundleBuilder(config, infoPListBuilder = InfoPListBuilder(config), mainPackageGuesser = MainPackageGuesser())
-            .build(moduleDescriptor, bundleDirectory, name)
+    BundleBuilder(
+            config = config,
+            infoPListBuilder = InfoPListBuilder(config, BundleType.XCTEST),
+            mainPackageGuesser = MainPackageGuesser()
+    ).build(moduleDescriptor, bundleDirectory, name)
 }
 
 // TODO: No need for such class in dynamic driver.
