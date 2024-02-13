@@ -44,11 +44,7 @@ class ObjCDependenciesTypesTest(
         doTest(dependenciesDir.resolve("array"))
     }
 
-    /**
-     * Fails because of KT-65709
-     */
     @Test
-    @TodoAnalysisApi
     fun `test - arrayList`() {
         doTest(dependenciesDir.resolve("arrayList"))
     }
