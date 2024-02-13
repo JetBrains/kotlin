@@ -22,7 +22,7 @@ internal object TestRunners {
 
     private fun Executor.toRunner(settings: Settings, testRun: TestRun): AbstractRunner<Unit> =
         if (settings.get<SharedExecutionTestRunner>().value) {
-            SharedExecutionBuilder.buildRunner(this, testRun)
+            SharedExecutionBuilder.buildRunner(settings, this, testRun)
         } else {
             RunnerWithExecutor(this, testRun)
         }

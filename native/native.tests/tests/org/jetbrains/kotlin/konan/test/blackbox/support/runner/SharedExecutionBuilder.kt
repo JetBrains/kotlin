@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BlackBoxTestInstances
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.SharedExecutionTestRunner
 import org.jetbrains.kotlin.native.executors.Executor
 import java.util.concurrent.ConcurrentHashMap
@@ -23,18 +25,16 @@ import java.util.concurrent.ConcurrentHashMap
  */
 internal object SharedExecutionBuilder {
     private val executionResults: ConcurrentHashMap<TestExecutable, AbstractRunner<Unit>> = ConcurrentHashMap()
-    private val testRunsToExecuteSeparately: ConcurrentHashMap<TestExecutable, MutableList<TestCase>> = ConcurrentHashMap()
+    private val testCasesToExecuteSeparately: ConcurrentHashMap<TestExecutable, MutableList<TestCase>> = ConcurrentHashMap()
 
-    fun buildRunner(executor: Executor, testRun: TestRun): AbstractRunner<Unit> {
-        if (testRun.expectedFailure || testRun.checks.executionTimeoutCheck is TestRunCheck.ExecutionTimeout.ShouldExceed) {
-            // If the test run is expected to fail or timeout it should not be executed with others.
-            // Add it to the map of ignored test cases for the executable
-            testRunsToExecuteSeparately.computeIfAbsent(testRun.executable) { mutableListOf() } += testRun.testCase
-
+    fun buildRunner(settings: Settings, executor: Executor, testRun: TestRun): AbstractRunner<Unit> {
+        if (testRun.testCase.kind != TestKind.REGULAR) {
             return RunnerWithExecutor(executor, testRun)
         }
 
-        if (testRun.testCase.kind != TestKind.REGULAR) {
+        val separateTestCases = settings.computeSeparateTestCases(testRun)
+
+        if (testRun.testCase in separateTestCases) {
             return RunnerWithExecutor(executor, testRun)
         }
 
@@ -46,9 +46,7 @@ internal object SharedExecutionBuilder {
                 emptySet()
 
             // Get tests that are not compatible with others
-            val testsThatMayFail = testRunsToExecuteSeparately[testRun.executable]
-                ?.map { it.nominalPackageName.toString() }
-                ?: emptyList()
+            val testsThatMayFail = separateTestCases.map { it.nominalPackageName.toString() }
 
             val ignoredParameters = (ignoredTests + testsThatMayFail).map {
                 TestRunParameter.WithIgnoredTestFilter(TestName(it))
@@ -56,7 +54,7 @@ internal object SharedExecutionBuilder {
             val runParameters = testRun.runParameters.filterNot { it is TestRunParameter.WithFilter } + ignoredParameters
 
             // Increase timeout for the run, as there are multiple tests to be run.
-            // At this point there is only amount of tests available, but not each TestRun instance with exact timeout value.
+            // At this point, there is only a number of tests available, but not each TestRun instance with exact timeout value.
             val timeout = testRun.checks.executionTimeoutCheck.timeout * testRun.executable.testNames.count()
             val checks = testRun.checks.copy(
                 executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(timeout)
@@ -73,6 +71,34 @@ internal object SharedExecutionBuilder {
             CachedRunResultRunner(executor, sharedTestRun)
         }
     }
+
+    private fun Settings.computeSeparateTestCases(testRun: TestRun): MutableList<TestCase> =
+        testCasesToExecuteSeparately.computeIfAbsent(testRun.executable) {
+            val testRunProvider = get<BlackBoxTestInstances>().enclosingTestInstance.testRunProvider
+            val testCaseGroupId = testRun.testCase.id.testCaseGroupId
+
+            // First, try to get all TestCases for the current executable from the same TestCaseGroup
+            val testCases = testRunProvider.testCaseGroupProvider.getTestCaseGroup(testCaseGroupId, this)
+                ?.getRegularOnly(
+                    testRun.testCase.freeCompilerArgs,
+                    testRun.testCase.sharedModules,
+                    testRun.testCase.extras<TestCase.WithTestRunnerExtras>().runnerType
+                )
+
+            check(testCases != null && testRun.testCase in testCases) {
+                "Should be not empty and contain at least $testRun"
+            }
+
+            check(testCases.all { it.id.testCaseGroupId == testCaseGroupId }) {
+                "Got TestCases with different group ids. TestCases: $testCases"
+            }
+
+            // If the test run is expected to fail or timeout, it should not be executed with others.
+            // Add it to the map of ignored test cases for the executable
+            testCases.filter {
+                it.expectedFailure || it.checks.executionTimeoutCheck is TestRunCheck.ExecutionTimeout.ShouldExceed
+            }.toMutableList()
+        }
 
     private class CachedRunResultRunner(executor: Executor, testRun: TestRun) : RunnerWithExecutor(executor, testRun) {
         private val cachedRunResult by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
