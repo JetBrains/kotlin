@@ -826,9 +826,9 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
-        @TestMetadata("labledLambda.kt")
-        public void testLabledLambda() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/labledLambda.kt");
+        @TestMetadata("labeledLambda.kt")
+        public void testLabeledLambda() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/labeledLambda.kt");
         }
 
         @Test
