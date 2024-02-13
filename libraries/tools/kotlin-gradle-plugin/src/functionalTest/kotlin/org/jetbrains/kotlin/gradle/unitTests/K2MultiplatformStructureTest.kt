@@ -21,12 +21,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.Fragment
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.RefinesEdge
-import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
-import org.jetbrains.kotlin.gradle.util.buildProject
-import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
-import org.jetbrains.kotlin.gradle.util.main
+import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.fail
 
 class K2MultiplatformStructureTest {
@@ -85,6 +83,19 @@ class K2MultiplatformStructureTest {
     @Test
     fun `test - configure js compilation`() {
         `test compilations multiplatformStructure configuration`(kotlin.js(IR).compilations.main)
+    }
+
+    @Test
+    fun `KT-65768 - no fragment sources in pure jvm project`() {
+        val project = buildProject {
+            applyKotlinJvmPlugin()
+        }
+        project.evaluate()
+
+        project.tasks.withType<KotlinCompile>().forEach { task ->
+            val arguments = task.buildCompilerArguments()
+            assertNull(arguments.fragmentSources, "Task $task has -Xframent-sources but it shouldn't.")
+        }
     }
 
     private fun `test compilations multiplatformStructure configuration`(compilation: KotlinCompilation<*>) {
