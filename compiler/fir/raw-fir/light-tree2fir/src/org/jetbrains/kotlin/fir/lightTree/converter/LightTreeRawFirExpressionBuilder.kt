@@ -625,7 +625,7 @@ class LightTreeRawFirExpressionBuilder(
         }
 
         return result ?: buildErrorExpression {
-            source = null
+            source = dotQualifiedExpression.toFirSourceElement()
             diagnostic = ConeSyntaxDiagnostic("Qualified expression without selector")
 
             // if there is no selector, we still want to resolve the receiver

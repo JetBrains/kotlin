@@ -13185,6 +13185,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("assignmentWithIncorrectLValue.kt")
+      public void testAssignmentWithIncorrectLValue() {
+        runTest("compiler/testData/diagnostics/tests/exceptions/assignmentWithIncorrectLValue.kt");
+      }
+
+      @Test
       @TestMetadata("expectedSomeTypesOnBranchForWhenExpressionOfErroneousType.kt")
       public void testExpectedSomeTypesOnBranchForWhenExpressionOfErroneousType() {
         runTest("compiler/testData/diagnostics/tests/exceptions/expectedSomeTypesOnBranchForWhenExpressionOfErroneousType.kt");
