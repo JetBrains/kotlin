@@ -66,13 +66,6 @@ internal object FirLazyBodiesCalculator {
         firElement.transformSingle(FirTargetLazyAnnotationCalculatorTransformer, FirLazyAnnotationTransformerData(session))
     }
 
-    fun calculateCompilerAnnotations(firElement: FirElementWithResolveState) {
-        firElement.transformSingle(
-            FirTargetLazyAnnotationCalculatorTransformer,
-            FirLazyAnnotationTransformerData(firElement.moduleData.session, FirLazyAnnotationTransformerScope.COMPILER_ONLY)
-        )
-    }
-
     fun calculateLazyArgumentsForAnnotation(annotationCall: FirAnnotationCall, session: FirSession): FirArgumentList {
         require(needCalculatingAnnotationCall(annotationCall))
         return createArgumentsForAnnotation(annotationCall, session)
@@ -634,7 +627,6 @@ private fun calculateLazyBodyForCodeFragment(designation: FirDesignation) {
 
 private enum class FirLazyAnnotationTransformerScope {
     ALL_ANNOTATIONS,
-    COMPILER_ONLY;
 }
 
 private data class FirLazyAnnotationTransformerData(

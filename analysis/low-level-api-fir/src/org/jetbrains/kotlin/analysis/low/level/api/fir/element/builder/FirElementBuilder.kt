@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
@@ -293,12 +291,6 @@ internal class FirElementBuilder(
     private fun FirAnnotationContainer.findAnnotation(
         annotationEntry: KtAnnotationEntry,
     ): FirAnnotation? = annotations.find { it.psi == annotationEntry }
-
-    @TestOnly
-    fun getStructureElementFor(element: KtElement): FileStructureElement {
-        val fileStructure = moduleComponents.fileStructureCache.getFileStructure(element.containingKtFile)
-        return fileStructure.getStructureElementFor(element)
-    }
 }
 
 private fun KtDeclaration.isPartOf(callableDeclaration: KtCallableDeclaration): Boolean = when (this) {

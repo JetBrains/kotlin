@@ -27,8 +27,6 @@ internal sealed class FileStructureElement {
     abstract val diagnostics: FileStructureElementDiagnostics
 
     companion object {
-        val recorder = FirElementsRecorder()
-
         fun recorderFor(fir: FirElement): FirElementsRecorder = when (fir) {
             is FirFile -> RootStructureElement.Recorder
             is FirScript -> RootScriptStructureElement.Recorder
