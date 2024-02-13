@@ -84,14 +84,14 @@ internal object PersistenceContextCollector {
 
         requireWithAttachment(
             !isLocal,
-            { "Cannot collect context for local declaration ${declaration::class}" }
+            { "Cannot collect context for local declaration ${declaration::class.simpleName}" },
         ) {
             withFirEntry("declaration", declaration)
         }
 
         val designation = declaration.collectDesignation(firFile)
-        designation.path.forEach { firClass ->
-            firClass.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        designation.path.asReversed().forEach {
+            it.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         }
 
         return ContextCollectingDiagnosticCollectorVisitor.collect(sessionHolder, designation)
