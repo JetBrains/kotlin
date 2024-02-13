@@ -47,28 +47,6 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     private val replacementApplier: RawFirReplacement.Applier? = null,
 ) : PsiRawFirBuilder(session, baseScopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL) {
     companion object {
-        fun buildNewFile(
-            session: FirSession,
-            scopeProvider: FirScopeProvider,
-            file: KtFile,
-        ): FirFile {
-            val builder = PsiRawFirBuilder(session, scopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL)
-            return builder.buildFirFile(file)
-        }
-
-        fun buildWithReplacement(
-            session: FirSession,
-            scopeProvider: FirScopeProvider,
-            designation: FirDesignation,
-            rootNonLocalDeclaration: KtElement,
-            replacement: RawFirReplacement?,
-        ): FirDeclaration {
-            val replacementApplier = replacement?.Applier()
-            val result = build(session, scopeProvider, designation, rootNonLocalDeclaration, replacementApplier = replacementApplier)
-            replacementApplier?.ensureApplied()
-            return result
-        }
-
         fun buildWithFunctionSymbolRebind(
             session: FirSession,
             scopeProvider: FirScopeProvider,
