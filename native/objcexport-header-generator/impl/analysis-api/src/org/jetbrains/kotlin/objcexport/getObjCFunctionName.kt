@@ -1,25 +1,29 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyGetterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportFunctionName
 
+/**
+ * Currently covers only basic cases
+ * KT-65774: check K1 implementation and add more tests.
+ * See K1 part of implementation at [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getMangledName]
+ */
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtFunctionLikeSymbol.getObjCFunctionName(): ObjCExportFunctionName {
     val resolveObjCNameAnnotation = resolveObjCNameAnnotation()
 
+    val fallbackName = when (this) {
+        is KtFunctionSymbol -> name.asString()
+        is KtConstructorSymbol -> "init"
+        is KtPropertyGetterSymbol -> "get"
+        is KtAnonymousFunctionSymbol -> ""
+        is KtPropertySetterSymbol -> ""
+        is KtSamConstructorSymbol -> ""
+    }
 
-    val name: String = when (this) {
-            is KtFunctionSymbol -> this.name.asString()
-            is KtConstructorSymbol -> "init"
-            is KtPropertyGetterSymbol -> "get" //TODO: implement properly getter since it doesn't have [name]
-            else -> "Undefined name for $this type"
-        }
-
-        return ObjCExportFunctionName(
-             resolveObjCNameAnnotation?.swiftName ?:  name,  resolveObjCNameAnnotation?.objCName ?: name
-        )
+    return ObjCExportFunctionName(
+        swiftName = resolveObjCNameAnnotation?.swiftName ?: fallbackName,
+        objCName = resolveObjCNameAnnotation?.objCName ?: fallbackName
+    )
 }
