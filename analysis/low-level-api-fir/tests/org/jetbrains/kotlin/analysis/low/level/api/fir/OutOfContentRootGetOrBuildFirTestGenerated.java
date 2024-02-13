@@ -1300,6 +1300,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         }
 
         @Test
+        @TestMetadata("fileAnnotationList.kt")
+        public void testFileAnnotationList() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/fileAnnotationList.kt");
+        }
+
+        @Test
         @TestMetadata("functionTypeParemeter.kt")
         public void testFunctionTypeParemeter() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/functionTypeParemeter.kt");
