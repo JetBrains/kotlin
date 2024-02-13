@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCIdType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCType
 import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getPropertyMethodBridge
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
@@ -48,7 +47,9 @@ fun KtPropertySymbol.buildProperty(): ObjCProperty {
         setterName = null
     }
 
-    val getterName = null //TODO: Fix and use getter.getSelector(), it should return name when it's available
+
+    val getterSelector = getter?.getSelector(bridge)
+    val getterName: String? = if (getterSelector != name && getterSelector?.isNotBlank() == true) getterSelector else null
 
     val declarationAttributes = mutableListOf(getSwiftPrivateAttribute() ?: swiftNameAttribute(propertyName.swiftName))
 
@@ -61,7 +62,7 @@ fun KtPropertySymbol.buildProperty(): ObjCProperty {
         origin = getObjCExportStubOrigin(),
         type = type ?: ObjCIdType, //[ObjCIdType] temp fix, should be translated properly, see KT-65709
         propertyAttributes = attributes,
-        setterName = setterName,
+        setterName = if (setterName.isNullOrBlank()) null else setterName,
         getterName = getterName,
         declarationAttributes = declarationAttributes
     )
