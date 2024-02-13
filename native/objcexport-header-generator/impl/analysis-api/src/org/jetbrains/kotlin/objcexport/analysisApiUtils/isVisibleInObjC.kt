@@ -173,6 +173,6 @@ private fun KtClassOrObjectSymbol.isInlined(): Boolean {
 }
 
 private fun KtClassKind.isVisibleInObjC(): Boolean = when (this) {
-    CLASS, ENUM_CLASS, INTERFACE, OBJECT -> true
-    COMPANION_OBJECT, ANONYMOUS_OBJECT, ANNOTATION_CLASS -> false
+    CLASS, ENUM_CLASS, INTERFACE, OBJECT, COMPANION_OBJECT -> true
+    ANONYMOUS_OBJECT, ANNOTATION_CLASS -> false
 }
