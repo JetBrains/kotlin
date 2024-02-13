@@ -701,17 +701,33 @@ internal fun getHeadersAndUnits(
 
 class UnitsHolder(val index: CXIndex) : Disposable {
     private val unitByBinaryFile = mutableMapOf<String, CXTranslationUnit>()
+    private val allOwnedUnits = mutableListOf<CXTranslationUnit>()
 
     internal fun load(info: CXIdxImportedASTFileInfo): CXTranslationUnit {
         val canonicalPath: String = info.file!!.canonicalPath
         return unitByBinaryFile.getOrPut(canonicalPath) {
             clang_createTranslationUnit(index, canonicalPath)!!
+                    .also { allOwnedUnits += it }
         }
     }
 
+    internal fun parse(
+            compilation: Compilation,
+            index: CXIndex,
+            options: Int = 0,
+            diagnosticHandler: DiagnosticHandler? = null
+    ): CXTranslationUnit = compilation.parse(
+            index = index,
+            options = options,
+            diagnosticHandler = diagnosticHandler
+    ).also {
+        allOwnedUnits += it
+    }
+
     override fun dispose() {
-        unitByBinaryFile.values.forEach { clang_disposeTranslationUnit(it) }
         unitByBinaryFile.clear()
+        allOwnedUnits.forEach { clang_disposeTranslationUnit(it) }
+        allOwnedUnits.clear()
     }
 }
 

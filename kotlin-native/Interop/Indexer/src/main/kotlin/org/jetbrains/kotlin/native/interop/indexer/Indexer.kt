@@ -1215,11 +1215,12 @@ public open class NativeIndexer(val library: NativeLibrary, val verbose: Boolean
 
     internal fun indexDeclarations(): CompilationWithPCH {
         val errors = mutableListOf<Diagnostic>()
-        val translationUnit = this.library.copyWithArgsForPCH().parse(
+        val translationUnit = unitsHolder.parse(
+                this.library.copyWithArgsForPCH(),
                 index,
                 options = CXTranslationUnit_DetailedPreprocessingRecord or CXTranslationUnit_ForSerialization,
                 diagnosticHandler = { if (it.isError()) errors.add(it) }
-        ).toBeDisposedWith { clang_disposeTranslationUnit(it) }
+        )
 
         if (errors.isNotEmpty()) {
             error(errors.take(10).joinToString("\n") { it.format })
