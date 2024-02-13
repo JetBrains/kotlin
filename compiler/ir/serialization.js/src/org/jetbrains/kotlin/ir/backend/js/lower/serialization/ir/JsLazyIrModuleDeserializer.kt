@@ -78,7 +78,7 @@ class JsLazyIrModuleDeserializer(
     }
 
 
-    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns, emptyList())
+    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns)
     override val moduleDependencies: Collection<IrModuleDeserializer> = dependencies
 
     override val kind get() = IrModuleDeserializerKind.SYNTHETIC

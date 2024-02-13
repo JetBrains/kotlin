@@ -198,7 +198,8 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                     containsStdlib = containsStdlib
             )
             val dependenciesTracker = DependenciesTrackerImpl(llvmModuleSpecification, context.config, context)
-            val fragment = IrModuleFragmentImpl(input.descriptor, input.irBuiltins, listOf(file))
+            val fragment = IrModuleFragmentImpl(input.descriptor, input.irBuiltins)
+            fragment.files += file
             if (containsStdlib && cacheDeserializationStrategy.containsKFunctionImpl)
                 fragment.files += files.filter { it.isFunctionInterfaceFile }
 

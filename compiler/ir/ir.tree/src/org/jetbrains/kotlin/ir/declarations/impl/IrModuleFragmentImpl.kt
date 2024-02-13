@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.name.Name
 class IrModuleFragmentImpl(
     override val descriptor: ModuleDescriptor,
     override val irBuiltins: IrBuiltIns,
-    files: List<IrFile> = emptyList(),
 ) : IrModuleFragment() {
     override val startOffset: Int
         get() = UNDEFINED_OFFSET
@@ -36,5 +35,5 @@ class IrModuleFragmentImpl(
 
     override val name: Name get() = descriptor.name
 
-    override val files: MutableList<IrFile> = files.toMutableList()
+    override val files: MutableList<IrFile> = ArrayList()
 }
