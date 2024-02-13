@@ -12,6 +12,7 @@ private val FOO: FOO.`<no name provided>`
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     @org.jspecify.annotations.Nullable public open fun mixed(/*0*/ x: Foo!): @org.jspecify.annotations.Nullable Foo!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open fun withVararg(/*0*/ vararg p: kotlin.Any! /*kotlin.Array<(out) kotlin.Any!>!*/): kotlin.Unit
 
     // Static members
     public open fun foo(): Foo!
@@ -28,6 +29,7 @@ public final class Correct : IntermediateClass {
     public open override /*1*/ fun intermediateNotNull(): Foo
     public open override /*1*/ fun mixed(/*0*/ x: Foo): Foo?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ fun withVararg(/*0*/ vararg p: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Unit
 }
 
 public interface Foo {
@@ -47,6 +49,7 @@ public open class IntermediateClass : BaseClass {
     public open fun intermediateNotNull(): Foo!
     @org.jspecify.annotations.Nullable public open override /*1*/ /*fake_override*/ fun mixed(/*0*/ x: Foo!): @org.jspecify.annotations.Nullable Foo!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun withVararg(/*0*/ vararg p: kotlin.Any! /*kotlin.Array<(out) kotlin.Any!>!*/): kotlin.Unit
 }
 
 public final class WrongParameter : IntermediateClass {
@@ -60,6 +63,7 @@ public final class WrongParameter : IntermediateClass {
     public open override /*1*/ /*fake_override*/ fun intermediateNotNull(): Foo!
     public open override /*1*/ fun mixed(/*0*/ x: Foo?): Foo?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun withVararg(/*0*/ vararg p: kotlin.Any! /*kotlin.Array<(out) kotlin.Any!>!*/): kotlin.Unit
 }
 
 public final class WrongReturnTypes : IntermediateClass {
@@ -73,5 +77,6 @@ public final class WrongReturnTypes : IntermediateClass {
     public open override /*1*/ fun intermediateNotNull(): Foo?
     @org.jspecify.annotations.Nullable public open override /*1*/ /*fake_override*/ fun mixed(/*0*/ x: Foo!): @org.jspecify.annotations.Nullable Foo!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun withVararg(/*0*/ vararg p: kotlin.Any! /*kotlin.Array<(out) kotlin.Any!>!*/): kotlin.Unit
 }
 

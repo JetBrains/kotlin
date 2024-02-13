@@ -18,6 +18,8 @@ public class BaseClass {
 
     public Foo explicitlyNullnessUnspecified(@NullnessUnspecified Foo x) { return null; }
 
+    public void withVararg(Object... p) { }
+
     public static Foo foo() { return null; }
 }
 
@@ -54,6 +56,8 @@ class Correct : IntermediateClass() {
     override fun intermediateNotNull(): Foo {
         return FOO
     }
+
+    override fun withVararg(vararg p: Any) {}
 }
 
 class WrongReturnTypes : IntermediateClass() {

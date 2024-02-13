@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.java.enhancement
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds
 import kotlin.reflect.KClass
 
 data class EnhancedTypeForWarningAttribute(
@@ -45,8 +46,10 @@ val ConeKotlinType.isEnhancedTypeForWarningDeprecation: Boolean
 class EnhancedForWarningConeSubstitutor(typeContext: ConeTypeContext) : AbstractConeSubstitutor(typeContext) {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         // The attribute is usually taken from the lower bound of flexible types.
-        // However, if the type has flexible mutability, we don't want to accidentally enhance the mutability to the lower bound.
-        if (type is ConeFlexibleType && type.hasFlexibleMutability()) {
+        // However, if the type has flexible mutability or type argument variance,
+        // we can't just use the lower bound, otherwise we can get false positive mismatches
+        // because of the mutability or the type argument variance.
+        if (type is ConeFlexibleType && (type.hasFlexibleMutability() || type.isArrayWithFlexibleVariance())) {
             val lowerSubstituted = substituteOrNull(type.lowerBound)
 
             return if (lowerSubstituted is ConeSimpleKotlinType) {
@@ -67,7 +70,17 @@ class EnhancedForWarningConeSubstitutor(typeContext: ConeTypeContext) : Abstract
         return enhancedTopLevel?.let(::substituteOrSelf)
     }
 
+    /**
+     * `List<Object>` is represented as `MutableList<Any!>..List<Any!>?`.
+     */
     private fun ConeFlexibleType.hasFlexibleMutability(): Boolean {
         return JavaToKotlinClassMap.isMutable(lowerBound.classId) && JavaToKotlinClassMap.isReadOnly(upperBound.classId)
+    }
+
+    /**
+     * `Object[]` is represented as `Array<Any>..Array<out Any>?`.
+     */
+    private fun ConeFlexibleType.isArrayWithFlexibleVariance(): Boolean {
+        return lowerBound.classId == StandardClassIds.Array && lowerBound.typeArguments.firstOrNull()?.kind != upperBound.typeArguments.firstOrNull()?.kind
     }
 }
