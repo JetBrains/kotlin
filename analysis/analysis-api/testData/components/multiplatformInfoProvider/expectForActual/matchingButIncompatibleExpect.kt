@@ -6,7 +6,7 @@
 package sample
 expect fun foo()
 
-// MODULE: androidMain(commonMain)
+// MODULE: androidMain()()(commonMain)
 // FILE: JvmAndroid.kt
 
 package sample
