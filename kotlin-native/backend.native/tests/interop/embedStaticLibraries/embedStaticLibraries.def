@@ -1,2 +1,0 @@
-libraryPaths = build/embedStaticLibraries
-staticLibraries = 3.a 4.a

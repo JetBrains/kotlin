@@ -947,30 +947,6 @@ createInterop("sockets") {
     it.defFile 'interop/basics/sockets.def'
 }
 
-createInterop("embedStaticLibraries") {
-    it.defFile 'interop/embedStaticLibraries/embedStaticLibraries.def'
-    it.headers "$projectDir/interop/embedStaticLibraries/embedStaticLibraries.h"
-
-    // Note: also hardcoded in def file.
-    final File libDir = project.layout.buildDirectory.dir("embedStaticLibraries").get().asFile
-
-    it.getByTarget(target.name).configure {
-        doFirst {
-            1.upto(4) {
-                UtilsKt.buildStaticLibrary(
-                        project,
-                        [file("$projectDir/interop/embedStaticLibraries/${it}.c")],
-                        file("$libDir/${it}.a"),
-                        file("$libDir/${it}.objs"),
-                )
-            }
-        }
-    }
-
-    it.extraOpts '-staticLibrary', "1.a"
-    it.extraOpts '-staticLibrary', "2.a"
-}
-
 createInterop("kt43502") {
     it.defFile 'interop/kt43502/kt43502.def'
     it.headers "$projectDir/interop/kt43502/kt43502.h"
@@ -1148,11 +1124,6 @@ standaloneTest("interop_objc_allocException") {
     expectedExitStatus = 0
     source = "interop/objc/allocException.kt"
     UtilsKt.dependsOnPlatformLibs(it)
-}
-
-interopTest("interop_embedStaticLibraries") {
-    source = "interop/embedStaticLibraries/main.kt"
-    interop = 'embedStaticLibraries'
 }
 
 dynamicTest("interop_kt43502") {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.isSimulator
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
@@ -21,12 +22,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
+import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertTrue
+import kotlin.time.Duration
 
 @TestDataPath("\$PROJECT_ROOT")
 class ClassicComplexCInteropTest : ComplexCInteropTestBase()
@@ -39,6 +42,68 @@ class FirComplexCInteropTest : ComplexCInteropTestBase()
 abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     private val interopDir = File("native/native.tests/testData/interop")
     private val interopObjCDir = interopDir.resolve("objc")
+
+    @Test
+    @TestMetadata("embedStaticLibraries.kt")
+    fun testEmbedStaticLibraries() {
+        val llvmAr = ClangArgs.Native(testRunSettings.configurables).llvmAr().first()
+        val embedStaticLibrariesDir = interopDir.resolve("embedStaticLibraries")
+        (1..4).forEach {
+            val source = embedStaticLibrariesDir.resolve("$it.c")
+            val obj = buildDir.resolve("$it.o")
+            compileWithClang(
+                clangDistribution = ClangDistribution.Llvm,
+                sourceFiles = listOf(source),
+                includeDirectories = emptyList(),
+                outputFile = obj,
+                libraryDirectories = emptyList(),
+                libraries = emptyList(),
+                additionalClangFlags = listOf("-c"),
+                fmodules = false, // with `-fmodules`, ld cannot find symbol `_assert`
+            ).assertSuccess()
+            val libFile = buildDir.resolve("$it.a")
+            runProcess(llvmAr, "-rc", libFile.absolutePath, obj.absolutePath) {
+                timeout = Duration.parse("1m")
+            }
+            assertTrue(libFile.exists())
+        }
+        val defFile = buildDir.resolve("embedStaticLibraries.def").also {
+            it.printWriter().use {
+                it.println(
+                    """
+                    libraryPaths = ${buildDir.absolutePath.replace("\\", "/")}
+                    staticLibraries = 3.a 4.a
+                """.trimIndent()
+                )
+            }
+        }
+        val cinteropKlib = cinteropToLibrary(
+            targets = targets,
+            defFile = defFile,
+            outputDir = buildDir,
+            freeCompilerArgs = TestCompilerArgs(
+                emptyList(), cinteropArgs = listOf(
+                    "-header", embedStaticLibrariesDir.resolve("embedStaticLibraries.h").absolutePath,
+                    "-staticLibrary", "1.a",
+                    "-staticLibrary", "2.a",
+                )
+            )
+        ).assertSuccess().resultingArtifact
+
+        val testCase = generateTestCaseWithSingleFile(
+            sourceFile = embedStaticLibrariesDir.resolve("embedStaticLibraries.kt"),
+            testKind = TestKind.STANDALONE_NO_TR,
+            extras = TestCase.NoTestRunnerExtras("main"),
+            freeCompilerArgs = TestCompilerArgs("-opt-in=kotlinx.cinterop.ExperimentalForeignApi"),
+        )
+        val compilationResult = compileToExecutable(testCase, cinteropKlib.asLibraryDependency()).assertSuccess()
+        val testExecutable = TestExecutable(
+            compilationResult.resultingArtifact,
+            compilationResult.loggedData,
+            listOf(TestName("embedStaticLibraries"))
+        )
+        runExecutableAndVerify(testCase, testExecutable)
+    }
 
     @Test
     @TestMetadata("smoke.kt")
