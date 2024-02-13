@@ -149,7 +149,7 @@ internal fun invokeCInterop(
     }
     return when {
         // cinterop has failed with a known error that was returned as a result.
-        cinteropResult is Exception -> {
+        cinteropResult is Throwable -> {
             CompilationToolCallResult(
                 exitCode = ExitCode.COMPILATION_ERROR,
                 toolOutput = cinteropResult.stackTraceToString(),

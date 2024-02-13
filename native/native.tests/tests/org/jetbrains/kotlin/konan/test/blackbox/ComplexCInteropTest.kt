@@ -35,7 +35,8 @@ class ClassicComplexCInteropTest : ComplexCInteropTestBase()
 class FirComplexCInteropTest : ComplexCInteropTestBase()
 
 abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
-    private val interopObjCDir = File("native/native.tests/testData/interop/objc")
+    private val interopDir = File("native/native.tests/testData/interop")
+    private val interopObjCDir = interopDir.resolve("objc")
 
     @Test
     @TestMetadata("smoke.kt")
@@ -59,7 +60,6 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
         val mSources = listOf(interopObjCDir.resolve("smoke.m"))
         val dylib = compileDylib("objcsmoke", mSources)
-        println(dylib)
         if (testRunSettings.configurables.targetTriple.isSimulator)
             codesign(dylib.resultingArtifact.path)
         val stringsdict = interopObjCDir.resolve("Localizable.stringsdict")
@@ -71,7 +71,6 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             outputDir = buildDir,
             freeCompilerArgs = TestCompilerArgs(emptyList(), cinteropArgs = listOf("-header", "smoke.h"))
         ).assertSuccess().resultingArtifact
-        println(cinteropKlib)
 
         val testCase = generateTestCaseWithSingleFile(
             sourceFile = interopObjCDir.resolve("$ktFilePrefix.kt"),
@@ -88,7 +87,6 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             )
         )
         val success = compileToExecutable(testCase, cinteropKlib.asLibraryDependency()).assertSuccess()
-        println(success)
         val testExecutable = TestExecutable(
             success.resultingArtifact,
             success.loggedData,
@@ -105,7 +103,6 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         val dylib = compileDylib("objctests", mSources)
         if (testRunSettings.configurables.targetTriple.isSimulator)
             codesign(dylib.resultingArtifact.path)
-        println(dylib)
 
         val hFiles = interopObjCDir.resolve("tests").listFiles { file: File -> file.name.endsWith(".h") }!!.toList()
         val cinteropKlib = cinteropToLibrary(
@@ -114,7 +111,6 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             outputDir = buildDir,
             freeCompilerArgs = TestCompilerArgs(emptyList(), cinteropArgs = hFiles.flatMap { listOf("-header", "tests/${it.name}") })
         ).assertSuccess().resultingArtifact
-        println(cinteropKlib)
 
         val ignoredTestGTestPatterns = if (testRunSettings.get<GCType>() != GCType.NOOP) emptySet() else setOf(
             "Kt41811Kt.*",
@@ -134,7 +130,6 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT, ignoredTestGTestPatterns),
         )
         val success = compileToExecutable(testCase, cinteropKlib.asLibraryDependency()).assertSuccess()
-        println(success)
         val testExecutable = TestExecutable(
             success.resultingArtifact,
             success.loggedData,
