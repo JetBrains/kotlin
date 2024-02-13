@@ -78,10 +78,6 @@ fun AbstractKtSourceElement?.startOffsetSkippingComments(): Int? {
     }
 }
 
-internal inline fun <T : IrElement> FirElement.convertWithOffsets(defaultOffset: Int, f: (startOffset: Int, endOffset: Int) -> T): T {
-    return source.convertWithOffsets(defaultOffset, f)
-}
-
 internal inline fun <T : IrElement> FirElement.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
     return source.convertWithOffsets(f)
 }
@@ -93,19 +89,15 @@ internal fun <T : IrElement> FirPropertyAccessor?.convertWithOffsets(
 }
 
 internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
-    return convertWithOffsets(UNDEFINED_OFFSET, f)
-}
-
-internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(defaultOffset: Int, f: (startOffset: Int, endOffset: Int) -> T): T {
     val startOffset: Int
     val endOffset: Int
 
     if (isCompiledElement(psi) || this?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers) {
-        startOffset = defaultOffset
-        endOffset = defaultOffset
+        startOffset = UNDEFINED_OFFSET
+        endOffset = UNDEFINED_OFFSET
     } else {
-        startOffset = this?.startOffsetSkippingComments() ?: this?.startOffset ?: defaultOffset
-        endOffset = this?.endOffset ?: defaultOffset
+        startOffset = this?.startOffsetSkippingComments() ?: this?.startOffset ?: UNDEFINED_OFFSET
+        endOffset = this?.endOffset ?: UNDEFINED_OFFSET
     }
 
     return f(startOffset, endOffset)
