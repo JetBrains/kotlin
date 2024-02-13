@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -812,7 +813,10 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         if (needUpdateLambdaType) {
-            val kind = expectedType?.functionTypeKind(session)
+            // When we get the FunctionTypeKind, we have to check the deserialized ConeType first because it checks both
+            // class ID and annotations. On the other hand, `functionTypeKind()` checks only class ID.
+            val kind = expectedType?.functionTypeKindForDeserializedConeType()
+                ?: expectedType?.functionTypeKind(session)
                 ?: result.typeRef.coneTypeSafe<ConeClassLikeType>()?.functionTypeKind(session)
             result.replaceTypeRef(result.constructFunctionTypeRef(session, kind))
             session.lookupTracker?.recordTypeResolveAsLookup(result.typeRef, result.source, context.file.source)
@@ -820,6 +824,12 @@ class FirCallCompletionResultsWriterTransformer(
         // Have to delay this until the type is written to avoid adding a return if the type is Unit.
         result.addReturnToLastStatementIfNeeded(session)
         return result
+    }
+
+    private fun ConeKotlinType.functionTypeKindForDeserializedConeType(): FunctionTypeKind? {
+        val coneClassLikeType = type as? ConeClassLikeType ?: return null
+        val classId = coneClassLikeType.classId ?: return null
+        return session.functionTypeService.extractSingleExtensionKindForDeserializedConeType(classId, coneClassLikeType.customAnnotations)
     }
 
     private fun transformImplicitTypeRefInAnonymousFunction(

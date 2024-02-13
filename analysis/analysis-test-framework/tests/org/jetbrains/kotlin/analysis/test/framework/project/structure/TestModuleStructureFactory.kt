@@ -48,7 +48,7 @@ private typealias ModulesByName = Map<String, KtModuleWithFiles>
  *   - For [TestModule] A and B, where A has dependency on B, A will never appears earlier than B in the result list.
  */
 private fun sortInDependencyPostOrder(testModules: List<TestModule>): List<TestModule> {
-    val namesToModules = buildMap { testModules.forEach { put(it.name, it) } }
+    val namesToModules = testModules.associateBy { it.name }
     val notVisited = testModules.toMutableSet()
     val sortedModules = mutableListOf<TestModule>()
 
