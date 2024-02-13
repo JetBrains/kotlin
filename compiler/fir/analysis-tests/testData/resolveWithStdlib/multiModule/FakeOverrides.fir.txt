@@ -26,7 +26,64 @@ FILE: common.kt
         }
 
     }
+FILE: jvm.kt
+    public open actual class A<T> : R|kotlin/Any| {
+        public constructor<T>(): R|A<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open actual fun foo(arg: R|T|): R|kotlin/Unit| {
+        }
+
+        public open fun bar(arg: R|T|): R|T| {
+            ^bar R|<local>/arg|
+        }
+
+        public open fun baz(arg: R|T|): R|T| {
+            ^baz R|<local>/arg|
+        }
+
+    }
+    public final class D : R|C| {
+        public constructor(): R|D| {
+            super<R|C|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/D|.R|SubstitutionOverride</B.foo: R|kotlin/Unit|>|(String())
+            this@R|/D|.R|/C.bar|(String())
+            this@R|/D|.R|SubstitutionOverride</B.baz: R|kotlin/String|>|(String())
+        }
+
+    }
 Module: m1-jvm
+FILE: common.kt
+    public open expect class A<T> : R|kotlin/Any| {
+        public expect constructor<T>(): R|A<T>|
+
+        public open expect fun foo(arg: R|T|): R|kotlin/Unit|
+
+    }
+    public open class B : R|A<kotlin/String>| {
+        public constructor(): R|B| {
+            super<R|A<kotlin/String>|>()
+        }
+
+    }
+    public open class C : R|B| {
+        public constructor(): R|C| {
+            super<R|B|>()
+        }
+
+        public open fun bar(arg: R|kotlin/String|): R|kotlin/String| {
+            ^bar R|<local>/arg|
+        }
+
+        public open fun baz(arg: R|kotlin/CharSequence|): R|kotlin/String| {
+            ^baz R|<local>/arg|.R|kotlin/Any.toString|()
+        }
+
+    }
 FILE: jvm.kt
     public open actual class A<T> : R|kotlin/Any| {
         public constructor<T>(): R|A<T>| {
