@@ -412,7 +412,7 @@ public open class NativeIndexer(val library: NativeLibrary, val verbose: Boolean
      * NB: Current implementation is rather slow as it walks all the enclosing translation units.
      */
     private fun includeCategoriesToObjCClasses() {
-        val categoryCursors = findObjCCategoriesInSameFilesAsClasses(objCClassCursorsToIncludeCategories)
+        val categoryCursors = findObjCCategoriesInSameFilesAsClasses(objCClassCursorsToIncludeCategories, unitsHolder)
         objCClassCursorsToIncludeCategories.clear()
 
         for (cursor in categoryCursors) {

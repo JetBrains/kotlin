@@ -703,6 +703,9 @@ class UnitsHolder(val index: CXIndex) : Disposable {
     private val unitByBinaryFile = mutableMapOf<String, CXTranslationUnit>()
     private val allOwnedUnits = mutableListOf<CXTranslationUnit>()
 
+    internal val validTranslationUnits: List<CXTranslationUnit>
+        get() = allOwnedUnits
+
     internal fun load(info: CXIdxImportedASTFileInfo): CXTranslationUnit {
         val canonicalPath: String = info.file!!.canonicalPath
         return unitByBinaryFile.getOrPut(canonicalPath) {

@@ -8,7 +8,14 @@ package org.jetbrains.kotlin.native.interop.indexer
 import clang.*
 import kotlinx.cinterop.CValue
 
-internal fun findObjCCategoriesInSameFilesAsClasses(classCursors: List<CValue<CXCursor>>): List<CValue<CXCursor>> {
+internal fun findObjCCategoriesInSameFilesAsClasses(classCursors: List<CValue<CXCursor>>, unitsHolder: UnitsHolder): List<CValue<CXCursor>> {
+    val translationUnits = classCursors.asSequence().mapNotNull { clang_Cursor_getTranslationUnit(it) }.distinct().toList()
+
+    val validTranslationUnits = unitsHolder.validTranslationUnits.toSet()
+    translationUnits.forEach {
+        check(it in validTranslationUnits) { "Invalid translation unit found: $it" }
+    }
+
     val fileToClassNames = mutableMapOf<CXFile, MutableSet<String>>()
     for (cursor in classCursors) {
         check(cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { cursor.kind }
@@ -18,8 +25,6 @@ internal fun findObjCCategoriesInSameFilesAsClasses(classCursors: List<CValue<CX
     }
 
     val result = mutableListOf<CValue<CXCursor>>()
-
-    val translationUnits = classCursors.asSequence().mapNotNull { clang_Cursor_getTranslationUnit(it) }.distinct()
 
     for (translationUnit in translationUnits) {
         // Accessing the whole translation unit (TU) is overkill, but it is the simplest solution which is doable.
