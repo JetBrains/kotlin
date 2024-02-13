@@ -30555,6 +30555,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             public void testKt57620() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/rawTypes/kt57620.kt");
             }
+
+            @Test
+            @TestMetadata("rawTypeOverrides.kt")
+            public void testRawTypeOverrides() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/rawTypes/rawTypeOverrides.kt");
+            }
         }
 
         @Nested

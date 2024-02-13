@@ -851,6 +851,12 @@ class JavaClassUseSiteMemberScope(
 
     // It's either overrides Collection.contains(Object) or Collection.containsAll(Collection<?>) or similar methods
     private fun FirNamedFunctionSymbol.hasErasedParameters(): Boolean {
+        // We're only interested in Java declarations with erased parameters.
+        // Removing this check would also return true for substitution overrides for raw types,
+        // which leads to false positives like NOTHING_TO_OVERRIDE.
+        // See compiler/testData/diagnostics/tests/rawTypes/rawTypeOverrides.kt.
+        if (!this.isJavaOrEnhancement) return false
+
         val valueParameter = fir.valueParameters.first()
         val parameterType = valueParameter.returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
         val upperBound = parameterType.upperBoundIfFlexible()

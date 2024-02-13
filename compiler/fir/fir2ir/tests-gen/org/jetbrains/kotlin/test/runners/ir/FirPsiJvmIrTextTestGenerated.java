@@ -2691,6 +2691,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         public void testFakeOverrideOfRaw() throws Exception {
             runTest("compiler/testData/ir/irText/fakeOverrides/fakeOverrideOfRaw.kt");
         }
+
+        @Test
+        @TestMetadata("fakeOverrideOfRawJavaCollection.kt")
+        public void testFakeOverrideOfRawJavaCollection() throws Exception {
+            runTest("compiler/testData/ir/irText/fakeOverrides/fakeOverrideOfRawJavaCollection.kt");
+        }
     }
 
     @Nested
