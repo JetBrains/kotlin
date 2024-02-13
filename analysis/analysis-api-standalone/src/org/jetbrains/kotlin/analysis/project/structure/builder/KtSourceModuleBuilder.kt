@@ -32,6 +32,7 @@ public class KtSourceModuleBuilder(
         LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST)
 
     private val sourceRoots: MutableList<Path> = mutableListOf()
+    private val sourceVirtualFiles: MutableList<VirtualFile> = mutableListOf()
 
     public fun addSourceRoot(path: Path) {
         sourceRoots.add(path)
@@ -39,6 +40,14 @@ public class KtSourceModuleBuilder(
 
     public fun addSourceRoots(paths: Collection<Path>) {
         sourceRoots.addAll(paths)
+    }
+
+    public fun addSourceVirtualFile(virtualFile: VirtualFile) {
+        sourceVirtualFiles.add(virtualFile)
+    }
+
+    public fun addSourceVirtualFiles(virtualFiles: Collection<VirtualFile>) {
+        sourceVirtualFiles.addAll(virtualFiles)
     }
 
     override fun build(): KtSourceModule {
@@ -73,6 +82,7 @@ public class KtSourceModuleBuilder(
                     add(virtualFile)
                 }
             }
+            addAll(sourceVirtualFiles)
         }
     }
 }

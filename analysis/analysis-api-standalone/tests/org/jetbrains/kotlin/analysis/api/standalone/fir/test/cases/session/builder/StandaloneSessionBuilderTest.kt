@@ -248,4 +248,45 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
         ktCallExpression.assertIsCallOf(CallableId(FqName.ROOT, Name.identifier("foo")))
     }
+
+    @Test
+    fun testKotlinSourceModuleSessionWithVirtualFile() {
+        val root = "otherModuleUsage"
+        lateinit var sourceModule: KtSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
+
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                val dep = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root).resolve("dependent"))
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "dependent"
+                    }
+                )
+                sourceModule = addModule(
+                    buildKtSourceModule {
+                        // addSourceRoot(testDataPath(root).resolve("main"))
+                        // Instead, add [VirtualFile] on-the-fly
+                        val virtualFile = createVirtualFileOnTheFly(
+                            project,
+                            """
+                                fun main() {
+                                    foo()
+                                }
+                            """.trimIndent()
+                        )
+                        addSourceVirtualFile(virtualFile)
+                        addRegularDependency(dep)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "main"
+                    }
+                )
+            }
+        }
+        val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
+        val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
+        ktCallExpression.assertIsCallOf(CallableId(FqName.ROOT, Name.identifier("foo")))
+    }
 }
