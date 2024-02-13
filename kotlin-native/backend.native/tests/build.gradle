@@ -929,29 +929,6 @@ tasks.register("driver_opt", KonanDriverTest) {
     flags = ["-opt"]
 }
 
-def generateWithSpaceDefFile() {
-    def buildDirectory = project.layout.buildDirectory.get().asFile
-    def mapOption = "--Map \"$buildDirectory/cutom map.map\""
-    if (PlatformInfo.isAppleTarget(project)) {
-        mapOption = "-map \"$buildDirectory/cutom map.map\""
-    } else if (PlatformInfo.isWindowsTarget(project)) {
-        mapOption = "\"-Wl,--Map,$buildDirectory/cutom map.map\""
-    }
-
-    buildDirectory.mkdirs()
-    def file = new File("${buildDirectory}/withSpaces.def")
-    file.write """
-headers = stdio.h "${projectDir}/interop/basics/custom headers/custom.h"
-linkerOpts = $mapOption
----
-
-int customCompare(const char* str1, const char* str2) {
-    return custom_strcmp(str1, str2);
-}
-"""
-    return file.absolutePath
-}
-
 // A helper method to create interop artifacts
 void createInterop(String name, Closure conf) {
     konanArtifacts {
@@ -1102,10 +1079,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 }
 
-createInterop("withSpaces") {
-    it.defFile generateWithSpaceDefFile()
-}
-
 createInterop("exceptions_throwThroughBridge") {
     it.defFile "interop/exceptions/throwThroughBridge.def"
     it.extraOpts "-Xcompile-source", "$projectDir/interop/exceptions/throwThroughBridgeInterop.cpp"
@@ -1180,15 +1153,6 @@ standaloneTest("interop_objc_allocException") {
 interopTest("interop_embedStaticLibraries") {
     source = "interop/embedStaticLibraries/main.kt"
     interop = 'embedStaticLibraries'
-}
-
-interopTest("interop_withSpaces") {
-    interop ='withSpaces'
-    source = "interop/basics/withSpaces.kt"
-
-    doLast {
-        assert project.layout.buildDirectory.file("cutom map.map").get().asFile.exists()
-    }
 }
 
 dynamicTest("interop_kt43502") {

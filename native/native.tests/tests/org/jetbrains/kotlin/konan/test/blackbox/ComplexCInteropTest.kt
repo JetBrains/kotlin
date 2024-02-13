@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.isSimulator
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.test.assertTrue
 
 @TestDataPath("\$PROJECT_ROOT")
 class ClassicComplexCInteropTest : ComplexCInteropTestBase()
@@ -136,6 +138,56 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             listOf(TestName("interop_objc_tests"))
         )
         runExecutableAndVerify(testCase, testExecutable)
+    }
+
+    @Test
+    @TestMetadata("withSpaces.kt")
+    fun testWithSpaces() {
+        val srcDir = interopDir.resolve("withSpaces")
+        val mapfile = buildDir.resolve("cutom map.map").also { it.delete() }
+        val mapOption = when {
+            targets.testTarget.family.isAppleFamily -> "-map \"${buildDir.absolutePath}/cutom map.map\""
+            targets.testTarget.family == Family.MINGW -> "\"-Wl,--Map,${buildDir.absolutePath}/cutom map.map\""
+            else -> "--Map \"${buildDir.absolutePath}/cutom map.map\""
+        }
+        val withSpacesDef = buildDir.resolve("withSpaces.def").also {
+            it.printWriter().use {
+                it.println(
+                    """
+                    headers = stdio.h "${srcDir.absolutePath}/custom headers/custom.h"
+                    linkerOpts = $mapOption
+                    ---
+    
+                    int customCompare(const char* str1, const char* str2) {
+                        return custom_strcmp(str1, str2);
+                    }
+                """.trimIndent()
+                )
+            }
+        }
+        val cinteropKlib = cinteropToLibrary(
+            targets = targets,
+            defFile = withSpacesDef,
+            outputDir = buildDir,
+            freeCompilerArgs = TestCompilerArgs.EMPTY
+        ).assertSuccess().resultingArtifact
+
+        val testCase = generateTestCaseWithSingleFile(
+            sourceFile = srcDir.resolve("withSpaces.kt"),
+            freeCompilerArgs = TestCompilerArgs(
+                "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+            ),
+            testKind = TestKind.STANDALONE_NO_TR,
+            extras = TestCase.NoTestRunnerExtras("main"),
+        )
+        val success = compileToExecutable(testCase, cinteropKlib.asLibraryDependency()).assertSuccess()
+        val testExecutable = TestExecutable(
+            success.resultingArtifact,
+            success.loggedData,
+            listOf(TestName("interop_objc_tests"))
+        )
+        runExecutableAndVerify(testCase, testExecutable)
+        assertTrue(mapfile.exists())
     }
 
     private fun compileDylib(name: String, mSources: List<File>): TestCompilationResult.Success<out TestCompilationArtifact.Executable> {
