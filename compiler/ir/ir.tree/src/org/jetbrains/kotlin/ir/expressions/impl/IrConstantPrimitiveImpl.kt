@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstantPrimitive
 import org.jetbrains.kotlin.ir.expressions.IrConstantValue
@@ -14,6 +15,9 @@ class IrConstantPrimitiveImpl(
     override val endOffset: Int,
     override var value: IrConst<*>,
 ) : IrConstantPrimitive() {
+    override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
+
     override fun contentEquals(other: IrConstantValue) =
         other is IrConstantPrimitive &&
                 type == other.type &&

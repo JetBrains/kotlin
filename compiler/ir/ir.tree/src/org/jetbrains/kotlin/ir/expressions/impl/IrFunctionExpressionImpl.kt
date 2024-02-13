@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -16,4 +17,7 @@ class IrFunctionExpressionImpl(
     override var type: IrType,
     override var function: IrSimpleFunction,
     override var origin: IrStatementOrigin
-) : IrFunctionExpression()
+) : IrFunctionExpression() {
+    override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
+}

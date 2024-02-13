@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -31,12 +30,6 @@ abstract class IrModuleFragment : IrElementBase(), IrElement {
     abstract val irBuiltins: IrBuiltIns
 
     abstract val files: MutableList<IrFile>
-
-    override val startOffset: Int
-        get() = UNDEFINED_OFFSET
-
-    override val endOffset: Int
-        get() = UNDEFINED_OFFSET
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitModuleFragment(this, data)

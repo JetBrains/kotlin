@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -25,4 +26,7 @@ class IrInstanceInitializerCallImpl(
     override val endOffset: Int,
     override var classSymbol: IrClassSymbol,
     override var type: IrType,
-) : IrInstanceInitializerCall()
+) : IrInstanceInitializerCall() {
+    override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
+}

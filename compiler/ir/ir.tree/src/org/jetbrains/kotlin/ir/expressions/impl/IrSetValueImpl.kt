@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -30,6 +31,9 @@ class IrSetValueImpl(
     override var value: IrExpression,
     override var origin: IrStatementOrigin?
 ) : IrSetValue() {
+    override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
+
     init {
         if (symbol.isBound) {
             assert(symbol.owner.isAssignable) { "Only assignable IrValues can be set" }

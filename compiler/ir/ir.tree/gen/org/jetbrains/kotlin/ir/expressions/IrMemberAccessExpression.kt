@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.memberAccessExpression]
  */
 abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference() {
-    var dispatchReceiver: IrExpression? = null
+    abstract var dispatchReceiver: IrExpression?
 
-    var extensionReceiver: IrExpression? = null
+    abstract var extensionReceiver: IrExpression?
 
     abstract override val symbol: S
 

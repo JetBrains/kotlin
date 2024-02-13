@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -21,6 +22,9 @@ class IrConstantObjectImpl constructor(
 ) : IrConstantObject() {
     override val valueArguments = SmartList(initValueArguments)
     override val typeArguments = SmartList(initTypeArguments)
+
+    override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
 
     override fun contentEquals(other: IrConstantValue): Boolean =
         other is IrConstantObject &&

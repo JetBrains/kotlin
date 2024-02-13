@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrBreak
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.types.IrType
@@ -25,4 +26,9 @@ class IrBreakImpl(
     override val endOffset: Int,
     override var type: IrType,
     override var loop: IrLoop,
-) : IrBreak()
+) : IrBreak() {
+    override var label: String? = null
+
+    override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
+}

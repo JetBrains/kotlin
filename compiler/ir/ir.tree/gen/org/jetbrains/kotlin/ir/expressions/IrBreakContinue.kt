@@ -16,5 +16,5 @@ package org.jetbrains.kotlin.ir.expressions
 abstract class IrBreakContinue : IrExpression() {
     abstract var loop: IrLoop
 
-    var label: String? = null
+    abstract var label: String?
 }

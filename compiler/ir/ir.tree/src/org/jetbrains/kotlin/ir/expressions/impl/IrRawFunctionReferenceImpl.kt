@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrRawFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -25,4 +26,7 @@ class IrRawFunctionReferenceImpl(
     override val endOffset: Int,
     override var type: IrType,
     override var symbol: IrFunctionSymbol,
-) : IrRawFunctionReference()
+) : IrRawFunctionReference() {
+    override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
+}

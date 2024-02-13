@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -38,5 +39,10 @@ class IrLocalDelegatedPropertyReferenceImpl(
 ) : IrLocalDelegatedPropertyReference() {
     override val typeArguments: Array<IrType?> = initializeTypeArguments(0)
 
+    override var dispatchReceiver: IrExpression? = null
+    override var extensionReceiver: IrExpression? = null
     override val valueArguments: Array<IrExpression?> = initializeParameterArguments(0)
+
+    override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
 }

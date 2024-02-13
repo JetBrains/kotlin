@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrDynamicMemberExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
@@ -15,4 +16,7 @@ class IrDynamicMemberExpressionImpl(
     override var type: IrType,
     override var memberName: String,
     override var receiver: IrExpression
-) : IrDynamicMemberExpression()
+) : IrDynamicMemberExpression() {
+    override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
+}

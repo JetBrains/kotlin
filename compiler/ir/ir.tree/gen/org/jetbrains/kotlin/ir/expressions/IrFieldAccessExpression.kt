@@ -21,7 +21,7 @@ abstract class IrFieldAccessExpression : IrDeclarationReference() {
 
     abstract var superQualifierSymbol: IrClassSymbol?
 
-    var receiver: IrExpression? = null
+    abstract var receiver: IrExpression?
 
     abstract var origin: IrStatementOrigin?
 }

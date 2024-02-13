@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.generators.tree.ListField as AbstractListField
 sealed class Field(
     override val name: String,
     override var isMutable: Boolean,
-) : AbstractField<Field>() {
-    var baseDefaultValue: String? = null
+) : AbstractField<Field>(), AbstractFieldWithDefaultValue<Field> {
     var baseGetter: String? = null
 
     sealed class UseFieldAsParameterInIrFactoryStrategy {
@@ -32,11 +31,18 @@ sealed class Field(
                 UseFieldAsParameterInIrFactoryStrategy.Yes(null)
             }
 
-    override val withGetter: Boolean
+    override var withGetter: Boolean
         get() = baseGetter != null
+        set(value) = error("Operation not supported")
 
-    override val defaultValueInImplementation: String?
-        get() = baseGetter ?: baseDefaultValue
+    override var defaultValueInImplementation: String? by ::baseGetter
+
+    override var defaultValueInBuilder: String?
+        get() = null
+        set(_) = error("Builders are not supported")
+
+    override val origin: Field
+        get() = this
 
     override var customSetter: String? = null
 
@@ -46,7 +52,7 @@ sealed class Field(
         get() = false
 
     override val isFinal: Boolean
-        get() = defaultValueInImplementation != null
+        get() = baseGetter != null
 
     override val isParameter: Boolean
         get() = false
@@ -55,7 +61,6 @@ sealed class Field(
 
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
-        copy.baseDefaultValue = baseDefaultValue
         copy.baseGetter = baseGetter
         copy.customUseInIrFactoryStrategy = customUseInIrFactoryStrategy
         copy.customSetter = customSetter

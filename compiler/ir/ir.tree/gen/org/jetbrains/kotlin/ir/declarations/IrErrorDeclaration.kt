@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.errorDeclaration]
  */
 abstract class IrErrorDeclaration : IrDeclarationBase() {
-    override val symbol: IrSymbol
-        get() = error("Should never be called")
+    abstract override val symbol: IrSymbol
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitErrorDeclaration(this, data)

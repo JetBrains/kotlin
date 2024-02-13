@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
 
@@ -26,6 +27,11 @@ class IrBlockImpl(
     override var type: IrType,
     override var origin: IrStatementOrigin? = null,
 ) : IrBlock() {
+    override val statements: MutableList<IrStatement> = ArrayList(2)
+
+    override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
+
     constructor(
         startOffset: Int,
         endOffset: Int,

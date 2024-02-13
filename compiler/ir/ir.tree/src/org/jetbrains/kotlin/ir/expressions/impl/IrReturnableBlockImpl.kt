@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
@@ -20,6 +21,11 @@ class IrReturnableBlockImpl(
     override val symbol: IrReturnableBlockSymbol,
     override var origin: IrStatementOrigin? = null,
 ) : IrReturnableBlock() {
+    override val statements: MutableList<IrStatement> = ArrayList(2)
+
+    override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
+
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
         get() = symbol.descriptor

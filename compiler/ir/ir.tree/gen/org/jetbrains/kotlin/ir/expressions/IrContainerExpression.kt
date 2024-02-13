@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -20,8 +19,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  */
 abstract class IrContainerExpression : IrExpression(), IrStatementContainer {
     abstract var origin: IrStatementOrigin?
-
-    override val statements: MutableList<IrStatement> = ArrayList(2)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }

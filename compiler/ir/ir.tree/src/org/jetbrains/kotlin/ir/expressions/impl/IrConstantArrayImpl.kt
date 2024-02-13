@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrConstantArray
 import org.jetbrains.kotlin.ir.expressions.IrConstantValue
 import org.jetbrains.kotlin.ir.types.IrType
@@ -17,6 +18,9 @@ class IrConstantArrayImpl(
     initElements: List<IrConstantValue>,
 ) : IrConstantArray() {
     override val elements = SmartList(initElements)
+
+    override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
 
     override fun contentEquals(other: IrConstantValue): Boolean =
         other is IrConstantArray &&

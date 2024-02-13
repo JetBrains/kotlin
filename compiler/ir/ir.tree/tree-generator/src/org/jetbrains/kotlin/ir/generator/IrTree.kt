@@ -443,7 +443,6 @@ object IrTree : AbstractTreeBuilder() {
         fieldsToSkipInIrFactoryMethod.add("origin")
 
         +field("symbol", symbolType, mutable = false) {
-            baseGetter = "error(\"Should never be called\")"
             skipInIrFactory()
         }
     }
@@ -495,13 +494,6 @@ object IrTree : AbstractTreeBuilder() {
         +field("name", type<Name>(), mutable = false)
         +field("irBuiltins", type(Packages.tree, "IrBuiltIns"), mutable = false)
         +listField("files", file, mutability = MutableList)
-        additionalImports += ArbitraryImportable(Packages.tree, "UNDEFINED_OFFSET")
-        +field("startOffset", int, mutable = false) {
-            baseGetter = "UNDEFINED_OFFSET"
-        }
-        +field("endOffset", int, mutable = false) {
-            baseGetter = "UNDEFINED_OFFSET"
-        }
     }
     val property: Element by element(Declaration) {
         isLeaf = true
@@ -678,14 +670,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(varargElement)
         parent(attributeContainer)
 
-        +field("attributeOwnerId", attributeContainer, isChild = false) {
-            baseDefaultValue = "this"
-            skipInIrFactory()
-        }
-        +field("originalBeforeInline", attributeContainer, nullable = true, isChild = false) {
-            baseDefaultValue = "null"
-            skipInIrFactory()
-        }
         +field("type", irTypeType)
     }
     val statementContainer: Element by element(Expression) {
@@ -733,12 +717,8 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(declarationReference)
 
-        +field("dispatchReceiver", expression, nullable = true) {
-            baseDefaultValue = "null"
-        }
-        +field("extensionReceiver", expression, nullable = true) {
-            baseDefaultValue = "null"
-        }
+        +field("dispatchReceiver", expression, nullable = true)
+        +field("extensionReceiver", expression, nullable = true)
         +symbol(s)
         +field("origin", statementOriginType, nullable = true)
         +listField("valueArguments", expression.copy(nullable = true), mutability = Array) {
@@ -862,9 +842,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(statementContainer)
 
         +field("origin", statementOriginType, nullable = true)
-        +listField("statements", statement, mutability = MutableList) {
-            baseDefaultValue = "ArrayList(2)"
-        }
     }
     val block: Element by element(Expression) {
         needAcceptMethod()
@@ -902,9 +879,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(expression)
 
         +field("loop", loop, isChild = false)
-        +field("label", string, nullable = true) {
-            baseDefaultValue = "null"
-        }
+        +field("label", string, nullable = true)
     }
     val `break` by element(Expression) {
         visitorParameterName = "jump"
@@ -1051,9 +1026,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +symbol(fieldSymbolType, mutable = true)
         +field("superQualifierSymbol", classSymbolType, nullable = true)
-        +field("receiver", expression, nullable = true) {
-            baseDefaultValue = "null"
-        }
+        +field("receiver", expression, nullable = true)
         +field("origin", statementOriginType, nullable = true)
     }
     val getField: Element by element(Expression) {
@@ -1089,13 +1062,9 @@ object IrTree : AbstractTreeBuilder() {
         parent(expression)
 
         +field("origin", statementOriginType, nullable = true)
-        +field("body", expression, nullable = true) {
-            baseDefaultValue = "null"
-        }
+        +field("body", expression, nullable = true)
         +field("condition", expression)
-        +field("label", string, nullable = true) {
-            baseDefaultValue = "null"
-        }
+        +field("label", string, nullable = true)
     }
     val whileLoop: Element by element(Expression) {
         visitorParameterName = "loop"
