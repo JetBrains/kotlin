@@ -20,7 +20,13 @@ internal class BridgeGeneratorImpl : BridgeGenerator {
         val parameterBridges = request.callable.allParameters.mapIndexed { index, value -> bridgeParameter(value, index) }
 
         val cDeclaration = request.createCDeclaration()
-        val kotlinBridge = createKotlinBridge(request.bridgeName, request.fqName, kotlinReturnType, parameterBridges.map { it.kotlin })
+        val kotlinBridge = createKotlinBridge(
+            bridgeName = request.bridgeName,
+            cName = request.cDeclarationName(),
+            functionFqName = request.fqName,
+            returnType = kotlinReturnType,
+            parameterBridges = parameterBridges.map { it.kotlin }
+        )
         return FunctionBridge(
             KotlinFunctionBridge(kotlinBridge, listOf(exportAnnotationFqName)),
             CFunctionBridge(cDeclaration, listOf(stdintHeader))
@@ -41,12 +47,13 @@ internal fun BridgeRequest.cDeclarationName(): String {
 
 private fun createKotlinBridge(
     bridgeName: String,
+    cName: String,
     functionFqName: List<String>,
     returnType: KotlinType,
     parameterBridges: List<KotlinBridgeParameter>,
 ): List<String> {
     val declaration = createKotlinDeclarationSignature(bridgeName, returnType, parameterBridges)
-    val annotation = "@${exportAnnotationFqName.substringAfterLast('.')}(\"${bridgeName}\")"
+    val annotation = "@${exportAnnotationFqName.substringAfterLast('.')}(\"${cName}\")"
     val resultName = "result"
     val callSite = createCallSite(functionFqName, parameterBridges.map { it.name }, resultName)
     return """

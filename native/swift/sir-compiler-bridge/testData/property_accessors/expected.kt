@@ -6,7 +6,7 @@ public fun getter_bridge(): Boolean {
     return result
 }
 
-@ExportedBridge("setter_bridge")
+@ExportedBridge("setter_bridge__TypesOfArguments___Bool__")
 public fun setter_bridge(newValue: Boolean): Unit {
     val result = variable(newValue)
     return result

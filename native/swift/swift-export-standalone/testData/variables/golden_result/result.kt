@@ -12,13 +12,13 @@ public fun namespace_main_bar_get(): Int {
     return result
 }
 
-@ExportedBridge("namespace_main_bar_set")
+@ExportedBridge("namespace_main_bar_set__TypesOfArguments__int32_t__")
 public fun namespace_main_bar_set(newValue: Int): Unit {
     val result = namespace.main.bar(newValue)
     return result
 }
 
-@ExportedBridge("namespace_main_foobar")
+@ExportedBridge("namespace_main_foobar__TypesOfArguments__int32_t__")
 public fun namespace_main_foobar(param: Int): Int {
     val result = namespace.main.foobar(param)
     return result
