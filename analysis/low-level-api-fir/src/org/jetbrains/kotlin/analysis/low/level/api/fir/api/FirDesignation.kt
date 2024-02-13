@@ -313,6 +313,10 @@ private fun findKotlinStdlibClass(classId: ClassId, target: FirDeclaration): Fir
 /**
  * Consider using this function only if [collectDesignation] is not applicable.
  *
+ * This extension function can be used in the case there your [FirElementWithResolveState] probably
+ * doesn't have [getContainingFile] and it doesn't matter for your purposes.
+ * Potentially, this function can become obsolete if we support all possible cases in [getContainingFile]
+ *
  * @return [FirDesignation] where [FirDesignation.fileOrNull] can be null or throws an exception.
  *
  * @see collectDesignation
@@ -338,6 +342,10 @@ fun FirElementWithResolveState.collectDesignation(providedFile: FirFile? = null)
 
 /**
  * Consider using this function only if [tryCollectDesignation] is not applicable.
+ *
+ * This extension function can be used in the case there your [FirElementWithResolveState] probably
+ * doesn't have [getContainingFile] and it doesn't matter for your purposes.
+ * Potentially, this function can become obsolete if we support all possible cases in [getContainingFile]
  *
  * @return [FirDesignation] where [FirDesignation.fileOrNull] can be null or null.
  *
