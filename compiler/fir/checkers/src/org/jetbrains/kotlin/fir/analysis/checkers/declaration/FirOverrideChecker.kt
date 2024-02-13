@@ -244,7 +244,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
 
             if (callableName in FirDeprecationChecker.DeprecatedOverrideOfHiddenReplacements) {
                 firTypeScope.processOverriddenFunctions(this) {
-                    if (it.isHidden(isSuperCall = false, isOverridden = true) == VisibleWithDeprecation) {
+                    if (it.hiddenStatusOfCall(isSuperCall = false, isCallToOverride = true) == VisibleWithDeprecation) {
                         val message = FirDeprecationChecker.getDeprecatedOverrideOfHiddenMessage(callableName)
                         val deprecationInfo =
                             SimpleDeprecationInfo(DeprecationLevelValue.WARNING, propagatesToOverrides = false, message)

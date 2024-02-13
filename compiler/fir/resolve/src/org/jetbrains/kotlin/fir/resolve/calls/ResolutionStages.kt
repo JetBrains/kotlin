@@ -775,7 +775,7 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
         }
 
         val isSuperCall = callInfo.callSite.isSuperCall(session)
-        if (symbol.isHidden(isSuperCall, isOverridden = false) == CallToPotentiallyHiddenSymbolResult.Hidden) return true
+        if (symbol.hiddenStatusOfCall(isSuperCall, isCallToOverride = false) == CallToPotentiallyHiddenSymbolResult.Hidden) return true
         if (symbol.fir.dispatchReceiverType == null || symbol !is FirNamedFunctionSymbol) return false
 
         val scope = candidate.originScope as? FirTypeScope ?: return false
@@ -783,7 +783,7 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
         var hidden = false
         var deprecated = false
         scope.processOverriddenFunctions(symbol) {
-            val result = it.isHidden(isSuperCall, isOverridden = true)
+            val result = it.hiddenStatusOfCall(isSuperCall, isCallToOverride = true)
             if (result != CallToPotentiallyHiddenSymbolResult.Visible) {
                 if (result == CallToPotentiallyHiddenSymbolResult.Hidden) {
                     hidden = true

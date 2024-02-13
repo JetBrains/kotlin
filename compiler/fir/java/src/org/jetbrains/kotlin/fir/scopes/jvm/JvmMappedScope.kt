@@ -195,7 +195,7 @@ class JvmMappedScope(
             symbol = FirNamedFunctionSymbol(CallableId(firKotlinClass.classId, name))
             resolvePhase = FirResolvePhase.BODY_RESOLVE
         }.apply {
-            isHiddenEverywhereBesideSuperCalls = HiddenEverywhereBesideSuperCallsStatus.HIDDEN_FAKE
+            hiddenEverywhereBesideSuperCallsStatus = HiddenEverywhereBesideSuperCallsStatus.HIDDEN_FAKE
         }.symbol
     }
 
@@ -293,9 +293,9 @@ class JvmMappedScope(
 
     private fun FirCallableDeclaration.setHiddenAttributeIfNecessary(jdkMemberStatus: JDKMemberStatus) {
         if (jdkMemberStatus == JDKMemberStatus.HIDDEN) {
-            isHiddenEverywhereBesideSuperCalls = HiddenEverywhereBesideSuperCallsStatus.HIDDEN
+            hiddenEverywhereBesideSuperCallsStatus = HiddenEverywhereBesideSuperCallsStatus.HIDDEN
         } else if (jdkMemberStatus == JDKMemberStatus.HIDDEN_IN_DECLARING_CLASS_ONLY) {
-            isHiddenEverywhereBesideSuperCalls = HiddenEverywhereBesideSuperCallsStatus.HIDDEN_IN_DECLARING_CLASS_ONLY
+            hiddenEverywhereBesideSuperCallsStatus = HiddenEverywhereBesideSuperCallsStatus.HIDDEN_IN_DECLARING_CLASS_ONLY
         }
     }
 

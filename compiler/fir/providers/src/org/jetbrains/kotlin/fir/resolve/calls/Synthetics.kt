@@ -272,7 +272,7 @@ class FirSyntheticPropertiesScope private constructor(
 
         val visited = mutableSetOf<MemberWithBaseScope<FirNamedFunctionSymbol>>()
         fun checkJavaOrigin(symbol: FirNamedFunctionSymbol, scope: FirTypeScope, isOverridden: Boolean) {
-            val hidden = symbol.isHidden(isSuperCall = false, isOverridden = isOverridden)
+            val hidden = symbol.hiddenStatusOfCall(isSuperCall = false, isCallToOverride = isOverridden)
             when (hidden) {
                 CallToPotentiallyHiddenSymbolResult.Hidden -> isHiddenEverywhereBesideSuperCalls = true
                 CallToPotentiallyHiddenSymbolResult.VisibleWithDeprecation -> isDeprecatedOverrideOfHidden = true

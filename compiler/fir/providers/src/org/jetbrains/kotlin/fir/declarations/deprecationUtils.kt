@@ -326,7 +326,7 @@ fun FirBasedSymbol<*>.isDeprecationLevelHidden(languageVersionSettings: Language
 
 private object IsHiddenEverywhereBesideSuperCalls : FirDeclarationDataKey()
 
-var FirCallableDeclaration.isHiddenEverywhereBesideSuperCalls: HiddenEverywhereBesideSuperCallsStatus? by FirDeclarationDataRegistry.data(
+var FirCallableDeclaration.hiddenEverywhereBesideSuperCallsStatus: HiddenEverywhereBesideSuperCallsStatus? by FirDeclarationDataRegistry.data(
     IsHiddenEverywhereBesideSuperCalls
 )
 
@@ -344,13 +344,44 @@ enum class CallToPotentiallyHiddenSymbolResult {
     Hidden, Visible, VisibleWithDeprecation,
 }
 
-fun FirCallableSymbol<*>.isHidden(isSuperCall: Boolean, isOverridden: Boolean): CallToPotentiallyHiddenSymbolResult {
+/**
+ * To check whether a symbol is visible and if it's deprecated, the method needs to be called for the symbol and all its
+ * overridden symbols.
+ * [isSuperCall] must be set to `true` when the receiver is `super`.
+ * [isCallToOverride] must be set to `false` for the original symbol and to `true` for all its overridden symbols.
+ *
+ * Given the following hierarchy
+ *
+ * ```
+ * public class A {
+ *     public String getX() { return ""; }  // HIDDEN
+ *     public String getY() { return ""; }  // HIDDEN_IN_DECLARING_CLASS_ONLY
+ *     public String getZ() { return ""; }  // HIDDEN_FAKE
+ * }
+ *
+ * class B extends A {
+ *     @Override public String getX() { return super.getX(); }
+ *     @Override public String getY() { return super.getY(); }
+ *     @Override public String getZ() { return super.getZ(); }
+ * }
+ * ```
+ *
+ * the results will be as follows
+ *
+ * | Receiver \ Symbol | getX    | getY                   | getZ                   |
+ * |-------------------|---------|------------------------|------------------------|
+ * | A                 | Hidden  | Hidden                 | Hidden                 |
+ * | super             | Visible | VisibleWithDeprecation | Hidden                 |
+ * | B                 | Hidden  | VisibleWithDeprecation | VisibleWithDeprecation |
+ *
+ */
+fun FirCallableSymbol<*>.hiddenStatusOfCall(isSuperCall: Boolean, isCallToOverride: Boolean): CallToPotentiallyHiddenSymbolResult {
     val fir = fir
     if (fir.isHiddenToOvercomeSignatureClash == true) {
         return CallToPotentiallyHiddenSymbolResult.Hidden
     }
 
-    val status = fir.isHiddenEverywhereBesideSuperCalls ?: return CallToPotentiallyHiddenSymbolResult.Visible
+    val status = fir.hiddenEverywhereBesideSuperCallsStatus ?: return CallToPotentiallyHiddenSymbolResult.Visible
 
     return when (status) {
         // If the declaration is HIDDEN, we don't need a deprecation on supercalls because what are we warning the user about?
@@ -359,8 +390,8 @@ fun FirCallableSymbol<*>.isHidden(isSuperCall: Boolean, isOverridden: Boolean): 
         // However, on HIDDEN_IN_DECLARING_CLASS_ONLY,
         // we report a deprecation warning on super calls because we might want to rename the method in the future
         // (getFirst -> first).
-        HiddenEverywhereBesideSuperCallsStatus.HIDDEN_IN_DECLARING_CLASS_ONLY -> if (isSuperCall || isOverridden) CallToPotentiallyHiddenSymbolResult.VisibleWithDeprecation else CallToPotentiallyHiddenSymbolResult.Hidden
+        HiddenEverywhereBesideSuperCallsStatus.HIDDEN_IN_DECLARING_CLASS_ONLY -> if (isSuperCall || isCallToOverride) CallToPotentiallyHiddenSymbolResult.VisibleWithDeprecation else CallToPotentiallyHiddenSymbolResult.Hidden
         // HIDDEN_FAKE is always hidden (even for super calls), unless overridden.
-        HiddenEverywhereBesideSuperCallsStatus.HIDDEN_FAKE -> if (isOverridden) CallToPotentiallyHiddenSymbolResult.VisibleWithDeprecation else CallToPotentiallyHiddenSymbolResult.Hidden
+        HiddenEverywhereBesideSuperCallsStatus.HIDDEN_FAKE -> if (isCallToOverride) CallToPotentiallyHiddenSymbolResult.VisibleWithDeprecation else CallToPotentiallyHiddenSymbolResult.Hidden
     }
 }
