@@ -286,6 +286,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.IMPORT_LAST_NAME
     )
 
+    val IMPORT_LAST_BUT_ONE_NAME = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.IMPORT_LAST_BUT_ONE_NAME,
+        PositioningStrategies.IMPORT_LAST_BUT_ONE_NAME,
+    )
+
     val SPREAD_OPERATOR = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.SPREAD_OPERATOR,
         PositioningStrategies.SPREAD_OPERATOR

@@ -11,5 +11,5 @@ object Host {
 import bar.<!TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT_WARNING("HostAlias; Host")!>HostAlias<!>.foo
 
 fun test() {
-    <!UNRESOLVED_REFERENCE!>foo<!>()
+    foo()
 }

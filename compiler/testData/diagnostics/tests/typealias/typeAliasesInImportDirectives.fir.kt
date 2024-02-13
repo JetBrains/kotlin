@@ -42,6 +42,6 @@ import test.EnumAlias.Nested3
 import test.EnumSample.Nested3.*
 import test.EnumAlias.<!UNRESOLVED_IMPORT!>Nested3<!>.*
 
-import test.EnumAlias.Entry
+import test.<!TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT_WARNING!>EnumAlias<!>.Entry
 
 fun f() {}

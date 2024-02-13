@@ -4106,6 +4106,20 @@ internal class OperatorRenamedOnImportImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtImportDirective>(firDiagnostic, token), KtFirDiagnostic.OperatorRenamedOnImport
 
+internal class TypealiasAsCallableQualifierInImportErrorImpl(
+    override val typealiasName: Name,
+    override val originalClassName: Name,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtImportDirective>(firDiagnostic, token), KtFirDiagnostic.TypealiasAsCallableQualifierInImportError
+
+internal class TypealiasAsCallableQualifierInImportWarningImpl(
+    override val typealiasName: Name,
+    override val originalClassName: Name,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtImportDirective>(firDiagnostic, token), KtFirDiagnostic.TypealiasAsCallableQualifierInImportWarning
+
 internal class IllegalSuspendFunctionCallImpl(
     override val suspendCallable: KtSymbol,
     firDiagnostic: KtPsiDiagnostic,

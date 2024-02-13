@@ -95,7 +95,8 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
         val symbolProvider = context.session.symbolProvider
         val parentClassId = (import as? FirResolvedImport)?.resolvedParentClassId
         if (parentClassId != null) {
-            val parentClassSymbol = parentClassId.resolveToClass(context) ?: return
+            val parentClassLikeSymbol = parentClassId.resolveToClassLike(context) ?: return
+            val parentClassSymbol = parentClassLikeSymbol.fullyExpandedClass(context.session) ?: return
 
             fun reportInvisibleParentClasses(classSymbol: FirRegularClassSymbol, depth: Int) {
                 if (!classSymbol.isVisible(context)) {
@@ -109,7 +110,14 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
             reportInvisibleParentClasses(parentClassSymbol, 1)
 
             when (val status = parentClassSymbol.getImportStatusOfCallableMembers(context, importedName)) {
-                ImportStatus.OK -> return
+                ImportStatus.OK -> {
+                    if (parentClassLikeSymbol is FirTypeAliasSymbol) {
+                        reporter.reportOn(
+                            import.source, FirErrors.TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT,
+                            parentClassLikeSymbol.name, parentClassSymbol.name, context
+                        )
+                    }
+                }
                 is ImportStatus.Invisible -> {
                     val source = import.getSourceForImportSegment(0)
                     reporter.report(status.symbol.toInvisibleReferenceDiagnostic(source), context)
@@ -237,8 +245,12 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
         }
     }
 
+    private fun ClassId.resolveToClassLike(context: CheckerContext): FirClassLikeSymbol<*>? {
+        return context.session.symbolProvider.getClassLikeSymbolByClassId(this)
+    }
+
     private fun ClassId.resolveToClass(context: CheckerContext): FirRegularClassSymbol? {
-        val classSymbol = context.session.symbolProvider.getClassLikeSymbolByClassId(this) ?: return null
+        val classSymbol = resolveToClassLike(context) ?: return null
         return when (classSymbol) {
             is FirRegularClassSymbol -> classSymbol
             is FirTypeAliasSymbol -> classSymbol.fullyExpandedClass(context.session)

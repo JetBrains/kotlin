@@ -4889,6 +4889,22 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT.errorFactory) { firDiagnostic ->
+        TypealiasAsCallableQualifierInImportErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT.warningFactory) { firDiagnostic ->
+        TypealiasAsCallableQualifierInImportWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ILLEGAL_SUSPEND_FUNCTION_CALL) { firDiagnostic ->
         IllegalSuspendFunctionCallImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),

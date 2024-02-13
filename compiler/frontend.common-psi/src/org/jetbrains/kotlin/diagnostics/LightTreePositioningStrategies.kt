@@ -1048,6 +1048,19 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val IMPORT_LAST_BUT_ONE_NAME: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val references = tree.collectDescendantsOfType(node, KtNodeTypes.REFERENCE_EXPRESSION)
+            val nodeToMark = references.elementAtOrNull(references.size - 2) ?: node
+            return markElement(nodeToMark, startOffset, endOffset, tree, node)
+        }
+    }
+
     val IMPORT_ALIAS: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,

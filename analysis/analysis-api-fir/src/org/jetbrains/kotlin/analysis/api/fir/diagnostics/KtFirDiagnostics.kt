@@ -3406,6 +3406,18 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = OperatorRenamedOnImport::class
     }
 
+    interface TypealiasAsCallableQualifierInImportError : KtFirDiagnostic<KtImportDirective> {
+        override val diagnosticClass get() = TypealiasAsCallableQualifierInImportError::class
+        val typealiasName: Name
+        val originalClassName: Name
+    }
+
+    interface TypealiasAsCallableQualifierInImportWarning : KtFirDiagnostic<KtImportDirective> {
+        override val diagnosticClass get() = TypealiasAsCallableQualifierInImportWarning::class
+        val typealiasName: Name
+        val originalClassName: Name
+    }
+
     interface IllegalSuspendFunctionCall : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = IllegalSuspendFunctionCall::class
         val suspendCallable: KtSymbol

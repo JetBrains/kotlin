@@ -93,6 +93,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     QUESTION_MARK_BY_TYPE,
     ANNOTATION_USE_SITE,
     IMPORT_LAST_NAME,
+    IMPORT_LAST_BUT_ONE_NAME,
     DATA_MODIFIER,
     SPREAD_OPERATOR,
     DECLARATION_WITH_BODY,

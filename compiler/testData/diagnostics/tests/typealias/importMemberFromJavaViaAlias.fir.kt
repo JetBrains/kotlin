@@ -24,5 +24,5 @@ fun foo(
     sample: <!UNRESOLVED_REFERENCE!>JavaSample<!>,
     alias: JavaAlias
 ) {
-    <!UNRESOLVED_REFERENCE!>member<!>()
+    member()
 }
