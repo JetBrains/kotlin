@@ -1,3 +1,7 @@
+// LL_FIR_DIVERGENCE
+// I have no idea why the tests diverge. The test was misconfigured (it used regular dependencies instead of `dependsOn` dependencies).
+// I fixed the misconfiguration, now it turns out that it has been diverged all the time
+// LL_FIR_DIVERGENCE
 // !LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
@@ -10,7 +14,7 @@ open class B : A<String>() {
     // Fake (JVM only): override fun bar(arg: String): String = super.bar(arg)
 }
 open class C : B() {
-    open fun <!VIRTUAL_MEMBER_HIDDEN!>bar<!>(arg: String): String = arg
+    open fun bar(arg: String): String = arg
     open fun baz(arg: CharSequence): String = arg.toString()
 }
 
