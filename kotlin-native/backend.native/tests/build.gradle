@@ -1160,12 +1160,6 @@ standaloneTest("interop_objc_illegal_sharing") {
     }
 }
 
-standaloneTest("interop_kt62262") {
-    enabled = project.testTarget == 'ios_x64' || project.testTarget == 'ios_arm64' || project.testTarget == 'ios_simulator_arm64'
-    source = "interop/objc/kt62262.kt"
-    UtilsKt.dependsOnPlatformLibs(it)
-}
-
 dynamicTest("produce_dynamic") {
     source = "produce_dynamic/simple/hello.kt"
     cSource = "$projectDir/produce_dynamic/simple/main.c"
