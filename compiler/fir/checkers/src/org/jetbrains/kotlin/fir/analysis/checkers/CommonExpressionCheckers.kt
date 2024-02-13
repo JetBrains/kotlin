@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineBodyQualifiedAccessExpressionChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineBodyResolvedQualifierChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineBodyVariableAssignmentChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.*
 
@@ -55,7 +52,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirInlineBodyQualifiedAccessExpressionChecker,
             FirIncompatibleClassExpressionChecker,
             FirMissingDependencyClassChecker,
-            FirMissingDependencySupertypeChecker.ForQualifiedAccessExpressions,
+            FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker,
             FirArrayOfNothingQualifierChecker,
         )
 

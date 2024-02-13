@@ -123,8 +123,6 @@ allprojects {
 
     // backend.native/tests/framework
     ext.testOutputFramework = rootProject.file("$testOutputRoot/framework")
-
-    ext.testOutputFileCheck = rootProject.file("$testOutputRoot/filecheck")
 }
 testOutputExternal.mkdirs()
 
@@ -177,7 +175,6 @@ tasks.named("clean", Delete.class) {
 
 tasks.named("run") {
     dependsOn(tasks.withType(KonanTest).matching { it.enabled })
-    dependsOn(tasks.withType(FileCheckTest).matching { it.enabled })
     // Add regular gradle test tasks
     dependsOn(tasks.withType(Test).matching { it.enabled })
     // TODO(KTI-1571): This task should be run by Compiler Unit Tests (Native) configuration
@@ -1948,71 +1945,6 @@ Task pluginTest(String name, String pluginName, Closure configureClosure) {
 pluginTest("runtime_basic_init", "nopPlugin") {
     source = "runtime/basic/runtime_basic_init.kt"
     flags = ["-tr"]
-}
-
-
-Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
-    return project.tasks.create(name, FileCheckTest) { FileCheckTest task ->
-        task.configure(configureClosure)
-        task.llvmIr = project.file("$testOutputFileCheck/$name/$target/out.${task.phaseToCheck}.ll")
-
-        KonanTarget target = task.target
-        boolean isCrossCompiling = target != project.target
-
-        // Bitcode that is generated in presence of caches or two-stage compilation differs from the "closed world"-generated,
-        // so disable these tests for now.
-        if (task.enabled && twoStageEnabled)
-            task.enabled = false
-
-        if (task.enabled) {
-            konanArtifacts {
-                def lib = task.interop
-                if (lib != null) {
-                    UtilsKt.dependsOnKonanBuildingTask(task, lib, target)
-                }
-                if (!task.generateFramework) {
-                    // We could use `bitcode` here to make things faster. But:
-                    // 1. `bitcode` has no other usages.
-                    // 2. Unification should help porting to the new test infra.
-                    // 3. Compiler might behave differently when outputting bitcode instead of object files.
-                    program(name, targets: [target]) {
-                        srcFiles task.annotatedSource
-                        baseDir "$testOutputFileCheck/$name"
-                        if (!isCrossCompiling) {
-                            extraOpts project.globalTestArgs
-                        }
-                        extraOpts task.extraOpts
-                        extraOpts "-Xsave-llvm-ir-directory=$testOutputFileCheck/$name/$target"
-                        extraOpts "-Xsave-llvm-ir-after=${task.phaseToCheck}"
-                        if (lib != null) {
-                            libraries {
-                                artifact lib
-                            }
-                        }
-                    }
-                } else {
-                    // Framework support is much weakier than `frameworkTest`, but we don't need much.
-                    framework(name, targets: [target]) {
-                        srcFiles task.annotatedSource
-                        baseDir "$testOutputFileCheck/$name"
-                        if (!isCrossCompiling) {
-                            extraOpts project.globalTestArgs
-                        }
-                        extraOpts "-Xsave-llvm-ir-directory=$testOutputFileCheck/$name/$target"
-                        extraOpts "-Xsave-llvm-ir-after=${task.phaseToCheck}"
-
-                        if (lib != null) {
-                            libraries {
-                                artifact lib
-                            }
-                        }
-                    }
-                }
-                UtilsKt.dependsOnKonanBuildingTask(task, name, target)
-            }
-            task.dependsOn(nativeDependencies.llvmDependency)
-        }
-    }
 }
 
 dependencies {

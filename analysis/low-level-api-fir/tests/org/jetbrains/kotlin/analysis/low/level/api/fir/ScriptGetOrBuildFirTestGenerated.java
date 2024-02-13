@@ -340,6 +340,12 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
         public void testSyntheticResultDeclaration() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/syntheticResultDeclaration.kts");
         }
+
+        @Test
+        @TestMetadata("syntheticResultDeclarationInitializer.kts")
+        public void testSyntheticResultDeclarationInitializer() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/syntheticResultDeclarationInitializer.kts");
+        }
     }
 
     @Nested
@@ -496,6 +502,18 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("firstStatement.kts")
+        public void testFirstStatement() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/firstStatement.kts");
+        }
+
+        @Test
+        @TestMetadata("firstStatementCall.kts")
+        public void testFirstStatementCall() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/firstStatementCall.kts");
+        }
+
+        @Test
         @TestMetadata("forExpressionRangeScript.kts")
         public void testForExpressionRangeScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/forExpressionRangeScript.kts");
@@ -553,6 +571,18 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
         @TestMetadata("parenthesizedExpressionScript.kts")
         public void testParenthesizedExpressionScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/parenthesizedExpressionScript.kts");
+        }
+
+        @Test
+        @TestMetadata("secondStatement.kts")
+        public void testSecondStatement() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/secondStatement.kts");
+        }
+
+        @Test
+        @TestMetadata("secondStatementCall.kts")
+        public void testSecondStatementCall() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/secondStatementCall.kts");
         }
 
         @Test

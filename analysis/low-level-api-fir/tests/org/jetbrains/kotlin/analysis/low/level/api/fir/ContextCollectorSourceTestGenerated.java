@@ -85,6 +85,24 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("fileImport.kt")
+    public void testFileImport() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/fileImport.kt");
+    }
+
+    @Test
+    @TestMetadata("fileImportInside.kt")
+    public void testFileImportInside() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/fileImportInside.kt");
+    }
+
+    @Test
+    @TestMetadata("filePackage.kt")
+    public void testFilePackage() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/filePackage.kt");
+    }
+
+    @Test
     @TestMetadata("forLoopVariable.kt")
     public void testForLoopVariable() throws Exception {
         runTest("analysis/low-level-api-fir/testData/contextCollector/forLoopVariable.kt");

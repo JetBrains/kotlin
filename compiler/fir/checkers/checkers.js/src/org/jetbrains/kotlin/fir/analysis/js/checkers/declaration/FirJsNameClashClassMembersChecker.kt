@@ -19,10 +19,11 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.isPresentInGeneratedCode
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.constructors
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.getNonSubsumedOverriddenSymbols
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
+import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
 
 sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
     object Regular : FirJsNameClashClassMembersChecker(MppCheckerKind.Platform) {
@@ -123,9 +123,10 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
                             sessionHolder.session,
                             sessionHolder.scopeSession
                         )
-                        addAllSymbolsFrom(nonSubsumedOverriddenSymbols, sessionHolder)
-                        for (intersectedSymbol in nonSubsumedOverriddenSymbols) {
-                            overrideIntersections.getOrPut(intersectedSymbol) { hashSetOf() }.addAll(nonSubsumedOverriddenSymbols)
+                        val overriddenSymbols = nonSubsumedOverriddenSymbols.map { it.originalForSubstitutionOverride ?: it }
+                        addAllSymbolsFrom(overriddenSymbols, sessionHolder)
+                        for (intersectedSymbol in overriddenSymbols) {
+                            overrideIntersections.getOrPut(intersectedSymbol) { hashSetOf() }.addAll(overriddenSymbols)
                         }
                     }
                     else -> allSymbols.add(symbol)

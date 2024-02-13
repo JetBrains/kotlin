@@ -8,7 +8,7 @@
 
 /* anchor --> */fun build(/* anchor --> */action: Builder.() -> Unit/* <-- */) = Builder().apply(action)/* <-- */
 
-build {
+/* anchor --> */build {
     version = "123"
     class A {
         fun doo() {
@@ -17,11 +17,11 @@ build {
     }
 
     execute()
-}
+}/* <-- */
 
 /* anchor --> */val builder = build {
     version = "321"
 }/* <-- */
 
-builder.execute()
+/* anchor --> */builder.execute()/* <-- */
 /* <-- */

@@ -110,16 +110,11 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
             if (isLambda) ((function as FirAnonymousFunction).typeRef as? FirResolvedTypeRef)?.type?.isSuspendOrKSuspendFunctionType(session) == true
             else function.isSuspend
-        val defaultOffset = when {
-            function.origin == FirDeclarationOrigin.Synthetic.DataClassMember -> SYNTHETIC_OFFSET
-            updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER -> SYNTHETIC_OFFSET
-            else -> UNDEFINED_OFFSET
-        }
-        val created = function.convertWithOffsets(defaultOffset) { startOffset, endOffset ->
+        val created = function.convertWithOffsets { startOffset, endOffset ->
             classifierStorage.preCacheTypeParameters(function, symbol)
             irFactory.createSimpleFunction(
-                startOffset = startOffset,
-                endOffset = endOffset,
+                startOffset = if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else startOffset,
+                endOffset = if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else endOffset,
                 origin = updatedOrigin,
                 name = name,
                 visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),

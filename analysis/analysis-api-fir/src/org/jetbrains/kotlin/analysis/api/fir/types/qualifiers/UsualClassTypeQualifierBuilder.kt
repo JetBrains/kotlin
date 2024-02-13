@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.types.qualifiers
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.toSequence
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithOptionalFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.containingClassForLocal
 import org.jetbrains.kotlin.fir.declarations.*
@@ -46,7 +46,7 @@ internal object UsualClassTypeQualifierBuilder {
         }
 
         val designation = classSymbolToRender.fir.let {
-            val nonLocalDesignation = it.tryCollectDesignation()
+            val nonLocalDesignation = it.tryCollectDesignationWithOptionalFile()
             nonLocalDesignation?.toSequence(includeTarget = true)?.toList() ?: collectDesignationPathForLocal(it)
         }.filterIsInstance<FirRegularClass>()
 

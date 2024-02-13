@@ -13,10 +13,10 @@ Tower Data Context:
         Scope: FirExplicitSimpleImportingScope
 
 FILE: [ResolvedTo(IMPORTS)] fileAnnotation.kt
-    @FILE:R|Anno|[Types]()
-    [ResolvedTo(STATUS)] annotations container
-    @R|kotlin/annotation/Target|[Types](FILE#) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] constructor(): R|Anno| {
+    @FILE:Anno[Unresolved]()
+    [ResolvedTo(RAW_FIR)] annotations container
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 

@@ -10,8 +10,8 @@ FILE: [ResolvedTo(IMPORTS)] setOperatorScript.kts
     package test
 
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-setOperatorScript.kts>
-        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(TYPES)] <script-setOperatorScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=test/B.n] n: R|kotlin/Int|): R|test/B| {
@@ -32,9 +32,9 @@ FILE: [ResolvedTo(IMPORTS)] setOperatorScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] var a: R|test/B| = R|test/B.B|(Int(1))
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|test/B|
-            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|test/B|): R|kotlin/Unit|
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|test/B| = R|test/B.B|(Int(1))
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|test/B|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|test/B|): R|kotlin/Unit|
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|test/B| =  {
             [ResolvedTo(BODY_RESOLVE)] lval <array>: R|test/B| = R|test/a|

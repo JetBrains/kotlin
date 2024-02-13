@@ -1,0 +1,26 @@
+KT element: KtScriptInitializer
+FIR element: FirAnonymousInitializerImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] init {
+    R|/foo|()
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] firstStatement.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-firstStatement.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
+            ^foo Int(4)
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/foo|()
+        }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }

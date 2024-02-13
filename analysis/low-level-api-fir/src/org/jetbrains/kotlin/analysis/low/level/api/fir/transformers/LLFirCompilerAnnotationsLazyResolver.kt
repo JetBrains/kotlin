@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockPro
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeprecationProviderIsResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -65,7 +63,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
             if (regularClass.resolvePhase >= resolverPhase) return
 
             symbol.lazyResolveToPhase(resolverPhase.previous)
-            val designation = regularClass.collectDesignationWithFile().asResolveTarget()
+            val designation = regularClass.collectDesignation().asResolveTarget()
             val targetSession = designation.target.llFirSession
             val resolver = LLFirCompilerRequiredAnnotationsTargetResolver(
                 designation,
@@ -245,8 +243,6 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
                     target.setter?.let(::publishResult)
                     target.backingField?.let(::publishResult)
                 }
-
-                is FirScript -> target.forEachDependentDeclaration(::publishResult)
             }
         }
     }
@@ -268,10 +264,6 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
                 getter?.annotationsForTransformationTo(map)
                 setter?.annotationsForTransformationTo(map)
                 backingField?.annotationsForTransformationTo(map)
-            }
-
-            is FirScript -> {
-                forEachDependentDeclaration { it.annotationsForTransformationTo(map) }
             }
         }
 
@@ -318,8 +310,6 @@ private fun FirAnnotationContainer.hasAnnotationsToResolve(): Boolean {
         is FirProperty -> this.getter?.hasAnnotationsToResolve() == true ||
                 this.setter?.hasAnnotationsToResolve() == true ||
                 this.backingField?.hasAnnotationsToResolve() == true
-
-        is FirScript -> declarations.any { it.isScriptDependentDeclaration && it.hasAnnotationsToResolve() }
         else -> false
     }
 }

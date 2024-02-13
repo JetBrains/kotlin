@@ -12,12 +12,5 @@ Tower Data Context:
     Element 5
         Scope: FirExplicitSimpleImportingScope
 
-FILE: [ResolvedTo(IMPORTS)] fileAnnotation.kt
-    @FILE:R|Anno|[Types]()
-    [ResolvedTo(STATUS)] annotations container
-    @R|kotlin/annotation/Target|[Types](FILE#) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] constructor(): R|Anno| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
+FILE: [ResolvedTo(RAW_FIR)] typeAliasInitializer.kt
+    public final [ResolvedTo(RAW_FIR)] typealias Foo = String

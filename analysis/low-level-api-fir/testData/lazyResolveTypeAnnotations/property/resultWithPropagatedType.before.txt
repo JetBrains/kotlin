@@ -24,7 +24,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedType.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <script-resultWithPropagatedType.kts>
+    SCRIPT: [ResolvedTo(TYPES)] <script-resultWithPropagatedType.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {

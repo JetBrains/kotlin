@@ -709,6 +709,7 @@ private class ElementsToShortenCollector(
         val scopeDistanceLevel: Int // Note: Don't use the built-in ordinal since there are some scopes that are at the same level.
     ) {
         Local(1),
+        ScriptDeclarations(2),
         ClassUseSite(2),
         NestedClassifier(2),
         TypeParameter(2),
@@ -721,6 +722,7 @@ private class ElementsToShortenCollector(
             fun FirScope.toPartialOrder(): PartialOrderOfScope {
                 return when (this) {
                     is FirLocalScope -> Local
+                    is FirScriptDeclarationsScope -> ScriptDeclarations
                     is FirClassUseSiteMemberScope -> ClassUseSite
                     is FirNestedClassifierScope -> NestedClassifier
                     is FirTypeParameterScope -> TypeParameter

@@ -1,0 +1,23 @@
+KT element: KtCallExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|/bar|()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] secondStatementCall.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-secondStatementCall.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/bar|()
+        }
+
+        public final [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit| {
+        }

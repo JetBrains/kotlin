@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,17 +16,17 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLoc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
     firFileBuilder: LLFirFileBuilder,
@@ -61,7 +61,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, pr
                                 return@findSourceNonLocalFirDeclarationByProvider firScript?.takeIf { it.psi == declaration }
                             }
 
-                            firScript?.declarations?.filterNot { it is FirAnonymousInitializer }
+                            firScript?.declarations
                         } else {
                             firFile.declarations
                         }
@@ -122,7 +122,7 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
         is KtProperty,
         is KtNamedFunction,
         is KtConstructor<*>,
-        is KtClassInitializer,
+        is KtAnonymousInitializer,
         is KtTypeAlias,
         is KtDestructuringDeclaration,
         is KtScript,
@@ -204,7 +204,6 @@ val FirDeclaration.isGeneratedDeclaration
 
 internal inline fun FirScript.forEachDeclaration(action: (FirDeclaration) -> Unit) {
     for (statement in declarations) {
-        if (statement.isElementWhichShouldBeResolvedAsPartOfScript) continue
         action(statement)
     }
 }
@@ -228,17 +227,16 @@ internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -
     }
 }
 
-internal val FirDeclaration.isElementWhichShouldBeResolvedAsPartOfScript: Boolean get() = this is FirAnonymousInitializer || isScriptDependentDeclaration
-
-internal val FirDeclaration.isScriptDependentDeclaration: Boolean
-    get() = origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty
-
-internal inline fun FirScript.forEachDependentDeclaration(action: (FirDeclaration) -> Unit) {
-    for (declaration in declarations) {
-        if (declaration is FirAnonymousInitializer || !declaration.isScriptDependentDeclaration) continue
-        action(declaration)
+/**
+ * Some "local" declarations are not local from the lazy resolution perspective.
+ */
+internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
+    get() = when {
+        // We should treat result$$ property as non-local explicitly as its CallableId is local
+        // TODO: can be dropped after KT-65523
+        fir.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> false
+        else -> callableId.isLocal || fir.status.visibility == Visibilities.Local
     }
-}
 
 val PsiElement.parentsWithSelfCodeFragmentAware: Sequence<PsiElement>
     get() = generateSequence(this) { element ->

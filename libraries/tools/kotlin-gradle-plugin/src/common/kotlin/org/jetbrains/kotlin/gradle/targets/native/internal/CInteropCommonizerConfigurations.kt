@@ -119,7 +119,7 @@ internal suspend fun Project.locateOrCreateCommonizedCInteropDependencyConfigura
             CInteropCommonizerArtifactTypeAttribute.attribute,
             CInteropCommonizerArtifactTypeAttribute.KLIB
         )
-        description = "Commonized CInterop dependencies for $sourceSet with targets: '$commonizerTarget'."
+        configuration.description = "Commonized CInterop dependencies for $sourceSet with targets: '$commonizerTarget'."
     }
 
     return configuration

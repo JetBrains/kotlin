@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.native.checkers
 
-import FirNativeForwardDeclarationGetClassCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirSuperCallWithDefaultsChecker

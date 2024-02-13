@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReceiverTypeRef
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
@@ -181,7 +180,6 @@ private class LLFirTypeTargetResolver(
     private fun resolveScriptTypes(firScript: FirScript) {
         firScript.annotations.forEach { it.accept(transformer, null) }
         firScript.contextReceivers.forEach { it.accept(transformer, null) }
-        firScript.forEachDependentDeclaration { it.accept(transformer, null) }
     }
 
     private fun resolveClassTypes(firClass: FirRegularClass) {

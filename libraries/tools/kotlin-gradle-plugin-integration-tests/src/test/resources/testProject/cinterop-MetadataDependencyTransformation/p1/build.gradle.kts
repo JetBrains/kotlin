@@ -19,10 +19,7 @@ version = "1.0.0-SNAPSHOT"
 
 publishing {
     repositories {
-        this.maven {
-            this.name = "build"
-            this.url = rootProject.buildDir.resolve("repo").toURI()
-        }
+        maven("<localRepo>")
     }
 }
 

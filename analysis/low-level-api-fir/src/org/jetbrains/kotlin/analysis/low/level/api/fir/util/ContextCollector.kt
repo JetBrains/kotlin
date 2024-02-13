@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Context
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveCon
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -41,6 +43,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import java.util.ArrayList
 
 object ContextCollector {
@@ -160,22 +163,11 @@ object ContextCollector {
         shouldCollectBodyContext: Boolean,
         filter: (PsiElement) -> FilterResponse,
     ): ContextProvider {
-        val interceptor = designation?.let(::DesignationInterceptor) ?: { null }
+        val interceptor = designation?.let(::DesignationInterceptor)
         val visitor = ContextCollectorVisitor(holder, shouldCollectBodyContext, filter, interceptor)
-        file.accept(visitor)
+        visitor.collect(file)
 
         return ContextProvider { element, kind -> visitor[element, kind] }
-    }
-
-    private class DesignationInterceptor(private val designation: FirDesignation) : () -> FirElement? {
-        private val targetIterator = iterator {
-            yieldAll(designation.path)
-            yield(designation.target)
-        }
-
-        override fun invoke(): FirElement? {
-            return if (targetIterator.hasNext()) targetIterator.next() else null
-        }
     }
 
     fun interface ContextProvider {
@@ -183,12 +175,35 @@ object ContextCollector {
     }
 }
 
+private class DesignationInterceptor(val designation: FirDesignation) : () -> FirElement? {
+    private val targetIterator = iterator {
+        yieldAll(designation.path)
+        yield(designation.target)
+    }
+
+    override fun invoke(): FirElement? = if (targetIterator.hasNext()) targetIterator.next() else null
+}
+
 private class ContextCollectorVisitor(
     private val holder: SessionHolder,
     private val shouldCollectBodyContext: Boolean,
     private val filter: (PsiElement) -> FilterResponse,
-    private val designationPathInterceptor: () -> FirElement?,
+    private val designationPathInterceptor: DesignationInterceptor?,
 ) : FirDefaultVisitorVoid() {
+    fun collect(file: FirFile) {
+        if (designationPathInterceptor != null) {
+            withInterceptor {
+                // This code is unreachable in the case of a not empty path
+                errorWithAttachment("Designation path is empty") {
+                    withFirEntry("file", file)
+                    withFirDesignationEntry("designation", designationPathInterceptor.designation)
+                }
+            }
+        } else {
+            file.accept(this)
+        }
+    }
+
     private data class ContextKey(val element: PsiElement, val kind: ContextKind)
 
     operator fun get(element: PsiElement, kind: ContextKind): Context? {
@@ -335,18 +350,34 @@ private class ContextCollectorVisitor(
         else -> true
     }
 
-    override fun visitScript(script: FirScript) {
-        context.withScript(script, holder) {
-            withInterceptor {
-                super.visitScript(script)
+    override fun visitScript(script: FirScript) = withProcessor(script) {
+        dumpContext(script, ContextKind.SELF)
+
+        processSignatureAnnotations(script)
+
+        onActiveBody {
+            context.withScript(script, holder) {
+                dumpContext(script, ContextKind.BODY)
+
+                onActive {
+                    withInterceptor {
+                        processChildren(script)
+                    }
+                }
             }
         }
     }
 
-    override fun visitFile(file: FirFile) {
+    override fun visitFile(file: FirFile) = withProcessor(file) {
         context.withFile(file, holder) {
-            withInterceptor {
-                super.visitFile(file)
+            dumpContext(file, ContextKind.SELF)
+
+            processFileHeader(file)
+
+            onActive {
+                withInterceptor {
+                    processChildren(file)
+                }
             }
         }
     }
@@ -415,6 +446,13 @@ private class ContextCollectorVisitor(
             processList(regularClass.typeParameters)
             processList(regularClass.superTypeRefs)
         }
+    }
+
+    @OptIn(PrivateForInline::class)
+    private fun Processor.processFileHeader(file: FirFile) {
+        process(file.packageDirective)
+        processList(file.imports)
+        process(file.annotationsContainer)
     }
 
     /**
@@ -731,7 +769,7 @@ private class ContextCollectorVisitor(
      * If the designation is over, then allows the [block] code to take control.
      */
     private fun withInterceptor(block: () -> Unit) {
-        val target = designationPathInterceptor()
+        val target = designationPathInterceptor?.invoke()
         if (target != null) {
             target.accept(this)
         } else {

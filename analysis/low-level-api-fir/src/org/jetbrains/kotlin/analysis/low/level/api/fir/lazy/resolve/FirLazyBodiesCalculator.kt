@@ -11,7 +11,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
@@ -83,13 +83,6 @@ internal object FirLazyBodiesCalculator {
         builder.context.packageFqName = ktAnnotationEntry.containingKtFile.packageFqName
         val newAnnotationCall = builder.buildAnnotationCall(ktAnnotationEntry, annotationCall.containingDeclarationSymbol)
         return newAnnotationCall.argumentList
-    }
-
-    fun createDeclarationsForScript(designation: FirDesignation): List<FirDeclaration> {
-        designation.target as FirScript
-
-        val newScript = revive<FirScript>(designation)
-        return newScript.declarations
     }
 
     fun needCalculatingAnnotationCall(firAnnotationCall: FirAnnotationCall): Boolean =
@@ -199,6 +192,10 @@ private fun calculateLazyBodyForConstructor(designation: FirDesignation) {
 private fun calculateLazyBodyForProperty(designation: FirDesignation) {
     val firProperty = designation.target as FirProperty
     if (!needCalculatingLazyBodyForProperty(firProperty)) return
+    if (firProperty.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
+        calculateLazyBodyForResultProperty(firProperty, designation)
+        return
+    }
 
     val recreatedProperty = revive<FirProperty>(designation, firProperty.unwrapFakeOverridesOrDelegated().psi)
 
@@ -224,6 +221,26 @@ private fun calculateLazyBodyForProperty(designation: FirDesignation) {
         val newBackingField = recreatedProperty.getExplicitBackingField()!!
         replaceLazyInitializer(backingField, newBackingField)
     }
+}
+
+private fun calculateLazyBodyForResultProperty(firProperty: FirProperty, designation: FirDesignation) {
+    val newInitializer = revive<FirAnonymousInitializer>(designation)
+    val body = newInitializer.body
+    requireWithAttachment(body != null, { "${FirAnonymousInitializer::class.simpleName} without body" }) {
+        withFirDesignationEntry("designation", designation)
+        withFirEntry("initializer", newInitializer)
+    }
+
+    val singleStatement = body.statements.singleOrNull()
+    requireWithAttachment(singleStatement is FirExpression, { "Unexpected body content" }) {
+        withFirDesignationEntry("designation", designation)
+        withFirEntry("initializer", newInitializer)
+        singleStatement?.let {
+            withFirEntry("statement", it)
+        }
+    }
+
+    firProperty.replaceInitializer(singleStatement)
 }
 
 /**
@@ -650,10 +667,6 @@ private object FirTargetLazyAnnotationCalculatorTransformer : FirLazyAnnotationT
 
     override fun transformScript(script: FirScript, data: FirLazyAnnotationTransformerData): FirScript {
         script.transformAnnotations(this, data)
-        script.forEachDependentDeclaration {
-            it.transformSingle(this, data)
-        }
-
         return script
     }
 
@@ -853,14 +866,5 @@ private abstract class FirLazyBodiesCalculatorTransformer : FirTransformer<Persi
         }
 
         return codeFragment
-    }
-
-    override fun transformScript(script: FirScript, data: PersistentList<FirDeclaration>): FirScript {
-        for (declaration in script.declarations) {
-            if (declaration !is FirAnonymousInitializer) continue
-            declaration.accept(this, data)
-        }
-
-        return script
     }
 }

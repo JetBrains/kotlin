@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
@@ -104,21 +103,6 @@ internal fun checkBodyIsResolved(function: FirFunction) {
     val block = function.body ?: return
     checkExpressionTypeIsResolved(block.coneTypeOrNull, "block type", function) {
         withFirEntry("block", block)
-    }
-}
-
-internal fun checkStatementsAreResolved(script: FirScript) {
-    fun checkExpression(expression: FirExpression) {
-        checkExpressionTypeIsResolved(expression.coneTypeOrNull, "script statement", script) {
-            withFirEntry("expression", expression)
-        }
-    }
-    for (declaration in script.declarations) {
-        if (declaration.isScriptDependentDeclaration) {
-            (declaration as? FirProperty)?.initializer?.let(::checkExpression)
-        } else if (declaration is FirAnonymousInitializer) {
-            declaration.body?.statements?.filterIsInstance<FirExpression>()?.forEach(::checkExpression)
-        }
     }
 }
 

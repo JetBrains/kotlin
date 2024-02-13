@@ -1,0 +1,56 @@
+KT element: KtClass
+KT element text:
+public final data class MyDependency public constructor(b: one.B, d: one.D) {
+    public final val b: one.B /* compiled code */
+
+    public final var d: one.D /* compiled code */
+
+    public final val a: one.A /* compiled code */
+        public final get
+
+    public final val c: one.C /* compiled code */
+        public final get
+
+    public final operator fun component1(): one.B { /* compiled code */ }
+
+    public final operator fun component2(): one.D { /* compiled code */ }
+
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+    public open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+    public open fun toString(): kotlin.String { /* compiled code */ }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final data [ResolvedTo(BODY_RESOLVE)] class MyDependency : R|kotlin/Any| {
+    public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|one/B|
+
+    public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|one/D|
+
+    public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] b: R|one/B| = this@R|one/MyDependency|.R|one/MyDependency.b|, [ResolvedTo(BODY_RESOLVE)] d: R|one/D| = this@R|one/MyDependency|.R|one/MyDependency.d|): R|one/MyDependency|
+
+    public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
+
+    public final [ResolvedTo(BODY_RESOLVE)] val a: R|one/A|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDependency] get(): R|one/A|
+
+    public final [ResolvedTo(BODY_RESOLVE)] val b: R|one/B|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|one/B|
+
+    public final [ResolvedTo(BODY_RESOLVE)] val c: R|one/C|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDependency] get(): R|one/C|
+
+    public final [ResolvedTo(BODY_RESOLVE)] var d: R|one/D|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|one/D|
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|one/D|): R|kotlin/Unit|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDependency] constructor([ResolvedTo(BODY_RESOLVE)] b: R|one/B|, [ResolvedTo(BODY_RESOLVE)] d: R|one/D|): R|one/MyDependency|
+
+}

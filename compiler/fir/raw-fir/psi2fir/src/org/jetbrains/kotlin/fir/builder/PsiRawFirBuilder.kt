@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -1304,24 +1304,15 @@ open class PsiRawFirBuilder(
                         val declarationSource = declaration.toFirSourceElement()
                         when (declaration) {
                             is KtScriptInitializer -> {
-                                val firBlock =
-                                    if (isLast) {
-                                        // the last one need to be analyzed in script configurator to decide on result property
-                                        // therefore no lazy conversion in this case
-                                        withForcedLocalContext { declaration.body.toFirBlock() }
-                                    } else {
-                                        buildOrLazyBlock { withForcedLocalContext { declaration.body.toFirBlock() } }
-                                    }
-                                declarations.add(
-                                    buildAnonymousInitializer {
-                                        moduleData = baseModuleData
-                                        origin = FirDeclarationOrigin.Source
-                                        source = declarationSource
-                                        body = firBlock
-                                        declaration.extractAnnotationsTo(this)
-                                        containingDeclarationSymbol = scriptSymbol
-                                    }
+                                val initializer = buildAnonymousInitializer(
+                                    initializer = declaration,
+                                    containingDeclarationSymbol = scriptSymbol,
+                                    // the last one need to be analyzed in script configurator to decide on result property
+                                    // therefore no lazy conversion in this case
+                                    allowLazyBody = !isLast,
                                 )
+
+                                declarations.add(initializer)
                             }
                             is KtDestructuringDeclaration -> {
                                 val destructuringContainerVar = generateTemporaryVariable(
@@ -2237,24 +2228,34 @@ open class PsiRawFirBuilder(
         }
 
         override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer, data: FirElement?): FirElement {
-            return buildAnonymousInitializer(initializer, null)
+            return buildAnonymousInitializer(initializer, containingDeclarationSymbol = null)
         }
 
-        private fun buildAnonymousInitializer(initializer: KtAnonymousInitializer, containingDeclarationSymbol: FirBasedSymbol<*>?) =
-            buildAnonymousInitializer {
-                withContainerSymbol(symbol) {
-                    source = initializer.toFirSourceElement()
-                    moduleData = baseModuleData
-                    origin = FirDeclarationOrigin.Source
-                    body = buildOrLazyBlock {
+        protected fun buildAnonymousInitializer(
+            initializer: KtAnonymousInitializer,
+            containingDeclarationSymbol: FirBasedSymbol<*>?,
+            allowLazyBody: Boolean = true,
+        ) = buildAnonymousInitializer {
+            withContainerSymbol(symbol) {
+                source = initializer.toFirSourceElement()
+                moduleData = baseModuleData
+                origin = FirDeclarationOrigin.Source
+                body = if (allowLazyBody) {
+                    buildOrLazyBlock {
                         withForcedLocalContext {
                             initializer.body.toFirBlock()
                         }
                     }
-                    this.containingDeclarationSymbol = containingDeclarationSymbol
-                    initializer.extractAnnotationsTo(this)
+                } else {
+                    withForcedLocalContext {
+                        initializer.body.toFirBlock()
+                    }
                 }
+
+                this.containingDeclarationSymbol = containingDeclarationSymbol
+                initializer.extractAnnotationsTo(this)
             }
+        }
 
         override fun visitProperty(property: KtProperty, data: FirElement?): FirElement {
             return property.toFirProperty(

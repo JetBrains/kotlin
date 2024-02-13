@@ -1,17 +1,13 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isElementWhichShouldBeResolvedAsPartOfScript
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal object LLFirPhaseUpdater {
@@ -30,18 +26,11 @@ internal object LLFirPhaseUpdater {
                     target.delegate?.accept(PhaseUpdatingTransformer, newPhase)
                     target.getter?.body?.accept(PhaseUpdatingTransformer, newPhase)
                     target.setter?.body?.accept(PhaseUpdatingTransformer, newPhase)
-                    target.backingField?.accept(PhaseUpdatingTransformer, newPhase)
+                    target.backingField?.initializer?.accept(PhaseUpdatingTransformer, newPhase)
                 }
 
                 is FirAnonymousInitializer -> target.body?.accept(PhaseUpdatingTransformer, newPhase)
-                is FirScript -> {
-                    target.parameters.forEach { it.accept(PhaseUpdatingTransformer, newPhase) }
-                    for (declaration in target.declarations) {
-                        if (!declaration.isElementWhichShouldBeResolvedAsPartOfScript) continue
-                        declaration.accept(PhaseUpdatingTransformer, newPhase)
-                    }
-                }
-
+                is FirScript -> target.parameters.forEach { it.accept(PhaseUpdatingTransformer, newPhase) }
                 is FirCodeFragment -> target.block.accept(PhaseUpdatingTransformer, newPhase)
             }
         }
@@ -66,7 +55,6 @@ internal object LLFirPhaseUpdater {
         }
 
         when (element) {
-            is FirScript -> element.forEachDependentDeclaration { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
             is FirFunction -> element.valueParameters.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
             is FirProperty -> {
                 element.getter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
@@ -81,11 +69,6 @@ internal object LLFirPhaseUpdater {
 private object PhaseUpdatingTransformer : FirVisitor<Unit, FirResolvePhase>() {
     override fun visitElement(element: FirElement, data: FirResolvePhase) {
         if (element is FirElementWithResolveState) {
-            if (element.resolvePhase >= data &&
-                element !is FirDefaultPropertyAccessor &&
-                !(element is FirDeclaration && element.isScriptDependentDeclaration)
-            ) return
-
             @OptIn(ResolveStateAccess::class)
             element.resolveState = data.asResolveState()
         }

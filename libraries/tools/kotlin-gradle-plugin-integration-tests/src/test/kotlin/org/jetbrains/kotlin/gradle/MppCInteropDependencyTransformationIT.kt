@@ -5,12 +5,20 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.testkit.runner.BuildResult
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.WithSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget.*
-import org.junit.Test
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
+import kotlin.test.assertTrue
 
 /**
  * Runs Tests on a Gradle project with three subprojects
@@ -23,51 +31,82 @@ import org.junit.Test
  * - dependency-mode=project: In this case p2 will just declare a regular project dependency on p1
  * - dependency-mode=repository: In this case p2 will rely on a previously published version of p1
  */
-abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
-    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
+@DisplayName("CInterop dependency transformation")
+@NativeGradlePluginTests
+class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
-    override fun defaultBuildOptions(): BuildOptions = super.defaultBuildOptions().run {
-        copy(
-            forceOutputToStdout = true,
-            parallelTasksInProject = true,
-            freeCommandLineArgs = freeCommandLineArgs + "-s"
-        )
+    private val projectDependencyMode = "-PdependencyMode=project"
+
+    private val repositoryDependencyMode = "-PdependencyMode=repository"
+
+    private fun BuildResult.assertProjectDependencyMode() {
+        assertOutputContains("dependencyMode = 'project'")
     }
 
-    protected val projectDependencyOptions
-        get() = defaultBuildOptions().copy(
-            freeCommandLineArgs = defaultBuildOptions().freeCommandLineArgs + "-PdependencyMode=project"
-        )
+    private fun BuildResult.assertRepositoryDependencyMode() {
+        assertOutputContains("dependencyMode = 'repository'")
+    }
 
-    protected val repositoryDependencyOptions
-        get() = defaultBuildOptions().copy(
-            freeCommandLineArgs = defaultBuildOptions().freeCommandLineArgs + "-PdependencyMode=repository"
-        )
+    private fun BuildResult.assertNoCompileTasksExecuted() {
+        val compileTaskRegex = ".*[cC]ompile.*".toRegex()
+        val taskPaths = tasks.map { it.path }
+        assertTrue(taskPaths.none { it.contains(compileTaskRegex) })
+    }
 
-    class ComplexProject : MppCInteropDependencyTransformationIT() {
+    private fun TestProject.publishP1ToBuildRepository() {
+        build(":p1:publishAllPublicationsToMavenRepository", repositoryDependencyMode)
+    }
 
-        private val project by lazy { Project("cinterop-MetadataDependencyTransformation") }
+    private val cinteropProjectName = "cinterop-MetadataDependencyTransformation"
 
-        @Test
-        fun `test - compile project - dependencyMode=project`() {
-            testCompileProject(projectDependencyOptions) {
-                assertProjectDependencyMode()
-                assertTasksExecuted(":p1:commonizeCInterop")
-            }
+    @DisplayName("Compile project with project mode")
+    @GradleTest
+    fun compileDependencyModeProject(
+        gradleVersion: GradleVersion,
+        @TempDir localRepo: Path,
+    ) {
+        testCompileProject(
+            gradleVersion,
+            projectDependencyMode,
+            localRepo,
+        ) {
+            assertProjectDependencyMode()
+            assertTasksExecuted(":p1:commonizeCInterop")
         }
+    }
 
-        @Test
-        fun `test - compile project - dependencyMode=repository`() {
-            publishP1ToBuildRepository()
-            testCompileProject(repositoryDependencyOptions) {
-                assertRepositoryDependencyMode()
-            }
+    @DisplayName("Compile project with repository mode")
+    @GradleTest
+    fun compileDependencyModeRepository(
+        gradleVersion: GradleVersion,
+        @TempDir localRepo: Path,
+    ) {
+        testCompileProject(
+            gradleVersion,
+            repositoryDependencyMode,
+            localRepo,
+            additionalBuildStep = { publishP1ToBuildRepository() }
+        ) {
+            assertRepositoryDependencyMode()
         }
+    }
 
-        private fun testCompileProject(options: BuildOptions, check: CompiledProject.() -> Unit = {}) {
-            project.build("compileAll", options = options) {
+    private fun testCompileProject(
+        gradleVersion: GradleVersion,
+        repositoryMode: String,
+        localRepo: Path,
+        additionalBuildStep: TestProject.() -> Unit = {},
+        check: BuildResult.() -> Unit = {},
+    ) {
+        project(
+            projectName = cinteropProjectName,
+            gradleVersion = gradleVersion,
+            localRepoDir = localRepo
+        ) {
+            additionalBuildStep()
+
+            build("compileAll", repositoryMode) {
                 check()
-                assertSuccessful()
 
                 /* Assert p2 & p3 compiled metadata */
                 assertTasksExecuted(":p2:compileNativeMainKotlinMetadata")
@@ -94,143 +133,210 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
                 assertTasksExecuted(":p3:compileTestKotlinLinuxX64")
 
                 /* Configurations should not be resolved during configuration phase */
-                assertNotContains("Configuration resolved before Task Graph is ready")
+                assertOutputDoesNotContain("Configuration resolved before Task Graph is ready")
             }
         }
+    }
 
-        @Test
-        fun `test - source set dependencies - dependencyMode=project`() {
-            reportSourceSetCommonizerDependencies(project, "p2", projectDependencyOptions) {
+    @DisplayName("Source set dependency in project mode")
+    @GradleTest
+    fun sourceSetDependencyProjectMode(gradleVersion: GradleVersion) {
+        project(cinteropProjectName, gradleVersion) {
+            reportSourceSetCommonizerDependencies(
+                subproject = "p2",
+                options = defaultBuildOptions.copy(freeArgs = listOf(projectDependencyMode))
+            ) {
                 it.assertProjectDependencyMode()
                 it.assertTasksExecuted(":p2:transformNativeMainCInteropDependenciesMetadataForIde")
-                it.assertTasksNotExecuted(".*[cC]ompile.*")
+                it.assertNoCompileTasksExecuted()
                 assertP2SourceSetDependencies()
             }
 
-            reportSourceSetCommonizerDependencies(project, "p3", projectDependencyOptions) {
+            reportSourceSetCommonizerDependencies(
+                subproject = "p3",
+                options = defaultBuildOptions.copy(freeArgs = listOf(projectDependencyMode))
+            ) {
                 it.assertProjectDependencyMode()
                 it.assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadataForIde")
-                it.assertTasksNotExecuted(".*[cC]ompile.*")
+                it.assertNoCompileTasksExecuted()
                 assertP3SourceSetDependencies()
             }
         }
+    }
 
-        @Test
-        fun `test - source set dependencies - dependencyMode=repository`() {
+    @DisplayName("Source set dependency in repository mode")
+    @GradleTest
+    fun sourceSetDependencyRepositoryMode(
+        gradleVersion: GradleVersion,
+        @TempDir localRepo: Path,
+    ) {
+        project(cinteropProjectName, gradleVersion, localRepoDir = localRepo) {
             publishP1ToBuildRepository()
 
-            reportSourceSetCommonizerDependencies(project, "p2", repositoryDependencyOptions) {
+            reportSourceSetCommonizerDependencies(
+                subproject = "p2",
+                options = defaultBuildOptions.copy(freeArgs = listOf(repositoryDependencyMode))
+            ) {
                 it.assertRepositoryDependencyMode()
                 it.assertTasksExecuted(":p2:transformNativeMainCInteropDependenciesMetadataForIde")
-                it.assertTasksNotExecuted(".*[cC]ompile.*")
+                it.assertNoCompileTasksExecuted()
                 assertP2SourceSetDependencies()
             }
 
-            reportSourceSetCommonizerDependencies(project, "p3", repositoryDependencyOptions) {
+            reportSourceSetCommonizerDependencies(
+                subproject = "p3",
+                options = defaultBuildOptions.copy(freeArgs = listOf(repositoryDependencyMode))
+            ) {
                 it.assertRepositoryDependencyMode()
                 it.assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadataForIde")
-                it.assertTasksNotExecuted(".*[cC]ompile.*")
+                it.assertNoCompileTasksExecuted()
                 assertP3SourceSetDependencies()
             }
         }
+    }
 
-        private fun WithSourceSetCommonizerDependencies.assertP2SourceSetDependencies() {
-            listOf("nativeMain", "nativeTest").forEach { sourceSetName ->
-                getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
+    private fun WithSourceSetCommonizerDependencies.assertP2SourceSetDependencies() {
+        listOf("nativeMain", "nativeTest").forEach { sourceSetName ->
+            getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions.konanDataDir!!)
+                .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
+                .assertTargetOnAllDependencies(
+                    CommonizerTarget(
+                        KonanTarget.LINUX_ARM64,
+                        KonanTarget.LINUX_X64,
+                        KonanTarget.IOS_ARM64,
+                        KonanTarget.IOS_X64,
+                        KonanTarget.MACOS_X64,
+                        KonanTarget.MINGW_X64
+                    )
+                )
+        }
+
+        if (HostManager.hostIsMac) {
+            listOf("appleAndLinuxMain", "appleAndLinuxTest").forEach { sourceSetName ->
+                getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions.konanDataDir!!)
                     .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
                     .assertTargetOnAllDependencies(
-                        CommonizerTarget(LINUX_ARM64, LINUX_X64, IOS_ARM64, IOS_X64, MACOS_X64, MINGW_X64)
+                        CommonizerTarget(
+                            KonanTarget.LINUX_ARM64,
+                            KonanTarget.LINUX_X64,
+                            KonanTarget.IOS_ARM64,
+                            KonanTarget.IOS_X64,
+                            KonanTarget.MACOS_X64
+                        )
                     )
             }
 
-            if (HostManager.hostIsMac) {
-                listOf("appleAndLinuxMain", "appleAndLinuxTest").forEach { sourceSetName ->
-                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
-                        .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
-                        .assertTargetOnAllDependencies(CommonizerTarget(LINUX_ARM64, LINUX_X64, IOS_ARM64, IOS_X64, MACOS_X64))
-                }
-
-                listOf("appleMain", "appleTest").forEach { sourceSetName ->
-                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
-                        .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
-                        .assertTargetOnAllDependencies(CommonizerTarget(IOS_ARM64, IOS_X64, MACOS_X64))
-                }
-
-                listOf("iosMain", "iosTest").forEach { sourceSetName ->
-                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
-                        .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
-                        .assertTargetOnAllDependencies(CommonizerTarget(IOS_ARM64, IOS_X64))
-                }
-            }
-
-            listOf("linuxMain", "linuxTest").forEach { sourceSetName ->
-                getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
-                    .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
-                    .assertTargetOnAllDependencies(CommonizerTarget(LINUX_ARM64, LINUX_X64))
-            }
-        }
-
-        private fun WithSourceSetCommonizerDependencies.assertP3SourceSetDependencies() {
-            /*
-            windowsAndLinuxMain / windowsAndLinuxTest will not have a 'perfect target match' in p1.
-            They will choose cinterops associated with 'nativeMain'
-            */
-            listOf("nativeMain", "nativeTest", "windowsAndLinuxMain", "windowsAndLinuxTest").forEach { sourceSetName ->
-                getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
+            listOf("appleMain", "appleTest").forEach { sourceSetName ->
+                getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions.konanDataDir!!)
                     .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
                     .assertTargetOnAllDependencies(
-                        CommonizerTarget(LINUX_ARM64, LINUX_X64, IOS_ARM64, IOS_X64, MACOS_X64, MINGW_X64)
+                        CommonizerTarget(
+                            KonanTarget.IOS_ARM64,
+                            KonanTarget.IOS_X64,
+                            KonanTarget.MACOS_X64
+                        )
                     )
             }
 
-            if (HostManager.hostIsMac) {
-                listOf("appleAndLinuxMain", "appleAndLinuxTest").forEach { sourceSetName ->
-                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
-                        .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
-                        .assertTargetOnAllDependencies(CommonizerTarget(LINUX_ARM64, LINUX_X64, IOS_ARM64, IOS_X64, MACOS_X64))
-                }
-
-                listOf("iosMain", "iosTest").forEach { sourceSetName ->
-                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
-                        .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
-                        .assertTargetOnAllDependencies(CommonizerTarget(IOS_ARM64, IOS_X64))
-                }
+            listOf("iosMain", "iosTest").forEach { sourceSetName ->
+                getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions.konanDataDir!!)
+                    .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
+                    .assertTargetOnAllDependencies(
+                        CommonizerTarget(
+                            KonanTarget.IOS_ARM64,
+                            KonanTarget.IOS_X64
+                        )
+                    )
             }
         }
 
-        @Test
-        fun `test - transformation - UP-TO-DATE behaviour - on p3`() {
+        listOf("linuxMain", "linuxTest").forEach { sourceSetName ->
+            getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions.konanDataDir!!)
+                .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
+                .assertTargetOnAllDependencies(
+                    CommonizerTarget(KonanTarget.LINUX_ARM64, KonanTarget.LINUX_X64)
+                )
+        }
+    }
+
+    private fun WithSourceSetCommonizerDependencies.assertP3SourceSetDependencies() {
+        /*
+        windowsAndLinuxMain / windowsAndLinuxTest will not have a 'perfect target match' in p1.
+        They will choose cinterops associated with 'nativeMain'
+        */
+        listOf("nativeMain", "nativeTest", "windowsAndLinuxMain", "windowsAndLinuxTest").forEach { sourceSetName ->
+            getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions.konanDataDir!!)
+                .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
+                .assertTargetOnAllDependencies(
+                    CommonizerTarget(
+                        KonanTarget.LINUX_ARM64,
+                        KonanTarget.LINUX_X64,
+                        KonanTarget.IOS_ARM64,
+                        KonanTarget.IOS_X64,
+                        KonanTarget.MACOS_X64,
+                        KonanTarget.MINGW_X64
+                    )
+                )
+        }
+
+        if (HostManager.hostIsMac) {
+            listOf("appleAndLinuxMain", "appleAndLinuxTest").forEach { sourceSetName ->
+                getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions.konanDataDir!!)
+                    .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
+                    .assertTargetOnAllDependencies(
+                        CommonizerTarget(
+                            KonanTarget.LINUX_ARM64,
+                            KonanTarget.LINUX_X64,
+                            KonanTarget.IOS_ARM64,
+                            KonanTarget.IOS_X64,
+                            KonanTarget.MACOS_X64,
+                        )
+                    )
+            }
+
+            listOf("iosMain", "iosTest").forEach { sourceSetName ->
+                getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions.konanDataDir!!)
+                    .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
+                    .assertTargetOnAllDependencies(CommonizerTarget(KonanTarget.IOS_ARM64, KonanTarget.IOS_X64))
+            }
+        }
+    }
+
+    @DisplayName("UP-TO-DATE transformations for P3 subproject")
+    @GradleTest
+    fun transformationsUpToDateOnP3(
+        gradleVersion: GradleVersion,
+        @TempDir localRepo: Path,
+    ) {
+        project(cinteropProjectName, gradleVersion, localRepoDir = localRepo) {
             publishP1ToBuildRepository()
-            project.build(":p3:transformNativeMainCInteropDependenciesMetadata", options = repositoryDependencyOptions) {
-                assertSuccessful()
+
+            build(":p3:transformNativeMainCInteropDependenciesMetadata", repositoryDependencyMode) {
                 assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadata")
             }
 
-            project.build(":p3:transformNativeMainCInteropDependenciesMetadata", options = repositoryDependencyOptions) {
-                assertSuccessful()
-                assertTasksNotExecuted(":p3:transformNativeMainCInteropDependenciesMetadata")
+            build(":p3:transformNativeMainCInteropDependenciesMetadata", repositoryDependencyMode) {
                 assertTasksUpToDate(":p3:transformNativeMainCInteropDependenciesMetadata")
             }
 
-            val p3BuildGradleKts = project.projectDir.resolve("p3/build.gradle.kts")
+            val p3BuildGradleKts = subProject("p3").buildGradleKts
             val p3BuildGradleKtsContent = p3BuildGradleKts.readText()
 
             // Remove dependency on p2 | Task should re-run
-            p3BuildGradleKts.writeText(p3BuildGradleKtsContent.replace("""implementation(project(":p2"))""", ""))
-            project.build(":p3:transformNativeMainCInteropDependenciesMetadata", options = repositoryDependencyOptions) {
-                assertSuccessful()
+            p3BuildGradleKts.writeText(
+                p3BuildGradleKtsContent.replace("""implementation(project(":p2"))""", "")
+            )
+            build(":p3:transformNativeMainCInteropDependenciesMetadata", repositoryDependencyMode) {
                 assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadata")
             }
 
             // Re-add dependency on p3 | Task should re-run for the next invocation
             p3BuildGradleKts.writeText(p3BuildGradleKtsContent)
-            project.build(":p3:transformNativeMainCInteropDependenciesMetadata", options = repositoryDependencyOptions) {
-                assertSuccessful()
+            build(":p3:transformNativeMainCInteropDependenciesMetadata", repositoryDependencyMode) {
                 assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadata")
             }
-            project.build(":p3:transformNativeMainCInteropDependenciesMetadata", options = repositoryDependencyOptions) {
-                assertSuccessful()
-                assertTasksNotExecuted(":p3:transformNativeMainCInteropDependenciesMetadata")
+
+            build(":p3:transformNativeMainCInteropDependenciesMetadata", repositoryDependencyMode) {
                 assertTasksUpToDate(":p3:transformNativeMainCInteropDependenciesMetadata")
             }
 
@@ -238,100 +344,98 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
             p3BuildGradleKts.writeText(
                 p3BuildGradleKtsContent.replace("""project(":p2")""", """"kotlin-multiplatform-projects:p1:1.0.0-SNAPSHOT"""")
             )
-            project.build(":p3:transformNativeMainCInteropDependenciesMetadata", options = repositoryDependencyOptions) {
-                assertSuccessful()
+            build(":p3:transformNativeMainCInteropDependenciesMetadata", repositoryDependencyMode) {
                 /* Same binaries to transform; but project(":p2") is excluded from Task Inputs now */
                 assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadata")
             }
         }
+    }
 
-
-        @Test
-        fun `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2 - dependencyMode=repository`() {
+    @DisplayName("UP-TO-DATE transformations on adding/removing targets in repositories mode")
+    @GradleTest
+    fun upToDateTransformationsAddingRemovingTargetRepositoriesMode(
+        gradleVersion: GradleVersion,
+        @TempDir localRepo: Path,
+    ) {
+        project(cinteropProjectName, gradleVersion, localRepoDir = localRepo) {
             publishP1ToBuildRepository()
-            `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2`(repositoryDependencyOptions)
-        }
-
-        @Test
-        fun `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2 - dependencyMode=project`() {
-            `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2`(projectDependencyOptions)
-        }
-
-        private fun `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2`(options: BuildOptions) {
-            project.build(":p3:transformNativeMainCInteropDependenciesMetadata", options = options) {
-                assertSuccessful()
-            }
-
-            project.build(":p3:transformNativeMainCInteropDependenciesMetadata", options = options) {
-                assertTasksUpToDate(":p3:transformNativeMainCInteropDependenciesMetadata")
-            }
-        }
-
-        private fun publishP1ToBuildRepository() = project.publishP1ToBuildRepository()
-    }
-
-    class KT50952 : MppCInteropDependencyTransformationIT() {
-        private val project by lazy { Project("cinterop-MetadataDependencyTransformation-kt-50952") }
-
-        @Test
-        fun `test UP-TO-DATE - when changing consumer targets - dependencyMode=repository`() {
-            project.publishP1ToBuildRepository()
-            `test UP-TO-DATE - when changing consumer targets`(repositoryDependencyOptions)
-        }
-
-        @Test
-        fun `test UP-TO-DATE - when changing consumer targets - dependencyMode=project`() {
-            `test UP-TO-DATE - when changing consumer targets`(projectDependencyOptions)
-        }
-
-        private fun `test UP-TO-DATE - when changing consumer targets`(options: BuildOptions) {
-            project.build(":p2:transformCommonMainCInteropDependenciesMetadata", options = options) {
-                assertSuccessful()
-            }
-
-            project.build(":p2:transformCommonMainCInteropDependenciesMetadata", options = options) {
-                assertSuccessful()
-                assertTasksNotExecuted(":p2:transformCommonMainCInteropDependenciesMetadata")
-                assertTasksUpToDate(":p2:transformCommonMainCInteropDependenciesMetadata")
-            }
-
-            val optionsWithAdditionalTargetEnabled = options.withFreeCommandLineArgument("-Pp2.enableAdditionalTarget")
-
-            project.build(":p2:transformCommonMainCInteropDependenciesMetadata", options = optionsWithAdditionalTargetEnabled) {
-                assertSuccessful()
-                assertTasksExecuted(":p2:transformCommonMainCInteropDependenciesMetadata")
-            }
-
-            project.build(":p2:transformCommonMainCInteropDependenciesMetadata", options = optionsWithAdditionalTargetEnabled) {
-                assertSuccessful()
-                assertTasksNotExecuted(":p2:transformCommonMainCInteropDependenciesMetadata")
-                assertTasksUpToDate(":p2:transformCommonMainCInteropDependenciesMetadata")
-            }
-
-            project.build(":p2:transformCommonMainCInteropDependenciesMetadata", options = options) {
-                assertSuccessful()
-                assertTasksExecuted(":p2:transformCommonMainCInteropDependenciesMetadata")
-            }
-
-            project.build(":p2:transformCommonMainCInteropDependenciesMetadata", options = options) {
-                assertSuccessful()
-                assertTasksNotExecuted(":p2:transformCommonMainCInteropDependenciesMetadata")
-                assertTasksUpToDate(":p2:transformCommonMainCInteropDependenciesMetadata")
-            }
+            testUpToDateTransformationOnRemovingOrAddingTargets(repositoryDependencyMode)
         }
     }
 
-    protected fun CompiledProject.assertProjectDependencyMode() {
-        assertContains("dependencyMode = 'project'")
+    @DisplayName("UP-TO-DATE transformations on adding/removing targets in project mode")
+    @GradleTest
+    fun upToDateTransformationsAddingRemovingTargetRepositoriesMode(gradleVersion: GradleVersion) {
+        project(cinteropProjectName, gradleVersion) {
+            testUpToDateTransformationOnRemovingOrAddingTargets(projectDependencyMode)
+        }
     }
 
-    protected fun CompiledProject.assertRepositoryDependencyMode() {
-        assertContains("dependencyMode = 'repository'")
+    private fun TestProject.testUpToDateTransformationOnRemovingOrAddingTargets(
+        dependencyMode: String,
+    ) {
+        build(":p3:transformNativeMainCInteropDependenciesMetadata", dependencyMode)
+
+        build(":p3:transformNativeMainCInteropDependenciesMetadata", dependencyMode) {
+            assertTasksUpToDate(":p3:transformNativeMainCInteropDependenciesMetadata")
+        }
     }
 
-    protected fun Project.publishP1ToBuildRepository() {
-        build(":p1:publishAllPublicationsToBuildRepository", options = repositoryDependencyOptions) {
-            assertSuccessful()
+    private val cinteropProjectNameForKt50952 = "cinterop-MetadataDependencyTransformation-kt-50952"
+
+    @DisplayName("KT-50952: UP-TO-DATE on changing consumer targets in repository mode")
+    @GradleTest
+    fun kt50952UpToDateChangingConsumerTargetsRepositoryMode(
+        gradleVersion: GradleVersion,
+        @TempDir localRepo: Path,
+    ) {
+        project(cinteropProjectNameForKt50952, gradleVersion, localRepoDir = localRepo) {
+            publishP1ToBuildRepository()
+            testUpToDateOnChangingConsumerTargets(repositoryDependencyMode)
+        }
+    }
+
+    @DisplayName("KT-50952: UP-TO-DATE on changing consumer targets in project mode")
+    @GradleTest
+    fun kt50952UpToDateChangingConsumerTargetsRepositoryMode(gradleVersion: GradleVersion) {
+        project(cinteropProjectNameForKt50952, gradleVersion) {
+            testUpToDateOnChangingConsumerTargets(projectDependencyMode)
+        }
+    }
+
+    private fun TestProject.testUpToDateOnChangingConsumerTargets(
+        dependencyMode: String
+    ) {
+        build(":p2:transformCommonMainCInteropDependenciesMetadata", dependencyMode)
+
+        build(":p2:transformCommonMainCInteropDependenciesMetadata", dependencyMode) {
+            assertTasksUpToDate(":p2:transformCommonMainCInteropDependenciesMetadata")
+        }
+
+        val optionToEnableAdditionalTarget = "-Pp2.enableAdditionalTarget"
+
+        build(
+            ":p2:transformCommonMainCInteropDependenciesMetadata",
+            optionToEnableAdditionalTarget,
+            dependencyMode
+        ) {
+            assertTasksExecuted(":p2:transformCommonMainCInteropDependenciesMetadata")
+        }
+
+        build(
+            ":p2:transformCommonMainCInteropDependenciesMetadata",
+            optionToEnableAdditionalTarget,
+            dependencyMode
+        ) {
+            assertTasksUpToDate(":p2:transformCommonMainCInteropDependenciesMetadata")
+        }
+
+        build(":p2:transformCommonMainCInteropDependenciesMetadata", dependencyMode) {
+            assertTasksExecuted(":p2:transformCommonMainCInteropDependenciesMetadata")
+        }
+
+        build(":p2:transformCommonMainCInteropDependenciesMetadata", dependencyMode) {
+            assertTasksUpToDate(":p2:transformCommonMainCInteropDependenciesMetadata")
         }
     }
 }

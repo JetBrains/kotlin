@@ -24,8 +24,8 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-statement.kts>
-        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(TYPES)] <script-statement.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -71,16 +71,11 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             )
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            this@R|special/anonymous|.R|/Builder.version| = String(321)
-        }
-        )
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|Builder|
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        [ResolvedTo(BODY_RESOLVE)] init {
-            R|/builder|.R|/Builder.execute|()
-        }
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
-        [ResolvedTo(BODY_RESOLVE)] init {
-            R|/builder|.R|/Builder.version| = String()
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
         }

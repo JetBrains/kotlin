@@ -755,6 +755,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
         }
 
         @Test
+        @TestMetadata("IntersectionInheritance.kt")
+        public void testIntersectionInheritance() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/IntersectionInheritance.kt");
+        }
+
+        @Test
         @TestMetadata("jsNameAndOverridden.kt")
         public void testJsNameAndOverridden() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameAndOverridden.kt");

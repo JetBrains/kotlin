@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassWithSpecificMembersResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.resolve
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.isImplicitConstructor
@@ -55,7 +55,7 @@ internal object FileElementFactory {
             }
         }
 
-        val firClassDesignation = firClass.collectDesignationWithFile()
+        val firClassDesignation = firClass.collectDesignation()
         val designationWithMembers = LLFirClassWithSpecificMembersResolveTarget(
             firClassDesignation,
             classMembersToResolve,

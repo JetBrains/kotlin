@@ -8,8 +8,8 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] statementAnnotation.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-statementAnnotation.kts>
-        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(TYPES)] <script-statementAnnotation.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
         }

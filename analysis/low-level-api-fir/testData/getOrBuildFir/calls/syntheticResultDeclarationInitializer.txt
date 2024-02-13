@@ -1,0 +1,20 @@
+KT element: KtScriptInitializer
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Int| = R|/foo|()
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationInitializer.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclarationInitializer.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
+            ^foo Int(24)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Int| = R|/foo|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

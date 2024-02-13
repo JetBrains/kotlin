@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDynamicUnsupportedChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.type.*
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.type.FirFunctionalTypeParameterNameChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.type.FirIncompatibleClassTypeChecker
 
 object JvmTypeCheckers : TypeCheckers() {
     override val typeRefCheckers: Set<FirTypeRefChecker> = setOf(
