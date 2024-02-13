@@ -268,8 +268,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             return when (declarationToBuild) {
                 is KtProperty -> {
                     val ownerSymbol = containingClass?.symbol
-                    val ownerTypeArgumentsCount = containingClass?.typeParameters?.size
-                    visitor.convertProperty(declarationToBuild, ownerSymbol, ownerTypeArgumentsCount)
+                    visitor.convertProperty(declarationToBuild, ownerSymbol)
                 }
                 is KtConstructor<*> -> {
                     if (containingClass == null) {
