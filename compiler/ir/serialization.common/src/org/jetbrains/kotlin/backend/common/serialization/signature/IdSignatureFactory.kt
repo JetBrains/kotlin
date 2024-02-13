@@ -274,10 +274,10 @@ class IdSignatureFactory(
     }
 
     private fun IrSimpleFunction.isOverridableFunction(): Boolean =
-        !DescriptorVisibilities.isPrivate(visibility) && (hasDispatchReceiver || isFromJava())
+        !DescriptorVisibilities.isPrivate(visibility) && hasDispatchReceiver
 
     private fun IrProperty.isOverridableProperty(): Boolean =
-        !DescriptorVisibilities.isPrivate(visibility) && (getter.hasDispatchReceiver || setter.hasDispatchReceiver || isFromJava())
+        !DescriptorVisibilities.isPrivate(visibility) && (getter.hasDispatchReceiver || setter.hasDispatchReceiver)
 
     private val IrSimpleFunction?.hasDispatchReceiver: Boolean
         get() = this?.dispatchReceiverParameter != null
