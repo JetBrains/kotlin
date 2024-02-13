@@ -1,5 +1,7 @@
 // ISSUE: KT-58371
 // RENDER_DIAGNOSTICS_FULL_TEXT
+// DIAGNOSTICS: -SUPER_CANT_BE_EXTENSION_RECEIVER
+// ^Otherwise only K1 errors are written to .diag file.
 
 class A<T> : ArrayList<T>() {
     override fun addFirst(t: T) {
@@ -12,6 +14,9 @@ class A<T> : ArrayList<T>() {
 
     override fun <!OVERRIDE_DEPRECATION!>getFirst<!>(): T = super.<!DEPRECATION!>getFirst<!>()
     override fun <!OVERRIDE_DEPRECATION!>getLast<!>(): T = super.<!DEPRECATION!>getLast<!>()
+
+    fun superFirst2(): T = super.<!DEPRECATION!>first<!>
+    fun superLast2(): T = super.<!DEPRECATION!>last<!>
 
     override fun removeFirst(): T = super.removeFirst()
     override fun removeLast(): T = super.removeLast()

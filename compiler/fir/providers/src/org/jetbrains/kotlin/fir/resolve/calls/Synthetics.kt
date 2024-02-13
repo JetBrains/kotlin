@@ -46,6 +46,7 @@ class FirSyntheticPropertiesScope private constructor(
     private val dispatchReceiverType: ConeKotlinType,
     private val syntheticNamesProvider: FirSyntheticNamesProvider,
     private val returnTypeCalculator: ReturnTypeCalculator?,
+    private val isSuperCall: Boolean,
 ) : FirContainingNamesAwareScope() {
     companion object {
         fun createIfSyntheticNamesProviderIsDefined(
@@ -53,6 +54,7 @@ class FirSyntheticPropertiesScope private constructor(
             dispatchReceiverType: ConeKotlinType,
             baseScope: FirTypeScope,
             returnTypeCalculator: ReturnTypeCalculator? = null,
+            isSuperCall: Boolean = false,
         ): FirSyntheticPropertiesScope? {
             val syntheticNamesProvider = session.syntheticNamesProvider ?: return null
             return FirSyntheticPropertiesScope(
@@ -61,6 +63,7 @@ class FirSyntheticPropertiesScope private constructor(
                 dispatchReceiverType,
                 syntheticNamesProvider,
                 returnTypeCalculator,
+                isSuperCall,
             )
         }
     }
@@ -229,7 +232,7 @@ class FirSyntheticPropertiesScope private constructor(
             baseScope.processDirectOverriddenFunctionsWithBaseScope(symbolToStart) l@{ symbol, scope ->
                 if (hasMatchingSetter) return@l ProcessorAction.STOP
                 val baseDispatchReceiverType = symbol.dispatchReceiverType ?: return@l ProcessorAction.NEXT
-                val syntheticScope = FirSyntheticPropertiesScope(session, scope, baseDispatchReceiverType, syntheticNamesProvider, returnTypeCalculator)
+                val syntheticScope = FirSyntheticPropertiesScope(session, scope, baseDispatchReceiverType, syntheticNamesProvider, returnTypeCalculator, isSuperCall)
                 val baseProperties = syntheticScope.getProperties(propertyName)
                 val propertyFound = baseProperties.any {
                     val baseProperty = it.fir
@@ -272,7 +275,7 @@ class FirSyntheticPropertiesScope private constructor(
 
         val visited = mutableSetOf<MemberWithBaseScope<FirNamedFunctionSymbol>>()
         fun checkJavaOrigin(symbol: FirNamedFunctionSymbol, scope: FirTypeScope, isOverridden: Boolean) {
-            val hidden = symbol.hiddenStatusOfCall(isSuperCall = false, isCallToOverride = isOverridden)
+            val hidden = symbol.hiddenStatusOfCall(isSuperCall = isSuperCall, isCallToOverride = isOverridden)
             when (hidden) {
                 CallToPotentiallyHiddenSymbolResult.Hidden -> isHiddenEverywhereBesideSuperCalls = true
                 CallToPotentiallyHiddenSymbolResult.VisibleWithDeprecation -> isDeprecatedOverrideOfHidden = true

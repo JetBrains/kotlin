@@ -802,11 +802,10 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
 
         return hidden
     }
-
-    private fun FirElement.isSuperCall(session: FirSession): Boolean =
-        this is FirQualifiedAccessExpression && explicitReceiver?.toReference(session) is FirSuperReference
-
 }
+
+internal fun FirElement.isSuperCall(session: FirSession): Boolean =
+    this is FirQualifiedAccessExpression && explicitReceiver?.toReference(session) is FirSuperReference
 
 private val DYNAMIC_EXTENSION_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(DYNAMIC_EXTENSION_FQ_NAME)
 

@@ -81,6 +81,7 @@ class MemberScopeTowerLevel(
     private val session: FirSession get() = bodyResolveComponents.session
 
     private fun <T : FirCallableSymbol<*>> processMembers(
+        info: CallInfo,
         output: TowerScopeLevelProcessor<T>,
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
     ): ProcessResult {
@@ -165,6 +166,7 @@ class MemberScopeTowerLevel(
                 typeForSyntheticScope,
                 useSiteForSyntheticScope,
                 bodyResolveComponents.returnTypeCalculator,
+                isSuperCall = info.callSite.isSuperCall(session),
             )
 
             withSynthetic?.processScopeMembers { symbol ->
@@ -274,7 +276,7 @@ class MemberScopeTowerLevel(
         processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>
     ): ProcessResult {
         val lookupTracker = session.lookupTracker
-        return processMembers(processor) { consumer ->
+        return processMembers(info, processor) { consumer ->
             withMemberCallLookup(lookupTracker, info) { lookupCtx ->
                 this.processFunctionsAndConstructorsByName(
                     info, session, bodyResolveComponents,
@@ -294,7 +296,7 @@ class MemberScopeTowerLevel(
         processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>
     ): ProcessResult {
         val lookupTracker = session.lookupTracker
-        return processMembers(processor) { consumer ->
+        return processMembers(info, processor) { consumer ->
             withMemberCallLookup(lookupTracker, info) { lookupCtx ->
                 lookupTracker?.recordCallLookup(info, dispatchReceiverValue.type)
                 this.processPropertiesByName(info.name) {
