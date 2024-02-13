@@ -6,4 +6,4 @@ FIR element rendered:
 import a.b.c
 
 FIR FILE:
-FILE: [ResolvedTo(BODY_RESOLVE)] wholeImportDirective.kt
+FILE: [ResolvedTo(IMPORTS)] wholeImportDirective.kt

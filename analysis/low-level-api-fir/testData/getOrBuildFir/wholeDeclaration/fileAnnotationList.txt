@@ -4,9 +4,9 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 @FILE:R|kotlin/Suppress|[Types](names = vararg(String()))
-[ResolvedTo(BODY_RESOLVE)] annotations container
+[ResolvedTo(ANNOTATION_ARGUMENTS)] annotations container
 
 FIR FILE:
-FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotationList.kt
+FILE: [ResolvedTo(IMPORTS)] fileAnnotationList.kt
     @FILE:R|kotlin/Suppress|[Types](names = vararg(String()))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+    [ResolvedTo(ANNOTATION_ARGUMENTS)] annotations container

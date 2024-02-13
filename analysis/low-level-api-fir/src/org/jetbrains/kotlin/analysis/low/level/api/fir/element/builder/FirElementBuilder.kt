@@ -99,6 +99,7 @@ internal class FirElementBuilder(
 
         getFirForElementInsideAnnotations(element)?.let { return it }
         getFirForElementInsideTypes(element)?.let { return it }
+        getFirForElementInsideFileHeader(element)?.let { return it }
 
         val psi = getPsiAsFirElementSource(element) ?: return null
         val firFile = element.containingKtFile
@@ -174,6 +175,38 @@ internal class FirElementBuilder(
         } else {
             firElement
         }
+    }
+
+    private fun getFirForElementInsideFileHeader(
+        element: KtElement,
+    ): FirElement? = getFirForNonBodyElement<KtElement, KtAnnotated>(
+        element = element,
+        anchorElementProvider = { it.fileHeaderAnchorElement() },
+        elementOwnerProvider = { it.containingKtFile },
+        resolveAndFindFirForAnchor = { declaration, anchor ->
+            declaration.requireTypeIntersectionWith<FirFile>()
+
+            when (anchor) {
+                is KtPackageDirective -> declaration.packageDirective
+                is KtFileAnnotationList -> declaration.annotationsContainer?.also { it.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS) }
+                is KtImportDirective -> {
+                    declaration.lazyResolveToPhase(FirResolvePhase.IMPORTS)
+                    declaration.imports.find { it.psi == anchor }
+                }
+                else -> errorWithAttachment("Unexpected element type: ${anchor::class.simpleName}") {
+                    withPsiEntry("anchor", anchor)
+                }
+            }
+        },
+    )
+
+    private fun KtElement.fileHeaderAnchorElement(): KtElement? {
+        /**
+         * File annotations already covered by [getFirForElementInsideAnnotations], but we have to cover the list itself
+         */
+        if (this is KtFileAnnotationList) return this
+
+        return parentsWithSelf.find { it is KtPackageDirective || it is KtImportDirective } as? KtElement
     }
 
     private fun findElementInside(firElement: FirElement, element: KtElement, stopAt: PsiElement): FirElement? {
