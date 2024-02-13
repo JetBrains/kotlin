@@ -2863,6 +2863,25 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Nested
+    @TestMetadata("native/native.tests/testData/codegen/interop")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-fir")
+    @FirPipeline()
+    @UseExtTestCaseGroupProvider()
+    public class Interop {
+        @Test
+        public void testAllFilesPresentInInterop() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/interop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("platform_zlib.kt")
+        public void testPlatform_zlib() throws Exception {
+            runTest("native/native.tests/testData/codegen/interop/platform_zlib.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("native/native.tests/testData/codegen/intrinsics")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("frontend-fir")

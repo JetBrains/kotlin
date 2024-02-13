@@ -1505,13 +1505,6 @@ standaloneTest("interop_libiconv") {
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
-standaloneTest("interop_zlib") {
-    enabled = (project.testTarget == null)
-    source = "interop/platform_zlib.kt"
-    useGoldenData = true
-    UtilsKt.dependsOnPlatformLibs(it)
-}
-
 standaloneTest("interop_objc_illegal_sharing") {
     disabled = !PlatformInfo.isAppleTarget(project)
     source = "interop/objc/illegal_sharing.kt"
