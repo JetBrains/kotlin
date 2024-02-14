@@ -239,8 +239,18 @@ private fun KtFunctionLikeSymbol.getMangledName(forSwift: Boolean): String {
     return if (this.isConstructor) {
         if (isArrayConstructor && !forSwift) "array" else "init"
     } else {
-        getObjCFunctionName().name(forSwift)
+        getObjCFunctionName().name(forSwift).handleSpecialNames("do")
     }
+}
+
+private fun String.handleSpecialNames(prefix: String): String {
+    val trimmed = this.dropWhile { it == '_' }
+    for (family in listOf("alloc", "copy", "mutableCopy", "new", "init")) {
+        if (trimmed.startsWithWords(family)) {
+            return prefix + this.replaceFirstChar(Char::uppercaseChar)
+        }
+    }
+    return this
 }
 
 /**
@@ -264,6 +274,8 @@ fun MethodBridge.valueParametersAssociated(
     }
 }
 
+private fun String.startsWithWords(words: String) = this.startsWith(words) &&
+        (this.length == words.length || !this[words.length].isLowerCase())
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReturnType]
