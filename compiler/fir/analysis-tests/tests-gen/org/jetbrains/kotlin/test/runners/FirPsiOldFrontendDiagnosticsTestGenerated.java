@@ -26910,6 +26910,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("kt65555.kt")
+                public void testKt65555() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt65555.kt");
+                }
+
+                @Test
                 @TestMetadata("kt9550.kt")
                 public void testKt9550() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt9550.kt");
