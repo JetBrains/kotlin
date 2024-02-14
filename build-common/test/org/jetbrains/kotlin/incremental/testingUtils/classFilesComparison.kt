@@ -109,7 +109,7 @@ private fun getDirectoryString(
     fun addDirContent(dir: File) {
         p.pushIndent()
 
-        val listFiles = dir.listFiles().filter { includeFiles(it) }
+        val listFiles = dir.listFiles()?.filter { includeFiles(it) }
         assertNotNull("$dir does not exist", listFiles)
 
         val children = listFiles!!.sortedWith(compareBy({ it.isDirectory }, { it.name }))
