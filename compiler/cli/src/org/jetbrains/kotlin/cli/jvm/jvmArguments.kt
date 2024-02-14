@@ -31,6 +31,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         val value =
             when (releaseTargetArg) {
                 "1.6" -> 6
+                "1.7" -> 7
                 "1.8" -> 8
                 else -> releaseTargetArg.toIntOrNull()
             }
@@ -52,7 +53,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
     }
 
     val jvmTargetValue = when (releaseTargetArg) {
-        "6", "1.6" -> {
+        "6", "1.6", "7", "1.7" -> {
             if (jvmTargetArg == null) {
                 messageCollector.report(
                     ERROR,
@@ -113,7 +114,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
 private fun isCompatibleJvmTargetAndRelease(jvmTarget: String, release: String): Boolean {
     if (jvmTarget == "1.8") {
         // This is needed to be able to compile stdlib with -jvm-target 1.8 and -Xjdk-release=1.6/1.7.
-        return release in listOf("6", "1.6", "8", "1.8")
+        return release in listOf("6", "1.6", "7", "1.7", "8", "1.8")
     }
 
     return jvmTarget == release
