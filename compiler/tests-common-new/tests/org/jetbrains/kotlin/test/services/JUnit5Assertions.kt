@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.test.services
 
-import com.intellij.rt.execution.junit.FileComparisonFailure
 import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.utils.rethrow
 import org.junit.jupiter.api.function.Executable
+import org.opentest4j.AssertionFailedError
+import org.opentest4j.FileInfo
 import java.io.File
 import java.io.IOException
+import java.nio.charset.StandardCharsets
 import org.junit.jupiter.api.Assertions as JUnit5PlatformAssertions
 
 object JUnit5Assertions : AssertionsService() {
@@ -71,9 +73,10 @@ object JUnit5Assertions : AssertionsService() {
         val (equalsToFile, expected) =
             doesEqualToFile(expectedFile, actual, sanitizer, fileNotFoundMessageTeamCity, fileNotFoundMessageLocal)
         if (!equalsToFile) {
-            throw FileComparisonFailure(
+            throw AssertionFailedError(
                 "${differenceObtainedMessage()}: ${expectedFile.name}",
-                expected, actual, expectedFile.absolutePath
+                FileInfo(expectedFile.absolutePath, expected.toByteArray(StandardCharsets.UTF_8)),
+                actual,
             )
         }
     }
@@ -96,7 +99,7 @@ object JUnit5Assertions : AssertionsService() {
 
     override fun failAll(exceptions: List<Throwable>) {
         exceptions.singleOrNull()?.let { throw it }
-        JUnit5PlatformAssertions.assertAll(exceptions.sortedWith(FileComparisonFailureFirst).map { Executable { throw it } })
+        JUnit5PlatformAssertions.assertAll(exceptions.sortedWith(AssertionFailedErrorFirst).map { Executable { throw it } })
     }
 
     override fun assertAll(conditions: List<() -> Unit>) {
@@ -115,12 +118,12 @@ object JUnit5Assertions : AssertionsService() {
         org.junit.jupiter.api.fail(message)
     }
 
-    private object FileComparisonFailureFirst : Comparator<Throwable> {
+    private object AssertionFailedErrorFirst : Comparator<Throwable> {
         override fun compare(o1: Throwable, o2: Throwable): Int {
             return when {
-                o1 is FileComparisonFailure && o2 is FileComparisonFailure -> 0
-                o1 is FileComparisonFailure -> -1
-                o2 is FileComparisonFailure -> 1
+                o1 is AssertionFailedError && o2 is AssertionFailedError -> 0
+                o1 is AssertionFailedError -> -1
+                o2 is AssertionFailedError -> 1
                 else -> 0
             }
         }

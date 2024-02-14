@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import com.intellij.rt.execution.junit.FileComparisonFailure
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
+import org.opentest4j.AssertionFailedError
+import org.opentest4j.FileInfo
 import java.io.File
-import kotlin.collections.mapNotNull
-import kotlin.io.writeText
-import kotlin.text.endsWith
 
 /**
  * Does nothing normally.
@@ -36,8 +34,9 @@ class UpdateTestDataHandler(
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         if (enabled || System.getProperty("kotlin.test.update.test.data") == "true") {
-            for (failure in failedAssertions.mapNotNull { it.cause as? FileComparisonFailure }) {
-                File(failure.filePath).writeText(failure.actual)
+            for (failure in failedAssertions.mapNotNull { it.cause as? AssertionFailedError }) {
+                val path = (failure.expected.value as? FileInfo)?.path ?: continue
+                File(path).writeText(failure.actual.stringRepresentation)
             }
         }
         return failedAssertions

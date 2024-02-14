@@ -18,7 +18,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
-import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ReflectionUtil;
@@ -28,7 +27,6 @@ import com.intellij.util.containers.PeekableIterator;
 import com.intellij.util.containers.PeekableIteratorWrapper;
 import com.intellij.util.lang.CompoundRuntimeException;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +36,8 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker;
 import org.jetbrains.kotlin.types.FlexibleTypeImpl;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
+import org.opentest4j.AssertionFailedError;
+import org.opentest4j.FileInfo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -806,7 +806,11 @@ public abstract class KtUsefulTestCase extends TestCase {
         String expected = StringUtil.convertLineSeparators(trimBeforeComparing ? fileText.trim() : fileText);
         String actual = StringUtil.convertLineSeparators(trimBeforeComparing ? actualText.trim() : actualText);
         if (!Objects.equals(expected, actual)) {
-            throw new FileComparisonFailure(messageProducer == null ? null : messageProducer.get(), expected, actual, filePath);
+            throw new AssertionFailedError(
+                    messageProducer == null ? null : messageProducer.get(),
+                    new FileInfo(filePath, expected.getBytes(StandardCharsets.UTF_8)),
+                    actual
+            );
         }
     }
 
