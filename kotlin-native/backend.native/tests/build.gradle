@@ -1611,52 +1611,6 @@ dynamicTest("interop_kotlin_exception_hook") {
     outputChecker = { s -> s.contains("OK. Kotlin unhandled exception hook") }
 }
 
-standaloneTest("library_ir_provider_mismatch") {
-    enabled = !isAggressiveGC // No need to test with different GC schedulers
-
-    String librarySource = "$projectDir/link/ir_providers/library/empty.kt"
-    String invalidManifest = "$projectDir/link/ir_providers/library/manifest.properties"
-    String mainSource = "$projectDir/link/ir_providers/hello.kt"
-
-    File outputDir = project.layout.buildDirectory.dir(name).get().asFile
-    String currentTarget = project.target.name
-
-    inputs.files(librarySource, invalidManifest)
-    inputs.property("target", currentTarget)
-    outputs.dir(outputDir)
-    source = mainSource
-
-    doBeforeBuild {
-        konanc("$librarySource -target $currentTarget -p library -o $outputDir/unsupported_ir_provider/empty.klib -manifest $invalidManifest")
-        konanc("$librarySource -target $currentTarget -p library -o $outputDir/supported_ir_provider/empty.klib ")
-
-        // Should not be successful:
-        boolean failed = false
-        String command = "$mainSource -target $currentTarget -p program -o $outputDir/failed.kexe -l $outputDir/unsupported_ir_provider/empty.klib"
-        try {
-            konanc(command)
-        } catch (Throwable t) {
-            String exceptionText = t.message
-            exceptionText = PlatformInfo.isWindows() ? exceptionText.replace("\\", "/") : exceptionText
-
-            String expectedText = "warning: KLIB resolver: Skipping '$outputDir/unsupported_ir_provider/empty.klib'. The library requires unknown IR provider: UNSUPPORTED"
-            expectedText = PlatformInfo.isWindows() ? expectedText.replace("\\", "/") : expectedText
-
-            if (t instanceof GradleException && exceptionText.contains(expectedText)) {
-                failed = true
-            } else {
-                throw t
-            }
-        }
-
-        if (!failed) {
-            throw new GradleException("Kotlin/Natice invocation is successful but should fail:\n$command")
-        }
-    }
-
-    flags = ["-l", "$outputDir/supported_ir_provider/empty.klib"]
-}
-
 standaloneTest("kt51302") {
     enabled = project.target.name == project.hostName
     source = "serialization/KT-51302/main.kt"
