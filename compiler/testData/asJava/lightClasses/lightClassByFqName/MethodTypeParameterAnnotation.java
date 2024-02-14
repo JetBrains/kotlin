@@ -1,5 +1,5 @@
 public final class C /* one.C*/ {
   public  C();//  .ctor()
 
-  public final <T> void foo(T);// <T>  foo(T)
+  public final <@one.Anno() T> void foo(T);// <@one.Anno() T>  foo(T)
 }

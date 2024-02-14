@@ -1,2 +1,2 @@
-public abstract interface C /* one.C*/<T>  {
+public abstract interface C /* one.C*/<@one.Anno() T>  {
 }
