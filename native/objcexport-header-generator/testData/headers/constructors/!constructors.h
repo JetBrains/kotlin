@@ -31,6 +31,11 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 __attribute__((objc_subclassing_restricted))
+@interface ConstructorFunction : Base
+- (instancetype)initWithFoo:(void (^)(void))foo __attribute__((swift_name("init(foo:)"))) __attribute__((objc_designated_initializer));
+@end
+
+__attribute__((objc_subclassing_restricted))
 @interface ConstructorParam0 : Base
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));

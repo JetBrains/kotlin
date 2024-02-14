@@ -14,5 +14,5 @@ internal fun KtType.translateToObjCFunctionType(typeBridge: BlockPointerBridge):
         parameterTypes = listOfNotNull(this.receiverType).plus(this.parameterTypes).map { parameterType ->
             parameterType.translateToObjCReferenceType()
         }
-    )
+    ).withNullabilityOf(this)
 }

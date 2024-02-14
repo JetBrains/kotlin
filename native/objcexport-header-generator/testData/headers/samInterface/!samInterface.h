@@ -18,10 +18,9 @@ NS_ASSUME_NONNULL_BEGIN
 #define _Nullable_result _Nullable
 #endif
 
-__attribute__((objc_subclassing_restricted))
-@interface FooKt : Base
-@property (class, readonly) int32_t topLevelVal __attribute__((swift_name("topLevelVal")));
-@property (class) int32_t topLevelVar __attribute__((swift_name("topLevelVar")));
+@protocol Foo
+@required
+- (void)invoke __attribute__((swift_name("invoke()")));
 @end
 
 #pragma pop_macro("_Nullable_result")

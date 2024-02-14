@@ -185,7 +185,7 @@ private fun <T : Any> getPredefined(method: KtFunctionLikeSymbol, predefinedForA
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
 
-    getPredefined(this, Predefined.anyMethodSelectors)?.let { return it }
+    getPredefined(this, anyMethodSelectors)?.let { return it }
 
     val parameters = methodBridge.valueParametersAssociated(this)
 
@@ -231,55 +231,27 @@ fun KtFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
     return sb.toString()
 }
 
+/**
+ * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getMangledName]
+ */
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtFunctionLikeSymbol.getMangledName(forSwift: Boolean): String {
-
-    if (this.isConstructor) {
-        return if (isArrayConstructor && !forSwift) "array" else "init"
+    return if (this.isConstructor) {
+        if (isArrayConstructor && !forSwift) "array" else "init"
+    } else {
+        getObjCFunctionName().name(forSwift).handleSpecialNames("do")
     }
-
-    val candidate = when (this) {
-        is KtPropertyGetterSymbol -> {
-            this.getObjCFunctionName().name(forSwift)
-        }
-        is KtPropertySetterSymbol -> {
-            this.getObjCFunctionName().name(forSwift)
-            //TODO: find replacement for [this.correspondingProperty]
-//            "set${
-//                this.correspondingProperty.getObjCName().asString(forSwift).replaceFirstChar(kotlin.Char::uppercaseChar)
-//            }".toIdentifier()
-        }
-        else -> {
-            this.getObjCFunctionName().name(forSwift)
-        }
-    }
-    return candidate.mangleIfSpecialFamily("do")
 }
 
-
-/**
- * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.mangleIfSpecialFamily]
- */
-private fun String.mangleIfSpecialFamily(prefix: String): String {
+private fun String.handleSpecialNames(prefix: String): String {
     val trimmed = this.dropWhile { it == '_' }
     for (family in listOf("alloc", "copy", "mutableCopy", "new", "init")) {
         if (trimmed.startsWithWords(family)) {
-            // Then method can be detected as having special family by Objective-C compiler.
-            // mangle the name:
             return prefix + this.replaceFirstChar(Char::uppercaseChar)
         }
     }
-
-    // TODO: handle clashes with NSObject methods etc.
-
     return this
 }
-
-/**
- * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.startsWithWords]
- */
-private fun String.startsWithWords(words: String) = this.startsWith(words) &&
-        (this.length == words.length || !this[words.length].isLowerCase())
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.MethodBrideExtensionsKt.valueParametersAssociated]
@@ -302,6 +274,8 @@ fun MethodBridge.valueParametersAssociated(
     }
 }
 
+private fun String.startsWithWords(words: String) = this.startsWith(words) &&
+        (this.length == words.length || !this[words.length].isLowerCase())
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReturnType]

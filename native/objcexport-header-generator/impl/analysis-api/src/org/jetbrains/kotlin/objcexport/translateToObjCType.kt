@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeParameterType
@@ -159,29 +158,6 @@ internal fun KtType.translateTypeArgumentsToObjC(): List<ObjCNonNullReferenceTyp
             }
         }
     }
-}
-
-context(KtAnalysisSession)
-private fun ObjCNonNullReferenceType.withNullabilityOf(kotlinType: KtType): ObjCReferenceType {
-    return if (kotlinType.isBinaryRepresentationNullable()) {
-        ObjCNullableReferenceType(this)
-    } else {
-        this
-    }
-}
-
-context(KtAnalysisSession)
-private fun KtType.isBinaryRepresentationNullable(): Boolean {
-    /* Convention to match K1 implementation */
-    if (this is KtErrorType) return false
-
-    if (fullyExpandedType.canBeNull) return true
-
-    getInlineTargetTypeOrNull()?.let { inlineTargetType ->
-        if (inlineTargetType.canBeNull) return true
-    }
-
-    return false
 }
 
 
