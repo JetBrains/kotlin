@@ -976,6 +976,7 @@ tasks {
 
     named("checkBuild") {
         if (kotlinBuildProperties.isTeamcityBuild) {
+            val bootstrapKotlinVersion = bootstrapKotlinVersion
             doFirst {
                 println("##teamcity[setParameter name='bootstrap.kotlin.version' value='$bootstrapKotlinVersion']")
             }
