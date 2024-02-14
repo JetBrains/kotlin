@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractAnalysisApiGetSuperTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
@@ -603,6 +604,13 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("klibSourceFileNameProvider", filter = frontendIs(FrontendKind.Fir) and analysisApiModeIs(AnalysisApiMode.Standalone)) {
         test<AbstractGetKlibSourceFileNameTest> {
             model(it, "getKlibSourceFileName")
+        }
+    }
+
+    // Avoid Standalone mode because of KT-65813.
+    component("visibilityChecker", filter = frontendIs(FrontendKind.Fir) and analysisApiModeIs(AnalysisApiMode.Ide)) {
+        test<AbstractVisibilityCheckerTest> {
+            model(it, "visibility")
         }
     }
 }

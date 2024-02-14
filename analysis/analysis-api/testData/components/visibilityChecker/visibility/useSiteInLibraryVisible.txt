@@ -1,0 +1,3 @@
+Declaration: class Declaration
+At usage site: public fun useSite(): kotlin.Unit { /* compiled code */ }
+Is visible: true

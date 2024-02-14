@@ -111,9 +111,15 @@ class ExpressionMarkerProvider : TestService {
         return file.findElementAt(offset)?.parentOfType() ?: error("No expression found at caret")
     }
 
+    /**
+     * Returns an element of type [P] at the specified caret, or returns `null` if no such caret exists. If the caret can be found but the
+     * element has the wrong type, an error will be raised.
+     */
     inline fun <reified P : KtElement> getElementOfTypeAtCaretOrNull(file: KtFile, caretTag: String? = null): P? {
         val offset = getCaretPositionOrNull(file, caretTag) ?: return null
-        return file.findElementAt(offset)?.parentOfType()
+        return file.findElementAt(offset)
+            ?.parentOfType()
+            ?: error("Element at caret doesn't exist or doesn't have a parent of type `${P::class.simpleName}`")
     }
 
     inline fun <reified P : KtElement> getElementOfTypeAtCaretByDirective(
