@@ -28,7 +28,6 @@ import org.junit.runner.RunWith
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.*
 import java.util.regex.Pattern
 import javax.xml.parsers.DocumentBuilderFactory
@@ -36,7 +35,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.isDirectory
 import kotlin.test.*
 
-val SYSTEM_LINE_SEPARATOR: String = System.getProperty("line.separator")
+val SYSTEM_LINE_SEPARATOR: String = System.lineSeparator()
 
 @RunWith(value = RunnerWithMuteInDatabase::class)
 abstract class BaseGradleIT {
@@ -1152,4 +1151,25 @@ private object MavenLocalUrlProvider {
         get() = System.getProperty("M2_HOME")?.let { getLocalRepositoryFromXml(File(it, "conf/settings.xml")) }
 
     private val defaultM2RepoPath get() = File(homeDir, ".m2/repository").absolutePath
+}
+
+internal fun BaseGradleIT.Project.embedProject(other: BaseGradleIT.Project, renameTo: String? = null) {
+    setupWorkingDir()
+    other.setupWorkingDir(false)
+    val tempDir = createTempDir(if (isWindows) "" else "BaseGradleIT")
+    val embeddedModuleName = renameTo ?: other.projectName
+    try {
+        other.projectDir.copyRecursively(tempDir)
+        tempDir.copyRecursively(projectDir.resolve(embeddedModuleName))
+    } finally {
+        check(tempDir.deleteRecursively())
+    }
+    testCase.apply {
+        gradleSettingsScript().appendText("\ninclude(\"$embeddedModuleName\")")
+
+        val embeddedBuildScript = gradleBuildScript(embeddedModuleName)
+        if (embeddedBuildScript.extension == "kts") {
+            embeddedBuildScript.modify { it.replace(".version(\"$PLUGIN_MARKER_VERSION_PLACEHOLDER\")", "") }
+        }
+    }
 }

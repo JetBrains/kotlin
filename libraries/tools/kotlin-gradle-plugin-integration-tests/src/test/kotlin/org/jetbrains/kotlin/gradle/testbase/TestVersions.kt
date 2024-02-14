@@ -88,5 +88,6 @@ interface TestVersions {
     object ThirdPartyDependencies {
         const val SHADOW_PLUGIN_VERSION = "8.1.1"
         const val GRADLE_ENTERPRISE_PLUGIN_VERSION = "3.13.4"
+        const val KOTLINX_ATOMICFU = "0.23.2"
     }
 }
