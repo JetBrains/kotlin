@@ -50,25 +50,7 @@ class FirScriptConfiguratorExtensionImpl(
     @Suppress("UNUSED_PARAMETER") hostConfiguration: ScriptingHostConfiguration,
 ) : FirScriptConfiguratorExtension(session) {
 
-    @OptIn(SymbolInternals::class)
     override fun FirScriptBuilder.configureContainingFile(fileBuilder: FirFileBuilder) {
-        val sourceFile = fileBuilder.sourceFile ?: return
-        val configuration = getOrLoadConfiguration(sourceFile) ?: run {
-            log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScriptBuilder wasn't configured.")
-            return
-        }
-
-        configuration[ScriptCompilationConfiguration.defaultImports]?.forEach { defaultImport ->
-            val trimmed = defaultImport.trim()
-            val endsWithStar = trimmed.endsWith("*")
-            val stripped = if (endsWithStar) trimmed.substring(0, trimmed.length - 2) else trimmed
-            val fqName = FqName.fromSegments(stripped.split("."))
-            fileBuilder.imports += buildImport {
-                source = fileBuilder.source?.fakeElement(KtFakeSourceElementKind.ImplicitImport)
-                importedFqName = fqName
-                isAllUnder = endsWithStar
-            }
-        }
     }
 
     @OptIn(SymbolInternals::class)
