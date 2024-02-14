@@ -14,7 +14,7 @@ class Test<in I> {
         apply(foo())
         apply(this.foo())
         with(Test<I>()) {
-            apply(foo()) // resolved to this@Test.foo
+            apply(<!INVISIBLE_REFERENCE!>foo<!>()) // K1: this@Test.foo, K2: this@with.foo, see KT-55446
             apply(this.<!INVISIBLE_REFERENCE!>foo<!>())
             apply(this@with.<!INVISIBLE_REFERENCE!>foo<!>())
             apply(this@Test.foo())

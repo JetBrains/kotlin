@@ -14,7 +14,7 @@ class Test<in I, out O> {
         i = getT()
         this.i = getT()
         with(Test<I, O>()) {
-            i = getT() // resolved to this@Test.i
+            <!INVISIBLE_REFERENCE!>i<!> = getT() // K1: this@Test.i, K2: this@with.i, see KT-55446
             this.<!INVISIBLE_REFERENCE!>i<!> = getT()
             this@with.<!INVISIBLE_REFERENCE!>i<!> = getT()
             this@Test.i  = getT()

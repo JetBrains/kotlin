@@ -64,6 +64,12 @@ fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassLikeSym
 /**
  * @see toSymbol
  */
+fun ConeClassLikeLookupTag.toClassSymbol(session: FirSession): FirClassSymbol<*>? =
+    toSymbol(session) as? FirClassSymbol<*>
+
+/**
+ * @see toSymbol
+ */
 fun ConeClassLikeLookupTag.toFirRegularClassSymbol(session: FirSession): FirRegularClassSymbol? =
     toSymbol(session) as? FirRegularClassSymbol
 
