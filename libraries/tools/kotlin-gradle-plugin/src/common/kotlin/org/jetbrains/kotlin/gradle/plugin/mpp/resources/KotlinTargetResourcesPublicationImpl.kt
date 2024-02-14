@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.KotlinAndroidTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.locateTask
@@ -33,6 +34,8 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
         KotlinJsIrTarget::class,
         KotlinNativeTarget::class,
         KotlinJvmTarget::class,
+        // FIXME: Check how Android target published variants with flavors and with the grouping flag
+        KotlinAndroidTarget::class,
     )
 
     private val targetToResourcesMap: MutableMap<KotlinTarget, KotlinTargetResourcesPublication.TargetResources> = mutableMapOf()
@@ -59,6 +62,9 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
 
     override fun canPublishResources(target: KotlinTarget): Boolean {
         if (targetsThatSupportPublication.none { it.isInstance(target) }) return false
+        if (target is KotlinAndroidTarget) {
+            return AndroidGradlePluginVersion.current >= KotlinAndroidTargetResourcesPublication.MIN_AGP_VERSION
+        }
         return true
     }
 
@@ -85,6 +91,25 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
             notify(resources)
         }
     }
+
+    override fun publishInAndroidAssets(
+        target: KotlinAndroidTarget,
+        resourcePathForSourceSet: (KotlinSourceSet) -> (KotlinTargetResourcesPublication.ResourceRoot),
+        relativeResourcePlacement: Provider<File>,
+    ) {
+        if (androidTargetAssetsMap[target] != null) {
+            error("Only one assets publication per android target is allowed")
+        }
+        val resources = KotlinTargetResourcesPublication.TargetResources(
+            resourcePathForSourceSet = resourcePathForSourceSet,
+            relativeResourcePlacement = relativeResourcePlacement,
+        )
+        androidTargetAssetsMap[target] = resources
+        androidTargetAssetsSubscribers[target].orEmpty().forEach { notify ->
+            notify(resources)
+        }
+    }
+
     internal companion object {
         const val MULTIPLATFORM_RESOURCES_DIRECTORY = "kotlin-multiplatform-resources"
     }

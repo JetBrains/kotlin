@@ -34,6 +34,12 @@ interface KotlinTargetResourcesPublication {
         relativeResourcePlacement: Provider<File>,
     )
 
+    fun publishInAndroidAssets(
+        target: KotlinAndroidTarget,
+        resourcePathForSourceSet: (KotlinSourceSet) -> (ResourceRoot),
+        relativeResourcePlacement: Provider<File>,
+    )
+
     companion object {
         const val EXTENSION_NAME = "multiplatformResourcesPublication"
     }
