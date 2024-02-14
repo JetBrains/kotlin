@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.generators.tree.printer.VariableKind
+import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.generators.tree.printer.printKDoc
+import org.jetbrains.kotlin.generators.tree.printer.printPropertyDeclaration
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
+import java.lang.reflect.Modifier.isVolatile
 
 abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
     private val printer: SmartPrinter,
@@ -34,78 +38,38 @@ abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
         modality: Modality? = null,
     ) {
         printer.run {
-            if (!field.fromParent) {
-                printKDoc(field.kDoc)
-            }
-
-            field.deprecation?.let {
-                println("@Deprecated(")
-                withIndent {
-                    println("message = \"", it.message, "\",")
-                    println("replaceWith = ReplaceWith(\"", it.replaceWith.expression, "\"),")
-                    println("level = DeprecationLevel.", it.level.name, ",")
-                }
-                println(")")
-            }
-
-            if (field.isVolatile) {
-                println("@", type<Volatile>().render())
-            }
-
             val defaultValue = field.defaultValueInImplementation
+            printPropertyDeclaration(
+                name = field.name,
+                type = actualTypeOfField(field),
+                kind = if (forceMutable(field) || field.isFinal && field.isMutable) VariableKind.VAR else VariableKind.VAL,
+                inConstructor = inConstructor,
+                visibility = field.visibility,
+                modality = modality,
+                override = override,
+                isLateinit = field.isLateinit,
+                isVolatile = field.isVolatile,
+                optInAnnotation = field.optInAnnotation,
+                printOptInWrapped = defaultValue != null,
+                deprecation = field.deprecation,
+                kDoc = field.kDoc,
+                initializer = defaultValue.takeUnless { field.withGetter }
+            )
+            println()
 
-            field.optInAnnotation?.let {
-                val rendered = it.render()
-                when {
-                    defaultValue != null -> println("@OptIn(", rendered, "::class)")
-                    inConstructor -> println("@property:", rendered)
-                    else -> println("@", rendered)
-                }
-            }
-
-            if (field.visibility != Visibility.PUBLIC) {
-                print(field.visibility.name.toLowerCaseAsciiOnly(), " ")
-            }
-
-            modality?.let {
-                print(it.name.toLowerCaseAsciiOnly(), " ")
-            }
-
-            if (override) {
-                print("override ")
-            }
-            if (field.isLateinit) {
-                print("lateinit ")
-            }
-            if (forceMutable(field) || field.isFinal && field.isMutable) {
-                print("var ")
-            } else {
-                print("val ")
-            }
-            print(field.name, ": ", actualTypeOfField(field).render())
-            if (inConstructor) {
-                print(",")
-            }
-            if (defaultValue == null) {
-                println()
-                return
-            }
-
-            if (field.withGetter) {
-                println()
-                pushIndent()
-                print("get()")
-            }
-            println(" = $defaultValue")
-            field.customSetter?.let {
-                println("set(value) {")
+            if (defaultValue != null && field.withGetter) {
                 withIndent {
-                    println(it)
+                    println("get() = $defaultValue")
                 }
-                println("}")
             }
-            if (field.withGetter) {
-                popIndent()
+
+            field.customSetter?.let {
+                withIndent {
+                    print("set(value)")
+                    printBlock {
+                        println(it)
+                    }
+                }
             }
         }
     }

@@ -190,6 +190,80 @@ inline fun SmartPrinter.printFunctionWithBlockBody(
     printBlock(blockBody)
 }
 
+context(ImportCollector)
+fun SmartPrinter.printPropertyDeclaration(
+    name: String,
+    type: TypeRef,
+    kind: VariableKind,
+    inConstructor: Boolean = false,
+    visibility: Visibility = Visibility.PUBLIC,
+    modality: Modality? = null,
+    override: Boolean = false,
+    isLateinit: Boolean = false,
+    isVolatile: Boolean = false,
+    kDoc: String? = null,
+    optInAnnotation: ClassRef<*>? = null,
+    printOptInWrapped: Boolean = false,
+    deprecation: Deprecated? = null,
+    initializer: String? = null,
+) {
+    printKDoc(kDoc)
+
+    deprecation?.let {
+        println("@Deprecated(")
+        withIndent {
+            println("message = \"", it.message, "\",")
+            println("replaceWith = ReplaceWith(\"", it.replaceWith.expression, "\"),")
+            println("level = DeprecationLevel.", it.level.name, ",")
+        }
+        println(")")
+    }
+
+    if (isVolatile) {
+        println("@", type<Volatile>().render())
+    }
+
+    optInAnnotation?.let {
+        val rendered = it.render()
+        when {
+            printOptInWrapped -> println("@OptIn(", rendered, "::class)")
+            inConstructor -> println("@property:", rendered)
+            else -> println("@", rendered)
+        }
+    }
+
+    if (visibility != Visibility.PUBLIC) {
+        print(visibility.name.toLowerCaseAsciiOnly(), " ")
+    }
+
+    modality?.let {
+        print(it.name.toLowerCaseAsciiOnly(), " ")
+    }
+
+    if (override) {
+        print("override ")
+    }
+    if (isLateinit) {
+        print("lateinit ")
+    }
+    when (kind) {
+        VariableKind.PARAMETER -> {}
+        VariableKind.VAL -> print("val ")
+        VariableKind.VAR -> print("var ")
+    }
+    print(name, ": ", type.render())
+
+    if (initializer != null) {
+        print(" = $initializer")
+    }
+
+    if (inConstructor) {
+        print(",")
+    }
+}
+
+enum class VariableKind { VAL, VAR, PARAMETER }
+
 inline fun SmartPrinter.printBlock(body: () -> Unit) {
     println(" {")
     withIndent(body)
