@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
-import java.nio.file.Path
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AssertionsService
 import org.junit.Assume
+import java.nio.file.Path
 
 open class AbstractSymbolLightClassesParentingTestBase(
     configurator: AnalysisApiTestConfigurator,
@@ -212,43 +212,41 @@ open class AbstractSymbolLightClassesParentingTestBase(
                 assertions.assertNotNull(owner)
 
                 val lastDeclaration = declarationStack.last()
-                val psiModifierListOwner = if (lastDeclaration is PsiModifierListOwner) {
-                    assertions.assertEquals(lastDeclaration.modifierList, owner)
-                    lastDeclaration
-                } else {
-                    (lastDeclaration as PsiModifierList).parent
-                } as PsiModifierListOwner
+                val psiModifierListOwner = when (lastDeclaration) {
+                    is PsiTypeParameter -> null
+                    is PsiModifierListOwner -> {
+                        assertions.assertEquals(lastDeclaration.modifierList, owner)
+                        lastDeclaration
+                    }
+                    else -> (lastDeclaration as PsiModifierList).parent as PsiModifierListOwner
+                }
 
                 if (!ignoreDecompiledClasses) {
                     when (psiModifierListOwner) {
-                        is PsiClass,
-                        is PsiParameter ->
-                            assertions.assertTrue(owner is SymbolLightClassModifierList<*>)
-
-                        is PsiField,
-                        is PsiMethod ->
-                            assertions.assertTrue(owner is SymbolLightMemberModifierList<*>)
-
-                        else ->
-                            throw IllegalStateException("Unexpected annotation owner kind: ${lastDeclaration::class}")
+                        is PsiClass, is PsiParameter -> assertions.assertTrue(owner is SymbolLightClassModifierList<*>)
+                        is PsiField, is PsiMethod -> assertions.assertTrue(owner is SymbolLightMemberModifierList<*>)
+                        null -> {}
+                        else -> throw IllegalStateException("Unexpected annotation owner kind: ${lastDeclaration::class}")
                     }
                 }
 
-                val modifierList = psiModifierListOwner.modifierList!!
                 val qualifiedName = annotation.qualifiedName!!
-                assertions.assertTrue(modifierList.hasAnnotation(qualifiedName)) {
-                    "$qualifiedName is not found in $modifierList"
+                // This is a workaround for IDEA-346155 bug
+                if (!ignoreDecompiledClasses || owner !is PsiTypeParameter) {
+                    assertions.assertTrue(owner!!.hasAnnotation(qualifiedName)) {
+                        "$qualifiedName is not found in $owner"
+                    }
                 }
 
-                val anno = modifierList.findAnnotation(qualifiedName)
+                val anno = owner.findAnnotation(qualifiedName)
                 assertions.assertNotNull(anno) {
-                    "$qualifiedName is not found in $modifierList"
+                    "$qualifiedName is not found in $owner"
                 }
 
-                assertions.assertTrue(annotation == anno || modifierList.annotations.count { it.qualifiedName == qualifiedName } > 1)
+                assertions.assertTrue(annotation == anno || owner.annotations.count { it.qualifiedName == qualifiedName } > 1)
 
-                assertions.assertTrue(modifierList.annotations.any { it == annotation }) {
-                    "$annotation is not found in ${modifierList.annotations}"
+                assertions.assertTrue(owner.annotations.any { it == annotation }) {
+                    "$annotation is not found in ${owner.annotations}"
                 }
 
                 checkParentAndVisitChildren(annotation, notCheckItself = true) { visitor ->
