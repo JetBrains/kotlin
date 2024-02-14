@@ -18,7 +18,7 @@ fun DiagnosticReporter.reportOn(
     report(factory.on(source.requireNotNull(), positioningStrategy), context)
 }
 
-fun <A : Any> DiagnosticReporter.reportOn(
+fun <A> DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactory1<A>,
     a: A,
@@ -28,7 +28,7 @@ fun <A : Any> DiagnosticReporter.reportOn(
     report(factory.on(source.requireNotNull(), a, positioningStrategy), context)
 }
 
-fun <A : Any, B : Any> DiagnosticReporter.reportOn(
+fun <A, B> DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactory2<A, B>,
     a: A,
@@ -39,7 +39,7 @@ fun <A : Any, B : Any> DiagnosticReporter.reportOn(
     report(factory.on(source.requireNotNull(), a, b, positioningStrategy), context)
 }
 
-fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
+fun <A, B, C> DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactory3<A, B, C>,
     a: A,
@@ -51,7 +51,7 @@ fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
     report(factory.on(source.requireNotNull(), a, b, c, positioningStrategy), context)
 }
 
-fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOn(
+fun <A, B, C, D> DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactory4<A, B, C, D>,
     a: A,
@@ -76,7 +76,7 @@ fun DiagnosticReporter.reportOn(
     reportOn(source, factory.chooseFactory(context), context, positioningStrategy)
 }
 
-fun <A : Any> DiagnosticReporter.reportOn(
+fun <A> DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactoryForDeprecation1<A>,
     a: A,
@@ -86,7 +86,7 @@ fun <A : Any> DiagnosticReporter.reportOn(
     reportOn(source, factory.chooseFactory(context), a, context, positioningStrategy)
 }
 
-fun <A : Any, B : Any> DiagnosticReporter.reportOn(
+fun <A, B> DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactoryForDeprecation2<A, B>,
     a: A,
@@ -97,7 +97,7 @@ fun <A : Any, B : Any> DiagnosticReporter.reportOn(
     reportOn(source, factory.chooseFactory(context), a, b, context, positioningStrategy)
 }
 
-fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
+fun <A, B, C> DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactoryForDeprecation3<A, B, C>,
     a: A,
@@ -109,7 +109,7 @@ fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
     reportOn(source, factory.chooseFactory(context), a, b, c, context, positioningStrategy)
 }
 
-fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOn(
+fun <A, B, C, D> DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactoryForDeprecation4<A, B, C, D>,
     a: A,
