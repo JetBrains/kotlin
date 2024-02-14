@@ -52,7 +52,15 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
     }
 
     val jvmTargetValue = when (releaseTargetArg) {
-        "6" -> "1.6"
+        "6", "1.6" -> {
+            if (jvmTargetArg == null) {
+                messageCollector.report(
+                    ERROR,
+                    "'-Xjdk-release=$releaseTargetArg' option requires explicit JVM target. Please specify the '-jvm-target' option"
+                )
+            }
+            jvmTargetArg
+        }
         "8" -> "1.8"
         null -> jvmTargetArg
         else -> releaseTargetArg

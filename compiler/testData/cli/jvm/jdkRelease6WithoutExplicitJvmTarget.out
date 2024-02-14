@@ -1,0 +1,2 @@
+error: '-Xjdk-release=1.6' option requires explicit JVM target. Please specify the '-jvm-target' option
+COMPILATION_ERROR
