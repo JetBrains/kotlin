@@ -230,13 +230,11 @@ internal class AndroidProjectHandler(
 
         val javaTask = variantData.javaCompileProvider
         @Suppress("UNCHECKED_CAST") val kotlinTask = compilation.compileTaskProvider as TaskProvider<KotlinCompile>
-        compilation.androidVariant.forEachJavaSourceDir { sources ->
-            // It is important to pass exactly `sources.dir` as provider with explicit task dependency
-            // Because of the following bugs:
-            // * https://github.com/gradle/gradle/issues/27881 ConfigurableFileTree.from() doesn't preserve Task Dependencies
-            // * https://github.com/gradle/gradle/issues/27882 SourceDirectorySet doesn't accept ConfigurableFileTree
-            val sourceDirWithTaskDependencies = project.filesProvider(sources) { sources.dir }
-            compilation.defaultSourceSet.kotlin.srcDir(sourceDirWithTaskDependencies)
+        kotlinTask.configure { task ->
+            variantData.forEachJavaSourceDir { sources ->
+                task.source(sources.dir)
+                task.dependsOn(sources)
+            }
         }
         wireKotlinTasks(project, compilation, androidPlugin, androidExt, variantData, javaTask, kotlinTask)
     }

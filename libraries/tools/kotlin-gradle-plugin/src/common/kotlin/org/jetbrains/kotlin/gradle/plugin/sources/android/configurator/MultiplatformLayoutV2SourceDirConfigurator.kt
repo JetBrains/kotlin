@@ -15,7 +15,6 @@ internal object MultiplatformLayoutV2SourceDirConfigurator : KotlinAndroidSource
         kotlinSourceSet: KotlinSourceSet,
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
     ) {
-        kotlinSourceSet.kotlin.srcDir(target.project.provider { androidSourceSet.java.srcDirs })
         kotlinSourceSet.kotlin.srcDir("src/${androidSourceSet.name}/kotlin")
     }
 }

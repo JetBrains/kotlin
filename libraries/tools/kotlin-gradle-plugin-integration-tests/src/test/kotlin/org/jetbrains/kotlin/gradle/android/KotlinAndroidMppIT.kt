@@ -973,11 +973,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            // Hacks for TODO: KT-65426
-            val appPath = subProject("app").projectPath
-            appPath.resolve("src/main/java/app/example/com/app_sample").deleteRecursively()
-            appPath.resolve("src/commonMain/kotlin/A.kt").replaceText("expect fun f(): Unit", "")
-
             // Code copied from the reproducer from KT-63753
             subProject("app").buildGradleKts.appendText(
                 """
