@@ -296,9 +296,16 @@ class Fir2IrDeclarationStorage(
         name: Name,
         source: SourceElement,
     ) : IrClassImpl(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrClassSymbolImpl(), name,
-        ClassKind.CLASS, DescriptorVisibilities.PUBLIC, Modality.FINAL,
-        source, IrFactoryImpl,
+        startOffset = UNDEFINED_OFFSET,
+        endOffset = UNDEFINED_OFFSET,
+        origin = origin,
+        symbol = IrClassSymbolImpl(),
+        name = name,
+        kind = ClassKind.CLASS,
+        visibility = DescriptorVisibilities.PUBLIC,
+        modality = Modality.FINAL,
+        source = source,
+        factory = IrFactoryImpl,
     )
 
     private class NonCachedSourceFacadeContainerSource(

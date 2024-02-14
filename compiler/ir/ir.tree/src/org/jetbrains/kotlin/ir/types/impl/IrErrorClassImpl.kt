@@ -21,11 +21,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-@OptIn(IrImplementationDetail::class)
-val IrErrorClassImpl = IrClassImpl(
-    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.ERROR_CLASS, IrClassSymbolImpl(),
-    Name.special("<error>"), ClassKind.CLASS, DescriptorVisibilities.DEFAULT_VISIBILITY, Modality.FINAL,
-    SourceElement.NO_SOURCE, IrFactoryImpl
+val IrErrorClassImpl: IrClass = IrFactoryImpl.createClass(
+    startOffset = UNDEFINED_OFFSET,
+    endOffset = UNDEFINED_OFFSET,
+    origin = IrDeclarationOrigin.ERROR_CLASS,
+    symbol = IrClassSymbolImpl(),
+    name = Name.special("<error>"),
+    kind = ClassKind.CLASS,
+    visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
+    modality = Modality.FINAL,
+    source = SourceElement.NO_SOURCE,
 ).apply {
     parent = ErrorFile
 }
