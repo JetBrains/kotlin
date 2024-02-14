@@ -94,7 +94,7 @@ open class FirDeclarationsResolveTransformer(
         if (callableMember is FirFunction) {
             callableMember.valueParameters.forEach {
                 it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-                it.transformVarargTypeToArrayType()
+                it.transformVarargTypeToArrayType(transformer.session)
             }
         }
     }

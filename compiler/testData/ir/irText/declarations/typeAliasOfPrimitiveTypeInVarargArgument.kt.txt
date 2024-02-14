@@ -1,0 +1,107 @@
+typealias MyByte = Byte
+typealias MyShort = Short
+typealias MyInt = Int
+typealias MyLong = Long
+typealias MyUByte = UByte
+typealias MyUShort = UShort
+typealias MyUInt = UInt
+typealias MyULong = ULong
+typealias MyFloat = Float
+typealias MyDouble = Double
+typealias MyChar = Char
+typealias MyBoolean = Boolean
+fun checkByte(vararg values: Byte) {
+  return Unit
+}
+
+fun checkShort(vararg values: Short) {
+  return Unit
+}
+
+fun checkInt(vararg values: Int) {
+  return Unit
+}
+
+fun checkLong(vararg values: Long) {
+  return Unit
+}
+
+fun checkMyByte(vararg values: Byte) {
+  return Unit
+}
+
+fun checkMyShort(vararg values: Short) {
+  return Unit
+}
+
+fun checkMyInt(vararg values: Int) {
+  return Unit
+}
+
+fun checkMyLong(vararg values: Long) {
+  return Unit
+}
+
+fun checkUByte(vararg values: UByte) {
+  return Unit
+}
+
+fun checkUShort(vararg values: UShort) {
+  return Unit
+}
+
+fun checkUInt(vararg values: UInt) {
+  return Unit
+}
+
+fun checkULong(vararg values: ULong) {
+  return Unit
+}
+
+fun checkMyUByte(vararg values: UByte) {
+  return Unit
+}
+
+fun checkMyUShort(vararg values: UShort) {
+  return Unit
+}
+
+fun checkMyUInt(vararg values: UInt) {
+  return Unit
+}
+
+fun checkMyULong(vararg values: ULong) {
+  return Unit
+}
+
+fun checkFloat(vararg values: Float) {
+  return Unit
+}
+
+fun checkDouble(vararg values: Double) {
+  return Unit
+}
+
+fun checkMyFloat(vararg values: Float) {
+  return Unit
+}
+
+fun checkMyDouble(vararg values: Double) {
+  return Unit
+}
+
+fun checkChar(vararg values: Char) {
+  return Unit
+}
+
+fun checkBoolean(vararg values: Boolean) {
+  return Unit
+}
+
+fun checkMyChar(vararg values: Char) {
+  return Unit
+}
+
+fun checkMyBoolean(vararg values: Boolean) {
+  return Unit
+}

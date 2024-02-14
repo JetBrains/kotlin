@@ -468,6 +468,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/declarations/typeAlias.kt");
         }
 
+        @TestMetadata("typeAliasOfPrimitiveTypeInVarargArgument.kt")
+        public void testTypeAliasOfPrimitiveTypeInVarargArgument() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/typeAliasOfPrimitiveTypeInVarargArgument.kt");
+        }
+
         @TestMetadata("compiler/testData/ir/irText/declarations/annotations")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

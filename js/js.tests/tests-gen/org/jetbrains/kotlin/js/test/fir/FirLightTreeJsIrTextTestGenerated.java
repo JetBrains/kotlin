@@ -534,6 +534,12 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
             runTest("compiler/testData/ir/irText/declarations/typeAlias.kt");
         }
 
+        @Test
+        @TestMetadata("typeAliasOfPrimitiveTypeInVarargArgument.kt")
+        public void testTypeAliasOfPrimitiveTypeInVarargArgument() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/typeAliasOfPrimitiveTypeInVarargArgument.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/ir/irText/declarations/annotations")
         @TestDataPath("$PROJECT_ROOT")
