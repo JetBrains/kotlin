@@ -91,6 +91,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     }
 
     @Test
+    @TestMetadata("ClassTypeParameterAnnotation.kt")
+    public void testClassTypeParameterAnnotation() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ClassTypeParameterAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("CompanionObject.kt")
     public void testCompanionObject() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/CompanionObject.kt");
@@ -199,6 +205,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     }
 
     @Test
+    @TestMetadata("InterfaceTypeParameterAnnotation.kt")
+    public void testInterfaceTypeParameterAnnotation() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InterfaceTypeParameterAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("InvalidJavaIdentifierAsAnnotationArgument.kt")
     public void testInvalidJavaIdentifierAsAnnotationArgument() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InvalidJavaIdentifierAsAnnotationArgument.kt");
@@ -241,6 +253,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     }
 
     @Test
+    @TestMetadata("MethodTypeParameterAnnotation.kt")
+    public void testMethodTypeParameterAnnotation() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/MethodTypeParameterAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("NestedObjects.kt")
     public void testNestedObjects() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/NestedObjects.kt");
@@ -262,6 +280,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     @TestMetadata("PrivateObject.kt")
     public void testPrivateObject() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PrivateObject.kt");
+    }
+
+    @Test
+    @TestMetadata("PropertyTypeParameterAnnotation.kt")
+    public void testPropertyTypeParameterAnnotation() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PropertyTypeParameterAnnotation.kt");
     }
 
     @Test
@@ -558,6 +582,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
         }
 
         @Test
+        @TestMetadata("FunctionTypeParameterAnnotation.kt")
+        public void testFunctionTypeParameterAnnotation() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/FunctionTypeParameterAnnotation.kt");
+        }
+
+        @Test
         @TestMetadata("InternalFacadeClass.kt")
         public void testInternalFacadeClass() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/InternalFacadeClass.kt");
@@ -567,6 +597,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
         @TestMetadata("MultiFile.kt")
         public void testMultiFile() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/MultiFile.kt");
+        }
+
+        @Test
+        @TestMetadata("PropertyTypeParameterAnnotation.kt")
+        public void testPropertyTypeParameterAnnotation() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/PropertyTypeParameterAnnotation.kt");
         }
 
         @Test
