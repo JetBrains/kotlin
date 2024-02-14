@@ -26,8 +26,6 @@ Tower Data Context:
                     public? get(): <implicit>
     Element 7
         Scope: FirLocalScope
-            Properties:
-                FirPropertySymbol lval args: R|kotlin/Array<kotlin/String>|
     Element 8
         Context receivers:
             FirScriptSymbol context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -70,7 +68,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kts
         }
 
         [ResolvedTo(BODY_RESOLVE)] init {
-            R|<local>/args|
+            this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|
         }
 
         public? final? [ResolvedTo(RAW_FIR)] fun after_Fun(): R|kotlin/Unit| { LAZY_BLOCK }

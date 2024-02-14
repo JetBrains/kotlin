@@ -93,7 +93,7 @@ class FirScriptConfiguratorExtensionImpl(
                         buildProperty {
                             moduleData = session.moduleData
                             source = this@configure.source?.fakeElement(KtFakeSourceElementKind.ScriptParameter)
-                            origin = FirDeclarationOrigin.ScriptCustomization.Parameter
+                            origin = FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
                             // TODO: copy type parameters?
                             returnTypeRef = baseCtorParameter.returnTypeRef
                             name = baseCtorParameter.name

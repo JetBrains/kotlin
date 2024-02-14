@@ -555,7 +555,9 @@ open class FirDeclarationsResolveTransformer(
             .transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
 
         context.storeVariable(variable, session)
-        if (variable.origin != FirDeclarationOrigin.ScriptCustomization.Parameter) {
+        if (variable.origin != FirDeclarationOrigin.ScriptCustomization.Parameter &&
+            variable.origin != FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass)
+        {
             // script parameters should not be added to CFG to avoid graph building compilations
             dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
         }

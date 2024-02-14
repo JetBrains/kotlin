@@ -24,8 +24,6 @@ Tower Data Context:
                     public get(): <implicit>
     Element 7
         Scope: FirLocalScope
-            Properties:
-                FirPropertySymbol lval args: R|kotlin/Array<kotlin/String>|
     Element 8
         Context receivers:
             FirScriptSymbol context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

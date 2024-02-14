@@ -534,7 +534,11 @@ class BodyResolveContext(
         val statics = base
             .addNonLocalScopeIfNotNull(towerElementsForScript.staticScope)
 
-        val parameterScope = owner.parameters.fold(FirLocalScope(holder.session)) { scope, parameter ->
+        val parameterScope = owner.parameters.filter {
+            // for compatibility with old script resolve, the parameters that implicitly copied from the base class c-tor are ignored here
+            // this quirk should be removed after removing base class support (KT-60449)
+            it.origin != FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
+        }.fold(FirLocalScope(holder.session)) { scope, parameter ->
             scope.storeVariable(parameter, holder.session)
         }
 

@@ -1,11 +1,82 @@
-KtLocalVariableSymbol:
+KtKotlinPropertySymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(kotlin/script/templates/standard/ScriptTemplateWithArgs.args)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: [
+        KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/String
+      ]
+      type: kotlin/Array<kotlin/String>
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingFileSymbol: null
+    getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    getContainingModule: KtLibraryModule "Library kotlin-script-runtime"
+    deprecationStatus: null
+  callableIdIfNonLocal: kotlin/script/templates/standard/ScriptTemplateWithArgs.args
   contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: [
+        KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/String
+      ]
+      type: kotlin/Array<kotlin/String>
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+    getDispatchReceiver(): KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/script/templates/standard/ScriptTemplateWithArgs
+    getContainingFileSymbol: null
+    getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    getContainingModule: KtLibraryModule "Library kotlin-script-runtime"
+    deprecationStatus: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
   isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
   isVal: true
+  modality: FINAL
   name: args
-  origin: PLUGIN
+  origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
@@ -16,9 +87,19 @@ KtLocalVariableSymbol:
         type: kotlin/String
     ]
     type: kotlin/Array<kotlin/String>
-  symbolKind: LOCAL
+  setter: null
+  symbolKind: CLASS_MEMBER
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(scriptArgument.kts)
-  getContainingJvmClassName: null
-  getContainingModule: KtScriptModule "Script scriptArgument.kts"
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/script/templates/standard/ScriptTemplateWithArgs
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
+  getContainingModule: KtLibraryModule "Library kotlin-script-runtime"
   deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getArgs
+  javaSetterName: null
+  setterDeprecationStatus: null

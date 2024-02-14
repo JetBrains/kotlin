@@ -26,6 +26,12 @@ public class ScriptWithCustomDefBlackBoxCodegenTestGenerated extends AbstractScr
   }
 
   @Test
+  @TestMetadata("params.test.kts")
+  public void testParams_test() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/params.test.kts");
+  }
+
+  @Test
   @TestMetadata("simple.test.kts")
   public void testSimple_test() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/simple.test.kts");
