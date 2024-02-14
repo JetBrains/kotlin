@@ -185,8 +185,12 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         val inBlockModificationOwner = nonLocalDeclarationForLocalChange(element) ?: return ChangeType.OutOfBlock
 
         if (inBlockModificationOwner is KtCodeFragment) {
-            // All code fragment content is local
-            return ChangeType.InBlock(inBlockModificationOwner, project)
+            return if (handleCodeFragmentImportsChange(inBlockModificationOwner)) {
+                ChangeType.OutOfBlock
+            } else {
+                // All changes inside the code fragment are local
+                ChangeType.InBlock(inBlockModificationOwner, project)
+            }
         }
 
         val isOutOfBlockChange = element.isNewDirectChildOf(inBlockModificationOwner, modificationType)
@@ -196,6 +200,33 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
             !isOutOfBlockChange -> ChangeType.InBlock(inBlockModificationOwner, project)
             else -> ChangeType.OutOfBlock
         }
+    }
+
+    /**
+     * The function changes whether new import directives were added to the code fragment since the last invalidation event.
+     * While changes in the code fragment itself are local as only the body of 'FirCodeFragment' is changed,
+     * imports are projected to 'FirImports' which are outside the 'FirCodeFragment', and those additional imports won't be added to
+     * the 'FirFile' unless an out-of-block modification happens, causing re-creation of the whole 'FirFile'.
+     *
+     * Warning: the function is not pure, as it manipulates the import counter.
+     * Even if it returned 'true' once, consequent calls will most likely return 'false'.
+     *
+     * Note: because of the implementation, the first modification event in a code fragment will trigger the out-of-block event,
+     * as the user data is not set. Additional API in the 'KtCodeFragment' itself is needed to fix this.
+     *
+     * @return true if the imports changed in a code fragment since the last invalidation event.
+     */
+    private fun handleCodeFragmentImportsChange(codeFragment: KtCodeFragment): Boolean {
+        val currentImportCount = codeFragment.importDirectives.size
+        val lastImportCount = codeFragment.getUserData(cachedCodeFragmentImportCountKey)
+
+        /** In [KtCodeFragment], imports can only be added, and not removed/changed.  */
+        if (lastImportCount == null || lastImportCount != currentImportCount) {
+            codeFragment.putUserData(cachedCodeFragmentImportCountKey, currentImportCount)
+            return true
+        }
+
+        return false
     }
 
     /**
@@ -344,6 +375,8 @@ private sealed class ChangeType {
         override fun hashCode(): Int = blockOwner.hashCode()
     }
 }
+
+private val cachedCodeFragmentImportCountKey = Key.create<Int>("CACHED_CODE_FRAGMENT_IMPORTS")
 
 /**
  * The purpose of this property as user data is to avoid FIR building in case the [KtAnnotated]
