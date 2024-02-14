@@ -23,6 +23,7 @@ kotlin {
                 "org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi",
                 "org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi",
                 "org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi",
+                "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
             )
         )
     }
@@ -30,6 +31,7 @@ kotlin {
 
 apiValidation {
     publicMarkers.add("org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi")
+    publicMarkers.add("org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi")
     publicMarkers.add("org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl")
     nonPublicMarkers.add("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
     additionalSourceSets.add("common")
