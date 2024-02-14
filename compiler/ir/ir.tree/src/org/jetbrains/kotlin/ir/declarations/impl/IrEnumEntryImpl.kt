@@ -20,7 +20,7 @@ class IrEnumEntryImpl @IrImplementationDetail constructor(
     override var origin: IrDeclarationOrigin,
     override val symbol: IrEnumEntrySymbol,
     override var name: Name,
-    override val factory: IrFactory = IrFactoryImpl,
+    override val factory: IrFactory,
 ) : IrEnumEntry() {
     init {
         symbol.bind(this)

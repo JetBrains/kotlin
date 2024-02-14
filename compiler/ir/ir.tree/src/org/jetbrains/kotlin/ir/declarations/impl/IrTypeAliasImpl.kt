@@ -24,7 +24,7 @@ class IrTypeAliasImpl @IrImplementationDetail constructor(
     override var expandedType: IrType,
     override var isActual: Boolean,
     override var origin: IrDeclarationOrigin,
-    override val factory: IrFactory = IrFactoryImpl,
+    override val factory: IrFactory,
 ) : IrTypeAlias() {
     init {
         symbol.bind(this)

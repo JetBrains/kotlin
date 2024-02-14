@@ -29,8 +29,8 @@ class IrPropertyWithLateBindingImpl @IrImplementationDetail constructor(
     override var isDelegated: Boolean,
     override var isExternal: Boolean,
     override var isExpect: Boolean,
-    override var isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-    override val factory: IrFactory = IrFactoryImpl,
+    override var isFakeOverride: Boolean,
+    override val factory: IrFactory,
 ) : IrPropertyWithLateBinding() {
 
     private var _symbol: IrPropertySymbol? = null

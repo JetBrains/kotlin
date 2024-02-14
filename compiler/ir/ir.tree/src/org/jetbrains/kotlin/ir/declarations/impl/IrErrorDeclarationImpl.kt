@@ -21,7 +21,7 @@ class IrErrorDeclarationImpl @IrImplementationDetail constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     private val _descriptor: DeclarationDescriptor?,
-    override val factory: IrFactory = IrFactoryImpl,
+    override val factory: IrFactory,
 ) : IrErrorDeclaration() {
     override val descriptor: DeclarationDescriptor
         get() = _descriptor ?: this.toIrBasedDescriptor()

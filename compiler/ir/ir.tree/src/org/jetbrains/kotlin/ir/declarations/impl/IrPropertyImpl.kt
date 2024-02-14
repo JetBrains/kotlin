@@ -30,9 +30,9 @@ class IrPropertyImpl @IrImplementationDetail constructor(
     override var isDelegated: Boolean,
     override var isExternal: Boolean,
     override var isExpect: Boolean = false,
-    override var isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-    override var containerSource: DeserializedContainerSource? = null,
-    override val factory: IrFactory = IrFactoryImpl,
+    override var isFakeOverride: Boolean,
+    override var containerSource: DeserializedContainerSource?,
+    override val factory: IrFactory,
 ) : IrProperty() {
 
     init {

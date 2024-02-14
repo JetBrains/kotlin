@@ -21,8 +21,8 @@ class IrAnonymousInitializerImpl @IrImplementationDetail constructor(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrAnonymousInitializerSymbol,
-    override var isStatic: Boolean = false,
-    override val factory: IrFactory = IrFactoryImpl,
+    override var isStatic: Boolean,
+    override val factory: IrFactory,
 ) : IrAnonymousInitializer() {
     init {
         symbol.bind(this)

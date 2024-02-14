@@ -36,8 +36,8 @@ class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
     override var isOperator: Boolean,
     override var isInfix: Boolean,
     override var isExpect: Boolean,
-    override var isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-    override val factory: IrFactory = IrFactoryImpl
+    override var isFakeOverride: Boolean,
+    override val factory: IrFactory
 ) : IrFunctionWithLateBinding() {
 
     private var _symbol: IrSimpleFunctionSymbol? = null

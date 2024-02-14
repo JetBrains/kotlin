@@ -28,7 +28,7 @@ class IrFieldImpl @IrImplementationDetail constructor(
     override var isFinal: Boolean,
     override var isExternal: Boolean,
     override var isStatic: Boolean,
-    override val factory: IrFactory = IrFactoryImpl,
+    override val factory: IrFactory,
 ) : IrField() {
     init {
         symbol.bind(this)

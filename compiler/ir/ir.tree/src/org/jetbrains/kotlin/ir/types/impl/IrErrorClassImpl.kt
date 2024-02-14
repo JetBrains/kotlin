@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -23,7 +24,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 @OptIn(IrImplementationDetail::class)
 val IrErrorClassImpl = IrClassImpl(
     UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.ERROR_CLASS, IrClassSymbolImpl(),
-    Name.special("<error>"), ClassKind.CLASS, DescriptorVisibilities.DEFAULT_VISIBILITY, Modality.FINAL
+    Name.special("<error>"), ClassKind.CLASS, DescriptorVisibilities.DEFAULT_VISIBILITY, Modality.FINAL,
+    SourceElement.NO_SOURCE, IrFactoryImpl
 ).apply {
     parent = ErrorFile
 }

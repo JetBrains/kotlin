@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
@@ -297,7 +298,7 @@ class Fir2IrDeclarationStorage(
     ) : IrClassImpl(
         UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrClassSymbolImpl(), name,
         ClassKind.CLASS, DescriptorVisibilities.PUBLIC, Modality.FINAL,
-        source = source
+        source, IrFactoryImpl,
     )
 
     private class NonCachedSourceFacadeContainerSource(

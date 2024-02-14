@@ -55,10 +55,18 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         source: SourceElement,
     ): IrClass =
         IrClassImpl(
-            startOffset, endOffset, origin, symbol, name, kind, visibility, modality,
-            isCompanion, isInner, isData, isExternal, isValue, isExpect, isFun, hasEnumEntries, source,
+            startOffset, endOffset, origin, symbol, name, kind, visibility, modality, source,
             factory = this
-        )
+        ).apply {
+            this.isCompanion = isCompanion
+            this.isInner = isInner
+            this.isData = isData
+            this.isExternal = isExternal
+            this.isValue = isValue
+            this.isExpect = isExpect
+            this.isFun = isFun
+            this.hasEnumEntries = hasEnumEntries
+        }
 
     override fun createConstructor(
         startOffset: Int,

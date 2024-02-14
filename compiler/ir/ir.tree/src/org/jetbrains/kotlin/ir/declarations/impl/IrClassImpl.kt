@@ -25,16 +25,8 @@ open class IrClassImpl @IrImplementationDetail constructor(
     override var kind: ClassKind,
     override var visibility: DescriptorVisibility,
     override var modality: Modality,
-    override var isCompanion: Boolean = false,
-    override var isInner: Boolean = false,
-    override var isData: Boolean = false,
-    override var isExternal: Boolean = false,
-    override var isValue: Boolean = false,
-    override var isExpect: Boolean = false,
-    override var isFun: Boolean = false,
-    override var hasEnumEntries: Boolean = false,
-    override val source: SourceElement = SourceElement.NO_SOURCE,
-    override val factory: IrFactory = IrFactoryImpl
+    override val source: SourceElement,
+    override val factory: IrFactory,
 ) : IrClass() {
     init {
         symbol.bind(this)
@@ -64,4 +56,13 @@ open class IrClassImpl @IrImplementationDetail constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 
     override var sealedSubclasses: List<IrClassSymbol> = emptyList()
+
+    override var isCompanion: Boolean = false
+    override var isInner: Boolean = false
+    override var isData: Boolean = false
+    override var isExternal: Boolean = false
+    override var isValue: Boolean = false
+    override var isExpect: Boolean = false
+    override var isFun: Boolean = false
+    override var hasEnumEntries: Boolean = false
 }

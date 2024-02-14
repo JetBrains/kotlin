@@ -31,8 +31,8 @@ class IrConstructorImpl @IrImplementationDetail constructor(
     override var isExternal: Boolean,
     override var isPrimary: Boolean,
     override var isExpect: Boolean,
-    override var containerSource: DeserializedContainerSource? = null,
-    override val factory: IrFactory = IrFactoryImpl,
+    override var containerSource: DeserializedContainerSource?,
+    override val factory: IrFactory,
 ) : IrConstructor() {
     init {
         symbol.bind(this)

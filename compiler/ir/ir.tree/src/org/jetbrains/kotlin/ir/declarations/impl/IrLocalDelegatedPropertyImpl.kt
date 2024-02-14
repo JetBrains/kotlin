@@ -22,7 +22,7 @@ class IrLocalDelegatedPropertyImpl @IrImplementationDetail constructor(
     override var name: Name,
     override var type: IrType,
     override var isVar: Boolean,
-    override val factory: IrFactory = IrFactoryImpl,
+    override val factory: IrFactory,
 ) : IrLocalDelegatedProperty() {
     init {
         symbol.bind(this)
