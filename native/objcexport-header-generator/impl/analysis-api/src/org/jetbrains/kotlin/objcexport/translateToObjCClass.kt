@@ -8,10 +8,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.buildCompanionProperty
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.hasExportForCompilerAnnotation
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.needsCompanionProperty
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
