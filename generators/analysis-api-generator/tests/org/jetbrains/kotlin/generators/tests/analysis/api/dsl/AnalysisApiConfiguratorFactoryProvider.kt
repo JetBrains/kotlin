@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,10 +40,10 @@ object AnalysisApiConfiguratorFactoryProvider {
     }
 
     val allPossibleFactoryDataList: List<AnalysisApiTestConfiguratorFactoryData> = buildList {
-        FrontendKind.values().forEach { frontend ->
-            TestModuleKind.values().forEach { moduleKind ->
-                AnalysisSessionMode.values().forEach { analysisSessionMode ->
-                    AnalysisApiMode.values().forEach { analysisApiMode ->
+        FrontendKind.entries.forEach { frontend ->
+            TestModuleKind.entries.forEach { moduleKind ->
+                AnalysisSessionMode.entries.forEach { analysisSessionMode ->
+                    AnalysisApiMode.entries.forEach { analysisApiMode ->
                         add(AnalysisApiTestConfiguratorFactoryData(frontend, moduleKind, analysisSessionMode, analysisApiMode))
                     }
                 }

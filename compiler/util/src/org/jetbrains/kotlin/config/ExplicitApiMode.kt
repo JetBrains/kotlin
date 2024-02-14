@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,8 +11,8 @@ enum class ExplicitApiMode(val state: String) {
     WARNING("warning");
 
     companion object {
-        fun fromString(string: String): ExplicitApiMode? = values().find { it.state == string }
+        fun fromString(string: String): ExplicitApiMode? = entries.find { it.state == string }
 
-        fun availableValues() = values().joinToString(prefix = "{", postfix = "}") { it.state }
+        fun availableValues() = entries.joinToString(prefix = "{", postfix = "}") { it.state }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.StubUtils
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 enum class KotlinConstantValueKind {
     NULL, BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, DOUBLE, FLOAT, ENUM, KCLASS, STRING, ARRAY, UBYTE, USHORT, UINT, ULONG, ANNO;
@@ -24,7 +22,7 @@ enum class KotlinConstantValueKind {
 fun createConstantValue(dataStream: StubInputStream): ConstantValue<*>? {
     val kind = dataStream.readInt()
     if (kind == -1) return null
-    return when (KotlinConstantValueKind.values()[kind]) {
+    return when (KotlinConstantValueKind.entries[kind]) {
         KotlinConstantValueKind.NULL -> NullValue
         KotlinConstantValueKind.BOOLEAN -> BooleanValue(dataStream.readBoolean())
         KotlinConstantValueKind.CHAR -> CharValue(dataStream.readChar())

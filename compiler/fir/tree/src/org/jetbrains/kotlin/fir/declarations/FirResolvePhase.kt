@@ -183,8 +183,8 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
      */
     BODY_RESOLVE;
 
-    val next: FirResolvePhase get() = values()[ordinal + 1]
-    val previous: FirResolvePhase get() = values()[ordinal - 1]
+    val next: FirResolvePhase get() = entries[ordinal + 1]
+    val previous: FirResolvePhase get() = entries[ordinal - 1]
 
     companion object {
         // Short-cut

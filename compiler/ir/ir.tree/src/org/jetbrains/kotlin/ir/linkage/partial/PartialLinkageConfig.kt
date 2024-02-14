@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,7 +26,7 @@ enum class PartialLinkageMode(val isEnabled: Boolean) {
         val DEFAULT = ENABLE
 
         fun resolveMode(key: String): PartialLinkageMode? =
-            values().firstOrNull { entry -> entry.name.equals(key, ignoreCase = true) }
+            entries.firstOrNull { entry -> entry.name.equals(key, ignoreCase = true) }
     }
 }
 
@@ -37,7 +37,7 @@ enum class PartialLinkageLogLevel {
         val DEFAULT = INFO
 
         fun resolveLogLevel(key: String): PartialLinkageLogLevel? =
-            values().firstOrNull { entry -> entry.name.equals(key, ignoreCase = true) }
+            entries.firstOrNull { entry -> entry.name.equals(key, ignoreCase = true) }
     }
 }
 

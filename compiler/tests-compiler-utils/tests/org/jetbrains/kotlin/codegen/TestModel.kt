@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -277,7 +277,7 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
 
             fun getOpArgs() = line.substring(opIndex + 1).splitAndTrim()
 
-            val expectedState = DirtyFileState.values().find { it.str == op }
+            val expectedState = DirtyFileState.entries.find { it.str == op }
             if (expectedState != null) {
                 expectedFileStats[expectedState.str] = getOpArgs().toSet()
             } else {
