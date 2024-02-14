@@ -292,6 +292,15 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("samInterface"))
     }
 
+    /**
+     * Requires some fixes: KT-65800
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - simple data class`() {
+        doTest(headersTestDataDir.resolve("simpleDataClass"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()
