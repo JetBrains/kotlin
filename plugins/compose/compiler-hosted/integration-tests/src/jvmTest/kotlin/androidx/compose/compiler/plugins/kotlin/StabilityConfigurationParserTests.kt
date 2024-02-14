@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityConfigParser
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
@@ -122,6 +123,66 @@ class StabilityConfigurationParserTests {
     fun testIllegalCharacterThrows() = testConfigParsingThrows(
         """
             com.foo!.bar //comment
+        """.trimIndent()
+    )
+}
+
+private const val PATH_TO_CONFIG_FILES = "src/test/resources/testStabilityConfigFiles"
+class SingleStabilityConfigurationTest(useFir: Boolean) : AbstractIrTransformTest(useFir) {
+    override fun CompilerConfiguration.updateConfiguration() {
+        put(ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,
+            listOf("$PATH_TO_CONFIG_FILES/config1.conf")
+        )
+        put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, false)
+    }
+
+    @Test
+    fun testExternalTypeStable() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.Composable
+            import java.time.Instant
+
+            @Composable
+            fun SkippableComposable(list: List<String>) {
+                use(list)
+            }
+
+            @Composable
+            fun UnskippableComposable(instant: Instant) {
+                use(instant)
+            }
+        """.trimIndent(),
+        extra = """
+            fun use(foo: Any) {}
+        """.trimIndent()
+    )
+}
+
+class MultipleStabilityConfigurationTest(useFir: Boolean) : AbstractIrTransformTest(useFir) {
+    override fun CompilerConfiguration.updateConfiguration() {
+        put(ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,
+            listOf(
+                "$PATH_TO_CONFIG_FILES/config1.conf",
+                "$PATH_TO_CONFIG_FILES/config2.conf"
+            )
+        )
+        put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, false)
+    }
+
+    @Test
+    fun testExternalTypeStable() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.Composable
+            import java.time.Instant
+
+            @Composable
+            fun SkippableComposable(list: List<String>, instant: Instant) {
+                use(list)
+                use(instant)
+            }
+        """.trimIndent(),
+        extra = """
+            fun use(foo: Any) {}
         """.trimIndent()
     )
 }

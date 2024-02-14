@@ -1,0 +1,43 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import java.time.Instant
+
+@Composable
+fun SkippableComposable(list: List<String>, instant: Instant) {
+    use(list)
+    use(instant)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun SkippableComposable(list: List<String>, instant: Instant, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  val %dirty = %changed
+  if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(list)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b01110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(instant)) 0b00100000 else 0b00010000
+  }
+  if (%dirty and 0b01011011 != 0b00010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    use(list)
+    use(instant)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    SkippableComposable(list, instant, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

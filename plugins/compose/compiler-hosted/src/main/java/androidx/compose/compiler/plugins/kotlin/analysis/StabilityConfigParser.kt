@@ -26,8 +26,6 @@ interface StabilityConfigParser {
             if (filepath == null) return StabilityConfigParserImpl(emptyList())
 
             val confFile = File(filepath)
-            if (!confFile.exists()) return StabilityConfigParserImpl(emptyList())
-
             return StabilityConfigParserImpl(confFile.readLines())
         }
 
