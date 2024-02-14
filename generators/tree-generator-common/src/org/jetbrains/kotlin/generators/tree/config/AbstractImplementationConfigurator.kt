@@ -244,16 +244,16 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
         /**
          * Specifies that the default value of each field of [fields] in this implementation class should be [emptyList].
          *
-         * Always forces generation of a getter-only computed property.
+         * @param withGetter If `true`, the field will be generated as a computed property instead of stored one.
          */
-        fun defaultEmptyList(vararg fields: String) {
+        fun defaultEmptyList(vararg fields: String, withGetter: Boolean = false) {
             for (field in fields) {
                 require(getField(field).origin is ListField) {
                     "$field is list field"
                 }
                 default(field) {
                     value = "emptyList()"
-                    withGetter = true
+                    this.withGetter = withGetter
                 }
             }
         }

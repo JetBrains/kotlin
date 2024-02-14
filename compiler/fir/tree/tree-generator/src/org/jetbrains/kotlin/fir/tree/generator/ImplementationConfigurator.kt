@@ -73,7 +73,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         fun ImplementationContext.commonAnnotationConfig() {
-            defaultEmptyList("annotations")
+            defaultEmptyList("annotations", withGetter = true)
             default("coneTypeOrNull") {
                 value = "annotationTypeRef.coneTypeOrNull"
                 withGetter = true
@@ -203,8 +203,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         val emptyExpressionBlock = impl(block, "FirEmptyExpressionBlock") {
             noSource()
-            defaultEmptyList("statements")
-            defaultEmptyList("annotations")
+            defaultEmptyList("statements", withGetter = true)
+            defaultEmptyList("annotations", withGetter = true)
             publicImplementation()
             defaultNull("coneTypeOrNull")
         }
@@ -635,7 +635,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "typeParameters",
             implementationPredicate = { it.typeName in implementationsWithoutStatusAndTypeParameters }
         ) {
-            defaultEmptyList(it)
+            defaultEmptyList(it, withGetter = true)
             additionalImports(resolvedDeclarationStatusImplType)
         }
     }
