@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
-private val junit5Classpath = System.getProperty("junit5.classpath").split(",")
+private val junit5Classpath = System.getProperty("junit5.classpath")?.split(File.pathSeparator)?.map(::File)
+    ?: error("Unable to get a valid classpath from 'junit5.classpath' property")
 
 fun TestConfigurationBuilder.enableJunit() {
     useConfigurators(::JunitEnvironmentConfigurator)
@@ -24,7 +25,7 @@ fun TestConfigurationBuilder.enableJunit() {
 class JunitEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         if (PowerAssertConfigurationDirectives.WITH_JUNIT5 in module.directives) {
-            for (file in junit5Classpath.map { File(it) }) {
+            for (file in junit5Classpath) {
                 configuration.addJvmClasspathRoot(file)
             }
         }
@@ -34,7 +35,7 @@ class JunitEnvironmentConfigurator(testServices: TestServices) : EnvironmentConf
 class JunitRuntimeClassPathProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
     override fun runtimeClassPaths(module: TestModule): List<File> {
         if (PowerAssertConfigurationDirectives.WITH_JUNIT5 in module.directives) {
-            return junit5Classpath.map { File(it) }
+            return junit5Classpath
         } else {
             return emptyList()
         }
