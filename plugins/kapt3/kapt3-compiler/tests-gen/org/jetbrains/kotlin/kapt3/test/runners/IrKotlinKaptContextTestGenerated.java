@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.kapt3.test.runners;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,7 @@ import java.util.regex.Pattern;
 public class IrKotlinKaptContextTestGenerated extends AbstractIrKotlinKaptContextTest {
     @Test
     public void testAllFilesPresentInKotlinRunner() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-compiler/testData/kotlinRunner"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-compiler/testData/kotlinRunner"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test

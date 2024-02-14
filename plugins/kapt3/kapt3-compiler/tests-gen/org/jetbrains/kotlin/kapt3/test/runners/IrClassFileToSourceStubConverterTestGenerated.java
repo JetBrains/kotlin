@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.kapt3.test.runners;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,7 +39,7 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
 
     @Test
     public void testAllFilesPresentInConverter() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-compiler/testData/converter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-compiler/testData/converter"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
