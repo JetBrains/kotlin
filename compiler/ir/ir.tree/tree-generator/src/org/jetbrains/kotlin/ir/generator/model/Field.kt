@@ -73,12 +73,13 @@ class SingleField(
     name: String,
     override var typeRef: TypeRefWithNullability,
     mutable: Boolean,
+    override val isChild: Boolean,
 ) : Field(name, mutable) {
 
     override fun replaceType(newType: TypeRefWithNullability) =
-        SingleField(name, newType, isMutable).also(::updateFieldsInCopy)
+        SingleField(name, newType, isMutable, isChild).also(::updateFieldsInCopy)
 
-    override fun internalCopy() = SingleField(name, typeRef, isMutable)
+    override fun internalCopy() = SingleField(name, typeRef, isMutable, isChild)
 }
 
 class ListField(
@@ -87,6 +88,7 @@ class ListField(
     private val isNullable: Boolean,
     override val listType: ClassRef<PositionTypeParameterRef>,
     mutable: Boolean,
+    override val isChild: Boolean,
 ) : Field(name, mutable), AbstractListField {
 
     override val typeRef: ClassRef<PositionTypeParameterRef>
@@ -94,7 +96,7 @@ class ListField(
 
     override fun replaceType(newType: TypeRefWithNullability) = copy()
 
-    override fun internalCopy() = ListField(name, baseType, isNullable, listType, isMutable)
+    override fun internalCopy() = ListField(name, baseType, isNullable, listType, isMutable, isChild)
 
     enum class Mutability {
         Var,

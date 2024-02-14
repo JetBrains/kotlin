@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.generators.tree.*
 // ----------- Simple field -----------
 
 fun field(name: String, type: TypeRefWithNullability, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return SimpleField(name, type.copy(nullable), withReplace)
+    return SimpleField(name, type.copy(nullable), withReplace = withReplace)
 }
 
 fun field(type: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return SimpleField(type.simpleName.replaceFirstChar(Char::lowercaseChar), type.copy(nullable), withReplace)
+    return SimpleField(type.simpleName.replaceFirstChar(Char::lowercaseChar), type.copy(nullable), withReplace = withReplace)
 }
 
 fun booleanField(name: String, withReplace: Boolean = false): Field {
@@ -31,22 +31,23 @@ fun intField(name: String, withReplace: Boolean = false): Field {
 
 // ----------- Fir field -----------
 
-fun field(name: String, element: ElementOrRef, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return FirField(name, element.copy(nullable), withReplace)
+fun field(name: String, element: ElementOrRef, nullable: Boolean = false, withReplace: Boolean = false, isChild: Boolean = true): Field {
+    return FirField(name, element.copy(nullable), withReplace = withReplace, isChild = isChild)
 }
 
-fun field(element: Element, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return FirField(element.name.replaceFirstChar(Char::lowercaseChar), element.copy(nullable), withReplace)
+fun field(element: Element, nullable: Boolean = false, withReplace: Boolean = false, isChild: Boolean = true): Field {
+    return FirField(element.name.replaceFirstChar(Char::lowercaseChar), element.copy(nullable), withReplace = withReplace, isChild = isChild)
 }
 
 // ----------- Field list -----------
 
-fun fieldList(name: String, type: TypeRef, withReplace: Boolean = false, useMutableOrEmpty: Boolean = false): Field {
-    return FieldList(name, type, withReplace, useMutableOrEmpty)
+fun fieldList(name: String, type: TypeRef, withReplace: Boolean = false, useMutableOrEmpty: Boolean = false, isChild: Boolean = true): Field {
+    return FieldList(name, type, withReplace = withReplace, isChild = isChild, useMutableOrEmpty = useMutableOrEmpty)
 }
 
-fun fieldList(elementOrRef: ElementOrRef, withReplace: Boolean = false, useMutableOrEmpty: Boolean = false): Field {
-    return FieldList(elementOrRef.element.name.replaceFirstChar(Char::lowercaseChar) + "s", elementOrRef, withReplace, useMutableOrEmpty)
+fun fieldList(elementOrRef: ElementOrRef, withReplace: Boolean = false, useMutableOrEmpty: Boolean = false, isChild: Boolean = true): Field {
+    val name = elementOrRef.element.name.replaceFirstChar(Char::lowercaseChar) + "s"
+    return FieldList(name, elementOrRef, withReplace = withReplace, isChild = isChild, useMutableOrEmpty = useMutableOrEmpty)
 }
 
 // ----------- Field set -----------

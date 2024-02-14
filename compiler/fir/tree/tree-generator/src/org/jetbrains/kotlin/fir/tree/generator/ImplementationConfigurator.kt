@@ -66,10 +66,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 delegateCall = "shortName()"
                 withGetter = true
             }
-
-            default("delegate") {
-                isChild = false
-            }
         }
 
         fun ImplementationContext.commonAnnotationConfig() {
@@ -87,16 +83,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(annotationCall) {
             commonAnnotationConfig()
-            default("argumentMapping") {
-                isChild = false
-            }
         }
 
         impl(errorAnnotationCall) {
             commonAnnotationConfig()
-            default("argumentMapping") {
-                isChild = false
-            }
             default("annotationResolvePhase") {
                 value = "FirAnnotationResolvePhase.Types"
             }
@@ -512,9 +502,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(resolvedTypeRef) {
             publicImplementation()
-            default("delegatedTypeRef") {
-                isChild = false
-            }
         }
 
         impl(errorExpression) {

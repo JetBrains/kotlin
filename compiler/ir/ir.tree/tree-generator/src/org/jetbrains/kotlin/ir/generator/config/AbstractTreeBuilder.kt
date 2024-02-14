@@ -78,8 +78,7 @@ abstract class AbstractTreeBuilder {
         isChild: Boolean = true,
         initializer: SingleField.() -> Unit = {}
     ): SingleField {
-        return SingleField(name, type.copy(nullable), mutable).apply {
-            this.isChild = isChild
+        return SingleField(name, type.copy(nullable), mutable, isChild).apply {
             initializer()
         }
     }
@@ -103,8 +102,8 @@ abstract class AbstractTreeBuilder {
             listType = listType,
             isNullable = nullable,
             mutable = mutability == ListField.Mutability.Var,
+            isChild = isChild,
         ).apply(initializer).apply {
-            this.isChild = isChild
             initializer()
         }
     }

@@ -528,7 +528,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         resolvedImport.configure {
-            +field("delegate", import)
+            +field("delegate", import, isChild = false)
             +field("packageFqName", fqNameType)
             +field("relativeParentClassName", fqNameType, nullable = true)
             +field("resolvedParentClassId", classIdType, nullable = true)
@@ -547,7 +547,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         annotationCall.configure {
-            +field("argumentMapping", annotationArgumentMapping, withReplace = true)
+            +field("argumentMapping", annotationArgumentMapping, withReplace = true, isChild = false)
             +field("annotationResolvePhase", annotationResolvePhaseType, withReplace = true)
             +field("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)).apply {
                 withBindThis = false
@@ -555,7 +555,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         errorAnnotationCall.configure {
-            +field("argumentMapping", annotationArgumentMapping, withReplace = true)
+            +field("argumentMapping", annotationArgumentMapping, withReplace = true, isChild = false)
         }
 
         annotationArgumentMapping.configure {
@@ -721,7 +721,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         resolvedTypeRef.configure {
             +field("type", coneKotlinTypeType)
-            +field("delegatedTypeRef", typeRef, nullable = true)
+            +field("delegatedTypeRef", typeRef, nullable = true, isChild = false)
             element.otherParents.add(typeRefMarkerType)
         }
 
