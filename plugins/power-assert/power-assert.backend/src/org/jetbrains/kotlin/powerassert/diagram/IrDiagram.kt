@@ -192,7 +192,6 @@ private fun memberAccessOffset(
             ?: return 0
         val expressionInfo = sourceFile.getSourceRangeInfo(expression)
         var offset = receiver.endOffset - expressionInfo.startOffset + 1
-        if (receiver is IrConst<*> && receiver.kind == IrConstKind.String) offset++ // String constants don't include the quote
         if (offset < 0 || offset >= source.length) return 0 // infix function called using non-infix syntax
 
         // Continue until there is a non-whitespace character
