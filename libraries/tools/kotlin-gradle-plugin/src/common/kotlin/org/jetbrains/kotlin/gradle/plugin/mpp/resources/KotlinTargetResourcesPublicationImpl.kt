@@ -11,6 +11,8 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -27,6 +29,12 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
     val project: Project
 ) : KotlinTargetResourcesPublication {
 
+    private val targetsThatSupportPublication = listOf(
+        KotlinJsIrTarget::class,
+        KotlinNativeTarget::class,
+        KotlinJvmTarget::class,
+    )
+
     private val targetToResourcesMap: MutableMap<KotlinTarget, KotlinTargetResourcesPublication.TargetResources> = mutableMapOf()
 
     private val targetResourcesSubscribers: MutableMap<KotlinTarget, MutableList<(KotlinTargetResourcesPublication.TargetResources) -> (Unit)>> = mutableMapOf()
@@ -40,6 +48,34 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
     }
 
 
+    override fun canPublishResources(target: KotlinTarget): Boolean {
+        if (targetsThatSupportPublication.none { it.isInstance(target) }) return false
+        return true
+    }
+
+    override fun publishResourcesAsKotlinComponent(
+        target: KotlinTarget,
+        resourcePathForSourceSet: (KotlinSourceSet) -> (KotlinTargetResourcesPublication.ResourceRoot),
+        relativeResourcePlacement: Provider<File>,
+    ) {
+        if (!canPublishResources(target)) {
+            target.project.reportDiagnostic(KotlinToolingDiagnostics.ResourceMayNotBePublishedForTarget(target.name))
+            return
+        }
+        if (targetToResourcesMap[target] != null) {
+            target.project.reportDiagnostic(KotlinToolingDiagnostics.ResourcePublishedMoreThanOncePerTarget(target.name))
+            return
+        }
+
+        val resources = KotlinTargetResourcesPublication.TargetResources(
+            resourcePathForSourceSet = resourcePathForSourceSet,
+            relativeResourcePlacement = relativeResourcePlacement,
+        )
+        targetToResourcesMap[target] = resources
+        targetResourcesSubscribers[target].orEmpty().forEach { notify ->
+            notify(resources)
+        }
+    }
     internal companion object {
         const val MULTIPLATFORM_RESOURCES_DIRECTORY = "kotlin-multiplatform-resources"
     }
