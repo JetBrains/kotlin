@@ -6,11 +6,7 @@ package kotlin.native
 
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.concurrent.InvalidMutabilityException
-import kotlin.native.internal.ExportForCppRuntime
-import kotlin.native.internal.GCUnsafeCall
-import kotlin.native.internal.UnhandledExceptionHookHolder
-import kotlin.native.internal.runUnhandledExceptionHook
-import kotlin.native.internal.ReportUnhandledException
+import kotlin.native.internal.*
 
 /**
  * Initializes Kotlin runtime for the current thread, if not inited already.
@@ -80,6 +76,7 @@ public fun getUnhandledExceptionHook(): ReportUnhandledExceptionHook? {
 @ExperimentalNativeApi
 @SinceKotlin("1.6")
 @GCUnsafeCall("Kotlin_processUnhandledException")
+@Escapes(0b01) // throwable may be passed to the user code via unhandled exception hook.
 public external fun processUnhandledException(throwable: Throwable): Unit
 
 /*
@@ -91,6 +88,7 @@ public external fun processUnhandledException(throwable: Throwable): Unit
 @ExperimentalNativeApi
 @SinceKotlin("1.6")
 @GCUnsafeCall("Kotlin_terminateWithUnhandledException")
+// No need to mark throwable as @Escapes because this function never returns.
 public external fun terminateWithUnhandledException(throwable: Throwable): Nothing
 
 /**
