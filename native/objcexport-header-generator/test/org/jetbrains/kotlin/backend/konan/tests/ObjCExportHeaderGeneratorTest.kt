@@ -282,6 +282,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("anonymousFunctions"))
     }
 
+    @Test
+    fun `test - sam interface`() {
+        doTest(headersTestDataDir.resolve("samInterface"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()
