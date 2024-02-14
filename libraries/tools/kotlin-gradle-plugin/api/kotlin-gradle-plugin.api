@@ -907,6 +907,11 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotli
 	public static final fun sourcesJarTask (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/resources/KotlinTargetResourcesPublication {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/KotlinTargetResourcesPublication$Companion;
+	public static final field EXTENSION_NAME Ljava/lang/String;
+}
+
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier {
 }
 
