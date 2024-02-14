@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXCodeSetu
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.DeprecatedMppGradlePropertiesMigrationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.RegisterMultiplatformResourcesPublicationExtensionAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformJvmResourcesPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinMultiplatformSourceSetSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.LanguageSettingsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.statistics.MultiplatformBuildStatsReportSetupAction
@@ -75,6 +76,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, KotlinLLDBScriptSetupAction)
             register(project, ExcludeDefaultPlatformDependenciesFromKotlinNativeCompileTasks)
             register(project, RegisterMultiplatformResourcesPublicationExtensionAction)
+            register(project, SetUpMultiplatformJvmResourcesPublicationAction)
         }
     }
 
