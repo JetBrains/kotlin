@@ -28132,6 +28132,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/jvmField/kt48295a.kt");
         }
 
+        @TestMetadata("noClashWithInheritedJavaMethod.kt")
+        public void testNoClashWithInheritedJavaMethod() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmField/noClashWithInheritedJavaMethod.kt");
+        }
+
         @TestMetadata("publicField.kt")
         public void testPublicField() throws Exception {
             runTest("compiler/testData/codegen/box/jvmField/publicField.kt");

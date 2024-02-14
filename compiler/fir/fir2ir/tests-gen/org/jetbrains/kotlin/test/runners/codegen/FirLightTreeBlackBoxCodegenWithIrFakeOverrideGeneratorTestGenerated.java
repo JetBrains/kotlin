@@ -33074,6 +33074,12 @@ public class FirLightTreeBlackBoxCodegenWithIrFakeOverrideGeneratorTestGenerated
         }
 
         @Test
+        @TestMetadata("noClashWithInheritedJavaMethod.kt")
+        public void testNoClashWithInheritedJavaMethod() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmField/noClashWithInheritedJavaMethod.kt");
+        }
+
+        @Test
         @TestMetadata("publicField.kt")
         public void testPublicField() throws Exception {
             runTest("compiler/testData/codegen/box/jvmField/publicField.kt");
