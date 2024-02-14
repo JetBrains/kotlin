@@ -54,6 +54,9 @@ abstract class AbstractKotlinTarget(
     override val sourcesElementsConfigurationName: String
         get() = disambiguateName("sourcesElements")
 
+    override val resourcesElementsConfigurationName: String
+        get() = disambiguateName("resourcesElements")
+
     override val artifactsTaskName: String
         get() = disambiguateName("jar")
 

@@ -36,6 +36,7 @@ object KotlinUsages {
      */
     const val KOTLIN_COMMONIZED_CINTEROP = "kotlin-commonized-cinterop"
     const val KOTLIN_SOURCES = "kotlin-sources"
+    const val KOTLIN_RESOURCES = "kotlin-resources"
 
     // Following two constants were removed in Gradle 8.0 from 'Usages' class
     private const val JAVA_RUNTIME_CLASSES = "java-runtime-classes"

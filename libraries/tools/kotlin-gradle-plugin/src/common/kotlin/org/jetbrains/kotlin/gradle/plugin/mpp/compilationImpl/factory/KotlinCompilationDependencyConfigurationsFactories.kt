@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 
+import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.configureResourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.javaSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.utils.*
@@ -198,6 +201,21 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         description = "Kotlin compiler plugins for $compilation"
     }
 
+    val resourcesConfiguration = target.project.configurations.maybeCreate(
+        lowerCamelCaseName(
+            target.disambiguationClassifier, "ResourcesPath"
+        )
+    ).apply {
+        extendsFrom(runtimeOnlyConfiguration)
+        extendsFrom(implementationConfiguration)
+        extendsFrom(apiConfiguration)
+
+        isVisible = false
+        isCanBeConsumed = false
+
+        configureResourcesPublicationAttributes(target)
+    }
+
     return DefaultKotlinCompilationConfigurationsContainer(
         deprecatedCompileConfiguration = deprecatedCompileConfiguration,
         deprecatedRuntimeConfiguration = deprecatedRuntimeConfiguration,
@@ -208,6 +226,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         compileDependencyConfiguration = compileDependencyConfiguration,
         runtimeDependencyConfiguration = runtimeDependencyConfiguration,
         hostSpecificMetadataConfiguration = hostSpecificMetadataConfiguration,
-        pluginConfiguration = pluginConfiguration
+        pluginConfiguration = pluginConfiguration,
+        resourcesConfiguration = resourcesConfiguration,
     )
 }
