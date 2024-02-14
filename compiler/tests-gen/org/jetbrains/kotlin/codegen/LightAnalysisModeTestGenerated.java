@@ -16645,6 +16645,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/smartCastToInvisibleClassMember.kt");
         }
 
+        @TestMetadata("sourceBinarySource.kt")
+        public void testSourceBinarySource() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/sourceBinarySource.kt");
+        }
+
         @TestMetadata("StackOverflowInAnnotationLoader.kt")
         public void testStackOverflowInAnnotationLoader() throws Exception {
             runTest("compiler/testData/codegen/box/fir/StackOverflowInAnnotationLoader.kt");

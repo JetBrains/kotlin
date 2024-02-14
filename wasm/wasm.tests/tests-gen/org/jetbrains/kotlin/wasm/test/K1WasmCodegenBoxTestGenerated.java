@@ -14746,6 +14746,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
         }
 
         @Test
+        @TestMetadata("sourceBinarySource.kt")
+        public void testSourceBinarySource() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/sourceBinarySource.kt");
+        }
+
+        @Test
         @TestMetadata("starProjectionLambdaNullReturn.kt")
         public void testStarProjectionLambdaNullReturn() throws Exception {
             runTest("compiler/testData/codegen/box/fir/starProjectionLambdaNullReturn.kt");

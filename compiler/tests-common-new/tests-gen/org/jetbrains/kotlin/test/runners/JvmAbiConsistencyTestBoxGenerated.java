@@ -19978,6 +19978,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
         }
 
         @Test
+        @TestMetadata("sourceBinarySource.kt")
+        public void testSourceBinarySource() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/sourceBinarySource.kt");
+        }
+
+        @Test
         @TestMetadata("StackOverflowInAnnotationLoader.kt")
         public void testStackOverflowInAnnotationLoader() throws Exception {
             runTest("compiler/testData/codegen/box/fir/StackOverflowInAnnotationLoader.kt");
