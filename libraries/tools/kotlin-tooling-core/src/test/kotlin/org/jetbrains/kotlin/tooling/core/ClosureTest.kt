@@ -348,7 +348,7 @@ class ClosureTest {
     }
 
     @Test
-    fun `withExplicitBfsDepthClosure on List`() {
+    fun `withClosureGroupingByDistance on List`() {
         val a = Node("a")
         val b = Node("b")
         val c = Node("c")
@@ -374,29 +374,29 @@ class ClosureTest {
                 listOf("b", "c", "f", "g"),
                 listOf("d"),
             ),
-            listOf(a, e).withExplicitBfsDepthClosure<Node> { it.children }.map { it.map { it.value } }
+            listOf(a, e).withClosureGroupingByDistance<Node> { it.children }.map { it.map { it.value } }
         )
     }
 
 
     @Test
-    fun `withExplicitBfsDepthClosure on emptyList`() {
+    fun `withClosureGroupingByDistance on emptyList`() {
         assertSame(
-            emptySet(), listOf<Node>().withExplicitBfsDepthClosure<Node> { it.children },
+            emptyList(), listOf<Node>().withClosureGroupingByDistance<Node> { it.children },
             "Expected no Set being allocated on empty closure"
         )
     }
 
     @Test
-    fun `withExplicitBfsDepthClosure with no further nodes`() {
+    fun `withClosureGroupingByDistance with no further nodes`() {
         assertEquals(
             listOf(listOf("a", "b")),
-            listOf(Node("a"), Node("b")).withExplicitBfsDepthClosure<Node> { it.children }.map { it.map { it.value } }
+            listOf(Node("a"), Node("b")).withClosureGroupingByDistance<Node> { it.children }.map { it.map { it.value } }
         )
     }
 
     @Test
-    fun `withExplicitBfsDepthClosure handles loop and self references`() {
+    fun `withClosureGroupingByDistance handles loop and self references`() {
         val nodeA = Node("a")
         val nodeB = Node("b")
         val nodeC = Node("c")
@@ -413,7 +413,7 @@ class ClosureTest {
         // add loop from c -> a
         nodeC.children.add(nodeA)
 
-        val closure = listOf(nodeA).withExplicitBfsDepthClosure { it.children }.map { it.map { it } }
+        val closure = listOf(nodeA).withClosureGroupingByDistance { it.children }.map { it.map { it } }
         assertEquals(
             listOf(
                 listOf(nodeA),
@@ -421,7 +421,7 @@ class ClosureTest {
                 listOf(nodeC),
                 listOf(nodeD)
             ), closure,
-            "Expected withExplicitBfsDepthClosure to be robust against loops and self references"
+            "Expected withClosureGroupingByDistance to be robust against loops and self references"
         )
     }
 

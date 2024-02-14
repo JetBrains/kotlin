@@ -144,28 +144,24 @@ inline fun <reified T : Any> T.withLinearClosure(next: (T) -> T?): Set<T> {
  * Similar to [closure], but the result is returned in explicit BFS depth order starting with the receiver
  * @see closure
  */
-inline fun <reified T> Iterable<T>.withExplicitBfsDepthClosure(edges: (T) -> Iterable<T>): Set<Set<T>> {
+inline fun <reified T> Iterable<T>.withClosureGroupingByDistance(edges: (T) -> Iterable<T>): List<Set<T>> {
     val dequeue = if (this is Collection) {
-        if (this.isEmpty()) return emptySet()
+        if (this.isEmpty()) return emptyList()
         createDequeue(this)
     } else createDequeueFromIterable(this)
 
     val allElements = createResultSet<T>(dequeue.size)
-    var level = createResultSet<T>()
-    val results = createResultSet<MutableSet<T>>()
+    val results = mutableListOf<MutableSet<T>>()
 
     while (dequeue.isNotEmpty()) {
+        results.add(createResultSet(dequeue.size))
         var levelSize = dequeue.size
         while (levelSize != 0) {
             levelSize -= 1
             val element = dequeue.removeAt(0)
-            if (allElements.add(element) && level.add(element)) {
+            if (allElements.add(element) && results.last().add(element)) {
                 dequeue.addAll(edges(element))
             }
-        }
-        results.add(level)
-        if (dequeue.isNotEmpty()) {
-            level = createResultSet()
         }
     }
     return results
