@@ -832,6 +832,7 @@ tasks {
         dependsOn(":kotlin-scripting-common:test")
         dependsOn(":kotlin-scripting-jvm:test")
         dependsOn(":kotlin-scripting-jvm-host-test:test")
+        dependsOn(":plugins:scripting:scripting-tests:test")
         dependsOn(":kotlin-scripting-dependencies:test")
         dependsOn(":kotlin-scripting-dependencies-maven:test")
         dependsOn(":kotlin-scripting-dependencies-maven-all:test")
