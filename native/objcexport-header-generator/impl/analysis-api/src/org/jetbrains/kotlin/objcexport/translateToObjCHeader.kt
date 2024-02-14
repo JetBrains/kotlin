@@ -61,7 +61,7 @@ fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
                     }
 
                     symbol.getSuperClassSymbolNotAny()?.let { superClassSymbol ->
-                        process(superClassSymbol, true)
+                        result.addAll(process(superClassSymbol, true))
                     }
 
                     result.add(translatedObjCClassOrProtocol)

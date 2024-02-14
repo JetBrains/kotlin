@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.objcexport
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
@@ -29,9 +30,11 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
     val superProtocols: List<String> = superProtocols()
     val constructors = getMemberScope().getConstructors().filter { !it.hasExportForCompilerAnnotation }
 
-    val members = getMemberScope().getCallableSymbols().plus(constructors)
+    val members = getMemberScope().getCallableSymbols()
+        .plus(constructors)
         .sortedWith(StableCallableOrder)
         .flatMap { it.translateToObjCExportStubs() }
+        .plus(getEnumMembers())
         .toMutableList()
 
     if (needsCompanionProperty) members.add(buildCompanionProperty())

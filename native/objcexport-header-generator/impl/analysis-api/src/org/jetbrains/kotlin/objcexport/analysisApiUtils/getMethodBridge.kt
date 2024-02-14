@@ -1,10 +1,7 @@
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.backend.konan.KonanPrimitiveType
@@ -35,7 +32,7 @@ internal fun KtFunctionLikeSymbol.getFunctionMethodBridge(): MethodBridge {
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtPropertySymbol.getPropertyMethodBridge(): MethodBridge {
+internal fun KtVariableLikeSymbol.getPropertyMethodBridge(): MethodBridge {
     return MethodBridge(
         bridgeReturnType(),
         receiverType,
