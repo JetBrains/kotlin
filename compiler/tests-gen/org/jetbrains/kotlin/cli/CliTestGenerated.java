@@ -755,6 +755,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/jdkRelease.args");
     }
 
+    @TestMetadata("jdkRelease6WithJvmTarget8Jdk11.args")
+    public void testJdkRelease6WithJvmTarget8Jdk11() {
+      runTest("compiler/testData/cli/jvm/jdkRelease6WithJvmTarget8Jdk11.args");
+    }
+
+    @TestMetadata("jdkRelease6WithJvmTarget8Jdk8.args")
+    public void testJdkRelease6WithJvmTarget8Jdk8() {
+      runTest("compiler/testData/cli/jvm/jdkRelease6WithJvmTarget8Jdk8.args");
+    }
+
     @TestMetadata("jdkRelease6WithoutExplicitJvmTarget.args")
     public void testJdkRelease6WithoutExplicitJvmTarget() {
       runTest("compiler/testData/cli/jvm/jdkRelease6WithoutExplicitJvmTarget.args");
