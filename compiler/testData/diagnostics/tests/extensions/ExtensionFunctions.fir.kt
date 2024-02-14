@@ -61,7 +61,7 @@ import outer.*
 
             val command = parse("")
 
-            command.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>foo<!>
+            command.foo
 
             command<!UNSAFE_CALL!>.<!>equals(null)
             command?.equals(null)

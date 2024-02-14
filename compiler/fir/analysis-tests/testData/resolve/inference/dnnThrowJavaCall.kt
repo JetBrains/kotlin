@@ -33,5 +33,5 @@ public interface Project {
 import java.io.File
 
 fun getExcludedDirs(project: Project, excludedProjects: List<Project>): List<File> {
-    return project.plugins.findPlugin(IdeaPlugin::class.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>java<!>)?.excludeDirs?.toList() ?: emptyList()
+    return project.plugins.findPlugin(IdeaPlugin::class.java)?.excludeDirs?.toList() ?: emptyList()
 }

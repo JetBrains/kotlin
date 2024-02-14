@@ -7,10 +7,10 @@ class A<T> : ArrayList<T>() {
 
 fun foo(x: List<String>, y: LinkedList<String>, z: A<String>) {
     x.<!UNRESOLVED_REFERENCE!>getFirst<!>()
-    x.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, FUNCTION_CALL_EXPECTED!>first<!>
+    x.<!FUNCTION_CALL_EXPECTED!>first<!>
     x.first() // stdlib extension on List
     x.<!UNRESOLVED_REFERENCE!>getLast<!>()
-    x.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, FUNCTION_CALL_EXPECTED!>last<!>
+    x.<!FUNCTION_CALL_EXPECTED!>last<!>
     x.last()
 
     y.<!DEPRECATION!>getFirst<!>()
@@ -21,9 +21,9 @@ fun foo(x: List<String>, y: LinkedList<String>, z: A<String>) {
     y.last()
 
     z.<!DEPRECATION!>getFirst<!>()
-    z.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, FUNCTION_CALL_EXPECTED!>first<!>
+    z.<!FUNCTION_CALL_EXPECTED!>first<!>
     z.first()
     z.<!DEPRECATION!>getLast<!>()
-    z.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, FUNCTION_CALL_EXPECTED!>last<!>
+    z.<!FUNCTION_CALL_EXPECTED!>last<!>
     z.last()
 }

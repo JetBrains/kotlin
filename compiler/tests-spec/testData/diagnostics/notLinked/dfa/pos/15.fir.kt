@@ -24,9 +24,9 @@ fun case_1() {
         if (b != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>b<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>b<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>b<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>b<!>.propT
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>b<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>b<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>b<!>.propNullableT
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>b<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>b<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>b<!>.funAny()
@@ -136,9 +136,9 @@ fun case_8() {
             if (z != null) {
                 <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*>? & java.io.Serializable? & kotlin.Comparable<*> & java.io.Serializable")!>z<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*>? & java.io.Serializable? & kotlin.Comparable<*> & java.io.Serializable")!>z<!>.equals(null)
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*>? & java.io.Serializable? & kotlin.Comparable<*> & java.io.Serializable")!>z<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*>? & java.io.Serializable? & kotlin.Comparable<*> & java.io.Serializable")!>z<!>.propT
                 <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*>? & java.io.Serializable? & kotlin.Comparable<*> & java.io.Serializable")!>z<!>.propAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*>? & java.io.Serializable? & kotlin.Comparable<*> & java.io.Serializable")!>z<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*>? & java.io.Serializable? & kotlin.Comparable<*> & java.io.Serializable")!>z<!>.propNullableT
                 <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*>? & java.io.Serializable? & kotlin.Comparable<*> & java.io.Serializable")!>z<!>.propNullableAny
                 <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*>? & java.io.Serializable? & kotlin.Comparable<*> & java.io.Serializable")!>z<!>.funT()
                 <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*>? & java.io.Serializable? & kotlin.Comparable<*> & java.io.Serializable")!>z<!>.funAny()
@@ -164,9 +164,9 @@ fun case_9() {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>y<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>y<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>y<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>y<!>.propT
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>y<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>y<!>.propNullableT
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>y<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>y<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>y<!>.funAny()
@@ -186,9 +186,9 @@ fun case_10() = run {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Interface3? & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>? & Interface3 & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Interface3? & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>? & Interface3 & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3? & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>? & Interface3 & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3? & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>? & Interface3 & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>")!>x<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("Interface3? & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>? & Interface3 & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3? & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>? & Interface3 & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3? & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>? & Interface3 & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>")!>x<!>.propNullableT
         <!DEBUG_INFO_EXPRESSION_TYPE("Interface3? & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>? & Interface3 & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("Interface3? & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>? & Interface3 & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("Interface3? & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>? & Interface3 & InterfaceWithOutParameter<Interface3 & InterfaceWithOutParameter<*>>")!>x<!>.funAny()

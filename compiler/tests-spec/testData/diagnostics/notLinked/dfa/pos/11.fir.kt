@@ -19,9 +19,9 @@ fun case_1() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.propNullableT
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.funAny()
@@ -39,9 +39,9 @@ fun case_2(y: Int) {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.propNullableT
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<*>? & kotlin.Number & kotlin.Comparable<*>")!>x<!>.funAny()
@@ -64,9 +64,9 @@ fun case_3(a: Int?, b: Float?, c: Double?, d: Boolean?) {
         if (this != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.propT
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.propNullableT
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.funAny()
@@ -78,9 +78,9 @@ fun case_3(a: Int?, b: Float?, c: Double?, d: Boolean?) {
         if (it != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.propT
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.propNullableT
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.funAny()
@@ -107,9 +107,9 @@ fun case_4(a: Interface1?, b: Interface2?, c: Boolean) {
         if (this != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.propT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.propNullableT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.funAny()
@@ -122,9 +122,9 @@ fun case_4(a: Interface1?, b: Interface2?, c: Boolean) {
         if (it != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.propT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.propNullableT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.funAny()
@@ -150,9 +150,9 @@ fun case_5(a: Interface1?, b: Interface2?, d: Boolean) {
         if (this != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.propT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.propNullableT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>this<!>.funAny()
@@ -164,9 +164,9 @@ fun case_5(a: Interface1?, b: Interface2?, d: Boolean) {
         if (it != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.propT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.propNullableT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>it<!>.funAny()
@@ -194,9 +194,9 @@ fun case_6(a: Interface1?, b: Interface2, d: Boolean) {
         if (<!SENSELESS_COMPARISON!>this != null<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.propT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.propNullableT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.funAny()
@@ -212,9 +212,9 @@ fun case_6(a: Interface1?, b: Interface2, d: Boolean) {
         if (<!SENSELESS_COMPARISON!>it != null<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.propT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.propNullableT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.funAny()
@@ -244,9 +244,9 @@ fun case_7(a: Interface1?, b: Interface2?, d: Boolean) {
         if (this != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.propT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.propNullableT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>this<!>.funAny()
@@ -262,9 +262,9 @@ fun case_7(a: Interface1?, b: Interface2?, d: Boolean) {
         if (it != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.propT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.propNullableT
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface3 & Interface2 & Interface1")!>it<!>.funAny()

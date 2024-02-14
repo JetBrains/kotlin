@@ -218,14 +218,14 @@ class Main<L>(x: L?, y: L) {
     val x360 = foo36(x)
     val x361 = foo36(y)
 
-    val vx01 = x.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>vfoo0<!>
-    val vx02 = y.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>vfoo0<!>
+    val vx01 = x.vfoo0
+    val vx02 = y.vfoo0
 
-    val vx11 = x.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>vfoo1<!>
-    val vx12 = y.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>vfoo1<!>
+    val vx11 = x.vfoo1
+    val vx12 = y.vfoo1
 
-    val vx21 = x.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>vfoo2<!>
-    val vx22 = y.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>vfoo2<!>
+    val vx21 = x.vfoo2
+    val vx22 = y.vfoo2
 
     val x370 = foo37(x)
     val x371 = foo37(y)

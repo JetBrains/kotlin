@@ -19,6 +19,6 @@ abstract class User<T : Freezable> {
     protected abstract fun createSettings(): T
 
     fun foo() {
-        settings = StaticOwner.newInstance(settings.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>javaClass<!>)
+        settings = StaticOwner.newInstance(settings.javaClass)
     }
 }

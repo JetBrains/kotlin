@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isExplicit
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -19,7 +20,7 @@ object FirPropertyAccessTypeArgumentsChecker : FirPropertyAccessExpressionChecke
         // precedence, if any exist. For example, the callee reference might be a function `Collections.emptyList<Int>`, but the programmer
         // has forgotten to add function call parentheses, making it a property access.
         if (expression.calleeReference !is FirErrorNamedReference) {
-            val hasExplicitTypeArgument = expression.typeArguments.any { it.source != null }
+            val hasExplicitTypeArgument = expression.typeArguments.any { it.isExplicit }
             if (hasExplicitTypeArgument) {
                 reporter.reportOn(expression.source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Property", context)
             }

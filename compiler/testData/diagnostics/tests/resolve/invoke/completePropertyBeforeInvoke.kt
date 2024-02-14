@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-58142
 interface XTrackableLoading {
     val <X> Property<LoadingValue<X>>.liveLoaded: X

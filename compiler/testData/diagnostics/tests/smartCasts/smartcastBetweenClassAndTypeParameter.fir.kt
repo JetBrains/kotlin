@@ -8,7 +8,7 @@ class C : A()
 
 fun <T : A> createObj(implementedBy: Class<T>): T {
     val obj = when (implementedBy) {
-        B::class.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>java<!> -> B()
+        B::class.java -> B()
         else -> throw Exception("unsupported class")
     }
     val castObj = implementedBy.cast(obj)

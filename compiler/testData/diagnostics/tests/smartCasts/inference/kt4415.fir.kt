@@ -8,7 +8,7 @@ object A {
     fun toJson2(obj:Any){
         if(obj is SelfJson){
             // A.find( (obj as SelfJson).javaClass)  // OK
-            A.find( obj.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>javaClass<!> )   // ERROR:  Type mismatch: inferred type is kotlin.Any but SelfJson was expected
+            A.find( obj.javaClass )   // ERROR:  Type mismatch: inferred type is kotlin.Any but SelfJson was expected
         }
     }
 }

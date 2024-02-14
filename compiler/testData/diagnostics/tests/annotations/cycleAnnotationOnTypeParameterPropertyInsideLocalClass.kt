@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package myPack
 
 @Target(AnnotationTarget.TYPE_PARAMETER)

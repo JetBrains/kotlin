@@ -10,6 +10,6 @@ abstract class Inv<E>
 
 class C : B() {
     fun foo(x: Inv<String>) {
-        x.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>phasedFir<!>
+        x.phasedFir
     }
 }

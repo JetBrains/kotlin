@@ -16,5 +16,5 @@ fun foo() {
     var c: MutableSet<String>? = null
     c = HashSet()
 
-    c<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>d<!> = produce()
+    c<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.d = produce()
 }

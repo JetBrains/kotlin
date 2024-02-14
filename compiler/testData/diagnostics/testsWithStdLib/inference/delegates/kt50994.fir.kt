@@ -9,7 +9,7 @@ class ProcessorWithParent : Entity {
 }
 
 class ProcessorWithChildren : Entity {
-    var processors by children(ProcessorWithParent::class.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>java<!>, ProcessorWithParent::<!INAPPLICABLE_CANDIDATE!>processor<!>)
+    var processors by children(ProcessorWithParent::class.java, ProcessorWithParent::<!INAPPLICABLE_CANDIDATE!>processor<!>)
 }
 
 class Processor2WithParent : Entity {
@@ -17,7 +17,7 @@ class Processor2WithParent : Entity {
 }
 
 class Processor2WithChildren : Entity {
-    var processors by children(Processor2WithParent::class.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>java<!>, Processor2WithParent::processor)
+    var processors by children(Processor2WithParent::class.java, Processor2WithParent::processor)
 }
 
 class Processor3WithParent : Entity {
@@ -25,7 +25,7 @@ class Processor3WithParent : Entity {
 }
 
 class Processor3WithChildren : Entity {
-    var processors: MutableCollection<Processor3WithParent> by children(Processor3WithParent::class.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>java<!>, Processor3WithParent::processor)
+    var processors: MutableCollection<Processor3WithParent> by children(Processor3WithParent::class.java, Processor3WithParent::processor)
 }
 
 inline fun <reified SP : Entity, reified TP : Entity> SP.parent(

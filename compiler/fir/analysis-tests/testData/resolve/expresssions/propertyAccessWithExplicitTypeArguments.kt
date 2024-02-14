@@ -50,24 +50,24 @@ operator fun <A, B> String.invoke(): String = "world"
 fun f4() {
     val receiver = Receiver<Int>()
 
-    receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello1<!>
+    receiver.hello1
     receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello1<!><Int>
-    receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, TYPE_ARGUMENTS_NOT_ALLOWED!>hello1<!><Int, String>()
+    receiver.<!TYPE_ARGUMENTS_NOT_ALLOWED!>hello1<!><Int, String>()
     receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello1<!><String>
     receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello1<!><Int, String>
     receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello1<!><Int, String, String>
 
     with (ContextImpl<String>()) {
-        <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello2<!>
+        hello2
         <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello2<!><String>
-        <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, TYPE_ARGUMENTS_NOT_ALLOWED!>hello2<!><String, Int>()
+        <!TYPE_ARGUMENTS_NOT_ALLOWED!>hello2<!><String, Int>()
         <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello2<!><Int>
         <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello2<!><String, Int>
         <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello2<!><String, Int, Int>
 
-        receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello3<!>
+        receiver.hello3
         receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello3<!><Int, String>
-        receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, TYPE_ARGUMENTS_NOT_ALLOWED!>hello3<!><Int, String>()
+        receiver.<!TYPE_ARGUMENTS_NOT_ALLOWED!>hello3<!><Int, String>()
         receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello3<!><String, Int>
         receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello3<!><Int>
         receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello3<!><Int, String, String>
@@ -80,7 +80,7 @@ inline val <reified A> Receiver<A>.helloReified: String
 
 fun f5() {
     val receiver = Receiver<Int>()
-    receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>helloReified<!>
+    receiver.helloReified
     receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>helloReified<!><Int>
     receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>helloReified<!><String>
 }

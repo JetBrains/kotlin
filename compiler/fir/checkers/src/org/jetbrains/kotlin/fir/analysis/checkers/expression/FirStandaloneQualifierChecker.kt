@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isExplicit
 import org.jetbrains.kotlin.fir.analysis.checkers.isStandalone
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
@@ -27,7 +28,7 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
 
         // Note: if it's real Unit, it will be filtered by ClassKind.OBJECT check below in reportErrorOn
         if (!expression.resolvedType.isUnit) {
-            if (expression.typeArguments.any { it.source != null }) {
+            if (expression.typeArguments.any { it.isExplicit }) {
                 reporter.reportOn(expression.source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Object", context)
             }
             return

@@ -117,6 +117,6 @@ fun case_7(x: Int?) {
 fun case_8(x: KClass<EmptyObject>?) {
     if (x == EmptyObject::class == true) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KClass<EmptyObject>? & kotlin.reflect.KClass<EmptyObject>")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KClass<EmptyObject>? & kotlin.reflect.KClass<EmptyObject>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>java<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KClass<EmptyObject>? & kotlin.reflect.KClass<EmptyObject>")!>x<!>.java
     }
 }

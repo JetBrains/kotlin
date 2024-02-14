@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isExplicit
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirImplicitInvokeCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
@@ -28,7 +29,7 @@ object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressio
 
         if (
             expression is FirImplicitInvokeCall && explicitReceiver is FirPropertyAccessExpression &&
-            expression.typeArguments.any { it.source != null } &&
+            expression.typeArguments.any { it.isExplicit } &&
             expression.toResolvedCallableSymbol()?.typeParameterSymbols?.isNotEmpty() == true &&
             explicitReceiver.toResolvedCallableSymbol()?.typeParameterSymbols?.isNotEmpty() == true
         ) {

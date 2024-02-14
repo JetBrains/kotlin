@@ -13,7 +13,7 @@ fun <Self : DatabaseEntity, Target : DatabaseEntity> Self.directed(clazz: Class<
         Delegate<Self, Target?> = null!!
 
 class MyClassSome : DatabaseEntity {
-    var other by directed(MyClassSome::class.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>java<!>)
+    var other by directed(MyClassSome::class.java)
     fun set(link: MyClassSome?) {
         other = link
     }
