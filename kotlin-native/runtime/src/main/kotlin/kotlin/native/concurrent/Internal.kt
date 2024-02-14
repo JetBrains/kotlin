@@ -6,14 +6,11 @@
 package kotlin.native.concurrent
 
 import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.internal.DescribeObjectForDebugging
-import kotlin.native.internal.ExportForCppRuntime
-import kotlin.native.internal.GCUnsafeCall
-import kotlin.native.internal.InternalForKotlinNative
-import kotlin.native.internal.debugDescription
 import kotlin.native.identityHashCode
-import kotlin.reflect.KClass
-import kotlinx.cinterop.*
+import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.CFunction
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlin.native.internal.*
 
 @GCUnsafeCall("Kotlin_Any_isShareable")
 @FreezingIsDeprecated
@@ -38,7 +35,7 @@ external internal fun waitForAnyFuture(versionToken: Int, millis: Int): Boolean
 @ObsoleteWorkersApi
 external internal fun versionToken(): Int
 
-@kotlin.native.internal.ExportForCompiler
+@ExportForCompiler
 @ObsoleteWorkersApi
 internal fun executeImpl(worker: Worker, mode: TransferMode, producer: () -> Any?,
                          job: CPointer<CFunction<*>>): Future<Any?> =
@@ -46,6 +43,7 @@ internal fun executeImpl(worker: Worker, mode: TransferMode, producer: () -> Any
 
 @GCUnsafeCall("Kotlin_Worker_startInternal")
 @ObsoleteWorkersApi
+@Escapes(0b10) // name is stored in the Worker instance.
 external internal fun startInternal(errorReporting: Boolean, name: String?): Int
 
 @GCUnsafeCall("Kotlin_Worker_currentInternal")
@@ -63,6 +61,7 @@ external internal fun executeInternal(
 
 @GCUnsafeCall("Kotlin_Worker_executeAfterInternal")
 @ObsoleteWorkersApi
+@Escapes(0b10) // operation escapes into stable ref.
 external internal fun executeAfterInternal(id: Int, operation: () -> Unit, afterMicroseconds: Long): Unit
 
 @GCUnsafeCall("Kotlin_Worker_processQueueInternal")
