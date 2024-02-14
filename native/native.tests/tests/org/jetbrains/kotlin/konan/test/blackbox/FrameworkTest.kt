@@ -41,7 +41,6 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
     private val extras = TestCase.NoTestRunnerExtras("There's no entrypoint in Swift program")
     private val testCompilationFactory = TestCompilationFactory()
 
-    @Disabled("KT-65659 is not yet fixed for K2")
     @Test
     fun testKT65659() {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
