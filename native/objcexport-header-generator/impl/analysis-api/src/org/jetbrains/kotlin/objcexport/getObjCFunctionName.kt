@@ -25,7 +25,7 @@ private val KtFunctionLikeSymbol.translationName: String
     get() = when (this) {
         is KtFunctionSymbol -> name.asString()
         is KtConstructorSymbol -> "init"
-        is KtPropertyGetterSymbol -> "get"
+        is KtPropertyGetterSymbol -> ""
         is KtAnonymousFunctionSymbol -> ""
         is KtPropertySetterSymbol -> ""
         is KtSamConstructorSymbol -> ""

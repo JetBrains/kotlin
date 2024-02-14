@@ -47,7 +47,9 @@ fun KtPropertySymbol.buildProperty(): ObjCProperty {
         setterName = null
     }
 
-    val getterName = null //TODO: Fix and use getter.getSelector(), it should return name when it's available
+
+    val getterSelector = getter?.getSelector(bridge)
+    val getterName: String? = if (getterSelector != name && getterSelector?.isNotBlank() == true) getterSelector else null
 
     val declarationAttributes = mutableListOf(getSwiftPrivateAttribute() ?: swiftNameAttribute(propertyName.swiftName))
 
