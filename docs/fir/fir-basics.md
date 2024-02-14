@@ -7,32 +7,25 @@ FIR (Frontend IR) compiler is a new Kotlin Frontend that has entirely new archit
 
 FIR tree is a core abstraction for the new frontend. FIR tree contains all information the compiler knows about the code. Compilation in the
 FIR compiler is performed in separate compiler phases. Compiler phases are executed sequentially in the CLI compiler and lazily in the Analysis API.
-There is a guarantee that if we have two phases: `A` and `B` where `B` follows `A`, then all FIR elements visible in phase `B are` are already resolved to phase `A`. This is a very important invariant that determines which information in FIR elements is resolved on each
-phase.
+There is a guarantee that if we have two phases: `A` and `B` where `B` follows `A`, then all FIR elements visible in phase `B` are already resolved to phase `A`. 
+This is a crucial invariant that determines which information in FIR elements is resolved in each phase.
+See [FirResolvePhase](../../compiler/fir/tree/src/org/jetbrains/kotlin/fir/declarations/FirResolvePhase.kt) for more details and up-to-date information regarding the compiler phases.
 
 ## Phases
-List of all FIR phases which exists in the compiler right now:
-- **RAW_FIR**: In this phase, we ran the translator from some parser AST to FIR tree. Currently, FIR supports two parser representations: PSI and LighterAst.
-  During conversion, the FIR translator performs desugaring of the source code. This includes replacing all `if` expressions with
-  corresponding `when` expressions, converting `for` loops into blocks with `iterator` variable declaration and `while` loop, and similar.
-- **IMPORTS**: In this stage, the compiler resolves qualifiers of all imports, excluding the last part of an imported name. More specifically, if an import
-  is `import aaa.bbb.ccc.D` then the compiler tries to resolve `aaa.bbb.ccc` package.
-- **ANNOTATIONS_FOR_PLUGINS** and **COMPANION_GENERATION**. Those phases are required for plugin support
-- **SUPER_TYPES**: At this stage, the compiler resolves all supertypes of all non-local classes and performs type aliases expansion. 
-- **SEALED_CLASS_INHERITORS**: At this stage, the compiler collects and records all inheritors of non-local sealed classes.
-- **TYPES**: At this stage, the compiler resolves all other explicitly written types in declaration headers, including:
-    - explicit return types of members
-    - types of value parameters of functions
-    - extension receivers of members
-    - bounds of type parameters
-    - types of annotations (without resolution of annotation arguments)
-- **STATUS**: At this phase, the compiler resolves modality, visibility, and modifiers of all non-local declarations. Note that members modality and
-  modifiers may depend on super declarations in the case when "this" member overrides some other member.
-- **ARGUMENTS_OF_ANNOTATIONS**:  At this phase, the compiler resolves arguments of annotations in declaration headers.
-- **CONTRACTS**: At this phase, the compiler resolves a contract block in property accessors and functions.
-- **IMPLICIT_TYPES_BODY_RESOLVE**: At this stage, the compiler resolves bodies of all functions and properties which have no explicit return
-  type (`fun foo() = ...`)
-- **BODY_RESOLVE**: At this stage, all other bodies are resolved.
+List of all FIR phases that exist in the compiler right now with a short description:
+- **RAW_FIR**: We ran the translator from some parser AST to FIR tree.
+- **IMPORTS**: The compiler splits all imports on longest existing package part and related class qualifier.
+- **COMPILER_REQUIRED_ANNOTATIONS**: The compiler resolves types of some specific compiler annotations which are required earlier than the **TYPES** phase.
+- **COMPANION_GENERATION**. The compiler generates companion objects which were provided by compiler plugins
+- **SUPER_TYPES**: The compiler resolves all supertypes of classes and performs type aliases expansion. 
+- **SEALED_CLASS_INHERITORS**: The compiler collects and records all inheritors of sealed classes.
+- **TYPES**: The compiler resolves all other explicitly written types in declaration headers.
+- **STATUS**: The compiler resolves modality, visibility, and modifiers for member declarations.
+- **EXPECT_ACTUAL_MATCHING**: The compiler matches and records an `expect` member declaration for `actual` member declarations.
+- **CONTRACTS**: The compiler resolves a contract definition in property accessors, functions, and constructors.
+- **IMPLICIT_TYPES_BODY_RESOLVE**: The compiler resolves types for callable declarations without an explicit return type.
+- **ANNOTATION_ARGUMENTS**: The compiler resolves arguments of annotations in declaration headers.
+- **BODY_RESOLVE**: The compiler resolves bodies for declarations.
 - **CHECKERS**: At this point, all FIR tree is already resolved, and it's time to check it and report diagnostics for the user.
   Note that it's allowed to report diagnostics only in this phase. If some diagnostic can be detected only during resolution (e.g, error
   that type of argument does not match with the expected type of parameter) then information about such errors is saved right inside the FIR tree
@@ -40,8 +33,9 @@ List of all FIR phases which exists in the compiler right now:
 
 - **FIR2IR**: At this stage, the compiler transforms resolved FIR to backed IR.
 
-As you may notice, phases from `SUPER_TYPES` till `CONTRACTS` run for non-local declarations. When the compiler meets some local
-classifier declaration (local class or anonymous object) during body resolve, it runs all those phases for that classifier specifically.
+As you may notice, phases from `COMPILER_REQUIRED_ANNOTATIONS` till `ANNOTATION_ARGUMENTS` run for non-local declarations.
+When the compiler meets some local classifier declaration (local class or anonymous object) during body resolve,
+it runs all those phases for that classifier specifically.
 
 ## FIR elements
 
