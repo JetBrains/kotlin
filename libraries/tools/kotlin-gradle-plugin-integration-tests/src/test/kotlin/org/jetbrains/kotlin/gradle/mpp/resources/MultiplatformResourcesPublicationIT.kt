@@ -76,6 +76,22 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
         )
     }
 
+    @DisplayName("Multiplatform resources publication for Native target")
+    @GradleAndroidTest
+    fun testNativeTargetResourcesPublication(
+        gradleVersion: GradleVersion,
+        androidVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk,
+    ) {
+        testEmbeddedResources(
+            gradleVersion,
+            androidVersion,
+            providedJdk,
+            publicationTask = ":publishLinuxX64PublicationToMavenRepository",
+            publishedArchive = "build/repo/test/publication-linuxx64/1.0/publication-linuxx64-1.0-kotlin_resources.zip",
+            reference = "linuxX64",
+        )
+    }
     private fun testEmbeddedResources(
         gradleVersion: GradleVersion,
         androidVersion: String,
