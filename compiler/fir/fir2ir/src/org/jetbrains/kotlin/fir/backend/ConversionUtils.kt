@@ -535,6 +535,9 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? = when (this) {
             source?.kind == KtFakeSourceElementKind.DesugaredForLoop && symbol.callableId.isIterator() ->
                 IrStatementOrigin.FOR_LOOP_ITERATOR
 
+            source?.kind == KtFakeSourceElementKind.DesugaredInvertedContains ->
+                IrStatementOrigin.NOT_IN
+
             source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement ->
                 incOrDeclSourceKindToIrStatementOrigin[source?.kind]
 
