@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -24,7 +23,7 @@ internal object AbstractClassAdditionalAnnotationsProvider : AdditionalAnnotatio
     override fun addAllAnnotations(
         currentRawAnnotations: MutableList<in PsiAnnotation>,
         foundQualifiers: MutableSet<String>,
-        owner: PsiModifierList
+        owner: PsiElement
     ) {
         if (!owner.parent.isAnnotationClass()) return
 
@@ -34,7 +33,7 @@ internal object AbstractClassAdditionalAnnotationsProvider : AdditionalAnnotatio
     override fun findSpecialAnnotation(
         annotationsBox: GranularAnnotationsBox,
         qualifiedName: String,
-        owner: PsiModifierList,
+        owner: PsiElement,
     ): PsiAnnotation? = if (owner.parent.isAnnotationClass())
         findAdditionalAnnotationFromAnnotationClass(annotationsBox, qualifiedName, owner)
     else
@@ -48,7 +47,7 @@ private fun PsiElement.isAnnotationClass(): Boolean = this is PsiClass && isAnno
 private fun addAllAnnotationsFromAnnotationClass(
     currentRawAnnotations: MutableList<in PsiAnnotation>,
     foundQualifiers: MutableSet<String>,
-    owner: PsiModifierList,
+    owner: PsiElement,
 ) {
     for (index in currentRawAnnotations.indices) {
         val currentAnnotation = currentRawAnnotations[index] as? SymbolLightLazyAnnotation ?: continue
@@ -73,7 +72,7 @@ private fun addAllAnnotationsFromAnnotationClass(
 private fun findAdditionalAnnotationFromAnnotationClass(
     annotationsBox: GranularAnnotationsBox,
     qualifiedName: String,
-    owner: PsiModifierList,
+    owner: PsiElement,
 ): PsiAnnotation? = annotationsBox.tryConvertToRetentionJavaAnnotation(qualifiedName, owner)
     ?: annotationsBox.tryConvertToTargetJavaAnnotation(qualifiedName, owner)
     ?: annotationsBox.tryConvertToDocumentedJavaAnnotation(qualifiedName, owner)
@@ -82,7 +81,7 @@ private fun findAdditionalAnnotationFromAnnotationClass(
 
 private fun GranularAnnotationsBox.tryConvertToDocumentedJavaAnnotation(
     qualifiedName: String,
-    owner: PsiModifierList,
+    owner: PsiElement,
 ): PsiAnnotation? = tryConvertToJavaAnnotation(
     qualifiedName = qualifiedName,
     javaQualifier = JvmAnnotationNames.DOCUMENTED_ANNOTATION.asString(),
@@ -91,7 +90,7 @@ private fun GranularAnnotationsBox.tryConvertToDocumentedJavaAnnotation(
 )
 
 private fun SymbolLightLazyAnnotation.tryConvertToDocumentedJavaAnnotation(
-    owner: PsiModifierList,
+    owner: PsiElement,
 ): PsiAnnotation? = tryConvertToJavaAnnotation(
     javaQualifier = JvmAnnotationNames.DOCUMENTED_ANNOTATION.asString(),
     kotlinQualifier = StandardNames.FqNames.mustBeDocumented.asString(),
@@ -100,7 +99,7 @@ private fun SymbolLightLazyAnnotation.tryConvertToDocumentedJavaAnnotation(
 
 private fun GranularAnnotationsBox.tryConvertToRetentionJavaAnnotation(
     qualifiedName: String,
-    owner: PsiModifierList,
+    owner: PsiElement,
 ): PsiAnnotation? {
     val javaQualifier = JvmAnnotationNames.RETENTION_ANNOTATION.asString()
     return tryConvertToJavaAnnotation(
@@ -113,7 +112,7 @@ private fun GranularAnnotationsBox.tryConvertToRetentionJavaAnnotation(
 }
 
 private fun SymbolLightLazyAnnotation.tryConvertToRetentionJavaAnnotation(
-    owner: PsiModifierList,
+    owner: PsiElement,
 ): PsiAnnotation? = tryConvertToJavaAnnotation(
     javaQualifier = JvmAnnotationNames.RETENTION_ANNOTATION.asString(),
     kotlinQualifier = StandardNames.FqNames.retention.asString(),
@@ -133,7 +132,7 @@ private fun SymbolLightJavaAnnotation.computeJavaRetentionArguments(): List<KtNa
     return javaRetentionArguments(kotlinRetentionName)
 }
 
-private fun createRetentionJavaAnnotation(owner: PsiModifierList): PsiAnnotation = SymbolLightSimpleAnnotation(
+private fun createRetentionJavaAnnotation(owner: PsiElement): PsiAnnotation = SymbolLightSimpleAnnotation(
     fqName = JvmAnnotationNames.RETENTION_ANNOTATION.asString(),
     parent = owner,
     arguments = javaRetentionArguments(kotlinRetentionName = null),
@@ -159,7 +158,7 @@ private fun retentionMapping(name: String): String = when (name) {
 
 private fun GranularAnnotationsBox.tryConvertToRepeatableJavaAnnotation(
     qualifiedName: String,
-    owner: PsiModifierList,
+    owner: PsiElement,
 ): PsiAnnotation? = tryConvertToJavaAnnotation(
     qualifiedName = qualifiedName,
     javaQualifier = JvmAnnotationNames.REPEATABLE_ANNOTATION.asString(),
@@ -169,7 +168,7 @@ private fun GranularAnnotationsBox.tryConvertToRepeatableJavaAnnotation(
 )
 
 private fun SymbolLightLazyAnnotation.tryConvertToRepeatableJavaAnnotation(
-    owner: PsiModifierList,
+    owner: PsiElement,
 ): PsiAnnotation? = tryConvertToJavaAnnotation(
     javaQualifier = JvmAnnotationNames.REPEATABLE_ANNOTATION.asString(),
     kotlinQualifier = StandardNames.FqNames.repeatable.asString(),
@@ -193,7 +192,7 @@ private fun SymbolLightJavaAnnotation.computeRepeatableJavaAnnotationArguments()
 
 private fun GranularAnnotationsBox.tryConvertToTargetJavaAnnotation(
     qualifiedName: String,
-    owner: PsiModifierList,
+    owner: PsiElement,
 ): PsiAnnotation? = tryConvertToJavaAnnotation(
     qualifiedName = qualifiedName,
     javaQualifier = JvmAnnotationNames.TARGET_ANNOTATION.asString(),
@@ -203,7 +202,7 @@ private fun GranularAnnotationsBox.tryConvertToTargetJavaAnnotation(
 )
 
 private fun SymbolLightLazyAnnotation.tryConvertToTargetJavaAnnotation(
-    owner: PsiModifierList,
+    owner: PsiElement,
 ): PsiAnnotation? = tryConvertToJavaAnnotation(
     javaQualifier = JvmAnnotationNames.TARGET_ANNOTATION.asString(),
     kotlinQualifier = StandardNames.FqNames.target.asString(),
@@ -262,7 +261,7 @@ private fun GranularAnnotationsBox.tryConvertToJavaAnnotation(
     qualifiedName: String,
     javaQualifier: String,
     kotlinQualifier: String,
-    owner: PsiModifierList,
+    owner: PsiElement,
     argumentsComputer: SymbolLightJavaAnnotation.() -> List<KtNamedAnnotationValue> = { emptyList() },
 ): PsiAnnotation? {
     if (qualifiedName != javaQualifier) return null
@@ -285,7 +284,7 @@ private fun GranularAnnotationsBox.tryConvertToJavaAnnotation(
 private fun SymbolLightLazyAnnotation.tryConvertToJavaAnnotation(
     javaQualifier: String,
     kotlinQualifier: String,
-    owner: PsiModifierList,
+    owner: PsiElement,
     argumentsComputer: SymbolLightJavaAnnotation.() -> List<KtNamedAnnotationValue> = { emptyList() },
 ): PsiAnnotation? {
     if (qualifiedName != kotlinQualifier) return null

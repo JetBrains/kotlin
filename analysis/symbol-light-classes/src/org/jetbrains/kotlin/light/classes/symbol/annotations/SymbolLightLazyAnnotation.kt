@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotationParameterList
-import com.intellij.psi.PsiModifierList
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.KtCallElement
 internal class SymbolLightLazyAnnotation(
     val annotationsProvider: AnnotationsProvider,
     private val annotationApplication: KtAnnotationApplication,
-    owner: PsiModifierList,
+    owner: PsiElement,
 ) : SymbolLightAbstractAnnotation(owner) {
     init {
         requireNotNull(annotationApplication.classId)

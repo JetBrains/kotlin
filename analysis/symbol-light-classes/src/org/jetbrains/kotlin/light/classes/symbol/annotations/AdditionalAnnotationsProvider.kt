@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
-import com.intellij.psi.PsiModifierList
+import com.intellij.psi.PsiElement
 
 /**
  * This class provides more annotation in addition to [AnnotationsProvider].
@@ -27,7 +27,7 @@ internal sealed interface AdditionalAnnotationsProvider {
      * @param foundQualifiers a list of already presented qualifiers. Used to optimize computation
      * @param owner an owner for new annotations
      */
-    fun addAllAnnotations(currentRawAnnotations: MutableList<in PsiAnnotation>, foundQualifiers: MutableSet<String>, owner: PsiModifierList)
+    fun addAllAnnotations(currentRawAnnotations: MutableList<in PsiAnnotation>, foundQualifiers: MutableSet<String>, owner: PsiElement)
 
     /**
      * @return **true** if this qualifier should be treated as a **special** in [GranularAnnotationsBox.findAnnotation]
@@ -44,7 +44,7 @@ internal sealed interface AdditionalAnnotationsProvider {
      *
      * @return a new annotation with [qualifiedName]
      */
-    fun findSpecialAnnotation(annotationsBox: GranularAnnotationsBox, qualifiedName: String, owner: PsiModifierList): PsiAnnotation?
+    fun findSpecialAnnotation(annotationsBox: GranularAnnotationsBox, qualifiedName: String, owner: PsiElement): PsiAnnotation?
 
     /**
      * Adds a new annotation with [qualifier] name to [currentRawAnnotations] and [foundQualifiers] if not already present
@@ -53,7 +53,7 @@ internal sealed interface AdditionalAnnotationsProvider {
         qualifier: String,
         currentRawAnnotations: MutableList<in PsiAnnotation>,
         foundQualifiers: MutableSet<String>,
-        owner: PsiModifierList,
+        owner: PsiElement,
     ) {
         val isNewQualifier = foundQualifiers.add(qualifier)
         if (!isNewQualifier) return
@@ -64,6 +64,6 @@ internal sealed interface AdditionalAnnotationsProvider {
     fun createSimpleAnnotationIfMatches(
         qualifier: String,
         expectedQualifier: String,
-        owner: PsiModifierList,
+        owner: PsiElement,
     ): PsiAnnotation? = if (qualifier == expectedQualifier) SymbolLightSimpleAnnotation(expectedQualifier, owner) else null
 }

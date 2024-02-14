@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
-import com.intellij.psi.PsiModifierList
+import com.intellij.psi.PsiElement
 
 /**
  * This class is used as a proxy for [com.intellij.psi.PsiAnnotationOwner].
@@ -18,7 +18,7 @@ import com.intellij.psi.PsiModifierList
  * @see org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightModifierList
  */
 internal sealed interface AnnotationsBox {
-    fun annotationsArray(owner: PsiModifierList): Array<PsiAnnotation>
-    fun findAnnotation(owner: PsiModifierList, qualifiedName: String): PsiAnnotation?
-    fun hasAnnotation(owner: PsiModifierList, qualifiedName: String): Boolean = findAnnotation(owner, qualifiedName) != null
+    fun annotationsArray(owner: PsiElement): Array<PsiAnnotation>
+    fun findAnnotation(owner: PsiElement, qualifiedName: String): PsiAnnotation?
+    fun hasAnnotation(owner: PsiElement, qualifiedName: String): Boolean = findAnnotation(owner, qualifiedName) != null
 }

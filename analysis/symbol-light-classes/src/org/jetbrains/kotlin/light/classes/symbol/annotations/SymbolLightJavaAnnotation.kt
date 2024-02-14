@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotationParameterList
-import com.intellij.psi.PsiModifierList
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.KtCallElement
 internal open class SymbolLightJavaAnnotation(
     val originalLightAnnotation: SymbolLightLazyAnnotation,
     private val javaQualifier: String,
-    owner: PsiModifierList,
+    owner: PsiElement,
     private val argumentsComputer: SymbolLightJavaAnnotation.() -> List<KtNamedAnnotationValue>,
 ) : SymbolLightAbstractAnnotation(owner) {
     override fun createReferenceInformationProvider(): ReferenceInformationProvider = ReferenceInformationHolder(
