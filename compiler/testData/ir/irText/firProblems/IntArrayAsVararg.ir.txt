@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/IntArrayAsVararg.kt
-  FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun consumeVarargs (vararg arr: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         arr: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
