@@ -29,11 +29,13 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDirectory
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.addSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpMultiplatformResourcesAndAssets
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSets.applyKotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -81,6 +83,16 @@ internal class AndroidProjectHandler(
 
                 @Suppress("UNCHECKED_CAST")
                 (kotlinAndroidTarget.compilations as NamedDomainObjectCollection<in KotlinJvmAndroidCompilation>).add(compilation)
+
+                // FIXME: Move this somewhere, make sure it is only applied to multiplatform plugin and test agp-application with MPP bundling
+                if (project.kotlinPropertiesProvider.mppResourcesPublication) {
+                    project.launch {
+                        kotlinAndroidTarget.setUpMultiplatformResourcesAndAssets(
+                            compilation,
+                            variant,
+                        )
+                    }
+                }
             }
 
         }

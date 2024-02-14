@@ -181,6 +181,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
                     compilation = compilation,
                     isSingleBuildType = publishableVariants.filter(::isVariantPublished).map(::getBuildTypeName).distinct().size == 1,
                 )
+                // FIXME: How does publishLibraryVariantsGroupedByFlavor affect resources publication?
 
                 createKotlinVariant(
                     lowerCamelCaseName(compilation.target.name, *flavorGroupNameParts.toTypedArray()),

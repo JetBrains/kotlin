@@ -36,8 +36,10 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
     )
 
     private val targetToResourcesMap: MutableMap<KotlinTarget, KotlinTargetResourcesPublication.TargetResources> = mutableMapOf()
+    private val androidTargetAssetsMap: MutableMap<KotlinAndroidTarget, KotlinTargetResourcesPublication.TargetResources> = mutableMapOf()
 
     private val targetResourcesSubscribers: MutableMap<KotlinTarget, MutableList<(KotlinTargetResourcesPublication.TargetResources) -> (Unit)>> = mutableMapOf()
+    private val androidTargetAssetsSubscribers: MutableMap<KotlinAndroidTarget, MutableList<(KotlinTargetResourcesPublication.TargetResources) -> (Unit)>> = mutableMapOf()
 
     internal fun subscribeOnPublishResources(
         target: KotlinTarget,
@@ -47,6 +49,13 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
         targetResourcesSubscribers.getOrPut(target, { mutableListOf() }).add(notify)
     }
 
+    internal fun subscribeOnAndroidPublishAssets(
+        target: KotlinAndroidTarget,
+        notify: (KotlinTargetResourcesPublication.TargetResources) -> (Unit),
+    ) {
+        androidTargetAssetsMap[target]?.let(notify)
+        androidTargetAssetsSubscribers.getOrPut(target, { mutableListOf() }).add(notify)
+    }
 
     override fun canPublishResources(target: KotlinTarget): Boolean {
         if (targetsThatSupportPublication.none { it.isInstance(target) }) return false
