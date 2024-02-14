@@ -704,6 +704,14 @@ object KotlinToolingDiagnostics {
         )
     }
 
+    object ResourcePublishedMoreThanOncePerTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(targetName: String) = build(
+            """
+                "Only one resources publication per target $targetName is allowed."
+            """.trimIndent()
+        )
+    }
+
     object DependencyDoesNotPhysicallyExist : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(dependency: File) = build(
             """
