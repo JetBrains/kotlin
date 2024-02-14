@@ -157,29 +157,6 @@ internal fun KtType.translateTypeArgumentsToObjC(): List<ObjCNonNullReferenceTyp
     }
 }
 
-context(KtAnalysisSession)
-private fun ObjCNonNullReferenceType.withNullabilityOf(kotlinType: KtType): ObjCReferenceType {
-    return if (kotlinType.isBinaryRepresentationNullable()) {
-        ObjCNullableReferenceType(this)
-    } else {
-        this
-    }
-}
-
-context(KtAnalysisSession)
-private fun KtType.isBinaryRepresentationNullable(): Boolean {
-    /* Convention to match K1 implementation */
-    if (this is KtErrorType) return false
-
-    if (fullyExpandedType.canBeNull) return true
-
-    getInlineTargetTypeOrNull()?.let { inlineTargetType ->
-        if (inlineTargetType.canBeNull) return true
-    }
-
-    return false
-}
-
 
 /**
  * Types to be "hidden" during mapping, i.e., represented as `id`.
