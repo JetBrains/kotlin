@@ -40,6 +40,4 @@ internal fun KtClassOrObjectSymbol.buildCompanionProperty(): ObjCProperty {
 }
 
 internal val KtClassOrObjectSymbol.isCompanion: Boolean
-    get() {
-        return classKind == KtClassKind.COMPANION_OBJECT
-    }
+    get() = classKind == KtClassKind.COMPANION_OBJECT
