@@ -162,7 +162,7 @@ private val SirType.swift
 private val SirNamedDeclaration.swiftFqName: String
     get() {
         val parentName = (parent as? SirNamedDeclaration)?.swiftFqName ?: ((parent as? SirNamed)?.name)
-        return parentName?.let { "$it.$name" } ?: name
+        return parentName?.takeIf { it.isNotBlank() }?.let { "$it.$name" } ?: name
     }
 
 private val simpleIdentifierRegex = Regex("[_a-zA-Z][_a-zA-Z0-9]*")

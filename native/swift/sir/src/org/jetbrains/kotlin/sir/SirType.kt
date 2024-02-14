@@ -8,38 +8,20 @@ package org.jetbrains.kotlin.sir
 sealed interface SirType
 
 class SirNominalType(
-    val type: SirNamedDeclaration,
-    val parent: SirNominalType? = null,
+    var declRef: SirDeclarationReference,
 ) : SirType {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other != null && this::class != other::class) return false
+    constructor(decl: SirNamedDeclaration) : this(DiscoveredDeclaration(decl))
 
-        other as SirNominalType
-
-        if (type != other.type) return false
-        if (parent != other.parent) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = type.hashCode()
-        result = 31 * result + (parent?.hashCode() ?: 0)
-        return result
-    }
+    val type: SirNamedDeclaration
+        get() = (declRef as DiscoveredDeclaration).decl
 }
 
-class SirExistentialType(
-    // TODO: Protocols. For now, only `any Any` is supported
-) : SirType {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other != null && this::class != other::class) return false
-        return true
-    }
+// TODO: Protocols. For now, only `any Any` is supported
+data object SirExistentialType : SirType
 
-    override fun hashCode(): Int {
-        return this::class.hashCode()
-    }
-}
+sealed interface SirDeclarationReference
+
+@JvmInline
+value class DiscoveredDeclaration(val decl: SirNamedDeclaration) : SirDeclarationReference
+
+class UnknownDeclaration(val origin: SirOrigin) : SirDeclarationReference
