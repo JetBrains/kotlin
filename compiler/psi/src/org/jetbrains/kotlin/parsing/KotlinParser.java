@@ -25,7 +25,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.psi.KtFile;
 
 public class KotlinParser implements PsiParser {
 
@@ -44,13 +43,20 @@ public class KotlinParser implements PsiParser {
     public static ASTNode parse(PsiBuilder psiBuilder, PsiFile psiFile) {
         KotlinParsing ktParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
         String extension = FileUtilRt.getExtension(psiFile.getName());
-        if (extension.isEmpty() || extension.equals(KotlinFileType.EXTENSION) || (psiFile instanceof KtFile && ((KtFile) psiFile).isCompiled())) {
+        if (extension.isEmpty() || extension.equals(KotlinFileType.EXTENSION) || isCompiledFile(psiFile)) {
             ktParsing.parseFile();
         }
         else {
             ktParsing.parseScript();
         }
         return psiBuilder.getTreeBuilt();
+    }
+
+    @SuppressWarnings({"deprecation", "UnnecessaryFullyQualifiedName"})
+    private static boolean isCompiledFile(PsiFile psiFile) {
+        //avoid loading KtFile which depends on java psi, which is not available in some setup
+        //e.g. remote dev https://youtrack.jetbrains.com/issue/GTW-7554
+        return psiFile instanceof org.jetbrains.kotlin.psi.KtCommonFile && ((org.jetbrains.kotlin.psi.KtCommonFile) psiFile).isCompiled();
     }
 
     @NotNull
