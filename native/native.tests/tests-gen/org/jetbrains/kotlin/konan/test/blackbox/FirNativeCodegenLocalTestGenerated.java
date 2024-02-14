@@ -832,6 +832,510 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Nested
+    @TestMetadata("native/native.tests/testData/codegen/cinterop")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-fir")
+    @FirPipeline()
+    @UseExtTestCaseGroupProvider()
+    public class Cinterop {
+        @Test
+        public void testAllFilesPresentInCinterop() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("arrayPointers.kt")
+        public void testArrayPointers() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/arrayPointers.kt");
+        }
+
+        @Test
+        @TestMetadata("auxiliarySources.kt")
+        public void testAuxiliarySources() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/auxiliarySources.kt");
+        }
+
+        @Test
+        @TestMetadata("bitfields.kt")
+        public void testBitfields() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/bitfields.kt");
+        }
+
+        @Test
+        @TestMetadata("callbacksAndVarargs.kt")
+        public void testCallbacksAndVarargs() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/callbacksAndVarargs.kt");
+        }
+
+        @Test
+        @TestMetadata("enums.kt")
+        public void testEnums() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/enums.kt");
+        }
+
+        @Test
+        @TestMetadata("forwardDeclarations.kt")
+        public void testForwardDeclarations() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/forwardDeclarations.kt");
+        }
+
+        @Test
+        @TestMetadata("forwardDeclarationsTwoLibs.kt")
+        public void testForwardDeclarationsTwoLibs() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/forwardDeclarationsTwoLibs.kt");
+        }
+
+        @Test
+        @TestMetadata("globals.kt")
+        public void testGlobals() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/globals.kt");
+        }
+
+        @Test
+        @TestMetadata("incompleteTypes.kt")
+        public void testIncompleteTypes() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/incompleteTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("kt43265.kt")
+        public void testKt43265() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/kt43265.kt");
+        }
+
+        @Test
+        @TestMetadata("kt44283.kt")
+        public void testKt44283() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/kt44283.kt");
+        }
+
+        @Test
+        @TestMetadata("kt51925.kt")
+        public void testKt51925() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/kt51925.kt");
+        }
+
+        @Test
+        @TestMetadata("kt54284.kt")
+        public void testKt54284() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/kt54284.kt");
+        }
+
+        @Test
+        @TestMetadata("kt54284_fmodules.kt")
+        public void testKt54284_fmodules() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/kt54284_fmodules.kt");
+        }
+
+        @Test
+        @TestMetadata("kt57640.kt")
+        public void testKt57640() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/kt57640.kt");
+        }
+
+        @Test
+        @TestMetadata("kt59167.kt")
+        public void testKt59167() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/kt59167.kt");
+        }
+
+        @Test
+        @TestMetadata("kt63048.kt")
+        public void testKt63048() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/kt63048.kt");
+        }
+
+        @Test
+        @TestMetadata("kt63049.kt")
+        public void testKt63049() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/kt63049.kt");
+        }
+
+        @Test
+        @TestMetadata("kt64105.kt")
+        public void testKt64105() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/kt64105.kt");
+        }
+
+        @Test
+        @TestMetadata("leakMemoryWithRunningThreadUnchecked.kt")
+        public void testLeakMemoryWithRunningThreadUnchecked() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/leakMemoryWithRunningThreadUnchecked.kt");
+        }
+
+        @Test
+        @TestMetadata("toKString.kt")
+        public void testToKString() throws Exception {
+            runTest("native/native.tests/testData/codegen/cinterop/toKString.kt");
+        }
+
+        @Nested
+        @TestMetadata("native/native.tests/testData/codegen/cinterop/basics")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("frontend-fir")
+        @FirPipeline()
+        @UseExtTestCaseGroupProvider()
+        public class Basics {
+            @Test
+            @TestMetadata("1.kt")
+            public void test1() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/1.kt");
+            }
+
+            @Test
+            @TestMetadata("3.kt")
+            public void test3() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/3.kt");
+            }
+
+            @Test
+            public void testAllFilesPresentInBasics() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/basics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("available_processors.kt")
+            public void testAvailable_processors() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/available_processors.kt");
+            }
+
+            @Test
+            @TestMetadata("macros.kt")
+            public void testMacros() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/macros.kt");
+            }
+
+            @Test
+            @TestMetadata("mangling.kt")
+            public void testMangling() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/mangling.kt");
+            }
+
+            @Test
+            @TestMetadata("mangling2.kt")
+            public void testMangling2() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/mangling2.kt");
+            }
+
+            @Test
+            @TestMetadata("mangling_keywords.kt")
+            public void testMangling_keywords() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/mangling_keywords.kt");
+            }
+
+            @Test
+            @TestMetadata("mangling_keywords2.kt")
+            public void testMangling_keywords2() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/mangling_keywords2.kt");
+            }
+
+            @Test
+            @TestMetadata("statbuf.kt")
+            public void testStatbuf() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/statbuf.kt");
+            }
+
+            @Test
+            @TestMetadata("structAnonRecordMember_ExplicitAlignment.kt")
+            public void testStructAnonRecordMember_ExplicitAlignment() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonRecordMember_ExplicitAlignment.kt");
+            }
+
+            @Test
+            @TestMetadata("structAnonRecordMember_ImplicitAlignment.kt")
+            public void testStructAnonRecordMember_ImplicitAlignment() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonRecordMember_ImplicitAlignment.kt");
+            }
+
+            @Test
+            @TestMetadata("structAnonRecordMember_Nested.kt")
+            public void testStructAnonRecordMember_Nested() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonRecordMember_Nested.kt");
+            }
+
+            @Test
+            @TestMetadata("structAnonym_Complicate.kt")
+            public void testStructAnonym_Complicate() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonym_Complicate.kt");
+            }
+
+            @Test
+            @TestMetadata("structAnonym_GLKVector3.kt")
+            public void testStructAnonym_GLKVector3() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonym_GLKVector3.kt");
+            }
+
+            @Test
+            @TestMetadata("structAnonym_Packed.kt")
+            public void testStructAnonym_Packed() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonym_Packed.kt");
+            }
+
+            @Test
+            @TestMetadata("structAnonym_Packed2.kt")
+            public void testStructAnonym_Packed2() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonym_Packed2.kt");
+            }
+
+            @Test
+            @TestMetadata("structAnonym_PragmaPacked.kt")
+            public void testStructAnonym_PragmaPacked() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonym_PragmaPacked.kt");
+            }
+
+            @Test
+            @TestMetadata("structs.kt")
+            public void testStructs() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/structs.kt");
+            }
+
+            @Test
+            @TestMetadata("types.kt")
+            public void testTypes() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/types.kt");
+            }
+
+            @Test
+            @TestMetadata("union.kt")
+            public void testUnion() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/union.kt");
+            }
+
+            @Test
+            @TestMetadata("unsupported.kt")
+            public void testUnsupported() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/unsupported.kt");
+            }
+
+            @Test
+            @TestMetadata("values.kt")
+            public void testValues() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/values.kt");
+            }
+
+            @Test
+            @TestMetadata("vectors.kt")
+            public void testVectors() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/basics/vectors.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("native/native.tests/testData/codegen/cinterop/exceptions")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("frontend-fir")
+        @FirPipeline()
+        @UseExtTestCaseGroupProvider()
+        public class Exceptions {
+            @Test
+            public void testAllFilesPresentInExceptions() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/exceptions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("cCallback.kt")
+            public void testCCallback() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/exceptions/cCallback.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("native/native.tests/testData/codegen/cinterop/objc")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("frontend-fir")
+        @FirPipeline()
+        @UseExtTestCaseGroupProvider()
+        public class Objc {
+            @Test
+            public void testAllFilesPresentInObjc() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/objc"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("direct.kt")
+            public void testDirect() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/objc/direct.kt");
+            }
+
+            @Test
+            @TestMetadata("forwardDeclarationsCast.kt")
+            public void testForwardDeclarationsCast() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/objc/forwardDeclarationsCast.kt");
+            }
+
+            @Test
+            @TestMetadata("kt34467.kt")
+            public void testKt34467() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/objc/kt34467.kt");
+            }
+
+            @Test
+            @TestMetadata("kt48816_lazy_ir_disable.kt")
+            public void testKt48816_lazy_ir_disable() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/objc/kt48816_lazy_ir_disable.kt");
+            }
+
+            @Test
+            @TestMetadata("kt48816_lazy_ir_enable.kt")
+            public void testKt48816_lazy_ir_enable() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/objc/kt48816_lazy_ir_enable.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49034_objcclass.kt")
+            public void testKt49034_objcclass() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/objc/kt49034_objcclass.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49034_struct.kt")
+            public void testKt49034_struct() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/objc/kt49034_struct.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53151.kt")
+            public void testKt53151() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/objc/kt53151.kt");
+            }
+
+            @Test
+            @TestMetadata("overridabilityCondition.kt")
+            public void testOverridabilityCondition() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/objc/overridabilityCondition.kt");
+            }
+
+            @Test
+            @TestMetadata("sharing_with_weak.kt")
+            public void testSharing_with_weak() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/objc/sharing_with_weak.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("native/native.tests/testData/codegen/cinterop/packages")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("frontend-fir")
+        @FirPipeline()
+        @UseExtTestCaseGroupProvider()
+        public class Packages {
+            @Test
+            public void testAllFilesPresentInPackages() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/packages"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("dotFnameNested1.kt")
+            public void testDotFnameNested1() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/packages/dotFnameNested1.kt");
+            }
+
+            @Test
+            @TestMetadata("dotFnameNested2.kt")
+            public void testDotFnameNested2() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/packages/dotFnameNested2.kt");
+            }
+
+            @Test
+            @TestMetadata("dotFnameRoot.kt")
+            public void testDotFnameRoot() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/packages/dotFnameRoot.kt");
+            }
+
+            @Test
+            @TestMetadata("nested1.kt")
+            public void testNested1() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/packages/nested1.kt");
+            }
+
+            @Test
+            @TestMetadata("nested2.kt")
+            public void testNested2() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/packages/nested2.kt");
+            }
+
+            @Test
+            @TestMetadata("root.kt")
+            public void testRoot() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/packages/root.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("native/native.tests/testData/codegen/cinterop/threadStates")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("frontend-fir")
+        @FirPipeline()
+        @UseExtTestCaseGroupProvider()
+        public class ThreadStates {
+            @Test
+            public void testAllFilesPresentInThreadStates() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/threadStates"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("callback.kt")
+            public void testCallback() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/threadStates/callback.kt");
+            }
+
+            @Test
+            @TestMetadata("callbackOnSeparateThread.kt")
+            public void testCallbackOnSeparateThread() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/threadStates/callbackOnSeparateThread.kt");
+            }
+
+            @Test
+            @TestMetadata("callbackWithException.kt")
+            public void testCallbackWithException() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/threadStates/callbackWithException.kt");
+            }
+
+            @Test
+            @TestMetadata("callbackWithFinally.kt")
+            public void testCallbackWithFinally() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/threadStates/callbackWithFinally.kt");
+            }
+
+            @Test
+            @TestMetadata("callbackWithFinallyNoCatch.kt")
+            public void testCallbackWithFinallyNoCatch() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/threadStates/callbackWithFinallyNoCatch.kt");
+            }
+
+            @Test
+            @TestMetadata("directStaticCFunctionCall.kt")
+            public void testDirectStaticCFunctionCall() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/threadStates/directStaticCFunctionCall.kt");
+            }
+
+            @Test
+            @TestMetadata("nativeCall.kt")
+            public void testNativeCall() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/threadStates/nativeCall.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedCallbackWithException.kt")
+            public void testNestedCallbackWithException() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/threadStates/nestedCallbackWithException.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedCallbackWithFinally.kt")
+            public void testNestedCallbackWithFinally() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/threadStates/nestedCallbackWithFinally.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedCalls.kt")
+            public void testNestedCalls() throws Exception {
+                runTest("native/native.tests/testData/codegen/cinterop/threadStates/nestedCalls.kt");
+            }
+        }
+    }
+
+    @Nested
     @TestMetadata("native/native.tests/testData/codegen/classDelegation")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("frontend-fir")
@@ -1763,6 +2267,352 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
         @TestMetadata("throw_from_catch.kt")
         public void testThrow_from_catch() throws Exception {
             runTest("native/native.tests/testData/codegen/exceptions/throw_from_catch.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("native/native.tests/testData/codegen/fileCheck")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-fir")
+    @FirPipeline()
+    @UseExtTestCaseGroupProvider()
+    public class FileCheck {
+        @Test
+        @TestMetadata("adopted_function_reference.kt")
+        public void testAdopted_function_reference() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/adopted_function_reference.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInFileCheck() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/fileCheck"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("atomics.kt")
+        public void testAtomics() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/atomics.kt");
+        }
+
+        @Test
+        @TestMetadata("bce.kt")
+        public void testBce() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/bce.kt");
+        }
+
+        @Test
+        @TestMetadata("constants_merge.kt")
+        public void testConstants_merge() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/constants_merge.kt");
+        }
+
+        @Test
+        @TestMetadata("default_parameters_dont_box.kt")
+        public void testDefault_parameters_dont_box() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/default_parameters_dont_box.kt");
+        }
+
+        @Test
+        @TestMetadata("enum_when.kt")
+        public void testEnum_when() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/enum_when.kt");
+        }
+
+        @Test
+        @TestMetadata("escape_analysis.kt")
+        public void testEscape_analysis() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/escape_analysis.kt");
+        }
+
+        @Test
+        @TestMetadata("filecheck_expected_failure.kt")
+        public void testFilecheck_expected_failure() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/filecheck_expected_failure.kt");
+        }
+
+        @Test
+        @TestMetadata("force_arm_instruction_set.kt")
+        public void testForce_arm_instruction_set() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/force_arm_instruction_set.kt");
+        }
+
+        @Test
+        @TestMetadata("function_attributes_at_callsite.kt")
+        public void testFunction_attributes_at_callsite() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/function_attributes_at_callsite.kt");
+        }
+
+        @Test
+        @TestMetadata("generic_function_references.kt")
+        public void testGeneric_function_references() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/generic_function_references.kt");
+        }
+
+        @Test
+        @TestMetadata("intrinsics.kt")
+        public void testIntrinsics() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/intrinsics.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49847_class.kt")
+        public void testKt49847_class() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/kt49847_class.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49847_generic.kt")
+        public void testKt49847_generic() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/kt49847_generic.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49847_generic_receiver.kt")
+        public void testKt49847_generic_receiver() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/kt49847_generic_receiver.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49847_sam_Any.kt")
+        public void testKt49847_sam_Any() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/kt49847_sam_Any.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49847_sam_Any_generic.kt")
+        public void testKt49847_sam_Any_generic() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/kt49847_sam_Any_generic.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49847_sam_Int.kt")
+        public void testKt49847_sam_Int() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/kt49847_sam_Int.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49847_sam_Int_generic.kt")
+        public void testKt49847_sam_Int_generic() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/kt49847_sam_Int_generic.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49847_simple_function_reference.kt")
+        public void testKt49847_simple_function_reference() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/kt49847_simple_function_reference.kt");
+        }
+
+        @Test
+        @TestMetadata("kt58654.kt")
+        public void testKt58654() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/kt58654.kt");
+        }
+
+        @Test
+        @TestMetadata("no_frame_on_constant_object_access.kt")
+        public void testNo_frame_on_constant_object_access() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/no_frame_on_constant_object_access.kt");
+        }
+
+        @Test
+        @TestMetadata("redundant_safepoints.kt")
+        public void testRedundant_safepoints() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/redundant_safepoints.kt");
+        }
+
+        @Test
+        @TestMetadata("replace_invoke_with_call.kt")
+        public void testReplace_invoke_with_call() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/replace_invoke_with_call.kt");
+        }
+
+        @Test
+        @TestMetadata("signext_zeroext0.kt")
+        public void testSignext_zeroext0() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/signext_zeroext0.kt");
+        }
+
+        @Test
+        @TestMetadata("single_tls_load.kt")
+        public void testSingle_tls_load() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/single_tls_load.kt");
+        }
+
+        @Test
+        @TestMetadata("smoke0.kt")
+        public void testSmoke0() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/smoke0.kt");
+        }
+
+        @Test
+        @TestMetadata("suspend_returnNothing.kt")
+        public void testSuspend_returnNothing() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/suspend_returnNothing.kt");
+        }
+
+        @Test
+        @TestMetadata("suspend_tailcalls_functions.kt")
+        public void testSuspend_tailcalls_functions() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/suspend_tailcalls_functions.kt");
+        }
+
+        @Test
+        @TestMetadata("suspend_tailcalls_lambdas.kt")
+        public void testSuspend_tailcalls_lambdas() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/suspend_tailcalls_lambdas.kt");
+        }
+
+        @Test
+        @TestMetadata("when.kt")
+        public void testWhen() throws Exception {
+            runTest("native/native.tests/testData/codegen/fileCheck/when.kt");
+        }
+
+        @Nested
+        @TestMetadata("native/native.tests/testData/codegen/fileCheck/cinterop")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("frontend-fir")
+        @FirPipeline()
+        @UseExtTestCaseGroupProvider()
+        public class Cinterop {
+            @Test
+            public void testAllFilesPresentInCinterop() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/fileCheck/cinterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("direct.kt")
+            public void testDirect() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/cinterop/direct.kt");
+            }
+
+            @Test
+            @TestMetadata("signext_zeroext_interop.kt")
+            public void testSignext_zeroext_interop() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/cinterop/signext_zeroext_interop.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("native/native.tests/testData/codegen/fileCheck/kt53261")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("frontend-fir")
+        @FirPipeline()
+        @UseExtTestCaseGroupProvider()
+        public class Kt53261 {
+            @Test
+            public void testAllFilesPresentInKt53261() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/fileCheck/kt53261"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("kt53261_inline_unbox.kt")
+            public void testKt53261_inline_unbox() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_inline_unbox.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53261_noinline_CPointer.kt")
+            public void testKt53261_noinline_CPointer() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_CPointer.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53261_noinline_NativePointed.kt")
+            public void testKt53261_noinline_NativePointed() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_NativePointed.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53261_noinline_NonNullNativePtr.kt")
+            public void testKt53261_noinline_NonNullNativePtr() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_NonNullNativePtr.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53261_noinline_StableRef.kt")
+            public void testKt53261_noinline_StableRef() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_StableRef.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53261_noinline_UByteArray.kt")
+            public void testKt53261_noinline_UByteArray() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_UByteArray.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53261_noinline_UIntArray.kt")
+            public void testKt53261_noinline_UIntArray() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_UIntArray.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53261_noinline_ULongArray.kt")
+            public void testKt53261_noinline_ULongArray() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_ULongArray.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53261_noinline_UShortArray.kt")
+            public void testKt53261_noinline_UShortArray() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_UShortArray.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53261_noinline_value_unbox.kt")
+            public void testKt53261_noinline_value_unbox() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_value_unbox.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("frontend-fir")
+        @FirPipeline()
+        @UseExtTestCaseGroupProvider()
+        public class StringConcatenationTypeNarrowing {
+            @Test
+            public void testAllFilesPresentInStringConcatenationTypeNarrowing() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("kt53119_append_generated.kt")
+            public void testKt53119_append_generated() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing/kt53119_append_generated.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53119_append_manual.kt")
+            public void testKt53119_append_manual() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing/kt53119_append_manual.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53119_plus_extension.kt")
+            public void testKt53119_plus_extension() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing/kt53119_plus_extension.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53119_plus_generated_noescape.kt")
+            public void testKt53119_plus_generated_noescape() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing/kt53119_plus_generated_noescape.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53119_plus_member.kt")
+            public void testKt53119_plus_member() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing/kt53119_plus_member.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53119_side_effect.kt")
+            public void testKt53119_side_effect() throws Exception {
+                runTest("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing/kt53119_side_effect.kt");
+            }
         }
     }
 

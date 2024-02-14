@@ -4627,66 +4627,6 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Nested
-    @TestMetadata("compiler/testData/codegen/box/cinterop")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Cinterop {
-        @Test
-        public void testAllFilesPresentInCinterop() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/cinterop/basics")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Basics {
-            @Test
-            public void testAllFilesPresentInBasics() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/basics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/cinterop/exceptions")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Exceptions {
-            @Test
-            public void testAllFilesPresentInExceptions() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/exceptions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/cinterop/objc")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Objc {
-            @Test
-            public void testAllFilesPresentInObjc() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/objc"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/cinterop/packages")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Packages {
-            @Test
-            public void testAllFilesPresentInPackages() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/packages"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/cinterop/threadStates")
-        @TestDataPath("$PROJECT_ROOT")
-        public class ThreadStates {
-            @Test
-            public void testAllFilesPresentInThreadStates() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/threadStates"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-        }
-    }
-
-    @Nested
     @TestMetadata("compiler/testData/codegen/box/classLiteral")
     @TestDataPath("$PROJECT_ROOT")
     public class ClassLiteral {
@@ -14543,52 +14483,6 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
         @TestMetadata("genericPropertyWithItself.kt")
         public void testGenericPropertyWithItself() throws Exception {
             runTest("compiler/testData/codegen/box/fieldRename/genericPropertyWithItself.kt");
-        }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/fileCheck")
-    @TestDataPath("$PROJECT_ROOT")
-    public class FileCheck {
-        @Test
-        public void testAllFilesPresentInFileCheck() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fileCheck"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/fileCheck/cinterop")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Cinterop {
-            @Test
-            public void testAllFilesPresentInCinterop() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fileCheck/cinterop"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/fileCheck/kt53261")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Kt53261 {
-            @Test
-            public void testAllFilesPresentInKt53261() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fileCheck/kt53261"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/fileCheck/stringConcatenationTypeNarrowing")
-        @TestDataPath("$PROJECT_ROOT")
-        public class StringConcatenationTypeNarrowing {
-            @Test
-            public void testAllFilesPresentInStringConcatenationTypeNarrowing() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fileCheck/stringConcatenationTypeNarrowing"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @Test
-            @TestMetadata("kt53119_side_effect.kt")
-            public void testKt53119_side_effect() throws Exception {
-                runTest("compiler/testData/codegen/box/fileCheck/stringConcatenationTypeNarrowing/kt53119_side_effect.kt");
-            }
         }
     }
 

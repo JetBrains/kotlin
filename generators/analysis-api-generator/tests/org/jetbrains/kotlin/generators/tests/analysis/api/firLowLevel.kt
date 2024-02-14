@@ -338,7 +338,6 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
                 "codegen/box",
                 excludeDirs = listOf(
                     "script", // script is excluded until KT-60127 is implemented
-                    "cinterop", "fileCheck/cinterop", // CInterop tests contain .DEF .H .CPP .M files, which are invalid for Compiler Core new test system
                 )
             )
         }
@@ -348,7 +347,6 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
                 "codegen/box",
                 excludeDirs = listOf(
                     "script", // script is excluded until KT-60127 is implemented
-                    "cinterop", "fileCheck/cinterop", // CInterop tests contain .DEF .H .CPP .M files, which are invalid for Compiler Core new test system
                 )
             )
         }
