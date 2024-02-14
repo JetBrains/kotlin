@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
+import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sir.SirModule
@@ -18,10 +20,12 @@ import org.jetbrains.kotlin.sir.builder.buildImport
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportInput
 import org.jetbrains.sir.passes.builder.buildSirDeclarationList
+import kotlin.io.path.Path
 
 @OptIn(KtAnalysisApiInternals::class)
 internal fun buildSwiftModule(
     input: SwiftExportInput,
+    kotlinDistribution: Distribution,
     shouldSortInputFiles: Boolean,
     bridgeModuleName: String,
 ): SirModule {
@@ -31,11 +35,20 @@ internal fun buildSwiftModule(
         buildKtModuleProvider {
             platform = NativePlatforms.unspecifiedNativePlatform
 
+            val stdlib = addModule(
+                buildKtLibraryModule {
+                    addBinaryRoot(Path(kotlinDistribution.stdlib))
+                    platform = NativePlatforms.unspecifiedNativePlatform
+                    libraryName = "stdlib"
+                }
+            )
+
             addModule(
                 buildKtSourceModule {
                     addSourceRoot(input.sourceRoot)
                     platform = NativePlatforms.unspecifiedNativePlatform
                     moduleName = "main"
+                    addRegularDependency(stdlib)
                 }
             )
         }

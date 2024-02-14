@@ -18,10 +18,14 @@ public enum namespace1 {
             arg3: Swift.Int16,
             arg4: Swift.Int32,
             arg5: Swift.Int64,
+            arg6: Swift.UInt8,
+            arg7: Swift.UInt16,
+            arg8: Swift.UInt32,
+            arg9: Swift.UInt64,
             arg10: Swift.Float,
             arg11: Swift.Double
         ) -> Swift.Void {
-            namespace1_main_all_args__TypesOfArguments___Bool_int8_t_int16_t_int32_t_int64_t_float_double__(arg1, arg2, arg3, arg4, arg5, arg10, arg11)
+            namespace1_main_all_args__TypesOfArguments___Bool_int8_t_int16_t_int32_t_int64_t_uint8_t_uint16_t_uint32_t_uint64_t_float_double__(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11)
         }
     }
     public static func bar() -> Swift.Int32 {

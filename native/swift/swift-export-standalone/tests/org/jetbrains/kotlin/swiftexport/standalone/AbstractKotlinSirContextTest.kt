@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.standalone
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import kotlin.io.path.*
 
@@ -41,7 +42,8 @@ abstract class AbstractSwiftRunnerTestBase {
                     SwiftExportConfig.DEBUG_MODE_ENABLED to "true",
                     SwiftExportConfig.BRIDGE_MODULE_NAME to SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME,
                 ),
-                logger = createDummyLogger()
+                logger = createDummyLogger(),
+                distribution = Distribution(KonanHome.konanHomePath),
             )
         )
 
@@ -49,4 +51,12 @@ abstract class AbstractSwiftRunnerTestBase {
         KotlinTestUtils.assertEqualsToFile(expectedCHeader, output.cHeaderBridges.readText())
         KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, output.kotlinBridges.readText())
     }
+}
+
+private object KonanHome {
+    private const val KONAN_HOME_PROPERTY_KEY = "kotlin.internal.native.test.nativeHome"
+
+    val konanHomePath: String
+        get() = System.getProperty(KONAN_HOME_PROPERTY_KEY)
+            ?: error("Missing System property: '$KONAN_HOME_PROPERTY_KEY'")
 }

@@ -12,9 +12,9 @@ public fun namespace1_main_foobar(param: Int): Int {
     return result
 }
 
-@ExportedBridge("namespace1_main_all_args__TypesOfArguments___Bool_int8_t_int16_t_int32_t_int64_t_float_double__")
-public fun namespace1_main_all_args(arg1: Boolean, arg2: Byte, arg3: Short, arg4: Int, arg5: Long, arg10: Float, arg11: Double): Unit {
-    val result = namespace1.main.all_args(arg1, arg2, arg3, arg4, arg5, arg10, arg11)
+@ExportedBridge("namespace1_main_all_args__TypesOfArguments___Bool_int8_t_int16_t_int32_t_int64_t_uint8_t_uint16_t_uint32_t_uint64_t_float_double__")
+public fun namespace1_main_all_args(arg1: Boolean, arg2: Byte, arg3: Short, arg4: Int, arg5: Long, arg6: UByte, arg7: UShort, arg8: UInt, arg9: ULong, arg10: Float, arg11: Double): Unit {
+    val result = namespace1.main.all_args(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11)
     return result
 }
 
