@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isExplicit
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
@@ -116,7 +117,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         if (this !is FirFunctionCall) return null
         val reference = this.calleeReference
         if (reference is FirResolvedCallableReference) return null
-        if (typeArguments.any { it.source != null }) return null
+        if (typeArguments.any { it.isExplicit }) return null
         if (arguments.singleOrNull().let { it is FirAnonymousFunctionExpression && it.isTrailingLambda }) {
             // No brackets should be in a selector call
             val callExpressionSource =

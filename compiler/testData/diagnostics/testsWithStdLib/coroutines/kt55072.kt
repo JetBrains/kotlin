@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-55072
 
 import java.util.concurrent.locks.ReentrantLock

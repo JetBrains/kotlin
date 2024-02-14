@@ -8,10 +8,10 @@ fun <T: suspend (Int) -> Unit, K: T> takeSuspend(x: T, y: K) = x
 fun <T: (Int) -> Unit, K: T> takeSimpleFunction(x: T, y: K) = x
 
 fun main() {
-    select(<!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> {}, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>{}<!>)
-    select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>{}<!>, <!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> {})
-    select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>id {}<!>, <!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> {})
-    select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>id {}<!>, id(<!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> {}))
+    select(suspend {}, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>{}<!>)
+    select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>{}<!>, suspend {})
+    select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>id {}<!>, suspend {})
+    select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>id {}<!>, id(suspend {}))
     select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>id {}<!>, id<suspend () -> Unit> {})
 
     takeSuspend(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>id { it }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>{ x -> x }<!>)

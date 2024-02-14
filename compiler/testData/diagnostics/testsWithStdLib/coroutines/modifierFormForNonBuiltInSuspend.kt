@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SKIP_TXT
 
 fun <R> suspend(block: suspend () -> R): suspend () -> R = block

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // LANGUAGE: +SynchronizedSuspendError
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
