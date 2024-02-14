@@ -26,9 +26,21 @@ public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagno
   }
 
   @Test
-  @TestMetadata("signatureClash.kt")
-  public void testSignatureClash() {
-    runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClash.kt");
+  @TestMetadata("signatureClashClasses.kt")
+  public void testSignatureClashClasses() {
+    runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClashClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("signatureClashFunctions.kt")
+  public void testSignatureClashFunctions() {
+    runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClashFunctions.kt");
+  }
+
+  @Test
+  @TestMetadata("signatureClashVariables.kt")
+  public void testSignatureClashVariables() {
+    runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClashVariables.kt");
   }
 
   @Test

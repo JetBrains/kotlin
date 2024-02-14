@@ -1,0 +1,7 @@
+/main.kt:27:5: error: Platform declaration clash: The following declarations have the same IR signature (com.example.klib.serialization.diagnostics/ConstructorsClash.<init>|<init>(kotlin.Int){}[0]):
+    constructor ConstructorsClash(s: kotlin.Int) defined in com.example.klib.serialization.diagnostics.ConstructorsClash
+    constructor ConstructorsClash(s: kotlin.Int) defined in com.example.klib.serialization.diagnostics.ConstructorsClash
+
+/main.kt:29:5: error: Platform declaration clash: The following declarations have the same IR signature (com.example.klib.serialization.diagnostics/ConstructorsClash.<init>|<init>(kotlin.Int){}[0]):
+    constructor ConstructorsClash(s: kotlin.Int) defined in com.example.klib.serialization.diagnostics.ConstructorsClash
+    constructor ConstructorsClash(s: kotlin.Int) defined in com.example.klib.serialization.diagnostics.ConstructorsClash

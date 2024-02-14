@@ -1,0 +1,111 @@
+/foo.kt:18:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/valueSeparateFiles|{}valueSeparateFiles[0]):
+    val valueSeparateFiles: kotlin.Int defined in com.example.klib.serialization.diagnostics
+    val valueSeparateFiles: kotlin.Int defined in com.example.klib.serialization.diagnostics
+
+/foo.kt:18:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/valueSeparateFiles.<get-valueSeparateFiles>|<get-valueSeparateFiles>(){}[0]):
+    fun `<get-valueSeparateFiles>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+    fun `<get-valueSeparateFiles>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+
+/foo.kt:20:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/myDelegated|{}myDelegated[0]):
+    val myDelegated: kotlin.Int defined in com.example.klib.serialization.diagnostics
+    val myDelegated: kotlin.Long defined in com.example.klib.serialization.diagnostics
+
+/foo.kt:20:53: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/myDelegated.<get-myDelegated>|<get-myDelegated>(){}[0]):
+    fun `<get-myDelegated>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+    fun `<get-myDelegated>`(): kotlin.Long defined in com.example.klib.serialization.diagnostics
+
+/foo.kt:22:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/extensionValue|@kotlin.Int{}extensionValue[0]):
+    val kotlin.Int.extensionValue: kotlin.Int defined in com.example.klib.serialization.diagnostics
+    var kotlin.Int.extensionValue: kotlin.Int defined in com.example.klib.serialization.diagnostics
+
+/foo.kt:24:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/extensionValue.<get-extensionValue>|<get-extensionValue>@kotlin.Int(){}[0]):
+    fun kotlin.Int.`<get-extensionValue>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+    fun kotlin.Int.`<get-extensionValue>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+
+/main.kt:32:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/valueSeparateFiles|{}valueSeparateFiles[0]):
+    val valueSeparateFiles: kotlin.Int defined in com.example.klib.serialization.diagnostics
+    val valueSeparateFiles: kotlin.Int defined in com.example.klib.serialization.diagnostics
+
+/main.kt:32:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/valueSeparateFiles.<get-valueSeparateFiles>|<get-valueSeparateFiles>(){}[0]):
+    fun `<get-valueSeparateFiles>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+    fun `<get-valueSeparateFiles>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+
+/main.kt:34:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/valueSingleFile|{}valueSingleFile[0]):
+    val valueSingleFile: kotlin.Int defined in com.example.klib.serialization.diagnostics
+    val valueSingleFile: kotlin.String defined in com.example.klib.serialization.diagnostics
+
+/main.kt:34:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/valueSingleFile.<get-valueSingleFile>|<get-valueSingleFile>(){}[0]):
+    fun `<get-valueSingleFile>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+    fun `<get-valueSingleFile>`(): kotlin.String defined in com.example.klib.serialization.diagnostics
+
+/main.kt:35:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/valueSingleFile|{}valueSingleFile[0]):
+    val valueSingleFile: kotlin.Int defined in com.example.klib.serialization.diagnostics
+    val valueSingleFile: kotlin.String defined in com.example.klib.serialization.diagnostics
+
+/main.kt:35:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/valueSingleFile.<get-valueSingleFile>|<get-valueSingleFile>(){}[0]):
+    fun `<get-valueSingleFile>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+    fun `<get-valueSingleFile>`(): kotlin.String defined in com.example.klib.serialization.diagnostics
+
+/main.kt:37:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/myDelegated|{}myDelegated[0]):
+    val myDelegated: kotlin.Int defined in com.example.klib.serialization.diagnostics
+    val myDelegated: kotlin.Long defined in com.example.klib.serialization.diagnostics
+
+/main.kt:37:52: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/myDelegated.<get-myDelegated>|<get-myDelegated>(){}[0]):
+    fun `<get-myDelegated>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+    fun `<get-myDelegated>`(): kotlin.Long defined in com.example.klib.serialization.diagnostics
+
+/main.kt:39:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/extensionValue|@kotlin.Int{}extensionValue[0]):
+    val kotlin.Int.extensionValue: kotlin.Int defined in com.example.klib.serialization.diagnostics
+    var kotlin.Int.extensionValue: kotlin.Int defined in com.example.klib.serialization.diagnostics
+
+/main.kt:41:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/extensionValue.<get-extensionValue>|<get-extensionValue>@kotlin.Int(){}[0]):
+    fun kotlin.Int.`<get-extensionValue>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+    fun kotlin.Int.`<get-extensionValue>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
+
+/main.kt:44:5: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClass|{}valueSameClass[0]):
+    val valueSameClass: kotlin.Int defined in com.example.klib.serialization.diagnostics.Container
+    val valueSameClass: kotlin.Int defined in com.example.klib.serialization.diagnostics.Container
+
+/main.kt:44:5: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClass.<get-valueSameClass>|<get-valueSameClass>(){}[0]):
+    fun `<get-valueSameClass>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics.Container
+    fun `<get-valueSameClass>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics.Container
+
+/main.kt:45:5: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClass|{}valueSameClass[0]):
+    val valueSameClass: kotlin.Int defined in com.example.klib.serialization.diagnostics.Container
+    val valueSameClass: kotlin.Int defined in com.example.klib.serialization.diagnostics.Container
+
+/main.kt:45:5: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClass.<get-valueSameClass>|<get-valueSameClass>(){}[0]):
+    fun `<get-valueSameClass>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics.Container
+    fun `<get-valueSameClass>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics.Container
+
+/main.kt:48:9: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/Container.Companion.valueSameClassCompanion|{}valueSameClassCompanion[0]):
+    val valueSameClassCompanion: kotlin.Int defined in com.example.klib.serialization.diagnostics.Container.Companion
+    val valueSameClassCompanion: kotlin.Int defined in com.example.klib.serialization.diagnostics.Container.Companion
+
+/main.kt:48:9: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/Container.Companion.valueSameClassCompanion.<get-valueSameClassCompanion>|<get-valueSameClassCompanion>(){}[0]):
+    fun `<get-valueSameClassCompanion>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics.Container.Companion
+    fun `<get-valueSameClassCompanion>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics.Container.Companion
+
+/main.kt:49:9: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/Container.Companion.valueSameClassCompanion|{}valueSameClassCompanion[0]):
+    val valueSameClassCompanion: kotlin.Int defined in com.example.klib.serialization.diagnostics.Container.Companion
+    val valueSameClassCompanion: kotlin.Int defined in com.example.klib.serialization.diagnostics.Container.Companion
+
+/main.kt:49:9: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/Container.Companion.valueSameClassCompanion.<get-valueSameClassCompanion>|<get-valueSameClassCompanion>(){}[0]):
+    fun `<get-valueSameClassCompanion>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics.Container.Companion
+    fun `<get-valueSameClassCompanion>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics.Container.Companion
+
+/main.kt:52:5: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClassExtension|@kotlin.String{}valueSameClassExtension[0]):
+    val kotlin.String.valueSameClassExtension: kotlin.String defined in com.example.klib.serialization.diagnostics.Container
+    val kotlin.String.valueSameClassExtension: kotlin.String defined in com.example.klib.serialization.diagnostics.Container
+
+/main.kt:52:75: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClassExtension.<get-valueSameClassExtension>|<get-valueSameClassExtension>@kotlin.String(){}[0]):
+    fun kotlin.String.`<get-valueSameClassExtension>`(): kotlin.String defined in com.example.klib.serialization.diagnostics.Container
+    fun kotlin.String.`<get-valueSameClassExtension>`(): kotlin.String defined in com.example.klib.serialization.diagnostics.Container
+
+/main.kt:53:5: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClassExtension|@kotlin.String{}valueSameClassExtension[0]):
+    val kotlin.String.valueSameClassExtension: kotlin.String defined in com.example.klib.serialization.diagnostics.Container
+    val kotlin.String.valueSameClassExtension: kotlin.String defined in com.example.klib.serialization.diagnostics.Container
+
+/main.kt:53:75: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClassExtension.<get-valueSameClassExtension>|<get-valueSameClassExtension>@kotlin.String(){}[0]):
+    fun kotlin.String.`<get-valueSameClassExtension>`(): kotlin.String defined in com.example.klib.serialization.diagnostics.Container
+    fun kotlin.String.`<get-valueSameClassExtension>`(): kotlin.String defined in com.example.klib.serialization.diagnostics.Container
