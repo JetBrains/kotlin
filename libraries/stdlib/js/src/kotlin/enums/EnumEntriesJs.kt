@@ -8,7 +8,6 @@ package kotlin.enums
 @SinceKotlin("1.9")
 @ExperimentalStdlibApi
 @PublishedApi
-internal actual inline fun <reified T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T> {
+internal actual fun <T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T> {
     throw NotImplementedError() // implemented as intrinsic
-
 }

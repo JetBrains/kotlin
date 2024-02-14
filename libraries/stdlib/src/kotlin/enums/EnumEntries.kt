@@ -33,7 +33,7 @@ public inline fun <reified T : Enum<T>> enumEntries(): EnumEntries<T> = enumEntr
 @PublishedApi
 @ExperimentalStdlibApi
 @SinceKotlin("1.9")
-internal expect inline fun <reified T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T>
+internal expect fun <T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T>
 
 @PublishedApi
 @SinceKotlin("1.8") // Used by pre-1.9.0 JVM compiler for the feature in preview mode. Can be safely removed around 2.1
