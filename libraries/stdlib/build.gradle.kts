@@ -118,6 +118,7 @@ kotlin {
                                 "-Xuse-14-inline-classes-mangling-scheme",
                                 "-Xbuiltins-from-sources",
                                 "-Xno-new-java-annotation-targets",
+                                "-Xlink-via-signatures",
                                 diagnosticNamesArg,
                             )
                         )

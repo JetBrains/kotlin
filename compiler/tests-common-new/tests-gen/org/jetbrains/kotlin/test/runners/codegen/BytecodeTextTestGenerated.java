@@ -2327,6 +2327,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     }
 
     @Test
+    @TestMetadata("forInRangeInlinedFromStdlib.kt")
+    public void testForInRangeInlinedFromStdlib() {
+      runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeInlinedFromStdlib.kt");
+    }
+
+    @Test
     @TestMetadata("forInRangeSpecializedToUntil.kt")
     public void testForInRangeSpecializedToUntil() {
       runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeSpecializedToUntil.kt");
