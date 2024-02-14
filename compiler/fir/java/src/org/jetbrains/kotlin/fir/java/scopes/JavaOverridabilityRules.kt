@@ -40,12 +40,9 @@ class JavaOverridabilityRules(session: FirSession) : PlatformSpecificOverridabil
     }
 
     private fun shouldApplyJavaChecker(overrideCandidate: FirCallableDeclaration, baseDeclaration: FirCallableDeclaration): Boolean {
-        return when {
-            // One candidate with Java original is enough to apply Java checker,
-            // otherwise e.g. primitive type comparisons do not work
-            overrideCandidate.isOriginallyFromJava() || baseDeclaration.isOriginallyFromJava() -> true
-            else -> false
-        }
+        // One candidate with Java original is enough to apply Java checker,
+        // otherwise e.g. primitive type comparisons do not work.
+        return overrideCandidate.isOriginallyFromJava() || baseDeclaration.isOriginallyFromJava()
     }
 
     private fun FirCallableDeclaration.isOriginallyFromJava(): Boolean = unwrapFakeOverrides().origin == FirDeclarationOrigin.Enhancement
