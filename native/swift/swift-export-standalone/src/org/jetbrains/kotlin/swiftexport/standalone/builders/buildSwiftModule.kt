@@ -47,7 +47,7 @@ internal fun buildSwiftModule(
                 buildKtSourceModule {
                     addSourceRoot(input.sourceRoot)
                     platform = NativePlatforms.unspecifiedNativePlatform
-                    moduleName = "main"
+                    moduleName = ""
                     addRegularDependency(stdlib)
                 }
             )

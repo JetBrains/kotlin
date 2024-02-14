@@ -37,4 +37,6 @@ val SirVariable.accessors: List<SirAccessor>
 
 val SirParameter.name: String? get() = parameterName ?: argumentName
 
-val SirType.isVoid: Boolean get() = this is SirNominalType && this.type == SirSwiftModule.void
+val SirType.isVoid: Boolean
+    get() = this.reference is SirTypeReference.Resolved.SirNominalType
+            && declaration == SirSwiftModule.void

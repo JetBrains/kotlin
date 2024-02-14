@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.sir.bridge.impl
 import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.SirTypeReference
 import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.sir.util.*
 
@@ -40,6 +41,7 @@ internal class BridgeGeneratorImpl : BridgeGenerator {
 // 1. this name will be UGLY in the debug session
 internal fun BridgeRequest.cDeclarationName(): String {
     val nameSuffixForOverloadSimulation = cParameters().joinToString(separator = "_", transform = { it.type.repr })
+        .replace("*", "STAR")
     val suffixString = if (cParameters().isNotEmpty()) "__TypesOfArguments__${nameSuffixForOverloadSimulation}__" else ""
     val result = "${bridgeName}${suffixString}"
     return result
@@ -90,8 +92,7 @@ private fun BridgeRequest.cParameters() = callable.allParameters
     .map { it.c }
 
 private fun bridgeType(type: SirType): Pair<KotlinType, CType> {
-    require(type is SirNominalType)
-    return when (type.type) {
+    return when (type.declaration) {
         SirSwiftModule.void -> (KotlinType.Unit to CType.Void)
 
         SirSwiftModule.bool -> (KotlinType.Boolean to CType.Bool)
@@ -109,7 +110,7 @@ private fun bridgeType(type: SirType): Pair<KotlinType, CType> {
         SirSwiftModule.double -> (KotlinType.Double to CType.Double)
         SirSwiftModule.float -> (KotlinType.Float to CType.Float)
 
-        else -> error("Unsupported type: ${type.type.name}")
+        else -> (KotlinType.AnyType to CType.AnyType)
     }
 }
 
@@ -156,6 +157,8 @@ public enum class CType(public val repr: String) {
 
     Float("float"),
     Double("double"),
+
+    AnyType("void*")
 }
 
 internal data class KotlinBridgeParameter(
@@ -180,5 +183,7 @@ internal enum class KotlinType(val repr: String) {
 
     Float("Float"),
     Double("Double"),
+
+    AnyType("Any")
 }
 

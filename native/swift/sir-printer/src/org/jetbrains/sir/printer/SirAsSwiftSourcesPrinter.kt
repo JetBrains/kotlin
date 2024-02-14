@@ -154,15 +154,16 @@ private val SirVisibility.swift
 private val SirParameter.swift get(): String = (argumentName ?: "_") + (parameterName?.let { " $it" } ?: "") + ": " + type.swift
 
 private val SirType.swift
-    get(): String = when (this) {
-        is SirExistentialType -> "Any"
-        is SirNominalType -> type.swiftFqName
+    get(): String = when (this.reference) {
+        SirTypeReference.Resolved.SirExistentialType -> "Any"
+        is SirTypeReference.Resolved.SirNominalType -> declaration.swiftFqName
+        is SirTypeReference.Unresolved -> throw IllegalStateException("printer was ran on unresolved SIR")
     }
 
 private val SirNamedDeclaration.swiftFqName: String
     get() {
         val parentName = (parent as? SirNamedDeclaration)?.swiftFqName ?: ((parent as? SirNamed)?.name)
-        return parentName?.let { "$it.$name" } ?: name
+        return parentName?.takeIf { it.isNotBlank() }?.let { "$it.$name" } ?: name
     }
 
 private val simpleIdentifierRegex = Regex("[_a-zA-Z][_a-zA-Z0-9]*")

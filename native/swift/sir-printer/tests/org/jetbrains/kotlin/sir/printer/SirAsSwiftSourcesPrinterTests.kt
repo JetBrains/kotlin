@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.sir.printer
 
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.builder.buildFunction
-import org.jetbrains.kotlin.sir.builder.buildModule
+import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -272,6 +271,71 @@ class SirAsSwiftSourcesPrinterTests {
         runTest(
             module,
             "testData/commented_function"
+        )
+    }
+
+    @Test
+    fun `should print val`() {
+
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildVariable {
+                    origin = SirOrigin.Unknown
+                    isStatic = false
+                    visibility = SirVisibility.PUBLIC
+                    name = "myVar"
+                    type = SirNominalType(SirSwiftModule.int64)
+                    getter = buildGetter {
+                        body = SirFunctionBody(
+                            listOf(
+                                "demo body for getter"
+                            )
+                        )
+                    }
+                }
+            )
+        }
+
+        runTest(
+            module,
+            "testData/variable_readonly"
+        )
+    }
+
+    @Test
+    fun `should print var`() {
+
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildVariable {
+                    origin = SirOrigin.Unknown
+                    isStatic = false
+                    visibility = SirVisibility.PUBLIC
+                    name = "myVar"
+                    type = SirNominalType(SirSwiftModule.int64)
+                    getter = buildGetter {
+                        body = SirFunctionBody(
+                            listOf(
+                                "demo body for getter"
+                            )
+                        )
+                    }
+                    setter = buildSetter {
+                        body = SirFunctionBody(
+                            listOf(
+                                "demo body for setter"
+                            )
+                        )
+                    }
+                }
+            )
+        }
+
+        runTest(
+            module,
+            "testData/variable_read_write"
         )
     }
 

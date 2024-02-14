@@ -5,41 +5,29 @@
 
 package org.jetbrains.kotlin.sir
 
-sealed interface SirType
+data class SirType(var reference: SirTypeReference) {
+    val declaration: SirNamedDeclaration
+        get() =
+            (reference as? SirTypeReference.Resolved.SirNominalType)?.declaration
+                ?: throw IllegalArgumentException("trying to get declaration of type ${this} that is not resolved or that is not nominal")
 
-class SirNominalType(
-    val type: SirNamedDeclaration,
-    val parent: SirNominalType? = null,
-) : SirType {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other != null && this::class != other::class) return false
-
-        other as SirNominalType
-
-        if (type != other.type) return false
-        if (parent != other.parent) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = type.hashCode()
-        result = 31 * result + (parent?.hashCode() ?: 0)
-        return result
+    companion object {
+        fun Unresolved(origin: SirOrigin): SirType = SirType(SirTypeReference.Unresolved(origin))
     }
 }
 
-class SirExistentialType(
-    // TODO: Protocols. For now, only `any Any` is supported
-) : SirType {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other != null && this::class != other::class) return false
-        return true
+fun SirNominalType(declaration: SirNamedDeclaration): SirType = SirType(SirTypeReference.Resolved.SirNominalType(declaration))
+
+sealed interface SirTypeReference {
+    sealed interface Resolved : SirTypeReference {
+        class SirNominalType(
+            var declaration: SirNamedDeclaration,
+        ) : Resolved
+
+        // TODO: Protocols. For now, only `any Any` is supported
+        data object SirExistentialType : Resolved
+
     }
 
-    override fun hashCode(): Int {
-        return this::class.hashCode()
-    }
+    class Unresolved(val origin: SirOrigin) : SirTypeReference
 }

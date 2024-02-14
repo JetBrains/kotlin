@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.builder.buildFunction
-import org.jetbrains.kotlin.sir.builder.buildGetter
-import org.jetbrains.kotlin.sir.builder.buildSetter
-import org.jetbrains.kotlin.sir.builder.buildVariable
+import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 
@@ -28,6 +25,17 @@ private class Visitor(
     private val res: MutableList<SirDeclaration>,
     private val analysisSession: KtAnalysisSession
 ) : KtTreeVisitorVoid() {
+
+    override fun visitClassOrObject(classOrObject: KtClassOrObject) {
+        // we do not handle inner declarations of class currently. No need to go deeper.
+//        super.visitClassOrObject(classOrObject)
+        with(analysisSession) {
+            classOrObject.process {
+                buildSirClassFromPsi(classOrObject)
+            }
+        }
+    }
+
     override fun visitNamedFunction(function: KtNamedFunction) {
         super.visitNamedFunction(function)
         with(analysisSession) {
@@ -106,31 +114,52 @@ internal fun buildSirVariableFromPsi(variable: KtProperty): SirVariable = buildV
     it.setter?.parent = it
 }
 
+context(KtAnalysisSession)
+internal fun buildSirClassFromPsi(classOrObject: KtClassOrObject): SirNamedDeclaration = buildEnum {
+    val symbol = classOrObject.getNamedClassOrObjectSymbol()
+        ?: throw IllegalStateException("unnamed kotlin class in public interfaces?")
+
+    name = classOrObject.name ?: "UNKNOWN_CLASS"
+    origin = KotlinSource(symbol)
+}
+
 public data class KotlinSource(
     val symbol: KtSymbol,
 ) : SirOrigin.Foreign.SourceCode
 
 
 context(KtAnalysisSession)
-private fun buildSirNominalType(it: KtType): SirNominalType = SirNominalType(
-    when {
-        it.isUnit -> SirSwiftModule.void
+private fun buildSirNominalType(it: KtType): SirType = swiftBuiltInFrom(it)
+    ?.let { SirNominalType(it) }
+    ?: sirTypeForKotlinClass(it)
+    ?: throw IllegalArgumentException("Swift Export does not support argument type: ${it.asStringForDebugging()}")
 
-        it.isByte -> SirSwiftModule.int8
-        it.isShort -> SirSwiftModule.int16
-        it.isInt -> SirSwiftModule.int32
-        it.isLong -> SirSwiftModule.int64
+context(KtAnalysisSession)
+private fun swiftBuiltInFrom(it: KtType): SirNamedDeclaration? = when {
+    it.isUnit -> SirSwiftModule.void
 
-        it.isUByte -> SirSwiftModule.uint8
-        it.isUShort -> SirSwiftModule.uint16
-        it.isUInt -> SirSwiftModule.uint32
-        it.isULong -> SirSwiftModule.uint64
+    it.isByte -> SirSwiftModule.int8
+    it.isShort -> SirSwiftModule.int16
+    it.isInt -> SirSwiftModule.int32
+    it.isLong -> SirSwiftModule.int64
 
-        it.isBoolean -> SirSwiftModule.bool
+    it.isUByte -> SirSwiftModule.uint8
+    it.isUShort -> SirSwiftModule.uint16
+    it.isUInt -> SirSwiftModule.uint32
+    it.isULong -> SirSwiftModule.uint64
 
-        it.isDouble -> SirSwiftModule.double
-        it.isFloat -> SirSwiftModule.float
-        else ->
-            throw IllegalArgumentException("Swift Export does not support argument type: ${it.asStringForDebugging()}")
-    }
-)
+    it.isBoolean -> SirSwiftModule.bool
+
+    it.isDouble -> SirSwiftModule.double
+    it.isFloat -> SirSwiftModule.float
+
+    else -> null
+}
+
+
+context(KtAnalysisSession)
+private fun sirTypeForKotlinClass(type: KtType): SirType? = type.expandedClassSymbol?.let {
+    SirType.Unresolved(
+        origin = KotlinSource(it)
+    )
+}

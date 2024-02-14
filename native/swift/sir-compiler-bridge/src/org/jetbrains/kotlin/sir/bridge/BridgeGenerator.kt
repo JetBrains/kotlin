@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.sir.bridge.impl.*
 import org.jetbrains.kotlin.sir.bridge.impl.BridgeGeneratorImpl
 import org.jetbrains.kotlin.sir.bridge.impl.CBridgePrinter
 import org.jetbrains.kotlin.sir.bridge.impl.KotlinBridgePrinter
-import org.jetbrains.kotlin.sir.util.allParameters
-import org.jetbrains.kotlin.sir.util.isVoid
-import org.jetbrains.kotlin.sir.util.name
-import org.jetbrains.kotlin.sir.util.returnType
+import org.jetbrains.kotlin.sir.util.*
 
 /**
  * Description of a Kotlin function for which we are creating the bridge.
@@ -36,6 +33,11 @@ public class BridgeRequest(
  */
 public fun createFunctionBodyFromRequest(request: BridgeRequest): SirFunctionBody {
     val callee = request.cDeclarationName()
+    if (callee.contains("voidSTAR") || request.callable.returnType.declaration.parent != SirSwiftModule) { // dirty temporary hack
+        return SirFunctionBody(
+            listOf("fatalError(\"YET UNSUPPORTED\")")
+        )
+    }
     val calleeArguments = request.callable.allParameters.map { it.name }
     val callSite = "$callee(${calleeArguments.joinToString(separator = ", ")})"
     val callStatement = if (request.callable.returnType.isVoid) callSite else "return $callSite"
