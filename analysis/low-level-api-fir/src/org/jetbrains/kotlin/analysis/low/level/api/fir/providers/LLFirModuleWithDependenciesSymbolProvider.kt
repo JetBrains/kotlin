@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedFirDeserializedSymbolProvider
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.deserialization.AbstractFirDeserializedSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirNullSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -44,8 +45,11 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration,
     ): FirClassLikeSymbol<*>? = providers.firstNotNullOfOrNull { provider ->
-        if (provider !is StubBasedFirDeserializedSymbolProvider) return@firstNotNullOfOrNull null
-        provider.getClassLikeSymbolByClassId(classId, classLikeDeclaration)
+        when (provider) {
+            is StubBasedFirDeserializedSymbolProvider -> provider.getClassLikeSymbolByClassId(classId, classLikeDeclaration)
+            is AbstractFirDeserializedSymbolProvider -> provider.getClassLikeSymbolByClassId(classId)
+            else -> null
+        }
     }
 
     @FirSymbolProviderInternals
@@ -62,8 +66,15 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
         callableDeclaration: KtCallableDeclaration,
     ) {
         providers.forEach { provider ->
-            if (provider !is StubBasedFirDeserializedSymbolProvider) return@forEach
-            destination.addIfNotNull(provider.getTopLevelCallableSymbol(packageFqName, shortName, callableDeclaration))
+            when (provider) {
+                is StubBasedFirDeserializedSymbolProvider ->
+                    destination.addIfNotNull(provider.getTopLevelCallableSymbol(packageFqName, shortName, callableDeclaration))
+
+                is AbstractFirDeserializedSymbolProvider ->
+                    provider.getTopLevelCallableSymbolsTo(destination, packageFqName, shortName)
+
+                else -> {}
+            }
         }
     }
 
