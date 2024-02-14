@@ -140,6 +140,36 @@ inline fun <reified T : Any> T.withLinearClosure(next: (T) -> T?): Set<T> {
     return results
 }
 
+/**
+ * Similar to [closure], but the result is returned in explicit BFS depth order starting with the receiver
+ * @see closure
+ */
+inline fun <reified T> Iterable<T>.withClosureGroupingByDistance(edges: (T) -> Iterable<T>): List<Set<T>> {
+    val dequeue = if (this is Collection) {
+        if (this.isEmpty()) return emptyList()
+        createDequeue(this)
+    } else createDequeueFromIterable(this)
+
+    val allElements = createResultSet<T>(dequeue.size)
+    val results = mutableListOf<MutableSet<T>>()
+
+    while (dequeue.isNotEmpty()) {
+        val levelElements = createResultSet<T>(dequeue.size)
+        var levelSize = dequeue.size
+        while (levelSize != 0) {
+            levelSize -= 1
+            val element = dequeue.removeAt(0)
+            if (allElements.add(element) && levelElements.add(element)) {
+                dequeue.addAll(edges(element))
+            }
+        }
+        if (levelElements.isNotEmpty()) {
+            results.add(levelElements)
+        }
+    }
+    return results
+}
+
 @PublishedApi
 internal inline fun <reified T> createDequeue(initialSize: Int = 16): MutableList<T> {
     return if (KotlinVersion.CURRENT.isAtLeast(1, 4)) ArrayDeque(initialSize)
