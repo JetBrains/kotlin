@@ -104,15 +104,13 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
     }
 
     if (fullyExpandedType is KtNonErrorClassType) {
-        val typeName = fullyExpandedType.classId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
-        val typeArguments = translateTypeArgumentsToObjC()
 
         // TODO NOW: create type translation test
-        if (classSymbol?.classKind == KtClassKind.INTERFACE) {
-            return ObjCProtocolType(typeName, classId)
+        return if (classSymbol?.classKind == KtClassKind.INTERFACE) {
+            ObjCProtocolType(fullyExpandedType.objCTypeName, classId)
+        } else {
+            ObjCClassType(fullyExpandedType.objCTypeName, translateTypeArgumentsToObjC(), classId)
         }
-
-        return ObjCClassType(typeName, typeArguments, classId)
     }
 
     if (fullyExpandedType is KtTypeParameterType) {
@@ -135,6 +133,12 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
     return objCErrorType
 }
 
+context(KtAnalysisSession, KtObjCExportSession)
+private val KtNonErrorClassType.objCTypeName: String
+    get() {
+        return getClassOrObjectSymbolByClassId(classId)?.getObjCClassOrProtocolName()?.objCName
+            ?: classId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
+    }
 
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtType.translateTypeArgumentsToObjC(): List<ObjCNonNullReferenceType> {
