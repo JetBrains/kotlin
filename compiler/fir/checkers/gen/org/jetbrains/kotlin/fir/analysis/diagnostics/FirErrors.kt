@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.ModifierNonBuiltinSuspendFunE
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitAllMultipleDefaultsInheritedFromSupertypes
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitConfusingSyntaxInWhenBranches
+import org.jetbrains.kotlin.config.LanguageFeature.ProhibitConstructorAndSupertypeOnTypealiasWithTypeProjection
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitCyclesInAnnotations
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitImplementingVarByInheritedVal
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitInlineModifierOnPrimaryConstructorParameters
@@ -801,6 +802,7 @@ object FirErrors {
     val TOPLEVEL_TYPEALIASES_ONLY: KtDiagnosticFactory0 by error0<KtTypeAlias>()
     val RECURSIVE_TYPEALIAS_EXPANSION: KtDiagnosticFactory0 by error0<KtElement>()
     val TYPEALIAS_SHOULD_EXPAND_TO_CLASS: KtDiagnosticFactory1<ConeKotlinType> by error1<KtElement, ConeKotlinType>()
+    val CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION: KtDiagnosticFactoryForDeprecation0 by deprecationError0<KtElement>(ProhibitConstructorAndSupertypeOnTypealiasWithTypeProjection)
 
     // Extended checkers
     val REDUNDANT_VISIBILITY_MODIFIER: KtDiagnosticFactory0 by warning0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
