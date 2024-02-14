@@ -346,4 +346,84 @@ class ClosureTest {
             listOf("a"), Node("a").withLinearClosure { it.parent }.map { it.value },
         )
     }
+
+    @Test
+    fun `withExplicitBfsDepthClosure on List`() {
+        val a = Node("a")
+        val b = Node("b")
+        val c = Node("c")
+        val d = Node("d")
+        val e = Node("e")
+        val f = Node("f")
+        val g = Node("g")
+
+        // a -> (b, c)
+        // c -> (d)
+        a.children.add(b)
+        a.children.add(c)
+        c.children.add(d)
+
+        // e -> (f, g, a)
+        e.children.add(f)
+        e.children.add(g)
+        e.children.add(a) // <- cycle back to a!
+
+        assertEquals(
+            listOf(
+                listOf("a", "e"),
+                listOf("b", "c", "f", "g"),
+                listOf("d"),
+            ),
+            listOf(a, e).withExplicitBfsDepthClosure<Node> { it.children }.map { it.map { it.value } }
+        )
+    }
+
+
+    @Test
+    fun `withExplicitBfsDepthClosure on emptyList`() {
+        assertSame(
+            emptySet(), listOf<Node>().withExplicitBfsDepthClosure<Node> { it.children },
+            "Expected no Set being allocated on empty closure"
+        )
+    }
+
+    @Test
+    fun `withExplicitBfsDepthClosure with no further nodes`() {
+        assertEquals(
+            listOf(listOf("a", "b")),
+            listOf(Node("a"), Node("b")).withExplicitBfsDepthClosure<Node> { it.children }.map { it.map { it.value } }
+        )
+    }
+
+    @Test
+    fun `withExplicitBfsDepthClosure handles loop and self references`() {
+        val nodeA = Node("a")
+        val nodeB = Node("b")
+        val nodeC = Node("c")
+        val nodeD = Node("d")
+
+        // a -> b -> c -> d
+        nodeA.children.add(nodeB)
+        nodeB.children.add(nodeC)
+        nodeC.children.add(nodeD)
+
+        // add self reference to b
+        nodeB.children.add(nodeB)
+
+        // add loop from c -> a
+        nodeC.children.add(nodeA)
+
+        val closure = listOf(nodeA).withExplicitBfsDepthClosure { it.children }.map { it.map { it } }
+        assertEquals(
+            listOf(
+                listOf(nodeA),
+                listOf(nodeB),
+                listOf(nodeC),
+                listOf(nodeD)
+            ), closure,
+            "Expected withExplicitBfsDepthClosure to be robust against loops and self references"
+        )
+    }
+
+
 }
