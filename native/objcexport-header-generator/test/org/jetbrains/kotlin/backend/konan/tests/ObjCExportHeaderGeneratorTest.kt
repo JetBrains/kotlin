@@ -124,6 +124,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    fun `test - propertyWithObjCNameAnnotation`() {
+        doTest(headersTestDataDir.resolve("propertyWithObjCNameAnnotation"))
+    }
+
+    @Test
     fun `test - classWithKDoc`() {
         doTest(headersTestDataDir.resolve("classWithKDoc"))
     }

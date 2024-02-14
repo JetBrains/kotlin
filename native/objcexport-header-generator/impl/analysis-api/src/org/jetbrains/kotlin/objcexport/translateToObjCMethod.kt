@@ -231,6 +231,9 @@ fun KtFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
     return sb.toString()
 }
 
+/**
+ * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getMangledName]
+ */
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtFunctionLikeSymbol.getMangledName(forSwift: Boolean): String {
     return if (this.isConstructor) {
