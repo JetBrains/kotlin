@@ -2,6 +2,7 @@
  * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:JvmName("SwiftExportRunner")
 
 package org.jetbrains.kotlin.swiftexport.standalone
 
@@ -15,6 +16,25 @@ import org.jetbrains.kotlin.swiftexport.standalone.transformation.transformToSwi
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpResultToFiles
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Path
+import java.nio.file.Paths
+
+public fun main(args: Array<String>) {
+    runSwiftExport(
+        input = SwiftExportInput(
+            sourceRoot = Paths.get(System.getenv("SWIFT_EXPORT_INPUT_SOURCE_ROOT_PATH")),
+            libraries = emptyList(),
+        ),
+        config = SwiftExportConfig(
+            emptyMap(),
+            createDummyLogger()
+        ),
+        output = SwiftExportOutput(
+            swiftApi = Paths.get(System.getenv("SWIFT_EXPORT_OUTPUT_SWIFT_API_PATH")),
+            kotlinBridges = Paths.get(System.getenv("SWIFT_EXPORT_OUTPUT_KOTLIN_BRIDGE_PATH")),
+            cHeaderBridges = Paths.get(System.getenv("SWIFT_EXPORT_OUTPUT_C_HEADER_BRIDGE_PATH")),
+        )
+    )
+}
 
 public data class SwiftExportConfig(
     val settings: Map<String, String> = emptyMap(),

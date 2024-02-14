@@ -48,3 +48,9 @@ val test by nativeTest("test", null) {
 }
 
 testsJar()
+
+tasks.register("runSwiftExport", JavaExec::class) {
+    classpath(sourceSets.test.get().runtimeClasspath)
+    workingDir(project.rootDir)
+    mainClass.set("org.jetbrains.kotlin.swiftexport.standalone.SwiftExportRunner")
+}
