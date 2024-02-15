@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.formver.embeddings.callables
 
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
+import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.MethodCall
 import org.jetbrains.kotlin.formver.embeddings.expression.PlaceholderVariableEmbedding
@@ -20,4 +21,10 @@ class NonInlineNamedFunction(val signature: FullNamedFunctionSignature) : RichCa
 
     override fun toViperMethodHeader(): Method =
         signature.toViperMethod(null, PlaceholderVariableEmbedding(PlaceholderReturnVariableName, signature.returnType))
+
+    override val receiverType: TypeEmbedding?
+        get() = signature.receiverType
+
+    override val paramTypes: List<TypeEmbedding>
+        get() = signature.paramTypes
 }
