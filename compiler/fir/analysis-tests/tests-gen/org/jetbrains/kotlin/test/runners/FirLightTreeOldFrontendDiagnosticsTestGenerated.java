@@ -26956,12 +26956,6 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
-        @TestMetadata("kt65555.kt")
-        public void testKt65555() {
-          runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt65555.kt");
-        }
-
-        @Test
         @TestMetadata("kt9550.kt")
         public void testKt9550() {
           runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt9550.kt");
