@@ -19,13 +19,6 @@ import kotlin.native.internal.ReportUnhandledException
 @Deprecated("Initializing runtime is not possible in the new memory model.", level = DeprecationLevel.WARNING)
 external public fun initRuntimeIfNeeded(): Unit
 
-/**
- * Deinitializes Kotlin runtime for the current thread, if was inited.
- * Cannot be called from Kotlin frames holding references, thus deprecated.
- */
-@GCUnsafeCall("Kotlin_deinitRuntimeIfNeeded")
-@Deprecated("Deinit runtime can not be called from Kotlin", level = DeprecationLevel.ERROR)
-external public fun deinitRuntimeIfNeeded(): Unit
 
 /**
  * Exception thrown when top level variable is accessed from incorrect execution context.
