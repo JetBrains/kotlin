@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION_WITH_DOT
 import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
@@ -25,7 +24,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
 
 abstract class AbstractDecompiledKnmFileTest : KotlinTestWithEnvironment() {
-    abstract val ignoreDirective: Directive
+    abstract val knmTestSupport: KnmTestSupport
 
     protected abstract fun doTest(testDirectoryPath: Path)
 
@@ -90,7 +89,7 @@ abstract class AbstractDecompiledKnmFileTest : KotlinTestWithEnvironment() {
 
     private fun isTestIgnored(testDirectory: Path): Boolean {
         val mainKotlinFile = findMainTestKotlinFile(testDirectory).toFile()
-        return InTextDirectivesUtils.isDirectiveDefined(mainKotlinFile.readText(), "// ${ignoreDirective.name}")
+        return InTextDirectivesUtils.isDirectiveDefined(mainKotlinFile.readText(), "// ${knmTestSupport.ignoreDirective.name}")
     }
 
     private fun withKnmIgnoreDirective(testDirectory: Path, block: () -> Unit) {
@@ -103,6 +102,6 @@ abstract class AbstractDecompiledKnmFileTest : KotlinTestWithEnvironment() {
             else throw e
         }
 
-        if (isIgnored) error("The test is passing. Please, remove the `// ${ignoreDirective.name}` directive")
+        if (isIgnored) error("The test is passing. Please, remove the `// ${knmTestSupport.ignoreDirective.name}` directive")
     }
 }

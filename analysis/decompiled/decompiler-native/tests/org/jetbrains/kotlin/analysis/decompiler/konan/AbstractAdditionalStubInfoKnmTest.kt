@@ -8,25 +8,15 @@ package org.jetbrains.kotlin.analysis.decompiler.konan
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.extractAdditionalStubInfo
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.directives.model.Directive
-import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
-import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import java.nio.file.Path
 import kotlin.io.path.name
 
 abstract class AbstractAdditionalStubInfoKnmTest : AbstractDecompiledKnmFileTest() {
-    private object Directives : SimpleDirectivesContainer() {
-        val KNM_K2_IGNORE by directive(
-            description = "Ignore test for KNM files with K2 K/N Decompiler",
-            applicability = DirectiveApplicability.Global,
-        )
-    }
-
-    override val ignoreDirective: Directive
-        get() = Directives.KNM_K2_IGNORE
+    override val knmTestSupport: KnmTestSupport
+        get() = K2KnmTestSupport
 
     override fun doTest(testDirectoryPath: Path) {
-        val stubBuilder = K2KotlinNativeMetadataDecompiler().stubBuilder
+        val stubBuilder = knmTestSupport.createDecompiler().stubBuilder
         val knmFiles = compileToKnmFiles(testDirectoryPath)
         val knmFile = knmFiles.singleOrNull { "root_package" !in it.path }
             ?: error("Expected a single non-root .knm file, but received:${System.lineSeparator()}" +
