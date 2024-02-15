@@ -29,6 +29,7 @@ dependencies {
     testRuntimeOnly(project(":kotlin-metadata-jvm"))
 
     shadows(project(":kotlin-metadata-jvm"))
+    shadows(project(":tools:kotlinp"))
     shadows("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")
 }
 
