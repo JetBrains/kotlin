@@ -339,10 +339,6 @@ object TaskUtils {
     fun useAndroidJar(task: Task) {
         task.useAndroidConfiguration(systemPropertyName = "android.jar", configName = "androidJar")
     }
-
-    fun useAndroidEmulator(task: Task) {
-        task.useAndroidConfiguration(systemPropertyName = "android.sdk", configName = "androidEmulator")
-    }
 }
 
 private fun Task.useAndroidConfiguration(systemPropertyName: String, configName: String) {

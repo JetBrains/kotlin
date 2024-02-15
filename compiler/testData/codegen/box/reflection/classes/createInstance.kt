@@ -1,5 +1,7 @@
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND: ANDROID
 // WITH_REFLECT
+// Android is ignored due to KT-66391
 
 import kotlin.reflect.full.createInstance
 import kotlin.test.assertTrue

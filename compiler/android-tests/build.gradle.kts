@@ -1,34 +1,20 @@
-import TaskUtils.useAndroidEmulator
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
 }
 
 dependencies {
-    testApi(project(":core:descriptors"))
-    testApi(project(":core:descriptors.jvm"))
-    testApi(project(":compiler:util"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":compiler:frontend"))
-    testApi(project(":compiler:backend"))
-    testApi(project(":compiler:incremental-compilation-impl"))
-    testApi(project(":compiler:frontend.java"))
-
     testApi(kotlinStdlib())
-    testApi(projectTests(":compiler:tests-common"))
-    testImplementation(libs.junit4)
+    testApi(intellijCore())
+    testApi(project(":core:compiler.common"))
+    testApi(project(":compiler:config"))
+    testApi(project(":compiler:cli"))
+    testApi(project(":compiler:frontend.common.jvm"))
+    testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
-
-    testApi(jpsModel())
-
-    testRuntimeOnly(intellijCore())
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
-
-    testImplementation(libs.junit.platform.launcher)
+    testApi(projectTests(":generators:test-generator"))
 }
 
 sourceSets {
@@ -36,27 +22,19 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
-    dependsOn(":dist")
-    val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
-    doFirst {
-        environment("kotlin.tests.android.timeout", "45")
-        environment("JAVA_HOME", jdkHome.get())
-    }
-
-    if (project.hasProperty("teamcity") || project.hasProperty("kotlin.test.android.teamcity")) {
-        systemProperty("kotlin.test.android.teamcity", true)
-    }
-
-    project.findProperty("kotlin.test.android.path.filter")?.let {
-        systemProperty("kotlin.test.android.path.filter", it.toString())
-    }
-
-    workingDir = rootDir
-    useAndroidEmulator(this)
-}
-
 val generateAndroidTests by generator("org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator") {
     workingDir = rootDir
-    dependsOn(rootProject.tasks.named("dist"))
+
+    val destinationDirectory =
+        rootProject.file("libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/codegen-tests").absolutePath
+
+    val testDataDirectories = arrayOf(
+        rootProject.file("compiler/testData/codegen/box").absolutePath,
+        rootProject.file("compiler/testData/codegen/boxInline").absolutePath,
+    )
+
+    args(destinationDirectory, *testDataDirectories)
+    dependsOn(":dist", ":createIdeaHomeForTests")
+    systemProperty("idea.home.path", ideaHomePathForTests().get().asFile.canonicalPath)
+    systemProperty("idea.use.native.fs.for.win", false)
 }

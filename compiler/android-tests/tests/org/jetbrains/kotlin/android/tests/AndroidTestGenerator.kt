@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.android.tests
 
-import com.intellij.openapi.util.Ref
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -40,20 +39,21 @@ internal fun patchFilesAndAddTest(
     services: TestServices,
     filesHolder: CodegenTestsOnAndroidGenerator.FilesWriter
 ): FqName {
-    val newPackagePrefix = testFile.path.replace("\\\\|-|\\.|/".toRegex(), "_")
-    val oldPackage = Ref<FqName>()
-    val isJvmName = Ref<Boolean>(false)
+    val newPackagePrefix = testFile.path.substringAfter("testData/").replace("""[\\\-./]""".toRegex(), "_")
     val testFiles = module.files
     val isSingle = testFiles.size == 1
     val resultFiles = testFiles.map {
         val fileName = if (isSingle) it.name else testFile.name.substringBeforeLast(".kt") + "/" + it.name
-        val content = services.sourceFileProvider.getContentOfSourceFile(it)
+        val (textChangedPackage, oldPackage, isJvmName) = changePackage(
+            newPackagePrefix = newPackagePrefix,
+            text = services.sourceFileProvider.getContentOfSourceFile(it)
+        )
         TestClassInfo(
             fileName,
-            changePackage(newPackagePrefix, content, oldPackage, isJvmName),
-            oldPackage.get(),
-            isJvmName.get(),
-            getGeneratedClassName(File(fileName), content, newPackagePrefix, oldPackage.get())
+            textChangedPackage,
+            oldPackage,
+            isJvmName,
+            getGeneratedClassName(File(fileName), textChangedPackage, newPackagePrefix, oldPackage)
         )
     }
     val packages =
@@ -111,7 +111,7 @@ internal fun patchFilesAndAddTest(
         }
     }
 
-    val boxFiles = resultFiles.filter { hasBoxMethod(it.content) }
+    val boxFiles = resultFiles.filter { it.content.contains("fun box()") }
     if (boxFiles.size != 1) {
         println("Several box methods in $testFile")
     }
@@ -124,31 +124,25 @@ internal fun patchFilesAndAddTest(
     return boxFiles.last().newPackagePartClassId
 }
 
-private fun hasBoxMethod(text: String): Boolean {
-    return text.contains("fun box()")
-}
-
 class TestClassInfo(val name: String, var content: String, val oldPackage: FqName, val isJvmName: Boolean, val newPackagePartClassId: FqName) {
     val newPackage = newPackagePartClassId.parent()
 }
 
+private data class ChangePackageResult(val text: String, val oldPackage: FqName, val isJvmName: Boolean)
 
-private fun changePackage(newPackagePrefix: String, text: String, oldPackage: Ref<FqName>, isJvmName: Ref<Boolean>): String {
+private fun changePackage(newPackagePrefix: String, text: String): ChangePackageResult {
     val matcher = packagePattern.matcher(text)
     if (matcher.find()) {
         val oldPackageName = matcher.toMatchResult().group(1)
-        oldPackage.set(FqName(oldPackageName))
-        return matcher.replaceAll("package $newPackagePrefix.$oldPackageName")
+        return ChangePackageResult(matcher.replaceAll("package $newPackagePrefix.$oldPackageName"), FqName(oldPackageName), false)
     } else {
-        oldPackage.set(FqName.ROOT)
         val packageDirective = "package $newPackagePrefix;\n"
         if (text.contains("@file:")) {
             val index = text.lastIndexOf("@file:")
             val packageDirectiveIndex = text.indexOf("\n", index)
-            isJvmName.set(true)
-            return text.substring(0, packageDirectiveIndex + 1) + packageDirective + text.substring(packageDirectiveIndex + 1)
+            return ChangePackageResult(text.substring(0, packageDirectiveIndex + 1) + packageDirective + text.substring(packageDirectiveIndex + 1), FqName.ROOT, true)
         } else {
-            return packageDirective + text
+            return ChangePackageResult(packageDirective + text, FqName.ROOT, false)
         }
     }
 }
