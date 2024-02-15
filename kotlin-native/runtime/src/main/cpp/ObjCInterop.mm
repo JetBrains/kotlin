@@ -5,7 +5,7 @@
 
 #if KONAN_OBJC_INTEROP
 
-#import <Foundation/NSException.h>
+#import <Foundation/Foundation.h>
 #import <objc/objc-exception.h>
 
 #include <objc/objc.h>

@@ -9,7 +9,7 @@
 
 #include <condition_variable>
 #include <mutex>
-#include <CoreFoundation/CFRunLoop.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 #include "ScopedThread.hpp"
 #include "Utils.hpp"

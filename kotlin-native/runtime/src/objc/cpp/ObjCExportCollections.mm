@@ -22,11 +22,7 @@
 
 #import <objc/runtime.h>
 
-#import <Foundation/NSObject.h>
-#import <Foundation/NSArray.h>
-#import <Foundation/NSDictionary.h>
-#import <Foundation/NSSet.h>
-#import <Foundation/NSNull.h>
+#import <Foundation/Foundation.h>
 
 #import "Exceptions.h"
 #import "Runtime.h"
