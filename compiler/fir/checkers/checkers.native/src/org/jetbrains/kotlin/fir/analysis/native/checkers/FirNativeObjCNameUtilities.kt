@@ -82,7 +82,7 @@ object FirNativeObjCNameUtilities {
             reporter.reportOn(
                 declarationToReport.source,
                 FirNativeErrors.INCOMPATIBLE_OBJC_NAME_OVERRIDE,
-                declarationToReport.symbol,
+                memberSymbol,
                 containingDeclarations,
                 context
             )
