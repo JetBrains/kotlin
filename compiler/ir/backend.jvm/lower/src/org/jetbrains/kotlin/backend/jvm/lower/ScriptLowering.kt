@@ -201,6 +201,8 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
         )
         val lambdaPatcher = ScriptFixLambdasTransformer(irScriptClass)
 
+        irScript.patchDeclarationsDispatchReceiver(context, scriptTransformer.scriptClassReceiver.type)
+
         irScriptClass.thisReceiver = scriptTransformer.scriptClassReceiver
 
         fun <E : IrElement> E.patchDeclarationForClass(): IrElement {
@@ -435,6 +437,26 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
             }
 
             property.addDefaultGetter(this, context.irBuiltIns)
+        }
+    }
+}
+
+private fun IrScript.patchDeclarationsDispatchReceiver(context: JvmBackendContext, scriptClassReceiverType: IrType) {
+
+    fun IrFunction.addScriptDispatchReceiverIfNeeded() {
+        if (dispatchReceiverParameter == null) {
+            dispatchReceiverParameter =
+                createThisReceiverParameter(context, IrDeclarationOrigin.SCRIPT_THIS_RECEIVER, scriptClassReceiverType)
+        }
+    }
+
+    statements.forEach { scriptStatement ->
+        when (scriptStatement) {
+            is IrProperty -> {
+                scriptStatement.getter?.addScriptDispatchReceiverIfNeeded()
+                scriptStatement.setter?.addScriptDispatchReceiverIfNeeded()
+            }
+            is IrFunction -> scriptStatement.addScriptDispatchReceiverIfNeeded()
         }
     }
 }
