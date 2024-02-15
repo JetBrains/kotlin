@@ -20,7 +20,7 @@
 
 #if KONAN_OBJC_INTEROP
 
-#import <Foundation/NSException.h>
+#import <Foundation/Foundation.h>
 
 //! TODO: Use not_null signature.
 OBJ_GETTER(Kotlin_ObjCExport_ExceptionDetails, KRef /*thiz*/, KRef exceptionHolder) {

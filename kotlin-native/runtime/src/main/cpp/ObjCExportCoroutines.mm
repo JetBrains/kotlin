@@ -10,8 +10,7 @@
 #if KONAN_OBJC_INTEROP
 
 #import <pthread.h>
-#import <Foundation/NSException.h>
-#import <Foundation/NSObject.h>
+#import <Foundation/Foundation.h>
 
 typedef void (^Completion)(id _Nullable, NSError* _Nullable);
 

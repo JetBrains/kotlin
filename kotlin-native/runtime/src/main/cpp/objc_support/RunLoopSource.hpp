@@ -8,7 +8,6 @@
 #if KONAN_HAS_FOUNDATION_FRAMEWORK
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <CoreFoundation/CFRunLoop.h>
 
 #include "RawPtr.hpp"
 #include "Utils.hpp"
