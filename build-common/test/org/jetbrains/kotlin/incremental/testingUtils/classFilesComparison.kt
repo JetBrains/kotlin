@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.incremental.testingUtils
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
+import org.jetbrains.kotlin.incremental.createDirectory
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapError
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapParser
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapSuccess
@@ -45,6 +46,18 @@ import java.util.zip.GZIPInputStream
 
 // Set this to true if you want to dump all bytecode (test will fail in this case)
 private val DUMP_ALL = System.getProperty("comparison.dump.all") == "true"
+
+fun assertExpectedExistsOrCreateAndFail(
+    expected: File,
+    actual: File,
+) {
+    if (!expected.exists()) {
+        assert(actual.exists())
+        expected.parentFile.createDirectory()
+        actual.copyRecursively(expected)
+        assert(false) { "Generated reference from ${actual} in ${expected}. Rerun the test." }
+    }
+}
 
 fun assertEqualDirectoriesIgnoringDotFiles(
     expected: File,
