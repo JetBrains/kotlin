@@ -64,21 +64,8 @@ abstract class AbstractDecompiledKnmStubConsistencyK2Test : AbstractDecompiledKn
     }
 }
 
-
-abstract class AbstractDecompiledKnmStubConsistencyTest : KotlinTestWithEnvironment() {
-    abstract val ignoreDirective: Directive
+abstract class AbstractDecompiledKnmStubConsistencyTest : AbstractDecompiledKnmFileTest() {
     abstract fun createDecompiler(): KlibMetadataDecompiler<*>
-
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        return KotlinCoreEnvironment.createForTests(
-            ApplicationEnvironmentDisposer.ROOT_DISPOSABLE,
-            KotlinTestUtils.newConfiguration(
-                ConfigurationKind.JDK_NO_RUNTIME,
-                TestJdkKind.MOCK_JDK,
-            ),
-            EnvironmentConfigFiles.METADATA_CONFIG_FILES,
-        )
-    }
 
     override fun setUp() {
         super.setUp()
@@ -88,66 +75,12 @@ abstract class AbstractDecompiledKnmStubConsistencyTest : KotlinTestWithEnvironm
         )
     }
 
-    fun runTest(testDirectory: String) {
-        val testDirectoryPath = Paths.get(testDirectory)
-        withKnmIgnoreDirective(testDirectoryPath) { doTest(testDirectoryPath) }
-    }
-
-    private fun isTestIgnored(testDirectory: Path): Boolean {
-        val mainKotlinFile = findMainTestKotlinFile(testDirectory).toFile()
-        return InTextDirectivesUtils.isDirectiveDefined(mainKotlinFile.readText(), "// ${ignoreDirective.name}")
-    }
-
-    private fun withKnmIgnoreDirective(testDirectory: Path, block: () -> Unit) {
-        val isIgnored = isTestIgnored(testDirectory)
-
-        try {
-            block()
-        } catch (e: Throwable) {
-            if (isIgnored) return
-            else throw e
-        }
-
-        if (isIgnored) error("The test is passing. Please, remove the `// ${ignoreDirective.name}` directive")
-    }
-
-    private fun doTest(testDirectoryPath: Path) {
-        val commonKlib = compileCommonKlib(testDirectoryPath)
-        val files = getKnmFilesFromKlib(commonKlib)
+    override fun doTest(testDirectoryPath: Path) {
+        val files = compileToKnmFiles(testDirectoryPath)
 
         for (knmFile in files) {
             checkKnmStubConsistency(knmFile)
         }
-    }
-
-    private fun compileCommonKlib(testDirectory: Path): File {
-        val ktFiles = Files.list(testDirectory).filter { it.extension == "kt" }.collect(Collectors.toList())
-        val testKlib = KtTestUtil.tmpDir("testLibrary").resolve("library.klib")
-        KlibTestUtil.compileCommonSourcesToKlib(
-            ktFiles.map(Path::toFile),
-            libraryName = "library",
-            testKlib,
-        )
-
-        return testKlib
-    }
-
-    private fun getKnmFilesFromKlib(klib: File): List<VirtualFile> {
-        val path = klib.toPath()
-        val jarFileSystem = environment.projectEnvironment.environment.jarFileSystem as CoreJarFileSystem
-        val root = jarFileSystem.refreshAndFindFileByPath(path.absolutePathString() + "!/")!!
-        val files = mutableListOf<VirtualFile>()
-        VfsUtilCore.iterateChildrenRecursively(
-            root,
-            { virtualFile -> virtualFile.isDirectory || virtualFile.name.endsWith(KLIB_METADATA_FILE_EXTENSION_WITH_DOT) },
-            { virtualFile ->
-                if (!virtualFile.isDirectory) {
-                    files.addIfNotNull(virtualFile)
-                }
-                true
-            })
-
-        return files
     }
 
     private fun checkKnmStubConsistency(knmFile: VirtualFile) {
