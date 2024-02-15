@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS_ON_NEXT_LINES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CANNOT_CHECK_FOR_FORWARD_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CONFLICTING_OBJC_OVERLOADS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR
@@ -53,7 +53,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
     override val MAP = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
         map.put(THROWS_LIST_EMPTY, "Throws must have a non-empty class list.")
         map.put(INCOMPATIBLE_THROWS_OVERRIDE, "Member overrides different ''@Throws'' filter from ''{0}''.", SYMBOL)
-        map.put(INCOMPATIBLE_THROWS_INHERITED, "Member inherits different ''@Throws'' filters from ''{0}''.", SYMBOLS)
+        map.put(INCOMPATIBLE_THROWS_INHERITED, "Member inherits different ''@Throws'' filters from:{0}", SYMBOLS_ON_NEXT_LINES)
         map.put(
             MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND, "''@Throws'' on suspend declaration must have ''{0}'' (or any of its superclasses) listed.",
             TO_STRING
@@ -72,9 +72,9 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(REDUNDANT_SWIFT_REFINEMENT, "ObjC refined declarations cannot be refined in Swift.")
         map.put(
             INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE,
-            "Refined declaration ''{0}'' overrides declarations with different or no refinement from ''{1}''.",
+            "Refined declaration ''{0}'' overrides declarations with different or no refinement from:{1}",
             SYMBOL,
-            SYMBOLS
+            SYMBOLS_ON_NEXT_LINES
         )
         map.put(
             INVALID_OBJC_HIDES_TARGETS,
@@ -89,7 +89,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(EMPTY_OBJC_NAME, "Empty '@ObjCName' names aren't supported.")
         map.put(INVALID_OBJC_NAME_CHARS, "''@ObjCName'' contains illegal characters ''{0}''.", TO_STRING)
         map.put(INVALID_OBJC_NAME_FIRST_CHAR, "''@ObjCName'' contains illegal first characters ''{0}''.", TO_STRING)
-        map.put(INCOMPATIBLE_OBJC_NAME_OVERRIDE, "Member ''{0}'' inherits inconsistent ''@ObjCName'' from ''{1}''.", SYMBOL, SYMBOLS)
+        map.put(INCOMPATIBLE_OBJC_NAME_OVERRIDE, "Member ''{0}'' inherits inconsistent ''@ObjCName'' from:{1}", SYMBOL, SYMBOLS_ON_NEXT_LINES)
         map.put(INAPPLICABLE_EXACT_OBJC_NAME, "Exact '@ObjCName' is only applicable to classes, objects, and interfaces.")
         map.put(MISSING_EXACT_OBJC_NAME, "Exact '@ObjCName' is required to have an ObjC name.")
         map.put(NON_LITERAL_OBJC_NAME_ARG, "'@ObjCName' accepts only literal 'String' and 'Boolean' values.")
@@ -149,8 +149,8 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CONFLICTING_OBJC_OVERLOADS,
-            "Conflicting overloads: {0}. Add @ObjCSignatureOverride to allow collision for functions inherited from Objective-C.",
-            SYMBOLS
+            "Conflicting overloads:{0}\nAdd @ObjCSignatureOverride to allow collision for functions inherited from Objective-C.",
+            SYMBOLS_ON_NEXT_LINES
         )
         map.put(
             INAPPLICABLE_OBJC_OVERRIDE,

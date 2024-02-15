@@ -160,16 +160,16 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NAME_CONTAINS_ILLEGAL_CHARS, "Name contains illegal chars that cannot appear in JavaScript identifier.")
         map.put(
             JS_NAME_CLASH,
-            "JavaScript name ({0}) generated for this declaration clashes with another declarations: {1}",
+            "JavaScript name ''{0}'' generated for this declaration clashes with other declarations:{1}",
             CommonRenderers.STRING,
-            FirDiagnosticRenderers.SYMBOLS
+            FirDiagnosticRenderers.SYMBOLS_ON_NEXT_LINES
         )
         map.put(
             JS_FAKE_NAME_CLASH,
-            "JavaScript name {0} is generated for different inherited members: {1} and {2}",
+            "JavaScript name ''{0}'' is generated for different inherited members:\n{1}{2}",
             CommonRenderers.STRING,
             FirDiagnosticRenderers.SYMBOL,
-            FirDiagnosticRenderers.SYMBOLS
+            FirDiagnosticRenderers.SYMBOLS_ON_NEXT_LINES
         )
 
         map.put(JS_NAME_IS_NOT_ON_ALL_ACCESSORS, "'@JsName' should be on all the property accessors.")
