@@ -4528,6 +4528,24 @@ internal class IllegalJavaLangRecordSupertypeImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.IllegalJavaLangRecordSupertype
 
+internal class JavaModuleDoesNotDependOnModuleImpl(
+    override val moduleName: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.JavaModuleDoesNotDependOnModule
+
+internal class JavaModuleDoesNotReadUnnamedModuleImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.JavaModuleDoesNotReadUnnamedModule
+
+internal class JavaModuleDoesNotExportPackageImpl(
+    override val moduleName: String,
+    override val packageName: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.JavaModuleDoesNotExportPackage
+
 internal class JvmDefaultInDeclarationImpl(
     override val annotation: String,
     firDiagnostic: KtPsiDiagnostic,
