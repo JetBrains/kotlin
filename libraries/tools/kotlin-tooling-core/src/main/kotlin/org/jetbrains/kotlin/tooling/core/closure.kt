@@ -154,14 +154,17 @@ inline fun <reified T> Iterable<T>.withClosureGroupingByDistance(edges: (T) -> I
     val results = mutableListOf<MutableSet<T>>()
 
     while (dequeue.isNotEmpty()) {
-        results.add(createResultSet(dequeue.size))
+        val levelElements = createResultSet<T>(dequeue.size)
         var levelSize = dequeue.size
         while (levelSize != 0) {
             levelSize -= 1
             val element = dequeue.removeAt(0)
-            if (allElements.add(element) && results.last().add(element)) {
+            if (allElements.add(element) && levelElements.add(element)) {
                 dequeue.addAll(edges(element))
             }
+        }
+        if (levelElements.isNotEmpty()) {
+            results.add(levelElements)
         }
     }
     return results

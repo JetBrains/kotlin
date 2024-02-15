@@ -425,5 +425,71 @@ class ClosureTest {
         )
     }
 
+    @Test
+    fun `withClosureGroupingByDistance handles a simple self reference`() {
+        val nodeA = Node("a")
+        nodeA.children.add(nodeA)
+
+        assertEquals(
+            listOf(
+                listOf("a")
+            ),
+            listOf(nodeA).withClosureGroupingByDistance { it.children }.map { it.map { it.value } },
+        )
+    }
+
+    @Test
+    fun `withClosureGroupingByDistance handles a simple cyclic reference`() {
+        val nodeA = Node("a")
+        val nodeB = Node("b")
+        nodeA.children.add(nodeB)
+        nodeB.children.add(nodeA)
+
+        assertEquals(
+            listOf(
+                listOf("a"),
+                listOf("b"),
+            ),
+            listOf(nodeA).withClosureGroupingByDistance { it.children }.map { it.map { it.value } },
+        )
+        assertEquals(
+            listOf(
+                listOf("a", "b"),
+            ),
+            listOf(nodeA, nodeB).withClosureGroupingByDistance { it.children }.map { it.map { it.value } },
+        )
+    }
+
+    @Test
+    fun `withClosureGroupingByDistance handles a loop`() {
+        val nodeA = Node("a")
+        val nodeB = Node("b")
+        val nodeC = Node("c")
+        nodeA.children.add(nodeB)
+        nodeB.children.add(nodeC)
+        nodeC.children.add(nodeA)
+
+        assertEquals(
+            listOf(
+                listOf("a"),
+                listOf("b"),
+                listOf("c"),
+            ),
+            listOf(nodeA).withClosureGroupingByDistance { it.children }.map { it.map { it.value } },
+        )
+        assertEquals(
+            listOf(
+                listOf("a", "b"),
+                listOf("c"),
+            ),
+            listOf(nodeA, nodeB).withClosureGroupingByDistance { it.children }.map { it.map { it.value } },
+        )
+        assertEquals(
+            listOf(
+                listOf("a", "b", "c"),
+            ),
+            listOf(nodeA, nodeB, nodeC).withClosureGroupingByDistance { it.children }.map { it.map { it.value } },
+        )
+    }
 
 }
