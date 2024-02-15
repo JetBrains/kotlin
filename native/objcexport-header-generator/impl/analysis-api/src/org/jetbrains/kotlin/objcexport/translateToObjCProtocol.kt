@@ -24,9 +24,9 @@ fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
     // TODO: Check error type!
     val name = getObjCClassOrProtocolName()
 
-    val members = getMemberScope().getCallableSymbols()
+    val members = getDeclaredMemberScope().getCallableSymbols()
         .sortedWith(StableCallableOrder)
-        .flatMap { it.translateToObjCExportStubs() }
+        .mapNotNull { it.translateToObjCExportStub() }
         .toList()
 
     val comment: ObjCComment? = annotationsList.translateToObjCComment()
