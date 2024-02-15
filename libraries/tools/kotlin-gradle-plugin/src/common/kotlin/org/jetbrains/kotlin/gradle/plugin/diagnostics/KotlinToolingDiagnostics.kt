@@ -712,6 +712,14 @@ object KotlinToolingDiagnostics {
         )
     }
 
+    object AssetsPublishedMoreThanOncePerTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke() = build(
+            """
+                "Only one assets publication per android target is allowed."
+            """.trimIndent()
+        )
+    }
+
     object ResourceMayNotBePublishedForTarget : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke(targetName: String) = build(
             """
