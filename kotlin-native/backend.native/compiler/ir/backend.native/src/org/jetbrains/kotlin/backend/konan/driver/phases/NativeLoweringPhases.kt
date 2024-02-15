@@ -35,19 +35,33 @@ import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTrans
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
+import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import java.io.File
 
 /**
  * Run whole IR lowering pipeline over [irModuleFragment].
  */
-internal fun PhaseEngine<NativeGenerationState>.runAllLowerings(irModuleFragment: IrModuleFragment) {
+internal fun PhaseEngine<NativeGenerationState>.runAllLowerings(irModuleFragment: IrModuleFragment, main: Boolean = false) {
+    val reverseFilesOrder = this.context.config.configuration.get(BinaryOptions.reverseFilesWhenLowering) ?: false
+
     val lowerings = getAllLowerings()
-    irModuleFragment.files.forEach { file ->
+    val files = if (reverseFilesOrder) irModuleFragment.files.reversed() else irModuleFragment.files
+    files.forEach { file ->
         context.fileLowerState = FileLowerState()
         lowerings.fold(file) { loweredFile, lowering ->
             runPhase(lowering, loweredFile)
         }
+    }
+
+    val irDumpFile = this.context.config.configuration.get(BinaryOptions.dumpIrAndStopAfterLowerings) ?: return
+    if (main) File(irDumpFile).delete()
+    val options = DumpIrTreeOptions(printSignatures = true)
+    irModuleFragment.files.forEach {
+        val dump = it.dump(options = options)
+        File(irDumpFile).appendText(dump)
     }
 }
 

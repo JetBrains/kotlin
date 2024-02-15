@@ -107,11 +107,12 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
     }
 }
 
-private class ExtTestDataFile(
+internal class ExtTestDataFile(
     private val testDataFile: File,
     structureFactory: ExtTestDataFileStructureFactory,
     customSourceTransformers: ExternalSourceTransformers?,
     settings: Settings,
+    private val additionalCompilerArgs: List<String> = emptyList(),
 ) {
     private val testRoots = settings.get<TestRoots>()
     private val generatedSources = settings.get<GeneratedSources>()
@@ -179,6 +180,7 @@ private class ExtTestDataFile(
 
     private fun assembleFreeCompilerArgs(): TestCompilerArgs {
         val args = mutableListOf<String>()
+        args.addAll(additionalCompilerArgs)
         structure.directives.listValues(FREE_COMPILER_ARGS.name)?.let { args.addAll(it)}
         testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
@@ -635,7 +637,7 @@ private class ExtTestDataFileSettings(
 private typealias SharedModuleGenerator = (sharedModulesDir: File) -> TestModule.Shared?
 private typealias SharedModuleCache = (moduleName: String, generator: SharedModuleGenerator) -> TestModule.Shared?
 
-private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : TestDisposable(parentDisposable) {
+internal class ExtTestDataFileStructureFactory(parentDisposable: Disposable?) : TestDisposable(parentDisposable) {
     private val psiFactory = createPsiFactory(parentDisposable = this)
 
     inner class ExtTestDataFileStructure(originalTestDataFile: File, sourceTransformers: ExternalSourceTransformers) {

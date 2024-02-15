@@ -305,7 +305,8 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
 }
 
 internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(module: IrModuleFragment) {
-    runAllLowerings(module)
+    runAllLowerings(module, main = true)
+    // context.context.configuration.get(BinaryOptions.dumpIrAndStopAfterLowerings)?.let { return }
     val dependenciesToCompile = findDependenciesToCompile()
     // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
     // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
