@@ -46,6 +46,18 @@ import java.util.zip.GZIPInputStream
 // Set this to true if you want to dump all bytecode (test will fail in this case)
 private val DUMP_ALL = System.getProperty("comparison.dump.all") == "true"
 
+fun assertEqualDirectoriesIgnoringDotFiles(
+    expected: File,
+    actual: File,
+    forgiveOtherExtraFiles: Boolean,
+) = assertEqualDirectories(
+    expected,
+    actual,
+    forgiveExtraFiles = forgiveOtherExtraFiles,
+    // e.g. ignore .DS_Store on macOS
+    filter = { !it.name.startsWith(".") },
+)
+
 fun assertEqualDirectories(
     expected: File,
     actual: File,
