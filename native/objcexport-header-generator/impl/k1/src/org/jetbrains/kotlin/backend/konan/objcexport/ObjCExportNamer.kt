@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
+import org.jetbrains.kotlin.backend.konan.ObjCExportNameCollisionMode
 import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
@@ -67,11 +68,8 @@ interface ObjCExportNamer {
         val ignoreInterfaceMethodCollisions: Boolean
             get() = false
 
-        val reportNameCollisions: Boolean
-            get() = false
-
-        val errorOnNameCollisions: Boolean
-            get() = false
+        val nameCollisionMode: ObjCExportNameCollisionMode
+            get() = ObjCExportNameCollisionMode.NONE
     }
 
     val topLevelNamePrefix: String
@@ -311,8 +309,7 @@ class ObjCExportNamerImpl(
         objcGenerics: Boolean = false,
         disableSwiftMemberNameMangling: Boolean = false,
         ignoreInterfaceMethodCollisions: Boolean = false,
-        reportNameCollisions: Boolean = false,
-        errorOnNameCollisions: Boolean = false,
+        nameCollisionMode: ObjCExportNameCollisionMode = ObjCExportNameCollisionMode.NONE,
     ) : this(
         object : ObjCExportNamer.Configuration {
             override val topLevelNamePrefix: String
@@ -330,11 +327,8 @@ class ObjCExportNamerImpl(
             override val ignoreInterfaceMethodCollisions: Boolean
                 get() = ignoreInterfaceMethodCollisions
 
-            override val reportNameCollisions: Boolean
-                get() = reportNameCollisions
-
-            override val errorOnNameCollisions: Boolean
-                get() = errorOnNameCollisions
+            override val nameCollisionMode: ObjCExportNameCollisionMode
+                get() = nameCollisionMode
         },
         builtIns,
         mapper,
@@ -871,20 +865,24 @@ class ObjCExportNamerImpl(
                 }
 
                 if (!reportedCollision) {
-                    if (configuration.errorOnNameCollisions) {
-                        if (element is DeclarationDescriptor) {
-                            problemCollector.reportError(element, "name is mangled when generating Objective-C header")
-                        } else {
-                            problemCollector.reportError("name \"$it\" is mangled when generating Objective-C header")
-                        }
-                    } else if (configuration.reportNameCollisions) {
-                        if (element is DeclarationDescriptor) {
-                            problemCollector.reportWarning(element, "name is mangled when generating Objective-C header")
-                        } else {
-                            problemCollector.reportWarning("name \"$it\" is mangled when generating Objective-C header")
-                        }
-                    }
                     reportedCollision = true
+                    when (configuration.nameCollisionMode) {
+                        ObjCExportNameCollisionMode.ERROR -> {
+                            if (element is DeclarationDescriptor) {
+                                problemCollector.reportError(element, "name is mangled when generating Objective-C header")
+                            } else {
+                                problemCollector.reportError("name \"$it\" is mangled when generating Objective-C header")
+                            }
+                        }
+                        ObjCExportNameCollisionMode.WARNING -> {
+                            if (element is DeclarationDescriptor) {
+                                problemCollector.reportWarning(element, "name is mangled when generating Objective-C header")
+                            } else {
+                                problemCollector.reportWarning("name \"$it\" is mangled when generating Objective-C header")
+                            }
+                        }
+                        ObjCExportNameCollisionMode.NONE -> Unit
+                    }
                 }
             }
 

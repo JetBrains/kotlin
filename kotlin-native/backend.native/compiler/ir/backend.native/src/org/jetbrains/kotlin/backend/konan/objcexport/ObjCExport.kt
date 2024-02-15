@@ -66,8 +66,11 @@ internal fun produceObjCExportInterface(
             objcGenerics = objcGenerics,
             disableSwiftMemberNameMangling = disableSwiftMemberNameMangling,
             ignoreInterfaceMethodCollisions = ignoreInterfaceMethodCollisions,
-            reportNameCollisions = reportNameCollisions,
-            errorOnNameCollisions = errorOnNameCollisions,
+            nameCollisionMode = when {
+                errorOnNameCollisions -> ObjCExportNameCollisionMode.ERROR
+                reportNameCollisions -> ObjCExportNameCollisionMode.WARNING
+                else -> ObjCExportNameCollisionMode.NONE
+            }
     )
     val shouldExportKDoc = context.shouldExportKDoc()
     val additionalImports = context.config.configuration.getNotNull(KonanConfigKeys.FRAMEWORK_IMPORT_HEADERS)
@@ -95,14 +98,15 @@ private class ObjCExportCompilerProblemCollector(val context: PhaseContext) : Ob
     }
 
     override fun reportError(text: String) {
-        context.reportCompilationError(text)
+        context.messageCollector.report(CompilerMessageSeverity.ERROR, text, null)
     }
+
     override fun reportError(declaration: DeclarationDescriptor, text: String) {
-        val location = declaration.psiLocation ?: return reportWarning(
+        val location = declaration.psiLocation ?: return reportError(
                 "$text\n    (at ${DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declaration)})"
         )
 
-        context.messageCollector.report(CompilerMessageSeverity.WARNING, text, location)
+        context.messageCollector.report(CompilerMessageSeverity.ERROR, text, location)
     }
 
     override fun reportException(throwable: Throwable) {

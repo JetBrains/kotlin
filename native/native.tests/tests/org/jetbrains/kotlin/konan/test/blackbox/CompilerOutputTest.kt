@@ -84,27 +84,8 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testObjCExportDiagnostics() {
-        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
-
         val rootDir = File("native/native.tests/testData/compilerOutput/ObjCExportDiagnostics")
-        val settings = testRunSettings
-        val lib1 = compileLibrary(settings, rootDir.resolve("lib1.kt")).assertSuccess().resultingArtifact
-        val lib2 = compileLibrary(settings, rootDir.resolve("lib2.kt")).assertSuccess().resultingArtifact
-
-        val freeCompilerArgs = TestCompilerArgs(
-            "-Xinclude=${lib1.path}",
-            "-Xinclude=${lib2.path}",
-            "-Xbinary=objcExportReportNameCollisions=true"
-        )
-        val expectedArtifact = TestCompilationArtifact.ObjCFramework(buildDir, "testObjCExportDiagnostics")
-
-        val compilationResult = ObjCFrameworkCompilation(
-            settings,
-            freeCompilerArgs,
-            sourceModules = emptyList(),
-            dependencies = emptyList(),
-            expectedArtifact
-        ).result
+        val compilationResult = doBuildObjCFrameworkWithNameCollisions(rootDir, listOf("-Xbinary=objcExportReportNameCollisions=true"))
         val goldenData = rootDir.resolve("output.txt")
 
         KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput())
@@ -112,28 +93,36 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testObjCExportDiagnosticsErrors() {
+        val rootDir = File("native/native.tests/testData/compilerOutput/ObjCExportDiagnostics")
+        val compilationResult = doBuildObjCFrameworkWithNameCollisions(rootDir, listOf("-Xbinary=objcExportErrorOnNameCollisions=true"))
+        assertIs<TestCompilationResult.Failure>(compilationResult)
+        val goldenData = rootDir.resolve("error.txt")
+
+        KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput())
+    }
+
+    private fun doBuildObjCFrameworkWithNameCollisions(rootDir: File, additionalOptions: List<String>): TestCompilationResult<out TestCompilationArtifact.ObjCFramework> {
         Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
 
-        val rootDir = File("native/native.tests/testData/compilerOutput/ObjCExportDiagnostics")
         val settings = testRunSettings
         val lib1 = compileLibrary(settings, rootDir.resolve("lib1.kt")).assertSuccess().resultingArtifact
         val lib2 = compileLibrary(settings, rootDir.resolve("lib2.kt")).assertSuccess().resultingArtifact
 
         val freeCompilerArgs = TestCompilerArgs(
-            "-Xinclude=${lib1.path}",
-            "-Xinclude=${lib2.path}",
-            "-Xbinary=objcExportErrorOnNameCollisions=true"
+            listOf(
+                "-Xinclude=${lib1.path}",
+                "-Xinclude=${lib2.path}"
+            ) + additionalOptions
         )
-        val expectedArtifact = TestCompilationArtifact.ObjCFramework(buildDir, "testObjCExportDiagnosticsErrors")
+        val expectedArtifact = TestCompilationArtifact.ObjCFramework(buildDir, "testObjCExportDiagnostics")
 
-        val compilationResult = ObjCFrameworkCompilation(
+        return ObjCFrameworkCompilation(
             settings,
             freeCompilerArgs,
             sourceModules = emptyList(),
             dependencies = emptyList(),
             expectedArtifact
         ).result
-        assertIs<TestCompilationResult.Failure>(compilationResult)
     }
 
     internal fun compileLibrary(
