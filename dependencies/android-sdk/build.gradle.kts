@@ -24,21 +24,29 @@ repositories {
     }
 }
 
-val platformToolsVersion = "r28.0.1"
-val sdkToolsVersion = "4333796" /*26.1.1*/
+val buildToolsVersion = "r29.0.3"
+val platformToolsVersion = "r35.0.0"
+val sdkToolsVersion = "4333796" // 26.1.1
 val emulatorVersion = "5264690"
 
 dependencies {
-    listOf("linux", "windows", "darwin").forEach {
-        implicitDependencies("google:platform-tools:$platformToolsVersion:$it@zip")
-        implicitDependencies("google:sdk-tools-$it:$sdkToolsVersion@zip")
-        implicitDependencies("google:emulator-$it:$emulatorVersion@zip")
-    }
+    implicitDependencies("google:build-tools:$buildToolsVersion:linux@zip")
+    implicitDependencies("google:build-tools:$buildToolsVersion:windows@zip")
+    implicitDependencies("google:build-tools:$buildToolsVersion:macosx@zip")
+
+    implicitDependencies("google:platform-tools:$platformToolsVersion:linux@zip")
+    implicitDependencies("google:platform-tools:$platformToolsVersion:windows@zip")
+    implicitDependencies("google:platform-tools:$platformToolsVersion:darwin@zip")
+
+    implicitDependencies("google:sdk-tools-linux:$sdkToolsVersion@zip")
+    implicitDependencies("google:sdk-tools-windows:$sdkToolsVersion@zip")
+    implicitDependencies("google:sdk-tools-darwin:$sdkToolsVersion@zip")
 }
 
 val androidSdk by configurations.creating
 val androidJar by configurations.creating
-val androidEmulator by configurations.creating
+val androidPlatform by configurations.creating
+val buildTools by configurations.creating
 
 val sdkDestDirName = "androidSdk"
 
@@ -201,6 +209,7 @@ unzipSdkTask("sdk-tools-$toolsOsDarwin", sdkToolsVersion, "", "")
 unzipSdkTask("emulator-$toolsOsDarwin", emulatorVersion, "", "", prepareTask = prepareEmulator)
 unzipSdkTask("armeabi-v7a", "19", "system-images/android-19/default", "r05", prepareTask = prepareEmulator)
 unzipSdkTask("x86", "19", "system-images/android-19/default", "r06", prepareTask = prepareEmulator)
+unzipSdkTask("x86", "30", "system-images/android-30/aosp_atd", "r03", prepareTask = prepareEmulator)
 
 val clean by task<Delete> {
     delete(layout.buildDirectory)
@@ -212,8 +221,4 @@ artifacts.add(androidSdk.name, layout.buildDirectory.dir(sdkDestDirName)) {
 
 artifacts.add(androidJar.name, layout.buildDirectory.file("$sdkDestDirName/platforms/android-26/android.jar")) {
     builtBy(preparePlatform)
-}
-
-artifacts.add(androidEmulator.name, layout.buildDirectory.dir(sdkDestDirName)) {
-    builtBy(prepareEmulator)
 }

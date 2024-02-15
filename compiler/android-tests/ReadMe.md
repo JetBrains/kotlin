@@ -1,15 +1,21 @@
-# Codegen tests on Android
+# Codegen Tests on Android
 
-This module runs codegen box tests (`compiler/testData/codegen/box`) on Android. It does so by compiling all of tests,
-except the excluded ones, in one big Android project and running it as an app on an emulator, which is downloaded during
-the first run of the tests. See which tests are excluded in `CodegenTestsOnAndroidGenerator`, but mainly those are the
-ones annotated with `// IGNORE_BACKEND: ANDROID`, those having Java source files, or using advanced Kotlin/JVM features.
+The module prepares codegen tests for running
+(`compiler/testData/codegen/box` and `compiler/testData/codegen/boxInline` directories) on an Android platform.
+It achieves this by compiling all tests, except those explicitly excluded, into a single Android project.
+The tests are then executed on an Android Virtual Device, leveraging the Kotlin Gradle Plugin integration tests
+(`libraries/tools/kotlin-gradle-plugin-integration-tests`).
+This testing environment is well-suited for building and running external Gradle projects.
+Exclusions in the `CodegenTestsOnAndroidGenerator` typically include tests marked with `// IGNORE_BACKEND: ANDROID`,
+tests that contain Java source files, or tests that use JVM features not supported by the Android Runtime.
 
-Run the tests via Gradle:
+To generate the project with tests, execute:
+```
+./gradlew :compiler:android-tests:generateAndroidTests
+```
+
+Run the according Gradle integration tests by executing:
 
 ```
-./gradlew :compiler:android-tests:test
+./gradlew :kotlin-gradle-plugin-integration-tests:kgpAndroidCodegenTests
 ```
-
-**Make sure your JAVA_HOME points to a JDK 1.8 installation**, otherwise, you'll get an exception, such as
-`java.lang.ClassNotFoundException: javax.xml.bind.annotation.XmlSchema`.

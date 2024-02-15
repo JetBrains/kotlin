@@ -1,12 +1,12 @@
 MODULE main
-	CLASS LocalNestedClassesKt$foo1$X$Y.class
+	CLASS test/LocalNestedClassesKt$foo1$X$Y.class
 		CLASS METADATA
 			Property: class.metadata.companionObject
 				K1
 					null
 				K2
 					Z
-	CLASS LocalNestedClassesKt$foo2$X$Y.class
+	CLASS test/LocalNestedClassesKt$foo2$X$Y.class
 		CLASS METADATA
 			Property: class.metadata.companionObject
 				K1

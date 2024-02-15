@@ -1,6 +1,8 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
+// IGNORE_BACKEND: ANDROID
+// Android test generator always runs IR validator
 // FILE: mySynchronized.kt
 
 import kotlin.jvm.internal.unsafe.*

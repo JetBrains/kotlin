@@ -266,12 +266,12 @@ if (project.kotlinBuildProperties.isTeamcityBuild) {
 
 tasks.register<Test>("kgpAllParallelTests") {
     group = KGP_TEST_TASKS_GROUP
-    description = "Runs all tests for Kotlin Gradle plugins except daemon ones"
+    description = "Runs all tests for Kotlin Gradle plugins except daemon and codegen ones"
 
     maxParallelForks = maxParallelTestForks
 
     useJUnitPlatform {
-        excludeTags("DaemonsKGP")
+        excludeTags("DaemonsKGP", "AndroidCodegen")
     }
 }
 
@@ -281,7 +281,7 @@ val jvmTestsTask = tasks.register<Test>("kgpJvmTests") {
     maxParallelForks = maxParallelTestForks
     useJUnitPlatform {
         includeTags("JvmKGP")
-        excludeTags("JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
+        excludeTags("JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "AndroidCodegen", "SwiftExportKGP")
     }
 }
 
@@ -291,7 +291,7 @@ val swiftExportTestsTask = tasks.register<Test>("kgpSwiftExportTests") {
     maxParallelForks = maxParallelTestForks
     useJUnitPlatform {
         includeTags("SwiftExportKGP")
-        excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "NativeKGP")
+        excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "AndroidCodegen", "NativeKGP")
     }
     applyKotlinNativeFromCurrentBranchIfNeeded()
 }
@@ -302,7 +302,7 @@ val jsTestsTask = tasks.register<Test>("kgpJsTests") {
     maxParallelForks = maxParallelTestForks
     useJUnitPlatform {
         includeTags("JsKGP")
-        excludeTags("JvmKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
+        excludeTags("JvmKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "AndroidCodegen", "SwiftExportKGP")
     }
 }
 
@@ -312,7 +312,7 @@ val nativeTestsTask = tasks.register<Test>("kgpNativeTests") {
     maxParallelForks = maxParallelTestForks
     useJUnitPlatform {
         includeTags("NativeKGP")
-        excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
+        excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "AndroidCodegen", "SwiftExportKGP")
     }
     applyKotlinNativeFromCurrentBranchIfNeeded()
 }
@@ -325,7 +325,7 @@ val daemonsTestsTask = tasks.register<Test>("kgpDaemonTests") {
 
     useJUnitPlatform {
         includeTags("DaemonsKGP")
-        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
+        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "OtherKGP", "MppKGP", "AndroidKGP", "AndroidCodegen", "SwiftExportKGP")
     }
 }
 
@@ -335,7 +335,7 @@ val otherPluginsTestTask = tasks.register<Test>("kgpOtherTests") {
     maxParallelForks = maxParallelTestForks
     useJUnitPlatform {
         includeTags("OtherKGP")
-        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
+        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "MppKGP", "AndroidKGP", "AndroidCodegen", "SwiftExportKGP")
     }
     applyKotlinNativeFromCurrentBranchIfNeeded()
 }
@@ -346,7 +346,7 @@ val mppTestsTask = tasks.register<Test>("kgpMppTests") {
     maxParallelForks = maxParallelTestForks
     useJUnitPlatform {
         includeTags("MppKGP")
-        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "AndroidKGP", "SwiftExportKGP")
+        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "AndroidKGP", "AndroidCodegen", "SwiftExportKGP")
     }
     applyKotlinNativeFromCurrentBranchIfNeeded()
 }
@@ -357,7 +357,17 @@ val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
     maxParallelForks = maxParallelTestForks
     useJUnitPlatform {
         includeTags("AndroidKGP")
-        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "SwiftExportKGP")
+        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidCodegen", "SwiftExportKGP")
+    }
+}
+
+val androidCodegenTestsTask = tasks.register<Test>("kgpAndroidCodegenTests") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Run Android codegen tests"
+    maxParallelForks = maxParallelTestForks
+    useJUnitPlatform {
+        includeTags("AndroidCodegen")
+        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
     }
 }
 

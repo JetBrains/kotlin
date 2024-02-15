@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// SKIP_JDK6
 // FULL_JDK
 
 import java.lang.invoke.MethodHandles

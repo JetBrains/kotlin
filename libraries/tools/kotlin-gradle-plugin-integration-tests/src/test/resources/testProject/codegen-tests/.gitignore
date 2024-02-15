@@ -1,0 +1,6 @@
+test-classes/
+src/*
+!src/main/
+build/
+.gradle/
+

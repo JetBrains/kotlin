@@ -2,6 +2,8 @@
 // WITH_REFLECT
 // LANGUAGE: +ValueClasses
 // JVM_DEFAULT_MODE: all
+// KT-66789
+// IGNORE_BACKEND: ANDROID
 
 
 import kotlin.test.assertEquals

@@ -2,10 +2,13 @@
 // WITH_REFLECT
 // JVM_ABI_K1_K2_DIFF: K2 names companion objects in metadata correctly
 
+package test
+
+import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.memberProperties
 
-val KType.str get() = classifier.toString()
+val KType.str get() = (classifier as KClass<*>).java.name
 
 class A {
     fun foo(): String {
@@ -131,14 +134,14 @@ fun foo7(): String {
 }
 
 fun box(): String {
-    if (A().foo() != "class A\$foo\$Nested\$Inner") return "Fail 1"
-    if (foo1() != "class LocalNestedClassesKt\$foo1\$X\$Y\$Z") return "Fail 2"
-    if (foo2() != "class LocalNestedClassesKt\$foo2\$X\$Y\$Companion") return "Fail 3"
-    if (foo3() != "class LocalNestedClassesKt\$foo3\$X\$Y\$prop\$1") return "Fail 4"
-    if (foo4() != "class LocalNestedClassesKt\$foo4\$A\$B\$C\$bar\$D") return "Fail 5"
-    if (foo5() != "class LocalNestedClassesKt\$foo5\$1\$bar\$1\$foo\$A\$B") return "Fail 6"
-    if (foo6() != "class LocalNestedClassesKt\$foo6\$1\$bar\$A\$B\$C") return "Fail 7"
-    if (foo7() != "class LocalNestedClassesKt\$foo7\$x\$1\$y\$1\$z\$1") return "Fail 8"
+    if (A().foo() != "test.A\$foo\$Nested\$Inner") return "Fail 1"
+    if (foo1() != "test.LocalNestedClassesKt\$foo1\$X\$Y\$Z") return "Fail 2"
+    if (foo2() != "test.LocalNestedClassesKt\$foo2\$X\$Y\$Companion") return "Fail 3"
+    if (foo3() != "test.LocalNestedClassesKt\$foo3\$X\$Y\$prop\$1") return "Fail 4"
+    if (foo4() != "test.LocalNestedClassesKt\$foo4\$A\$B\$C\$bar\$D") return "Fail 5"
+    if (foo5() != "test.LocalNestedClassesKt\$foo5\$1\$bar\$1\$foo\$A\$B") return "Fail 6"
+    if (foo6() != "test.LocalNestedClassesKt\$foo6\$1\$bar\$A\$B\$C") return "Fail 7"
+    if (foo7() != "test.LocalNestedClassesKt\$foo7\$x\$1\$y\$1\$z\$1") return "Fail 8"
 
     return "OK"
 }
