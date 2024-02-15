@@ -130,6 +130,7 @@ class NativeLibraryDslWithCocoapodsIT : KGPBaseTest() {
 
     @DisplayName("Generates podspec when assembling xcframework from groovy")
     @GradleTest
+    @GradleTestVersions(TestVersions.Gradle.G_7_0)
     fun shouldGeneratePodspecWithXCFrameworkFromGroovy(gradleVersion: GradleVersion) {
         buildNewKnLibraryDslCocoapodsProjectWithTasks(gradleVersion) {
             build(":lib:assembleGrooframeFrameworkIosArm64") {
