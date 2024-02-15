@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.generators.tree.ImplementationKind.OpenClass
 
 object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() {
 
-    override fun configure() = with(FirTreeBuilder) {
+    override fun configure(model: Model) = with(FirTreeBuilder) {
         impl(constructor) {
             defaultFalse("isPrimary", withGetter = true)
         }
@@ -627,7 +627,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
     }
 
-    override fun configureAllImplementations() {
+    override fun configureAllImplementations(model: Model) {
         configureFieldInAllImplementations(
             field = "controlFlowGraphReference",
             implementationPredicate = { it.typeName != "FirAnonymousFunctionImpl" }

@@ -23,9 +23,9 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
     protected abstract fun createImplementation(element: Element, name: String?): Implementation
 
     fun configureImplementations(model: Model<Element>) {
-        configure()
+        configure(model)
         generateDefaultImplementations(model.elements)
-        configureAllImplementations()
+        configureAllImplementations(model)
     }
 
     /**
@@ -33,7 +33,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
      *
      * Override this method and use [noImpl] or [impl] in it to configure implementations of tree nodes.
      */
-    protected abstract fun configure()
+    protected abstract fun configure(model: Model<Element>)
 
     /**
      * A customization point for batch-applying rules to existing implementations.
@@ -41,7 +41,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
      * Override this method and use [configureFieldInAllImplementations] to configure fields that are common to multiple implementation
      * classes.
      */
-    protected abstract fun configureAllImplementations()
+    protected abstract fun configureAllImplementations(model: Model<Element>)
 
     /**
      * Disables generating any implementation classes for [element].
