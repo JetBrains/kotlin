@@ -97,6 +97,9 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
                 ::IrSourceRangesDumpHandler,
                 ::IrMangledNameAndSignatureDumpHandler,
             )
+            useAfterAnalysisCheckers(
+                ::FirIrDumpIdenticalChecker,
+            )
         }
     }
 
