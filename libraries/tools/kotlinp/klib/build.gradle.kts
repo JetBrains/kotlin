@@ -4,14 +4,14 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":kotlinx-metadata"))
+    compileOnly(project(":kotlin-metadata"))
     compileOnly(project(":kotlinx-metadata-klib"))
 
     api(project(":tools:kotlinp"))
 
     testApi(intellijCore())
 
-    testCompileOnly(project(":kotlinx-metadata"))
+    testCompileOnly(project(":kotlin-metadata"))
     testCompileOnly(project(":kotlinx-metadata-klib"))
 
     testImplementation(libs.junit4)

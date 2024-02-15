@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.kotlinp.klib
 
-import kotlinx.metadata.*
+import kotlin.metadata.*
 import kotlinx.metadata.klib.KlibEnumEntry
 import org.jetbrains.kotlin.kotlinp.klib.TypeArgumentId.VarianceId
 

@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.cli.klib
 
-import kotlinx.metadata.KmConstructor
-import kotlinx.metadata.KmFunction
-import kotlinx.metadata.KmPackage
-import kotlinx.metadata.KmProperty
-import kotlinx.metadata.internal.common.KmModuleFragment
+import kotlin.metadata.KmConstructor
+import kotlin.metadata.KmFunction
+import kotlin.metadata.KmPackage
+import kotlin.metadata.KmProperty
+import kotlin.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.className
 import kotlinx.metadata.klib.fqName

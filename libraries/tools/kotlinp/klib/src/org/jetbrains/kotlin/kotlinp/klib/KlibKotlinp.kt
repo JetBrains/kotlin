@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.kotlinp.klib
 
-import kotlinx.metadata.*
-import kotlinx.metadata.internal.common.KmModuleFragment
+import kotlin.metadata.*
+import kotlin.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.*
 import org.jetbrains.kotlin.kotlinp.Kotlinp
 import org.jetbrains.kotlin.kotlinp.Settings

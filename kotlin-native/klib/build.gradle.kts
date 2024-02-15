@@ -20,7 +20,7 @@ dependencies {
     implementation(project(":kotlin-util-klib-abi"))
     implementation(project(":tools:kotlinp-klib"))
     implementation(project(":kotlinx-metadata-klib")) { isTransitive = false }
-    implementation(project(":kotlinx-metadata")) { isTransitive = false }
+    implementation(project(":kotlin-metadata")) { isTransitive = false }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
