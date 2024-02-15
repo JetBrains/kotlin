@@ -71,6 +71,7 @@ abstract class BaseGradleIT {
                 "24333f8a63b6825ea9c5514f83c2829b004d1fee",
             )
             val sdkPreviewLicense = "84831b9409646a918e30573bab4c9c91346d8abd"
+            val sdkArmDbtLicense = "859f317696f67ef3d7f30a50a5560e7834b43903"
 
             val sdkLicenseFile = sdkLicensesDir.resolve("android-sdk-license")
             if (!sdkLicenseFile.exists()) {
@@ -94,6 +95,15 @@ abstract class BaseGradleIT {
             } else {
                 if (sdkPreviewLicense != sdkPreviewLicenseFile.readText().trim()) {
                     sdkPreviewLicenseFile.writeText(sdkPreviewLicense)
+                }
+            }
+
+            val sdkArmDbtLicenseFile = sdkLicensesDir.resolve("android-sdk-arm-dbt-license")
+            if (!sdkArmDbtLicenseFile.exists()) {
+                sdkArmDbtLicenseFile.writeText(sdkArmDbtLicense)
+            } else {
+                if (sdkArmDbtLicense != sdkArmDbtLicenseFile.readText().trim()) {
+                    sdkArmDbtLicenseFile.writeText(sdkArmDbtLicense)
                 }
             }
         }

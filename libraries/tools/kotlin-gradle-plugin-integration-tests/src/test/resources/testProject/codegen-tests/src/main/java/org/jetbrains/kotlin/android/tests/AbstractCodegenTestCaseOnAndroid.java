@@ -16,12 +16,18 @@
 
 package org.jetbrains.kotlin.android.tests;
 
-import android.app.Activity;
-import android.os.Bundle;
+import junit.framework.TestCase;
 
-public class MyActivity extends Activity {
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        System.out.println(R.string.app_name);
+import java.lang.reflect.Method;
+
+public abstract class AbstractCodegenTestCaseOnAndroid extends TestCase {
+    protected void invokeBoxMethod(Class<?> clazz, String filePath, String expectedResult) {
+        try {
+            Method method = clazz.getMethod("box");
+            assertEquals(expectedResult, method.invoke(null));
+        }
+        catch (Throwable e) {
+            throw new AssertionError("File: " + filePath, e);
+        }
     }
 }
