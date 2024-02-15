@@ -1,7 +1,4 @@
 public final class Usage /* mypack.Usage*/ {
-  @org.jetbrains.annotations.NotNull()
-  public final kotlin.Unit unitTypeAlias();//  unitTypeAlias()
-
   @org.jetbrains.annotations.Nullable()
   public final kotlin.Unit nullableUnitTypeAlias();//  nullableUnitTypeAlias()
 
@@ -12,4 +9,6 @@ public final class Usage /* mypack.Usage*/ {
   public final kotlin.Unit unitTypeAliasAsNullable();//  unitTypeAliasAsNullable()
 
   public  Usage();//  .ctor()
+
+  public final void unitTypeAlias();//  unitTypeAlias()
 }
