@@ -26,6 +26,7 @@ import com.intellij.psi.impl.source.tree.FileElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
 import com.intellij.testFramework.LightVirtualFile
+import com.intellij.util.messages.Topic
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
@@ -136,6 +137,10 @@ abstract class KtCodeFragment(
 
             // Increment the modification stamp
             clearCaches()
+
+            if (viewProvider.isEventSystemEnabled) {
+                project.messageBus.syncPublisher(IMPORT_MODIFICATION).onCodeFragmentImportsModification(this)
+            }
         }
     }
 
@@ -214,8 +219,16 @@ abstract class KtCodeFragment(
     companion object {
         const val IMPORT_SEPARATOR: String = ","
 
+        @Suppress("UnstableApiUsage")
+        val IMPORT_MODIFICATION: Topic<KotlinCodeFragmentImportModificationListener> =
+            Topic(KotlinCodeFragmentImportModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
+
         val FAKE_CONTEXT_FOR_JAVA_FILE: Key<Function0<KtElement>> = Key.create("FAKE_CONTEXT_FOR_JAVA_FILE")
 
         private val LOG = Logger.getInstance(KtCodeFragment::class.java)
     }
+}
+
+fun interface KotlinCodeFragmentImportModificationListener {
+    fun onCodeFragmentImportsModification(codeFragment: KtCodeFragment)
 }
