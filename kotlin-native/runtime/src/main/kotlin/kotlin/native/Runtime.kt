@@ -60,17 +60,6 @@ public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook?): Repor
     }
 }
 
-@Suppress("CONFLICTING_OVERLOADS")
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@OptIn(FreezingIsDeprecated::class, ExperimentalNativeApi::class)
-public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook): ReportUnhandledExceptionHook? {
-    try {
-        return UnhandledExceptionHookHolder.hook.getAndSet(hook)
-    } catch (e: InvalidMutabilityException) {
-        throw InvalidMutabilityException("Unhandled exception hook must be frozen")
-    }
-}
-
 /**
  * Returns a user-defined unhandled exception hook set by [setUnhandledExceptionHook] or `null` if no user-defined hooks were set.
  */
