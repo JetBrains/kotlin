@@ -29,6 +29,14 @@ abstract class AbstractDecompiledKnmFileTest : KotlinTestWithEnvironment() {
 
     protected abstract fun doTest(testDirectoryPath: Path)
 
+    override fun setUp() {
+        super.setUp()
+
+        environment.projectEnvironment.environment.registerFileType(
+            KlibMetaFileType, KlibMetaFileType.defaultExtension
+        )
+    }
+
     override fun createEnvironment(): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForTests(
             ApplicationEnvironmentDisposer.ROOT_DISPOSABLE,

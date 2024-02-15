@@ -1,3 +1,5 @@
+/* KTIJ-28668 */
+// KNM_K2_IGNORE
 // JVM_FILE_NAME: ContractsKt
 
 @file:OptIn(ExperimentalContracts::class)

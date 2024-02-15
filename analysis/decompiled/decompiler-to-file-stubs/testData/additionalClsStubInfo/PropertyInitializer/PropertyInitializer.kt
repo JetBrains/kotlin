@@ -1,3 +1,5 @@
+// KNM_K2_IGNORE
+
 package test
 
 import kotlin.reflect.KClass

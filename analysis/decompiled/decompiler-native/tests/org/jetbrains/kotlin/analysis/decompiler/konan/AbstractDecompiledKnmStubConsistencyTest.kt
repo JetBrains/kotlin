@@ -67,14 +67,6 @@ abstract class AbstractDecompiledKnmStubConsistencyK2Test : AbstractDecompiledKn
 abstract class AbstractDecompiledKnmStubConsistencyTest : AbstractDecompiledKnmFileTest() {
     abstract fun createDecompiler(): KlibMetadataDecompiler<*>
 
-    override fun setUp() {
-        super.setUp()
-
-        environment.projectEnvironment.environment.registerFileType(
-            KlibMetaFileType, KlibMetaFileType.defaultExtension
-        )
-    }
-
     override fun doTest(testDirectoryPath: Path) {
         val files = compileToKnmFiles(testDirectoryPath)
 
