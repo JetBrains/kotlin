@@ -330,7 +330,8 @@ internal class BinaryLibraryCompilation(
     freeCompilerArgs: TestCompilerArgs,
     sourceModules: Collection<TestModule>,
     dependencies: Iterable<TestCompilationDependency<*>>,
-    expectedArtifact: BinaryLibrary
+    expectedArtifact: BinaryLibrary,
+    private val kind: BinaryLibraryKind,
 ) : SourceBasedCompilation<BinaryLibrary>(
     targets = settings.get(),
     home = settings.get(),
@@ -353,9 +354,9 @@ internal class BinaryLibraryCompilation(
     override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting(optimizationMode, freeCompilerArgs.assertionsMode)
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
-        val libraryKind = when (expectedArtifact.kind) {
-            BinaryLibrary.Kind.STATIC -> "static"
-            BinaryLibrary.Kind.DYNAMIC -> "dynamic"
+        val libraryKind = when (kind) {
+            BinaryLibraryKind.STATIC -> "static"
+            BinaryLibraryKind.DYNAMIC -> "dynamic"
         }
         add(
             "-produce", libraryKind,

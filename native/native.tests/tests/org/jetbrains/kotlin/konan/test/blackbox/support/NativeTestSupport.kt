@@ -209,6 +209,7 @@ internal object NativeTestSupport {
         output += computePipelineType(enforcedProperties, testClass.get())
         output += computeUsedPartialLinkageConfig(enclosingTestClass)
         output += computeCompilerOutputInterceptor(enforcedProperties)
+        output += computeBinaryLibraryKind(enforcedProperties)
 
         return nativeTargets
     }
@@ -505,6 +506,8 @@ internal object NativeTestSupport {
         return UsedPartialLinkageConfig(config)
     }
 
+    private fun computeBinaryLibraryKind(enforcedProperties: EnforcedProperties): BinaryLibraryKind =
+        ClassLevelProperty.BINARY_LIBRARY_KIND.readValue(enforcedProperties, BinaryLibraryKind.values(), BinaryLibraryKind.STATIC)
     /*************** Test class settings (simplified) ***************/
 
     private fun ExtensionContext.getOrCreateSimpleTestClassSettings(): SimpleTestClassSettings =

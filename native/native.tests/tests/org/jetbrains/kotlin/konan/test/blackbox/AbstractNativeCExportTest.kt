@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
@@ -33,17 +34,33 @@ import org.junit.jupiter.api.Tag
 import java.io.File
 
 @Tag("cexport")
-abstract class AbstractNativeCExportTest(
-    protected val libraryKind: BinaryLibraryKind,
-) : AbstractNativeSimpleTest() {
+abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
 
-    enum class BinaryLibraryKind {
-        STATIC, DYNAMIC
+    private val libraryKind: BinaryLibraryKind by lazy {
+        testRunSettings.get<BinaryLibraryKind>()
     }
 
-    internal open fun getKindSpecificClangFlags(binaryLibrary: TestCompilationArtifact.BinaryLibrary): List<String> = emptyList()
+    private fun getKindSpecificClangFlags(binaryLibrary: TestCompilationArtifact.BinaryLibrary): List<String> = when (libraryKind) {
+        BinaryLibraryKind.STATIC -> testRunSettings.configurables.linkerKonanFlags.flatMap { listOf("-Xlinker", it) }
+        BinaryLibraryKind.DYNAMIC -> {
+            if (testRunSettings.get<KotlinNativeTargets>().testTarget.family != Family.MINGW) {
+                listOf("-rpath", binaryLibrary.libraryFile.parentFile.absolutePath)
+            } else {
+                // --allow-multiple-definition is needed because finalLinkCommands statically links a lot of MinGW-specific libraries,
+                // that are already included in DLL produced by Kotlin/Native.
+                listOf("-Wl,--allow-multiple-definition")
+            }
+        }
+    }
 
-    internal open fun checkTestPrerequisites() {}
+    internal open fun checkTestPrerequisites() {
+        when (libraryKind) {
+            BinaryLibraryKind.STATIC -> if (targets.testTarget.family == Family.MINGW) {
+                Assumptions.abort<Nothing>("Testing of static libraries is not supported for MinGW targets.")
+            }
+            BinaryLibraryKind.DYNAMIC -> {}
+        }
+    }
 
     private val testCompilationFactory = TestCompilationFactory()
 
@@ -67,7 +84,7 @@ abstract class AbstractNativeCExportTest(
         val binaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(
             testCase,
             testRunSettings,
-            kind = libraryKind.mapToArtifactKind(),
+            kind = libraryKind,
         ).result.assertSuccess().resultingArtifact
 
         val clangExecutableName = "clangMain"
@@ -119,30 +136,4 @@ abstract class AbstractNativeCExportTest(
             initialize(null, null)
         }
     }
-
-    private fun BinaryLibraryKind.mapToArtifactKind(): TestCompilationArtifact.BinaryLibrary.Kind = when (this) {
-        BinaryLibraryKind.STATIC -> TestCompilationArtifact.BinaryLibrary.Kind.STATIC
-        BinaryLibraryKind.DYNAMIC -> TestCompilationArtifact.BinaryLibrary.Kind.DYNAMIC
-    }
-}
-
-abstract class AbstractNativeCExportStaticTest() : AbstractNativeCExportTest(libraryKind = BinaryLibraryKind.STATIC) {
-    override fun getKindSpecificClangFlags(binaryLibrary: TestCompilationArtifact.BinaryLibrary): List<String> =
-        testRunSettings.configurables.linkerKonanFlags.flatMap { listOf("-Xlinker", it) }
-
-    override fun checkTestPrerequisites() {
-        if (targets.testTarget.family == Family.MINGW) {
-            Assumptions.abort<Nothing>("Testing of static libraries is not supported for MinGW targets.")
-        }
-    }
-}
-abstract class AbstractNativeCExportDynamicTest() : AbstractNativeCExportTest(libraryKind = BinaryLibraryKind.DYNAMIC) {
-    override fun getKindSpecificClangFlags(binaryLibrary: TestCompilationArtifact.BinaryLibrary): List<String> =
-        if (testRunSettings.get<KotlinNativeTargets>().testTarget.family != Family.MINGW) {
-            listOf("-rpath", binaryLibrary.libraryFile.parentFile.absolutePath)
-        } else {
-            // --allow-multiple-definition is needed because finalLinkCommands statically links a lot of MinGW-specific libraries,
-            // that are already included in DLL produced by Kotlin/Native.
-            listOf("-Wl,--allow-multiple-definition")
-        }
 }

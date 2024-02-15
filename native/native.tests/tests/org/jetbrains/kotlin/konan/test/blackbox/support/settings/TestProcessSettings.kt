@@ -295,3 +295,7 @@ internal enum class CompilerOutputInterceptor {
     DEFAULT,
     NONE
 }
+
+internal enum class BinaryLibraryKind {
+    STATIC, DYNAMIC
+}

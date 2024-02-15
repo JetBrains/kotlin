@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
+import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,7 +20,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/CExport")
 @TestDataPath("$PROJECT_ROOT")
-public class CExportTestStaticGenerated extends AbstractNativeCExportStaticTest {
+@EnforcedProperty(property = ClassLevelProperty.BINARY_LIBRARY_KIND, propertyValue = "STATIC")
+public class CExportStaticTestGenerated extends AbstractNativeCExportTest {
   @Test
   public void testAllFilesPresentInCExport() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CExport"), Pattern.compile("^([^_](.+))$"), null, false);
