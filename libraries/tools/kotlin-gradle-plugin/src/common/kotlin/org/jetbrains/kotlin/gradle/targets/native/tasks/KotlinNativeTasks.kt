@@ -556,10 +556,8 @@ internal constructor(
                 val output = outputFile.get()
                 output.parentFile.mkdirs()
 
-                buildFusService.orNull?.use {
-                    it.reportFusMetrics {
-                        NativeCompilerOptionMetrics.collectMetrics(compilerOptions, it)
-                    }
+                buildFusService.orNull?.reportFusMetrics {
+                    NativeCompilerOptionMetrics.collectMetrics(compilerOptions, it)
                 }
 
                 ArgumentUtils.convertArgumentsToStringList(arguments)
