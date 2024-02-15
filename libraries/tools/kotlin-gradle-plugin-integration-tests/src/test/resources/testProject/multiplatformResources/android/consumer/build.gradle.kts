@@ -12,8 +12,7 @@ version = "1.0"
 
 plugins {
     kotlin("multiplatform")
-    id("com.android.library")
-    `maven-publish`
+    id("com.android.application")
 }
 
 repositories {
@@ -23,6 +22,15 @@ repositories {
 }
 
 kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                api(project(":projectDependency"))
+                api("test:publication:+")
+            }
+        }
+    }
+
     val publication = project.ext.get(
         KotlinTargetResourcesPublication.EXTENSION_NAME
     ) as KotlinTargetResourcesPublication
@@ -33,11 +41,10 @@ kotlin {
             compilations.all {
                 kotlinOptions.jvmTarget = "1.8"
             }
-        },
-        jvm(),
+        }
     ).forEach { target ->
         val fontsFilter = if (target is KotlinAndroidTarget) listOf("fonts/*") else emptyList()
-        val relativeResourcePlacement = provider { File("embed/published") }
+        val relativeResourcePlacement = provider { File("embed/self") }
         val sourceSetPathProvider: (KotlinSourceSet) -> (Provider<File>) = { sourceSet ->
             project.provider { project.file("src/${sourceSet.name}/multiplatformResources") }
         }
@@ -69,14 +76,8 @@ kotlin {
     }
 }
 
-publishing {
-    repositories {
-        maven("${buildDir}/repo")
-    }
-}
-
 android {
-    namespace = "test.publication"
+    namespace = "test.consumer"
     compileSdk = 34
     defaultConfig {
         minSdk = 24
