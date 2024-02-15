@@ -30,13 +30,7 @@ class IrScriptImpl(
 ) : IrScript() {
     override var origin: IrDeclarationOrigin = SCRIPT_ORIGIN
 
-    private var _parent: IrDeclarationParent? = null
-    override var parent: IrDeclarationParent
-        get() = _parent
-            ?: throw UninitializedPropertyAccessException("Parent not initialized: $this")
-        set(v) {
-            _parent = v
-        }
+    override lateinit var parent: IrDeclarationParent
 
     override var annotations: List<IrConstructorCall> = SmartList()
 
