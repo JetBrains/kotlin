@@ -10,8 +10,9 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationCacheStartParameterAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationCacheStartParameterAccessorG82
 import javax.inject.Inject
 
 private const val PLUGIN_VARIANT_NAME = "gradle82"
@@ -132,7 +133,8 @@ open class KotlinApiPlugin : KotlinBaseApiPlugin() {
     }
 }
 
-@Suppress("UnusedReceiverParameter")
 private fun Project.registerVariantImplementations() {
-
+    val factories = VariantImplementationFactoriesConfigurator.get(gradle)
+    factories[ConfigurationCacheStartParameterAccessor.Factory::class] =
+        ConfigurationCacheStartParameterAccessorG82.Factory()
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.internal
 
+import org.gradle.api.Project
 import org.gradle.api.internal.StartParameterInternal
 import org.gradle.api.invocation.Gradle
 
@@ -17,6 +18,6 @@ internal class ConfigurationCacheStartParameterAccessorG74(
     }
 
     internal class Factory : ConfigurationCacheStartParameterAccessor.Factory {
-        override fun getInstance(gradle: Gradle) = ConfigurationCacheStartParameterAccessorG74(gradle)
+        override fun getInstance(project: Project) = ConfigurationCacheStartParameterAccessorG74(project.gradle)
     }
 }
