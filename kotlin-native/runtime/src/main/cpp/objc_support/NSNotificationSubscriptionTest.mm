@@ -7,8 +7,7 @@
 
 #include "NSNotificationSubscription.hpp"
 
-#import <Foundation/NSNotification.h>
-#import <Foundation/NSString.h>
+#import <Foundation/Foundation.h>
 #include <memory>
 
 #include "gmock/gmock.h"

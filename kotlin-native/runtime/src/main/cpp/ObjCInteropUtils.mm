@@ -8,9 +8,8 @@
 #if KONAN_OBJC_INTEROP
 
 #import <objc/runtime.h>
-#import <CoreFoundation/CFString.h>
-#import <Foundation/NSException.h>
-#import <Foundation/NSString.h>
+#import <CoreFoundation/CoreFoundation.h>
+#import <Foundation/Foundation.h>
 #import "Memory.h"
 #import "ObjCInteropUtils.h"
 #import "ObjCInteropUtilsPrivate.h"

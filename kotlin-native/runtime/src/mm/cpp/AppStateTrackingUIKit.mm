@@ -9,7 +9,7 @@
 
 #include <functional>
 
-#import <UIKit/UIApplication.h>
+#import <UIKit/UIKit.h>
 
 #include "CompilerConstants.hpp"
 #include "objc_support/NSNotificationSubscription.hpp"

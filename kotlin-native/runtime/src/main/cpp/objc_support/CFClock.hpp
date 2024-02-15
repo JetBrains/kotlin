@@ -8,7 +8,7 @@
 #if KONAN_HAS_FOUNDATION_FRAMEWORK
 
 #include <chrono>
-#include <CoreFoundation/CFDate.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 namespace kotlin::objc_support {
 

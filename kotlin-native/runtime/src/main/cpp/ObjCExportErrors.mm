@@ -16,9 +16,7 @@
 
 #if KONAN_OBJC_INTEROP
 
-#import <Foundation/NSDictionary.h>
-#import <Foundation/NSError.h>
-#import <Foundation/NSString.h>
+#import <Foundation/Foundation.h>
 
 #import "Exceptions.h"
 #import "ObjCExport.h"
