@@ -30820,6 +30820,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("immutableName.kt")
+    public void testImmutableName() {
+      runTest("compiler/testData/codegen/box/javaInterop/immutableName.kt");
+    }
+
+    @Test
     @TestMetadata("inheritanceWithWildcard.kt")
     public void testInheritanceWithWildcard() {
       runTest("compiler/testData/codegen/box/javaInterop/inheritanceWithWildcard.kt");
@@ -52049,6 +52055,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("explicitSuperCall.kt")
     public void testExplicitSuperCall() {
       runTest("compiler/testData/codegen/box/specialBuiltins/explicitSuperCall.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionWithMappedSignature.kt")
+    public void testIntersectionWithMappedSignature() {
+      runTest("compiler/testData/codegen/box/specialBuiltins/intersectionWithMappedSignature.kt");
     }
 
     @Test

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.AbstractFirUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.ResultOfIntersection
 import org.jetbrains.kotlin.fir.scopes.impl.MembersByScope
+import org.jetbrains.kotlin.fir.scopes.impl.isIntersectionOverride
 import org.jetbrains.kotlin.fir.scopes.impl.similarFunctionsOrBothProperties
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -398,6 +399,20 @@ class JavaClassUseSiteMemberScope(
 
         processSpecialFunctions(name, explicitlyDeclaredFunctions, functionsWithScopeFromSupertypes, result)
         return result.toSet()
+    }
+
+    private fun <D : FirCallableSymbol<*>> ResultOfIntersection<D>.extractSomeSymbolFromSuperType(): D {
+        return if (this.isIntersectionOverride()) {
+            /*
+             * we don't want to create intersection override if some declared function actually overrides some functions
+             *   from supertypes, so instead of intersection override symbol we check actual symbol from supertype
+             *
+             * TODO(KT-65925): is it enough to check only one function?
+             */
+            keySymbol
+        } else {
+            chosenSymbol
+        }
     }
 
     private fun processSpecialFunctions(

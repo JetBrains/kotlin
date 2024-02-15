@@ -22716,6 +22716,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("intersectionWithMappedSignature.kt")
+        public void testIntersectionWithMappedSignature() {
+          runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/intersectionWithMappedSignature.kt");
+        }
+
+        @Test
         @TestMetadata("irrelevantCharAtAbstract.kt")
         public void testIrrelevantCharAtAbstract() {
           runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/irrelevantCharAtAbstract.kt");

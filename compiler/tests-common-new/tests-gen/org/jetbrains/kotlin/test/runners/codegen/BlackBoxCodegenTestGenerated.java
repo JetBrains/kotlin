@@ -29014,6 +29014,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Test
+    @TestMetadata("immutableName.kt")
+    public void testImmutableName() {
+      runTest("compiler/testData/codegen/box/javaInterop/immutableName.kt");
+    }
+
+    @Test
     @TestMetadata("inheritanceWithWildcard.kt")
     public void testInheritanceWithWildcard() {
       runTest("compiler/testData/codegen/box/javaInterop/inheritanceWithWildcard.kt");

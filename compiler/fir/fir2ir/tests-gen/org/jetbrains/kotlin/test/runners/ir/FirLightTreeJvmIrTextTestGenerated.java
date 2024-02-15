@@ -2703,6 +2703,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
     public void testFakeOverrideOfRawJavaCollection() {
       runTest("compiler/testData/ir/irText/fakeOverrides/fakeOverrideOfRawJavaCollection.kt");
     }
+
+    @Test
+    @TestMetadata("intersectionWithMappedSignature.kt")
+    public void testIntersectionWithMappedSignature() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/intersectionWithMappedSignature.kt");
+    }
   }
 
   @Nested
