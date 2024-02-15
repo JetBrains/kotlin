@@ -430,6 +430,7 @@ class FilesTest {
         }
     }
 
+    @Suppress("DEPRECATION_ERROR")
     @Test fun testCopyTo() {
         val srcFile = @Suppress("DEPRECATION") createTempFile()
         val dstFile = @Suppress("DEPRECATION") createTempFile()
@@ -567,7 +568,7 @@ class FilesTest {
         }
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
     @Test fun copyRecursively() {
         val src = createTempDir()
         val dst = createTempDir()

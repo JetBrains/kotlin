@@ -10,6 +10,9 @@ package kotlin.io
 
 import java.io.File
 import java.io.IOException
+import kotlin.io.exceptions.FileSystemException
+import kotlin.io.exceptions.NoSuchFileException
+import kotlin.io.exceptions.FileAlreadyExistsException
 
 /**
  * Creates an empty directory in the specified [directory], using the given [prefix] and [suffix] to generate its name.

@@ -25,6 +25,7 @@ private fun constructMessage(file: File, other: File?, reason: String?): String 
  * @property other the second file involved in the operation, if any (for example, the target of a copy or move)
  * @property reason the description of the error
  */
+@Deprecated("", level = DeprecationLevel.ERROR)
 open public class FileSystemException(
     public val file: File,
     public val other: File? = null,
@@ -34,27 +35,30 @@ open public class FileSystemException(
 /**
  * An exception class which is used when some file to create or copy to already exists.
  */
-public class FileAlreadyExistsException(
+@Deprecated("", level = DeprecationLevel.ERROR)
+public open class FileAlreadyExistsException(
     file: File,
     other: File? = null,
     reason: String? = null
-) : FileSystemException(file, other, reason)
+) : kotlin.io.exceptions.FileSystemException(file, other, reason)
 
 /**
  * An exception class which is used when we have not enough access for some operation.
  */
-public class AccessDeniedException(
+@Deprecated("", level = DeprecationLevel.ERROR)
+public open class AccessDeniedException(
     file: File,
     other: File? = null,
     reason: String? = null
-) : FileSystemException(file, other, reason)
+) : kotlin.io.exceptions.FileSystemException(file, other, reason)
 
 /**
  * An exception class which is used when file to copy does not exist.
  */
-public class NoSuchFileException(
+@Deprecated("", level = DeprecationLevel.ERROR)
+public open class NoSuchFileException(
     file: File,
     other: File? = null,
     reason: String? = null
-) : FileSystemException(file, other, reason)
+) : kotlin.io.exceptions.FileSystemException(file, other, reason)
 

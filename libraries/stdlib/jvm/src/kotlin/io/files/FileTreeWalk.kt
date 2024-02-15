@@ -11,6 +11,7 @@ package kotlin.io
 import java.io.File
 import java.io.IOException
 import java.util.ArrayDeque
+import kotlin.io.exceptions.AccessDeniedException
 
 /**
  * An enumeration to describe possible walk directions.
