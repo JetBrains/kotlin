@@ -23,14 +23,14 @@ fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
     val superProtocols: List<String> = superProtocols()
     val categoryName: String? = null
     val generics: List<ObjCGenericTypeDeclaration> = emptyList()
-    val objectMembers = getDefaultMembers().toMutableList()
-
     val superClass = translateSuperClass()
 
-    getMemberScope().getCallableSymbols()
+    val objectMembers = mutableListOf<ObjCExportStub>()
+    objectMembers += translateToObjCConstructors()
+    objectMembers += getDefaultMembers()
+    objectMembers += getDeclaredMemberScope().getCallableSymbols()
         .sortedWith(StableCallableOrder)
-        .flatMap { it.translateToObjCExportStubs() }
-        .forEach { objectMembers.add(it) }
+        .mapNotNull { it.translateToObjCExportStub() }
 
     return ObjCInterfaceImpl(
         name = name.objCName,
@@ -50,15 +50,6 @@ context(KtAnalysisSession, KtObjCExportSession)
 private fun KtClassOrObjectSymbol.getDefaultMembers(): List<ObjCExportStub> {
 
     val result = mutableListOf<ObjCExportStub>()
-    val allocWithZoneParameter = ObjCParameter("zone", null, ObjCRawType("struct _NSZone *"), null)
-
-    result.add(
-        ObjCMethod(null, null, false, ObjCInstanceType, listOf("alloc"), emptyList(), listOf("unavailable"))
-    )
-
-    result.add(
-        ObjCMethod(null, null, false, ObjCInstanceType, listOf("allocWithZone:"), listOf(allocWithZoneParameter), listOf("unavailable"))
-    )
 
     result.add(
         ObjCMethod(
