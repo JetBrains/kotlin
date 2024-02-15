@@ -334,17 +334,11 @@ class JvmMappedScope(
 
             if (!javaCtor.status.visibility.isPublicAPI || javaCtor.isDeprecated()) return@processor
             val signature = SignatureBuildingComponents.signature(firJavaClass.classId, javaCtor.computeJvmDescriptor())
-            if (signature in JvmBuiltInsSignatures.HIDDEN_CONSTRUCTOR_SIGNATURES) return@processor
+            if (signature !in JvmBuiltInsSignatures.VISIBLE_CONSTRUCTOR_SIGNATURES) return@processor
             if (javaCtor.isTrivialCopyConstructor()) return@processor
             if (firKotlinClassConstructors.any { javaCtor.isShadowedBy(it) }) return@processor
 
-            val jvmDescriptor = javaCtorSymbol.fir.computeJvmDescriptor()
-            val jdkMemberStatus = getJdkMethodStatus(jvmDescriptor)
-
-            if (jdkMemberStatus == JDKMemberStatus.DROP) return@processor
-
-            val newSymbol = mappedSymbolCache.mappedConstructors.getValue(javaCtorSymbol, this to jdkMemberStatus)
-
+            val newSymbol = mappedSymbolCache.mappedConstructors.getValue(javaCtorSymbol, this)
             processor(newSymbol)
         }
 
@@ -353,7 +347,7 @@ class JvmMappedScope(
 
     private fun FirDeclaration.isDeprecated(): Boolean = symbol.getDeprecation(session, callSite = null) != null
 
-    private fun createMappedConstructor(symbol: FirConstructorSymbol, jdkMemberStatus: JDKMemberStatus): FirConstructorSymbol {
+    private fun createMappedConstructor(symbol: FirConstructorSymbol): FirConstructorSymbol {
         val oldConstructor = symbol.fir
         val classId = firKotlinClass.classId
         val newSymbol = FirConstructorSymbol(CallableId(classId, classId.shortClassName))
@@ -371,9 +365,7 @@ class JvmMappedScope(
             isExpect = false,
             deferredReturnTypeCalculation = null,
             newSource = oldConstructor.source,
-        ).apply {
-            setHiddenAttributeIfNecessary(jdkMemberStatus)
-        }
+        )
         return newSymbol
     }
 
@@ -410,9 +402,9 @@ class JvmMappedScope(
                     scope.createHiddenFakeFunction(name)
                 }
 
-            val mappedConstructors: FirCache<FirConstructorSymbol, FirConstructorSymbol, Pair<JvmMappedScope, JDKMemberStatus>> =
-                cachesFactory.createCache { symbol, (scope, jdkMemberStatus) ->
-                    scope.createMappedConstructor(symbol, jdkMemberStatus)
+            val mappedConstructors: FirCache<FirConstructorSymbol, FirConstructorSymbol, JvmMappedScope> =
+                cachesFactory.createCache { symbol, scope ->
+                    scope.createMappedConstructor(symbol)
                 }
         }
     }

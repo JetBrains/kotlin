@@ -22555,6 +22555,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("throwableConstructor.kt")
+            public void testThrowableConstructor() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/throwableConstructor.kt");
+            }
+
+            @Test
             @TestMetadata("traitDefaultCall.kt")
             public void testTraitDefaultCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/traitDefaultCall.kt");
