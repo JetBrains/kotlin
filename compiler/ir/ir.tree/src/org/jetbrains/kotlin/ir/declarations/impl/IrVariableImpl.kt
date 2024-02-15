@@ -53,12 +53,6 @@ class IrVariableImpl(
 
     override var initializer: IrExpression? = null
 
-    // Variables are assignable by default. This means that they can be used in IrSetValue.
-    // Variables are assigned in the IR even though they are not 'var' in the input. Hence
-    // the separate assignability flag.
-    override val isAssignable: Boolean
-        get() = true
-
     override val factory: IrFactory
         get() = error("Create IrVariableImpl directly")
 }

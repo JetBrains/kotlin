@@ -49,6 +49,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     open val containsElement: Boolean
         get() = typeRef is ElementOrRef<*> || this is ListField && baseType is ElementOrRef<*>
 
+    open val defaultValueInBase: String? get() = null
     open val defaultValueInImplementation: String? get() = null
 
     /**

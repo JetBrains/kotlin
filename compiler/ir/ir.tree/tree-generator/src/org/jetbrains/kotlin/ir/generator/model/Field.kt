@@ -12,8 +12,6 @@ sealed class Field(
     override val name: String,
     override var isMutable: Boolean,
 ) : AbstractField<Field>(), AbstractFieldWithDefaultValue<Field> {
-    var baseGetter: String? = null
-
     sealed class UseFieldAsParameterInIrFactoryStrategy {
 
         data object No : UseFieldAsParameterInIrFactoryStrategy()
@@ -31,28 +29,26 @@ sealed class Field(
                 UseFieldAsParameterInIrFactoryStrategy.Yes(null)
             }
 
-    override var withGetter: Boolean
-        get() = baseGetter != null
-        set(value) = error("Operation not supported")
 
-    override var defaultValueInImplementation: String? by ::baseGetter
+    override var withGetter: Boolean = false
 
+    override var defaultValueInBase: String? = null
+    override var defaultValueInImplementation: String? = null
     override var defaultValueInBuilder: String?
         get() = null
         set(_) = error("Builders are not supported")
 
+    override var customSetter: String? = null
+
     override val origin: Field
         get() = this
-
-    override var customSetter: String? = null
 
     override fun toString() = "$name: $typeRef"
 
     override val isVolatile: Boolean
         get() = false
 
-    override val isFinal: Boolean
-        get() = baseGetter != null
+    override var isFinal: Boolean = false
 
     override val isParameter: Boolean
         get() = false
@@ -61,7 +57,9 @@ sealed class Field(
 
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
-        copy.baseGetter = baseGetter
+        copy.withGetter = withGetter
+        copy.defaultValueInBase = defaultValueInBase
+        copy.defaultValueInImplementation = defaultValueInImplementation
         copy.customUseInIrFactoryStrategy = customUseInIrFactoryStrategy
         copy.customSetter = customSetter
     }

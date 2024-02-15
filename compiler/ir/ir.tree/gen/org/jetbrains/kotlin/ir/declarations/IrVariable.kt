@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -31,6 +32,14 @@ abstract class IrVariable : IrDeclarationBase(), IrValueDeclaration {
     abstract var isLateinit: Boolean
 
     abstract var initializer: IrExpression?
+
+    /**
+     * Variables are assignable by default. This means that they can be used in [IrSetValue].
+     * Variables are assigned in the IR even though they are not 'var' in the input. Hence
+     * the separate assignability flag.
+     */
+    override val isAssignable: Boolean
+        get() = true
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitVariable(this, data)

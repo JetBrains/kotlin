@@ -28,7 +28,8 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
     protected abstract fun makeFieldPrinter(printer: SmartPrinter): AbstractFieldPrinter<ImplementationField>
 
     context(ImportCollector)
-    protected open fun SmartPrinter.printAdditionalMethods(implementation: Implementation) {}
+    protected open fun SmartPrinter.printAdditionalMethods(implementation: Implementation) {
+    }
 
     context(ImportCollector)
     fun printImplementation(implementation: Implementation) {
@@ -72,7 +73,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
                             print(field.name, ": ", field.typeRef.render())
                             println(",")
                         } else if (!field.isFinal) {
-                            fieldPrinter.printField(field, override = true, inConstructor = true)
+                            fieldPrinter.printField(field, inImplementation = true, override = true, inConstructor = true)
                         }
                     }
                 }
@@ -87,11 +88,20 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
             printBlock {
                 if (isInterface || isAbstract) {
                     implementation.allFields.forEach {
-                        fieldPrinter.printField(it, override = true, modality = Modality.ABSTRACT.takeIf { isAbstract })
+                        fieldPrinter.printField(
+                            it,
+                            inImplementation = true,
+                            override = true,
+                            modality = Modality.ABSTRACT.takeIf { isAbstract }
+                        )
                     }
                 } else {
                     implementation.fieldsInBody.forEach {
-                        fieldPrinter.printField(it, override = true)
+                        fieldPrinter.printField(
+                            it,
+                            inImplementation = true,
+                            override = true
+                        )
                     }
                 }
 

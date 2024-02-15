@@ -587,6 +587,16 @@ object IrTree : AbstractTreeBuilder() {
         +field("isConst", boolean)
         +field("isLateinit", boolean)
         +field("initializer", expression, nullable = true)
+        +field("isAssignable", boolean, mutable = false) {
+            defaultValueInBase = "true"
+            withGetter = true
+            additionalImports.add(setValue)
+            kDoc = """
+            Variables are assignable by default. This means that they can be used in [${setValue.typeName}].
+            Variables are assigned in the IR even though they are not 'var' in the input. Hence
+            the separate assignability flag.
+            """.trimIndent()
+        }
     }
     val packageFragment: Element by element(Declaration) {
         ownsChildren = false
@@ -608,8 +618,9 @@ object IrTree : AbstractTreeBuilder() {
         }
         +field("packageFqName", type<FqName>())
         +field("fqName", type<FqName>()) {
-            baseGetter = "packageFqName"
+            defaultValueInBase = "packageFqName"
             customSetter = "packageFqName = value"
+            withGetter = true
             deprecation = Deprecated(
                 "Please use `packageFqName` instead",
                 ReplaceWith("packageFqName"),

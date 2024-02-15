@@ -52,14 +52,15 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
                 withIndent {
                     for (field in filterFields(element)) {
                         if (field.isParameter) continue
-                        if (!field.withGetter && field.defaultValueInImplementation == null && field.isFinal && field.fromParent) {
+                        if (!field.withGetter && field.defaultValueInImplementation == null && field.defaultValueInBase == null && field.isFinal && field.fromParent) {
                             continue
                         }
                         if (separateFieldsWithBlankLine) println()
                         fieldPrinter.printField(
                             field,
+                            inImplementation = false,
                             override = field.fromParent,
-                            modality = Modality.ABSTRACT.takeIf { !field.isFinal && !kind.isInterface },
+                            modality = Modality.ABSTRACT.takeIf { !field.isFinal && !kind.isInterface && field.defaultValueInBase == null },
                         )
                     }
                     printAdditionalMethods(element)
