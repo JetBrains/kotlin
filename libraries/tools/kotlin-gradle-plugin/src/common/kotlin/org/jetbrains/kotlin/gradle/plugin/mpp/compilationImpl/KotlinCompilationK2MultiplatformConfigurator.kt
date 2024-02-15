@@ -51,6 +51,8 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                         K2MultiplatformStructure.Fragment(fragmentName, sourceFiles.reduce { acc, fileTree -> acc + fileTree })
                     }
             })
+
+            compileTask.multiplatformStructure.defaultFragmentName.set(compilation.defaultSourceSet.fragmentName())
         }
     }
 }

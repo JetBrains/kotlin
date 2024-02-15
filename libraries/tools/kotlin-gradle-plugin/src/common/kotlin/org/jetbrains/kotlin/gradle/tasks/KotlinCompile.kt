@@ -263,17 +263,17 @@ abstract class KotlinCompile @Inject constructor(
         }
 
         sources { args ->
+            val sourcesFiles = sources.asFileTree.files.toList()
+            val javaSourcesFiles = javaSources.files.toList()
+            val scriptSourcesFiles = scriptSources.asFileTree.files.toList()
+
             if (multiPlatformEnabled.get()) {
                 if (compilerOptions.usesK2.get()) {
-                    args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sourceFileFilter)
+                    args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sourcesFiles, sourceFileFilter)
                 } else {
                     args.commonSources = commonSourceSet.asFileTree.toPathsArray()
                 }
             }
-
-            val sourcesFiles = sources.asFileTree.files.toList()
-            val javaSourcesFiles = javaSources.files.toList()
-            val scriptSourcesFiles = scriptSources.asFileTree.files.toList()
 
             if (logger.isInfoEnabled) {
                 logger.info("Kotlin source files: ${sourcesFiles.joinToString()}")

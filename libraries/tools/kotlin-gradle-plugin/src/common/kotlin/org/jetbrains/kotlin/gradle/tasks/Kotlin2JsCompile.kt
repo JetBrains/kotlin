@@ -178,7 +178,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
             if (multiPlatformEnabled.get()) {
                 if (compilerOptions.usesK2.get()) {
-                    args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sourceFileFilter)
+                    args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sources.files, sourceFileFilter)
                 } else {
                     args.commonSources = commonSourceSet.asFileTree.toPathsArray()
                 }
