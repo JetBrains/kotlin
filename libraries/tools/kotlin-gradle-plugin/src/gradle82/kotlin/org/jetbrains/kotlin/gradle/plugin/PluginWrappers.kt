@@ -13,6 +13,8 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationCacheStartParameterAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationCacheStartParameterAccessorG82
+import org.jetbrains.kotlin.gradle.plugin.internal.ProjectIsolationStartParameterAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.ProjectIsolationStartParameterAccessorG82
 import javax.inject.Inject
 
 private const val PLUGIN_VARIANT_NAME = "gradle82"
@@ -137,4 +139,6 @@ private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
     factories[ConfigurationCacheStartParameterAccessor.Factory::class] =
         ConfigurationCacheStartParameterAccessorG82.Factory()
+    factories[ProjectIsolationStartParameterAccessor.Factory::class] =
+        ProjectIsolationStartParameterAccessorG82.Factory()
 }

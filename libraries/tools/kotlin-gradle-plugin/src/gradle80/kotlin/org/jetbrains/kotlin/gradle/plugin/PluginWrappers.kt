@@ -138,4 +138,6 @@ private fun Project.registerVariantImplementations() {
         CompatibilityConventionRegistrarG80.Factory()
     factories[ConfigurationCacheStartParameterAccessor.Factory::class] =
         ConfigurationCacheStartParameterAccessorG80.Factory()
+    factories[ProjectIsolationStartParameterAccessor.Factory::class] =
+        ProjectIsolationStartParameterAccessorG80.Factory()
 }
