@@ -32,6 +32,7 @@ internal class DefaultConfigurationCacheStartParameterAccessor(
     private val gradle: Gradle,
 ) : ConfigurationCacheStartParameterAccessor {
     override val isConfigurationCacheRequested: Boolean by lazy {
+        @Suppress("DEPRECATION") // TODO: will be fixed separately via KT-64355
         gradle.startParameter.isConfigurationCacheRequested
     }
 }
