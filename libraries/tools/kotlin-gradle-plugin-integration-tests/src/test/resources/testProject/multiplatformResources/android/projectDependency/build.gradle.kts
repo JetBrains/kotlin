@@ -37,7 +37,7 @@ kotlin {
         jvm(),
     ).forEach { target ->
         val fontsFilter = if (target is KotlinAndroidTarget) listOf("fonts/*") else emptyList()
-        val relativeResourcePlacement = provider { File("embed/published") }
+        val relativeResourcePlacement = provider { File("embed/subproject") }
         val sourceSetPathProvider: (KotlinSourceSet) -> (Provider<File>) = { sourceSet ->
             project.provider { project.file("src/${sourceSet.name}/multiplatformResources") }
         }
@@ -76,7 +76,7 @@ publishing {
 }
 
 android {
-    namespace = "test.publication"
+    namespace = "test.projectDependency"
     compileSdk = 34
     defaultConfig {
         minSdk = 24
