@@ -505,6 +505,9 @@ object IrTree : AbstractTreeBuilder() {
 
         +descriptor("PropertyDescriptor")
         +symbol(propertySymbolType)
+        +listField("overriddenSymbols", propertySymbolType, mutability = Var) {
+            skipInIrFactory()
+        }
         +field("isVar", boolean)
         +field("isConst", boolean)
         +field("isLateinit", boolean)

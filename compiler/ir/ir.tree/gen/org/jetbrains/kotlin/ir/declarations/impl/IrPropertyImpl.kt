@@ -1,7 +1,12 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// DO NOT MODIFY IT MANUALLY.
+
+@file:Suppress("DuplicatedCode", "unused")
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
@@ -20,32 +25,35 @@ class IrPropertyImpl @IrImplementationDetail constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
-    override val symbol: IrPropertySymbol,
+    override val factory: IrFactory,
     override var name: Name,
+    override var isExternal: Boolean,
     override var visibility: DescriptorVisibility,
     override var modality: Modality,
+    override val containerSource: DeserializedContainerSource?,
+    override val symbol: IrPropertySymbol,
     override var isVar: Boolean,
     override var isConst: Boolean,
     override var isLateinit: Boolean,
     override var isDelegated: Boolean,
-    override var isExternal: Boolean,
-    override var isExpect: Boolean = false,
+    override var isExpect: Boolean,
     override var isFakeOverride: Boolean,
-    override var containerSource: DeserializedContainerSource?,
-    override val factory: IrFactory,
 ) : IrProperty() {
+    override var annotations: List<IrConstructorCall> = emptyList()
 
-    init {
-        symbol.bind(this)
-    }
+    override lateinit var parent: IrDeclarationParent
+
+    override var metadata: MetadataSource? = null
+
+    override var attributeOwnerId: IrAttributeContainer = this
+
+    override var originalBeforeInline: IrAttributeContainer? = null
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: PropertyDescriptor
         get() = symbol.descriptor
 
-    override lateinit var parent: IrDeclarationParent
-
-    override var annotations: List<IrConstructorCall> = emptyList()
+    override var overriddenSymbols: List<IrPropertySymbol> = emptyList()
 
     override var backingField: IrField? = null
 
@@ -53,11 +61,7 @@ class IrPropertyImpl @IrImplementationDetail constructor(
 
     override var setter: IrSimpleFunction? = null
 
-    override var overriddenSymbols: List<IrPropertySymbol> = emptyList()
-
-    override var metadata: MetadataSource? = null
-
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
+    init {
+        symbol.bind(this)
+    }
 }
