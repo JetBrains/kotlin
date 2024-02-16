@@ -28,31 +28,31 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/memberScope")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisScriptSourceModuleMemberScopeTestGenerated extends AbstractMemberScopeTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
+  @Test
+  public void testAllFilesPresentInMemberScope() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/memberScope"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/memberScope/withTestCompilerPluginEnabled")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WithTestCompilerPluginEnabled {
     @Test
-    public void testAllFilesPresentInMemberScope() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/memberScope"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/memberScope/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/memberScope/withTestCompilerPluginEnabled")
-    @TestDataPath("$PROJECT_ROOT")
-    public class WithTestCompilerPluginEnabled {
-        @Test
-        public void testAllFilesPresentInWithTestCompilerPluginEnabled() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/memberScope/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
+  }
 }

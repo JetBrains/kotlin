@@ -28,105 +28,105 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModuleSubstitutionOverridesUnwrappingTestGenerated extends AbstractSubstitutionOverridesUnwrappingTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInSubstitutionOverridesUnwrapping() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInSubstitutionOverridesUnwrapping() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("ClassWithGenericBase1.kt")
-    public void testClassWithGenericBase1() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/ClassWithGenericBase1.kt");
-    }
+  @Test
+  @TestMetadata("ClassWithGenericBase1.kt")
+  public void testClassWithGenericBase1() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/ClassWithGenericBase1.kt");
+  }
 
-    @Test
-    @TestMetadata("ClassWithGenericBase2.kt")
-    public void testClassWithGenericBase2() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/ClassWithGenericBase2.kt");
-    }
+  @Test
+  @TestMetadata("ClassWithGenericBase2.kt")
+  public void testClassWithGenericBase2() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/ClassWithGenericBase2.kt");
+  }
 
-    @Test
-    @TestMetadata("ClassWithGenericBase3.kt")
-    public void testClassWithGenericBase3() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/ClassWithGenericBase3.kt");
-    }
+  @Test
+  @TestMetadata("ClassWithGenericBase3.kt")
+  public void testClassWithGenericBase3() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/ClassWithGenericBase3.kt");
+  }
 
-    @Test
-    @TestMetadata("ClassWithGenericBase4.kt")
-    public void testClassWithGenericBase4() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/ClassWithGenericBase4.kt");
-    }
+  @Test
+  @TestMetadata("ClassWithGenericBase4.kt")
+  public void testClassWithGenericBase4() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/ClassWithGenericBase4.kt");
+  }
 
-    @Test
-    @TestMetadata("GenericFromFunctionInLocalClass1.kt")
-    public void testGenericFromFunctionInLocalClass1() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/GenericFromFunctionInLocalClass1.kt");
-    }
+  @Test
+  @TestMetadata("GenericFromFunctionInLocalClass1.kt")
+  public void testGenericFromFunctionInLocalClass1() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/GenericFromFunctionInLocalClass1.kt");
+  }
 
-    @Test
-    @TestMetadata("GenericFromFunctionInLocalClass2.kt")
-    public void testGenericFromFunctionInLocalClass2() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/GenericFromFunctionInLocalClass2.kt");
-    }
+  @Test
+  @TestMetadata("GenericFromFunctionInLocalClass2.kt")
+  public void testGenericFromFunctionInLocalClass2() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/GenericFromFunctionInLocalClass2.kt");
+  }
 
-    @Test
-    @TestMetadata("GenericFromOuterClassInInnerClass1.kt")
-    public void testGenericFromOuterClassInInnerClass1() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/GenericFromOuterClassInInnerClass1.kt");
-    }
+  @Test
+  @TestMetadata("GenericFromOuterClassInInnerClass1.kt")
+  public void testGenericFromOuterClassInInnerClass1() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/GenericFromOuterClassInInnerClass1.kt");
+  }
 
-    @Test
-    @TestMetadata("GenericFromOuterClassInInnerClass2.kt")
-    public void testGenericFromOuterClassInInnerClass2() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/GenericFromOuterClassInInnerClass2.kt");
-    }
+  @Test
+  @TestMetadata("GenericFromOuterClassInInnerClass2.kt")
+  public void testGenericFromOuterClassInInnerClass2() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/GenericFromOuterClassInInnerClass2.kt");
+  }
 
-    @Test
-    @TestMetadata("GenericFromOuterClassInInnerClassInInheritor1.kt")
-    public void testGenericFromOuterClassInInnerClassInInheritor1() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/GenericFromOuterClassInInnerClassInInheritor1.kt");
-    }
+  @Test
+  @TestMetadata("GenericFromOuterClassInInnerClassInInheritor1.kt")
+  public void testGenericFromOuterClassInInnerClassInInheritor1() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/GenericFromOuterClassInInnerClassInInheritor1.kt");
+  }
 
-    @Test
-    @TestMetadata("GenericFromOuterClassInInnerClassInInheritor2.kt")
-    public void testGenericFromOuterClassInInnerClassInInheritor2() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/GenericFromOuterClassInInnerClassInInheritor2.kt");
-    }
+  @Test
+  @TestMetadata("GenericFromOuterClassInInnerClassInInheritor2.kt")
+  public void testGenericFromOuterClassInInnerClassInInheritor2() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/GenericFromOuterClassInInnerClassInInheritor2.kt");
+  }
 
-    @Test
-    @TestMetadata("GenericFromOuterClassInInnerClassInInheritor3.kt")
-    public void testGenericFromOuterClassInInnerClassInInheritor3() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/GenericFromOuterClassInInnerClassInInheritor3.kt");
-    }
+  @Test
+  @TestMetadata("GenericFromOuterClassInInnerClassInInheritor3.kt")
+  public void testGenericFromOuterClassInInnerClassInInheritor3() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/GenericFromOuterClassInInnerClassInInheritor3.kt");
+  }
 
-    @Test
-    @TestMetadata("Implement_java_util_Collection.kt")
-    public void testImplement_java_util_Collection() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/Implement_java_util_Collection.kt");
-    }
+  @Test
+  @TestMetadata("Implement_java_util_Collection.kt")
+  public void testImplement_java_util_Collection() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/Implement_java_util_Collection.kt");
+  }
 
-    @Test
-    @TestMetadata("MemberFunctionWithOuterTypeParameterBound.kt")
-    public void testMemberFunctionWithOuterTypeParameterBound() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/MemberFunctionWithOuterTypeParameterBound.kt");
-    }
+  @Test
+  @TestMetadata("MemberFunctionWithOuterTypeParameterBound.kt")
+  public void testMemberFunctionWithOuterTypeParameterBound() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/MemberFunctionWithOuterTypeParameterBound.kt");
+  }
 
-    @Test
-    @TestMetadata("MemberPropertyWithOuterTypeParameterBound.kt")
-    public void testMemberPropertyWithOuterTypeParameterBound() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/MemberPropertyWithOuterTypeParameterBound.kt");
-    }
+  @Test
+  @TestMetadata("MemberPropertyWithOuterTypeParameterBound.kt")
+  public void testMemberPropertyWithOuterTypeParameterBound() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping/MemberPropertyWithOuterTypeParameterBound.kt");
+  }
 }

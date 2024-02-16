@@ -28,27 +28,27 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisScriptSourceModuleCombinedDeclaredMemberScopeTestGenerated extends AbstractCombinedDeclaredMemberScopeTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInCombinedDeclaredMemberScope() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope"), Pattern.compile("^(.+)\\.kts$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInCombinedDeclaredMemberScope() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("scriptWithClassDeclaration.kts")
-    public void testScriptWithClassDeclaration() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/scriptWithClassDeclaration.kts");
-    }
+  @Test
+  @TestMetadata("scriptWithClassDeclaration.kts")
+  public void testScriptWithClassDeclaration() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/scriptWithClassDeclaration.kts");
+  }
 }

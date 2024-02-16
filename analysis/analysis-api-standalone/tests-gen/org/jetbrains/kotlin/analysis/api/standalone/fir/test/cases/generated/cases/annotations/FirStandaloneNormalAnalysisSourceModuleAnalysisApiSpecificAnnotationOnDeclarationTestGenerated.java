@@ -28,81 +28,81 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/annotations/specificAnnotations")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiSpecificAnnotationOnDeclarationTestGenerated extends AbstractAnalysisApiSpecificAnnotationOnDeclarationTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInSpecificAnnotations() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/specificAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInSpecificAnnotations() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/specificAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("javaTargetAnnotationWithEmptyArguments.kt")
-    public void testJavaTargetAnnotationWithEmptyArguments() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithEmptyArguments.kt");
-    }
+  @Test
+  @TestMetadata("javaTargetAnnotationWithEmptyArguments.kt")
+  public void testJavaTargetAnnotationWithEmptyArguments() {
+    runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithEmptyArguments.kt");
+  }
 
-    @Test
-    @TestMetadata("javaTargetAnnotationWithOneArgument.kt")
-    public void testJavaTargetAnnotationWithOneArgument() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithOneArgument.kt");
-    }
+  @Test
+  @TestMetadata("javaTargetAnnotationWithOneArgument.kt")
+  public void testJavaTargetAnnotationWithOneArgument() {
+    runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithOneArgument.kt");
+  }
 
-    @Test
-    @TestMetadata("javaTargetAnnotationWithOneArgumentAsImport.kt")
-    public void testJavaTargetAnnotationWithOneArgumentAsImport() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithOneArgumentAsImport.kt");
-    }
+  @Test
+  @TestMetadata("javaTargetAnnotationWithOneArgumentAsImport.kt")
+  public void testJavaTargetAnnotationWithOneArgumentAsImport() {
+    runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithOneArgumentAsImport.kt");
+  }
 
-    @Test
-    @TestMetadata("javaTargetAnnotationWithSeveralArguments.kt")
-    public void testJavaTargetAnnotationWithSeveralArguments() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithSeveralArguments.kt");
-    }
+  @Test
+  @TestMetadata("javaTargetAnnotationWithSeveralArguments.kt")
+  public void testJavaTargetAnnotationWithSeveralArguments() {
+    runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithSeveralArguments.kt");
+  }
 
-    @Test
-    @TestMetadata("javaTargetAnnotationWithoutArguments.kt")
-    public void testJavaTargetAnnotationWithoutArguments() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithoutArguments.kt");
-    }
+  @Test
+  @TestMetadata("javaTargetAnnotationWithoutArguments.kt")
+  public void testJavaTargetAnnotationWithoutArguments() {
+    runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithoutArguments.kt");
+  }
 
-    @Test
-    @TestMetadata("targetAnnotationWithEmptyArguments.kt")
-    public void testTargetAnnotationWithEmptyArguments() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithEmptyArguments.kt");
-    }
+  @Test
+  @TestMetadata("targetAnnotationWithEmptyArguments.kt")
+  public void testTargetAnnotationWithEmptyArguments() {
+    runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithEmptyArguments.kt");
+  }
 
-    @Test
-    @TestMetadata("targetAnnotationWithOneArgument.kt")
-    public void testTargetAnnotationWithOneArgument() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithOneArgument.kt");
-    }
+  @Test
+  @TestMetadata("targetAnnotationWithOneArgument.kt")
+  public void testTargetAnnotationWithOneArgument() {
+    runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithOneArgument.kt");
+  }
 
-    @Test
-    @TestMetadata("targetAnnotationWithOneArgumentAsImport.kt")
-    public void testTargetAnnotationWithOneArgumentAsImport() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithOneArgumentAsImport.kt");
-    }
+  @Test
+  @TestMetadata("targetAnnotationWithOneArgumentAsImport.kt")
+  public void testTargetAnnotationWithOneArgumentAsImport() {
+    runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithOneArgumentAsImport.kt");
+  }
 
-    @Test
-    @TestMetadata("targetAnnotationWithSeveralArguments.kt")
-    public void testTargetAnnotationWithSeveralArguments() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithSeveralArguments.kt");
-    }
+  @Test
+  @TestMetadata("targetAnnotationWithSeveralArguments.kt")
+  public void testTargetAnnotationWithSeveralArguments() {
+    runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithSeveralArguments.kt");
+  }
 
-    @Test
-    @TestMetadata("targetAnnotationWithoutArguments.kt")
-    public void testTargetAnnotationWithoutArguments() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithoutArguments.kt");
-    }
+  @Test
+  @TestMetadata("targetAnnotationWithoutArguments.kt")
+  public void testTargetAnnotationWithoutArguments() {
+    runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithoutArguments.kt");
+  }
 }

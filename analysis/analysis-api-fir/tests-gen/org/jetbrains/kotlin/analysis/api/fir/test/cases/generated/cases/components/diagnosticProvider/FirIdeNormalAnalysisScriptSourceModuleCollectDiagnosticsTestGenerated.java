@@ -28,53 +28,53 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisScriptSourceModuleCollectDiagnosticsTestGenerated extends AbstractCollectDiagnosticsTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
+
+  @Test
+  public void testAllFilesPresentInDiagnostics() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Suppression {
+    @Test
+    public void testAllFilesPresentInSuppression() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
 
     @Test
-    public void testAllFilesPresentInDiagnostics() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    @TestMetadata("scriptUninitializedTopLevelProperty.kts")
+    public void testScriptUninitializedTopLevelProperty() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/scriptUninitializedTopLevelProperty.kts");
     }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Suppression {
-        @Test
-        public void testAllFilesPresentInSuppression() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("scriptUninitializedTopLevelProperty.kts")
-        public void testScriptUninitializedTopLevelProperty() throws Exception {
-            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/scriptUninitializedTopLevelProperty.kts");
-        }
-
-        @Test
-        @TestMetadata("scriptUninitializedTopLevelProperty2.kts")
-        public void testScriptUninitializedTopLevelProperty2() throws Exception {
-            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/scriptUninitializedTopLevelProperty2.kts");
-        }
+    @Test
+    @TestMetadata("scriptUninitializedTopLevelProperty2.kts")
+    public void testScriptUninitializedTopLevelProperty2() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/scriptUninitializedTopLevelProperty2.kts");
     }
+  }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when")
-    @TestDataPath("$PROJECT_ROOT")
-    public class When {
-        @Test
-        public void testAllFilesPresentInWhen() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when")
+  @TestDataPath("$PROJECT_ROOT")
+  public class When {
+    @Test
+    public void testAllFilesPresentInWhen() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+  }
 }

@@ -19,44 +19,44 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/assign-plugin/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class AssignmentPluginDiagnosticTestGenerated extends AbstractAssignmentPluginDiagnosticTest {
-    @Test
-    public void testAllFilesPresentInDiagnostics() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/assign-plugin/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-    }
+  @Test
+  public void testAllFilesPresentInDiagnostics() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/assign-plugin/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+  }
 
-    @Test
-    @TestMetadata("incorrectUsage.kt")
-    public void testIncorrectUsage() throws Exception {
-        runTest("plugins/assign-plugin/testData/diagnostics/incorrectUsage.kt");
-    }
+  @Test
+  @TestMetadata("incorrectUsage.kt")
+  public void testIncorrectUsage() {
+    runTest("plugins/assign-plugin/testData/diagnostics/incorrectUsage.kt");
+  }
 
-    @Test
-    @TestMetadata("localVariables.kt")
-    public void testLocalVariables() throws Exception {
-        runTest("plugins/assign-plugin/testData/diagnostics/localVariables.kt");
-    }
+  @Test
+  @TestMetadata("localVariables.kt")
+  public void testLocalVariables() {
+    runTest("plugins/assign-plugin/testData/diagnostics/localVariables.kt");
+  }
 
-    @Test
-    @TestMetadata("methodDeclaration.kt")
-    public void testMethodDeclaration() throws Exception {
-        runTest("plugins/assign-plugin/testData/diagnostics/methodDeclaration.kt");
-    }
+  @Test
+  @TestMetadata("methodDeclaration.kt")
+  public void testMethodDeclaration() {
+    runTest("plugins/assign-plugin/testData/diagnostics/methodDeclaration.kt");
+  }
 
-    @Test
-    @TestMetadata("noAnnotation.kt")
-    public void testNoAnnotation() throws Exception {
-        runTest("plugins/assign-plugin/testData/diagnostics/noAnnotation.kt");
-    }
+  @Test
+  @TestMetadata("noAnnotation.kt")
+  public void testNoAnnotation() {
+    runTest("plugins/assign-plugin/testData/diagnostics/noAnnotation.kt");
+  }
 
-    @Test
-    @TestMetadata("otherOperators.kt")
-    public void testOtherOperators() throws Exception {
-        runTest("plugins/assign-plugin/testData/diagnostics/otherOperators.kt");
-    }
+  @Test
+  @TestMetadata("otherOperators.kt")
+  public void testOtherOperators() {
+    runTest("plugins/assign-plugin/testData/diagnostics/otherOperators.kt");
+  }
 
-    @Test
-    @TestMetadata("plusAssignPrecedence.kt")
-    public void testPlusAssignPrecedence() throws Exception {
-        runTest("plugins/assign-plugin/testData/diagnostics/plusAssignPrecedence.kt");
-    }
+  @Test
+  @TestMetadata("plusAssignPrecedence.kt")
+  public void testPlusAssignPrecedence() {
+    runTest("plugins/assign-plugin/testData/diagnostics/plusAssignPrecedence.kt");
+  }
 }

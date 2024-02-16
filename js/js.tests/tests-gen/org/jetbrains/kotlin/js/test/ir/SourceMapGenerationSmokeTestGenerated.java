@@ -20,32 +20,32 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/sourcemap")
 @TestDataPath("$PROJECT_ROOT")
 public class SourceMapGenerationSmokeTestGenerated extends AbstractSourceMapGenerationSmokeTest {
-    @Test
-    public void testAllFilesPresentInSourcemap() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/sourcemap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
-    }
+  @Test
+  public void testAllFilesPresentInSourcemap() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/sourcemap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+  }
 
-    @Test
-    @TestMetadata("binaryOperation.kt")
-    public void testBinaryOperation() throws Exception {
-        runTest("js/js.translator/testData/sourcemap/binaryOperation.kt");
-    }
+  @Test
+  @TestMetadata("binaryOperation.kt")
+  public void testBinaryOperation() {
+    runTest("js/js.translator/testData/sourcemap/binaryOperation.kt");
+  }
 
-    @Test
-    @TestMetadata("emptyIfInsideInlineLambda.kt")
-    public void testEmptyIfInsideInlineLambda() throws Exception {
-        runTest("js/js.translator/testData/sourcemap/emptyIfInsideInlineLambda.kt");
-    }
+  @Test
+  @TestMetadata("emptyIfInsideInlineLambda.kt")
+  public void testEmptyIfInsideInlineLambda() {
+    runTest("js/js.translator/testData/sourcemap/emptyIfInsideInlineLambda.kt");
+  }
 
-    @Test
-    @TestMetadata("expressionBody.kt")
-    public void testExpressionBody() throws Exception {
-        runTest("js/js.translator/testData/sourcemap/expressionBody.kt");
-    }
+  @Test
+  @TestMetadata("expressionBody.kt")
+  public void testExpressionBody() {
+    runTest("js/js.translator/testData/sourcemap/expressionBody.kt");
+  }
 
-    @Test
-    @TestMetadata("methodCallInMethod.kt")
-    public void testMethodCallInMethod() throws Exception {
-        runTest("js/js.translator/testData/sourcemap/methodCallInMethod.kt");
-    }
+  @Test
+  @TestMetadata("methodCallInMethod.kt")
+  public void testMethodCallInMethod() {
+    runTest("js/js.translator/testData/sourcemap/methodCallInMethod.kt");
+  }
 }

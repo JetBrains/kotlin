@@ -28,27 +28,27 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/substitutorFactory/substitutorBuilder")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleSubstitutorBuilderTestGenerated extends AbstractSubstitutorBuilderTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInSubstitutorBuilder() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/substitutorFactory/substitutorBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInSubstitutorBuilder() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/substitutorFactory/substitutorBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("function.kt")
-    public void testFunction() throws Exception {
-        runTest("analysis/analysis-api/testData/components/substitutorFactory/substitutorBuilder/function.kt");
-    }
+  @Test
+  @TestMetadata("function.kt")
+  public void testFunction() {
+    runTest("analysis/analysis-api/testData/components/substitutorFactory/substitutorBuilder/function.kt");
+  }
 }

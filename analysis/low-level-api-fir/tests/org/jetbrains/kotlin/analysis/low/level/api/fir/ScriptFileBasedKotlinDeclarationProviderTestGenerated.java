@@ -19,14 +19,14 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider")
 @TestDataPath("$PROJECT_ROOT")
 public class ScriptFileBasedKotlinDeclarationProviderTestGenerated extends AbstractScriptFileBasedKotlinDeclarationProviderTest {
-    @Test
-    public void testAllFilesPresentInFileBasedDeclarationProvider() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInFileBasedDeclarationProvider() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("script.kts")
-    public void testScript() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/script.kts");
-    }
+  @Test
+  @TestMetadata("script.kts")
+  public void testScript() {
+    runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/script.kts");
+  }
 }

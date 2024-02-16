@@ -19,532 +19,532 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/contextCollector")
 @TestDataPath("$PROJECT_ROOT")
 public class ContextCollectorSourceTestGenerated extends AbstractContextCollectorSourceTest {
+  @Test
+  public void testAllFilesPresentInContextCollector() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("classFunction.kt")
+  public void testClassFunction() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/classFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("classProperty.kt")
+  public void testClassProperty() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/classProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("contextReceivers.kt")
+  public void testContextReceivers() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/contextReceivers.kt");
+  }
+
+  @Test
+  @TestMetadata("contextReceiversClass.kt")
+  public void testContextReceiversClass() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/contextReceiversClass.kt");
+  }
+
+  @Test
+  @TestMetadata("enumValueFunction.kt")
+  public void testEnumValueFunction() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/enumValueFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("enumValuePropertyAccessor.kt")
+  public void testEnumValuePropertyAccessor() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/enumValuePropertyAccessor.kt");
+  }
+
+  @Test
+  @TestMetadata("extensionFunction.kt")
+  public void testExtensionFunction() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/extensionFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("extensionLambdas.kt")
+  public void testExtensionLambdas() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/extensionLambdas.kt");
+  }
+
+  @Test
+  @TestMetadata("file.kt")
+  public void testFile() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/file.kt");
+  }
+
+  @Test
+  @TestMetadata("fileAnnotation.kt")
+  public void testFileAnnotation() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/fileAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("fileImport.kt")
+  public void testFileImport() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/fileImport.kt");
+  }
+
+  @Test
+  @TestMetadata("fileImportInside.kt")
+  public void testFileImportInside() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/fileImportInside.kt");
+  }
+
+  @Test
+  @TestMetadata("filePackage.kt")
+  public void testFilePackage() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/filePackage.kt");
+  }
+
+  @Test
+  @TestMetadata("forLoopVariable.kt")
+  public void testForLoopVariable() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/forLoopVariable.kt");
+  }
+
+  @Test
+  @TestMetadata("innerClasses.kt")
+  public void testInnerClasses() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/innerClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("KT-61728.kt")
+  public void testKT_61728() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/KT-61728.kt");
+  }
+
+  @Test
+  @TestMetadata("lambdaArguments.kt")
+  public void testLambdaArguments() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/lambdaArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("localClass.kt")
+  public void testLocalClass() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/localClass.kt");
+  }
+
+  @Test
+  @TestMetadata("localClassFunction.kt")
+  public void testLocalClassFunction() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/localClassFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("localFunction.kt")
+  public void testLocalFunction() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/localFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("localFunctionExpression.kt")
+  public void testLocalFunctionExpression() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/localFunctionExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClass.kt")
+  public void testNestedClass() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/nestedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClassFunction.kt")
+  public void testNestedClassFunction() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/nestedClassFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("parameter.kt")
+  public void testParameter() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/parameter.kt");
+  }
+
+  @Test
+  @TestMetadata("primaryConstructor.kt")
+  public void testPrimaryConstructor() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("primaryConstructorParameter.kt")
+  public void testPrimaryConstructorParameter() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructorParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("primaryConstructorProperty.kt")
+  public void testPrimaryConstructorProperty() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructorProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyAccessor.kt")
+  public void testPropertyAccessor() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/propertyAccessor.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyDelegateInitializer.kt")
+  public void testPropertyDelegateInitializer() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/propertyDelegateInitializer.kt");
+  }
+
+  @Test
+  @TestMetadata("secondaryConstructor_superCallArgument.kt")
+  public void testSecondaryConstructor_superCallArgument() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/secondaryConstructor_superCallArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("simple.kt")
+  public void testSimple() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/simple.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelFunction.kt")
+  public void testTopLevelFunction() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/topLevelFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelProperty.kt")
+  public void testTopLevelProperty() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/topLevelProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAlias.kt")
+  public void testTypeAlias() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/typeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAliasInitializer.kt")
+  public void testTypeAliasInitializer() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/typeAliasInitializer.kt");
+  }
+
+  @Test
+  @TestMetadata("typeParameter.kt")
+  public void testTypeParameter() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("wholeDeclaration_class.kt")
+  public void testWholeDeclaration_class() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/wholeDeclaration_class.kt");
+  }
+
+  @Test
+  @TestMetadata("wholeDeclaration_fun.kt")
+  public void testWholeDeclaration_fun() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/wholeDeclaration_fun.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ClassHeaderPositions {
     @Test
-    public void testAllFilesPresentInContextCollector() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    public void testAllFilesPresentInClassHeaderPositions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
-    @TestMetadata("classFunction.kt")
-    public void testClassFunction() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/classFunction.kt");
+    @TestMetadata("contextReceiver.kt")
+    public void testContextReceiver() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/contextReceiver.kt");
     }
 
     @Test
-    @TestMetadata("classProperty.kt")
-    public void testClassProperty() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/classProperty.kt");
+    @TestMetadata("primaryConstructorParameter_initializerExpression.kt")
+    public void testPrimaryConstructorParameter_initializerExpression() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/primaryConstructorParameter_initializerExpression.kt");
     }
 
     @Test
-    @TestMetadata("contextReceivers.kt")
-    public void testContextReceivers() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/contextReceivers.kt");
+    @TestMetadata("primaryConstructorParameter_typeRef.kt")
+    public void testPrimaryConstructorParameter_typeRef() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/primaryConstructorParameter_typeRef.kt");
     }
 
     @Test
-    @TestMetadata("contextReceiversClass.kt")
-    public void testContextReceiversClass() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/contextReceiversClass.kt");
+    @TestMetadata("superTypeCallArgumentsExpression.kt")
+    public void testSuperTypeCallArgumentsExpression() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallArgumentsExpression.kt");
     }
 
     @Test
-    @TestMetadata("enumValueFunction.kt")
-    public void testEnumValueFunction() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/enumValueFunction.kt");
+    @TestMetadata("superTypeCallArgumentsExpression_objectLiteral.kt")
+    public void testSuperTypeCallArgumentsExpression_objectLiteral() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallArgumentsExpression_objectLiteral.kt");
     }
 
     @Test
-    @TestMetadata("enumValuePropertyAccessor.kt")
-    public void testEnumValuePropertyAccessor() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/enumValuePropertyAccessor.kt");
+    @TestMetadata("superTypeCallArgumentsTypeRef.kt")
+    public void testSuperTypeCallArgumentsTypeRef() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallArgumentsTypeRef.kt");
     }
 
     @Test
-    @TestMetadata("extensionFunction.kt")
-    public void testExtensionFunction() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/extensionFunction.kt");
+    @TestMetadata("superTypeCallee.kt")
+    public void testSuperTypeCallee() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallee.kt");
     }
 
     @Test
-    @TestMetadata("extensionLambdas.kt")
-    public void testExtensionLambdas() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/extensionLambdas.kt");
+    @TestMetadata("superTypeCalleeGenerics.kt")
+    public void testSuperTypeCalleeGenerics() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCalleeGenerics.kt");
     }
 
     @Test
-    @TestMetadata("file.kt")
-    public void testFile() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/file.kt");
+    @TestMetadata("superTypeCallee_objectLiteral.kt")
+    public void testSuperTypeCallee_objectLiteral() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallee_objectLiteral.kt");
     }
 
     @Test
-    @TestMetadata("fileAnnotation.kt")
-    public void testFileAnnotation() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/fileAnnotation.kt");
+    @TestMetadata("superTypeDelegatedExpression.kt")
+    public void testSuperTypeDelegatedExpression() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeDelegatedExpression.kt");
     }
 
     @Test
-    @TestMetadata("fileImport.kt")
-    public void testFileImport() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/fileImport.kt");
+    @TestMetadata("superTypeDelegatedToCompanion.kt")
+    public void testSuperTypeDelegatedToCompanion() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeDelegatedToCompanion.kt");
     }
 
     @Test
-    @TestMetadata("fileImportInside.kt")
-    public void testFileImportInside() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/fileImportInside.kt");
+    @TestMetadata("superTypeDelegatedToPrimaryConstructorParam.kt")
+    public void testSuperTypeDelegatedToPrimaryConstructorParam() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeDelegatedToPrimaryConstructorParam.kt");
     }
 
     @Test
-    @TestMetadata("filePackage.kt")
-    public void testFilePackage() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/filePackage.kt");
+    @TestMetadata("superTypeDelegatedTypeRef.kt")
+    public void testSuperTypeDelegatedTypeRef() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeDelegatedTypeRef.kt");
     }
 
     @Test
-    @TestMetadata("forLoopVariable.kt")
-    public void testForLoopVariable() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/forLoopVariable.kt");
+    @TestMetadata("superTypeRef.kt")
+    public void testSuperTypeRef() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeRef.kt");
     }
 
     @Test
-    @TestMetadata("innerClasses.kt")
-    public void testInnerClasses() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/innerClasses.kt");
+    @TestMetadata("superTypeRefGenerics.kt")
+    public void testSuperTypeRefGenerics() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeRefGenerics.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/error")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Error {
+    @Test
+    public void testAllFilesPresentInError() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/error"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
-    @TestMetadata("KT-61728.kt")
-    public void testKT_61728() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/KT-61728.kt");
+    @TestMetadata("InvalidInitializer.kt")
+    public void testInvalidInitializer() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/error/InvalidInitializer.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/scripts")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Scripts {
+    @Test
+    public void testAllFilesPresentInScripts() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/scripts"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/smartCasts")
+  @TestDataPath("$PROJECT_ROOT")
+  public class SmartCasts {
+    @Test
+    @TestMetadata("afterIf.kt")
+    public void testAfterIf() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/afterIf.kt");
     }
 
     @Test
-    @TestMetadata("lambdaArguments.kt")
-    public void testLambdaArguments() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/lambdaArguments.kt");
+    @TestMetadata("afterLoop.kt")
+    public void testAfterLoop() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/afterLoop.kt");
     }
 
     @Test
-    @TestMetadata("localClass.kt")
-    public void testLocalClass() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/localClass.kt");
+    public void testAllFilesPresentInSmartCasts() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/smartCasts"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
-    @TestMetadata("localClassFunction.kt")
-    public void testLocalClassFunction() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/localClassFunction.kt");
+    @TestMetadata("andRight.kt")
+    public void testAndRight() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/andRight.kt");
     }
 
     @Test
-    @TestMetadata("localFunction.kt")
-    public void testLocalFunction() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/localFunction.kt");
+    @TestMetadata("argument.kt")
+    public void testArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/argument.kt");
     }
 
     @Test
-    @TestMetadata("localFunctionExpression.kt")
-    public void testLocalFunctionExpression() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/localFunctionExpression.kt");
+    @TestMetadata("argumentAsReceiver.kt")
+    public void testArgumentAsReceiver() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/argumentAsReceiver.kt");
     }
 
     @Test
-    @TestMetadata("nestedClass.kt")
-    public void testNestedClass() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/nestedClass.kt");
+    @TestMetadata("beforeIf.kt")
+    public void testBeforeIf() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/beforeIf.kt");
     }
 
     @Test
-    @TestMetadata("nestedClassFunction.kt")
-    public void testNestedClassFunction() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/nestedClassFunction.kt");
+    @TestMetadata("beforeLoop.kt")
+    public void testBeforeLoop() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/beforeLoop.kt");
     }
 
     @Test
-    @TestMetadata("parameter.kt")
-    public void testParameter() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/parameter.kt");
+    @TestMetadata("dispatchReceiver.kt")
+    public void testDispatchReceiver() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/dispatchReceiver.kt");
     }
 
     @Test
-    @TestMetadata("primaryConstructor.kt")
-    public void testPrimaryConstructor() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructor.kt");
+    @TestMetadata("extensionReceiver.kt")
+    public void testExtensionReceiver() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/extensionReceiver.kt");
     }
 
     @Test
-    @TestMetadata("primaryConstructorParameter.kt")
-    public void testPrimaryConstructorParameter() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructorParameter.kt");
+    @TestMetadata("insideLetOnNullableReceiver.kt")
+    public void testInsideLetOnNullableReceiver() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/insideLetOnNullableReceiver.kt");
     }
 
     @Test
-    @TestMetadata("primaryConstructorProperty.kt")
-    public void testPrimaryConstructorProperty() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructorProperty.kt");
+    @TestMetadata("insideLoop.kt")
+    public void testInsideLoop() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/insideLoop.kt");
     }
 
     @Test
-    @TestMetadata("propertyAccessor.kt")
-    public void testPropertyAccessor() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/propertyAccessor.kt");
+    @TestMetadata("onLabel.kt")
+    public void testOnLabel() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onLabel.kt");
     }
 
     @Test
-    @TestMetadata("propertyDelegateInitializer.kt")
-    public void testPropertyDelegateInitializer() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/propertyDelegateInitializer.kt");
+    @TestMetadata("onReference.kt")
+    public void testOnReference() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onReference.kt");
     }
 
     @Test
-    @TestMetadata("secondaryConstructor_superCallArgument.kt")
-    public void testSecondaryConstructor_superCallArgument() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/secondaryConstructor_superCallArgument.kt");
+    @TestMetadata("onType.kt")
+    public void testOnType() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onType.kt");
     }
 
     @Test
-    @TestMetadata("simple.kt")
-    public void testSimple() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/simple.kt");
+    @TestMetadata("orRight.kt")
+    public void testOrRight() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/orRight.kt");
     }
 
     @Test
-    @TestMetadata("topLevelFunction.kt")
-    public void testTopLevelFunction() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/topLevelFunction.kt");
+    @TestMetadata("plainCheck.kt")
+    public void testPlainCheck() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/plainCheck.kt");
     }
 
     @Test
-    @TestMetadata("topLevelProperty.kt")
-    public void testTopLevelProperty() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/topLevelProperty.kt");
+    @TestMetadata("require.kt")
+    public void testRequire() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/require.kt");
     }
 
     @Test
-    @TestMetadata("typeAlias.kt")
-    public void testTypeAlias() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/typeAlias.kt");
+    @TestMetadata("when.kt")
+    public void testWhen() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/when.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/typeParameters")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeParameters {
+    @Test
+    public void testAllFilesPresentInTypeParameters() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/typeParameters"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
-    @TestMetadata("typeAliasInitializer.kt")
-    public void testTypeAliasInitializer() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/typeAliasInitializer.kt");
+    @TestMetadata("declaredInClass_fromContextReceiver.kt")
+    public void testDeclaredInClass_fromContextReceiver() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromContextReceiver.kt");
     }
 
     @Test
-    @TestMetadata("typeParameter.kt")
-    public void testTypeParameter() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameter.kt");
+    @TestMetadata("declaredInClass_fromInner_typeBound.kt")
+    public void testDeclaredInClass_fromInner_typeBound() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromInner_typeBound.kt");
     }
 
     @Test
-    @TestMetadata("wholeDeclaration_class.kt")
-    public void testWholeDeclaration_class() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/wholeDeclaration_class.kt");
+    @TestMetadata("declaredInClass_fromInner_typeRefInMember.kt")
+    public void testDeclaredInClass_fromInner_typeRefInMember() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromInner_typeRefInMember.kt");
     }
 
     @Test
-    @TestMetadata("wholeDeclaration_fun.kt")
-    public void testWholeDeclaration_fun() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/contextCollector/wholeDeclaration_fun.kt");
+    @TestMetadata("declaredInClass_fromNested_typeBound.kt")
+    public void testDeclaredInClass_fromNested_typeBound() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromNested_typeBound.kt");
     }
 
-    @Nested
-    @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions")
-    @TestDataPath("$PROJECT_ROOT")
-    public class ClassHeaderPositions {
-        @Test
-        public void testAllFilesPresentInClassHeaderPositions() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("contextReceiver.kt")
-        public void testContextReceiver() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/contextReceiver.kt");
-        }
-
-        @Test
-        @TestMetadata("primaryConstructorParameter_initializerExpression.kt")
-        public void testPrimaryConstructorParameter_initializerExpression() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/primaryConstructorParameter_initializerExpression.kt");
-        }
-
-        @Test
-        @TestMetadata("primaryConstructorParameter_typeRef.kt")
-        public void testPrimaryConstructorParameter_typeRef() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/primaryConstructorParameter_typeRef.kt");
-        }
-
-        @Test
-        @TestMetadata("superTypeCallArgumentsExpression.kt")
-        public void testSuperTypeCallArgumentsExpression() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallArgumentsExpression.kt");
-        }
-
-        @Test
-        @TestMetadata("superTypeCallArgumentsExpression_objectLiteral.kt")
-        public void testSuperTypeCallArgumentsExpression_objectLiteral() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallArgumentsExpression_objectLiteral.kt");
-        }
-
-        @Test
-        @TestMetadata("superTypeCallArgumentsTypeRef.kt")
-        public void testSuperTypeCallArgumentsTypeRef() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallArgumentsTypeRef.kt");
-        }
-
-        @Test
-        @TestMetadata("superTypeCallee.kt")
-        public void testSuperTypeCallee() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallee.kt");
-        }
-
-        @Test
-        @TestMetadata("superTypeCalleeGenerics.kt")
-        public void testSuperTypeCalleeGenerics() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCalleeGenerics.kt");
-        }
-
-        @Test
-        @TestMetadata("superTypeCallee_objectLiteral.kt")
-        public void testSuperTypeCallee_objectLiteral() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallee_objectLiteral.kt");
-        }
-
-        @Test
-        @TestMetadata("superTypeDelegatedExpression.kt")
-        public void testSuperTypeDelegatedExpression() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeDelegatedExpression.kt");
-        }
-
-        @Test
-        @TestMetadata("superTypeDelegatedToCompanion.kt")
-        public void testSuperTypeDelegatedToCompanion() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeDelegatedToCompanion.kt");
-        }
-
-        @Test
-        @TestMetadata("superTypeDelegatedToPrimaryConstructorParam.kt")
-        public void testSuperTypeDelegatedToPrimaryConstructorParam() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeDelegatedToPrimaryConstructorParam.kt");
-        }
-
-        @Test
-        @TestMetadata("superTypeDelegatedTypeRef.kt")
-        public void testSuperTypeDelegatedTypeRef() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeDelegatedTypeRef.kt");
-        }
-
-        @Test
-        @TestMetadata("superTypeRef.kt")
-        public void testSuperTypeRef() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeRef.kt");
-        }
-
-        @Test
-        @TestMetadata("superTypeRefGenerics.kt")
-        public void testSuperTypeRefGenerics() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeRefGenerics.kt");
-        }
+    @Test
+    @TestMetadata("declaredInClass_fromNested_typeRefInMember.kt")
+    public void testDeclaredInClass_fromNested_typeRefInMember() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromNested_typeRefInMember.kt");
     }
 
-    @Nested
-    @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/error")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Error {
-        @Test
-        public void testAllFilesPresentInError() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/error"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("InvalidInitializer.kt")
-        public void testInvalidInitializer() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/error/InvalidInitializer.kt");
-        }
+    @Test
+    @TestMetadata("declaredInClass_fromSuperType.kt")
+    public void testDeclaredInClass_fromSuperType() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromSuperType.kt");
     }
 
-    @Nested
-    @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/scripts")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Scripts {
-        @Test
-        public void testAllFilesPresentInScripts() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/scripts"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-        }
+    @Test
+    @TestMetadata("declaredInClass_fromTypeBound.kt")
+    public void testDeclaredInClass_fromTypeBound() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromTypeBound.kt");
     }
-
-    @Nested
-    @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/smartCasts")
-    @TestDataPath("$PROJECT_ROOT")
-    public class SmartCasts {
-        @Test
-        @TestMetadata("afterIf.kt")
-        public void testAfterIf() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/afterIf.kt");
-        }
-
-        @Test
-        @TestMetadata("afterLoop.kt")
-        public void testAfterLoop() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/afterLoop.kt");
-        }
-
-        @Test
-        public void testAllFilesPresentInSmartCasts() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/smartCasts"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("andRight.kt")
-        public void testAndRight() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/andRight.kt");
-        }
-
-        @Test
-        @TestMetadata("argument.kt")
-        public void testArgument() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/argument.kt");
-        }
-
-        @Test
-        @TestMetadata("argumentAsReceiver.kt")
-        public void testArgumentAsReceiver() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/argumentAsReceiver.kt");
-        }
-
-        @Test
-        @TestMetadata("beforeIf.kt")
-        public void testBeforeIf() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/beforeIf.kt");
-        }
-
-        @Test
-        @TestMetadata("beforeLoop.kt")
-        public void testBeforeLoop() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/beforeLoop.kt");
-        }
-
-        @Test
-        @TestMetadata("dispatchReceiver.kt")
-        public void testDispatchReceiver() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/dispatchReceiver.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionReceiver.kt")
-        public void testExtensionReceiver() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/extensionReceiver.kt");
-        }
-
-        @Test
-        @TestMetadata("insideLetOnNullableReceiver.kt")
-        public void testInsideLetOnNullableReceiver() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/insideLetOnNullableReceiver.kt");
-        }
-
-        @Test
-        @TestMetadata("insideLoop.kt")
-        public void testInsideLoop() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/insideLoop.kt");
-        }
-
-        @Test
-        @TestMetadata("onLabel.kt")
-        public void testOnLabel() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onLabel.kt");
-        }
-
-        @Test
-        @TestMetadata("onReference.kt")
-        public void testOnReference() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onReference.kt");
-        }
-
-        @Test
-        @TestMetadata("onType.kt")
-        public void testOnType() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onType.kt");
-        }
-
-        @Test
-        @TestMetadata("orRight.kt")
-        public void testOrRight() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/orRight.kt");
-        }
-
-        @Test
-        @TestMetadata("plainCheck.kt")
-        public void testPlainCheck() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/plainCheck.kt");
-        }
-
-        @Test
-        @TestMetadata("require.kt")
-        public void testRequire() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/require.kt");
-        }
-
-        @Test
-        @TestMetadata("when.kt")
-        public void testWhen() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/when.kt");
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/typeParameters")
-    @TestDataPath("$PROJECT_ROOT")
-    public class TypeParameters {
-        @Test
-        public void testAllFilesPresentInTypeParameters() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/typeParameters"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("declaredInClass_fromContextReceiver.kt")
-        public void testDeclaredInClass_fromContextReceiver() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromContextReceiver.kt");
-        }
-
-        @Test
-        @TestMetadata("declaredInClass_fromInner_typeBound.kt")
-        public void testDeclaredInClass_fromInner_typeBound() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromInner_typeBound.kt");
-        }
-
-        @Test
-        @TestMetadata("declaredInClass_fromInner_typeRefInMember.kt")
-        public void testDeclaredInClass_fromInner_typeRefInMember() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromInner_typeRefInMember.kt");
-        }
-
-        @Test
-        @TestMetadata("declaredInClass_fromNested_typeBound.kt")
-        public void testDeclaredInClass_fromNested_typeBound() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromNested_typeBound.kt");
-        }
-
-        @Test
-        @TestMetadata("declaredInClass_fromNested_typeRefInMember.kt")
-        public void testDeclaredInClass_fromNested_typeRefInMember() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromNested_typeRefInMember.kt");
-        }
-
-        @Test
-        @TestMetadata("declaredInClass_fromSuperType.kt")
-        public void testDeclaredInClass_fromSuperType() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromSuperType.kt");
-        }
-
-        @Test
-        @TestMetadata("declaredInClass_fromTypeBound.kt")
-        public void testDeclaredInClass_fromTypeBound() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromTypeBound.kt");
-        }
-    }
+  }
 }

@@ -19,26 +19,26 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/js-plain-objects/compiler-plugin/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class FirJsPlainObjectsPluginDiagnosticTestGenerated extends AbstractFirJsPlainObjectsPluginDiagnosticTest {
-    @Test
-    public void testAllFilesPresentInDiagnostics() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/js-plain-objects/compiler-plugin/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInDiagnostics() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/js-plain-objects/compiler-plugin/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("inheritance.kt")
-    public void testInheritance() throws Exception {
-        runTest("plugins/js-plain-objects/compiler-plugin/testData/diagnostics/inheritance.kt");
-    }
+  @Test
+  @TestMetadata("inheritance.kt")
+  public void testInheritance() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/diagnostics/inheritance.kt");
+  }
 
-    @Test
-    @TestMetadata("only-properties.kt")
-    public void testOnly_properties() throws Exception {
-        runTest("plugins/js-plain-objects/compiler-plugin/testData/diagnostics/only-properties.kt");
-    }
+  @Test
+  @TestMetadata("only-properties.kt")
+  public void testOnly_properties() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/diagnostics/only-properties.kt");
+  }
 
-    @Test
-    @TestMetadata("wrongAnnotationTarget.kt")
-    public void testWrongAnnotationTarget() throws Exception {
-        runTest("plugins/js-plain-objects/compiler-plugin/testData/diagnostics/wrongAnnotationTarget.kt");
-    }
+  @Test
+  @TestMetadata("wrongAnnotationTarget.kt")
+  public void testWrongAnnotationTarget() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/diagnostics/wrongAnnotationTarget.kt");
+  }
 }

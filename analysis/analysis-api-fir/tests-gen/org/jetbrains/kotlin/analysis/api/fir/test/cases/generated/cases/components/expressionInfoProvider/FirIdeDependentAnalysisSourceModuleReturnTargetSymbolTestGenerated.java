@@ -28,39 +28,39 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/expressionInfoProvider/returnExpressionTargetSymbol")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeDependentAnalysisSourceModuleReturnTargetSymbolTestGenerated extends AbstractReturnTargetSymbolTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Dependent,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Dependent,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInReturnExpressionTargetSymbol() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionInfoProvider/returnExpressionTargetSymbol"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInReturnExpressionTargetSymbol() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionInfoProvider/returnExpressionTargetSymbol"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("labeledReturn.kt")
-    public void testLabeledReturn() throws Exception {
-        runTest("analysis/analysis-api/testData/components/expressionInfoProvider/returnExpressionTargetSymbol/labeledReturn.kt");
-    }
+  @Test
+  @TestMetadata("labeledReturn.kt")
+  public void testLabeledReturn() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/returnExpressionTargetSymbol/labeledReturn.kt");
+  }
 
-    @Test
-    @TestMetadata("normalReturn.kt")
-    public void testNormalReturn() throws Exception {
-        runTest("analysis/analysis-api/testData/components/expressionInfoProvider/returnExpressionTargetSymbol/normalReturn.kt");
-    }
+  @Test
+  @TestMetadata("normalReturn.kt")
+  public void testNormalReturn() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/returnExpressionTargetSymbol/normalReturn.kt");
+  }
 
-    @Test
-    @TestMetadata("unresolvedReturn.kt")
-    public void testUnresolvedReturn() throws Exception {
-        runTest("analysis/analysis-api/testData/components/expressionInfoProvider/returnExpressionTargetSymbol/unresolvedReturn.kt");
-    }
+  @Test
+  @TestMetadata("unresolvedReturn.kt")
+  public void testUnresolvedReturn() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/returnExpressionTargetSymbol/unresolvedReturn.kt");
+  }
 }

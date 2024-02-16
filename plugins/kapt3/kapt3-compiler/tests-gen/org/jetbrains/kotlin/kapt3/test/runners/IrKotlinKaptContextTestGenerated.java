@@ -19,44 +19,44 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kapt3/kapt3-compiler/testData/kotlinRunner")
 @TestDataPath("$PROJECT_ROOT")
 public class IrKotlinKaptContextTestGenerated extends AbstractIrKotlinKaptContextTest {
-    @Test
-    public void testAllFilesPresentInKotlinRunner() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-compiler/testData/kotlinRunner"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInKotlinRunner() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-compiler/testData/kotlinRunner"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("DefaultParameterValues.kt")
-    public void testDefaultParameterValues() throws Exception {
-        runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/DefaultParameterValues.kt");
-    }
+  @Test
+  @TestMetadata("DefaultParameterValues.kt")
+  public void testDefaultParameterValues() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/DefaultParameterValues.kt");
+  }
 
-    @Test
-    @TestMetadata("ErrorLocationMapping.kt")
-    public void testErrorLocationMapping() throws Exception {
-        runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/ErrorLocationMapping.kt");
-    }
+  @Test
+  @TestMetadata("ErrorLocationMapping.kt")
+  public void testErrorLocationMapping() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/ErrorLocationMapping.kt");
+  }
 
-    @Test
-    @TestMetadata("Log.kt")
-    public void testLog() throws Exception {
-        runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/Log.kt");
-    }
+  @Test
+  @TestMetadata("Log.kt")
+  public void testLog() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/Log.kt");
+  }
 
-    @Test
-    @TestMetadata("NestedClasses.kt")
-    public void testNestedClasses() throws Exception {
-        runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/NestedClasses.kt");
-    }
+  @Test
+  @TestMetadata("NestedClasses.kt")
+  public void testNestedClasses() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/NestedClasses.kt");
+  }
 
-    @Test
-    @TestMetadata("Overloads.kt")
-    public void testOverloads() throws Exception {
-        runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/Overloads.kt");
-    }
+  @Test
+  @TestMetadata("Overloads.kt")
+  public void testOverloads() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/Overloads.kt");
+  }
 
-    @Test
-    @TestMetadata("Simple.kt")
-    public void testSimple() throws Exception {
-        runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/Simple.kt");
-    }
+  @Test
+  @TestMetadata("Simple.kt")
+  public void testSimple() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/Simple.kt");
+  }
 }

@@ -20,38 +20,38 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kotlinx-serialization/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
 public class SerializationIrAsmLikeInstructionsListingTestGenerated extends AbstractSerializationIrAsmLikeInstructionsListingTest {
-    @Test
-    public void testAllFilesPresentInCodegen() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-    }
+  @Test
+  public void testAllFilesPresentInCodegen() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+  }
 
-    @Test
-    @TestMetadata("Basic.kt")
-    public void testBasic() throws Exception {
-        runTest("plugins/kotlinx-serialization/testData/codegen/Basic.kt");
-    }
+  @Test
+  @TestMetadata("Basic.kt")
+  public void testBasic() {
+    runTest("plugins/kotlinx-serialization/testData/codegen/Basic.kt");
+  }
 
-    @Test
-    @TestMetadata("Intrinsics.kt")
-    public void testIntrinsics() throws Exception {
-        runTest("plugins/kotlinx-serialization/testData/codegen/Intrinsics.kt");
-    }
+  @Test
+  @TestMetadata("Intrinsics.kt")
+  public void testIntrinsics() {
+    runTest("plugins/kotlinx-serialization/testData/codegen/Intrinsics.kt");
+  }
 
-    @Test
-    @TestMetadata("IntrinsicsAdvanced.kt")
-    public void testIntrinsicsAdvanced() throws Exception {
-        runTest("plugins/kotlinx-serialization/testData/codegen/IntrinsicsAdvanced.kt");
-    }
+  @Test
+  @TestMetadata("IntrinsicsAdvanced.kt")
+  public void testIntrinsicsAdvanced() {
+    runTest("plugins/kotlinx-serialization/testData/codegen/IntrinsicsAdvanced.kt");
+  }
 
-    @Test
-    @TestMetadata("IntrinsicsNonReified.kt")
-    public void testIntrinsicsNonReified() throws Exception {
-        runTest("plugins/kotlinx-serialization/testData/codegen/IntrinsicsNonReified.kt");
-    }
+  @Test
+  @TestMetadata("IntrinsicsNonReified.kt")
+  public void testIntrinsicsNonReified() {
+    runTest("plugins/kotlinx-serialization/testData/codegen/IntrinsicsNonReified.kt");
+  }
 
-    @Test
-    @TestMetadata("Sealed.kt")
-    public void testSealed() throws Exception {
-        runTest("plugins/kotlinx-serialization/testData/codegen/Sealed.kt");
-    }
+  @Test
+  @TestMetadata("Sealed.kt")
+  public void testSealed() {
+    runTest("plugins/kotlinx-serialization/testData/codegen/Sealed.kt");
+  }
 }

@@ -28,69 +28,69 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleAnalysisApiKtTypeByPsiTypeProviderTestGenerated extends AbstractAnalysisApiKtTypeByPsiTypeProviderTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInAsKtType() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInAsKtType() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("anonym.kt")
-    public void testAnonym() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/anonym.kt");
-    }
+  @Test
+  @TestMetadata("anonym.kt")
+  public void testAnonym() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/anonym.kt");
+  }
 
-    @Test
-    @TestMetadata("extends.kt")
-    public void testExtends() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/extends.kt");
-    }
+  @Test
+  @TestMetadata("extends.kt")
+  public void testExtends() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/extends.kt");
+  }
 
-    @Test
-    @TestMetadata("methodTypeParameters.kt")
-    public void testMethodTypeParameters() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameters.kt");
-    }
+  @Test
+  @TestMetadata("methodTypeParameters.kt")
+  public void testMethodTypeParameters() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameters.kt");
+  }
 
-    @Test
-    @TestMetadata("nestedGenerics.kt")
-    public void testNestedGenerics() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/nestedGenerics.kt");
-    }
+  @Test
+  @TestMetadata("nestedGenerics.kt")
+  public void testNestedGenerics() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/nestedGenerics.kt");
+  }
 
-    @Test
-    @TestMetadata("nullableString.kt")
-    public void testNullableString() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/nullableString.kt");
-    }
+  @Test
+  @TestMetadata("nullableString.kt")
+  public void testNullableString() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/nullableString.kt");
+  }
 
-    @Test
-    @TestMetadata("primitive.kt")
-    public void testPrimitive() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/primitive.kt");
-    }
+  @Test
+  @TestMetadata("primitive.kt")
+  public void testPrimitive() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/primitive.kt");
+  }
 
-    @Test
-    @TestMetadata("typeParameters.kt")
-    public void testTypeParameters() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameters.kt");
-    }
+  @Test
+  @TestMetadata("typeParameters.kt")
+  public void testTypeParameters() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameters.kt");
+  }
 
-    @Test
-    @TestMetadata("typeParameters2.kt")
-    public void testTypeParameters2() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameters2.kt");
-    }
+  @Test
+  @TestMetadata("typeParameters2.kt")
+  public void testTypeParameters2() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameters2.kt");
+  }
 }

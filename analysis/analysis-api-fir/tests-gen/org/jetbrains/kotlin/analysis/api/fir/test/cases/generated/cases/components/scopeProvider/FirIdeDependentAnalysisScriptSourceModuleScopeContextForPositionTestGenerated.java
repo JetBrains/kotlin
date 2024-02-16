@@ -28,21 +28,21 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeDependentAnalysisScriptSourceModuleScopeContextForPositionTestGenerated extends AbstractScopeContextForPositionTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Dependent,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Dependent,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInScopeContextForPosition() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition"), Pattern.compile("^(.+)\\.kts$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInScopeContextForPosition() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
 }

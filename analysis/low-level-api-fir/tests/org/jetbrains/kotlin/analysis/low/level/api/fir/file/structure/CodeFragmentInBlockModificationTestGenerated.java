@@ -19,26 +19,26 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/inBlockModification/codeFragments")
 @TestDataPath("$PROJECT_ROOT")
 public class CodeFragmentInBlockModificationTestGenerated extends AbstractCodeFragmentInBlockModificationTest {
-    @Test
-    public void testAllFilesPresentInCodeFragments() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/inBlockModification/codeFragments"), Pattern.compile("^([^.]+)\\.kt$"), null, false);
-    }
+  @Test
+  public void testAllFilesPresentInCodeFragments() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/inBlockModification/codeFragments"), Pattern.compile("^([^.]+)\\.kt$"), null, false);
+  }
 
-    @Test
-    @TestMetadata("localClass.kt")
-    public void testLocalClass() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/inBlockModification/codeFragments/localClass.kt");
-    }
+  @Test
+  @TestMetadata("localClass.kt")
+  public void testLocalClass() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/codeFragments/localClass.kt");
+  }
 
-    @Test
-    @TestMetadata("localFunction.kt")
-    public void testLocalFunction() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/inBlockModification/codeFragments/localFunction.kt");
-    }
+  @Test
+  @TestMetadata("localFunction.kt")
+  public void testLocalFunction() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/codeFragments/localFunction.kt");
+  }
 
-    @Test
-    @TestMetadata("simple.kt")
-    public void testSimple() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/inBlockModification/codeFragments/simple.kt");
-    }
+  @Test
+  @TestMetadata("simple.kt")
+  public void testSimple() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/codeFragments/simple.kt");
+  }
 }

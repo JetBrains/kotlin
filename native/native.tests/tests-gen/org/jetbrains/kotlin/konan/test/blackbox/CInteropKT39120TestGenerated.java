@@ -19,26 +19,26 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/CInterop/KT-39120/defs")
 @TestDataPath("$PROJECT_ROOT")
 public class CInteropKT39120TestGenerated extends AbstractNativeCInteropKT39120Test {
-    @Test
-    public void testAllFilesPresentInDefs() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/KT-39120/defs"), Pattern.compile("^([^_](.+))$"), null, false);
-    }
+  @Test
+  public void testAllFilesPresentInDefs() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/KT-39120/defs"), Pattern.compile("^([^_](.+))$"), null, false);
+  }
 
-    @Test
-    @TestMetadata("ForwardEnum")
-    public void testForwardEnum() throws Exception {
-        runTest("native/native.tests/testData/CInterop/KT-39120/defs/ForwardEnum/");
-    }
+  @Test
+  @TestMetadata("ForwardEnum")
+  public void testForwardEnum() {
+    runTest("native/native.tests/testData/CInterop/KT-39120/defs/ForwardEnum/");
+  }
 
-    @Test
-    @TestMetadata("interModuleImport")
-    public void testInterModuleImport() throws Exception {
-        runTest("native/native.tests/testData/CInterop/KT-39120/defs/interModuleImport/");
-    }
+  @Test
+  @TestMetadata("interModuleImport")
+  public void testInterModuleImport() {
+    runTest("native/native.tests/testData/CInterop/KT-39120/defs/interModuleImport/");
+  }
 
-    @Test
-    @TestMetadata("KT-39120")
-    public void testKT_39120() throws Exception {
-        runTest("native/native.tests/testData/CInterop/KT-39120/defs/KT-39120/");
-    }
+  @Test
+  @TestMetadata("KT-39120")
+  public void testKT_39120() {
+    runTest("native/native.tests/testData/CInterop/KT-39120/defs/KT-39120/");
+  }
 }

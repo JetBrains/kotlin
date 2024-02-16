@@ -28,49 +28,49 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModuleMultiModuleResolveCallTestGenerated extends AbstractMultiModuleResolveCallTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
+
+  @Test
+  public void testAllFilesPresentInResolveCall() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("implicitTypeSubstituteOverrideFromOtherModule.kt")
+  public void testImplicitTypeSubstituteOverrideFromOtherModule() {
+    runTest("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/implicitTypeSubstituteOverrideFromOtherModule.kt");
+  }
+
+  @Test
+  @TestMetadata("unitTypeFromOtherModule.kt")
+  public void testUnitTypeFromOtherModule() {
+    runTest("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/unitTypeFromOtherModule.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WithTestCompilerPluginEnabled {
+    @Test
+    public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
-    public void testAllFilesPresentInResolveCall() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    @TestMetadata("annotationFromOtherModule.kt")
+    public void testAnnotationFromOtherModule() {
+      runTest("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled/annotationFromOtherModule.kt");
     }
-
-    @Test
-    @TestMetadata("implicitTypeSubstituteOverrideFromOtherModule.kt")
-    public void testImplicitTypeSubstituteOverrideFromOtherModule() throws Exception {
-        runTest("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/implicitTypeSubstituteOverrideFromOtherModule.kt");
-    }
-
-    @Test
-    @TestMetadata("unitTypeFromOtherModule.kt")
-    public void testUnitTypeFromOtherModule() throws Exception {
-        runTest("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/unitTypeFromOtherModule.kt");
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled")
-    @TestDataPath("$PROJECT_ROOT")
-    public class WithTestCompilerPluginEnabled {
-        @Test
-        public void testAllFilesPresentInWithTestCompilerPluginEnabled() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("annotationFromOtherModule.kt")
-        public void testAnnotationFromOtherModule() throws Exception {
-            runTest("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled/annotationFromOtherModule.kt");
-        }
-    }
+  }
 }

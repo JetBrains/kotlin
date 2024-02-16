@@ -28,33 +28,33 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/signatureSubstitution/signatureSubstitution")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleAnalysisApiSignatureSubstitutionTestGenerated extends AbstractAnalysisApiSignatureSubstitutionTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInSignatureSubstitution() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/signatureSubstitution/signatureSubstitution"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInSignatureSubstitution() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/signatureSubstitution/signatureSubstitution"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("function.kt")
-    public void testFunction() throws Exception {
-        runTest("analysis/analysis-api/testData/components/signatureSubstitution/signatureSubstitution/function.kt");
-    }
+  @Test
+  @TestMetadata("function.kt")
+  public void testFunction() {
+    runTest("analysis/analysis-api/testData/components/signatureSubstitution/signatureSubstitution/function.kt");
+  }
 
-    @Test
-    @TestMetadata("property.kt")
-    public void testProperty() throws Exception {
-        runTest("analysis/analysis-api/testData/components/signatureSubstitution/signatureSubstitution/property.kt");
-    }
+  @Test
+  @TestMetadata("property.kt")
+  public void testProperty() {
+    runTest("analysis/analysis-api/testData/components/signatureSubstitution/signatureSubstitution/property.kt");
+  }
 }

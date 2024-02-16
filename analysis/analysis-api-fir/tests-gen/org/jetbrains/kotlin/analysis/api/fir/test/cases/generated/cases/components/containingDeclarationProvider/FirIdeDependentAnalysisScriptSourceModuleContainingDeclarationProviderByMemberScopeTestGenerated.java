@@ -28,21 +28,21 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationFromMemberScope")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeDependentAnalysisScriptSourceModuleContainingDeclarationProviderByMemberScopeTestGenerated extends AbstractContainingDeclarationProviderByMemberScopeTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Dependent,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Dependent,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInContainingDeclarationFromMemberScope() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationFromMemberScope"), Pattern.compile("^(.+)\\.kts$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInContainingDeclarationFromMemberScope() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationFromMemberScope"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
 }

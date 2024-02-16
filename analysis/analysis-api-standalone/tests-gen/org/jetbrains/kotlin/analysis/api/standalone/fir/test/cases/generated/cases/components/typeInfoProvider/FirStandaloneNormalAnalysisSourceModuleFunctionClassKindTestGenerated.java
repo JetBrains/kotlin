@@ -28,45 +28,45 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModuleFunctionClassKindTestGenerated extends AbstractFunctionClassKindTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInFunctionClassKind() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInFunctionClassKind() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("function.kt")
-    public void testFunction() throws Exception {
-        runTest("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind/function.kt");
-    }
+  @Test
+  @TestMetadata("function.kt")
+  public void testFunction() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind/function.kt");
+  }
 
-    @Test
-    @TestMetadata("kFunction.kt")
-    public void testKFunction() throws Exception {
-        runTest("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind/kFunction.kt");
-    }
+  @Test
+  @TestMetadata("kFunction.kt")
+  public void testKFunction() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind/kFunction.kt");
+  }
 
-    @Test
-    @TestMetadata("kSuspendFunction.kt")
-    public void testKSuspendFunction() throws Exception {
-        runTest("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind/kSuspendFunction.kt");
-    }
+  @Test
+  @TestMetadata("kSuspendFunction.kt")
+  public void testKSuspendFunction() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind/kSuspendFunction.kt");
+  }
 
-    @Test
-    @TestMetadata("suspendFunction.kt")
-    public void testSuspendFunction() throws Exception {
-        runTest("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind/suspendFunction.kt");
-    }
+  @Test
+  @TestMetadata("suspendFunction.kt")
+  public void testSuspendFunction() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind/suspendFunction.kt");
+  }
 }

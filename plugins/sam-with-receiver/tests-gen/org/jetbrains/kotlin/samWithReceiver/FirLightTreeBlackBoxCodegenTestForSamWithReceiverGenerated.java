@@ -20,20 +20,20 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/sam-with-receiver/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLightTreeBlackBoxCodegenTestForSamWithReceiverGenerated extends AbstractFirLightTreeBlackBoxCodegenTestForSamWithReceiver {
-    @Test
-    public void testAllFilesPresentInCodegen() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/sam-with-receiver/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
-    }
+  @Test
+  public void testAllFilesPresentInCodegen() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/sam-with-receiver/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+  }
 
-    @Test
-    @TestMetadata("SamConstructor.kt")
-    public void testSamConstructor() throws Exception {
-        runTest("plugins/sam-with-receiver/testData/codegen/SamConstructor.kt");
-    }
+  @Test
+  @TestMetadata("SamConstructor.kt")
+  public void testSamConstructor() {
+    runTest("plugins/sam-with-receiver/testData/codegen/SamConstructor.kt");
+  }
 
-    @Test
-    @TestMetadata("SamConversion.kt")
-    public void testSamConversion() throws Exception {
-        runTest("plugins/sam-with-receiver/testData/codegen/SamConversion.kt");
-    }
+  @Test
+  @TestMetadata("SamConversion.kt")
+  public void testSamConversion() {
+    runTest("plugins/sam-with-receiver/testData/codegen/SamConversion.kt");
+  }
 }

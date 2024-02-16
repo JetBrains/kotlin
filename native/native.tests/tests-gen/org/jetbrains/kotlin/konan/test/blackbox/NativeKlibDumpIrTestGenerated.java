@@ -19,44 +19,44 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/klib/dump-ir")
 @TestDataPath("$PROJECT_ROOT")
 public class NativeKlibDumpIrTestGenerated extends AbstractNativeKlibDumpIrTest {
-    @Test
-    public void testAllFilesPresentInDump_ir() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/dump-ir"), Pattern.compile("^([^_](.+)).kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInDump_ir() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/dump-ir"), Pattern.compile("^([^_](.+)).kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("class.kt")
-    public void testClass() throws Exception {
-        runTest("native/native.tests/testData/klib/dump-ir/class.kt");
-    }
+  @Test
+  @TestMetadata("class.kt")
+  public void testClass() {
+    runTest("native/native.tests/testData/klib/dump-ir/class.kt");
+  }
 
-    @Test
-    @TestMetadata("constructor.kt")
-    public void testConstructor() throws Exception {
-        runTest("native/native.tests/testData/klib/dump-ir/constructor.kt");
-    }
+  @Test
+  @TestMetadata("constructor.kt")
+  public void testConstructor() {
+    runTest("native/native.tests/testData/klib/dump-ir/constructor.kt");
+  }
 
-    @Test
-    @TestMetadata("enum.kt")
-    public void testEnum() throws Exception {
-        runTest("native/native.tests/testData/klib/dump-ir/enum.kt");
-    }
+  @Test
+  @TestMetadata("enum.kt")
+  public void testEnum() {
+    runTest("native/native.tests/testData/klib/dump-ir/enum.kt");
+  }
 
-    @Test
-    @TestMetadata("field.kt")
-    public void testField() throws Exception {
-        runTest("native/native.tests/testData/klib/dump-ir/field.kt");
-    }
+  @Test
+  @TestMetadata("field.kt")
+  public void testField() {
+    runTest("native/native.tests/testData/klib/dump-ir/field.kt");
+  }
 
-    @Test
-    @TestMetadata("fun.kt")
-    public void testFun() throws Exception {
-        runTest("native/native.tests/testData/klib/dump-ir/fun.kt");
-    }
+  @Test
+  @TestMetadata("fun.kt")
+  public void testFun() {
+    runTest("native/native.tests/testData/klib/dump-ir/fun.kt");
+  }
 
-    @Test
-    @TestMetadata("typealias.kt")
-    public void testTypealias() throws Exception {
-        runTest("native/native.tests/testData/klib/dump-ir/typealias.kt");
-    }
+  @Test
+  @TestMetadata("typealias.kt")
+  public void testTypealias() {
+    runTest("native/native.tests/testData/klib/dump-ir/typealias.kt");
+  }
 }

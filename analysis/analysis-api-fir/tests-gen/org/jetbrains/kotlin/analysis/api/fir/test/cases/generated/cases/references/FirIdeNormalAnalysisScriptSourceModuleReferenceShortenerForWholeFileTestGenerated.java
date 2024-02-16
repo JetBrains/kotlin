@@ -28,39 +28,39 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerForWholeFileTestGenerated extends AbstractReferenceShortenerForWholeFileTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInShortenWholeFile() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile"), Pattern.compile("^(.+)\\.kts$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInShortenWholeFile() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("callInsideScriptExpression.kts")
-    public void testCallInsideScriptExpression() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/callInsideScriptExpression.kts");
-    }
+  @Test
+  @TestMetadata("callInsideScriptExpression.kts")
+  public void testCallInsideScriptExpression() {
+    runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/callInsideScriptExpression.kts");
+  }
 
-    @Test
-    @TestMetadata("scriptFileWithImportStatement.kts")
-    public void testScriptFileWithImportStatement() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/scriptFileWithImportStatement.kts");
-    }
+  @Test
+  @TestMetadata("scriptFileWithImportStatement.kts")
+  public void testScriptFileWithImportStatement() {
+    runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/scriptFileWithImportStatement.kts");
+  }
 
-    @Test
-    @TestMetadata("scriptFileWithoutImportStatements.kts")
-    public void testScriptFileWithoutImportStatements() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/scriptFileWithoutImportStatements.kts");
-    }
+  @Test
+  @TestMetadata("scriptFileWithoutImportStatements.kts")
+  public void testScriptFileWithoutImportStatements() {
+    runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/scriptFileWithoutImportStatements.kts");
+  }
 }

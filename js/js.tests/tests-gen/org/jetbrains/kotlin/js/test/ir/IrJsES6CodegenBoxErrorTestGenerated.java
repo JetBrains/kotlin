@@ -20,112 +20,112 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/boxError")
 @TestDataPath("$PROJECT_ROOT")
 public class IrJsES6CodegenBoxErrorTestGenerated extends AbstractIrJsES6CodegenBoxErrorTest {
+  @Test
+  public void testAllFilesPresentInBoxError() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true, "compileKotlinAgainstKotlin");
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/boxError/semantic")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Semantic {
     @Test
-    public void testAllFilesPresentInBoxError() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true, "compileKotlinAgainstKotlin");
+    public void testAllFilesPresentInSemantic() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError/semantic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
     }
 
-    @Nested
-    @TestMetadata("compiler/testData/codegen/boxError/semantic")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Semantic {
-        @Test
-        public void testAllFilesPresentInSemantic() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError/semantic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-        }
-
-        @Test
-        @TestMetadata("castToErrorType.kt")
-        public void testCastToErrorType() throws Exception {
-            runTest("compiler/testData/codegen/boxError/semantic/castToErrorType.kt");
-        }
-
-        @Test
-        @TestMetadata("catchErrorType.kt")
-        public void testCatchErrorType() throws Exception {
-            runTest("compiler/testData/codegen/boxError/semantic/catchErrorType.kt");
-        }
-
-        @Test
-        @TestMetadata("evaluationOrder.kt")
-        public void testEvaluationOrder() throws Exception {
-            runTest("compiler/testData/codegen/boxError/semantic/evaluationOrder.kt");
-        }
-
-        @Test
-        @TestMetadata("mismatchTypeParameters.kt")
-        public void testMismatchTypeParameters() throws Exception {
-            runTest("compiler/testData/codegen/boxError/semantic/mismatchTypeParameters.kt");
-        }
-
-        @Test
-        @TestMetadata("missedBody.kt")
-        public void testMissedBody() throws Exception {
-            runTest("compiler/testData/codegen/boxError/semantic/missedBody.kt");
-        }
-
-        @Test
-        @TestMetadata("reifiedNonInline.kt")
-        public void testReifiedNonInline() throws Exception {
-            runTest("compiler/testData/codegen/boxError/semantic/reifiedNonInline.kt");
-        }
-
-        @Test
-        @TestMetadata("reifiedWithWrongArguments.kt")
-        public void testReifiedWithWrongArguments() throws Exception {
-            runTest("compiler/testData/codegen/boxError/semantic/reifiedWithWrongArguments.kt");
-        }
-
-        @Test
-        @TestMetadata("typeMismatch.kt")
-        public void testTypeMismatch() throws Exception {
-            runTest("compiler/testData/codegen/boxError/semantic/typeMismatch.kt");
-        }
-
-        @Test
-        @TestMetadata("unmatchedArguments.kt")
-        public void testUnmatchedArguments() throws Exception {
-            runTest("compiler/testData/codegen/boxError/semantic/unmatchedArguments.kt");
-        }
-
-        @Test
-        @TestMetadata("unresolvedFunctionReferece.kt")
-        public void testUnresolvedFunctionReferece() throws Exception {
-            runTest("compiler/testData/codegen/boxError/semantic/unresolvedFunctionReferece.kt");
-        }
+    @Test
+    @TestMetadata("castToErrorType.kt")
+    public void testCastToErrorType() {
+      runTest("compiler/testData/codegen/boxError/semantic/castToErrorType.kt");
     }
 
-    @Nested
-    @TestMetadata("compiler/testData/codegen/boxError/syntax")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Syntax {
-        @Test
-        public void testAllFilesPresentInSyntax() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError/syntax"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-        }
-
-        @Test
-        @TestMetadata("arrowReference.kt")
-        public void testArrowReference() throws Exception {
-            runTest("compiler/testData/codegen/boxError/syntax/arrowReference.kt");
-        }
-
-        @Test
-        @TestMetadata("evaluationOrder.kt")
-        public void testEvaluationOrder() throws Exception {
-            runTest("compiler/testData/codegen/boxError/syntax/evaluationOrder.kt");
-        }
-
-        @Test
-        @TestMetadata("incorectLexicalName.kt")
-        public void testIncorectLexicalName() throws Exception {
-            runTest("compiler/testData/codegen/boxError/syntax/incorectLexicalName.kt");
-        }
-
-        @Test
-        @TestMetadata("missedArgument.kt")
-        public void testMissedArgument() throws Exception {
-            runTest("compiler/testData/codegen/boxError/syntax/missedArgument.kt");
-        }
+    @Test
+    @TestMetadata("catchErrorType.kt")
+    public void testCatchErrorType() {
+      runTest("compiler/testData/codegen/boxError/semantic/catchErrorType.kt");
     }
+
+    @Test
+    @TestMetadata("evaluationOrder.kt")
+    public void testEvaluationOrder() {
+      runTest("compiler/testData/codegen/boxError/semantic/evaluationOrder.kt");
+    }
+
+    @Test
+    @TestMetadata("mismatchTypeParameters.kt")
+    public void testMismatchTypeParameters() {
+      runTest("compiler/testData/codegen/boxError/semantic/mismatchTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("missedBody.kt")
+    public void testMissedBody() {
+      runTest("compiler/testData/codegen/boxError/semantic/missedBody.kt");
+    }
+
+    @Test
+    @TestMetadata("reifiedNonInline.kt")
+    public void testReifiedNonInline() {
+      runTest("compiler/testData/codegen/boxError/semantic/reifiedNonInline.kt");
+    }
+
+    @Test
+    @TestMetadata("reifiedWithWrongArguments.kt")
+    public void testReifiedWithWrongArguments() {
+      runTest("compiler/testData/codegen/boxError/semantic/reifiedWithWrongArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("typeMismatch.kt")
+    public void testTypeMismatch() {
+      runTest("compiler/testData/codegen/boxError/semantic/typeMismatch.kt");
+    }
+
+    @Test
+    @TestMetadata("unmatchedArguments.kt")
+    public void testUnmatchedArguments() {
+      runTest("compiler/testData/codegen/boxError/semantic/unmatchedArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedFunctionReferece.kt")
+    public void testUnresolvedFunctionReferece() {
+      runTest("compiler/testData/codegen/boxError/semantic/unresolvedFunctionReferece.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/boxError/syntax")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Syntax {
+    @Test
+    public void testAllFilesPresentInSyntax() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError/syntax"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    }
+
+    @Test
+    @TestMetadata("arrowReference.kt")
+    public void testArrowReference() {
+      runTest("compiler/testData/codegen/boxError/syntax/arrowReference.kt");
+    }
+
+    @Test
+    @TestMetadata("evaluationOrder.kt")
+    public void testEvaluationOrder() {
+      runTest("compiler/testData/codegen/boxError/syntax/evaluationOrder.kt");
+    }
+
+    @Test
+    @TestMetadata("incorectLexicalName.kt")
+    public void testIncorectLexicalName() {
+      runTest("compiler/testData/codegen/boxError/syntax/incorectLexicalName.kt");
+    }
+
+    @Test
+    @TestMetadata("missedArgument.kt")
+    public void testMissedArgument() {
+      runTest("compiler/testData/codegen/boxError/syntax/missedArgument.kt");
+    }
+  }
 }

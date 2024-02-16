@@ -21,197 +21,197 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class K1KotlinpTestGenerated extends AbstractK1KotlinpTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  }
+
+  public void testAllFilesPresentInTestData() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/jvm/testData"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
+
+  @TestMetadata("Annotations.kt")
+  public void testAnnotations() {
+    runTest("libraries/tools/kotlinp/jvm/testData/Annotations.kt");
+  }
+
+  @TestMetadata("Constants.kt")
+  public void testConstants() {
+    runTest("libraries/tools/kotlinp/jvm/testData/Constants.kt");
+  }
+
+  @TestMetadata("ContextReceivers.kt")
+  public void testContextReceivers() {
+    runTest("libraries/tools/kotlinp/jvm/testData/ContextReceivers.kt");
+  }
+
+  @TestMetadata("Contracts.kt")
+  public void testContracts() {
+    runTest("libraries/tools/kotlinp/jvm/testData/Contracts.kt");
+  }
+
+  @TestMetadata("Delegation.kt")
+  public void testDelegation() {
+    runTest("libraries/tools/kotlinp/jvm/testData/Delegation.kt");
+  }
+
+  @TestMetadata("EnumEntries.kt")
+  public void testEnumEntries() {
+    runTest("libraries/tools/kotlinp/jvm/testData/EnumEntries.kt");
+  }
+
+  @TestMetadata("FunInterface.kt")
+  public void testFunInterface() {
+    runTest("libraries/tools/kotlinp/jvm/testData/FunInterface.kt");
+  }
+
+  @TestMetadata("IntersectionTypeInLambdaLiteralAndDelegatedProperty.kt")
+  public void testIntersectionTypeInLambdaLiteralAndDelegatedProperty() {
+    runTest("libraries/tools/kotlinp/jvm/testData/IntersectionTypeInLambdaLiteralAndDelegatedProperty.kt");
+  }
+
+  @TestMetadata("Lambda.kt")
+  public void testLambda() {
+    runTest("libraries/tools/kotlinp/jvm/testData/Lambda.kt");
+  }
+
+  @TestMetadata("LocalDelegatedProperties.kt")
+  public void testLocalDelegatedProperties() {
+    runTest("libraries/tools/kotlinp/jvm/testData/LocalDelegatedProperties.kt");
+  }
+
+  @TestMetadata("MultiFileClass.kt")
+  public void testMultiFileClass() {
+    runTest("libraries/tools/kotlinp/jvm/testData/MultiFileClass.kt");
+  }
+
+  @TestMetadata("NestedClasses.kt")
+  public void testNestedClasses() {
+    runTest("libraries/tools/kotlinp/jvm/testData/NestedClasses.kt");
+  }
+
+  @TestMetadata("NotEnumWithEnumEntriesEnabled.kt")
+  public void testNotEnumWithEnumEntriesEnabled() {
+    runTest("libraries/tools/kotlinp/jvm/testData/NotEnumWithEnumEntriesEnabled.kt");
+  }
+
+  @TestMetadata("OptionalAnnotation.kt")
+  public void testOptionalAnnotation() {
+    runTest("libraries/tools/kotlinp/jvm/testData/OptionalAnnotation.kt");
+  }
+
+  @TestMetadata("PlatformType.kt")
+  public void testPlatformType() {
+    runTest("libraries/tools/kotlinp/jvm/testData/PlatformType.kt");
+  }
+
+  @TestMetadata("Properties.kt")
+  public void testProperties() {
+    runTest("libraries/tools/kotlinp/jvm/testData/Properties.kt");
+  }
+
+  @TestMetadata("SimpleClass.kt")
+  public void testSimpleClass() {
+    runTest("libraries/tools/kotlinp/jvm/testData/SimpleClass.kt");
+  }
+
+  @TestMetadata("SimplePackage.kt")
+  public void testSimplePackage() {
+    runTest("libraries/tools/kotlinp/jvm/testData/SimplePackage.kt");
+  }
+
+  @TestMetadata("SyntheticClass.kt")
+  public void testSyntheticClass() {
+    runTest("libraries/tools/kotlinp/jvm/testData/SyntheticClass.kt");
+  }
+
+  @TestMetadata("TypeAlias.kt")
+  public void testTypeAlias() {
+    runTest("libraries/tools/kotlinp/jvm/testData/TypeAlias.kt");
+  }
+
+  @TestMetadata("TypeParameters.kt")
+  public void testTypeParameters() {
+    runTest("libraries/tools/kotlinp/jvm/testData/TypeParameters.kt");
+  }
+
+  @TestMetadata("ValueClass.kt")
+  public void testValueClass() {
+    runTest("libraries/tools/kotlinp/jvm/testData/ValueClass.kt");
+  }
+
+  @TestMetadata("VarargInAnnotation.kt")
+  public void testVarargInAnnotation() {
+    runTest("libraries/tools/kotlinp/jvm/testData/VarargInAnnotation.kt");
+  }
+
+  @TestMetadata("VersionRequirement.kt")
+  public void testVersionRequirement() {
+    runTest("libraries/tools/kotlinp/jvm/testData/VersionRequirement.kt");
+  }
+
+  @TestMetadata("libraries/tools/kotlinp/jvm/testData/jvmDefault")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class JvmDefault extends AbstractK1KotlinpTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInTestData() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/jvm/testData"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    @TestMetadata("All.kt")
+    public void testAll() {
+      runTest("libraries/tools/kotlinp/jvm/testData/jvmDefault/All.kt");
     }
 
-    @TestMetadata("Annotations.kt")
-    public void testAnnotations() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/Annotations.kt");
+    @TestMetadata("AllCompatibility.kt")
+    public void testAllCompatibility() {
+      runTest("libraries/tools/kotlinp/jvm/testData/jvmDefault/AllCompatibility.kt");
     }
 
-    @TestMetadata("Constants.kt")
-    public void testConstants() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/Constants.kt");
+    public void testAllFilesPresentInJvmDefault() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/jvm/testData/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @TestMetadata("ContextReceivers.kt")
-    public void testContextReceivers() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/ContextReceivers.kt");
+    @TestMetadata("withCompatibility.kt")
+    public void testWithCompatibility() {
+      runTest("libraries/tools/kotlinp/jvm/testData/jvmDefault/withCompatibility.kt");
     }
 
-    @TestMetadata("Contracts.kt")
-    public void testContracts() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/Contracts.kt");
+    @TestMetadata("withoutCompatibility.kt")
+    public void testWithoutCompatibility() {
+      runTest("libraries/tools/kotlinp/jvm/testData/jvmDefault/withoutCompatibility.kt");
+    }
+  }
+
+  @TestMetadata("libraries/tools/kotlinp/jvm/testData/localClasses")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class LocalClasses extends AbstractK1KotlinpTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    @TestMetadata("Delegation.kt")
-    public void testDelegation() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/Delegation.kt");
+    public void testAllFilesPresentInLocalClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/jvm/testData/localClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @TestMetadata("EnumEntries.kt")
-    public void testEnumEntries() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/EnumEntries.kt");
+    @TestMetadata("AnonymousObject.kt")
+    public void testAnonymousObject() {
+      runTest("libraries/tools/kotlinp/jvm/testData/localClasses/AnonymousObject.kt");
     }
 
-    @TestMetadata("FunInterface.kt")
-    public void testFunInterface() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/FunInterface.kt");
+    @TestMetadata("DeepInnerLocalChain.kt")
+    public void testDeepInnerLocalChain() {
+      runTest("libraries/tools/kotlinp/jvm/testData/localClasses/DeepInnerLocalChain.kt");
     }
 
-    @TestMetadata("IntersectionTypeInLambdaLiteralAndDelegatedProperty.kt")
-    public void testIntersectionTypeInLambdaLiteralAndDelegatedProperty() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/IntersectionTypeInLambdaLiteralAndDelegatedProperty.kt");
+    @TestMetadata("LocalClassInConstructor.kt")
+    public void testLocalClassInConstructor() {
+      runTest("libraries/tools/kotlinp/jvm/testData/localClasses/LocalClassInConstructor.kt");
     }
 
-    @TestMetadata("Lambda.kt")
-    public void testLambda() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/Lambda.kt");
+    @TestMetadata("LocalClassInSignature.kt")
+    public void testLocalClassInSignature() {
+      runTest("libraries/tools/kotlinp/jvm/testData/localClasses/LocalClassInSignature.kt");
     }
-
-    @TestMetadata("LocalDelegatedProperties.kt")
-    public void testLocalDelegatedProperties() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/LocalDelegatedProperties.kt");
-    }
-
-    @TestMetadata("MultiFileClass.kt")
-    public void testMultiFileClass() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/MultiFileClass.kt");
-    }
-
-    @TestMetadata("NestedClasses.kt")
-    public void testNestedClasses() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/NestedClasses.kt");
-    }
-
-    @TestMetadata("NotEnumWithEnumEntriesEnabled.kt")
-    public void testNotEnumWithEnumEntriesEnabled() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/NotEnumWithEnumEntriesEnabled.kt");
-    }
-
-    @TestMetadata("OptionalAnnotation.kt")
-    public void testOptionalAnnotation() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/OptionalAnnotation.kt");
-    }
-
-    @TestMetadata("PlatformType.kt")
-    public void testPlatformType() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/PlatformType.kt");
-    }
-
-    @TestMetadata("Properties.kt")
-    public void testProperties() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/Properties.kt");
-    }
-
-    @TestMetadata("SimpleClass.kt")
-    public void testSimpleClass() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/SimpleClass.kt");
-    }
-
-    @TestMetadata("SimplePackage.kt")
-    public void testSimplePackage() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/SimplePackage.kt");
-    }
-
-    @TestMetadata("SyntheticClass.kt")
-    public void testSyntheticClass() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/SyntheticClass.kt");
-    }
-
-    @TestMetadata("TypeAlias.kt")
-    public void testTypeAlias() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/TypeAlias.kt");
-    }
-
-    @TestMetadata("TypeParameters.kt")
-    public void testTypeParameters() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/TypeParameters.kt");
-    }
-
-    @TestMetadata("ValueClass.kt")
-    public void testValueClass() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/ValueClass.kt");
-    }
-
-    @TestMetadata("VarargInAnnotation.kt")
-    public void testVarargInAnnotation() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/VarargInAnnotation.kt");
-    }
-
-    @TestMetadata("VersionRequirement.kt")
-    public void testVersionRequirement() throws Exception {
-        runTest("libraries/tools/kotlinp/jvm/testData/VersionRequirement.kt");
-    }
-
-    @TestMetadata("libraries/tools/kotlinp/jvm/testData/jvmDefault")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class JvmDefault extends AbstractK1KotlinpTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        @TestMetadata("All.kt")
-        public void testAll() throws Exception {
-            runTest("libraries/tools/kotlinp/jvm/testData/jvmDefault/All.kt");
-        }
-
-        @TestMetadata("AllCompatibility.kt")
-        public void testAllCompatibility() throws Exception {
-            runTest("libraries/tools/kotlinp/jvm/testData/jvmDefault/AllCompatibility.kt");
-        }
-
-        public void testAllFilesPresentInJvmDefault() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/jvm/testData/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("withCompatibility.kt")
-        public void testWithCompatibility() throws Exception {
-            runTest("libraries/tools/kotlinp/jvm/testData/jvmDefault/withCompatibility.kt");
-        }
-
-        @TestMetadata("withoutCompatibility.kt")
-        public void testWithoutCompatibility() throws Exception {
-            runTest("libraries/tools/kotlinp/jvm/testData/jvmDefault/withoutCompatibility.kt");
-        }
-    }
-
-    @TestMetadata("libraries/tools/kotlinp/jvm/testData/localClasses")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class LocalClasses extends AbstractK1KotlinpTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInLocalClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/jvm/testData/localClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("AnonymousObject.kt")
-        public void testAnonymousObject() throws Exception {
-            runTest("libraries/tools/kotlinp/jvm/testData/localClasses/AnonymousObject.kt");
-        }
-
-        @TestMetadata("DeepInnerLocalChain.kt")
-        public void testDeepInnerLocalChain() throws Exception {
-            runTest("libraries/tools/kotlinp/jvm/testData/localClasses/DeepInnerLocalChain.kt");
-        }
-
-        @TestMetadata("LocalClassInConstructor.kt")
-        public void testLocalClassInConstructor() throws Exception {
-            runTest("libraries/tools/kotlinp/jvm/testData/localClasses/LocalClassInConstructor.kt");
-        }
-
-        @TestMetadata("LocalClassInSignature.kt")
-        public void testLocalClassInSignature() throws Exception {
-            runTest("libraries/tools/kotlinp/jvm/testData/localClasses/LocalClassInSignature.kt");
-        }
-    }
+  }
 }

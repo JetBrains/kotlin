@@ -28,563 +28,563 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/referenceResolve")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisScriptSourceModuleReferenceResolveTestGenerated extends AbstractReferenceResolveTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
+  @Test
+  public void testAllFilesPresentInReferenceResolve() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("ScriptArgument.kts")
+  public void testScriptArgument() {
+    runTest("analysis/analysis-api/testData/referenceResolve/ScriptArgument.kts");
+  }
+
+  @Test
+  @TestMetadata("ScriptResult.kts")
+  public void testScriptResult() {
+    runTest("analysis/analysis-api/testData/referenceResolve/ScriptResult.kts");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/arrayAccess")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ArrayAccess {
     @Test
-    public void testAllFilesPresentInReferenceResolve() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve"), Pattern.compile("^(.+)\\.kts$"), null, true);
-    }
-
-    @Test
-    @TestMetadata("ScriptArgument.kts")
-    public void testScriptArgument() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/ScriptArgument.kts");
-    }
-
-    @Test
-    @TestMetadata("ScriptResult.kts")
-    public void testScriptResult() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/ScriptResult.kts");
+    public void testAllFilesPresentInArrayAccess() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/arrayAccess"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
 
     @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/arrayAccess")
-    @TestDataPath("$PROJECT_ROOT")
-    public class ArrayAccess {
-        @Test
-        public void testAllFilesPresentInArrayAccess() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/arrayAccess"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/arrayAccess/withErrors")
-        @TestDataPath("$PROJECT_ROOT")
-        public class WithErrors {
-            @Test
-            public void testAllFilesPresentInWithErrors() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/arrayAccess/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment")
-    @TestDataPath("$PROJECT_ROOT")
-    public class CodeFragment {
-        @Test
-        public void testAllFilesPresentInCodeFragment() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment")
-        @TestDataPath("$PROJECT_ROOT")
-        public class BlockCodeFragment {
-            @Test
-            public void testAllFilesPresentInBlockCodeFragment() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment")
-        @TestDataPath("$PROJECT_ROOT")
-        public class ExpressionCodeFragment {
-            @Test
-            public void testAllFilesPresentInExpressionCodeFragment() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment")
-        @TestDataPath("$PROJECT_ROOT")
-        public class TypeCodeFragment {
-            @Test
-            public void testAllFilesPresentInTypeCodeFragment() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/constructorDelegatingReference")
-    @TestDataPath("$PROJECT_ROOT")
-    public class ConstructorDelegatingReference {
-        @Test
-        public void testAllFilesPresentInConstructorDelegatingReference() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/constructorDelegatingReference"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/danglingAnnotations")
-    @TestDataPath("$PROJECT_ROOT")
-    public class DanglingAnnotations {
-        @Test
-        public void testAllFilesPresentInDanglingAnnotations() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/danglingAnnotations"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors")
-    @TestDataPath("$PROJECT_ROOT")
-    public class DelegatedPropertyAccessors {
-        @Test
-        public void testAllFilesPresentInDelegatedPropertyAccessors() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inSource")
-        @TestDataPath("$PROJECT_ROOT")
-        public class InSource {
-            @Test
-            public void testAllFilesPresentInInSource() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inSource"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inStandardLibrary")
-        @TestDataPath("$PROJECT_ROOT")
-        public class InStandardLibrary {
-            @Test
-            public void testAllFilesPresentInInStandardLibrary() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inStandardLibrary"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/withErrors")
-        @TestDataPath("$PROJECT_ROOT")
-        public class WithErrors {
-            @Test
-            public void testAllFilesPresentInWithErrors() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn")
-    @TestDataPath("$PROJECT_ROOT")
-    public class ForLoopIn {
-        @Test
-        public void testAllFilesPresentInForLoopIn() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn/inBuiltIns")
-        @TestDataPath("$PROJECT_ROOT")
-        public class InBuiltIns {
-            @Test
-            public void testAllFilesPresentInInBuiltIns() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inBuiltIns"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn/inLibrary")
-        @TestDataPath("$PROJECT_ROOT")
-        public class InLibrary {
-            @Test
-            public void testAllFilesPresentInInLibrary() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inLibrary"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource")
-        @TestDataPath("$PROJECT_ROOT")
-        public class InSource {
-            @Test
-            public void testAllFilesPresentInInSource() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-
-            @Nested
-            @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource/withErrors")
-            @TestDataPath("$PROJECT_ROOT")
-            public class WithErrors {
-                @Test
-                public void testAllFilesPresentInWithErrors() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
-                }
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn/withErrors")
-        @TestDataPath("$PROJECT_ROOT")
-        public class WithErrors {
-            @Test
-            public void testAllFilesPresentInWithErrors() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/inImport")
-    @TestDataPath("$PROJECT_ROOT")
-    public class InImport {
-        @Test
-        public void testAllFilesPresentInInImport() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/inImport"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/invoke")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Invoke {
-        @Test
-        public void testAllFilesPresentInInvoke() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/invoke"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/invoke/onObjects")
-        @TestDataPath("$PROJECT_ROOT")
-        public class OnObjects {
-            @Test
-            public void testAllFilesPresentInOnObjects() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/invoke/onObjects"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/invoke/withErrors")
-        @TestDataPath("$PROJECT_ROOT")
-        public class WithErrors {
-            @Test
-            public void testAllFilesPresentInWithErrors() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/invoke/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/java")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Java {
-        @Test
-        public void testAllFilesPresentInJava() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/java"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/java/enumWithCustomGetName")
-        @TestDataPath("$PROJECT_ROOT")
-        public class EnumWithCustomGetName {
-            @Test
-            public void testAllFilesPresentInEnumWithCustomGetName() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/java/enumWithCustomGetName"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc")
-    @TestDataPath("$PROJECT_ROOT")
-    public class KDoc {
-        @Test
-        public void testAllFilesPresentInKDoc() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject")
-        @TestDataPath("$PROJECT_ROOT")
-        public class CompanionObject {
-            @Test
-            public void testAllFilesPresentInCompanionObject() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/extensions")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Extensions {
-            @Test
-            public void testAllFilesPresentInExtensions() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/extensions"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-
-            @Nested
-            @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/generics")
-            @TestDataPath("$PROJECT_ROOT")
-            public class Generics {
-                @Test
-                public void testAllFilesPresentInGenerics() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/generics"), Pattern.compile("^(.+)\\.kts$"), null, true);
-                }
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/imports")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Imports {
-            @Test
-            public void testAllFilesPresentInImports() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/imports"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations")
-        @TestDataPath("$PROJECT_ROOT")
-        public class JavaDeclarations {
-            @Test
-            public void testAllFilesPresentInJavaDeclarations() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/localContext")
-        @TestDataPath("$PROJECT_ROOT")
-        public class LocalContext {
-            @Test
-            public void testAllFilesPresentInLocalContext() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/localContext"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/packages")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Packages {
-            @Test
-            public void testAllFilesPresentInPackages() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/packages"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/parameters")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Parameters {
-            @Test
-            public void testAllFilesPresentInParameters() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/parameters"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Qualified {
-            @Test
-            public void testAllFilesPresentInQualified() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-
-            @Nested
-            @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables")
-            @TestDataPath("$PROJECT_ROOT")
-            public class Callables {
-                @Test
-                public void testAllFilesPresentInCallables() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables"), Pattern.compile("^(.+)\\.kts$"), null, true);
-                }
-
-                @Nested
-                @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported")
-                @TestDataPath("$PROJECT_ROOT")
-                public class NotImported {
-                    @Test
-                    public void testAllFilesPresentInNotImported() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported"), Pattern.compile("^(.+)\\.kts$"), null, true);
-                    }
-                }
-            }
-
-            @Nested
-            @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/conflictResolution")
-            @TestDataPath("$PROJECT_ROOT")
-            public class ConflictResolution {
-                @Test
-                public void testAllFilesPresentInConflictResolution() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/conflictResolution"), Pattern.compile("^(.+)\\.kts$"), null, true);
-                }
-            }
-
-            @Nested
-            @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/fromOtherFile")
-            @TestDataPath("$PROJECT_ROOT")
-            public class FromOtherFile {
-                @Test
-                public void testAllFilesPresentInFromOtherFile() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/fromOtherFile"), Pattern.compile("^(.+)\\.kts$"), null, true);
-                }
-            }
-
-            @Nested
-            @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib")
-            @TestDataPath("$PROJECT_ROOT")
-            public class Stdlib {
-                @Test
-                public void testAllFilesPresentInStdlib() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib"), Pattern.compile("^(.+)\\.kts$"), null, true);
-                }
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/thisQualifier")
-        @TestDataPath("$PROJECT_ROOT")
-        public class ThisQualifier {
-            @Test
-            public void testAllFilesPresentInThisQualifier() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/thisQualifier"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors")
-        @TestDataPath("$PROJECT_ROOT")
-        public class WithErrors {
-            @Test
-            public void testAllFilesPresentInWithErrors() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/kotlinPackage")
-    @TestDataPath("$PROJECT_ROOT")
-    public class KotlinPackage {
-        @Test
-        public void testAllFilesPresentInKotlinPackage() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kotlinPackage"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/nestedTypes")
-    @TestDataPath("$PROJECT_ROOT")
-    public class NestedTypes {
-        @Test
-        public void testAllFilesPresentInNestedTypes() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/nestedTypes"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/packageReference")
-    @TestDataPath("$PROJECT_ROOT")
-    public class PackageReference {
-        @Test
-        public void testAllFilesPresentInPackageReference() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/packageReference"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/qualifiedAccess")
-    @TestDataPath("$PROJECT_ROOT")
-    public class QualifiedAccess {
-        @Test
-        public void testAllFilesPresentInQualifiedAccess() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/qualifiedAccess"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument")
-    @TestDataPath("$PROJECT_ROOT")
-    public class TypeArgument {
-        @Test
-        public void testAllFilesPresentInTypeArgument() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/constant")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Constant {
-            @Test
-            public void testAllFilesPresentInConstant() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/constant"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall")
-        @TestDataPath("$PROJECT_ROOT")
-        public class FunctionCall {
-            @Test
-            public void testAllFilesPresentInFunctionCall() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess")
-        @TestDataPath("$PROJECT_ROOT")
-        public class PropertyAccess {
-            @Test
-            public void testAllFilesPresentInPropertyAccess() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/type")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Type {
-            @Test
-            public void testAllFilesPresentInType() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/type"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeParameter")
-    @TestDataPath("$PROJECT_ROOT")
-    public class TypeParameter {
-        @Test
-        public void testAllFilesPresentInTypeParameter() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeParameter"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/referenceResolve/withErrors")
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/arrayAccess/withErrors")
     @TestDataPath("$PROJECT_ROOT")
     public class WithErrors {
+      @Test
+      public void testAllFilesPresentInWithErrors() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/arrayAccess/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CodeFragment {
+    @Test
+    public void testAllFilesPresentInCodeFragment() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment")
+    @TestDataPath("$PROJECT_ROOT")
+    public class BlockCodeFragment {
+      @Test
+      public void testAllFilesPresentInBlockCodeFragment() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ExpressionCodeFragment {
+      @Test
+      public void testAllFilesPresentInExpressionCodeFragment() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TypeCodeFragment {
+      @Test
+      public void testAllFilesPresentInTypeCodeFragment() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/constructorDelegatingReference")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ConstructorDelegatingReference {
+    @Test
+    public void testAllFilesPresentInConstructorDelegatingReference() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/constructorDelegatingReference"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/danglingAnnotations")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DanglingAnnotations {
+    @Test
+    public void testAllFilesPresentInDanglingAnnotations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/danglingAnnotations"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DelegatedPropertyAccessors {
+    @Test
+    public void testAllFilesPresentInDelegatedPropertyAccessors() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inSource")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InSource {
+      @Test
+      public void testAllFilesPresentInInSource() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inSource"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inStandardLibrary")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InStandardLibrary {
+      @Test
+      public void testAllFilesPresentInInStandardLibrary() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inStandardLibrary"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/withErrors")
+    @TestDataPath("$PROJECT_ROOT")
+    public class WithErrors {
+      @Test
+      public void testAllFilesPresentInWithErrors() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ForLoopIn {
+    @Test
+    public void testAllFilesPresentInForLoopIn() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn/inBuiltIns")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InBuiltIns {
+      @Test
+      public void testAllFilesPresentInInBuiltIns() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inBuiltIns"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn/inLibrary")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InLibrary {
+      @Test
+      public void testAllFilesPresentInInLibrary() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inLibrary"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InSource {
+      @Test
+      public void testAllFilesPresentInInSource() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+
+      @Nested
+      @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource/withErrors")
+      @TestDataPath("$PROJECT_ROOT")
+      public class WithErrors {
         @Test
-        public void testAllFilesPresentInWithErrors() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        public void testAllFilesPresentInWithErrors() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn/withErrors")
+    @TestDataPath("$PROJECT_ROOT")
+    public class WithErrors {
+      @Test
+      public void testAllFilesPresentInWithErrors() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/inImport")
+  @TestDataPath("$PROJECT_ROOT")
+  public class InImport {
+    @Test
+    public void testAllFilesPresentInInImport() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/inImport"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/invoke")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Invoke {
+    @Test
+    public void testAllFilesPresentInInvoke() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/invoke"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/invoke/onObjects")
+    @TestDataPath("$PROJECT_ROOT")
+    public class OnObjects {
+      @Test
+      public void testAllFilesPresentInOnObjects() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/invoke/onObjects"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/invoke/withErrors")
+    @TestDataPath("$PROJECT_ROOT")
+    public class WithErrors {
+      @Test
+      public void testAllFilesPresentInWithErrors() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/invoke/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/java")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Java {
+    @Test
+    public void testAllFilesPresentInJava() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/java"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/java/enumWithCustomGetName")
+    @TestDataPath("$PROJECT_ROOT")
+    public class EnumWithCustomGetName {
+      @Test
+      public void testAllFilesPresentInEnumWithCustomGetName() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/java/enumWithCustomGetName"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc")
+  @TestDataPath("$PROJECT_ROOT")
+  public class KDoc {
+    @Test
+    public void testAllFilesPresentInKDoc() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CompanionObject {
+      @Test
+      public void testAllFilesPresentInCompanionObject() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/extensions")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Extensions {
+      @Test
+      public void testAllFilesPresentInExtensions() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/extensions"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+
+      @Nested
+      @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/generics")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Generics {
+        @Test
+        public void testAllFilesPresentInGenerics() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/generics"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/imports")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Imports {
+      @Test
+      public void testAllFilesPresentInImports() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/imports"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class JavaDeclarations {
+      @Test
+      public void testAllFilesPresentInJavaDeclarations() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/localContext")
+    @TestDataPath("$PROJECT_ROOT")
+    public class LocalContext {
+      @Test
+      public void testAllFilesPresentInLocalContext() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/localContext"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/packages")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Packages {
+      @Test
+      public void testAllFilesPresentInPackages() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/packages"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/parameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Parameters {
+      @Test
+      public void testAllFilesPresentInParameters() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/parameters"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Qualified {
+      @Test
+      public void testAllFilesPresentInQualified() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+
+      @Nested
+      @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Callables {
+        @Test
+        public void testAllFilesPresentInCallables() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables"), Pattern.compile("^(.+)\\.kts$"), null, true);
         }
 
         @Nested
-        @TestMetadata("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier")
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported")
         @TestDataPath("$PROJECT_ROOT")
-        public class PartiallyUnresolvedTypeQualifier {
-            @Test
-            public void testAllFilesPresentInPartiallyUnresolvedTypeQualifier() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
+        public class NotImported {
+          @Test
+          public void testAllFilesPresentInNotImported() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported"), Pattern.compile("^(.+)\\.kts$"), null, true);
+          }
         }
+      }
+
+      @Nested
+      @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/conflictResolution")
+      @TestDataPath("$PROJECT_ROOT")
+      public class ConflictResolution {
+        @Test
+        public void testAllFilesPresentInConflictResolution() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/conflictResolution"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+      }
+
+      @Nested
+      @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/fromOtherFile")
+      @TestDataPath("$PROJECT_ROOT")
+      public class FromOtherFile {
+        @Test
+        public void testAllFilesPresentInFromOtherFile() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/fromOtherFile"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+      }
+
+      @Nested
+      @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Stdlib {
+        @Test
+        public void testAllFilesPresentInStdlib() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+      }
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/thisQualifier")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ThisQualifier {
+      @Test
+      public void testAllFilesPresentInThisQualifier() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/thisQualifier"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors")
+    @TestDataPath("$PROJECT_ROOT")
+    public class WithErrors {
+      @Test
+      public void testAllFilesPresentInWithErrors() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/kotlinPackage")
+  @TestDataPath("$PROJECT_ROOT")
+  public class KotlinPackage {
+    @Test
+    public void testAllFilesPresentInKotlinPackage() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kotlinPackage"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/nestedTypes")
+  @TestDataPath("$PROJECT_ROOT")
+  public class NestedTypes {
+    @Test
+    public void testAllFilesPresentInNestedTypes() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/nestedTypes"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/packageReference")
+  @TestDataPath("$PROJECT_ROOT")
+  public class PackageReference {
+    @Test
+    public void testAllFilesPresentInPackageReference() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/packageReference"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/qualifiedAccess")
+  @TestDataPath("$PROJECT_ROOT")
+  public class QualifiedAccess {
+    @Test
+    public void testAllFilesPresentInQualifiedAccess() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/qualifiedAccess"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeArgument {
+    @Test
+    public void testAllFilesPresentInTypeArgument() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/constant")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Constant {
+      @Test
+      public void testAllFilesPresentInConstant() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/constant"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall")
+    @TestDataPath("$PROJECT_ROOT")
+    public class FunctionCall {
+      @Test
+      public void testAllFilesPresentInFunctionCall() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess")
+    @TestDataPath("$PROJECT_ROOT")
+    public class PropertyAccess {
+      @Test
+      public void testAllFilesPresentInPropertyAccess() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/type")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Type {
+      @Test
+      public void testAllFilesPresentInType() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/type"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeParameter")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeParameter {
+    @Test
+    public void testAllFilesPresentInTypeParameter() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeParameter"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/withErrors")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WithErrors {
+    @Test
+    public void testAllFilesPresentInWithErrors() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier")
+    @TestDataPath("$PROJECT_ROOT")
+    public class PartiallyUnresolvedTypeQualifier {
+      @Test
+      public void testAllFilesPresentInPartiallyUnresolvedTypeQualifier() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+  }
 }

@@ -19,100 +19,100 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/contextCollector")
 @TestDataPath("$PROJECT_ROOT")
 public class ContextCollectorScriptTestGenerated extends AbstractContextCollectorScriptTest {
+  @Test
+  public void testAllFilesPresentInContextCollector() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ClassHeaderPositions {
     @Test
-    public void testAllFilesPresentInContextCollector() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    public void testAllFilesPresentInClassHeaderPositions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/error")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Error {
+    @Test
+    public void testAllFilesPresentInError() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/error"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/scripts")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Scripts {
+    @Test
+    public void testAllFilesPresentInScripts() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/scripts"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @Nested
-    @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions")
-    @TestDataPath("$PROJECT_ROOT")
-    public class ClassHeaderPositions {
-        @Test
-        public void testAllFilesPresentInClassHeaderPositions() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
-        }
+    @Test
+    @TestMetadata("insideClassBody.kts")
+    public void testInsideClassBody() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/insideClassBody.kts");
     }
 
-    @Nested
-    @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/error")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Error {
-        @Test
-        public void testAllFilesPresentInError() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/error"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
-        }
+    @Test
+    @TestMetadata("insideClassMember.kts")
+    public void testInsideClassMember() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/insideClassMember.kts");
     }
 
-    @Nested
-    @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/scripts")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Scripts {
-        @Test
-        public void testAllFilesPresentInScripts() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/scripts"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("insideClassBody.kts")
-        public void testInsideClassBody() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/insideClassBody.kts");
-        }
-
-        @Test
-        @TestMetadata("insideClassMember.kts")
-        public void testInsideClassMember() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/insideClassMember.kts");
-        }
-
-        @Test
-        @TestMetadata("insideTopLevelFunction.kts")
-        public void testInsideTopLevelFunction() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/insideTopLevelFunction.kts");
-        }
-
-        @Test
-        @TestMetadata("lastStatement.kts")
-        public void testLastStatement() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/lastStatement.kts");
-        }
-
-        @Test
-        @TestMetadata("scriptInsideLastStatement.kts")
-        public void testScriptInsideLastStatement() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/scriptInsideLastStatement.kts");
-        }
-
-        @Test
-        @TestMetadata("statement.kts")
-        public void testStatement() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/statement.kts");
-        }
-
-        @Test
-        @TestMetadata("topLevel.kts")
-        public void testTopLevel() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/topLevel.kts");
-        }
+    @Test
+    @TestMetadata("insideTopLevelFunction.kts")
+    public void testInsideTopLevelFunction() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/insideTopLevelFunction.kts");
     }
 
-    @Nested
-    @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/smartCasts")
-    @TestDataPath("$PROJECT_ROOT")
-    public class SmartCasts {
-        @Test
-        public void testAllFilesPresentInSmartCasts() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/smartCasts"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
-        }
+    @Test
+    @TestMetadata("lastStatement.kts")
+    public void testLastStatement() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/lastStatement.kts");
     }
 
-    @Nested
-    @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/typeParameters")
-    @TestDataPath("$PROJECT_ROOT")
-    public class TypeParameters {
-        @Test
-        public void testAllFilesPresentInTypeParameters() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/typeParameters"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
-        }
+    @Test
+    @TestMetadata("scriptInsideLastStatement.kts")
+    public void testScriptInsideLastStatement() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/scriptInsideLastStatement.kts");
     }
+
+    @Test
+    @TestMetadata("statement.kts")
+    public void testStatement() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/statement.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevel.kts")
+    public void testTopLevel() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/topLevel.kts");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/smartCasts")
+  @TestDataPath("$PROJECT_ROOT")
+  public class SmartCasts {
+    @Test
+    public void testAllFilesPresentInSmartCasts() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/smartCasts"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/typeParameters")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeParameters {
+    @Test
+    public void testAllFilesPresentInTypeParameters() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/typeParameters"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+  }
 }

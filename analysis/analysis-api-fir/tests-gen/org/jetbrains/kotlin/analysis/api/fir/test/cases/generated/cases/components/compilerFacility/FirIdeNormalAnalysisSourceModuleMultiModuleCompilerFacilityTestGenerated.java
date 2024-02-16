@@ -28,55 +28,55 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleMultiModuleCompilerFacilityTestGenerated extends AbstractMultiModuleCompilerFacilityTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
+
+  @Test
+  public void testAllFilesPresentInCompilationMultiModule() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("commonUsage.kt")
+  public void testCommonUsage() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/commonUsage.kt");
+  }
+
+  @Test
+  @TestMetadata("defaultParameterValue.kt")
+  public void testDefaultParameterValue() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/defaultParameterValue.kt");
+  }
+
+  @Test
+  @TestMetadata("internalUsage.kt")
+  public void testInternalUsage() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/internalUsage.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CodeFragments {
+    @Test
+    public void testAllFilesPresentInCodeFragments() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
-    public void testAllFilesPresentInCompilationMultiModule() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    @TestMetadata("compilerPluginUsage.kt")
+    public void testCompilerPluginUsage() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments/compilerPluginUsage.kt");
     }
-
-    @Test
-    @TestMetadata("commonUsage.kt")
-    public void testCommonUsage() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/commonUsage.kt");
-    }
-
-    @Test
-    @TestMetadata("defaultParameterValue.kt")
-    public void testDefaultParameterValue() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/defaultParameterValue.kt");
-    }
-
-    @Test
-    @TestMetadata("internalUsage.kt")
-    public void testInternalUsage() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/internalUsage.kt");
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments")
-    @TestDataPath("$PROJECT_ROOT")
-    public class CodeFragments {
-        @Test
-        public void testAllFilesPresentInCodeFragments() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("compilerPluginUsage.kt")
-        public void testCompilerPluginUsage() throws Exception {
-            runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments/compilerPluginUsage.kt");
-        }
-    }
+  }
 }

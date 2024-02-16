@@ -19,92 +19,92 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder")
 @TestDataPath("$PROJECT_ROOT")
 public class FirScriptLazyBodiesCalculatorTestGenerated extends AbstractFirScriptLazyBodiesCalculatorTest {
+  @Test
+  public void testAllFilesPresentInRawBuilder() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+  }
+
+  @Nested
+  @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Declarations {
     @Test
-    public void testAllFilesPresentInRawBuilder() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    public void testAllFilesPresentInDeclarations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("script.kts")
+    public void testScript() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/script.kts");
+    }
+
+    @Test
+    @TestMetadata("scriptLevelDestructuringWithAnnotation.kts")
+    public void testScriptLevelDestructuringWithAnnotation() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptLevelDestructuringWithAnnotation.kts");
+    }
+
+    @Test
+    @TestMetadata("scriptStatementLevelDestructuringWithAnnotation.kts")
+    public void testScriptStatementLevelDestructuringWithAnnotation() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptStatementLevelDestructuringWithAnnotation.kts");
+    }
+
+    @Test
+    @TestMetadata("scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts")
+    public void testScriptStatementLevelDestructuringWithAnnotationAsLastStatement() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts");
     }
 
     @Nested
-    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations")
+    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts")
     @TestDataPath("$PROJECT_ROOT")
-    public class Declarations {
+    public class Contracts {
+      @Test
+      public void testAllFilesPresentInContracts() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+      }
+
+      @Nested
+      @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax")
+      @TestDataPath("$PROJECT_ROOT")
+      public class NewSyntax {
         @Test
-        public void testAllFilesPresentInDeclarations() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        public void testAllFilesPresentInNewSyntax() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
         }
+      }
 
+      @Nested
+      @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax")
+      @TestDataPath("$PROJECT_ROOT")
+      public class OldSyntax {
         @Test
-        @TestMetadata("script.kts")
-        public void testScript() throws Exception {
-            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/script.kts");
+        public void testAllFilesPresentInOldSyntax() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
         }
-
-        @Test
-        @TestMetadata("scriptLevelDestructuringWithAnnotation.kts")
-        public void testScriptLevelDestructuringWithAnnotation() throws Exception {
-            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptLevelDestructuringWithAnnotation.kts");
-        }
-
-        @Test
-        @TestMetadata("scriptStatementLevelDestructuringWithAnnotation.kts")
-        public void testScriptStatementLevelDestructuringWithAnnotation() throws Exception {
-            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptStatementLevelDestructuringWithAnnotation.kts");
-        }
-
-        @Test
-        @TestMetadata("scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts")
-        public void testScriptStatementLevelDestructuringWithAnnotationAsLastStatement() throws Exception {
-            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts");
-        }
-
-        @Nested
-        @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Contracts {
-            @Test
-            public void testAllFilesPresentInContracts() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
-            }
-
-            @Nested
-            @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax")
-            @TestDataPath("$PROJECT_ROOT")
-            public class NewSyntax {
-                @Test
-                public void testAllFilesPresentInNewSyntax() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
-                }
-            }
-
-            @Nested
-            @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax")
-            @TestDataPath("$PROJECT_ROOT")
-            public class OldSyntax {
-                @Test
-                public void testAllFilesPresentInOldSyntax() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
-                }
-            }
-        }
-
-        @Nested
-        @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType")
-        @TestDataPath("$PROJECT_ROOT")
-        public class NoParameterType {
-            @Test
-            public void testAllFilesPresentInNoParameterType() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
-            }
-        }
+      }
     }
 
     @Nested
-    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions")
+    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType")
     @TestDataPath("$PROJECT_ROOT")
-    public class Expressions {
-        @Test
-        public void testAllFilesPresentInExpressions() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
-        }
+    public class NoParameterType {
+      @Test
+      public void testAllFilesPresentInNoParameterType() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+      }
     }
+  }
+
+  @Nested
+  @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Expressions {
+    @Test
+    public void testAllFilesPresentInExpressions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+  }
 }

@@ -19,44 +19,44 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors")
 @TestDataPath("$PROJECT_ROOT")
 public class SourceNonLocalDeclarationAnchorTestGenerated extends AbstractSourceNonLocalDeclarationAnchorTest {
-    @Test
-    public void testAllFilesPresentInNonLocalDeclarationAnchors() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInNonLocalDeclarationAnchors() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("classWithMembers.kt")
-    public void testClassWithMembers() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/classWithMembers.kt");
-    }
+  @Test
+  @TestMetadata("classWithMembers.kt")
+  public void testClassWithMembers() {
+    runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/classWithMembers.kt");
+  }
 
-    @Test
-    @TestMetadata("localFunctionInsideAnnotationCall.kt")
-    public void testLocalFunctionInsideAnnotationCall() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideAnnotationCall.kt");
-    }
+  @Test
+  @TestMetadata("localFunctionInsideAnnotationCall.kt")
+  public void testLocalFunctionInsideAnnotationCall() {
+    runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideAnnotationCall.kt");
+  }
 
-    @Test
-    @TestMetadata("localFunctionInsideFunctionLiteral.kt")
-    public void testLocalFunctionInsideFunctionLiteral() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideFunctionLiteral.kt");
-    }
+  @Test
+  @TestMetadata("localFunctionInsideFunctionLiteral.kt")
+  public void testLocalFunctionInsideFunctionLiteral() {
+    runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideFunctionLiteral.kt");
+  }
 
-    @Test
-    @TestMetadata("localFunctionInsideLambdaCallInsideStringTemplate.kt")
-    public void testLocalFunctionInsideLambdaCallInsideStringTemplate() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideLambdaCallInsideStringTemplate.kt");
-    }
+  @Test
+  @TestMetadata("localFunctionInsideLambdaCallInsideStringTemplate.kt")
+  public void testLocalFunctionInsideLambdaCallInsideStringTemplate() {
+    runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideLambdaCallInsideStringTemplate.kt");
+  }
 
-    @Test
-    @TestMetadata("localFunctionInsideStringTemplate.kt")
-    public void testLocalFunctionInsideStringTemplate() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideStringTemplate.kt");
-    }
+  @Test
+  @TestMetadata("localFunctionInsideStringTemplate.kt")
+  public void testLocalFunctionInsideStringTemplate() {
+    runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideStringTemplate.kt");
+  }
 
-    @Test
-    @TestMetadata("localFunctionInsideSuperEntryCall.kt")
-    public void testLocalFunctionInsideSuperEntryCall() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideSuperEntryCall.kt");
-    }
+  @Test
+  @TestMetadata("localFunctionInsideSuperEntryCall.kt")
+  public void testLocalFunctionInsideSuperEntryCall() {
+    runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideSuperEntryCall.kt");
+  }
 }

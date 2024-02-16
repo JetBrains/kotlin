@@ -28,21 +28,21 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeDependentAnalysisScriptSourceModuleFunctionClassKindTestGenerated extends AbstractFunctionClassKindTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Dependent,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Dependent,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInFunctionClassKind() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind"), Pattern.compile("^(.+)\\.kts$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInFunctionClassKind() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
 }

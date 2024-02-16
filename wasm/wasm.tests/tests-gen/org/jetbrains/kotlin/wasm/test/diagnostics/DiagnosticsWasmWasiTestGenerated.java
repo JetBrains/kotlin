@@ -19,14 +19,14 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/wasmWasiTests")
 @TestDataPath("$PROJECT_ROOT")
 public class DiagnosticsWasmWasiTestGenerated extends AbstractDiagnosticsWasmWasiTest {
-    @Test
-    public void testAllFilesPresentInWasmWasiTests() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmWasiTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-    }
+  @Test
+  public void testAllFilesPresentInWasmWasiTests() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmWasiTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+  }
 
-    @Test
-    @TestMetadata("external.kt")
-    public void testExternal() throws Exception {
-        runTest("compiler/testData/diagnostics/wasmWasiTests/external.kt");
-    }
+  @Test
+  @TestMetadata("external.kt")
+  public void testExternal() {
+    runTest("compiler/testData/diagnostics/wasmWasiTests/external.kt");
+  }
 }

@@ -23,20 +23,20 @@ import java.util.regex.Pattern;
 @Tag("frontend-fir")
 @FirPipeline()
 public class FirCExportTestStaticGenerated extends AbstractNativeCExportStaticTest {
-    @Test
-    public void testAllFilesPresentInCExport() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CExport"), Pattern.compile("^([^_](.+))$"), null, false);
-    }
+  @Test
+  public void testAllFilesPresentInCExport() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CExport"), Pattern.compile("^([^_](.+))$"), null, false);
+  }
 
-    @Test
-    @TestMetadata("kt36639")
-    public void testKt36639() throws Exception {
-        runTest("native/native.tests/testData/CExport/kt36639/");
-    }
+  @Test
+  @TestMetadata("kt36639")
+  public void testKt36639() {
+    runTest("native/native.tests/testData/CExport/kt36639/");
+  }
 
-    @Test
-    @TestMetadata("smoke0")
-    public void testSmoke0() throws Exception {
-        runTest("native/native.tests/testData/CExport/smoke0/");
-    }
+  @Test
+  @TestMetadata("smoke0")
+  public void testSmoke0() {
+    runTest("native/native.tests/testData/CExport/smoke0/");
+  }
 }

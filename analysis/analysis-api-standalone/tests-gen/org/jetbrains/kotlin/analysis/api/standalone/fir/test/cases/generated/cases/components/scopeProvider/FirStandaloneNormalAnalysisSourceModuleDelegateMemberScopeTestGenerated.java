@@ -28,51 +28,51 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModuleDelegateMemberScopeTestGenerated extends AbstractDelegateMemberScopeTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInDelegatedMemberScope() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInDelegatedMemberScope() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("propertyWithGetter.kt")
-    public void testPropertyWithGetter() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/propertyWithGetter.kt");
-    }
+  @Test
+  @TestMetadata("propertyWithGetter.kt")
+  public void testPropertyWithGetter() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/propertyWithGetter.kt");
+  }
 
-    @Test
-    @TestMetadata("simple.kt")
-    public void testSimple() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/simple.kt");
-    }
+  @Test
+  @TestMetadata("simple.kt")
+  public void testSimple() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/simple.kt");
+  }
 
-    @Test
-    @TestMetadata("simpleLibrary.kt")
-    public void testSimpleLibrary() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/simpleLibrary.kt");
-    }
+  @Test
+  @TestMetadata("simpleLibrary.kt")
+  public void testSimpleLibrary() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/simpleLibrary.kt");
+  }
 
-    @Test
-    @TestMetadata("withImplicitType.kt")
-    public void testWithImplicitType() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/withImplicitType.kt");
-    }
+  @Test
+  @TestMetadata("withImplicitType.kt")
+  public void testWithImplicitType() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/withImplicitType.kt");
+  }
 
-    @Test
-    @TestMetadata("withOverridden.kt")
-    public void testWithOverridden() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/withOverridden.kt");
-    }
+  @Test
+  @TestMetadata("withOverridden.kt")
+  public void testWithOverridden() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/withOverridden.kt");
+  }
 }

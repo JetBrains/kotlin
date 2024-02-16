@@ -28,39 +28,39 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/imports/importAliases")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModuleReferenceImportAliasTestGenerated extends AbstractReferenceImportAliasTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInImportAliases() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/imports/importAliases"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInImportAliases() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/imports/importAliases"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("classAlias.kt")
-    public void testClassAlias() throws Exception {
-        runTest("analysis/analysis-api/testData/imports/importAliases/classAlias.kt");
-    }
+  @Test
+  @TestMetadata("classAlias.kt")
+  public void testClassAlias() {
+    runTest("analysis/analysis-api/testData/imports/importAliases/classAlias.kt");
+  }
 
-    @Test
-    @TestMetadata("functionAlias.kt")
-    public void testFunctionAlias() throws Exception {
-        runTest("analysis/analysis-api/testData/imports/importAliases/functionAlias.kt");
-    }
+  @Test
+  @TestMetadata("functionAlias.kt")
+  public void testFunctionAlias() {
+    runTest("analysis/analysis-api/testData/imports/importAliases/functionAlias.kt");
+  }
 
-    @Test
-    @TestMetadata("propertyAlias.kt")
-    public void testPropertyAlias() throws Exception {
-        runTest("analysis/analysis-api/testData/imports/importAliases/propertyAlias.kt");
-    }
+  @Test
+  @TestMetadata("propertyAlias.kt")
+  public void testPropertyAlias() {
+    runTest("analysis/analysis-api/testData/imports/importAliases/propertyAlias.kt");
+  }
 }

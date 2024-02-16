@@ -28,33 +28,33 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/types/builtins")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModuleBuiltInTypeTestGenerated extends AbstractBuiltInTypeTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInBuiltins() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/builtins"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInBuiltins() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/builtins"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("any.kt")
-    public void testAny() throws Exception {
-        runTest("analysis/analysis-api/testData/types/builtins/any.kt");
-    }
+  @Test
+  @TestMetadata("any.kt")
+  public void testAny() {
+    runTest("analysis/analysis-api/testData/types/builtins/any.kt");
+  }
 
-    @Test
-    @TestMetadata("anyWithoutBuiltins.kt")
-    public void testAnyWithoutBuiltins() throws Exception {
-        runTest("analysis/analysis-api/testData/types/builtins/anyWithoutBuiltins.kt");
-    }
+  @Test
+  @TestMetadata("anyWithoutBuiltins.kt")
+  public void testAnyWithoutBuiltins() {
+    runTest("analysis/analysis-api/testData/types/builtins/anyWithoutBuiltins.kt");
+  }
 }

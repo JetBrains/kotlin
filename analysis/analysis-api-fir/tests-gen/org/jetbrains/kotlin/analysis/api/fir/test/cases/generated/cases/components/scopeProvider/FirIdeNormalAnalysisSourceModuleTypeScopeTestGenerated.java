@@ -28,69 +28,69 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/typeScope")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleTypeScopeTestGenerated extends AbstractTypeScopeTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInTypeScope() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/typeScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInTypeScope() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/typeScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("errorType.kt")
-    public void testErrorType() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/errorType.kt");
-    }
+  @Test
+  @TestMetadata("errorType.kt")
+  public void testErrorType() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/errorType.kt");
+  }
 
-    @Test
-    @TestMetadata("innerClassTypeParamsSubstitution.kt")
-    public void testInnerClassTypeParamsSubstitution() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/innerClassTypeParamsSubstitution.kt");
-    }
+  @Test
+  @TestMetadata("innerClassTypeParamsSubstitution.kt")
+  public void testInnerClassTypeParamsSubstitution() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/innerClassTypeParamsSubstitution.kt");
+  }
 
-    @Test
-    @TestMetadata("intList.kt")
-    public void testIntList() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/intList.kt");
-    }
+  @Test
+  @TestMetadata("intList.kt")
+  public void testIntList() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/intList.kt");
+  }
 
-    @Test
-    @TestMetadata("outerClassTypeParamsSubstitution.kt")
-    public void testOuterClassTypeParamsSubstitution() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/outerClassTypeParamsSubstitution.kt");
-    }
+  @Test
+  @TestMetadata("outerClassTypeParamsSubstitution.kt")
+  public void testOuterClassTypeParamsSubstitution() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/outerClassTypeParamsSubstitution.kt");
+  }
 
-    @Test
-    @TestMetadata("outerTypeParamsSubstitution.kt")
-    public void testOuterTypeParamsSubstitution() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/outerTypeParamsSubstitution.kt");
-    }
+  @Test
+  @TestMetadata("outerTypeParamsSubstitution.kt")
+  public void testOuterTypeParamsSubstitution() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/outerTypeParamsSubstitution.kt");
+  }
 
-    @Test
-    @TestMetadata("substitutedTypeFromLib.kt")
-    public void testSubstitutedTypeFromLib() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/substitutedTypeFromLib.kt");
-    }
+  @Test
+  @TestMetadata("substitutedTypeFromLib.kt")
+  public void testSubstitutedTypeFromLib() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/substitutedTypeFromLib.kt");
+  }
 
-    @Test
-    @TestMetadata("typeParamList.kt")
-    public void testTypeParamList() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/typeParamList.kt");
-    }
+  @Test
+  @TestMetadata("typeParamList.kt")
+  public void testTypeParamList() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/typeParamList.kt");
+  }
 
-    @Test
-    @TestMetadata("typeWithSyntheticProperties.kt")
-    public void testTypeWithSyntheticProperties() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/typeWithSyntheticProperties.kt");
-    }
+  @Test
+  @TestMetadata("typeWithSyntheticProperties.kt")
+  public void testTypeWithSyntheticProperties() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/typeWithSyntheticProperties.kt");
+  }
 }

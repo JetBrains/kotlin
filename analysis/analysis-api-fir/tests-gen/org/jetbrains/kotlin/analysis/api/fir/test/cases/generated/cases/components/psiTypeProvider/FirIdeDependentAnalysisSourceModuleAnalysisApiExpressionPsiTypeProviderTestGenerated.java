@@ -28,75 +28,75 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeDependentAnalysisSourceModuleAnalysisApiExpressionPsiTypeProviderTestGenerated extends AbstractAnalysisApiExpressionPsiTypeProviderTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Dependent,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Dependent,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInForExpression() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInForExpression() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("capturedBoundType.kt")
-    public void testCapturedBoundType() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/capturedBoundType.kt");
-    }
+  @Test
+  @TestMetadata("capturedBoundType.kt")
+  public void testCapturedBoundType() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/capturedBoundType.kt");
+  }
 
-    @Test
-    @TestMetadata("class_object_call.kt")
-    public void testClass_object_call() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/class_object_call.kt");
-    }
+  @Test
+  @TestMetadata("class_object_call.kt")
+  public void testClass_object_call() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/class_object_call.kt");
+  }
 
-    @Test
-    @TestMetadata("class_object_constructor.kt")
-    public void testClass_object_constructor() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/class_object_constructor.kt");
-    }
+  @Test
+  @TestMetadata("class_object_constructor.kt")
+  public void testClass_object_constructor() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/class_object_constructor.kt");
+  }
 
-    @Test
-    @TestMetadata("errorType.kt")
-    public void testErrorType() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/errorType.kt");
-    }
+  @Test
+  @TestMetadata("errorType.kt")
+  public void testErrorType() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/errorType.kt");
+  }
 
-    @Test
-    @TestMetadata("KTIJ25461.kt")
-    public void testKTIJ25461() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/KTIJ25461.kt");
-    }
+  @Test
+  @TestMetadata("KTIJ25461.kt")
+  public void testKTIJ25461() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/KTIJ25461.kt");
+  }
 
-    @Test
-    @TestMetadata("localClassWithUnresolvedSuperType.kt")
-    public void testLocalClassWithUnresolvedSuperType() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/localClassWithUnresolvedSuperType.kt");
-    }
+  @Test
+  @TestMetadata("localClassWithUnresolvedSuperType.kt")
+  public void testLocalClassWithUnresolvedSuperType() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/localClassWithUnresolvedSuperType.kt");
+  }
 
-    @Test
-    @TestMetadata("recursiveTypeParameter_localSimple.kt")
-    public void testRecursiveTypeParameter_localSimple() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/recursiveTypeParameter_localSimple.kt");
-    }
+  @Test
+  @TestMetadata("recursiveTypeParameter_localSimple.kt")
+  public void testRecursiveTypeParameter_localSimple() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/recursiveTypeParameter_localSimple.kt");
+  }
 
-    @Test
-    @TestMetadata("recursiveTypeParameter_localWithTypeParameter.kt")
-    public void testRecursiveTypeParameter_localWithTypeParameter() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/recursiveTypeParameter_localWithTypeParameter.kt");
-    }
+  @Test
+  @TestMetadata("recursiveTypeParameter_localWithTypeParameter.kt")
+  public void testRecursiveTypeParameter_localWithTypeParameter() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/recursiveTypeParameter_localWithTypeParameter.kt");
+  }
 
-    @Test
-    @TestMetadata("typeParamFlexibleUpperBound.kt")
-    public void testTypeParamFlexibleUpperBound() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/typeParamFlexibleUpperBound.kt");
-    }
+  @Test
+  @TestMetadata("typeParamFlexibleUpperBound.kt")
+  public void testTypeParamFlexibleUpperBound() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/typeParamFlexibleUpperBound.kt");
+  }
 }

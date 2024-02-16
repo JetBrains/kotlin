@@ -19,20 +19,20 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/noarg/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class DiagnosticsTestForNoArgGenerated extends AbstractDiagnosticsTestForNoArg {
-    @Test
-    public void testAllFilesPresentInDiagnostics() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-    }
+  @Test
+  public void testAllFilesPresentInDiagnostics() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+  }
 
-    @Test
-    @TestMetadata("innerClass.kt")
-    public void testInnerClass() throws Exception {
-        runTest("plugins/noarg/testData/diagnostics/innerClass.kt");
-    }
+  @Test
+  @TestMetadata("innerClass.kt")
+  public void testInnerClass() {
+    runTest("plugins/noarg/testData/diagnostics/innerClass.kt");
+  }
 
-    @Test
-    @TestMetadata("noNoargCtorInSuperclass.kt")
-    public void testNoNoargCtorInSuperclass() throws Exception {
-        runTest("plugins/noarg/testData/diagnostics/noNoargCtorInSuperclass.kt");
-    }
+  @Test
+  @TestMetadata("noNoargCtorInSuperclass.kt")
+  public void testNoNoargCtorInSuperclass() {
+    runTest("plugins/noarg/testData/diagnostics/noNoargCtorInSuperclass.kt");
+  }
 }

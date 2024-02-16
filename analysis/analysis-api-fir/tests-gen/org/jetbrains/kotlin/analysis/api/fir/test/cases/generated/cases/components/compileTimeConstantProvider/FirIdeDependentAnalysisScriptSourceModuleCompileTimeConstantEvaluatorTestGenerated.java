@@ -28,31 +28,31 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeDependentAnalysisScriptSourceModuleCompileTimeConstantEvaluatorTestGenerated extends AbstractCompileTimeConstantEvaluatorTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Dependent,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Dependent,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
+  @Test
+  public void testAllFilesPresentInEvaluate() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode")
+  @TestDataPath("$PROJECT_ROOT")
+  public class IncompleteCode {
     @Test
-    public void testAllFilesPresentInEvaluate() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    public void testAllFilesPresentInIncompleteCode() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode")
-    @TestDataPath("$PROJECT_ROOT")
-    public class IncompleteCode {
-        @Test
-        public void testAllFilesPresentInIncompleteCode() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
+  }
 }

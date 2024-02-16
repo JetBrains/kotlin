@@ -28,31 +28,31 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/importOptimizer/analyseImports")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisScriptSourceModuleAnalysisApiImportOptimizerTestGenerated extends AbstractAnalysisApiImportOptimizerTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
+  @Test
+  public void testAllFilesPresentInAnalyseImports() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/importOptimizer/analyseImports"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ReferencesWithErrors {
     @Test
-    public void testAllFilesPresentInAnalyseImports() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/importOptimizer/analyseImports"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    public void testAllFilesPresentInReferencesWithErrors() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors")
-    @TestDataPath("$PROJECT_ROOT")
-    public class ReferencesWithErrors {
-        @Test
-        public void testAllFilesPresentInReferencesWithErrors() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
+  }
 }

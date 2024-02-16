@@ -20,116 +20,116 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/fir-plugin-prototype/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirLightTreePluginBlackBoxCodegenTest {
-    @Test
-    public void testAllFilesPresentInBox() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-    }
+  @Test
+  public void testAllFilesPresentInBox() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+  }
 
-    @Test
-    @TestMetadata("annotationsGeneratedInBackend_mpp.kt")
-    public void testAnnotationsGeneratedInBackend_mpp() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/annotationsGeneratedInBackend_mpp.kt");
-    }
+  @Test
+  @TestMetadata("annotationsGeneratedInBackend_mpp.kt")
+  public void testAnnotationsGeneratedInBackend_mpp() {
+    runTest("plugins/fir-plugin-prototype/testData/box/annotationsGeneratedInBackend_mpp.kt");
+  }
 
-    @Test
-    @TestMetadata("builtins.kt")
-    public void testBuiltins() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/builtins.kt");
-    }
+  @Test
+  @TestMetadata("builtins.kt")
+  public void testBuiltins() {
+    runTest("plugins/fir-plugin-prototype/testData/box/builtins.kt");
+  }
 
-    @Test
-    @TestMetadata("classWithAllPropertiesConstructor.kt")
-    public void testClassWithAllPropertiesConstructor() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/classWithAllPropertiesConstructor.kt");
-    }
+  @Test
+  @TestMetadata("classWithAllPropertiesConstructor.kt")
+  public void testClassWithAllPropertiesConstructor() {
+    runTest("plugins/fir-plugin-prototype/testData/box/classWithAllPropertiesConstructor.kt");
+  }
 
-    @Test
-    @TestMetadata("classWithCompanionObject.kt")
-    public void testClassWithCompanionObject() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/classWithCompanionObject.kt");
-    }
+  @Test
+  @TestMetadata("classWithCompanionObject.kt")
+  public void testClassWithCompanionObject() {
+    runTest("plugins/fir-plugin-prototype/testData/box/classWithCompanionObject.kt");
+  }
 
-    @Test
-    @TestMetadata("classWithGeneratedMembersAndNestedClass.kt")
-    public void testClassWithGeneratedMembersAndNestedClass() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/classWithGeneratedMembersAndNestedClass.kt");
-    }
+  @Test
+  @TestMetadata("classWithGeneratedMembersAndNestedClass.kt")
+  public void testClassWithGeneratedMembersAndNestedClass() {
+    runTest("plugins/fir-plugin-prototype/testData/box/classWithGeneratedMembersAndNestedClass.kt");
+  }
 
-    @Test
-    @TestMetadata("composableFunction.kt")
-    public void testComposableFunction() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/composableFunction.kt");
-    }
+  @Test
+  @TestMetadata("composableFunction.kt")
+  public void testComposableFunction() {
+    runTest("plugins/fir-plugin-prototype/testData/box/composableFunction.kt");
+  }
 
-    @Test
-    @TestMetadata("expectComposableFunction.kt")
-    public void testExpectComposableFunction() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/expectComposableFunction.kt");
-    }
+  @Test
+  @TestMetadata("expectComposableFunction.kt")
+  public void testExpectComposableFunction() {
+    runTest("plugins/fir-plugin-prototype/testData/box/expectComposableFunction.kt");
+  }
 
-    @Test
-    @TestMetadata("extendsJava.kt")
-    public void testExtendsJava() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/extendsJava.kt");
-    }
+  @Test
+  @TestMetadata("extendsJava.kt")
+  public void testExtendsJava() {
+    runTest("plugins/fir-plugin-prototype/testData/box/extendsJava.kt");
+  }
 
-    @Test
-    @TestMetadata("generatedClassWithMembersAndNestedClasses.kt")
-    public void testGeneratedClassWithMembersAndNestedClasses() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/generatedClassWithMembersAndNestedClasses.kt");
-    }
+  @Test
+  @TestMetadata("generatedClassWithMembersAndNestedClasses.kt")
+  public void testGeneratedClassWithMembersAndNestedClasses() {
+    runTest("plugins/fir-plugin-prototype/testData/box/generatedClassWithMembersAndNestedClasses.kt");
+  }
 
-    @Test
-    @TestMetadata("localClassWithCompanionObject.kt")
-    public void testLocalClassWithCompanionObject() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/localClassWithCompanionObject.kt");
-    }
+  @Test
+  @TestMetadata("localClassWithCompanionObject.kt")
+  public void testLocalClassWithCompanionObject() {
+    runTest("plugins/fir-plugin-prototype/testData/box/localClassWithCompanionObject.kt");
+  }
 
-    @Test
-    @TestMetadata("metaAnnotationFromLibrary.kt")
-    public void testMetaAnnotationFromLibrary() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/metaAnnotationFromLibrary.kt");
-    }
+  @Test
+  @TestMetadata("metaAnnotationFromLibrary.kt")
+  public void testMetaAnnotationFromLibrary() {
+    runTest("plugins/fir-plugin-prototype/testData/box/metaAnnotationFromLibrary.kt");
+  }
 
-    @Test
-    @TestMetadata("newSupertype.kt")
-    public void testNewSupertype() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/newSupertype.kt");
-    }
+  @Test
+  @TestMetadata("newSupertype.kt")
+  public void testNewSupertype() {
+    runTest("plugins/fir-plugin-prototype/testData/box/newSupertype.kt");
+  }
 
-    @Test
-    @TestMetadata("nullableComposableParameterAcrossModules.kt")
-    public void testNullableComposableParameterAcrossModules() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/nullableComposableParameterAcrossModules.kt");
-    }
+  @Test
+  @TestMetadata("nullableComposableParameterAcrossModules.kt")
+  public void testNullableComposableParameterAcrossModules() {
+    runTest("plugins/fir-plugin-prototype/testData/box/nullableComposableParameterAcrossModules.kt");
+  }
 
-    @Test
-    @TestMetadata("replaceActualFunctionBodyWitExpectDefaultValue.kt")
-    public void testReplaceActualFunctionBodyWitExpectDefaultValue() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/replaceActualFunctionBodyWitExpectDefaultValue.kt");
-    }
+  @Test
+  @TestMetadata("replaceActualFunctionBodyWitExpectDefaultValue.kt")
+  public void testReplaceActualFunctionBodyWitExpectDefaultValue() {
+    runTest("plugins/fir-plugin-prototype/testData/box/replaceActualFunctionBodyWitExpectDefaultValue.kt");
+  }
 
-    @Test
-    @TestMetadata("serializer.kt")
-    public void testSerializer() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/serializer.kt");
-    }
+  @Test
+  @TestMetadata("serializer.kt")
+  public void testSerializer() {
+    runTest("plugins/fir-plugin-prototype/testData/box/serializer.kt");
+  }
 
-    @Test
-    @TestMetadata("superCompiledClassAnnotation.kt")
-    public void testSuperCompiledClassAnnotation() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/superCompiledClassAnnotation.kt");
-    }
+  @Test
+  @TestMetadata("superCompiledClassAnnotation.kt")
+  public void testSuperCompiledClassAnnotation() {
+    runTest("plugins/fir-plugin-prototype/testData/box/superCompiledClassAnnotation.kt");
+  }
 
-    @Test
-    @TestMetadata("superJavaClassAnnotation.kt")
-    public void testSuperJavaClassAnnotation() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/superJavaClassAnnotation.kt");
-    }
+  @Test
+  @TestMetadata("superJavaClassAnnotation.kt")
+  public void testSuperJavaClassAnnotation() {
+    runTest("plugins/fir-plugin-prototype/testData/box/superJavaClassAnnotation.kt");
+  }
 
-    @Test
-    @TestMetadata("topLevelCallables.kt")
-    public void testTopLevelCallables() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/topLevelCallables.kt");
-    }
+  @Test
+  @TestMetadata("topLevelCallables.kt")
+  public void testTopLevelCallables() {
+    runTest("plugins/fir-plugin-prototype/testData/box/topLevelCallables.kt");
+  }
 }

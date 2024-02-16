@@ -21,47 +21,47 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalK1JsKlibMultiplatformJsCompilerRunnerTestGenerated extends AbstractIncrementalK1JsKlibMultiplatformJsCompilerRunnerTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  }
+
+  public void testAllFilesPresentInAllPlatforms() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms"), Pattern.compile("^([^\\.]+)$"), null, true);
+  }
+
+  @TestMetadata("touchActual")
+  public void testTouchActual() {
+    runTest("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual/");
+  }
+
+  @TestMetadata("touchExpect")
+  public void testTouchExpect() {
+    runTest("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect/");
+  }
+
+  @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class TouchActual extends AbstractIncrementalK1JsKlibMultiplatformJsCompilerRunnerTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInAllPlatforms() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms"), Pattern.compile("^([^\\.]+)$"), null, true);
+    public void testAllFilesPresentInTouchActual() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+    }
+  }
+
+  @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class TouchExpect extends AbstractIncrementalK1JsKlibMultiplatformJsCompilerRunnerTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    @TestMetadata("touchActual")
-    public void testTouchActual() throws Exception {
-        runTest("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual/");
+    public void testAllFilesPresentInTouchExpect() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
-
-    @TestMetadata("touchExpect")
-    public void testTouchExpect() throws Exception {
-        runTest("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect/");
-    }
-
-    @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class TouchActual extends AbstractIncrementalK1JsKlibMultiplatformJsCompilerRunnerTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInTouchActual() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual"), Pattern.compile("^([^\\.]+)$"), null, true);
-        }
-    }
-
-    @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class TouchExpect extends AbstractIncrementalK1JsKlibMultiplatformJsCompilerRunnerTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInTouchExpect() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect"), Pattern.compile("^([^\\.]+)$"), null, true);
-        }
-    }
+  }
 }

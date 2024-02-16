@@ -19,32 +19,32 @@ import java.util.regex.Pattern;
 @TestMetadata("native/swift/swift-export-standalone/testData")
 @TestDataPath("$PROJECT_ROOT")
 public class SwiftExportRunnerTest extends AbstractSwiftRunnerTest {
-    @Test
-    public void testAllFilesPresentInTestData() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData"), Pattern.compile("^([^\\.]+)$"), null, false);
-    }
+  @Test
+  public void testAllFilesPresentInTestData() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData"), Pattern.compile("^([^\\.]+)$"), null, false);
+  }
 
-    @Test
-    @TestMetadata("documentation")
-    public void testDocumentation() throws Exception {
-        runTest("native/swift/swift-export-standalone/testData/documentation/");
-    }
+  @Test
+  @TestMetadata("documentation")
+  public void testDocumentation() {
+    runTest("native/swift/swift-export-standalone/testData/documentation/");
+  }
 
-    @Test
-    @TestMetadata("functions")
-    public void testFunctions() throws Exception {
-        runTest("native/swift/swift-export-standalone/testData/functions/");
-    }
+  @Test
+  @TestMetadata("functions")
+  public void testFunctions() {
+    runTest("native/swift/swift-export-standalone/testData/functions/");
+  }
 
-    @Test
-    @TestMetadata("no_package")
-    public void testNo_package() throws Exception {
-        runTest("native/swift/swift-export-standalone/testData/no_package/");
-    }
+  @Test
+  @TestMetadata("no_package")
+  public void testNo_package() {
+    runTest("native/swift/swift-export-standalone/testData/no_package/");
+  }
 
-    @Test
-    @TestMetadata("variables")
-    public void testVariables() throws Exception {
-        runTest("native/swift/swift-export-standalone/testData/variables/");
-    }
+  @Test
+  @TestMetadata("variables")
+  public void testVariables() {
+    runTest("native/swift/swift-export-standalone/testData/variables/");
+  }
 }

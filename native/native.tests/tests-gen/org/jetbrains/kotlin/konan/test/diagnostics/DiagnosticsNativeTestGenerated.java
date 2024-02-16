@@ -19,146 +19,146 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/nativeTests")
 @TestDataPath("$PROJECT_ROOT")
 public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTest {
-    @Test
-    public void testAllFilesPresentInNativeTests() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "specialBackendChecks");
-    }
+  @Test
+  public void testAllFilesPresentInNativeTests() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "specialBackendChecks");
+  }
 
-    @Test
-    @TestMetadata("arrays_after.kt")
-    public void testArrays_after() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/arrays_after.kt");
-    }
+  @Test
+  @TestMetadata("arrays_after.kt")
+  public void testArrays_after() {
+    runTest("compiler/testData/diagnostics/nativeTests/arrays_after.kt");
+  }
 
-    @Test
-    @TestMetadata("cloneableInNative.kt")
-    public void testCloneableInNative() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/cloneableInNative.kt");
-    }
+  @Test
+  @TestMetadata("cloneableInNative.kt")
+  public void testCloneableInNative() {
+    runTest("compiler/testData/diagnostics/nativeTests/cloneableInNative.kt");
+  }
 
-    @Test
-    @TestMetadata("forwardDeclarations.kt")
-    public void testForwardDeclarations() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/forwardDeclarations.kt");
-    }
+  @Test
+  @TestMetadata("forwardDeclarations.kt")
+  public void testForwardDeclarations() {
+    runTest("compiler/testData/diagnostics/nativeTests/forwardDeclarations.kt");
+  }
 
-    @Test
-    @TestMetadata("identifiers.kt")
-    public void testIdentifiers() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/identifiers.kt");
-    }
+  @Test
+  @TestMetadata("identifiers.kt")
+  public void testIdentifiers() {
+    runTest("compiler/testData/diagnostics/nativeTests/identifiers.kt");
+  }
 
-    @Test
-    @TestMetadata("isInitialized.kt")
-    public void testIsInitialized() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/isInitialized.kt");
-    }
+  @Test
+  @TestMetadata("isInitialized.kt")
+  public void testIsInitialized() {
+    runTest("compiler/testData/diagnostics/nativeTests/isInitialized.kt");
+  }
 
-    @Test
-    @TestMetadata("isInitializedError.kt")
-    public void testIsInitializedError() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/isInitializedError.kt");
-    }
+  @Test
+  @TestMetadata("isInitializedError.kt")
+  public void testIsInitializedError() {
+    runTest("compiler/testData/diagnostics/nativeTests/isInitializedError.kt");
+  }
 
-    @Test
-    @TestMetadata("nativeProtectedFunCall.kt")
-    public void testNativeProtectedFunCall() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/nativeProtectedFunCall.kt");
-    }
+  @Test
+  @TestMetadata("nativeProtectedFunCall.kt")
+  public void testNativeProtectedFunCall() {
+    runTest("compiler/testData/diagnostics/nativeTests/nativeProtectedFunCall.kt");
+  }
 
-    @Test
-    @TestMetadata("noObjcOverrideConflictingOverloadsDisabled.kt")
-    public void testNoObjcOverrideConflictingOverloadsDisabled() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/noObjcOverrideConflictingOverloadsDisabled.kt");
-    }
+  @Test
+  @TestMetadata("noObjcOverrideConflictingOverloadsDisabled.kt")
+  public void testNoObjcOverrideConflictingOverloadsDisabled() {
+    runTest("compiler/testData/diagnostics/nativeTests/noObjcOverrideConflictingOverloadsDisabled.kt");
+  }
 
-    @Test
-    @TestMetadata("noObjcOverrideConflictingOverloadsEnabled.kt")
-    public void testNoObjcOverrideConflictingOverloadsEnabled() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/noObjcOverrideConflictingOverloadsEnabled.kt");
-    }
+  @Test
+  @TestMetadata("noObjcOverrideConflictingOverloadsEnabled.kt")
+  public void testNoObjcOverrideConflictingOverloadsEnabled() {
+    runTest("compiler/testData/diagnostics/nativeTests/noObjcOverrideConflictingOverloadsEnabled.kt");
+  }
 
-    @Test
-    @TestMetadata("objCName.kt")
-    public void testObjCName() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/objCName.kt");
-    }
+  @Test
+  @TestMetadata("objCName.kt")
+  public void testObjCName() {
+    runTest("compiler/testData/diagnostics/nativeTests/objCName.kt");
+  }
 
-    @Test
-    @TestMetadata("objCName2.kt")
-    public void testObjCName2() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/objCName2.kt");
-    }
+  @Test
+  @TestMetadata("objCName2.kt")
+  public void testObjCName2() {
+    runTest("compiler/testData/diagnostics/nativeTests/objCName2.kt");
+  }
 
-    @Test
-    @TestMetadata("objCName3.kt")
-    public void testObjCName3() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/objCName3.kt");
-    }
+  @Test
+  @TestMetadata("objCName3.kt")
+  public void testObjCName3() {
+    runTest("compiler/testData/diagnostics/nativeTests/objCName3.kt");
+  }
 
-    @Test
-    @TestMetadata("objCName4.kt")
-    public void testObjCName4() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/objCName4.kt");
-    }
+  @Test
+  @TestMetadata("objCName4.kt")
+  public void testObjCName4() {
+    runTest("compiler/testData/diagnostics/nativeTests/objCName4.kt");
+  }
 
-    @Test
-    @TestMetadata("objCName5.kt")
-    public void testObjCName5() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/objCName5.kt");
-    }
+  @Test
+  @TestMetadata("objCName5.kt")
+  public void testObjCName5() {
+    runTest("compiler/testData/diagnostics/nativeTests/objCName5.kt");
+  }
 
-    @Test
-    @TestMetadata("objCRefinement.kt")
-    public void testObjCRefinement() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/objCRefinement.kt");
-    }
+  @Test
+  @TestMetadata("objCRefinement.kt")
+  public void testObjCRefinement() {
+    runTest("compiler/testData/diagnostics/nativeTests/objCRefinement.kt");
+  }
 
-    @Test
-    @TestMetadata("objcOverrideApplicability.kt")
-    public void testObjcOverrideApplicability() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/objcOverrideApplicability.kt");
-    }
+  @Test
+  @TestMetadata("objcOverrideApplicability.kt")
+  public void testObjcOverrideApplicability() {
+    runTest("compiler/testData/diagnostics/nativeTests/objcOverrideApplicability.kt");
+  }
 
-    @Test
-    @TestMetadata("resolveToDelegatedProperty.kt")
-    public void testResolveToDelegatedProperty() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/resolveToDelegatedProperty.kt");
-    }
+  @Test
+  @TestMetadata("resolveToDelegatedProperty.kt")
+  public void testResolveToDelegatedProperty() {
+    runTest("compiler/testData/diagnostics/nativeTests/resolveToDelegatedProperty.kt");
+  }
 
-    @Test
-    @TestMetadata("sharedImmutable.kt")
-    public void testSharedImmutable() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/sharedImmutable.kt");
-    }
+  @Test
+  @TestMetadata("sharedImmutable.kt")
+  public void testSharedImmutable() {
+    runTest("compiler/testData/diagnostics/nativeTests/sharedImmutable.kt");
+  }
 
-    @Test
-    @TestMetadata("stdClassAndTypealiasAmbiguity.kt")
-    public void testStdClassAndTypealiasAmbiguity() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/stdClassAndTypealiasAmbiguity.kt");
-    }
+  @Test
+  @TestMetadata("stdClassAndTypealiasAmbiguity.kt")
+  public void testStdClassAndTypealiasAmbiguity() {
+    runTest("compiler/testData/diagnostics/nativeTests/stdClassAndTypealiasAmbiguity.kt");
+  }
 
-    @Test
-    @TestMetadata("threadLocal.kt")
-    public void testThreadLocal() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/threadLocal.kt");
-    }
+  @Test
+  @TestMetadata("threadLocal.kt")
+  public void testThreadLocal() {
+    runTest("compiler/testData/diagnostics/nativeTests/threadLocal.kt");
+  }
 
-    @Test
-    @TestMetadata("throws.kt")
-    public void testThrows() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/throws.kt");
-    }
+  @Test
+  @TestMetadata("throws.kt")
+  public void testThrows() {
+    runTest("compiler/testData/diagnostics/nativeTests/throws.kt");
+  }
 
-    @Test
-    @TestMetadata("throwsClash.kt")
-    public void testThrowsClash() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/throwsClash.kt");
-    }
+  @Test
+  @TestMetadata("throwsClash.kt")
+  public void testThrowsClash() {
+    runTest("compiler/testData/diagnostics/nativeTests/throwsClash.kt");
+  }
 
-    @Test
-    @TestMetadata("topLevelSingleton.kt")
-    public void testTopLevelSingleton() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/topLevelSingleton.kt");
-    }
+  @Test
+  @TestMetadata("topLevelSingleton.kt")
+  public void testTopLevelSingleton() {
+    runTest("compiler/testData/diagnostics/nativeTests/topLevelSingleton.kt");
+  }
 }

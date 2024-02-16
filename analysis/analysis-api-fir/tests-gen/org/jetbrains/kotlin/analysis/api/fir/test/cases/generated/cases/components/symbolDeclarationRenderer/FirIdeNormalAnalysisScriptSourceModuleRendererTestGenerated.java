@@ -28,31 +28,31 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisScriptSourceModuleRendererTestGenerated extends AbstractRendererTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
+  @Test
+  public void testAllFilesPresentInRenderDeclaration() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Types {
     @Test
-    public void testAllFilesPresentInRenderDeclaration() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    public void testAllFilesPresentInTypes() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Types {
-        @Test
-        public void testAllFilesPresentInTypes() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
+  }
 }

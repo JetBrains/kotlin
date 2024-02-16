@@ -28,27 +28,27 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByDelegatedMemberScope")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleContainingDeclarationProviderByDelegatedMemberScopeTestGenerated extends AbstractContainingDeclarationProviderByDelegatedMemberScopeTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInContainingDeclarationByDelegatedMemberScope() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByDelegatedMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInContainingDeclarationByDelegatedMemberScope() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByDelegatedMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("delegation.kt")
-    public void testDelegation() throws Exception {
-        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByDelegatedMemberScope/delegation.kt");
-    }
+  @Test
+  @TestMetadata("delegation.kt")
+  public void testDelegation() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByDelegatedMemberScope/delegation.kt");
+  }
 }

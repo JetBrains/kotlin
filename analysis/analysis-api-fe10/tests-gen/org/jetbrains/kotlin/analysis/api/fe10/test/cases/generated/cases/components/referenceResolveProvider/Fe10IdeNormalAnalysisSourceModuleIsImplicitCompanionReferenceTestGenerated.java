@@ -28,69 +28,69 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion")
 @TestDataPath("$PROJECT_ROOT")
 public class Fe10IdeNormalAnalysisSourceModuleIsImplicitCompanionReferenceTestGenerated extends AbstractIsImplicitCompanionReferenceTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFe10TestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fe10,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFe10TestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fe10,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInIsImplicitReferenceToCompanion() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInIsImplicitReferenceToCompanion() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("classAccessWithExplicitReferenceToCompanion.kt")
-    public void testClassAccessWithExplicitReferenceToCompanion() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/classAccessWithExplicitReferenceToCompanion.kt");
-    }
+  @Test
+  @TestMetadata("classAccessWithExplicitReferenceToCompanion.kt")
+  public void testClassAccessWithExplicitReferenceToCompanion() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/classAccessWithExplicitReferenceToCompanion.kt");
+  }
 
-    @Test
-    @TestMetadata("classAccessWithExplicitReferenceToNamedCompanion.kt")
-    public void testClassAccessWithExplicitReferenceToNamedCompanion() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/classAccessWithExplicitReferenceToNamedCompanion.kt");
-    }
+  @Test
+  @TestMetadata("classAccessWithExplicitReferenceToNamedCompanion.kt")
+  public void testClassAccessWithExplicitReferenceToNamedCompanion() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/classAccessWithExplicitReferenceToNamedCompanion.kt");
+  }
 
-    @Test
-    @TestMetadata("constructorCall.kt")
-    public void testConstructorCall() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/constructorCall.kt");
-    }
+  @Test
+  @TestMetadata("constructorCall.kt")
+  public void testConstructorCall() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/constructorCall.kt");
+  }
 
-    @Test
-    @TestMetadata("constructorCallWithInvokeInCompanion.kt")
-    public void testConstructorCallWithInvokeInCompanion() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/constructorCallWithInvokeInCompanion.kt");
-    }
+  @Test
+  @TestMetadata("constructorCallWithInvokeInCompanion.kt")
+  public void testConstructorCallWithInvokeInCompanion() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/constructorCallWithInvokeInCompanion.kt");
+  }
 
-    @Test
-    @TestMetadata("explicitReferenceToCompanion.kt")
-    public void testExplicitReferenceToCompanion() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/explicitReferenceToCompanion.kt");
-    }
+  @Test
+  @TestMetadata("explicitReferenceToCompanion.kt")
+  public void testExplicitReferenceToCompanion() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/explicitReferenceToCompanion.kt");
+  }
 
-    @Test
-    @TestMetadata("explicitReferenceToNamedCompanion.kt")
-    public void testExplicitReferenceToNamedCompanion() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/explicitReferenceToNamedCompanion.kt");
-    }
+  @Test
+  @TestMetadata("explicitReferenceToNamedCompanion.kt")
+  public void testExplicitReferenceToNamedCompanion() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/explicitReferenceToNamedCompanion.kt");
+  }
 
-    @Test
-    @TestMetadata("impicitReferenceToCompanion.kt")
-    public void testImpicitReferenceToCompanion() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/impicitReferenceToCompanion.kt");
-    }
+  @Test
+  @TestMetadata("impicitReferenceToCompanion.kt")
+  public void testImpicitReferenceToCompanion() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/impicitReferenceToCompanion.kt");
+  }
 
-    @Test
-    @TestMetadata("qualifierReferenceToClassWithCompanion.kt")
-    public void testQualifierReferenceToClassWithCompanion() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/qualifierReferenceToClassWithCompanion.kt");
-    }
+  @Test
+  @TestMetadata("qualifierReferenceToClassWithCompanion.kt")
+  public void testQualifierReferenceToClassWithCompanion() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/qualifierReferenceToClassWithCompanion.kt");
+  }
 }

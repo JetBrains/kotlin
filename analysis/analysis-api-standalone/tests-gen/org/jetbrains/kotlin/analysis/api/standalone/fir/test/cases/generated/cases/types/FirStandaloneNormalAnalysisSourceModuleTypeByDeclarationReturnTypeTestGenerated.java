@@ -28,45 +28,45 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/types/byDeclarationReturnType")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModuleTypeByDeclarationReturnTypeTestGenerated extends AbstractTypeByDeclarationReturnTypeTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInByDeclarationReturnType() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/byDeclarationReturnType"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInByDeclarationReturnType() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/byDeclarationReturnType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("anonymousFunction.kt")
-    public void testAnonymousFunction() throws Exception {
-        runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/anonymousFunction.kt");
-    }
+  @Test
+  @TestMetadata("anonymousFunction.kt")
+  public void testAnonymousFunction() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/anonymousFunction.kt");
+  }
 
-    @Test
-    @TestMetadata("localClassType.kt")
-    public void testLocalClassType() throws Exception {
-        runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localClassType.kt");
-    }
+  @Test
+  @TestMetadata("localClassType.kt")
+  public void testLocalClassType() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localClassType.kt");
+  }
 
-    @Test
-    @TestMetadata("localClassWithTypeArgumentsType.kt")
-    public void testLocalClassWithTypeArgumentsType() throws Exception {
-        runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localClassWithTypeArgumentsType.kt");
-    }
+  @Test
+  @TestMetadata("localClassWithTypeArgumentsType.kt")
+  public void testLocalClassWithTypeArgumentsType() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localClassWithTypeArgumentsType.kt");
+  }
 
-    @Test
-    @TestMetadata("localNestedClassType.kt")
-    public void testLocalNestedClassType() throws Exception {
-        runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localNestedClassType.kt");
-    }
+  @Test
+  @TestMetadata("localNestedClassType.kt")
+  public void testLocalNestedClassType() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localNestedClassType.kt");
+  }
 }

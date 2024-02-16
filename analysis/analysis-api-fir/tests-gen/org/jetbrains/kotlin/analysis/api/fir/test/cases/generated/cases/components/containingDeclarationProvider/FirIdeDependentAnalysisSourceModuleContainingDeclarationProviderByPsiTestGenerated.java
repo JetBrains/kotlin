@@ -28,63 +28,63 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeDependentAnalysisSourceModuleContainingDeclarationProviderByPsiTestGenerated extends AbstractContainingDeclarationProviderByPsiTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Dependent,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Dependent,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInContainingDeclarationByPsi() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInContainingDeclarationByPsi() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("classes.kt")
-    public void testClasses() throws Exception {
-        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/classes.kt");
-    }
+  @Test
+  @TestMetadata("classes.kt")
+  public void testClasses() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/classes.kt");
+  }
 
-    @Test
-    @TestMetadata("codeFragments.kt")
-    public void testCodeFragments() throws Exception {
-        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/codeFragments.kt");
-    }
+  @Test
+  @TestMetadata("codeFragments.kt")
+  public void testCodeFragments() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/codeFragments.kt");
+  }
 
-    @Test
-    @TestMetadata("deeplyNestedCode.kt")
-    public void testDeeplyNestedCode() throws Exception {
-        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/deeplyNestedCode.kt");
-    }
+  @Test
+  @TestMetadata("deeplyNestedCode.kt")
+  public void testDeeplyNestedCode() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/deeplyNestedCode.kt");
+  }
 
-    @Test
-    @TestMetadata("enums.kt")
-    public void testEnums() throws Exception {
-        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/enums.kt");
-    }
+  @Test
+  @TestMetadata("enums.kt")
+  public void testEnums() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/enums.kt");
+  }
 
-    @Test
-    @TestMetadata("functions.kt")
-    public void testFunctions() throws Exception {
-        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/functions.kt");
-    }
+  @Test
+  @TestMetadata("functions.kt")
+  public void testFunctions() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/functions.kt");
+  }
 
-    @Test
-    @TestMetadata("localDeclarations.kt")
-    public void testLocalDeclarations() throws Exception {
-        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/localDeclarations.kt");
-    }
+  @Test
+  @TestMetadata("localDeclarations.kt")
+  public void testLocalDeclarations() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/localDeclarations.kt");
+  }
 
-    @Test
-    @TestMetadata("typeAliases.kt")
-    public void testTypeAliases() throws Exception {
-        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/typeAliases.kt");
-    }
+  @Test
+  @TestMetadata("typeAliases.kt")
+  public void testTypeAliases() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/typeAliases.kt");
+  }
 }

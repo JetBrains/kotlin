@@ -28,97 +28,97 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerTestGenerated extends AbstractReferenceShortenerTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
+  @Test
+  public void testAllFilesPresentInShortenRange() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("callInsideScriptExpression.kts")
+  public void testCallInsideScriptExpression() {
+    runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/callInsideScriptExpression.kts");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Conflicts {
     @Test
-    public void testAllFilesPresentInShortenRange() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    public void testAllFilesPresentInConflicts() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
 
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ClassWithSameName {
+      @Test
+      public void testAllFilesPresentInClassWithSameName() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses")
+  @TestDataPath("$PROJECT_ROOT")
+  public class NestedClasses {
     @Test
-    @TestMetadata("callInsideScriptExpression.kts")
-    public void testCallInsideScriptExpression() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/callInsideScriptExpression.kts");
+    public void testAllFilesPresentInNestedClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
 
     @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts")
+    @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions")
     @TestDataPath("$PROJECT_ROOT")
-    public class Conflicts {
-        @Test
-        public void testAllFilesPresentInConflicts() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
+    public class ClassHeaderPositions {
+      @Test
+      public void testAllFilesPresentInClassHeaderPositions() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+  }
 
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName")
-        @TestDataPath("$PROJECT_ROOT")
-        public class ClassWithSameName {
-            @Test
-            public void testAllFilesPresentInClassWithSameName() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ThisReference {
+    @Test
+    public void testAllFilesPresentInThisReference() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
 
     @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses")
+    @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel")
     @TestDataPath("$PROJECT_ROOT")
-    public class NestedClasses {
-        @Test
-        public void testAllFilesPresentInNestedClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions")
-        @TestDataPath("$PROJECT_ROOT")
-        public class ClassHeaderPositions {
-            @Test
-            public void testAllFilesPresentInClassHeaderPositions() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
+    public class WithLabel {
+      @Test
+      public void testAllFilesPresentInWithLabel() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
     }
+  }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference")
-    @TestDataPath("$PROJECT_ROOT")
-    public class ThisReference {
-        @Test
-        public void testAllFilesPresentInThisReference() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel")
-        @TestDataPath("$PROJECT_ROOT")
-        public class WithLabel {
-            @Test
-            public void testAllFilesPresentInWithLabel() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel"), Pattern.compile("^(.+)\\.kts$"), null, true);
-            }
-        }
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParameters")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeParameters {
+    @Test
+    public void testAllFilesPresentInTypeParameters() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParameters"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParameters")
-    @TestDataPath("$PROJECT_ROOT")
-    public class TypeParameters {
-        @Test
-        public void testAllFilesPresentInTypeParameters() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParameters"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
+  }
 }

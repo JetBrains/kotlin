@@ -28,75 +28,75 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/standalone/source")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModulePsiDeclarationProviderTestGenerated extends AbstractPsiDeclarationProviderTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInSource() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/standalone/source"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInSource() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/standalone/source"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("capitalize_default.kt")
-    public void testCapitalize_default() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/source/capitalize_default.kt");
-    }
+  @Test
+  @TestMetadata("capitalize_default.kt")
+  public void testCapitalize_default() {
+    runTest("analysis/analysis-api/testData/standalone/source/capitalize_default.kt");
+  }
 
-    @Test
-    @TestMetadata("capitalize_locale.kt")
-    public void testCapitalize_locale() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/source/capitalize_locale.kt");
-    }
+  @Test
+  @TestMetadata("capitalize_locale.kt")
+  public void testCapitalize_locale() {
+    runTest("analysis/analysis-api/testData/standalone/source/capitalize_locale.kt");
+  }
 
-    @Test
-    @TestMetadata("listIterator.kt")
-    public void testListIterator() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/source/listIterator.kt");
-    }
+  @Test
+  @TestMetadata("listIterator.kt")
+  public void testListIterator() {
+    runTest("analysis/analysis-api/testData/standalone/source/listIterator.kt");
+  }
 
-    @Test
-    @TestMetadata("mapGetOrDefault.kt")
-    public void testMapGetOrDefault() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/source/mapGetOrDefault.kt");
-    }
+  @Test
+  @TestMetadata("mapGetOrDefault.kt")
+  public void testMapGetOrDefault() {
+    runTest("analysis/analysis-api/testData/standalone/source/mapGetOrDefault.kt");
+  }
 
-    @Test
-    @TestMetadata("mapGetOrDefault_nullable.kt")
-    public void testMapGetOrDefault_nullable() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/source/mapGetOrDefault_nullable.kt");
-    }
+  @Test
+  @TestMetadata("mapGetOrDefault_nullable.kt")
+  public void testMapGetOrDefault_nullable() {
+    runTest("analysis/analysis-api/testData/standalone/source/mapGetOrDefault_nullable.kt");
+  }
 
-    @Test
-    @TestMetadata("multipleFiles.kt")
-    public void testMultipleFiles() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/source/multipleFiles.kt");
-    }
+  @Test
+  @TestMetadata("multipleFiles.kt")
+  public void testMultipleFiles() {
+    runTest("analysis/analysis-api/testData/standalone/source/multipleFiles.kt");
+  }
 
-    @Test
-    @TestMetadata("setOf_last_vararg.kt")
-    public void testSetOf_last_vararg() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/source/setOf_last_vararg.kt");
-    }
+  @Test
+  @TestMetadata("setOf_last_vararg.kt")
+  public void testSetOf_last_vararg() {
+    runTest("analysis/analysis-api/testData/standalone/source/setOf_last_vararg.kt");
+  }
 
-    @Test
-    @TestMetadata("singleFile.kt")
-    public void testSingleFile() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/source/singleFile.kt");
-    }
+  @Test
+  @TestMetadata("singleFile.kt")
+  public void testSingleFile() {
+    runTest("analysis/analysis-api/testData/standalone/source/singleFile.kt");
+  }
 
-    @Test
-    @TestMetadata("todo.kt")
-    public void testTodo() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/source/todo.kt");
-    }
+  @Test
+  @TestMetadata("todo.kt")
+  public void testTodo() {
+    runTest("analysis/analysis-api/testData/standalone/source/todo.kt");
+  }
 }

@@ -19,50 +19,50 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/partialRawBuilder")
 @TestDataPath("$PROJECT_ROOT")
 public class OutOfContentRootPartialRawFirBuilderTestCaseGenerated extends AbstractOutOfContentRootPartialRawFirBuilderTestCase {
-    @Test
-    public void testAllFilesPresentInPartialRawBuilder() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/partialRawBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInPartialRawBuilder() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/partialRawBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("localFunction.kt")
-    public void testLocalFunction() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/partialRawBuilder/localFunction.kt");
-    }
+  @Test
+  @TestMetadata("localFunction.kt")
+  public void testLocalFunction() {
+    runTest("analysis/low-level-api-fir/testData/partialRawBuilder/localFunction.kt");
+  }
 
-    @Test
-    @TestMetadata("memberFunction.kt")
-    public void testMemberFunction() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/partialRawBuilder/memberFunction.kt");
-    }
+  @Test
+  @TestMetadata("memberFunction.kt")
+  public void testMemberFunction() {
+    runTest("analysis/low-level-api-fir/testData/partialRawBuilder/memberFunction.kt");
+  }
 
-    @Test
-    @TestMetadata("memberProperty.kt")
-    public void testMemberProperty() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/partialRawBuilder/memberProperty.kt");
-    }
+  @Test
+  @TestMetadata("memberProperty.kt")
+  public void testMemberProperty() {
+    runTest("analysis/low-level-api-fir/testData/partialRawBuilder/memberProperty.kt");
+  }
 
-    @Test
-    @TestMetadata("paramemtersCatching.kt")
-    public void testParamemtersCatching() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/partialRawBuilder/paramemtersCatching.kt");
-    }
+  @Test
+  @TestMetadata("paramemtersCatching.kt")
+  public void testParamemtersCatching() {
+    runTest("analysis/low-level-api-fir/testData/partialRawBuilder/paramemtersCatching.kt");
+  }
 
-    @Test
-    @TestMetadata("simpleFunction.kt")
-    public void testSimpleFunction() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/partialRawBuilder/simpleFunction.kt");
-    }
+  @Test
+  @TestMetadata("simpleFunction.kt")
+  public void testSimpleFunction() {
+    runTest("analysis/low-level-api-fir/testData/partialRawBuilder/simpleFunction.kt");
+  }
 
-    @Test
-    @TestMetadata("simpleVal.kt")
-    public void testSimpleVal() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/partialRawBuilder/simpleVal.kt");
-    }
+  @Test
+  @TestMetadata("simpleVal.kt")
+  public void testSimpleVal() {
+    runTest("analysis/low-level-api-fir/testData/partialRawBuilder/simpleVal.kt");
+  }
 
-    @Test
-    @TestMetadata("simpleVar.kt")
-    public void testSimpleVar() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/partialRawBuilder/simpleVar.kt");
-    }
+  @Test
+  @TestMetadata("simpleVar.kt")
+  public void testSimpleVar() {
+    runTest("analysis/low-level-api-fir/testData/partialRawBuilder/simpleVar.kt");
+  }
 }

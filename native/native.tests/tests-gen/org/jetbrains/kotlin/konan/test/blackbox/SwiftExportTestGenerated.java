@@ -19,14 +19,14 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/SwiftExport")
 @TestDataPath("$PROJECT_ROOT")
 public class SwiftExportTestGenerated extends AbstractNativeSwiftExportTest {
-    @Test
-    public void testAllFilesPresentInSwiftExport() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/SwiftExport"), Pattern.compile("^([^_](.+))$"), null, false);
-    }
+  @Test
+  public void testAllFilesPresentInSwiftExport() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/SwiftExport"), Pattern.compile("^([^_](.+))$"), null, false);
+  }
 
-    @Test
-    @TestMetadata("smokes")
-    public void testSmokes() throws Exception {
-        runTest("native/native.tests/testData/SwiftExport/smokes/");
-    }
+  @Test
+  @TestMetadata("smokes")
+  public void testSmokes() {
+    runTest("native/native.tests/testData/SwiftExport/smokes/");
+  }
 }

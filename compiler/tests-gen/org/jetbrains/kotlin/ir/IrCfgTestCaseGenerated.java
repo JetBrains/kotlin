@@ -21,107 +21,107 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IrCfgTestCaseGenerated extends AbstractIrCfgTestCase {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  }
+
+  public void testAllFilesPresentInIrCfg() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irCfg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
+
+  @TestMetadata("expressionFun.kt")
+  public void testExpressionFun() {
+    runTest("compiler/testData/ir/irCfg/expressionFun.kt");
+  }
+
+  @TestMetadata("expressionUnit.kt")
+  public void testExpressionUnit() {
+    runTest("compiler/testData/ir/irCfg/expressionUnit.kt");
+  }
+
+  @TestMetadata("returnUnit.kt")
+  public void testReturnUnit() {
+    runTest("compiler/testData/ir/irCfg/returnUnit.kt");
+  }
+
+  @TestMetadata("sequentialFun.kt")
+  public void testSequentialFun() {
+    runTest("compiler/testData/ir/irCfg/sequentialFun.kt");
+  }
+
+  @TestMetadata("simpleFun.kt")
+  public void testSimpleFun() {
+    runTest("compiler/testData/ir/irCfg/simpleFun.kt");
+  }
+
+  @TestMetadata("simpleReturn.kt")
+  public void testSimpleReturn() {
+    runTest("compiler/testData/ir/irCfg/simpleReturn.kt");
+  }
+
+  @TestMetadata("compiler/testData/ir/irCfg/loop")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class Loop extends AbstractIrCfgTestCase {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInIrCfg() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irCfg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    public void testAllFilesPresentInLoop() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irCfg/loop"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @TestMetadata("expressionFun.kt")
-    public void testExpressionFun() throws Exception {
-        runTest("compiler/testData/ir/irCfg/expressionFun.kt");
+    @TestMetadata("digitCount.kt")
+    public void testDigitCount() {
+      runTest("compiler/testData/ir/irCfg/loop/digitCount.kt");
     }
 
-    @TestMetadata("expressionUnit.kt")
-    public void testExpressionUnit() throws Exception {
-        runTest("compiler/testData/ir/irCfg/expressionUnit.kt");
+    @TestMetadata("factorial.kt")
+    public void testFactorial() {
+      runTest("compiler/testData/ir/irCfg/loop/factorial.kt");
     }
 
-    @TestMetadata("returnUnit.kt")
-    public void testReturnUnit() throws Exception {
-        runTest("compiler/testData/ir/irCfg/returnUnit.kt");
+    @TestMetadata("isPerfect.kt")
+    public void testIsPerfect() {
+      runTest("compiler/testData/ir/irCfg/loop/isPerfect.kt");
+    }
+  }
+
+  @TestMetadata("compiler/testData/ir/irCfg/when")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class When extends AbstractIrCfgTestCase {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    @TestMetadata("sequentialFun.kt")
-    public void testSequentialFun() throws Exception {
-        runTest("compiler/testData/ir/irCfg/sequentialFun.kt");
+    public void testAllFilesPresentInWhen() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irCfg/when"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @TestMetadata("simpleFun.kt")
-    public void testSimpleFun() throws Exception {
-        runTest("compiler/testData/ir/irCfg/simpleFun.kt");
+    @TestMetadata("cascadeIf.kt")
+    public void testCascadeIf() {
+      runTest("compiler/testData/ir/irCfg/when/cascadeIf.kt");
     }
 
-    @TestMetadata("simpleReturn.kt")
-    public void testSimpleReturn() throws Exception {
-        runTest("compiler/testData/ir/irCfg/simpleReturn.kt");
+    @TestMetadata("emptyWhen.kt")
+    public void testEmptyWhen() {
+      runTest("compiler/testData/ir/irCfg/when/emptyWhen.kt");
     }
 
-    @TestMetadata("compiler/testData/ir/irCfg/loop")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Loop extends AbstractIrCfgTestCase {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInLoop() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irCfg/loop"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("digitCount.kt")
-        public void testDigitCount() throws Exception {
-            runTest("compiler/testData/ir/irCfg/loop/digitCount.kt");
-        }
-
-        @TestMetadata("factorial.kt")
-        public void testFactorial() throws Exception {
-            runTest("compiler/testData/ir/irCfg/loop/factorial.kt");
-        }
-
-        @TestMetadata("isPerfect.kt")
-        public void testIsPerfect() throws Exception {
-            runTest("compiler/testData/ir/irCfg/loop/isPerfect.kt");
-        }
+    @TestMetadata("expressionIf.kt")
+    public void testExpressionIf() {
+      runTest("compiler/testData/ir/irCfg/when/expressionIf.kt");
     }
 
-    @TestMetadata("compiler/testData/ir/irCfg/when")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class When extends AbstractIrCfgTestCase {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInWhen() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irCfg/when"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("cascadeIf.kt")
-        public void testCascadeIf() throws Exception {
-            runTest("compiler/testData/ir/irCfg/when/cascadeIf.kt");
-        }
-
-        @TestMetadata("emptyWhen.kt")
-        public void testEmptyWhen() throws Exception {
-            runTest("compiler/testData/ir/irCfg/when/emptyWhen.kt");
-        }
-
-        @TestMetadata("expressionIf.kt")
-        public void testExpressionIf() throws Exception {
-            runTest("compiler/testData/ir/irCfg/when/expressionIf.kt");
-        }
-
-        @TestMetadata("ifChain.kt")
-        public void testIfChain() throws Exception {
-            runTest("compiler/testData/ir/irCfg/when/ifChain.kt");
-        }
-
-        @TestMetadata("whenReturn.kt")
-        public void testWhenReturn() throws Exception {
-            runTest("compiler/testData/ir/irCfg/when/whenReturn.kt");
-        }
+    @TestMetadata("ifChain.kt")
+    public void testIfChain() {
+      runTest("compiler/testData/ir/irCfg/when/ifChain.kt");
     }
+
+    @TestMetadata("whenReturn.kt")
+    public void testWhenReturn() {
+      runTest("compiler/testData/ir/irCfg/when/whenReturn.kt");
+    }
+  }
 }

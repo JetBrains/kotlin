@@ -20,56 +20,56 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/incremental/invalidationWithPL")
 @TestDataPath("$PROJECT_ROOT")
 public class JsFirInvalidationPerModuleWithPLTestGenerated extends AbstractJsFirInvalidationPerModuleWithPLTest {
-    @Test
-    public void testAllFilesPresentInInvalidationWithPL() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidationWithPL"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
-    }
+  @Test
+  public void testAllFilesPresentInInvalidationWithPL() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidationWithPL"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
+  }
 
-    @Test
-    @TestMetadata("changeFunctionSignature")
-    public void testChangeFunctionSignature() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidationWithPL/changeFunctionSignature/");
-    }
+  @Test
+  @TestMetadata("changeFunctionSignature")
+  public void testChangeFunctionSignature() {
+    runTest("js/js.translator/testData/incremental/invalidationWithPL/changeFunctionSignature/");
+  }
 
-    @Test
-    @TestMetadata("interfaceBecomeClass")
-    public void testInterfaceBecomeClass() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidationWithPL/interfaceBecomeClass/");
-    }
+  @Test
+  @TestMetadata("interfaceBecomeClass")
+  public void testInterfaceBecomeClass() {
+    runTest("js/js.translator/testData/incremental/invalidationWithPL/interfaceBecomeClass/");
+  }
 
-    @Test
-    @TestMetadata("removeFunction")
-    public void testRemoveFunction() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunction/");
-    }
+  @Test
+  @TestMetadata("removeFunction")
+  public void testRemoveFunction() {
+    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunction/");
+  }
 
-    @Test
-    @TestMetadata("removeFunctionFromBlock")
-    public void testRemoveFunctionFromBlock() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromBlock/");
-    }
+  @Test
+  @TestMetadata("removeFunctionFromBlock")
+  public void testRemoveFunctionFromBlock() {
+    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromBlock/");
+  }
 
-    @Test
-    @TestMetadata("removeFunctionFromChainCall")
-    public void testRemoveFunctionFromChainCall() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromChainCall/");
-    }
+  @Test
+  @TestMetadata("removeFunctionFromChainCall")
+  public void testRemoveFunctionFromChainCall() {
+    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromChainCall/");
+  }
 
-    @Test
-    @TestMetadata("removeFunctionFromElvis")
-    public void testRemoveFunctionFromElvis() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromElvis/");
-    }
+  @Test
+  @TestMetadata("removeFunctionFromElvis")
+  public void testRemoveFunctionFromElvis() {
+    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromElvis/");
+  }
 
-    @Test
-    @TestMetadata("removeFunctionFromInline")
-    public void testRemoveFunctionFromInline() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromInline/");
-    }
+  @Test
+  @TestMetadata("removeFunctionFromInline")
+  public void testRemoveFunctionFromInline() {
+    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromInline/");
+  }
 
-    @Test
-    @TestMetadata("removeInlineFunction")
-    public void testRemoveInlineFunction() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidationWithPL/removeInlineFunction/");
-    }
+  @Test
+  @TestMetadata("removeInlineFunction")
+  public void testRemoveInlineFunction() {
+    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeInlineFunction/");
+  }
 }

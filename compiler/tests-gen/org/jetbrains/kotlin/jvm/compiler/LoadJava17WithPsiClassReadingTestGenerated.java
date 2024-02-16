@@ -21,21 +21,21 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class LoadJava17WithPsiClassReadingTestGenerated extends AbstractLoadJava17WithPsiClassReadingTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInLoadJava17() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava17"), Pattern.compile("^(.+)\\.java$"), null, true);
-    }
+  public void testAllFilesPresentInLoadJava17() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava17"), Pattern.compile("^(.+)\\.java$"), null, true);
+  }
 
-    @TestMetadata("GenericRecord.java")
-    public void testGenericRecord() throws Exception {
-        runTest("compiler/testData/loadJava17/GenericRecord.java");
-    }
+  @TestMetadata("GenericRecord.java")
+  public void testGenericRecord() {
+    runTest("compiler/testData/loadJava17/GenericRecord.java");
+  }
 
-    @TestMetadata("SimpleRecord.java")
-    public void testSimpleRecord() throws Exception {
-        runTest("compiler/testData/loadJava17/SimpleRecord.java");
-    }
+  @TestMetadata("SimpleRecord.java")
+  public void testSimpleRecord() {
+    runTest("compiler/testData/loadJava17/SimpleRecord.java");
+  }
 }

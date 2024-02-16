@@ -28,99 +28,99 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/standalone/binary")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisLibraryBinaryModulePsiDeclarationProviderTestGenerated extends AbstractPsiDeclarationProviderTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.LibraryBinary,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.LibraryBinary,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInBinary() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/standalone/binary"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInBinary() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/standalone/binary"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("multifileFacade.kt")
-    public void testMultifileFacade() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/binary/multifileFacade.kt");
-    }
+  @Test
+  @TestMetadata("multifileFacade.kt")
+  public void testMultifileFacade() {
+    runTest("analysis/analysis-api/testData/standalone/binary/multifileFacade.kt");
+  }
 
-    @Test
-    @TestMetadata("propertiesInCompanionObject.kt")
-    public void testPropertiesInCompanionObject() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/binary/propertiesInCompanionObject.kt");
-    }
+  @Test
+  @TestMetadata("propertiesInCompanionObject.kt")
+  public void testPropertiesInCompanionObject() {
+    runTest("analysis/analysis-api/testData/standalone/binary/propertiesInCompanionObject.kt");
+  }
 
-    @Test
-    @TestMetadata("propertiesInCompanionObject_JvmField.kt")
-    public void testPropertiesInCompanionObject_JvmField() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/binary/propertiesInCompanionObject_JvmField.kt");
-    }
+  @Test
+  @TestMetadata("propertiesInCompanionObject_JvmField.kt")
+  public void testPropertiesInCompanionObject_JvmField() {
+    runTest("analysis/analysis-api/testData/standalone/binary/propertiesInCompanionObject_JvmField.kt");
+  }
 
-    @Test
-    @TestMetadata("propertiesInCompanionObject_JvmStatic.kt")
-    public void testPropertiesInCompanionObject_JvmStatic() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/binary/propertiesInCompanionObject_JvmStatic.kt");
-    }
+  @Test
+  @TestMetadata("propertiesInCompanionObject_JvmStatic.kt")
+  public void testPropertiesInCompanionObject_JvmStatic() {
+    runTest("analysis/analysis-api/testData/standalone/binary/propertiesInCompanionObject_JvmStatic.kt");
+  }
 
-    @Test
-    @TestMetadata("propertiesInInnerClass.kt")
-    public void testPropertiesInInnerClass() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/binary/propertiesInInnerClass.kt");
-    }
+  @Test
+  @TestMetadata("propertiesInInnerClass.kt")
+  public void testPropertiesInInnerClass() {
+    runTest("analysis/analysis-api/testData/standalone/binary/propertiesInInnerClass.kt");
+  }
 
-    @Test
-    @TestMetadata("propertiesInNamedCompanionObject.kt")
-    public void testPropertiesInNamedCompanionObject() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNamedCompanionObject.kt");
-    }
+  @Test
+  @TestMetadata("propertiesInNamedCompanionObject.kt")
+  public void testPropertiesInNamedCompanionObject() {
+    runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNamedCompanionObject.kt");
+  }
 
-    @Test
-    @TestMetadata("propertiesInNamedCompanionObject_JvmField.kt")
-    public void testPropertiesInNamedCompanionObject_JvmField() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNamedCompanionObject_JvmField.kt");
-    }
+  @Test
+  @TestMetadata("propertiesInNamedCompanionObject_JvmField.kt")
+  public void testPropertiesInNamedCompanionObject_JvmField() {
+    runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNamedCompanionObject_JvmField.kt");
+  }
 
-    @Test
-    @TestMetadata("propertiesInNamedCompanionObject_JvmStatic.kt")
-    public void testPropertiesInNamedCompanionObject_JvmStatic() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNamedCompanionObject_JvmStatic.kt");
-    }
+  @Test
+  @TestMetadata("propertiesInNamedCompanionObject_JvmStatic.kt")
+  public void testPropertiesInNamedCompanionObject_JvmStatic() {
+    runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNamedCompanionObject_JvmStatic.kt");
+  }
 
-    @Test
-    @TestMetadata("propertiesInNestedObject.kt")
-    public void testPropertiesInNestedObject() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNestedObject.kt");
-    }
+  @Test
+  @TestMetadata("propertiesInNestedObject.kt")
+  public void testPropertiesInNestedObject() {
+    runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNestedObject.kt");
+  }
 
-    @Test
-    @TestMetadata("propertiesInObject.kt")
-    public void testPropertiesInObject() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/binary/propertiesInObject.kt");
-    }
+  @Test
+  @TestMetadata("propertiesInObject.kt")
+  public void testPropertiesInObject() {
+    runTest("analysis/analysis-api/testData/standalone/binary/propertiesInObject.kt");
+  }
 
-    @Test
-    @TestMetadata("propertiesInOuterClass.kt")
-    public void testPropertiesInOuterClass() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/binary/propertiesInOuterClass.kt");
-    }
+  @Test
+  @TestMetadata("propertiesInOuterClass.kt")
+  public void testPropertiesInOuterClass() {
+    runTest("analysis/analysis-api/testData/standalone/binary/propertiesInOuterClass.kt");
+  }
 
-    @Test
-    @TestMetadata("propertyWithValueClass.kt")
-    public void testPropertyWithValueClass() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/binary/propertyWithValueClass.kt");
-    }
+  @Test
+  @TestMetadata("propertyWithValueClass.kt")
+  public void testPropertyWithValueClass() {
+    runTest("analysis/analysis-api/testData/standalone/binary/propertyWithValueClass.kt");
+  }
 
-    @Test
-    @TestMetadata("topLevelFunctionWithValueClass.kt")
-    public void testTopLevelFunctionWithValueClass() throws Exception {
-        runTest("analysis/analysis-api/testData/standalone/binary/topLevelFunctionWithValueClass.kt");
-    }
+  @Test
+  @TestMetadata("topLevelFunctionWithValueClass.kt")
+  public void testTopLevelFunctionWithValueClass() {
+    runTest("analysis/analysis-api/testData/standalone/binary/topLevelFunctionWithValueClass.kt");
+  }
 }

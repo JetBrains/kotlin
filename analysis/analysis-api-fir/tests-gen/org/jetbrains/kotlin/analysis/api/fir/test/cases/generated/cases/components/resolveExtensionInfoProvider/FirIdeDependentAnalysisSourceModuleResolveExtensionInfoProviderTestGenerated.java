@@ -28,33 +28,33 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/resolveExtensionInfoProvider/extensionScopeWithPsi")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeDependentAnalysisSourceModuleResolveExtensionInfoProviderTestGenerated extends AbstractResolveExtensionInfoProviderTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Dependent,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Dependent,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInExtensionScopeWithPsi() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolveExtensionInfoProvider/extensionScopeWithPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInExtensionScopeWithPsi() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolveExtensionInfoProvider/extensionScopeWithPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("multipleExtensions.kt")
-    public void testMultipleExtensions() throws Exception {
-        runTest("analysis/analysis-api/testData/components/resolveExtensionInfoProvider/extensionScopeWithPsi/multipleExtensions.kt");
-    }
+  @Test
+  @TestMetadata("multipleExtensions.kt")
+  public void testMultipleExtensions() {
+    runTest("analysis/analysis-api/testData/components/resolveExtensionInfoProvider/extensionScopeWithPsi/multipleExtensions.kt");
+  }
 
-    @Test
-    @TestMetadata("singleModule.kt")
-    public void testSingleModule() throws Exception {
-        runTest("analysis/analysis-api/testData/components/resolveExtensionInfoProvider/extensionScopeWithPsi/singleModule.kt");
-    }
+  @Test
+  @TestMetadata("singleModule.kt")
+  public void testSingleModule() {
+    runTest("analysis/analysis-api/testData/components/resolveExtensionInfoProvider/extensionScopeWithPsi/singleModule.kt");
+  }
 }
