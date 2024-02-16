@@ -469,18 +469,25 @@ fun main() {
         )
         // C Export
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            val cinterfaceModes = mapOf(
+                "InterfaceV1" to cinterfaceMode("V1"),
+                "InterfaceNone" to cinterfaceMode("NONE")
+            )
             binaryLibraryKinds.forEach { binaryKind ->
                 frontendFlags.forEach { frontend ->
-                    val frontendKey = if (frontend.key == "Classic") "" else frontend.key
-                    val suiteTestClassName = "${frontendKey}CExport${binaryKind.key}TestGenerated"
-                    testClass<AbstractNativeCExportTest>(
-                        suiteTestClassName,
-                        annotations = listOf(
-                            binaryKind.value,
-                            *frontend.value
-                        )
-                    ) {
-                        model("CExport/InterfaceV1", pattern = "^([^_](.+))$", recursive = false)
+                    cinterfaceModes.forEach { cinterfaceMode ->
+                        val frontendKey = if (frontend.key == "Classic") "" else frontend.key
+                        val suiteTestClassName = "${frontendKey}CExport${binaryKind.key}${cinterfaceMode.key}TestGenerated"
+                        testClass<AbstractNativeCExportTest>(
+                            suiteTestClassName,
+                            annotations = listOf(
+                                binaryKind.value,
+                                cinterfaceMode.value,
+                                *frontend.value
+                            )
+                        ) {
+                            model("CExport/${cinterfaceMode.key}", pattern = "^([^_](.+))$", recursive = false)
+                        }
                     }
                 }
             }
@@ -565,4 +572,9 @@ private fun binaryLibraryKind(kind: String = "DYNAMIC") = annotation(
     EnforcedProperty::class.java,
     "property" to ClassLevelProperty.BINARY_LIBRARY_KIND,
     "propertyValue" to kind
+)
+private fun cinterfaceMode(mode: String = "V1") = annotation(
+    EnforcedProperty::class.java,
+    "property" to ClassLevelProperty.C_INTERFACE_MODE,
+    "propertyValue" to mode
 )

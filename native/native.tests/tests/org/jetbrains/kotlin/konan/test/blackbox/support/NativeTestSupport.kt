@@ -210,6 +210,7 @@ internal object NativeTestSupport {
         output += computeUsedPartialLinkageConfig(enclosingTestClass)
         output += computeCompilerOutputInterceptor(enforcedProperties)
         output += computeBinaryLibraryKind(enforcedProperties)
+        output += computeCInterfaceMode(enforcedProperties)
 
         return nativeTargets
     }
@@ -508,6 +509,10 @@ internal object NativeTestSupport {
 
     private fun computeBinaryLibraryKind(enforcedProperties: EnforcedProperties): BinaryLibraryKind =
         ClassLevelProperty.BINARY_LIBRARY_KIND.readValue(enforcedProperties, BinaryLibraryKind.values(), BinaryLibraryKind.STATIC)
+
+    private fun computeCInterfaceMode(enforcedProperties: EnforcedProperties): CInterfaceMode =
+        ClassLevelProperty.C_INTERFACE_MODE.readValue(enforcedProperties, CInterfaceMode.values(), CInterfaceMode.NONE)
+
     /*************** Test class settings (simplified) ***************/
 
     private fun ExtensionContext.getOrCreateSimpleTestClassSettings(): SimpleTestClassSettings =

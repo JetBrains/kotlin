@@ -351,6 +351,7 @@ internal class BinaryLibraryCompilation(
     dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
 ) {
+    private val cinterfaceMode = settings.get<CInterfaceMode>().compilerFlag
     override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting(optimizationMode, freeCompilerArgs.assertionsMode)
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
@@ -360,7 +361,8 @@ internal class BinaryLibraryCompilation(
         }
         add(
             "-produce", libraryKind,
-            "-output", expectedArtifact.libraryFile.absolutePath
+            "-output", expectedArtifact.libraryFile.absolutePath,
+            cinterfaceMode
         )
         super.applySpecificArgs(argsBuilder)
     }

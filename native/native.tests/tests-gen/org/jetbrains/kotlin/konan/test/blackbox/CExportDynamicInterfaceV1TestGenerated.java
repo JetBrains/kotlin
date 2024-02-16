@@ -21,7 +21,8 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/CExport/InterfaceV1")
 @TestDataPath("$PROJECT_ROOT")
 @EnforcedProperty(property = ClassLevelProperty.BINARY_LIBRARY_KIND, propertyValue = "DYNAMIC")
-public class CExportDynamicTestGenerated extends AbstractNativeCExportTest {
+@EnforcedProperty(property = ClassLevelProperty.C_INTERFACE_MODE, propertyValue = "V1")
+public class CExportDynamicInterfaceV1TestGenerated extends AbstractNativeCExportTest {
     @Test
     public void testAllFilesPresentInInterfaceV1() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CExport/InterfaceV1"), Pattern.compile("^([^_](.+))$"), null, false);

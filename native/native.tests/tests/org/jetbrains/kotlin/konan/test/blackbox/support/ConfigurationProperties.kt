@@ -73,6 +73,7 @@ internal enum class ClassLevelProperty(val shortName: String) {
     PIPELINE_TYPE("pipelineType"),
     SHARED_TEST_EXECUTION("sharedTestExecution"),
     BINARY_LIBRARY_KIND("binaryLibraryKind"),
+    C_INTERFACE_MODE("cInterfaceMode"),
     ;
 
     internal val propertyName = fullPropertyName(shortName)
