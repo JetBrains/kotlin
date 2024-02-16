@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -89,11 +87,21 @@ fun KtFile.collectDiagnosticsForFile(
     firResolveSession.collectDiagnosticsForFile(this, filter)
 
 /**
- * Get a [FirElement] which was created by [KtElement]
- * Returned [FirElement] is guaranteed to be resolved to [FirResolvePhase.BODY_RESOLVE] phase
- * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase.
+ * Build [FirElement] node in its final resolved state for a requested element.
  *
- * The `null` value is returned iff FIR tree does not have corresponding element
+ * Note: that it isn't always [BODY_RESOLVE][FirResolvePhase.BODY_RESOLVE]
+ * as not all declarations have types/bodies/etc. to resolve.
+ *
+ * This operation could be time-consuming because it creates
+ * [FileStructureElement][org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement]
+ * and may resolve non-local declarations into [BODY_RESOLVE][FirResolvePhase.BODY_RESOLVE] phase.
+ *
+ * Please use [getOrBuildFirFile] to get [FirFile] in undefined phase.
+ *
+ * @return associated [FirElement] in final resolved state if it exists.
+ *
+ * @see getOrBuildFirFile
+ * @see LLFirResolveSession.getOrBuildFirFor
  */
 fun KtElement.getOrBuildFir(
     firResolveSession: LLFirResolveSession,

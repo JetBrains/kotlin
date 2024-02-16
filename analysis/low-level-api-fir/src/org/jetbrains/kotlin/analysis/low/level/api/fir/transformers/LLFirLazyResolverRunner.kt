@@ -10,11 +10,20 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 
+/**
+ * Runs required [LLFirLazyResolver] on [LLFirResolveTarget] based on [FirResolvePhase].
+ *
+ * @see runLazyResolverByPhase
+ * @see LLFirLazyResolver
+ * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
+ */
 internal object LLFirLazyResolverRunner {
-    fun runLazyResolverByPhase(
-        phase: FirResolvePhase,
-        target: LLFirResolveTarget,
-    ) {
+    /**
+     * Runs [resolver][LLFirLazyResolver] associated with [phase] for [target] and checks if it finished correctly.
+     *
+     * @see LLFirLazyPhaseResolverByPhase
+     */
+    fun runLazyResolverByPhase(phase: FirResolvePhase, target: LLFirResolveTarget) {
         val lazyResolver = LLFirLazyPhaseResolverByPhase.getByPhase(phase)
         val lockProvider = LLFirGlobalResolveComponents.getInstance(target.session).lockProvider
         lockProvider.withGlobalLock {

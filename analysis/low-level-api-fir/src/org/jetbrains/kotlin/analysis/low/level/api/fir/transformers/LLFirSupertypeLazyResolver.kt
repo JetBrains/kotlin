@@ -48,6 +48,23 @@ internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.S
     }
 }
 
+/**
+ * This resolver is responsible for [SUPER_TYPES][FirResolvePhase.SUPER_TYPES] phase.
+ *
+ * This resolver:
+ * - Transforms all supertypes of classes.
+ * - Performs type aliases expansion.
+ * - Breaks loops in the type hierarchy if needed.
+ *
+ * Special rules:
+ * - First resolves outer classes to this phase.
+ * - Resolves all super types recursively.
+ * - [Searches][org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirSuperTypeTargetResolver.crawlSupertype]
+ *   super types not only in the declaration site session, but also in the call site session to resolve `expect` declaration first.
+ *
+ * @see FirSupertypeResolverVisitor
+ * @see FirResolvePhase.SUPER_TYPES
+ */
 private class LLFirSuperTypeTargetResolver(
     target: LLFirResolveTarget,
     private val supertypeComputationSession: LLFirSupertypeComputationSession = LLFirSupertypeComputationSession(target.session),

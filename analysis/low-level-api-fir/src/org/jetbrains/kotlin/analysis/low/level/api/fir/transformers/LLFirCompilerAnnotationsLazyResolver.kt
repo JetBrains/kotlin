@@ -43,6 +43,16 @@ internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirReso
     }
 }
 
+/**
+ * This resolver is responsible for [COMPILER_REQUIRED_ANNOTATIONS][FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS] phase.
+ *
+ * This resolver:
+ * - Transforms compiler required annotations of declarations.
+ * - Calculates [DeprecationsProvider].
+ *
+ * @see FirCompilerRequiredAnnotationsResolveTransformer
+ * @see FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS
+ */
 private class LLFirCompilerRequiredAnnotationsTargetResolver(
     target: LLFirResolveTarget,
     computationSession: LLFirCompilerRequiredAnnotationsComputationSession? = null,

@@ -18,7 +18,14 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 import java.util.concurrent.locks.ReentrantLock
 
 /**
- * Keyed locks provider.
+ * This class is responsible for the locking strategy in the lazy resolution mode.
+ * Each [FirElementWithResolveState] have [FirResolveState] which is used by this provider
+ * to build the lock system.
+ *
+ * @see LLFirLazyResolveContractChecker
+ * @see withWriteLock
+ * @see withReadLock
+ * @see withJumpingLock
  */
 internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractChecker) {
     private val globalLock = ReentrantLock()

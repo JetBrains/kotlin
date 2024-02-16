@@ -29,6 +29,20 @@ internal object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.C
     }
 }
 
+/**
+ * This resolver is responsible for [CONTRACTS][FirResolvePhase.CONTRACTS] phase.
+ *
+ * This resolver:
+ * - Transforms a [contract][org.jetbrains.kotlin.fir.contracts.FirContractDescription]
+ *   definition in [contract owners][FirContractDescriptionOwner].
+ *
+ * Before the transformation, the resolver [recreates][ContractStateKeepers] bodies
+ * to prevent corrupted states due to [PCE][com.intellij.openapi.progress.ProcessCanceledException].
+ *
+ * @see ContractStateKeepers
+ * @see FirContractResolveTransformer
+ * @see FirResolvePhase.CONTRACTS
+ */
 private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(
     target,
     FirResolvePhase.CONTRACTS,

@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
  *
  * In case of non-local changes (out-of-block modification), this service will publish event to [MODULE_OUT_OF_BLOCK_MODIFICATION].
  *
+ * @see getNonLocalReanalyzableContainingDeclaration
  * @see MODULE_OUT_OF_BLOCK_MODIFICATION
  * @see org.jetbrains.kotlin.analysis.providers.topics.KotlinModuleOutOfBlockModificationListener
  */
@@ -113,7 +114,8 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
     }
 
     /**
-     * Force the service to publish delayed modifications. This action is required to fix inconsistencies in FirFile tree.
+     * Force the service to publish delayed modifications.
+     * This action is required to fix inconsistencies in [FirFile][org.jetbrains.kotlin.fir.declarations.FirFile] tree.
      */
     fun flushModifications() {
         ApplicationManager.getApplication().assertIsWriteThread()

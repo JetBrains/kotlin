@@ -40,12 +40,18 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
+/**
+ * This class is responsible for mapping from [KtElement] to [FirElement]
+ * using [FileStructure][org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructure].
+ *
+ * @see getOrBuildFirFor
+ * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructure
+ * @see getNonLocalContainingDeclaration
+ */
 @ThreadSafe
-internal class FirElementBuilder(
-    private val moduleComponents: LLFirModuleResolveComponents,
-) {
+internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolveComponents) {
     companion object {
-        fun getPsiAsFirElementSource(element: KtElement): KtElement? {
+        private fun getPsiAsFirElementSource(element: KtElement): KtElement? {
             val deparenthesized = if (element is KtExpression) KtPsiUtil.safeDeparenthesize(element) else element
             return when {
                 deparenthesized is KtPropertyDelegate -> deparenthesized.expression ?: element
@@ -67,13 +73,29 @@ internal class FirElementBuilder(
                 else -> deparenthesized
             }
         }
+
+        private fun doKtElementHasCorrespondingFirElement(ktElement: KtElement): Boolean = when (ktElement) {
+            is KtImportList -> false
+            else -> true
+        }
     }
 
-    fun doKtElementHasCorrespondingFirElement(ktElement: KtElement): Boolean = when (ktElement) {
-        is KtImportList -> false
-        else -> true
-    }
-
+    /**
+     * Returns a [FirElement] in its final resolved state.
+     *
+     * Note: that it isn't always [BODY_RESOLVE][FirResolvePhase.BODY_RESOLVE]
+     * as not all declarations have types/bodies/etc. to resolve.
+     *
+     * For instance, [KtPackageDirective] has nothing to resolve,
+     * so it will be returned as is ([FirPackageDirective][org.jetbrains.kotlin.fir.FirPackageDirective]),
+     * with the [RAW_FIR][FirResolvePhase.RAW_FIR] phase.
+     *
+     * @return associated [FirElement] in final resolved state if it exists.
+     *
+     * @see getFirForElementInsideAnnotations
+     * @see getFirForElementInsideTypes
+     * @see getFirForElementInsideFileHeader
+     */
     fun getOrBuildFirFor(element: KtElement): FirElement? {
         return if (element is KtFile && element !is KtCodeFragment) {
             getOrBuildFirForKtFile(element)
@@ -306,6 +328,12 @@ private fun KtDeclaration.isPartOf(callableDeclaration: KtCallableDeclaration): 
 internal val KtTypeParameter.containingDeclaration: KtDeclaration?
     get() = (parent as? KtTypeParameterList)?.parent as? KtDeclaration
 
+/**
+ * Returns **true** if [this] declaration is a unit of resolution and can be treated as non-local.
+ * The property is supposed to be used only in the pair with [getNonLocalContainingDeclaration] or [getNonLocalContainingOrThisDeclaration]
+ *
+ * @see getNonLocalContainingDeclaration
+ */
 internal val KtDeclaration.isAutonomousDeclaration: Boolean
     get() = when (this) {
         is KtPropertyAccessor, is KtParameter, is KtTypeParameter -> false
@@ -316,6 +344,14 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
     return getNonLocalContainingDeclaration(parentsWithSelf, predicate)
 }
 
+/**
+ * Returns the first non-local declaration from [elementsToCheck] that contains the given elements,
+ * based on the specified predicate.
+ *
+ * The resulting declaration can be considered reachable at [RAW_FIR][FirResolvePhase.RAW_FIR] phase.
+ *
+ * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructure
+ */
 internal fun getNonLocalContainingDeclaration(
     elementsToCheck: Sequence<PsiElement>,
     predicate: (KtDeclaration) -> Boolean = { true },
@@ -339,7 +375,7 @@ internal fun getNonLocalContainingDeclaration(
                 parent is KtCodeFragment ||
                 parent is PsiErrorElement
             ) {
-                // Candidate turned out to be local. Let's find another one.
+                // The candidate turned out to be local. Let's find another one.
                 candidate = null
             }
         }

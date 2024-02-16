@@ -38,6 +38,40 @@ import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
+/**
+ * This class represents the resolver for each [FirResolvePhase].
+ *
+ * Usually such the resolver extends the corresponding compiler phase transformer or delegates to it.
+ *
+ * The main difference with original compiler transformers is that we can transform declarations
+ * only under the lock of the declaration (see [LLFirLockProvider] for locks implementation).
+ * E.g., to avoid [contract violations][org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirLazyResolveContractChecker]
+ * we cannot transform class member declaration under the class lock – we have to take the corresponding declaration lock
+ * to avoid concurrent issues.
+ *
+ * So, at least we have a different implementation for transformations of such declarations as [FirFile], [FirScript] and [FirRegularClass].
+ *
+ * Due to lazy resolution, we have to maintain the resolution order explicitly in some cases as we are not guaranteed by default that all
+ * dependencies or outer declarations are resolved before the target one.
+ * We have [resolveDependencies] method which describes common dependencies between declarations.
+ * Also, each [LLFirResolveTarget] can define phase-specific rules.
+ *
+ * Implementations:
+ * - [COMPILER_REQUIRED_ANNOTATIONS][FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS] – [LLFirCompilerRequiredAnnotationsTargetResolver]
+ * - [COMPANION_GENERATION][FirResolvePhase.COMPANION_GENERATION] – [LLFirCompanionGenerationTargetResolver]
+ * - [SUPER_TYPES][FirResolvePhase.SUPER_TYPES] – [LLFirSuperTypeTargetResolver]
+ * - [SEALED_CLASS_INHERITORS][FirResolvePhase.SEALED_CLASS_INHERITORS] – [LLFirSealedClassInheritorsLazyResolver]
+ * - [TYPES][FirResolvePhase.TYPES] – [LLFirTypeTargetResolver]
+ * - [STATUS][FirResolvePhase.STATUS] – [LLFirStatusTargetResolver]
+ * - [EXPECT_ACTUAL_MATCHING][FirResolvePhase.EXPECT_ACTUAL_MATCHING] – [LLFirExpectActualMatchingTargetResolver]
+ * - [CONTRACTS][FirResolvePhase.CONTRACTS] – [LLFirContractsTargetResolver]
+ * - [IMPLICIT_TYPES_BODY_RESOLVE][FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE] – [LLFirImplicitBodyTargetResolver]
+ * - [ANNOTATION_ARGUMENTS][FirResolvePhase.ANNOTATION_ARGUMENTS] – [LLFirAnnotationArgumentsTargetResolver]
+ * - [BODY_RESOLVE][FirResolvePhase.BODY_RESOLVE] – [LLFirBodyTargetResolver]
+ *
+ * @see LLFirLockProvider
+ * @see FirResolvePhase
+ */
 internal abstract class LLFirTargetResolver(
     protected val resolveTarget: LLFirResolveTarget,
     val resolverPhase: FirResolvePhase,
@@ -83,6 +117,12 @@ internal abstract class LLFirTargetResolver(
     }
 
     /**
+     * Dependency target resolution can be skipped to optimize the resolution if this phase does not require any dependencies.
+     *
+     * For instance, [LLFirBodyTargetResolver] skips it as no one should depend on body resolution of another declaration.
+     *
+     * @return **true** if [resolveDependencies] step should be skipped
+     *
      * @see resolveDependencies
      */
     open val skipDependencyTargetResolutionStep: Boolean get() = false
@@ -91,6 +131,7 @@ internal abstract class LLFirTargetResolver(
      * Requests the resolution for dependencies to avoid race in the case of FIR instance sharing.
      * Will be executed before resolution without a lock.
      *
+     * @see resolveDataClassMemberDependencies
      * @see skipDependencyTargetResolutionStep
      */
     private fun resolveDependencies(target: FirElementWithResolveState) {
@@ -190,10 +231,32 @@ internal abstract class LLFirTargetResolver(
 
     protected open fun checkResolveConsistency() {}
 
+    /**
+     * This method executes **not under the lock** of [target].
+     * Any unsafe reads from [target] declaration have to be done under [withReadLock].
+     * [performCustomResolveUnderLock] have to be used for modifications.
+     *
+     * This method can be useful to resolve some dependencies (like [resolveDependencies] in general),
+     * but with some phase-specific rules.
+     *
+     * For instance, to pre-resolve [FirRegularClass] members before the class itself as it is required
+     * to build the [CFG][org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph].
+     *
+     * @return **true** if [performCustomResolveUnderLock] has been called
+     *
+     * @see withReadLock
+     * @see performCustomResolveUnderLock
+     */
     protected open fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean = false
 
+    /**
+     * This method executes **under the lock** of [target].
+     */
     protected abstract fun doLazyResolveUnderLock(target: FirElementWithResolveState)
 
+    /**
+     * Executes the resolution.
+     */
     fun resolveDesignation() {
         checkResolveConsistency()
         resolveTarget.visit(this)
@@ -203,6 +266,14 @@ internal abstract class LLFirTargetResolver(
         performResolve(element)
     }
 
+    /**
+     * Performs the resolution of [target].
+     * The [target] element have to be at least in [resolverPhase].[previous][FirResolvePhase.previous] phase.
+     *
+     * @see resolveDependencies
+     * @see doResolveWithoutLock
+     * @see doLazyResolveUnderLock
+     */
     protected fun performResolve(target: FirElementWithResolveState) {
         resolveDependencies(target)
 

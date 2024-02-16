@@ -65,6 +65,28 @@ internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_R
     }
 }
 
+/**
+ * This resolver is responsible for [BODY_RESOLVE][FirResolvePhase.BODY_RESOLVE] phase.
+ *
+ * This resolver:
+ * - Transforms bodies of declarations.
+ * - Builds [control flow graph][org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph].
+ *
+ * Before the transformation, the resolver [recreates][BodyStateKeepers] all bodies
+ * to prevent corrupted states due to [PCE][com.intellij.openapi.progress.ProcessCanceledException].
+ *
+ * Special rules:
+ * - [FirFile] – All members which [isUsedInControlFlowGraphBuilderForFile] have
+ *   to be resolved before the file to build correct [CFG][org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph].
+ * - [FirScript] – All members which [isUsedInControlFlowGraphBuilderForScript] have
+ *   to be resolved before the script to build correct [CFG][org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph].
+ * - [FirRegularClass] – All members which [isUsedInControlFlowGraphBuilderForClass] have
+ *   to be resolved before the class to build correct [CFG][org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph].
+ *
+ * @see BodyStateKeepers
+ * @see FirBodyResolveTransformer
+ * @see FirResolvePhase.BODY_RESOLVE
+ */
 private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(
     target,
     FirResolvePhase.BODY_RESOLVE,

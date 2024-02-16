@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,12 @@ import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.FirLazyResolveContractViolationException
 
+/**
+ * Checks a lazy resolve call's compliance with [FirResolvePhase] contracts.
+ *
+ * @see FirResolvePhase
+ * @see FirLazyResolveContractViolationException
+ */
 internal class LLFirLazyResolveContractChecker {
     private val currentTransformerPhase = ThreadLocal.withInitial<FirResolvePhase?> { null }
 
