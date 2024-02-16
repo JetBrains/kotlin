@@ -1,12 +1,17 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// DO NOT MODIFY IT MANUALLY.
+
+@file:Suppress("DuplicatedCode", "unused")
+
 package org.jetbrains.kotlin.ir.declarations.impl
 
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -21,21 +26,20 @@ class IrFieldImpl @IrImplementationDetail constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
-    override val symbol: IrFieldSymbol,
-    override var name: Name,
-    override var type: IrType,
-    override var visibility: DescriptorVisibility,
-    override var isFinal: Boolean,
-    override var isExternal: Boolean,
-    override var isStatic: Boolean,
     override val factory: IrFactory,
+    override var name: Name,
+    override var isExternal: Boolean,
+    override var visibility: DescriptorVisibility,
+    override val symbol: IrFieldSymbol,
+    override var type: IrType,
+    override var isFinal: Boolean,
+    override var isStatic: Boolean,
 ) : IrField() {
-    init {
-        symbol.bind(this)
-    }
+    override var annotations: List<IrConstructorCall> = emptyList()
 
     override lateinit var parent: IrDeclarationParent
-    override var annotations: List<IrConstructorCall> = emptyList()
+
+    override var metadata: MetadataSource? = null
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: PropertyDescriptor
@@ -45,5 +49,7 @@ class IrFieldImpl @IrImplementationDetail constructor(
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 
-    override var metadata: MetadataSource? = null
+    init {
+        symbol.bind(this)
+    }
 }
