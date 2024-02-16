@@ -42,7 +42,6 @@ fun TestConfigurationBuilder.baseFirSpecDiagnosticTestConfiguration(baseDir: Str
     useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider.bind(baseDir))
 
     useAfterAnalysisCheckers(
-        ::FirIdenticalChecker,
         ::FirTestDataConsistencyHandler,
         ::FirFailingTestSuppressor,
     )

@@ -74,9 +74,6 @@ open class AbstractFirScriptCodegenTest : AbstractKotlinCompilerWithTargetBacken
             useHandlers(
                 ::FirDiagnosticsHandler
             )
-            useAfterAnalysisCheckers(
-                ::FirIrDumpIdenticalChecker,
-            )
             commonFirHandlersForCodegenTest()
         }
 
