@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.generator.model.ListField
 object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
     override fun configure(model: Model): Unit = with(IrTree) {
         impl(anonymousInitializer) {
-            implementation.doPrint = false
+            isLateinit("body")
         }
 
         impl(simpleFunction) {
