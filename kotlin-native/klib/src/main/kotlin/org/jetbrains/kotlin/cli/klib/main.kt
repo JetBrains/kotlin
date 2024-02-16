@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
@@ -40,7 +39,7 @@ import java.io.File
 import kotlin.system.exitProcess
 import org.jetbrains.kotlin.konan.file.File as KFile
 
-fun printUsage() {
+private fun printUsage() {
     println(
             """
             Usage: klib <command> <library> [<option>]
@@ -98,7 +97,7 @@ private fun parseOptions(args: Array<String>): Map<String, List<String>> {
 }
 
 
-private class Command(args: Array<String>) {
+internal class Command(args: Array<String>) {
     init {
         if (args.size < 2) {
             printUsage()
@@ -132,20 +131,7 @@ private fun Command.parseSignatureVersion(): KotlinIrSignatureVersion? {
     return signatureVersion
 }
 
-internal fun logWarning(text: String) {
-    println("warning: $text")
-}
-
-internal fun logError(text: String, withStacktrace: Boolean = false): Nothing {
-    if (withStacktrace)
-        error("error: $text")
-    else {
-        System.err.println("error: $text")
-        exitProcess(1)
-    }
-}
-
-object KlibToolLogger : Logger, IrMessageLogger {
+internal object KlibToolLogger : Logger, IrMessageLogger {
     override fun log(message: String) = println(message)
     override fun warning(message: String) = logWarning(message)
     override fun error(message: String) = logWarning(message)
@@ -162,7 +148,20 @@ object KlibToolLogger : Logger, IrMessageLogger {
     }
 }
 
-val defaultRepository = KFile(DependencyDirectories.localKonanDir.resolve("klib").absolutePath)
+internal fun logWarning(text: String) {
+    println("warning: $text")
+}
+
+internal fun logError(text: String, withStacktrace: Boolean = false): Nothing {
+    if (withStacktrace)
+        error("error: $text")
+    else {
+        System.err.println("error: $text")
+        exitProcess(1)
+    }
+}
+
+private val defaultRepository = KFile(DependencyDirectories.localKonanDir.resolve("klib").absolutePath)
 
 private class KlibRepoDeprecationWarning {
     private var alreadyLogged = false
@@ -175,11 +174,11 @@ private class KlibRepoDeprecationWarning {
     }
 }
 
-class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
+internal class Library(val libraryNameOrPath: String, requestedRepository: String?) {
 
     private val klibRepoDeprecationWarning = KlibRepoDeprecationWarning()
 
-    val repository = requestedRepository?.let {
+    private val repository = requestedRepository?.let {
         klibRepoDeprecationWarning.logOnceIfNecessary() // Due to use of "-repository" option.
         KFile(it)
     } ?: defaultRepository
@@ -242,9 +241,11 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
         library?.libraryFile?.deleteRecursively()
     }
 
-    class KlibToolLinker(
-            module: ModuleDescriptor, irBuiltIns: IrBuiltIns, symbolTable: SymbolTable
-    ) : KotlinIrLinker(module, KlibToolLogger, irBuiltIns, symbolTable, emptyList()) {
+    class KlibToolIrLinker(
+            module: ModuleDescriptor,
+            irBuiltIns: IrBuiltIns,
+            symbolTable: SymbolTable
+    ) : KotlinIrLinker(module, KlibToolLogger, irBuiltIns, symbolTable, exportedDependencies = emptyList()) {
         override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
                 linker = this,
                 symbolTable = symbolTable,
@@ -254,25 +255,23 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
                 partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
         )
 
-        override val returnUnboundSymbolsIfSignatureNotFound: Boolean
-            get() = true
+        override val returnUnboundSymbolsIfSignatureNotFound get() = true
 
-        override val translationPluginContext: TranslationPluginContext
-            get() = TODO("Not needed for ir dumping")
+        override val translationPluginContext get() = TODO("Not needed for ir dumping")
 
-        override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: KotlinLibrary?, strategyResolver: (String) -> DeserializationStrategy): IrModuleDeserializer {
-            return KlibToolModuleDeserializer(
-                    module = moduleDescriptor,
-                    klib = klib ?: error("Expecting kotlin library for $moduleDescriptor"),
-                    strategyResolver = strategyResolver
-            )
-        }
+        override fun createModuleDeserializer(
+                moduleDescriptor: ModuleDescriptor,
+                klib: KotlinLibrary?,
+                strategyResolver: (String) -> DeserializationStrategy
+        ): IrModuleDeserializer = KlibToolModuleDeserializer(
+                module = moduleDescriptor,
+                klib = klib ?: error("Expecting kotlin library for $moduleDescriptor"),
+                strategyResolver = strategyResolver
+        )
 
-        override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean {
-            return false
-        }
+        override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor) = false
 
-        inner class KlibToolModuleDeserializer(
+        private inner class KlibToolModuleDeserializer(
                 module: ModuleDescriptor,
                 klib: KotlinLibrary,
                 strategyResolver: (String) -> DeserializationStrategy
@@ -302,7 +301,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
         val typeTranslator = TypeTranslatorImpl(symbolTable, ModuleDescriptorLoader.languageVersionSettings, module)
         val irBuiltIns = IrBuiltInsOverDescriptors(module.builtIns, typeTranslator, symbolTable)
 
-        val linker = KlibToolLinker(module, irBuiltIns, symbolTable)
+        val linker = KlibToolIrLinker(module, irBuiltIns, symbolTable)
         module.allDependencyModules.forEach {
             linker.deserializeOnlyHeaderModule(it, it.kotlinLibrary)
             linker.resolveModuleDeserializer(it, null).init()
@@ -363,6 +362,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
         )
     }
 
+    // TODO: This command is deprecated. Drop it after 2.0. KT-65380
     fun contents(output: Appendable, printSignatures: Boolean, signatureVersion: KotlinIrSignatureVersion?) {
         logWarning("\"contents\" has been renamed to \"dump-metadata\". Please, use new command name.")
         val module = ModuleDescriptorLoader.load(libraryInRepoOrCurrentDir(repository, libraryNameOrPath))
@@ -370,7 +370,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
             DefaultKlibSignatureRenderer(signatureVersion, "// Signature: ")
         else
             KlibSignatureRenderer.NO_SIGNATURE
-        val printer = DeclarationPrinter(output, DefaultDeclarationHeaderRenderer, signatureRenderer)
+        val printer = DeclarationPrinter(output, signatureRenderer)
 
         printer.print(module)
     }
@@ -419,12 +419,12 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 }
 
-fun libraryInRepo(repository: KFile, name: String) =
+private fun libraryInRepo(repository: KFile, name: String) =
         resolverByName(listOf(repository.absolutePath), skipCurrentDir = true, logger = KlibToolLogger).resolve(name)
 
-fun libraryInCurrentDir(name: String) = resolverByName(emptyList(), logger = KlibToolLogger).resolve(name)
+private fun libraryInCurrentDir(name: String) = resolverByName(emptyList(), logger = KlibToolLogger).resolve(name)
 
-fun libraryInRepoOrCurrentDir(repository: KFile, name: String) =
+private fun libraryInRepoOrCurrentDir(repository: KFile, name: String) =
         resolverByName(listOf(repository.absolutePath), logger = KlibToolLogger).resolve(name)
 
 private enum class KnownOption(val option: String) {
