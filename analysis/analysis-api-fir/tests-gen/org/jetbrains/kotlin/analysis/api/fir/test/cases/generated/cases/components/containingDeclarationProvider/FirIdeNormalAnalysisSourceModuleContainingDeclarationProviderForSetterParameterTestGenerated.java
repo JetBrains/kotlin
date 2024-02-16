@@ -28,27 +28,27 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationForSetterParameter")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleContainingDeclarationProviderForSetterParameterTestGenerated extends AbstractContainingDeclarationProviderForSetterParameterTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInContainingDeclarationForSetterParameter() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationForSetterParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInContainingDeclarationForSetterParameter() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationForSetterParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("defaultSetter.kt")
-    public void testDefaultSetter() throws Exception {
-        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationForSetterParameter/defaultSetter.kt");
-    }
+  @Test
+  @TestMetadata("defaultSetter.kt")
+  public void testDefaultSetter() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationForSetterParameter/defaultSetter.kt");
+  }
 }

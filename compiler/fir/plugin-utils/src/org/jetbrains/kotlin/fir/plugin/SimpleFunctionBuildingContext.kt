@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -56,6 +58,8 @@ public class SimpleFunctionBuildingContext(
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
             origin = key.origin
+
+            source = owner?.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
 
             symbol = FirNamedFunctionSymbol(callableId)
             name = callableId.callableName

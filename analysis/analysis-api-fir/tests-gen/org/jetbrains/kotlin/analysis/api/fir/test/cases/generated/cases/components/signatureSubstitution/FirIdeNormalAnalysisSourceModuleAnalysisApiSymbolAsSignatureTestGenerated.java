@@ -28,51 +28,51 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleAnalysisApiSymbolAsSignatureTestGenerated extends AbstractAnalysisApiSymbolAsSignatureTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInSymbolAsSignature() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInSymbolAsSignature() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("function.kt")
-    public void testFunction() throws Exception {
-        runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/function.kt");
-    }
+  @Test
+  @TestMetadata("function.kt")
+  public void testFunction() {
+    runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/function.kt");
+  }
 
-    @Test
-    @TestMetadata("propertyGetter.kt")
-    public void testPropertyGetter() throws Exception {
-        runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertyGetter.kt");
-    }
+  @Test
+  @TestMetadata("propertyGetter.kt")
+  public void testPropertyGetter() {
+    runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertyGetter.kt");
+  }
 
-    @Test
-    @TestMetadata("propertyNoAccessors.kt")
-    public void testPropertyNoAccessors() throws Exception {
-        runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertyNoAccessors.kt");
-    }
+  @Test
+  @TestMetadata("propertyNoAccessors.kt")
+  public void testPropertyNoAccessors() {
+    runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertyNoAccessors.kt");
+  }
 
-    @Test
-    @TestMetadata("propertySetter.kt")
-    public void testPropertySetter() throws Exception {
-        runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertySetter.kt");
-    }
+  @Test
+  @TestMetadata("propertySetter.kt")
+  public void testPropertySetter() {
+    runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertySetter.kt");
+  }
 
-    @Test
-    @TestMetadata("propertyWithAccessors.kt")
-    public void testPropertyWithAccessors() throws Exception {
-        runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertyWithAccessors.kt");
-    }
+  @Test
+  @TestMetadata("propertyWithAccessors.kt")
+  public void testPropertyWithAccessors() {
+    runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertyWithAccessors.kt");
+  }
 }

@@ -61,7 +61,7 @@ fun KGPBaseTest.project(
         workingDir,
         projectPathAdditionalSuffix,
     )
-    projectPath.addDefaultSettingsToSettingsGradle(dependencyManagement, localRepoDir)
+    projectPath.addDefaultSettingsToSettingsGradle(gradleVersion, dependencyManagement, localRepoDir)
     projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
     if (buildOptions.languageVersion != null || buildOptions.languageApiVersion != null) {
@@ -438,7 +438,7 @@ class TestProject(
         val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
         otherProjectPath.copyRecursively(projectPath.resolve(otherProjectName))
 
-        projectPath.resolve(otherProjectName).addDefaultSettingsToSettingsGradle()
+        projectPath.resolve(otherProjectName).addDefaultSettingsToSettingsGradle(gradleVersion)
 
         settingsGradle.append(
             """
@@ -551,30 +551,96 @@ private fun setupProjectFromTestResources(
 private val String.testProjectPath: Path get() = Paths.get("src", "test", "resources", "testProject", this)
 
 internal fun Path.addDefaultSettingsToSettingsGradle(
+    gradleVersion: GradleVersion,
     dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     localRepo: Path? = null,
 ) {
     addPluginManagementToSettings()
     when (dependencyManagement) {
-        is DependencyManagement.DefaultDependencyManagement -> addDependencyManagementToSettings(
-            additionalDependencyRepositories = dependencyManagement.additionalRepos,
-            localRepo = localRepo
-        )
+        is DependencyManagement.DefaultDependencyManagement -> {
+            // we cannot switch to dependencyManagement before Gradle 8.1 because of KT-65708
+            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_1)) {
+                addDependencyRepositoriesToBuildScript(
+                    additionalDependencyRepositories = dependencyManagement.additionalRepos,
+                    localRepo = localRepo
+                )
+            } else {
+                addDependencyManagementToSettings(
+                    additionalDependencyRepositories = dependencyManagement.additionalRepos,
+                    localRepo = localRepo
+                )
+            }
+        }
         is DependencyManagement.DisabledDependencyManagement -> {}
     }
+}
 
-    val buildSrc = resolve("buildSrc")
-    if (Files.exists(buildSrc)) {
-        buildSrc.addPluginManagementToSettings()
-        when (dependencyManagement) {
-            is DependencyManagement.DefaultDependencyManagement -> buildSrc.addDependencyManagementToSettings(
-                additionalDependencyRepositories = dependencyManagement.additionalRepos,
-                localRepo = localRepo
+private fun Path.addDependencyRepositoriesToBuildScript(
+    additionalDependencyRepositories: Set<String>,
+    localRepo: Path? = null,
+) {
+    val buildGradle = resolve("build.gradle")
+    val buildGradleKts = resolve("build.gradle.kts")
+    val settingsGradle = resolve("settings.gradle")
+    val settingsGradleKts = resolve("settings.gradle.kts")
+    when {
+        Files.exists(buildGradle) -> buildGradle.modify {
+            it.insertBlockToBuildScriptAfterPluginsAndImports(
+                getGroovyRepositoryBlock(additionalDependencyRepositories, localRepo).wrapWithAllProjectBlock()
             )
-            is DependencyManagement.DisabledDependencyManagement -> {}
         }
+
+        Files.exists(buildGradleKts) -> buildGradleKts.modify {
+            it.insertBlockToBuildScriptAfterPluginsAndImports(
+                getKotlinRepositoryBlock(additionalDependencyRepositories, localRepo).wrapWithAllProjectBlock()
+            )
+        }
+
+        Files.exists(settingsGradle) -> buildGradle.toFile()
+            .writeText(
+                getGroovyRepositoryBlock(
+                    additionalDependencyRepositories,
+                    localRepo
+                ).wrapWithAllProjectBlock()
+            )
+
+        Files.exists(settingsGradleKts) -> buildGradleKts.toFile()
+            .writeText(
+                getKotlinRepositoryBlock(
+                    additionalDependencyRepositories,
+                    localRepo
+                ).wrapWithAllProjectBlock()
+            )
+
+        else -> error("No build-file or settings file found")
+    }
+
+    if (Files.exists(resolve("buildSrc"))) {
+        resolve("buildSrc").addDependencyRepositoriesToBuildScript(additionalDependencyRepositories, localRepo)
     }
 }
+
+private fun String.wrapWithAllProjectBlock(): String =
+    """
+    |    
+    |allprojects {
+    |    $this
+    |}
+    |
+    """.trimMargin()
+
+private fun String.insertBlockToBuildScriptAfterPluginsAndImports(blockToInsert: String): String {
+    val importsPattern = Regex("^import.*$", RegexOption.MULTILINE)
+    val pluginsBlockPattern = Regex("plugins\\s*\\{[^}]*}", RegexOption.DOT_MATCHES_ALL)
+
+    val lastImportIndex = importsPattern.findAll(this).map { it.range.last }.maxOrNull()
+    val pluginBlockEndIndex = pluginsBlockPattern.find(this)?.range?.last
+
+    val insertionIndex = listOfNotNull(lastImportIndex, pluginBlockEndIndex).maxOrNull() ?: return blockToInsert + this
+
+    return StringBuilder(this).insert(insertionIndex + 1, "\n$blockToInsert\n").toString()
+}
+
 
 internal fun Path.addPluginManagementToSettings() {
     val buildGradle = resolve("build.gradle")
@@ -641,7 +707,7 @@ internal fun Path.addDependencyManagementToSettings(
                         localRepo
                     )
                 }
-                |""".trimMargin()
+                """.trimMargin()
             } else {
                 it
             }

@@ -5,17 +5,8 @@ FILE fqName:<root> fileName:/sealedClasses.kt
       CLASS OBJECT name:NotANumber modality:FINAL visibility:public superTypes:[<root>.Expr]
       CLASS CLASS name:Sum modality:FINAL visibility:public superTypes:[<root>.Expr]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Expr
-    CONSTRUCTOR visibility:protected <> () returnType:<root>.Expr [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Expr modality:SEALED visibility:public superTypes:[kotlin.Any]'
     CLASS CLASS name:Const modality:FINAL visibility:public superTypes:[<root>.Expr]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Expr.Const
-      CONSTRUCTOR visibility:public <> (number:kotlin.Double) returnType:<root>.Expr.Const [primary]
-        VALUE_PARAMETER name:number index:0 type:kotlin.Double
-        BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.Expr'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Const modality:FINAL visibility:public superTypes:[<root>.Expr]'
       PROPERTY name:number visibility:public modality:FINAL [val]
         FIELD PROPERTY_BACKING_FIELD name:number type:kotlin.Double visibility:private [final]
           EXPRESSION_BODY
@@ -27,6 +18,11 @@ FILE fqName:<root> fileName:/sealedClasses.kt
             RETURN type=kotlin.Nothing from='public final fun <get-number> (): kotlin.Double declared in <root>.Expr.Const'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:number type:kotlin.Double visibility:private [final]' type=kotlin.Double origin=null
                 receiver: GET_VAR '<this>: <root>.Expr.Const declared in <root>.Expr.Const.<get-number>' type=<root>.Expr.Const origin=null
+      CONSTRUCTOR visibility:public <> (number:kotlin.Double) returnType:<root>.Expr.Const [primary]
+        VALUE_PARAMETER name:number index:0 type:kotlin.Double
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.Expr'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Const modality:FINAL visibility:public superTypes:[<root>.Expr]'
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Expr
@@ -42,12 +38,6 @@ FILE fqName:<root> fileName:/sealedClasses.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     CLASS CLASS name:Sum modality:FINAL visibility:public superTypes:[<root>.Expr]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Expr.Sum
-      CONSTRUCTOR visibility:public <> (e1:<root>.Expr, e2:<root>.Expr) returnType:<root>.Expr.Sum [primary]
-        VALUE_PARAMETER name:e1 index:0 type:<root>.Expr
-        VALUE_PARAMETER name:e2 index:1 type:<root>.Expr
-        BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.Expr'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Sum modality:FINAL visibility:public superTypes:[<root>.Expr]'
       PROPERTY name:e1 visibility:public modality:FINAL [val]
         FIELD PROPERTY_BACKING_FIELD name:e1 type:<root>.Expr visibility:private [final]
           EXPRESSION_BODY
@@ -70,6 +60,12 @@ FILE fqName:<root> fileName:/sealedClasses.kt
             RETURN type=kotlin.Nothing from='public final fun <get-e2> (): <root>.Expr declared in <root>.Expr.Sum'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:e2 type:<root>.Expr visibility:private [final]' type=<root>.Expr origin=null
                 receiver: GET_VAR '<this>: <root>.Expr.Sum declared in <root>.Expr.Sum.<get-e2>' type=<root>.Expr.Sum origin=null
+      CONSTRUCTOR visibility:public <> (e1:<root>.Expr, e2:<root>.Expr) returnType:<root>.Expr.Sum [primary]
+        VALUE_PARAMETER name:e1 index:0 type:<root>.Expr
+        VALUE_PARAMETER name:e2 index:1 type:<root>.Expr
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.Expr'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Sum modality:FINAL visibility:public superTypes:[<root>.Expr]'
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Expr
@@ -102,6 +98,10 @@ FILE fqName:<root> fileName:/sealedClasses.kt
         overridden:
           public open fun toString (): kotlin.String declared in <root>.Expr
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    CONSTRUCTOR visibility:protected <> () returnType:<root>.Expr [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Expr modality:SEALED visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

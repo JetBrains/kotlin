@@ -87,10 +87,12 @@ internal abstract class KotlinBuildStatsBeanService internal constructor(
             }
         }
 
+        @Synchronized
         internal fun recordBuildStart(buildId: String) {
             kotlinBuildStatsServicesRegistry?.recordBuildStart(buildId)
         }
 
+        @Synchronized
         fun closeServices() {
             kotlinBuildStatsServicesRegistry?.close()
             kotlinBuildStatsServicesRegistry = null

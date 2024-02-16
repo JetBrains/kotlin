@@ -1,18 +1,14 @@
 class C {
+  val result: String
+    field = "OK"
+    get
+
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val result: String
-    field = "OK"
-    get
-
-}
-
-fun contextual(f: @ContextFunctionTypeParams(count = 1) Function1<C, String>): String {
-  return f.invoke(p1 = C())
 }
 
 fun box(): String {
@@ -21,3 +17,8 @@ fun box(): String {
   }
 )
 }
+
+fun contextual(f: @ContextFunctionTypeParams(count = 1) Function1<C, String>): String {
+  return f.invoke(p1 = C())
+}
+

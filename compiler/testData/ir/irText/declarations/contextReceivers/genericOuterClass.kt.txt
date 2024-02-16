@@ -20,10 +20,11 @@ class B<P : Any?> {
 
 }
 
+fun Collection<Int>.bar() {
+  B<Int>($context_receiver_0 = <this>) /*~> Unit */
+}
+
 fun Int.foo() {
   A<Int>($context_receiver_0 = <this>) /*~> Unit */
 }
 
-fun Collection<Int>.bar() {
-  B<Int>($context_receiver_0 = <this>) /*~> Unit */
-}

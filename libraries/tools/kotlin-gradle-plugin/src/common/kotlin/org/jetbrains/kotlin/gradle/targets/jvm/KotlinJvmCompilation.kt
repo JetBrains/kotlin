@@ -6,7 +6,6 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.Action
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
@@ -33,16 +32,13 @@ open class KotlinJvmCompilation @Inject internal constructor(
 
     final override val target: KotlinJvmTarget = compilation.target as KotlinJvmTarget
 
-    override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions> =
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
+                "    compilerOptions {}\n}"
+    )
+    override val compilerOptions: DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> =
         compilation.compilerOptions.castCompilerOptionsType()
-
-    internal fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
-        compilerOptions.configure(configure)
-    }
-
-    internal fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
-        configure.execute(compilerOptions.options)
-    }
 
     @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
     @Suppress("UNCHECKED_CAST", "DEPRECATION")

@@ -1,9 +1,22 @@
+library {
+  // module name: <pod1.def>
 
-package pod1 {
-    const val MY_MACRO_CONST_POD1: Int = 42
-    const val MY_MACRO_CONST_POD1A: Int = 153
-    var myVar: Double
-        @CCall(id = "knifunptr_pod10_myVar_getter") get
-        @CCall(id = "knifunptr_pod11_myVar_setter") set
+  library fragment {
+    // package name: pod1
+
+    package {
+
+      public final const val MY_MACRO_CONST_POD1: kotlin/Int /* = 42 */
+        public final get
+
+      public final const val MY_MACRO_CONST_POD1A: kotlin/Int /* = 153 */
+        public final get
+
+      public final var myVar: kotlin/Double
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_myVar_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_myVar_setter")
+        public final /* non-default */ external set(value: kotlin/Double)
+    }
+  }
 }
-

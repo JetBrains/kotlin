@@ -6,274 +6,293 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
-import org.junit.Test
+import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
 import kotlin.test.assertTrue
 
-class VariantAwareDependenciesMppIT : BaseGradleIT() {
-    private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
+@DisplayName("Multiplatform variant aware dependency resolution")
+@MppGradlePluginTests
+class VariantAwareDependenciesMppIT : KGPBaseTest() {
 
-    @Test
-    fun testJvmKtAppResolvesMppLib() {
-        val outerProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
-        val innerProject = Project("simpleProject")
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(
+        nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
+            // Use kotlin-native bundle version provided by default in KGP, because it will be pushed in one of the known IT repos for sure
+            version = null
+        )
+    )
 
-        with(outerProject) {
-            embedProject(innerProject)
-            gradleBuildScript(innerProject.projectName).appendText("\ndependencies { implementation rootProject }")
-            testResolveAllConfigurations(innerProject.projectName) {
-                assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-jvm6-1.0.jar")
+    @DisplayName("JVM project could depend on multiplatform project")
+    @GradleTest
+    fun testJvmKtAppResolvesMppLib(gradleVersion: GradleVersion) {
+        project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
+            includeOtherProjectAsSubmodule("simpleProject")
+
+            subProject("simpleProject")
+                .buildGradle
+                .appendText(
+                    """
+                    |
+                    |dependencies { implementation project(":") }
+                    |
+                    """.trimMargin()
+                )
+
+            testResolveAllConfigurations("simpleProject") { _, buildResult ->
+                buildResult.assertOutputContains(">> :simpleProject:runtimeClasspath --> sample-lib-jvm6-1.0.jar")
             }
         }
     }
 
-    @Test
-    fun testJsKtAppResolvesMppLib() {
-        val outerProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
-        val innerProject = Project("kotlin2JsInternalTest")
+    @DisplayName("JS project could depend on multiplatform project")
+    @GradleTest
+    fun testJsKtAppResolvesMppLib(gradleVersion: GradleVersion) {
+        project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
+            includeOtherProjectAsSubmodule("kotlin2JsInternalTest")
 
-        with(outerProject) {
-            embedProject(innerProject)
-            gradleBuildScript(innerProject.projectName).appendText("\ndependencies { implementation rootProject }")
+            subProject("kotlin2JsInternalTest")
+                .buildGradle
+                .appendText(
+                    """
+                    |
+                    |dependencies { implementation rootProject }
+                    |
+                    """.trimMargin()
+                )
 
-            testResolveAllConfigurations(subproject = innerProject.projectName) {
-                assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-nodejs-1.0.klib")
+            testResolveAllConfigurations("kotlin2JsInternalTest") { _, buildResult ->
+                buildResult.assertOutputContains(">> :kotlin2JsInternalTest:runtimeClasspath --> sample-lib-nodejs-1.0.klib")
             }
         }
     }
 
-    @Test
-    fun testMppLibResolvesJvmKtApp() {
-        val outerProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
-        val innerProject = Project("simpleProject")
+    @DisplayName("Multiplatform project could depend on JVM project")
+    @GradleTest
+    fun testMppLibResolvesJvmKtApp(gradleVersion: GradleVersion) {
+        project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
+            includeOtherProjectAsSubmodule("simpleProject")
+            buildGradle.appendText(
+                """
+                    |
+                    |dependencies { jvm6MainImplementation project(':simpleProject') }
+                    |
+                    """.trimMargin()
+            )
 
-        with(outerProject) {
-            embedProject(innerProject)
-            gradleBuildScript().appendText("\ndependencies { jvm6MainImplementation project(':${innerProject.projectName}') }")
-
-            testResolveAllConfigurations(innerProject.projectName)
+            testResolveAllConfigurations()
         }
     }
 
-    @Test
-    fun testMppLibResolvesJsKtApp() {
-        val outerProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
-        val innerProject = Project("kotlin2JsInternalTest")
+    @DisplayName("Multiplatform project could depend on JS project")
+    @GradleTest
+    fun testMppLibResolvesJsKtApp(gradleVersion: GradleVersion) {
+        project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
+            includeOtherProjectAsSubmodule("kotlin2JsInternalTest")
 
-        with(outerProject) {
-            embedProject(innerProject)
-            gradleBuildScript().appendText("\ndependencies { nodeJsMainImplementation project(':${innerProject.projectName}') }")
+            buildGradle.appendText(
+                """
+                |
+                |dependencies { nodeJsMainImplementation project(':kotlin2JsInternalTest') }
+                |
+                """.trimMargin()
+            )
 
-            testResolveAllConfigurations(innerProject.projectName)
+            testResolveAllConfigurations()
         }
     }
 
-    @Test
-    fun testNonKotlinJvmAppResolvesMppLib() {
-        val outerProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
-        val innerProject = Project("simpleProject").apply {
-            setupWorkingDir(false)
-            gradleBuildScript().modify {
-                it.checkedReplace("id \"org.jetbrains.kotlin.jvm\"", "")
-            }
-
-            gradleBuildScript().appendText(
+    @DisplayName("Gradle JVM project could depend on multiplatform project")
+    @GradleTest
+    fun testNonKotlinJvmAppResolvesMppLib(gradleVersion: GradleVersion) {
+        project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
+            includeOtherProjectAsSubmodule("simpleProject")
+            subProject("simpleProject").buildGradle.modify {
                 // In Gradle 5.3+, the variants of a Kotlin MPP can't be disambiguated in a pure Java project's deprecated
                 // configurations that don't have a proper 'org.gradle.usage' attribute value, see KT-30378
-                "\n" + """
-                configurations {
-                    configure([compile, runtime, testCompile, testRuntime, getByName('default')]) {
-                        canBeResolved = false
-                    }
-                }
-                """.trimIndent()
-            )
-        }
+                it.checkedReplace("id \"org.jetbrains.kotlin.jvm\"", "") +
+                        """
+                    |
+                    |configurations {
+                    |    configure([compile, runtime, deployCompile, deployCompileOnly, deployRuntime,
+                    |        testCompile, testRuntime, getByName('default')]) {
+                    |        canBeResolved = false
+                    |    }
+                    |}
+                    |
+                    |dependencies { implementation rootProject }
+                    |
+                    """.trimMargin()
+            }
 
-        with(outerProject) {
-            embedProject(innerProject)
-            gradleBuildScript(innerProject.projectName).appendText("\ndependencies { implementation rootProject }")
-
-            testResolveAllConfigurations(innerProject.projectName)
+            testResolveAllConfigurations("simpleProject")
         }
     }
 
-    @Test
-    fun testJvmKtAppResolvesJvmKtApp() {
-        val outerProject = Project("simpleProject", gradleVersion)
-        val innerProject = Project("jvmTarget") // cannot use simpleApp again, should be another project
+    @DisplayName("Kotlin JVM project could depend on another Kotlin JVM project")
+    @GradleTest
+    fun testJvmKtAppResolvesJvmKtApp(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            includeOtherProjectAsSubmodule("jvmTarget")
+            subProject("jvmTarget").buildGradle.modify {
+                it.replace("kotlinOptions.jvmTarget = \"1.7\"", "kotlinOptions.jvmTarget = \"11\"") +
+                        """
+                        |
+                        |dependencies { implementation rootProject }
+                        |
+                        """.trimMargin()
+            }
 
-        with(outerProject) {
-            embedProject(innerProject)
-            gradleBuildScript(innerProject.projectName).modify {
+            testResolveAllConfigurations("jvmTarget")
+        }
+    }
+
+    @DisplayName("Multiplatform project could depend on Kotlin JVM and JS projects")
+    @GradleTest
+    fun testMppResolvesJvmAndJsKtLibs(gradleVersion: GradleVersion) {
+        project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
+            includeOtherProjectAsSubmodule("simpleProject")
+            includeOtherProjectAsSubmodule("kotlin2JsInternalTest")
+
+            buildGradle.appendText(
                 """
-                ${it.replace("kotlinOptions.jvmTarget = \"1.7\"", "kotlinOptions.jvmTarget = \"11\"")}
-                
-                dependencies { implementation rootProject }
-                """.trimIndent()
-            }
+                |
+                |dependencies {
+                |   def jvmCompilations = kotlin.getTargets().getByName("jvm6").getCompilations()
+                |   def jsCompilations = kotlin.getTargets().getByName("nodeJs").getCompilations()
+                |
+                |   def jvmMainImplConfigName = jvmCompilations.getByName("main").getImplementationConfigurationName()
+                |   def jvmTestImplConfigName = jvmCompilations.getByName("test").getImplementationConfigurationName()
+                |   def jsMainImplConfigName = jsCompilations.getByName("main").getImplementationConfigurationName()
+                |   def jsTestImplConfigName = jsCompilations.getByName("test").getImplementationConfigurationName()
+                |
+                |   add(jvmMainImplConfigName, project(':simpleProject'))
+                |   add(jvmTestImplConfigName, project(':simpleProject'))
+                |   add(jsMainImplConfigName, project(':kotlin2JsInternalTest'))
+                |   add(jsTestImplConfigName, project(':kotlin2JsInternalTest'))
+                |}
+                """.trimMargin()
+            )
 
-            testResolveAllConfigurations(innerProject.projectName)
+            testResolveAllConfigurations()
         }
     }
 
-    @Test
-    fun testMppResolvesJvmAndJsKtLibs() {
-        val outerProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
-        val innerJvmProject = Project("simpleProject")
-        val innerJsProject = Project("kotlin2JsInternalTest")
+    @DisplayName("Kotlin JVM project could depend on multiplatform project in testRuntime configuration")
+    @GradleTest
+    fun testJvmKtAppDependsOnMppTestRuntime(gradleVersion: GradleVersion) {
+        project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
+            includeOtherProjectAsSubmodule("simpleProject")
 
-        with(outerProject) {
-            embedProject(innerJvmProject)
-            embedProject(innerJsProject)
-
-            gradleBuildScript().appendText(
-                "\n" + """
-                dependencies {
-                    def jvmCompilations = kotlin.getTargets().getByName("jvm6").getCompilations()
-                    def jsCompilations = kotlin.getTargets().getByName("nodeJs").getCompilations()
-                    
-                    def jvmMainImplConfigName = jvmCompilations.getByName("main").getImplementationConfigurationName()
-                    def jvmTestImplConfigName = jvmCompilations.getByName("test").getImplementationConfigurationName()
-                    def jsMainImplConfigName = jsCompilations.getByName("main").getImplementationConfigurationName()
-                    def jsTestImplConfigName = jsCompilations.getByName("test").getImplementationConfigurationName()
-
-                    add(jvmMainImplConfigName, project(':${innerJvmProject.projectName}'))
-                    add(jvmTestImplConfigName, project(':${innerJvmProject.projectName}'))
-                    add(jsMainImplConfigName, project(':${innerJsProject.projectName}'))
-                    add(jsTestImplConfigName, project(':${innerJsProject.projectName}'))
-                }
-            """.trimIndent()
+            subProject("simpleProject").buildGradle.appendText(
+                """
+                |
+                |dependencies { testImplementation project(path: ':', configuration: 'jvm6RuntimeElements') }
+                |
+                """.trimMargin()
             )
 
-            testResolveAllConfigurations(innerJvmProject.projectName)
-        }
-    }
-
-    @Test
-    fun testJvmKtAppDependsOnMppTestRuntime() {
-        val outerProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
-        val innerProject = Project("simpleProject")
-
-        with(outerProject) {
-            embedProject(innerProject)
-
-            gradleBuildScript(innerProject.projectName).appendText(
-                "\ndependencies { testImplementation project(path: ':', configuration: 'jvm6RuntimeElements') }"
-            )
-
-            testResolveAllConfigurations(innerProject.projectName) {
-                assertContains(">> :${innerProject.projectName}:testCompileClasspath --> sample-lib-jvm6-1.0.jar")
-                assertContains(">> :${innerProject.projectName}:testRuntimeClasspath --> sample-lib-jvm6-1.0.jar")
+            testResolveAllConfigurations("simpleProject") { _, buildResult ->
+                buildResult.assertOutputContains(">> :simpleProject:testCompileClasspath --> sample-lib-jvm6-1.0.jar")
+                buildResult.assertOutputContains(">> :simpleProject:testRuntimeClasspath --> sample-lib-jvm6-1.0.jar")
             }
         }
     }
 
-    @Test
-    fun testJvmWithJavaProjectCanBeResolvedInAllConfigurations() =
-        with(Project("new-mpp-jvm-with-java-multi-module", GradleVersionRequired.FOR_MPP_SUPPORT)) {
+    @DisplayName("Multiplatform project with Java plugin applied could be resolved in all configurations")
+    @GradleTest
+    fun testJvmWithJavaProjectCanBeResolvedInAllConfigurations(gradleVersion: GradleVersion) {
+        project("new-mpp-jvm-with-java-multi-module", gradleVersion) {
             testResolveAllConfigurations("app")
         }
+    }
 
-    @Test
-    fun testConfigurationsWithNoExplicitUsageResolveRuntime() =
-    // Starting with Gradle 5.0, plain Maven dependencies are represented as two variants, and resolving them to the API one leads
-    // to transitive dependencies left out of the resolution results. We need to ensure that our attributes schema does not lead to the API
+    @DisplayName("Configurations with no explicit usage could be resolved")
+    @GradleTest
+    fun testConfigurationsWithNoExplicitUsageResolveRuntime(gradleVersion: GradleVersion) {
+        // Starting with Gradle 5.0, plain Maven dependencies are represented as two variants, and resolving them to the API one leads
+        // to transitive dependencies left out of the resolution results. We need to ensure that our attributes schema does not lead to the API
         // variants chosen over the runtime ones when resolving a configuration with no required Usage:
-        with(Project("simpleProject")) {
-            setupWorkingDir()
-            gradleBuildScript().appendText(
-                "\n" + """
-                    dependencies { implementation 'org.jetbrains.kotlin:kotlin-compiler-embeddable' }
-
-                    configurations {
-                        customConfiguration.extendsFrom implementation
-                        customConfiguration.canBeResolved(true)
-                    }
-                """.trimIndent()
+        project("simpleProject", gradleVersion) {
+            buildGradle.appendText(
+                """
+                |
+                |dependencies { implementation 'org.jetbrains.kotlin:kotlin-compiler-embeddable' }
+                |
+                |configurations {
+                |    customConfiguration.extendsFrom implementation
+                |    customConfiguration.canBeResolved(true)
+                |}
+                |
+                """.trimMargin()
             )
 
-            testResolveAllConfigurations {
-                assertContains(">> :customConfiguration --> kotlin-compiler-embeddable-${defaultBuildOptions().kotlinVersion}.jar")
+            testResolveAllConfigurations { _, buildResult ->
+                buildResult.assertOutputContains(
+                    ">> :customConfiguration --> kotlin-compiler-embeddable-${defaultBuildOptions.kotlinVersion}.jar"
+                )
 
                 // Check that the transitive dependencies with 'runtime' scope are also available:
-                assertContains(">> :customConfiguration --> kotlin-script-runtime-${defaultBuildOptions().kotlinVersion}.jar")
+                buildResult.assertOutputContains(
+                    ">> :customConfiguration --> kotlin-script-runtime-${defaultBuildOptions.kotlinVersion}.jar"
+                )
             }
         }
+    }
 
-    @Test
-    fun testCompileAndRuntimeResolutionOfElementsConfigurations() =
-        with(Project("sample-app", gradleVersion, "new-mpp-lib-and-app")) {
-            val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
-            embedProject(libProject)
-            gradleBuildScript().modify {
-                it.replace("'com.example:sample-lib:1.0'", "project('${libProject.projectName}')")
-            }
+    @DisplayName("Elements configurations could be resolved correctly")
+    @GradleTest
+    fun testCompileAndRuntimeResolutionOfElementsConfigurations(gradleVersion: GradleVersion) {
+        project("new-mpp-lib-and-app/sample-app", gradleVersion) {
+            includeOtherProjectAsSubmodule(
+                otherProjectName = "sample-lib",
+                pathPrefix = "new-mpp-lib-and-app"
+            )
+            buildGradle.replaceText("'com.example:sample-lib:1.0'", "project(':sample-lib')")
 
-            val testGradleVersion = chooseWrapperVersionOrFinishTest()
-            val isAtLeastGradle75 = GradleVersion.version(testGradleVersion) >= GradleVersion.version("7.5")
+            val isAtLeastGradle75 = gradleVersion >= GradleVersion.version("7.5")
 
             listOf("jvm6" to "Classpath", "nodeJs" to "Classpath").forEach { (target, suffix) ->
                 build("dependencyInsight", "--configuration", "${target}Compile$suffix", "--dependency", "sample-lib") {
-                    assertSuccessful()
                     if (isAtLeastGradle75) {
-                        assertContains("Variant ${target}ApiElements")
+                        assertOutputContains("Variant ${target}ApiElements")
                     } else {
-                        assertContains("variant \"${target}ApiElements\" [")
+                        assertOutputContains("variant \"${target}ApiElements\" [")
                     }
                 }
 
                 if (suffix == "Classpath") {
                     build("dependencyInsight", "--configuration", "${target}Runtime$suffix", "--dependency", "sample-lib") {
-                        assertSuccessful()
                         if (isAtLeastGradle75) {
-                            assertContains("Variant ${target}RuntimeElements")
+                            assertOutputContains("Variant ${target}RuntimeElements")
                         } else {
-                            assertContains("variant \"${target}RuntimeElements\" [")
+                            assertOutputContains("variant \"${target}RuntimeElements\" [")
                         }
                     }
                 }
             }
         }
-
-    @Test
-    fun testResolveDependencyOnMppInCustomConfiguration() = with(Project("simpleProject", GradleVersionRequired.FOR_MPP_SUPPORT)) {
-        setupWorkingDir()
-
-        gradleBuildScript().appendText(
-            "\n" + """
-            configurations.create("custom")
-            dependencies { custom("org.jetbrains.kotlinx:atomicfu:0.15.2") }
-            tasks.register("resolveCustom") { doLast { println("###" + configurations.custom.toList()) } }
-            """.trimIndent()
-        )
-
-        build("resolveCustom") {
-            assertSuccessful()
-            val printedLine = output.lines().single { "###[" in it }.substringAfter("###")
-            val items = printedLine.removeSurrounding("[", "]").split(", ")
-            assertTrue(items.toString()) { items.any { "atomicfu-jvm" in it } }
-        }
     }
-}
 
-internal fun BaseGradleIT.Project.embedProject(other: BaseGradleIT.Project, renameTo: String? = null) {
-    setupWorkingDir()
-    other.setupWorkingDir(false)
-    val tempDir = createTempDir(if (isWindows) "" else "BaseGradleIT")
-    val embeddedModuleName = renameTo ?: other.projectName
-    try {
-        other.projectDir.copyRecursively(tempDir)
-        tempDir.copyRecursively(projectDir.resolve(embeddedModuleName))
-    } finally {
-        check(tempDir.deleteRecursively())
-    }
-    testCase.apply {
-        gradleSettingsScript().appendText("\ninclude(\"$embeddedModuleName\")")
+    @DisplayName("Custom configuration with dependency on multiplatform project could be resolved")
+    @GradleTest
+    fun testResolveDependencyOnMppInCustomConfiguration(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            buildGradle.appendText(
+                """
+                |
+                |configurations.create("custom")
+                |dependencies { custom("org.jetbrains.kotlinx:atomicfu:${TestVersions.ThirdPartyDependencies.KOTLINX_ATOMICFU}") }
+                |tasks.register("resolveCustom") { doLast { println("###" + configurations.custom.toList()) } }
+                |
+                """.trimMargin()
+            )
 
-        val embeddedBuildScript = gradleBuildScript(embeddedModuleName)
-        if (embeddedBuildScript.extension == "kts") {
-            embeddedBuildScript.modify { it.replace(".version(\"$PLUGIN_MARKER_VERSION_PLACEHOLDER\")", "") }
+            build("resolveCustom") {
+                val printedLine = output.lines().single { "###[" in it }.substringAfter("###")
+                val items = printedLine.removeSurrounding("[", "]").split(", ")
+                assertTrue(items.toString()) { items.any { "atomicfu-jvm" in it } }
+            }
         }
     }
 }

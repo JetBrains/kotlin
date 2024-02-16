@@ -22,41 +22,41 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class DceTestGenerated extends AbstractDceTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInDce() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/dce"), Pattern.compile("(.+)\\.js"), null, TargetBackend.JS, true);
-    }
+  public void testAllFilesPresentInDce() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/dce"), Pattern.compile("(.+)\\.js"), null, TargetBackend.JS, true);
+  }
 
-    @TestMetadata("amd.js")
-    public void testAmd() throws Exception {
-        runTest("js/js.translator/testData/dce/amd.js");
-    }
+  @TestMetadata("amd.js")
+  public void testAmd() {
+    runTest("js/js.translator/testData/dce/amd.js");
+  }
 
-    @TestMetadata("arrayAccess.js")
-    public void testArrayAccess() throws Exception {
-        runTest("js/js.translator/testData/dce/arrayAccess.js");
-    }
+  @TestMetadata("arrayAccess.js")
+  public void testArrayAccess() {
+    runTest("js/js.translator/testData/dce/arrayAccess.js");
+  }
 
-    @TestMetadata("commonjs.js")
-    public void testCommonjs() throws Exception {
-        runTest("js/js.translator/testData/dce/commonjs.js");
-    }
+  @TestMetadata("commonjs.js")
+  public void testCommonjs() {
+    runTest("js/js.translator/testData/dce/commonjs.js");
+  }
 
-    @TestMetadata("cycle.js")
-    public void testCycle() throws Exception {
-        runTest("js/js.translator/testData/dce/cycle.js");
-    }
+  @TestMetadata("cycle.js")
+  public void testCycle() {
+    runTest("js/js.translator/testData/dce/cycle.js");
+  }
 
-    @TestMetadata("localVarAndFunction.js")
-    public void testLocalVarAndFunction() throws Exception {
-        runTest("js/js.translator/testData/dce/localVarAndFunction.js");
-    }
+  @TestMetadata("localVarAndFunction.js")
+  public void testLocalVarAndFunction() {
+    runTest("js/js.translator/testData/dce/localVarAndFunction.js");
+  }
 
-    @TestMetadata("typeOf.js")
-    public void testTypeOf() throws Exception {
-        runTest("js/js.translator/testData/dce/typeOf.js");
-    }
+  @TestMetadata("typeOf.js")
+  public void testTypeOf() {
+    runTest("js/js.translator/testData/dce/typeOf.js");
+  }
 }

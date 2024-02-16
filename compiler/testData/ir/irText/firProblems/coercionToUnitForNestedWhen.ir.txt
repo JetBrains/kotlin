@@ -1,41 +1,4 @@
 FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
-  PROPERTY name:BACKSLASH visibility:private modality:FINAL [const,val]
-    FIELD PROPERTY_BACKING_FIELD name:BACKSLASH type:kotlin.Char visibility:private [final,static]
-      EXPRESSION_BODY
-        CONST Char type=kotlin.Char value='\\'
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-BACKSLASH> visibility:private modality:FINAL <> () returnType:kotlin.Char
-      correspondingProperty: PROPERTY name:BACKSLASH visibility:private modality:FINAL [const,val]
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='private final fun <get-BACKSLASH> (): kotlin.Char declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:BACKSLASH type:kotlin.Char visibility:private [final,static]' type=kotlin.Char origin=null
-  FUN name:nextChar visibility:private modality:FINAL <> ($receiver:java.io.Reader) returnType:kotlin.Char?
-    $receiver: VALUE_PARAMETER name:<this> type:java.io.Reader
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='private final fun nextChar (): kotlin.Char? declared in <root>'
-        BLOCK type=kotlin.Char? origin=SAFE_CALL
-          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int? [val]
-            CALL 'public final fun takeUnless <T> (predicate: kotlin.Function1<T of kotlin.takeUnless, kotlin.Boolean>): T of kotlin.takeUnless? declared in kotlin' type=kotlin.Int? origin=null
-              <T>: kotlin.Int
-              $receiver: CALL 'public open fun read (): kotlin.Int declared in java.io.Reader' type=kotlin.Int origin=null
-                $this: GET_VAR '<this>: java.io.Reader declared in <root>.nextChar' type=java.io.Reader origin=null
-              predicate: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Boolean> origin=LAMBDA
-                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Boolean
-                  VALUE_PARAMETER name:it index:0 type:kotlin.Int
-                  BLOCK_BODY
-                    RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Boolean declared in <root>.nextChar'
-                      CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'it: kotlin.Int declared in <root>.nextChar.<anonymous>' type=kotlin.Int origin=null
-                        arg1: CONST Int type=kotlin.Int value=-1
-          WHEN type=kotlin.Char? origin=null
-            BRANCH
-              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_0: kotlin.Int? declared in <root>.nextChar' type=kotlin.Int? origin=null
-                arg1: CONST Null type=kotlin.Nothing? value=null
-              then: CONST Null type=kotlin.Nothing? value=null
-            BRANCH
-              if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public open fun toChar (): kotlin.Char declared in kotlin.Int' type=kotlin.Char origin=null
-                $this: GET_VAR 'val tmp_0: kotlin.Int? declared in <root>.nextChar' type=kotlin.Int? origin=null
   FUN name:consumeRestOfQuotedSequence visibility:public modality:FINAL <> ($receiver:java.io.Reader, sb:java.lang.StringBuilder, quote:kotlin.Char) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:java.io.Reader
     VALUE_PARAMETER name:sb index:0 type:java.lang.StringBuilder
@@ -66,13 +29,13 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
                 arg1: CALL 'private final fun <get-BACKSLASH> (): kotlin.Char declared in <root>' type=kotlin.Char origin=GET_PROPERTY
               then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=@[FlexibleNullability] java.lang.StringBuilder? origin=SAFE_CALL
-                  VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Char? [val]
+                  VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Char? [val]
                     CALL 'private final fun nextChar (): kotlin.Char? declared in <root>' type=kotlin.Char? origin=null
                       $receiver: GET_VAR '<this>: java.io.Reader declared in <root>.consumeRestOfQuotedSequence' type=java.io.Reader origin=null
                   WHEN type=@[FlexibleNullability] java.lang.StringBuilder? origin=null
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'val tmp_1: kotlin.Char? declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
+                        arg0: GET_VAR 'val tmp_0: kotlin.Char? declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
                         arg1: CONST Null type=kotlin.Nothing? value=null
                       then: CONST Null type=kotlin.Nothing? value=null
                     BRANCH
@@ -80,7 +43,7 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
                       then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=@[FlexibleNullability] java.lang.StringBuilder? origin=null
                         <T>: kotlin.Char
                         <R>: @[FlexibleNullability] java.lang.StringBuilder?
-                        $receiver: GET_VAR 'val tmp_1: kotlin.Char? declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
+                        $receiver: GET_VAR 'val tmp_0: kotlin.Char? declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
                         block: FUN_EXPR type=kotlin.Function1<kotlin.Char, @[FlexibleNullability] java.lang.StringBuilder?> origin=LAMBDA
                           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Char) returnType:@[FlexibleNullability] java.lang.StringBuilder?
                             VALUE_PARAMETER name:it index:0 type:kotlin.Char
@@ -98,3 +61,40 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
           SET_VAR 'var ch: kotlin.Char? declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Unit origin=EQ
             CALL 'private final fun nextChar (): kotlin.Char? declared in <root>' type=kotlin.Char? origin=null
               $receiver: GET_VAR '<this>: java.io.Reader declared in <root>.consumeRestOfQuotedSequence' type=java.io.Reader origin=null
+  FUN name:nextChar visibility:private modality:FINAL <> ($receiver:java.io.Reader) returnType:kotlin.Char?
+    $receiver: VALUE_PARAMETER name:<this> type:java.io.Reader
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun nextChar (): kotlin.Char? declared in <root>'
+        BLOCK type=kotlin.Char? origin=SAFE_CALL
+          VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int? [val]
+            CALL 'public final fun takeUnless <T> (predicate: kotlin.Function1<T of kotlin.takeUnless, kotlin.Boolean>): T of kotlin.takeUnless? declared in kotlin' type=kotlin.Int? origin=null
+              <T>: kotlin.Int
+              $receiver: CALL 'public open fun read (): kotlin.Int declared in java.io.Reader' type=kotlin.Int origin=null
+                $this: GET_VAR '<this>: java.io.Reader declared in <root>.nextChar' type=java.io.Reader origin=null
+              predicate: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Boolean> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Boolean
+                  VALUE_PARAMETER name:it index:0 type:kotlin.Int
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Boolean declared in <root>.nextChar'
+                      CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                        arg0: GET_VAR 'it: kotlin.Int declared in <root>.nextChar.<anonymous>' type=kotlin.Int origin=null
+                        arg1: CONST Int type=kotlin.Int value=-1
+          WHEN type=kotlin.Char? origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp_1: kotlin.Int? declared in <root>.nextChar' type=kotlin.Int? origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public open fun toChar (): kotlin.Char declared in kotlin.Int' type=kotlin.Char origin=null
+                $this: GET_VAR 'val tmp_1: kotlin.Int? declared in <root>.nextChar' type=kotlin.Int? origin=null
+  PROPERTY name:BACKSLASH visibility:private modality:FINAL [const,val]
+    FIELD PROPERTY_BACKING_FIELD name:BACKSLASH type:kotlin.Char visibility:private [final,static]
+      EXPRESSION_BODY
+        CONST Char type=kotlin.Char value='\\'
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-BACKSLASH> visibility:private modality:FINAL <> () returnType:kotlin.Char
+      correspondingProperty: PROPERTY name:BACKSLASH visibility:private modality:FINAL [const,val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-BACKSLASH> (): kotlin.Char declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:BACKSLASH type:kotlin.Char visibility:private [final,static]' type=kotlin.Char origin=null

@@ -229,6 +229,7 @@ class Fir2IrLazyClass(
     }
 
     private fun shouldBuildStub(fir: FirDeclaration): Boolean {
+        if (fir is FirCallableDeclaration && fir.originalOrSelf().origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk) return false
         if (fir !is FirMemberDeclaration) return true
         return when {
             fir is FirConstructor -> isObject || isEnumClass || !Visibilities.isPrivate(fir.visibility) // This special case seams to be not needed anymore - KT-65172

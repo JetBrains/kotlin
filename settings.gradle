@@ -26,6 +26,13 @@ plugins {
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
+if (buildProperties.isKotlinNativeEnabled && startParameter.isConfigurationCacheRequested()) {
+    throw new Exception(
+            """
+            Kotlin Native is not compatible with Gradle configuration-cache.
+            Please, disable Configuration-cache before you enable native.
+            """.stripIndent())
+}
 
 // modules
 include ":benchmarks",
@@ -179,8 +186,8 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":plugins:fir-plugin-prototype:plugin-annotations",
         ":plugins:fir-plugin-prototype:fir-plugin-ic-test",
         ":kotlin-test-js-runner",
-        ":kotlinx-metadata",
-        ":kotlinx-metadata-jvm",
+        ":kotlin-metadata",
+        ":kotlin-metadata-jvm",
         ":kotlinx-metadata-klib",
         ":prepare:build.version",
         ":kotlin-build-common",
@@ -199,6 +206,8 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":generators:test-generator",
         ":generators:tree-generator-common",
         ":tools:kotlinp",
+        ":tools:kotlinp-jvm",
+        ":tools:kotlinp-klib",
         ":kotlin-build-tools-enum-compat",
         ":kotlin-gradle-compiler-types",
         ":kotlin-gradle-plugin-api",
@@ -664,8 +673,8 @@ project(':kotlin-script-runtime').projectDir = "$rootDir/libraries/tools/script-
 project(':kotlin-test-js-runner').projectDir = "$rootDir/libraries/tools/kotlin-test-js-runner" as File
 project(':kotlin-reflect').projectDir = "$rootDir/libraries/reflect" as File
 project(':kotlin-reflect-api').projectDir = "$rootDir/libraries/reflect/api" as File
-project(':kotlinx-metadata').projectDir = "$rootDir/libraries/kotlinx-metadata" as File
-project(':kotlinx-metadata-jvm').projectDir = "$rootDir/libraries/kotlinx-metadata/jvm" as File
+project(':kotlin-metadata').projectDir = "$rootDir/libraries/kotlinx-metadata" as File
+project(':kotlin-metadata-jvm').projectDir = "$rootDir/libraries/kotlinx-metadata/jvm" as File
 project(':kotlinx-metadata-klib').projectDir = "$rootDir/libraries/kotlinx-metadata/klib" as File
 project(':kotlin-compiler').projectDir = "$rootDir/prepare/compiler" as File
 project(':kotlin-compiler-embeddable').projectDir = "$rootDir/prepare/compiler-embeddable" as File
@@ -759,6 +768,8 @@ project(':kotlin-assignment-compiler-plugin.cli').projectDir = "$rootDir/plugins
 project(':kotlin-assignment-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/assign-plugin/assign-plugin.embeddable" as File
 
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
+project(':tools:kotlinp-jvm').projectDir = "$rootDir/libraries/tools/kotlinp/jvm" as File
+project(':tools:kotlinp-klib').projectDir = "$rootDir/libraries/tools/kotlinp/klib" as File
 project(":kotlin-build-tools-enum-compat").projectDir = "$rootDir/libraries/tools/kotlin-build-tools-enum-compat" as File
 project(':kotlin-gradle-compiler-types').projectDir = "$rootDir/libraries/tools/kotlin-gradle-compiler-types" as File
 project(':kotlin-gradle-plugin-api').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-api" as File

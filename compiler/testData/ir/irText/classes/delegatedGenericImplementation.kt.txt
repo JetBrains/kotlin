@@ -1,23 +1,15 @@
-interface IBase<A : Any?> {
-  abstract fun <B : Any?> foo(a: A, b: B)
-
-  abstract val <C : Any?> C.id: Map<A, C>?
-    abstract get
-
-  abstract var <D : Any?> List<D>.x: D?
-    abstract get
-    abstract set
-
-}
-
 class Test1<E : Any?> : IBase<E> {
+  private /* final field */ val $$delegate_0: IBase<E> = i
   constructor(i: IBase<E>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  private /* final field */ val $$delegate_0: IBase<E> = i
+  override fun <B : Any?> foo(a: E, b: B) {
+    <this>.#$$delegate_0.foo<B>(a = a, b = b)
+  }
+
   override val <C : Any?> C.id: Map<E, C>?
     override get(): Map<E, C>? {
       return (<this>.#$$delegate_0, <this>).<get-id><C>()
@@ -31,25 +23,25 @@ class Test1<E : Any?> : IBase<E> {
       (<this>.#$$delegate_0, <this>).<set-x><D>(<set-?> = <set-?>)
     }
 
-  override fun <B : Any?> foo(a: E, b: B) {
-    <this>.#$$delegate_0.foo<B>(a = a, b = b)
-  }
-
 }
 
 class Test2 : IBase<String> {
-  constructor(j: IBase<String>) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   var j: IBase<String>
     field = j
     get
     set
 
   private /* final field */ val $$delegate_0: IBase<String> = j
+  constructor(j: IBase<String>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun <B : Any?> foo(a: String, b: B) {
+    <this>.#$$delegate_0.foo<B>(a = a, b = b)
+  }
+
   override val <C : Any?> C.id: Map<String, C>?
     override get(): Map<String, C>? {
       return (<this>.#$$delegate_0, <this>).<get-id><C>()
@@ -63,8 +55,17 @@ class Test2 : IBase<String> {
       (<this>.#$$delegate_0, <this>).<set-x><D>(<set-?> = <set-?>)
     }
 
-  override fun <B : Any?> foo(a: String, b: B) {
-    <this>.#$$delegate_0.foo<B>(a = a, b = b)
-  }
+}
+
+interface IBase<A : Any?> {
+  abstract fun <B : Any?> foo(a: A, b: B)
+
+  abstract val <C : Any?> C.id: Map<A, C>?
+    abstract get
+
+  abstract var <D : Any?> List<D>.x: D?
+    abstract get
+    abstract set
 
 }
+

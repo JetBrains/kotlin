@@ -1,66 +1,4 @@
 FILE fqName:<root> fileName:/TypeAliasConstructorParameterMapping.kt
-  CLASS CLASS name:Box1 modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Box1<T of <root>.Box1>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Box1<T of <root>.Box1> [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Box1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:Box2 modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Box2<T of <root>.Box2, R of <root>.Box2>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Box2<T of <root>.Box2, R of <root>.Box2> [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Box2 modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  TYPEALIAS name:OneToOne visibility:public expandedType:<root>.Box1<A of <root>.OneToOne>
-    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
-  TYPEALIAS name:OneToTwo visibility:public expandedType:<root>.Box2<A of <root>.OneToTwo, A of <root>.OneToTwo>
-    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
-  TYPEALIAS name:TwoToTwo visibility:public expandedType:<root>.Box2<A of <root>.TwoToTwo, B of <root>.TwoToTwo>
-    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
-    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
-  TYPEALIAS name:TwoToTwoReversed visibility:public expandedType:<root>.Box2<B of <root>.TwoToTwoReversed, A of <root>.TwoToTwoReversed>
-    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
-    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
-  TYPEALIAS name:TwoToOne visibility:public expandedType:<root>.Box1<A of <root>.TwoToOne>
-    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
-    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
-  TYPEALIAS name:OneToOneTransitive visibility:public expandedType:<root>.Box1<A of <root>.OneToOneTransitive>
-    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
-  TYPEALIAS name:TwoToTwoTransitive visibility:public expandedType:<root>.Box2<A of <root>.TwoToTwoTransitive, A of <root>.TwoToTwoTransitive>
-    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
-    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
-  TYPEALIAS name:TwoToTwoTransitive2 visibility:public expandedType:<root>.Box2<B of <root>.TwoToTwoTransitive2, B of <root>.TwoToTwoTransitive2>
-    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
-    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
   PROPERTY name:test1 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test1 type:<root>.Box1<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
@@ -146,3 +84,65 @@ FILE fqName:<root> fileName:/TypeAliasConstructorParameterMapping.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test8> (): <root>.Box2<kotlin.String, kotlin.String> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test8 type:<root>.Box2<kotlin.String, kotlin.String> visibility:private [final,static]' type=<root>.Box2<kotlin.String, kotlin.String> origin=null
+  CLASS CLASS name:Box1 modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Box1<T of <root>.Box1>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Box1<T of <root>.Box1> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Box1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:Box2 modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Box2<T of <root>.Box2, R of <root>.Box2>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Box2<T of <root>.Box2, R of <root>.Box2> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Box2 modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  TYPEALIAS name:OneToOne visibility:public expandedType:<root>.Box1<A of <root>.OneToOne>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+  TYPEALIAS name:OneToOneTransitive visibility:public expandedType:<root>.Box1<A of <root>.OneToOneTransitive>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+  TYPEALIAS name:OneToTwo visibility:public expandedType:<root>.Box2<A of <root>.OneToTwo, A of <root>.OneToTwo>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+  TYPEALIAS name:TwoToOne visibility:public expandedType:<root>.Box1<A of <root>.TwoToOne>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
+  TYPEALIAS name:TwoToTwo visibility:public expandedType:<root>.Box2<A of <root>.TwoToTwo, B of <root>.TwoToTwo>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
+  TYPEALIAS name:TwoToTwoReversed visibility:public expandedType:<root>.Box2<B of <root>.TwoToTwoReversed, A of <root>.TwoToTwoReversed>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
+  TYPEALIAS name:TwoToTwoTransitive visibility:public expandedType:<root>.Box2<A of <root>.TwoToTwoTransitive, A of <root>.TwoToTwoTransitive>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
+  TYPEALIAS name:TwoToTwoTransitive2 visibility:public expandedType:<root>.Box2<B of <root>.TwoToTwoTransitive2, B of <root>.TwoToTwoTransitive2>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false

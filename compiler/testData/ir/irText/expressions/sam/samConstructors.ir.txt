@@ -1,4 +1,6 @@
 FILE fqName:<root> fileName:/samConstructors.kt
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
   FUN name:test1 visibility:public modality:FINAL <> () returnType:java.lang.Runnable
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (): java.lang.Runnable declared in <root>'
@@ -14,8 +16,6 @@ FILE fqName:<root> fileName:/samConstructors.kt
       RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.Function0<kotlin.Unit>): java.lang.Runnable declared in <root>'
         TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
           GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=null
-  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
-    BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <> () returnType:java.lang.Runnable
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): java.lang.Runnable declared in <root>'

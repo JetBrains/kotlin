@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.serialization.constant.coneTypeSafe
@@ -34,7 +35,7 @@ class FirAnnotationSerializer(
     }
 
     fun serializeAnnotation(annotation: AnnotationValue): ProtoBuf.Annotation {
-        return serializeAnnotation(annotation.coneTypeSafe<ConeClassLikeType>(), annotation.value.argumentsMapping)
+        return serializeAnnotation(annotation.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session), annotation.value.argumentsMapping)
     }
 
     private fun serializeAnnotation(coneType: ConeClassLikeType?, argumentsMapping: Map<Name, ConstantValue<*>>): ProtoBuf.Annotation {

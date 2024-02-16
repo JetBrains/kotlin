@@ -104,12 +104,6 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                     task.associatedJavaCompileTaskName.value(javaTask.map { it.name })
                 }
 
-                @Suppress("DEPRECATION")
-                task.ownModuleName.value(
-                    providers.provider {
-                        task.parentKotlinOptions.orNull?.moduleName ?: compilationInfo.moduleName
-                    })
-
                 task.nagTaskModuleNameUsage.value(true).disallowChanges()
             }
         }

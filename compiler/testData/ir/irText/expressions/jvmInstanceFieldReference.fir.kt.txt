@@ -1,12 +1,12 @@
 class Derived : Base {
+  init {
+    <this>.#value = 0
+  }
+
   constructor() /* primary */ {
     super/*Base*/()
     /* <init>() */
 
-  }
-
-  init {
-    <this>.#value = 0
   }
 
   fun getValue(): Int {

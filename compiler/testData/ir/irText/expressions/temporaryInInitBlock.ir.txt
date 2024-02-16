@@ -1,11 +1,6 @@
 FILE fqName:<root> fileName:/temporaryInInitBlock.kt
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
-    CONSTRUCTOR visibility:public <> (x:kotlin.Any?) returnType:<root>.C [primary]
-      VALUE_PARAMETER name:x index:0 type:kotlin.Any?
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:s visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String? visibility:private [final]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.String?
@@ -32,6 +27,11 @@ FILE fqName:<root> fileName:/temporaryInInitBlock.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
                   $this: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.C' type=kotlin.Any? origin=null
+    CONSTRUCTOR visibility:public <> (x:kotlin.Any?) returnType:<root>.C [primary]
+      VALUE_PARAMETER name:x index:0 type:kotlin.Any?
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

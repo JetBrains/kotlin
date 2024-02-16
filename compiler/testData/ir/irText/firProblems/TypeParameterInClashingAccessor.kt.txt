@@ -1,12 +1,3 @@
-private class D : C {
-  constructor(a: A) /* primary */ {
-    super/*C*/(a = a)
-    /* <init>() */
-
-  }
-
-}
-
 open class A {
   constructor() /* primary */ {
     super/*Any*/()
@@ -17,18 +8,28 @@ open class A {
 }
 
 open class B {
+  private val a: A
+    field = a
+    private get
+
   constructor(a: A) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  private val a: A
-    field = a
-    private get
-
   open fun <T : A> getA(): T {
     return <this>.<get-a>() as T
   }
 
 }
+
+private class D : C {
+  constructor(a: A) /* primary */ {
+    super/*C*/(a = a)
+    /* <init>() */
+
+  }
+
+}
+

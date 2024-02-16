@@ -28,105 +28,105 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeDependentAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGenerated extends AbstractAnalysisApiPsiTypeProviderTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Dependent,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Dependent,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    @TestMetadata("actual_jvmInline_typealias.kt")
-    public void testActual_jvmInline_typealias() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/actual_jvmInline_typealias.kt");
-    }
+  @Test
+  @TestMetadata("actual_jvmInline_typealias.kt")
+  public void testActual_jvmInline_typealias() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/actual_jvmInline_typealias.kt");
+  }
 
-    @Test
-    @TestMetadata("actual_typealias.kt")
-    public void testActual_typealias() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/actual_typealias.kt");
-    }
+  @Test
+  @TestMetadata("actual_typealias.kt")
+  public void testActual_typealias() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/actual_typealias.kt");
+  }
 
-    @Test
-    public void testAllFilesPresentInForDeclaration() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInForDeclaration() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("anonymousObject_exposedAsReturnValue.kt")
-    public void testAnonymousObject_exposedAsReturnValue() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/anonymousObject_exposedAsReturnValue.kt");
-    }
+  @Test
+  @TestMetadata("anonymousObject_exposedAsReturnValue.kt")
+  public void testAnonymousObject_exposedAsReturnValue() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/anonymousObject_exposedAsReturnValue.kt");
+  }
 
-    @Test
-    @TestMetadata("duplicatedClass_functionParameter.kt")
-    public void testDuplicatedClass_functionParameter() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/duplicatedClass_functionParameter.kt");
-    }
+  @Test
+  @TestMetadata("duplicatedClass_functionParameter.kt")
+  public void testDuplicatedClass_functionParameter() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/duplicatedClass_functionParameter.kt");
+  }
 
-    @Test
-    @TestMetadata("errorTypeInNestedTypeArgument.kt")
-    public void testErrorTypeInNestedTypeArgument() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/errorTypeInNestedTypeArgument.kt");
-    }
+  @Test
+  @TestMetadata("errorTypeInNestedTypeArgument.kt")
+  public void testErrorTypeInNestedTypeArgument() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/errorTypeInNestedTypeArgument.kt");
+  }
 
-    @Test
-    @TestMetadata("localClass_exposedAsMemberInAnonymousObject.kt")
-    public void testLocalClass_exposedAsMemberInAnonymousObject() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_exposedAsMemberInAnonymousObject.kt");
-    }
+  @Test
+  @TestMetadata("localClass_exposedAsMemberInAnonymousObject.kt")
+  public void testLocalClass_exposedAsMemberInAnonymousObject() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_exposedAsMemberInAnonymousObject.kt");
+  }
 
-    @Test
-    @TestMetadata("localClass_exposedAsReturnValue.kt")
-    public void testLocalClass_exposedAsReturnValue() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_exposedAsReturnValue.kt");
-    }
+  @Test
+  @TestMetadata("localClass_exposedAsReturnValue.kt")
+  public void testLocalClass_exposedAsReturnValue() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_exposedAsReturnValue.kt");
+  }
 
-    @Test
-    @TestMetadata("localClass_exposedAsReturnValue_privateFunction.kt")
-    public void testLocalClass_exposedAsReturnValue_privateFunction() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_exposedAsReturnValue_privateFunction.kt");
-    }
+  @Test
+  @TestMetadata("localClass_exposedAsReturnValue_privateFunction.kt")
+  public void testLocalClass_exposedAsReturnValue_privateFunction() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_exposedAsReturnValue_privateFunction.kt");
+  }
 
-    @Test
-    @TestMetadata("localClass_localFunctionInSameScope.kt")
-    public void testLocalClass_localFunctionInSameScope() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_localFunctionInSameScope.kt");
-    }
+  @Test
+  @TestMetadata("localClass_localFunctionInSameScope.kt")
+  public void testLocalClass_localFunctionInSameScope() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_localFunctionInSameScope.kt");
+  }
 
-    @Test
-    @TestMetadata("localClass_localPropertyInSameScope.kt")
-    public void testLocalClass_localPropertyInSameScope() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_localPropertyInSameScope.kt");
-    }
+  @Test
+  @TestMetadata("localClass_localPropertyInSameScope.kt")
+  public void testLocalClass_localPropertyInSameScope() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_localPropertyInSameScope.kt");
+  }
 
-    @Test
-    @TestMetadata("localClass_localPropertyInSampeScope_functionalType.kt")
-    public void testLocalClass_localPropertyInSampeScope_functionalType() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_localPropertyInSampeScope_functionalType.kt");
-    }
+  @Test
+  @TestMetadata("localClass_localPropertyInSampeScope_functionalType.kt")
+  public void testLocalClass_localPropertyInSampeScope_functionalType() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_localPropertyInSampeScope_functionalType.kt");
+  }
 
-    @Test
-    @TestMetadata("localClass_memberFunction.kt")
-    public void testLocalClass_memberFunction() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_memberFunction.kt");
-    }
+  @Test
+  @TestMetadata("localClass_memberFunction.kt")
+  public void testLocalClass_memberFunction() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_memberFunction.kt");
+  }
 
-    @Test
-    @TestMetadata("suspendFunctionValueParameterNoStdlib.kt")
-    public void testSuspendFunctionValueParameterNoStdlib() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterNoStdlib.kt");
-    }
+  @Test
+  @TestMetadata("suspendFunctionValueParameterNoStdlib.kt")
+  public void testSuspendFunctionValueParameterNoStdlib() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterNoStdlib.kt");
+  }
 
-    @Test
-    @TestMetadata("suspendFunctionValueParameterWithStdlib.kt")
-    public void testSuspendFunctionValueParameterWithStdlib() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterWithStdlib.kt");
-    }
+  @Test
+  @TestMetadata("suspendFunctionValueParameterWithStdlib.kt")
+  public void testSuspendFunctionValueParameterWithStdlib() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterWithStdlib.kt");
+  }
 }

@@ -1,11 +1,4 @@
 FILE fqName:<root> fileName:/stringVsTAny.kt
-  FUN name:useTAny visibility:public modality:FINAL <T> (fn:kotlin.Function0<T of <root>.useTAny>) returnType:T of <root>.useTAny
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<T of <root>.useTAny>
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun useTAny <T> (fn: kotlin.Function0<T of <root>.useTAny>): T of <root>.useTAny declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.useTAny origin=INVOKE
-          $this: GET_VAR 'fn: kotlin.Function0<T of <root>.useTAny> declared in <root>.useTAny' type=kotlin.Function0<T of <root>.useTAny> origin=VARIABLE_AS_FUNCTION
   FUN name:testNoNullCheck visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
@@ -16,3 +9,10 @@ FILE fqName:<root> fileName:/stringVsTAny.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): @[FlexibleNullability] kotlin.String? declared in <root>.testNoNullCheck'
                   CALL 'public open fun string (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
+  FUN name:useTAny visibility:public modality:FINAL <T> (fn:kotlin.Function0<T of <root>.useTAny>) returnType:T of <root>.useTAny
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<T of <root>.useTAny>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun useTAny <T> (fn: kotlin.Function0<T of <root>.useTAny>): T of <root>.useTAny declared in <root>'
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.useTAny origin=INVOKE
+          $this: GET_VAR 'fn: kotlin.Function0<T of <root>.useTAny> declared in <root>.useTAny' type=kotlin.Function0<T of <root>.useTAny> origin=VARIABLE_AS_FUNCTION

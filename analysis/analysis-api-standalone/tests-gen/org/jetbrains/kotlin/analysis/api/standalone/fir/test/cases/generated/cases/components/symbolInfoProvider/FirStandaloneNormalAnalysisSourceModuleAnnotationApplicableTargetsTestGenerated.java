@@ -28,51 +28,51 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModuleAnnotationApplicableTargetsTestGenerated extends AbstractAnnotationApplicableTargetsTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInAnnotationApplicableTargets() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInAnnotationApplicableTargets() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("defaultTargets.kt")
-    public void testDefaultTargets() throws Exception {
-        runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/defaultTargets.kt");
-    }
+  @Test
+  @TestMetadata("defaultTargets.kt")
+  public void testDefaultTargets() {
+    runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/defaultTargets.kt");
+  }
 
-    @Test
-    @TestMetadata("emptyTargets.kt")
-    public void testEmptyTargets() throws Exception {
-        runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/emptyTargets.kt");
-    }
+  @Test
+  @TestMetadata("emptyTargets.kt")
+  public void testEmptyTargets() {
+    runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/emptyTargets.kt");
+  }
 
-    @Test
-    @TestMetadata("javaAnnotation.kt")
-    public void testJavaAnnotation() throws Exception {
-        runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/javaAnnotation.kt");
-    }
+  @Test
+  @TestMetadata("javaAnnotation.kt")
+  public void testJavaAnnotation() {
+    runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/javaAnnotation.kt");
+  }
 
-    @Test
-    @TestMetadata("listedTargets.kt")
-    public void testListedTargets() throws Exception {
-        runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/listedTargets.kt");
-    }
+  @Test
+  @TestMetadata("listedTargets.kt")
+  public void testListedTargets() {
+    runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/listedTargets.kt");
+  }
 
-    @Test
-    @TestMetadata("nonAnnotationClass.kt")
-    public void testNonAnnotationClass() throws Exception {
-        runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/nonAnnotationClass.kt");
-    }
+  @Test
+  @TestMetadata("nonAnnotationClass.kt")
+  public void testNonAnnotationClass() {
+    runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/nonAnnotationClass.kt");
+  }
 }

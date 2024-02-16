@@ -1,23 +1,4 @@
-fun testFun() {
-  super<System>.#out /*!! PrintStream */.println(p0 = "testFun")
-}
-
-var testProp: Any
-  get(): Any {
-    super<System>.#out /*!! PrintStream */.println(p0 = "testProp/get")
-    return 42
-  }
-  set(value: Any) {
-    super<System>.#out /*!! PrintStream */.println(p0 = "testProp/set")
-  }
-
 class TestClass {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val test: Int
     field = when {
       else -> { // BLOCK
@@ -31,5 +12,24 @@ class TestClass {
     super<System>.#out /*!! PrintStream */.println(p0 = "TestClass/init")
   }
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+
+fun testFun() {
+  super<System>.#out /*!! PrintStream */.println(p0 = "testFun")
+}
+
+var testProp: Any
+  get(): Any {
+    super<System>.#out /*!! PrintStream */.println(p0 = "testProp/get")
+    return 42
+  }
+  set(value: Any) {
+    super<System>.#out /*!! PrintStream */.println(p0 = "testProp/set")
+  }
 

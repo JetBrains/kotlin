@@ -1,92 +1,11 @@
-interface IBase {
-  abstract fun foo(x: Int, s: String)
-
-  abstract fun bar(): Int
-
-  abstract fun String.qux()
-
-}
-
-object BaseImpl : IBase {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  override fun foo(x: Int, s: String) {
-  }
-
-  override fun bar(): Int {
-    return 42
-  }
-
-  override fun String.qux() {
-  }
-
-}
-
-interface IOther {
-  abstract val x: String
-    abstract get
-
-  abstract var y: Int
-    abstract get
-    abstract set
-
-  abstract val Byte.z1: Int
-    abstract get
-
-  abstract var Byte.z2: Int
-    abstract get
-    abstract set
-
-}
-
-fun otherImpl(x0: String, y0: Int): IOther {
-  return { // BLOCK
-    local class <no name provided> : IOther {
-      constructor() /* primary */ {
-        super/*Any*/()
-        /* <init>() */
-
-      }
-
-      override val x: String
-        field = x0
-        override get
-
-      override var y: Int
-        field = y0
-        override get
-        override set
-
-      override val Byte.z1: Int
-        override get(): Int {
-          return 1
-        }
-
-      override var Byte.z2: Int
-        override get(): Int {
-          return 2
-        }
-        override set(value: Int) {
-        }
-
-    }
-
-    <no name provided>()
-  }
-}
-
 class Test1 : IBase {
+  private /* final field */ val $$delegate_0: BaseImpl = BaseImpl
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  private /* final field */ val $$delegate_0: BaseImpl = BaseImpl
   override fun bar(): Int {
     return <this>.#$$delegate_0.bar()
   }
@@ -102,13 +21,14 @@ class Test1 : IBase {
 }
 
 class Test2 : IBase, IOther {
+  private /* final field */ val $$delegate_0: BaseImpl = BaseImpl
+  private /* final field */ val $$delegate_1: IOther = otherImpl(x0 = "", y0 = 42)
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  private /* final field */ val $$delegate_0: BaseImpl = BaseImpl
   override fun bar(): Int {
     return <this>.#$$delegate_0.bar()
   }
@@ -121,7 +41,6 @@ class Test2 : IBase, IOther {
     (<this>.#$$delegate_0, <this>).qux()
   }
 
-  private /* final field */ val $$delegate_1: IOther = otherImpl(x0 = "", y0 = 42)
   override val x: String
     override get(): String {
       return <this>.#$$delegate_1.<get-x>()
@@ -149,3 +68,85 @@ class Test2 : IBase, IOther {
     }
 
 }
+
+interface IBase {
+  abstract fun bar(): Int
+
+  abstract fun foo(x: Int, s: String)
+
+  abstract fun String.qux()
+
+}
+
+interface IOther {
+  abstract val x: String
+    abstract get
+
+  abstract var y: Int
+    abstract get
+    abstract set
+
+  abstract val Byte.z1: Int
+    abstract get
+
+  abstract var Byte.z2: Int
+    abstract get
+    abstract set
+
+}
+
+object BaseImpl : IBase {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun bar(): Int {
+    return 42
+  }
+
+  override fun foo(x: Int, s: String) {
+  }
+
+  override fun String.qux() {
+  }
+
+}
+
+fun otherImpl(x0: String, y0: Int): IOther {
+  return { // BLOCK
+    local class <no name provided> : IOther {
+      override val x: String
+        field = x0
+        override get
+
+      override var y: Int
+        field = y0
+        override get
+        override set
+
+      constructor() /* primary */ {
+        super/*Any*/()
+        /* <init>() */
+
+      }
+
+      override val Byte.z1: Int
+        override get(): Int {
+          return 1
+        }
+
+      override var Byte.z2: Int
+        override get(): Int {
+          return 2
+        }
+        override set(value: Int) {
+        }
+
+    }
+
+    <no name provided>()
+  }
+}
+

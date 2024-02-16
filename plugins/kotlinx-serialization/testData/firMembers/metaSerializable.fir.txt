@@ -38,14 +38,14 @@ FILE: metaSerializable.kt
         }
 
         public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Project1>| {
-            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Project1|): R|kotlin/Unit|
+            public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Project1|): R|kotlin/Unit|
 
-            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Project1|
+            public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Project1|
 
             public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                 public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+            public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|Project1.$serializer| {
                 super<R|kotlin/Any|>()
@@ -75,14 +75,14 @@ FILE: metaSerializable.kt
         }
 
         public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Project2>| {
-            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Project2|): R|kotlin/Unit|
+            public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Project2|): R|kotlin/Unit|
 
-            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Project2|
+            public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Project2|
 
             public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                 public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+            public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|Project2.$serializer| {
                 super<R|kotlin/Any|>()
@@ -109,14 +109,14 @@ FILE: metaSerializable.kt
         }
 
         public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Wrapper>| {
-            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Wrapper|): R|kotlin/Unit|
+            public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Wrapper|): R|kotlin/Unit|
 
-            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Wrapper|
+            public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Wrapper|
 
             public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                 public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+            public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|Wrapper.$serializer| {
                 super<R|kotlin/Any|>()
@@ -146,14 +146,14 @@ FILE: metaSerializable.kt
         }
 
         public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Project3>| {
-            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Project3|): R|kotlin/Unit|
+            public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Project3|): R|kotlin/Unit|
 
-            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Project3|
+            public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Project3|
 
             public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                 public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+            public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|Project3.$serializer| {
                 super<R|kotlin/Any|>()
@@ -206,14 +206,14 @@ FILE: metaSerializable.kt
             }
 
             public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestSealed.A>| {
-                public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestSealed.A|): R|kotlin/Unit|
+                public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestSealed.A|): R|kotlin/Unit|
 
-                public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|TestSealed.A|
+                public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|TestSealed.A|
 
                 public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                     public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-                public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+                public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
                 private constructor(): R|TestSealed.A.$serializer| {
                     super<R|kotlin/Any|>()
@@ -241,14 +241,14 @@ FILE: metaSerializable.kt
             }
 
             public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestSealed.B>| {
-                public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestSealed.B|): R|kotlin/Unit|
+                public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestSealed.B|): R|kotlin/Unit|
 
-                public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|TestSealed.B|
+                public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|TestSealed.B|
 
                 public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                     public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-                public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+                public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
                 private constructor(): R|TestSealed.B.$serializer| {
                     super<R|kotlin/Any|>()
@@ -291,14 +291,14 @@ FILE: metaSerializable.kt
             }
 
             public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestAbstract.A>| {
-                public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestAbstract.A|): R|kotlin/Unit|
+                public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestAbstract.A|): R|kotlin/Unit|
 
-                public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|TestAbstract.A|
+                public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|TestAbstract.A|
 
                 public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                     public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-                public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+                public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
                 private constructor(): R|TestAbstract.A.$serializer| {
                     super<R|kotlin/Any|>()
@@ -326,14 +326,14 @@ FILE: metaSerializable.kt
             }
 
             public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestAbstract.B>| {
-                public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestAbstract.B|): R|kotlin/Unit|
+                public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestAbstract.B|): R|kotlin/Unit|
 
-                public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|TestAbstract.B|
+                public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|TestAbstract.B|
 
                 public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                     public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-                public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+                public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
                 private constructor(): R|TestAbstract.B.$serializer| {
                     super<R|kotlin/Any|>()

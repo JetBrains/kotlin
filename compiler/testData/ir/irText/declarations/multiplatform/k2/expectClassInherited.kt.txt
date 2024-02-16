@@ -20,10 +20,11 @@ open class B : A {
 
   }
 
-  override fun foo() {
-  }
-
   open fun bar(s: String) {
   }
 
+  override fun foo() {
+  }
+
 }
+

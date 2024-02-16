@@ -1,4 +1,4 @@
-    const val POD1MACRO: Int = 42
-    var intPOD1: Int
-        @CCall(id = "knifunptr_pod10_intPOD1_getter") get
-        @CCall(id = "knifunptr_pod11_intPOD1_setter") set
+      public final const val POD1MACRO: kotlin/Int /* = 42 */
+      public final var intPOD1: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_intPOD1_getter")
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_intPOD1_setter")

@@ -1,23 +1,23 @@
 class A {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val it: Int
     field = 4
     get
-
-  fun test(): Int {
-    return <this>.<get-it>().plus(other = 3)
-  }
 
   val p: Int
     field = 5
     get(): Int {
       return <this>.#p
     }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun test(): Int {
+    return <this>.<get-it>().plus(other = 3)
+  }
 
 }
 

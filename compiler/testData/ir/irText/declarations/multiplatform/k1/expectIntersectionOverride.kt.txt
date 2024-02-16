@@ -1,3 +1,30 @@
+expect class C : I1, I2 {
+  expect override val p: Int
+    override get
+
+  expect constructor() /* primary */
+
+  expect override fun f(): String
+
+}
+
+class C : I1, I2 {
+  override val p: Int
+    field = 42
+    override get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun f(): String {
+    return "OK"
+  }
+
+}
+
 interface I1 {
   abstract fun f(): String
 
@@ -14,29 +41,3 @@ interface I2 {
 
 }
 
-expect class C : I1, I2 {
-  expect constructor() /* primary */
-
-  expect override fun f(): String
-
-  expect override val p: Int
-    override get
-
-}
-
-class C : I1, I2 {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  override fun f(): String {
-    return "OK"
-  }
-
-  override val p: Int
-    field = 42
-    override get
-
-}

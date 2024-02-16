@@ -1,3 +1,25 @@
+open class WithCompanion {
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun foo(): Companion {
+      return <this>
+    }
+
+  }
+
+  constructor(a: Companion) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
 fun WithCompanion.test() {
   val test1: <no name provided> = { // BLOCK
     local class <no name provided> : WithCompanion {
@@ -25,24 +47,3 @@ fun WithCompanion.test() {
   }
 }
 
-open class WithCompanion {
-  constructor(a: Companion) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    fun foo(): Companion {
-      return <this>
-    }
-
-  }
-
-}

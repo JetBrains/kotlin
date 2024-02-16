@@ -281,7 +281,8 @@ class ClassicFrontendFacade(
     ): List<ModuleDescriptor> {
         val resolvedLibraries = CommonKLibResolver.resolve(
             names,
-            configuration.getLogger(treatWarningsAsErrors = true)
+            configuration.getLogger(treatWarningsAsErrors = true),
+            knownIrProviders = listOf("kotlin.native.cinterop"), // FIXME use KonanLibraryProperResolver instead, as in production.
         ).getFullResolvedList()
 
         var builtInsModule: KotlinBuiltIns? = null

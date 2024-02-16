@@ -13,11 +13,10 @@ fun all_args(
     arg4: Int,
     arg5: Long,
 
-    // TODO: support kotlin Unsigned types - KT-65668
-//    arg6: UByte,
-//    arg7: UShort,
-//    arg8: UInt,
-//    arg9: ULong,
+    arg6: UByte,
+    arg7: UShort,
+    arg8: UInt,
+    arg9: ULong,
 
     arg10: Float,
     arg11: Double,

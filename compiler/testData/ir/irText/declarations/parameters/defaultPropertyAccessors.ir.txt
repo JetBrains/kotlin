@@ -25,10 +25,6 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
           value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-test2>' type=kotlin.Int origin=null
   CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Host [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:testMember1 visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:testMember1 type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -59,6 +55,10 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testMember2 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<set-testMember2>' type=<root>.Host origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.Host.<set-testMember2>' type=kotlin.Int origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Host [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -75,14 +75,6 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
   CLASS CLASS name:InPrimaryCtor modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.InPrimaryCtor<T of <root>.InPrimaryCtor>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (testInPrimaryCtor1:T of <root>.InPrimaryCtor, testInPrimaryCtor2:kotlin.Int) returnType:<root>.InPrimaryCtor<T of <root>.InPrimaryCtor> [primary]
-      VALUE_PARAMETER name:testInPrimaryCtor1 index:0 type:T of <root>.InPrimaryCtor
-      VALUE_PARAMETER name:testInPrimaryCtor2 index:1 type:kotlin.Int
-        EXPRESSION_BODY
-          CONST Int type=kotlin.Int value=42
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InPrimaryCtor modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:testInPrimaryCtor1 visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor1 type:T of <root>.InPrimaryCtor visibility:private [final]
         EXPRESSION_BODY
@@ -113,6 +105,14 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor2 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.InPrimaryCtor<T of <root>.InPrimaryCtor> declared in <root>.InPrimaryCtor.<set-testInPrimaryCtor2>' type=<root>.InPrimaryCtor<T of <root>.InPrimaryCtor> origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.InPrimaryCtor.<set-testInPrimaryCtor2>' type=kotlin.Int origin=null
+    CONSTRUCTOR visibility:public <> (testInPrimaryCtor1:T of <root>.InPrimaryCtor, testInPrimaryCtor2:kotlin.Int) returnType:<root>.InPrimaryCtor<T of <root>.InPrimaryCtor> [primary]
+      VALUE_PARAMETER name:testInPrimaryCtor1 index:0 type:T of <root>.InPrimaryCtor
+      VALUE_PARAMETER name:testInPrimaryCtor2 index:1 type:kotlin.Int
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=42
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InPrimaryCtor modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

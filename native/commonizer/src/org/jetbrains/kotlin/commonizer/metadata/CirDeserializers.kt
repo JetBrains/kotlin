@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.commonizer.metadata
 
-import kotlinx.metadata.*
-import kotlinx.metadata.Modality as KmModality
-import kotlinx.metadata.Visibility as KmVisibility
-import kotlinx.metadata.ClassKind as KmClassKind
+import kotlin.metadata.*
+import kotlin.metadata.Modality as KmModality
+import kotlin.metadata.Visibility as KmVisibility
+import kotlin.metadata.ClassKind as KmClassKind
 import kotlinx.metadata.klib.annotations
 import kotlinx.metadata.klib.compileTimeValue
 import kotlinx.metadata.klib.getterAnnotations

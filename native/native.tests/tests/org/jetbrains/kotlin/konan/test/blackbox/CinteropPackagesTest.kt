@@ -90,6 +90,6 @@ class CInteropPackagesTest : AbstractNativeSimpleTest() {
     }
 
     companion object {
-        private const val TEST_DATA_DIR = "compiler/testData/codegen/box/cinterop/packages"
+        private const val TEST_DATA_DIR = "native/native.tests/testData/codegen/cinterop/packages"
     }
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class FirSession(val name: String)
 
 interface Fir2IrComponents {

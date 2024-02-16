@@ -16,8 +16,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
-import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
@@ -32,17 +31,13 @@ open class KotlinJsCompilation @Inject internal constructor(
 ) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(compilation),
     HasBinaries<KotlinJsBinaryContainer> {
 
-    @Suppress("UNCHECKED_CAST")
-    final override val compilerOptions: HasCompilerOptions<KotlinJsCompilerOptions>
-        get() = compilation.compilerOptions as HasCompilerOptions<KotlinJsCompilerOptions>
-
-    internal fun compilerOptions(configure: KotlinJsCompilerOptions.() -> Unit) {
-        compilerOptions.configure(configure)
-    }
-
-    internal fun compilerOptions(configure: Action<KotlinJsCompilerOptions>) {
-        configure.execute(compilerOptions.options)
-    }
+    @Deprecated(
+        "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
+                "    compilerOptions {}\n}"
+    )
+    @Suppress("UNCHECKED_CAST", "DEPRECATION")
+    final override val compilerOptions: DeprecatedHasCompilerOptions<KotlinJsCompilerOptions>
+        get() = compilation.compilerOptions as DeprecatedHasCompilerOptions<KotlinJsCompilerOptions>
 
     override val binaries: KotlinJsBinaryContainer =
         compilation.target.project.objects.newInstance(
@@ -108,6 +103,7 @@ open class KotlinJsCompilation @Inject internal constructor(
 val KotlinJsCompilation.fileExtension: Provider<String>
     get() {
         val isWasm = platformType == KotlinPlatformType.wasm
+        @Suppress("DEPRECATION")
         return compilerOptions.options.moduleKind.map { moduleKind ->
             if (isWasm || moduleKind == JsModuleKind.MODULE_ES) {
                 "mjs"

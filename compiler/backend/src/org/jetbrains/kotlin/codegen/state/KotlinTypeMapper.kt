@@ -1426,6 +1426,11 @@ class KotlinTypeMapper @JvmOverloads constructor(
             SimpleClassicTypeSystemContext.hasNothingInNonContravariantPosition(kotlinType)
 
         fun TypeSystemContext.hasNothingInNonContravariantPosition(type: KotlinTypeMarker): Boolean {
+            if (type.isError()) {
+                // We cannot access type arguments for an unresolved type
+                return false
+            }
+
             val typeConstructor = type.typeConstructor()
 
             for (i in 0 until type.argumentsCount()) {

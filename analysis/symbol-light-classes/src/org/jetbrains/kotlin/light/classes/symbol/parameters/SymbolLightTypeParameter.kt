@@ -28,6 +28,9 @@ import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.AnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -138,7 +141,6 @@ internal class SymbolLightTypeParameter private constructor(
     override fun hasModifierProperty(name: String): Boolean = false
     override fun getOwner(): PsiTypeParameterListOwner = parent.owner
     override fun getParent(): PsiElement = parent
-    override fun getAnnotations(): Array<PsiAnnotation> = PsiAnnotation.EMPTY_ARRAY
     override fun getContainingClass(): PsiClass? = null
     override fun getDocComment(): PsiDocComment? = null
     override fun isDeprecated(): Boolean = false
@@ -153,7 +155,6 @@ internal class SymbolLightTypeParameter private constructor(
     override fun isInterface(): Boolean = false
     override fun isAnnotationType(): Boolean = false
     override fun isEnum(): Boolean = false
-    override fun findAnnotation(qualifiedName: String): PsiAnnotation? = null
     override fun addAnnotation(qualifiedName: String): PsiAnnotation = cannotModify()
     //End of PsiClass simple implementation
 
@@ -164,7 +165,17 @@ internal class SymbolLightTypeParameter private constructor(
     override fun getName(): String = _name
 
     override fun getIndex(): Int = index
-    override fun getApplicableAnnotations(): Array<PsiAnnotation> = PsiAnnotation.EMPTY_ARRAY //TODO
+
+    private val annotationsBox: AnnotationsBox = GranularAnnotationsBox(
+        annotationsProvider = SymbolAnnotationsProvider(ktModule, typeParameterSymbolPointer)
+    )
+
+    override fun getAnnotations(): Array<PsiAnnotation> = annotationsBox.annotationsArray(this)
+    override fun findAnnotation(qualifiedName: String): PsiAnnotation? = annotationsBox.findAnnotation(this, qualifiedName)
+    override fun getAnnotation(fqn: String): PsiAnnotation? = findAnnotation(fqn)
+    override fun hasAnnotation(fqn: String): Boolean = annotationsBox.hasAnnotation(this, fqn)
+    override fun getApplicableAnnotations(): Array<PsiAnnotation> = annotations
+
     override fun toString(): String = "SymbolLightTypeParameter:$name"
 
     override fun getNavigationElement(): PsiElement = kotlinOrigin ?: parent.navigationElement

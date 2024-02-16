@@ -1,4 +1,8 @@
 FILE fqName:<root> fileName:/arrayAssignment.kt
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>'
+        CONST Int type=kotlin.Int value=1
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:x type:kotlin.IntArray [val]
@@ -11,10 +15,6 @@ FILE fqName:<root> fileName:/arrayAssignment.kt
         $this: GET_VAR 'val x: kotlin.IntArray declared in <root>.test' type=kotlin.IntArray origin=null
         index: CONST Int type=kotlin.Int value=1
         value: CONST Int type=kotlin.Int value=0
-  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Int
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>'
-        CONST Int type=kotlin.Int value=1
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null

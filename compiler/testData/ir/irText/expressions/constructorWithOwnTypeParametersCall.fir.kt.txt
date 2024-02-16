@@ -1,18 +1,4 @@
-fun testKotlin(): K2<String, Int> {
-  return K1<Int>().K2<String>()
-}
-
-fun testJava(): J2<Double, Int> {
-  return J1<Int, String>().J2<Double, CharSequence>()
-}
-
 class K1<T1 : Number> {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   inner class K2<T2 : CharSequence> {
     constructor() /* primary */ {
       super/*Any*/()
@@ -22,4 +8,19 @@ class K1<T1 : Number> {
 
   }
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+
+fun testJava(): J2<Double, Int> {
+  return J1<Int, String>().J2<Double, CharSequence>()
+}
+
+fun testKotlin(): K2<String, Int> {
+  return K1<Int>().K2<String>()
+}
+

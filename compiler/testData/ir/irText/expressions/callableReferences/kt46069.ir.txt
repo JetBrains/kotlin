@@ -6,13 +6,6 @@ FILE fqName:<root> fileName:/kt46069.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ObjectAssert modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:describedAs visibility:public modality:FINAL <> ($this:<root>.ObjectAssert<ACTUAL of <root>.ObjectAssert>, description:kotlin.String?, args:kotlin.Array<out kotlin.Any?>) returnType:<root>.ObjectAssert<ACTUAL of <root>.ObjectAssert>?
-      $this: VALUE_PARAMETER name:<this> type:<root>.ObjectAssert<ACTUAL of <root>.ObjectAssert>
-      VALUE_PARAMETER name:description index:0 type:kotlin.String?
-      VALUE_PARAMETER name:args index:1 type:kotlin.Array<out kotlin.Any?> varargElementType:kotlin.Any? [vararg]
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun describedAs (description: kotlin.String?, vararg args: kotlin.Any?): <root>.ObjectAssert<ACTUAL of <root>.ObjectAssert>? declared in <root>.ObjectAssert'
-          CONST Null type=kotlin.Nothing? value=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -26,12 +19,32 @@ FILE fqName:<root> fileName:/kt46069.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:describedAs visibility:public modality:FINAL <> ($this:<root>.ObjectAssert<ACTUAL of <root>.ObjectAssert>, description:kotlin.String?, args:kotlin.Array<out kotlin.Any?>) returnType:<root>.ObjectAssert<ACTUAL of <root>.ObjectAssert>?
+      $this: VALUE_PARAMETER name:<this> type:<root>.ObjectAssert<ACTUAL of <root>.ObjectAssert>
+      VALUE_PARAMETER name:description index:0 type:kotlin.String?
+      VALUE_PARAMETER name:args index:1 type:kotlin.Array<out kotlin.Any?> varargElementType:kotlin.Any? [vararg]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun describedAs (description: kotlin.String?, vararg args: kotlin.Any?): <root>.ObjectAssert<ACTUAL of <root>.ObjectAssert>? declared in <root>.ObjectAssert'
+          CONST Null type=kotlin.Nothing? value=null
   CLASS OBJECT name:Assertions modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Assertions
     CONSTRUCTOR visibility:private <> () returnType:<root>.Assertions [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Assertions modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:assertThat visibility:public modality:FINAL <S> ($this:<root>.Assertions, actual:S of <root>.Assertions.assertThat) returnType:<root>.ObjectAssert<S of <root>.Assertions.assertThat>
       TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:<root>.Assertions
@@ -40,19 +53,6 @@ FILE fqName:<root> fileName:/kt46069.kt
         RETURN type=kotlin.Nothing from='public final fun assertThat <S> (actual: S of <root>.Assertions.assertThat): <root>.ObjectAssert<S of <root>.Assertions.assertThat> declared in <root>.Assertions'
           CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.ObjectAssert' type=<root>.ObjectAssert<S of <root>.Assertions.assertThat> origin=null
             <class: ACTUAL>: S of <root>.Assertions.assertThat
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:assertNotNull visibility:public modality:FINAL <T> ($receiver:T of <root>.assertNotNull?, description:kotlin.String?) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
     $receiver: VALUE_PARAMETER name:<this> type:T of <root>.assertNotNull?

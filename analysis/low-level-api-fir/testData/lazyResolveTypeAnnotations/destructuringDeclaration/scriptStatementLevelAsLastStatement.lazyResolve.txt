@@ -42,11 +42,11 @@ FILE: [ResolvedTo(RAW_FIR)] scriptStatementLevelAsLastStatement.kts
         public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = when () {
             Boolean(true) ->  {
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = LAZY_EXPRESSION
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = LAZY_EXPRESSION
             }
         }
 
@@ -97,11 +97,11 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = when () {
             Boolean(true) ->  {
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = LAZY_EXPRESSION
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = LAZY_EXPRESSION
             }
         }
 
@@ -152,11 +152,11 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val $$result: <implicit> = when () {
             Boolean(true) ->  {
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = LAZY_EXPRESSION
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = LAZY_EXPRESSION
             }
         }
 
@@ -207,11 +207,11 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         public final [ResolvedTo(COMPANION_GENERATION)] val $$result: <implicit> = when () {
             Boolean(true) ->  {
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = LAZY_EXPRESSION
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = LAZY_EXPRESSION
             }
         }
 
@@ -262,11 +262,11 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         public final [ResolvedTo(SUPER_TYPES)] val $$result: <implicit> = when () {
             Boolean(true) ->  {
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = LAZY_EXPRESSION
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = LAZY_EXPRESSION
             }
         }
 
@@ -317,11 +317,11 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         public final [ResolvedTo(TYPES)] val $$result: <implicit> = when () {
             Boolean(true) ->  {
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = LAZY_EXPRESSION
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = LAZY_EXPRESSION
             }
         }
 
@@ -372,11 +372,11 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         public final [ResolvedTo(STATUS)] val $$result: <implicit> = when () {
             Boolean(true) ->  {
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = LAZY_EXPRESSION
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = LAZY_EXPRESSION
             }
         }
 
@@ -427,11 +427,11 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val $$result: <implicit> = when () {
             Boolean(true) ->  {
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = LAZY_EXPRESSION
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = LAZY_EXPRESSION
             }
         }
 
@@ -482,11 +482,11 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         public final [ResolvedTo(CONTRACTS)] val $$result: <implicit> = when () {
             Boolean(true) ->  {
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval a: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval b: <implicit> = LAZY_EXPRESSION
                 @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = Pair#(LAZY_EXPRESSION, LAZY_EXPRESSION)
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = R|<local>/<destruct>|.component1#()
-                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = R|<local>/<destruct>|.component2#()
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval c: <implicit> = LAZY_EXPRESSION
+                @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] lval d: <implicit> = LAZY_EXPRESSION
             }
         }
 

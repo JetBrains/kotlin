@@ -39,7 +39,7 @@ import static org.jetbrains.kotlin.codegen.BytecodeTextUtilsKt.readExpectedOccur
 
 public abstract class AbstractTopLevelMembersInvocationTest extends AbstractBytecodeTextTest {
     @Override
-    public void doTest(@NotNull String filename) throws Exception {
+    public void doTest(@NotNull String filename) {
         File root = new File(filename);
         List<String> sourceFiles = SequencesKt.toList(SequencesKt.map(
                 SequencesKt.filter(FilesKt.walkTopDown(root).maxDepth(1), File::isFile),

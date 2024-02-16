@@ -1,10 +1,52 @@
 FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
+  CLASS ANNOTATION_CLASS name:FieldOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:FIELD' type=kotlin.annotation.AnnotationTarget])
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FieldOnly
+    CONSTRUCTOR visibility:public <> () returnType:<root>.FieldOnly [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:FieldOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS ANNOTATION_CLASS name:NoTarget modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.NoTarget
     CONSTRUCTOR visibility:public <> () returnType:<root>.NoTarget [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:NoTarget modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS ANNOTATION_CLASS name:ParameterOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget])
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ParameterOnly
+    CONSTRUCTOR visibility:public <> () returnType:<root>.ParameterOnly [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:ParameterOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
@@ -60,48 +102,6 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS ANNOTATION_CLASS name:ParameterOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]
-    annotations:
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget])
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ParameterOnly
-    CONSTRUCTOR visibility:public <> () returnType:<root>.ParameterOnly [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:ParameterOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Annotation
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS ANNOTATION_CLASS name:FieldOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]
-    annotations:
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:FIELD' type=kotlin.annotation.AnnotationTarget])
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FieldOnly
-    CONSTRUCTOR visibility:public <> () returnType:<root>.FieldOnly [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:FieldOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Annotation
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS ANNOTATION_CLASS name:PropertyOnly2 modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
       Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY' type=kotlin.annotation.AnnotationTarget])
@@ -125,15 +125,6 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo
-    CONSTRUCTOR visibility:public <> (param:kotlin.Int) returnType:<root>.Foo [primary]
-      VALUE_PARAMETER name:param index:0 type:kotlin.Int
-        annotations:
-          NoTarget
-          PropValueField
-          ParameterOnly
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:param visibility:public modality:FINAL [var]
       annotations:
         PropertyOnly
@@ -158,6 +149,15 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:param type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Foo declared in <root>.Foo.<set-param>' type=<root>.Foo origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.Foo.<set-param>' type=kotlin.Int origin=null
+    CONSTRUCTOR visibility:public <> (param:kotlin.Int) returnType:<root>.Foo [primary]
+      VALUE_PARAMETER name:param index:0 type:kotlin.Int
+        annotations:
+          NoTarget
+          PropValueField
+          ParameterOnly
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

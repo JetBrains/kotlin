@@ -68,6 +68,7 @@ suspend fun check() {
 }
 
 fun box(): String {
+    StateMachineChecker.reset()
     builder {
         check()
     }

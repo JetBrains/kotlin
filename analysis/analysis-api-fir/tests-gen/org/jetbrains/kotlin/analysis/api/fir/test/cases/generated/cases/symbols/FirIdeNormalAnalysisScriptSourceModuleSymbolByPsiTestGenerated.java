@@ -28,47 +28,47 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisScriptSourceModuleSymbolByPsiTestGenerated extends AbstractSymbolByPsiTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
+  @Test
+  public void testAllFilesPresentInSymbolByPsi() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("script.kts")
+  public void testScript() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/script.kts");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ContextReceivers {
     @Test
-    public void testAllFilesPresentInSymbolByPsi() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    public void testAllFilesPresentInContextReceivers() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+  }
 
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ValueParameters {
     @Test
-    @TestMetadata("script.kts")
-    public void testScript() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/script.kts");
+    public void testAllFilesPresentInValueParameters() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers")
-    @TestDataPath("$PROJECT_ROOT")
-    public class ContextReceivers {
-        @Test
-        public void testAllFilesPresentInContextReceivers() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters")
-    @TestDataPath("$PROJECT_ROOT")
-    public class ValueParameters {
-        @Test
-        public void testAllFilesPresentInValueParameters() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
+  }
 }

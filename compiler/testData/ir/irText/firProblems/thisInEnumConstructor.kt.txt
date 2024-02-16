@@ -1,19 +1,19 @@
 enum class EE : Enum<EE> {
-  private constructor(myName: String = Companion.toString().lowercase()) /* primary */ {
-    super/*Enum*/<EE>()
-    /* <init>() */
-
-  }
-
   val myName: String
     field = myName
     get
 
   ENTRY = EE()
 
-  fun values(): Array<EE> /* Synthetic body for ENUM_VALUES */
+  private constructor(myName: String = Companion.toString().lowercase()) /* primary */ {
+    super/*Enum*/<EE>()
+    /* <init>() */
+
+  }
 
   fun valueOf(value: String): EE /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<EE> /* Synthetic body for ENUM_VALUES */
 
   val entries: EnumEntries<EE>
     get(): EnumEntries<EE> /* Synthetic body for ENUM_ENTRIES */

@@ -54,11 +54,12 @@ val debuggerTest = nativeTest("debuggerTest", "debugger")
 val cachesTest = nativeTest("cachesTest", "caches")
 val klibTest = nativeTest("klibTest", "klib")
 val standaloneTest = nativeTest("standaloneTest", "standalone")
+val driverTest = nativeTest("driverTest", "driver")
 
 val testTags = findProperty("kotlin.native.tests.tags")?.toString()
 // Note: arbitrary JUnit tag expressions can be used in this property.
 // See https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions
-val test by nativeTest("test", testTags)
+val test by nativeTest("test", testTags, requirePlatformLibs = true)
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateNativeTestsKt") {
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))

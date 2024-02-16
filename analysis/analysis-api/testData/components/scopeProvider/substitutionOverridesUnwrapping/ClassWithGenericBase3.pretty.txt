@@ -1,12 +1,12 @@
 fun noGenerics_InterfaceWithFun()
 
-open fun withOuterGeneric_InterfaceWithFun(): test.SomeClass2
+override fun withOuterGeneric_InterfaceWithFun(): test.SomeClass2
 
 fun noGenerics_InterfaceWithFunBase()
 
-fun withOuterGenericT1_InterfaceWithFunBase(): test.SomeClass1
+override fun withOuterGenericT1_InterfaceWithFunBase(): test.SomeClass1
 
-open fun withOuterGenericT2_InterfaceWithFunBase(): test.SomeClass2
+override fun withOuterGenericT2_InterfaceWithFunBase(): test.SomeClass2
 
 open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 

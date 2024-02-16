@@ -404,3 +404,8 @@ object ConeResolutionResultOverridesOtherToPreserveCompatibility : ConeDiagnosti
         get() = "Resolution result overrides another result to preserve compatibility, result maybe changed in future versions"
 
 }
+
+object ConeCallToDeprecatedOverrideOfHidden : ConeDiagnostic {
+    override val reason: String
+        get() = "Call to deprecated override of hidden"
+}

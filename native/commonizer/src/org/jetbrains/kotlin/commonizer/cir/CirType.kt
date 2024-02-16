@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.cir
 
-import kotlinx.metadata.KmType
+import kotlin.metadata.KmType
 import org.jetbrains.kotlin.commonizer.utils.Interner
 import org.jetbrains.kotlin.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.commonizer.utils.hashCode

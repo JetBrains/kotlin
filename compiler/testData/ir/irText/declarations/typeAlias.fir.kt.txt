@@ -1,9 +1,3 @@
-typealias Test1 = String
-fun foo() {
-  { // BLOCK
-  }
-}
-
 class C {
   constructor() /* primary */ {
     super/*Any*/()
@@ -12,3 +6,10 @@ class C {
   }
 
 }
+
+fun foo() {
+  { // BLOCK
+  }
+}
+
+typealias Test1 = String

@@ -1,19 +1,48 @@
-package <root> {
-    abstract class AbstractClass constructor() : Interface {
-        abstract fun abstractFun()
-        override fun interfaceFun()
+library {
+  // module name: <MethodModality.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AbstractClass
+    // class name: FinalClass
+    // class name: Interface
+    // class name: OpenClass
+
+    public abstract class AbstractClass : Interface {
+
+      public constructor()
+
+      public abstract fun abstractFun(): kotlin/Unit
+
+      public open fun interfaceFun(): kotlin/Unit
     }
-    class FinalClass constructor() : OpenClass {
-        override fun openFun1()
-        final override fun openFun2()
+
+    public final class FinalClass : OpenClass {
+
+      public constructor()
+
+      public open fun openFun1(): kotlin/Unit
+
+      public final fun openFun2(): kotlin/Unit
     }
-    interface Interface {
-        fun interfaceFun()
+
+    public abstract interface Interface : kotlin/Any {
+
+      public abstract fun interfaceFun(): kotlin/Unit
     }
-    open class OpenClass constructor() : AbstractClass {
-        override fun abstractFun()
-        fun finalFun()
-        open fun openFun1()
-        open fun openFun2()
+
+    public open class OpenClass : AbstractClass {
+
+      public constructor()
+
+      public open fun abstractFun(): kotlin/Unit
+
+      public final fun finalFun(): kotlin/Unit
+
+      public open fun openFun1(): kotlin/Unit
+
+      public open fun openFun2(): kotlin/Unit
     }
+  }
 }

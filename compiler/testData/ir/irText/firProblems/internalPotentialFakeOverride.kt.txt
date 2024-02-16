@@ -2,6 +2,10 @@
 // FILE: A.kt
 
 open class A {
+  internal open val bar: Int
+    field = 1
+    internal open get
+
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -11,10 +15,6 @@ open class A {
   internal open fun foo(): Int {
     return 1
   }
-
-  internal open val bar: Int
-    field = 1
-    internal open get
 
 }
 
@@ -29,3 +29,4 @@ class B : A {
   }
 
 }
+

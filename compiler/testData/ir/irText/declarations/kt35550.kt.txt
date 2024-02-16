@@ -1,3 +1,18 @@
+class A : I {
+  private /* final field */ val $$delegate_0: I = i
+  constructor(i: I) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override val <T : Any?> T.id: T
+    override get(): T {
+      return (<this>.#$$delegate_0, <this>).<get-id><T>()
+    }
+
+}
+
 interface I {
   val <T : Any?> T.id: T
     get(): T {
@@ -6,17 +21,3 @@ interface I {
 
 }
 
-class A : I {
-  constructor(i: I) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  private /* final field */ val $$delegate_0: I = i
-  override val <T : Any?> T.id: T
-    override get(): T {
-      return (<this>.#$$delegate_0, <this>).<get-id><T>()
-    }
-
-}

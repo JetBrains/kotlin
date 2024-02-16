@@ -2315,6 +2315,12 @@ internal class CannotChangeAccessPrivilegeImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KtFirDiagnostic.CannotChangeAccessPrivilege
 
+internal class CannotInferVisibilityImpl(
+    override val callable: KtCallableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KtFirDiagnostic.CannotInferVisibility
+
 internal class MultipleDefaultsInheritedFromSupertypesImpl(
     override val name: Name,
     override val valueParameter: KtSymbol,
@@ -4105,6 +4111,20 @@ internal class OperatorRenamedOnImportImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtImportDirective>(firDiagnostic, token), KtFirDiagnostic.OperatorRenamedOnImport
+
+internal class TypealiasAsCallableQualifierInImportErrorImpl(
+    override val typealiasName: Name,
+    override val originalClassName: Name,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtImportDirective>(firDiagnostic, token), KtFirDiagnostic.TypealiasAsCallableQualifierInImportError
+
+internal class TypealiasAsCallableQualifierInImportWarningImpl(
+    override val typealiasName: Name,
+    override val originalClassName: Name,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtImportDirective>(firDiagnostic, token), KtFirDiagnostic.TypealiasAsCallableQualifierInImportWarning
 
 internal class IllegalSuspendFunctionCallImpl(
     override val suspendCallable: KtSymbol,

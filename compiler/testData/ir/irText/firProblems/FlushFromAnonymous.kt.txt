@@ -5,16 +5,6 @@ class Serializer {
 
   }
 
-  fun serialize() {
-    val messageCollector: <no name provided> = <this>.createMessageCollector()
-    try { // BLOCK
-    }
-    catch (e: Throwable){ // BLOCK
-      messageCollector.flush()
-    }
-
-  }
-
   private fun createMessageCollector(): <no name provided> {
     return { // BLOCK
       local class <no name provided> : Collector {
@@ -30,4 +20,15 @@ class Serializer {
     }
   }
 
+  fun serialize() {
+    val messageCollector: <no name provided> = <this>.createMessageCollector()
+    try { // BLOCK
+    }
+    catch (e: Throwable){ // BLOCK
+      messageCollector.flush()
+    }
+
+  }
+
 }
+

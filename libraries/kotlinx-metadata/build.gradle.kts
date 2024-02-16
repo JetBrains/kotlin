@@ -18,4 +18,7 @@ dependencies {
 
 kotlin {
     explicitApi()
+    compilerOptions {
+        freeCompilerArgs.add("-Xallow-kotlin-package")
+    }
 }

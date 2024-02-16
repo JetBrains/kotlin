@@ -7,6 +7,8 @@ package org.jetbrains.kotlinx.serialization
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlinx.serialization.matrix.cases.enumsTestMatrix
+import org.jetbrains.kotlinx.serialization.matrix.testMatrix
 import org.jetbrains.kotlinx.serialization.runners.*
 
 fun main(args: Array<String>) {
@@ -76,6 +78,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractSerializationFirJsBoxTest> {
                 model("boxIr")
+            }
+
+            testMatrix {
+                add("enums") { enumsTestMatrix() }
             }
         }
     }

@@ -28,18 +28,14 @@ operator fun A.get(i: IFoo): Int {
   return 1
 }
 
-operator fun A.set(i: IFoo, newValue: Int) {
-}
-
 operator fun B.get(i: IFoo): Int {
   return 1
 }
 
-operator fun B.set(i: IFoo2, newValue: Int) {
+operator fun A.set(i: IFoo, newValue: Int) {
 }
 
-fun withVararg(vararg xs: Int): Int {
-  return 42
+operator fun B.set(i: IFoo2, newValue: Int) {
 }
 
 fun test1() {
@@ -107,5 +103,9 @@ fun test6(a: Any) {
     val tmp_11: Any = a
     tmp_10.set(i = tmp_11, newValue = tmp_10.get(i = tmp_11).plus(other = 1))
   }
+}
+
+fun withVararg(vararg xs: Int): Int {
+  return 42
 }
 

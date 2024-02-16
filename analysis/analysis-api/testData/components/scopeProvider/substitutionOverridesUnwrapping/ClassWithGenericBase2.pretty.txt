@@ -1,11 +1,11 @@
 val noGeneric: test.Foo?
 
-val withOuterGeneric: test.Foo?
+override val withOuterGeneric: test.Foo?
 
 val <TT> TT.withOwnGeneric: TT?
   get()
 
-val <TT> TT.withOuterAndOwnGeneric: test.Foo?
+override val <TT> TT.withOuterAndOwnGeneric: test.Foo?
 
 open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 

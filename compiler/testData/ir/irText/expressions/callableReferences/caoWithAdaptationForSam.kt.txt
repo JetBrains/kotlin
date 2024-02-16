@@ -28,18 +28,14 @@ operator fun A.get(i: IFoo): Int {
   return 1
 }
 
-operator fun A.set(i: IFoo, newValue: Int) {
-}
-
 operator fun B.get(i: IFoo): Int {
   return 1
 }
 
-operator fun B.set(i: IFoo2, newValue: Int) {
+operator fun A.set(i: IFoo, newValue: Int) {
 }
 
-fun withVararg(vararg xs: Int): Int {
-  return 42
+operator fun B.set(i: IFoo2, newValue: Int) {
 }
 
 fun test1() {
@@ -108,3 +104,8 @@ fun test6(a: Any) {
     tmp_10.set(i = tmp_11 /*as IFoo */, newValue = tmp_10.get(i = tmp_11 /*as IFoo */).plus(other = 1))
   }
 }
+
+fun withVararg(vararg xs: Int): Int {
+  return 42
+}
+

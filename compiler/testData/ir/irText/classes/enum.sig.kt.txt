@@ -3,12 +3,6 @@
 //   Public signature: /TestEnum1|null[0]
 enum class TestEnum1 : Enum<TestEnum1> {
   // CHECK:
-  //   Mangled name: TestEnum1#<init>(){}
-  //   Public signature: /TestEnum1.<init>|-5645683436151566731[0]
-  //   Public signature debug description: <init>(){}
-  private constructor() /* primary */
-
-  // CHECK:
   //   Mangled name: TestEnum1.TEST1
   //   Public signature: /TestEnum1.TEST1|null[0]
   TEST1
@@ -17,6 +11,12 @@ enum class TestEnum1 : Enum<TestEnum1> {
   //   Mangled name: TestEnum1.TEST2
   //   Public signature: /TestEnum1.TEST2|null[0]
   TEST2
+
+  // CHECK:
+  //   Mangled name: TestEnum1#<init>(){}
+  //   Public signature: /TestEnum1.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: TestEnum1#valueOf#static(kotlin.String){}TestEnum1
@@ -145,12 +145,6 @@ enum class TestEnum2 : Enum<TestEnum2> {
     get
 
   // CHECK:
-  //   Mangled name: TestEnum2#<init>(kotlin.Int){}
-  //   Public signature: /TestEnum2.<init>|-5182794243525578284[0]
-  //   Public signature debug description: <init>(kotlin.Int){}
-  private constructor(x: Int) /* primary */
-
-  // CHECK:
   //   Mangled name: TestEnum2.TEST1
   //   Public signature: /TestEnum2.TEST1|null[0]
   TEST1
@@ -164,6 +158,12 @@ enum class TestEnum2 : Enum<TestEnum2> {
   //   Mangled name: TestEnum2.TEST3
   //   Public signature: /TestEnum2.TEST3|null[0]
   TEST3
+
+  // CHECK:
+  //   Mangled name: TestEnum2#<init>(kotlin.Int){}
+  //   Public signature: /TestEnum2.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  private constructor(x: Int) /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: TestEnum2#valueOf#static(kotlin.String){}TestEnum2
@@ -277,12 +277,6 @@ enum class TestEnum2 : Enum<TestEnum2> {
 //   Public signature: /TestEnum3|null[0]
 abstract enum class TestEnum3 : Enum<TestEnum3> {
   // CHECK:
-  //   Mangled name: TestEnum3#<init>(){}
-  //   Public signature: /TestEnum3.<init>|-5645683436151566731[0]
-  //   Public signature debug description: <init>(){}
-  private constructor() /* primary */
-
-  // CHECK:
   //   Mangled name: TestEnum3.TEST
   //   Public signature: /TestEnum3.TEST|null[0]
 
@@ -374,6 +368,12 @@ abstract enum class TestEnum3 : Enum<TestEnum3> {
       /* fake */ override get(): Int
 
   }
+
+  // CHECK:
+  //   Mangled name: TestEnum3#<init>(){}
+  //   Public signature: /TestEnum3.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: TestEnum3#valueOf#static(kotlin.String){}TestEnum3
@@ -506,12 +506,6 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
     //   Public signature: /TestEnum4.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
     get
-
-  // CHECK:
-  //   Mangled name: TestEnum4#<init>(kotlin.Int){}
-  //   Public signature: /TestEnum4.<init>|-5182794243525578284[0]
-  //   Public signature debug description: <init>(kotlin.Int){}
-  private constructor(x: Int) /* primary */
 
   // CHECK:
   //   Mangled name: TestEnum4.TEST1
@@ -744,6 +738,12 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
 
   }
 
+  // CHECK:
+  //   Mangled name: TestEnum4#<init>(kotlin.Int){}
+  //   Public signature: /TestEnum4.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  private constructor(x: Int) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: TestEnum4#valueOf#static(kotlin.String){}TestEnum4
   //   Public signature: /TestEnum4.valueOf|2423737738768372933[0]
@@ -877,12 +877,6 @@ enum class TestEnum5 : Enum<TestEnum5> {
     get
 
   // CHECK:
-  //   Mangled name: TestEnum5#<init>(kotlin.Int){}
-  //   Public signature: /TestEnum5.<init>|-5182794243525578284[0]
-  //   Public signature debug description: <init>(kotlin.Int){}
-  private constructor(x: Int) /* primary */
-
-  // CHECK:
   //   Mangled name: TestEnum5.TEST1
   //   Public signature: /TestEnum5.TEST1|null[0]
   TEST1
@@ -896,6 +890,12 @@ enum class TestEnum5 : Enum<TestEnum5> {
   //   Mangled name: TestEnum5.TEST3
   //   Public signature: /TestEnum5.TEST3|null[0]
   TEST3
+
+  // CHECK:
+  //   Mangled name: TestEnum5#<init>(kotlin.Int){}
+  //   Public signature: /TestEnum5.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  private constructor(x: Int) /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: TestEnum5#valueOf#static(kotlin.String){}TestEnum5
@@ -1039,15 +1039,15 @@ enum class TestEnum6 : Enum<TestEnum6> {
     get
 
   // CHECK:
+  //   Mangled name: TestEnum6.TEST
+  //   Public signature: /TestEnum6.TEST|null[0]
+  TEST
+
+  // CHECK:
   //   Mangled name: TestEnum6#<init>(kotlin.Int;kotlin.Int){}
   //   Public signature: /TestEnum6.<init>|-7691762014320324121[0]
   //   Public signature debug description: <init>(kotlin.Int;kotlin.Int){}
   private constructor(x: Int, y: Int) /* primary */
-
-  // CHECK:
-  //   Mangled name: TestEnum6.TEST
-  //   Public signature: /TestEnum6.TEST|null[0]
-  TEST
 
   // CHECK JVM_IR:
   //   Mangled name: TestEnum6#valueOf#static(kotlin.String){}TestEnum6

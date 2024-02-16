@@ -1,18 +1,4 @@
 FILE fqName:<root> fileName:/dynamicBinaryRelationalOperator.kt
-  FUN name:testLess visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean
-    VALUE_PARAMETER name:d index:0 type:dynamic
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testLess (d: dynamic): kotlin.Boolean declared in <root>'
-        DYN_OP operator=LT type=kotlin.Boolean
-          receiver: GET_VAR 'd: dynamic declared in <root>.testLess' type=dynamic origin=null
-          0: CONST Int type=kotlin.Int value=2
-  FUN name:testLessOrEqual visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean
-    VALUE_PARAMETER name:d index:0 type:dynamic
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testLessOrEqual (d: dynamic): kotlin.Boolean declared in <root>'
-        DYN_OP operator=LE type=kotlin.Boolean
-          receiver: GET_VAR 'd: dynamic declared in <root>.testLessOrEqual' type=dynamic origin=null
-          0: CONST Int type=kotlin.Int value=2
   FUN name:testGreater visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean
     VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
@@ -26,4 +12,18 @@ FILE fqName:<root> fileName:/dynamicBinaryRelationalOperator.kt
       RETURN type=kotlin.Nothing from='public final fun testGreaterOrEqual (d: dynamic): kotlin.Boolean declared in <root>'
         DYN_OP operator=GE type=kotlin.Boolean
           receiver: GET_VAR 'd: dynamic declared in <root>.testGreaterOrEqual' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=2
+  FUN name:testLess visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:d index:0 type:dynamic
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testLess (d: dynamic): kotlin.Boolean declared in <root>'
+        DYN_OP operator=LT type=kotlin.Boolean
+          receiver: GET_VAR 'd: dynamic declared in <root>.testLess' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=2
+  FUN name:testLessOrEqual visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:d index:0 type:dynamic
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testLessOrEqual (d: dynamic): kotlin.Boolean declared in <root>'
+        DYN_OP operator=LE type=kotlin.Boolean
+          receiver: GET_VAR 'd: dynamic declared in <root>.testLessOrEqual' type=dynamic origin=null
           0: CONST Int type=kotlin.Int value=2

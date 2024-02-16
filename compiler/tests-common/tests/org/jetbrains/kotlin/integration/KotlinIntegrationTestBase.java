@@ -53,13 +53,18 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         KotlinTestUtils.runTestWithThrowable(this, () -> super.runTest());
     }
 
-    protected int runJava(@NotNull String testDataDir, @Nullable String logName, @NotNull String... arguments) throws Exception {
+    protected int runJava(@NotNull String testDataDir, @Nullable String logName, @NotNull String... arguments) {
         GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(testDataDir);
         commandLine.setExePath(getJavaRuntime().getAbsolutePath());
         commandLine.addParameters(arguments);
 
         StringBuilder executionLog = new StringBuilder();
-        int exitCode = runProcess(commandLine, executionLog);
+        int exitCode;
+        try {
+            exitCode = runProcess(commandLine, executionLog);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
 
         if (logName == null) {
             assertEquals("Non-zero exit code", 0, exitCode);

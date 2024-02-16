@@ -1,0 +1,47 @@
+library {
+  // module name: <data_class.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/DataClass
+    // class name: test/DataObject
+
+    public final data class test/DataClass : kotlin/Any {
+
+      public constructor(intProp: kotlin/Int, stringProp: kotlin/String)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      public final /* synthesized */ operator fun component2(): kotlin/String
+
+      public final /* synthesized */ fun copy(intProp: kotlin/Int /* = ... */, stringProp: kotlin/String /* = ... */): test/DataClass
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val intProp: kotlin/Int
+        public final get
+
+      public final val nonConstructorProp: kotlin/Int /* = 0 */
+        public final get
+
+      public final val stringProp: kotlin/String
+        public final get
+    }
+
+    public final data object test/DataObject : kotlin/Any {
+
+      private constructor()
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+    }
+  }
+}

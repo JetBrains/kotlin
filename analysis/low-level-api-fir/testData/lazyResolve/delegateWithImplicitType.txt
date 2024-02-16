@@ -1,5 +1,5 @@
 STATUS:
-TARGET: public open [ResolvedTo(STATUS)] [CallableCopyDeferredReturnTypeCalculationKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
+TARGET: public open override [ResolvedTo(STATUS)] [CallableCopyDeferredReturnTypeCalculationKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -16,7 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
 
 EXPECT_ACTUAL_MATCHING:
-TARGET: public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CallableCopyDeferredReturnTypeCalculationKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
+TARGET: public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CallableCopyDeferredReturnTypeCalculationKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
 
 CONTRACTS:
-TARGET: public open [ResolvedTo(CONTRACTS)] [CallableCopyDeferredReturnTypeCalculationKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
+TARGET: public open override [ResolvedTo(CONTRACTS)] [CallableCopyDeferredReturnTypeCalculationKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -50,7 +50,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-TARGET: public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
+TARGET: public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -69,7 +69,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
 
 ANNOTATION_ARGUMENTS:
-TARGET: public open [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
+TARGET: public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
 
 BODY_RESOLVE:
-TARGET: public open [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
+TARGET: public open override [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {

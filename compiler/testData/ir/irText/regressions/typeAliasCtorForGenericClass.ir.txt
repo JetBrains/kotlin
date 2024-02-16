@@ -2,11 +2,6 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<Q of <root>.A>
     TYPE_PARAMETER name:Q index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (q:Q of <root>.A) returnType:<root>.A<Q of <root>.A> [primary]
-      VALUE_PARAMETER name:q index:0 type:Q of <root>.A
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:q visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:q type:Q of <root>.A visibility:private [final]
         EXPRESSION_BODY
@@ -18,6 +13,11 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
           RETURN type=kotlin.Nothing from='public final fun <get-q> (): Q of <root>.A declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:q type:Q of <root>.A visibility:private [final]' type=Q of <root>.A origin=null
               receiver: GET_VAR '<this>: <root>.A<Q of <root>.A> declared in <root>.A.<get-q>' type=<root>.A<Q of <root>.A> origin=null
+    CONSTRUCTOR visibility:public <> (q:Q of <root>.A) returnType:<root>.A<Q of <root>.A> [primary]
+      VALUE_PARAMETER name:q index:0 type:Q of <root>.A
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -31,10 +31,6 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  TYPEALIAS name:B visibility:public expandedType:<root>.A<X of <root>.B>
-    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
-  TYPEALIAS name:B2 visibility:public expandedType:<root>.A<<root>.A<T of <root>.B2>>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
   FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:b type:<root>.A<kotlin.Int> [val]
@@ -45,3 +41,7 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
         CONSTRUCTOR_CALL 'public constructor <init> (q: Q of <root>.A) declared in <root>.A' type=<root>.A<<root>.A<kotlin.Int>> origin=null
           <class: Q>: <root>.A<kotlin.Int>
           q: GET_VAR 'val b: <root>.A<kotlin.Int> declared in <root>.bar' type=<root>.A<kotlin.Int> origin=null
+  TYPEALIAS name:B visibility:public expandedType:<root>.A<X of <root>.B>
+    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
+  TYPEALIAS name:B2 visibility:public expandedType:<root>.A<<root>.A<T of <root>.B2>>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false

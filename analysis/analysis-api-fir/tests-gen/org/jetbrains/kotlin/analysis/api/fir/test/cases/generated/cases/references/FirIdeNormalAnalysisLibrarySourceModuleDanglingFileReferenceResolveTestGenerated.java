@@ -28,245 +28,245 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/danglingFileReferenceResolve")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisLibrarySourceModuleDanglingFileReferenceResolveTestGenerated extends AbstractDanglingFileReferenceResolveTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.LibrarySource,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.LibrarySource,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
+
+  @Test
+  public void testAllFilesPresentInDanglingFileReferenceResolve() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/danglingFileReferenceResolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("classDifferentFile.kt")
+  public void testClassDifferentFile() {
+    runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/classDifferentFile.kt");
+  }
+
+  @Test
+  @TestMetadata("classSameFile.kt")
+  public void testClassSameFile() {
+    runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/classSameFile.kt");
+  }
+
+  @Test
+  @TestMetadata("functionDifferentFile.kt")
+  public void testFunctionDifferentFile() {
+    runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/functionDifferentFile.kt");
+  }
+
+  @Test
+  @TestMetadata("functionSameFile.kt")
+  public void testFunctionSameFile() {
+    runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/functionSameFile.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf")
+  @TestDataPath("$PROJECT_ROOT")
+  public class IgnoreSelf {
+    @Test
+    public void testAllFilesPresentInIgnoreSelf() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @Test
-    public void testAllFilesPresentInDanglingFileReferenceResolve() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/danglingFileReferenceResolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    @TestMetadata("classTypeParameter.kt")
+    public void testClassTypeParameter() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/classTypeParameter.kt");
     }
 
     @Test
-    @TestMetadata("classDifferentFile.kt")
-    public void testClassDifferentFile() throws Exception {
-        runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/classDifferentFile.kt");
+    @TestMetadata("companionObject.kt")
+    public void testCompanionObject() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/companionObject.kt");
     }
 
     @Test
-    @TestMetadata("classSameFile.kt")
-    public void testClassSameFile() throws Exception {
-        runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/classSameFile.kt");
+    @TestMetadata("functionTypeParameter.kt")
+    public void testFunctionTypeParameter() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/functionTypeParameter.kt");
     }
 
     @Test
-    @TestMetadata("functionDifferentFile.kt")
-    public void testFunctionDifferentFile() throws Exception {
-        runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/functionDifferentFile.kt");
+    @TestMetadata("localClass.kt")
+    public void testLocalClass() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/localClass.kt");
     }
 
     @Test
-    @TestMetadata("functionSameFile.kt")
-    public void testFunctionSameFile() throws Exception {
-        runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/functionSameFile.kt");
+    @TestMetadata("localVariable.kt")
+    public void testLocalVariable() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/localVariable.kt");
     }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf")
-    @TestDataPath("$PROJECT_ROOT")
-    public class IgnoreSelf {
-        @Test
-        public void testAllFilesPresentInIgnoreSelf() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("classTypeParameter.kt")
-        public void testClassTypeParameter() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/classTypeParameter.kt");
-        }
-
-        @Test
-        @TestMetadata("companionObject.kt")
-        public void testCompanionObject() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/companionObject.kt");
-        }
-
-        @Test
-        @TestMetadata("functionTypeParameter.kt")
-        public void testFunctionTypeParameter() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/functionTypeParameter.kt");
-        }
-
-        @Test
-        @TestMetadata("localClass.kt")
-        public void testLocalClass() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/localClass.kt");
-        }
-
-        @Test
-        @TestMetadata("localVariable.kt")
-        public void testLocalVariable() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/localVariable.kt");
-        }
-
-        @Test
-        @TestMetadata("outerClassProperty.kt")
-        public void testOuterClassProperty() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/outerClassProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("primaryConstructorParameter.kt")
-        public void testPrimaryConstructorParameter() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/primaryConstructorParameter.kt");
-        }
-
-        @Test
-        @TestMetadata("privateClass.kt")
-        public void testPrivateClass() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/privateClass.kt");
-        }
-
-        @Test
-        @TestMetadata("privateFunction.kt")
-        public void testPrivateFunction() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/privateFunction.kt");
-        }
-
-        @Test
-        @TestMetadata("privateProperty.kt")
-        public void testPrivateProperty() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/privateProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("publicFunction.kt")
-        public void testPublicFunction() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/publicFunction.kt");
-        }
-
-        @Test
-        @TestMetadata("publicProperty.kt")
-        public void testPublicProperty() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/publicProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("syntheticFieldVariable.kt")
-        public void testSyntheticFieldVariable() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/syntheticFieldVariable.kt");
-        }
-
-        @Test
-        @TestMetadata("topLevelFunction.kt")
-        public void testTopLevelFunction() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/topLevelFunction.kt");
-        }
-
-        @Test
-        @TestMetadata("valueParameter.kt")
-        public void testValueParameter() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/valueParameter.kt");
-        }
+    @Test
+    @TestMetadata("outerClassProperty.kt")
+    public void testOuterClassProperty() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/outerClassProperty.kt");
     }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf")
-    @TestDataPath("$PROJECT_ROOT")
-    public class PreferSelf {
-        @Test
-        public void testAllFilesPresentInPreferSelf() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("classTypeParameter.kt")
-        public void testClassTypeParameter() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/classTypeParameter.kt");
-        }
-
-        @Test
-        @TestMetadata("companionObject.kt")
-        public void testCompanionObject() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/companionObject.kt");
-        }
-
-        @Test
-        @TestMetadata("functionTypeParameter.kt")
-        public void testFunctionTypeParameter() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/functionTypeParameter.kt");
-        }
-
-        @Test
-        @TestMetadata("localClass.kt")
-        public void testLocalClass() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/localClass.kt");
-        }
-
-        @Test
-        @TestMetadata("localVariable.kt")
-        public void testLocalVariable() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/localVariable.kt");
-        }
-
-        @Test
-        @TestMetadata("outerClassProperty.kt")
-        public void testOuterClassProperty() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/outerClassProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("primaryConstructorParameter.kt")
-        public void testPrimaryConstructorParameter() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/primaryConstructorParameter.kt");
-        }
-
-        @Test
-        @TestMetadata("privateClass.kt")
-        public void testPrivateClass() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/privateClass.kt");
-        }
-
-        @Test
-        @TestMetadata("privateFunction.kt")
-        public void testPrivateFunction() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/privateFunction.kt");
-        }
-
-        @Test
-        @TestMetadata("privateProperty.kt")
-        public void testPrivateProperty() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/privateProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("publicFunction.kt")
-        public void testPublicFunction() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/publicFunction.kt");
-        }
-
-        @Test
-        @TestMetadata("publicProperty.kt")
-        public void testPublicProperty() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/publicProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("syntheticFieldVariable.kt")
-        public void testSyntheticFieldVariable() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/syntheticFieldVariable.kt");
-        }
-
-        @Test
-        @TestMetadata("topLevelFunction.kt")
-        public void testTopLevelFunction() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/topLevelFunction.kt");
-        }
-
-        @Test
-        @TestMetadata("valueParameter.kt")
-        public void testValueParameter() throws Exception {
-            runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/valueParameter.kt");
-        }
+    @Test
+    @TestMetadata("primaryConstructorParameter.kt")
+    public void testPrimaryConstructorParameter() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/primaryConstructorParameter.kt");
     }
+
+    @Test
+    @TestMetadata("privateClass.kt")
+    public void testPrivateClass() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/privateClass.kt");
+    }
+
+    @Test
+    @TestMetadata("privateFunction.kt")
+    public void testPrivateFunction() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/privateFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("privateProperty.kt")
+    public void testPrivateProperty() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/privateProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("publicFunction.kt")
+    public void testPublicFunction() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/publicFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("publicProperty.kt")
+    public void testPublicProperty() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/publicProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("syntheticFieldVariable.kt")
+    public void testSyntheticFieldVariable() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/syntheticFieldVariable.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunction.kt")
+    public void testTopLevelFunction() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/topLevelFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("valueParameter.kt")
+    public void testValueParameter() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/valueParameter.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf")
+  @TestDataPath("$PROJECT_ROOT")
+  public class PreferSelf {
+    @Test
+    public void testAllFilesPresentInPreferSelf() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("classTypeParameter.kt")
+    public void testClassTypeParameter() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/classTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("companionObject.kt")
+    public void testCompanionObject() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/companionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("functionTypeParameter.kt")
+    public void testFunctionTypeParameter() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/functionTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("localClass.kt")
+    public void testLocalClass() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/localClass.kt");
+    }
+
+    @Test
+    @TestMetadata("localVariable.kt")
+    public void testLocalVariable() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/localVariable.kt");
+    }
+
+    @Test
+    @TestMetadata("outerClassProperty.kt")
+    public void testOuterClassProperty() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/outerClassProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("primaryConstructorParameter.kt")
+    public void testPrimaryConstructorParameter() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/primaryConstructorParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("privateClass.kt")
+    public void testPrivateClass() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/privateClass.kt");
+    }
+
+    @Test
+    @TestMetadata("privateFunction.kt")
+    public void testPrivateFunction() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/privateFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("privateProperty.kt")
+    public void testPrivateProperty() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/privateProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("publicFunction.kt")
+    public void testPublicFunction() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/publicFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("publicProperty.kt")
+    public void testPublicProperty() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/publicProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("syntheticFieldVariable.kt")
+    public void testSyntheticFieldVariable() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/syntheticFieldVariable.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunction.kt")
+    public void testTopLevelFunction() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/topLevelFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("valueParameter.kt")
+    public void testValueParameter() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/valueParameter.kt");
+    }
+  }
 }

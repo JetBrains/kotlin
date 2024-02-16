@@ -1,23 +1,17 @@
 open class Base {
+  val x: Any
+    field = x
+    get
+
   constructor(x: Any) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: Any
-    field = x
-    get
-
 }
 
 object Host {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   class Derived1 : Base {
     constructor() /* primary */ {
       super/*Base*/(x = Host)
@@ -36,4 +30,11 @@ object Host {
 
   }
 
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+

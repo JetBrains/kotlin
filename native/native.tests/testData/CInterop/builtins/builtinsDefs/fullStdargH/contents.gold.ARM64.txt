@@ -1,31 +1,69 @@
+library {
+  // module name: <pod1.def>
 
-package pod1 {
+  library fragment {
+    // package name: pod1
 
-    @CStruct(spelling = "struct  { void* __stack; void* __gr_top; void* __vr_top; int __gr_offs; int __vr_offs; }") class __va_list constructor(rawPtr: NativePtr /* = NativePtr */) : CStructVar {
-        var __gr_offs: Int
-            @CStruct.MemberAt(offset = 24.toLong()) get
-            @CStruct.MemberAt(offset = 24.toLong()) set
-        var __gr_top: COpaquePointer? /* = CPointer<out CPointed>? */
-            @CStruct.MemberAt(offset = 8.toLong()) get
-            @CStruct.MemberAt(offset = 8.toLong()) set
-        var __stack: COpaquePointer? /* = CPointer<out CPointed>? */
-            @CStruct.MemberAt(offset = 0.toLong()) get
-            @CStruct.MemberAt(offset = 0.toLong()) set
-        var __vr_offs: Int
-            @CStruct.MemberAt(offset = 28.toLong()) get
-            @CStruct.MemberAt(offset = 28.toLong()) set
-        var __vr_top: COpaquePointer? /* = CPointer<out CPointed>? */
-            @CStruct.MemberAt(offset = 16.toLong()) get
-            @CStruct.MemberAt(offset = 16.toLong()) set
-        @CStruct.VarType(align = 8, size = 32.toLong()) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CStructVar.Type
+    // class name: pod1/__va_list
+    // class name: pod1/__va_list.Companion
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { void* __stack; void* __gr_top; void* __vr_top; int __gr_offs; int __vr_offs; }")
+    public final class pod1/__va_list : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var __gr_offs: kotlin/Int
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 24L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 24L)
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final var __gr_top: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */)
+
+      public final var __stack: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */)
+
+      public final var __vr_offs: kotlin/Int
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 28L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 28L)
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final var __vr_top: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 16L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 16L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */)
+
+      // companion object: Companion
+
+      // nested class: Companion
     }
 
-}
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 32L, align = 8)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/__va_list.Companion : kotlinx/cinterop/CStructVar.Type {
 
-package pod1 {
-    const val __GNUC_VA_LIST: Int = 1
-    typealias __builtin_va_list = __va_list
-    typealias __gnuc_va_list = __builtin_va_list
-    typealias va_list = __builtin_va_list
-}
+      private constructor()
+    }
 
+    package {
+
+      public final const val __GNUC_VA_LIST: kotlin/Int /* = 1 */
+        public final get
+
+      public typealias __builtin_va_list = pod1/__va_list /* = pod1/__va_list */
+
+      public typealias __gnuc_va_list = pod1/__builtin_va_list^ /* = pod1/__va_list /* = pod1/__builtin_va_list^ */ */
+
+      public typealias va_list = pod1/__builtin_va_list^ /* = pod1/__va_list /* = pod1/__builtin_va_list^ */ */
+    }
+  }
+}

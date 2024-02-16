@@ -1,6 +1,10 @@
 package interop
 
 object Definitions {
+  val ktValue: String
+    field = #CONSTANT
+    get
+
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -9,10 +13,6 @@ object Definitions {
 
   const val KT_CONSTANT: String
     field = "constant"
-    get
-
-  val ktValue: String
-    field = #CONSTANT
     get
 
 }

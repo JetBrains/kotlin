@@ -20,62 +20,62 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/noarg/testData/bytecodeListing")
 @TestDataPath("$PROJECT_ROOT")
 public class IrBytecodeListingTestForNoArgGenerated extends AbstractIrBytecodeListingTestForNoArg {
-    @Test
-    public void testAllFilesPresentInBytecodeListing() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/testData/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
-    }
+  @Test
+  public void testAllFilesPresentInBytecodeListing() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/testData/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+  }
 
-    @Test
-    @TestMetadata("annoOnNotClass.kt")
-    public void testAnnoOnNotClass() throws Exception {
-        runTest("plugins/noarg/testData/bytecodeListing/annoOnNotClass.kt");
-    }
+  @Test
+  @TestMetadata("annoOnNotClass.kt")
+  public void testAnnoOnNotClass() {
+    runTest("plugins/noarg/testData/bytecodeListing/annoOnNotClass.kt");
+  }
 
-    @Test
-    @TestMetadata("constructorVisibility.kt")
-    public void testConstructorVisibility() throws Exception {
-        runTest("plugins/noarg/testData/bytecodeListing/constructorVisibility.kt");
-    }
+  @Test
+  @TestMetadata("constructorVisibility.kt")
+  public void testConstructorVisibility() {
+    runTest("plugins/noarg/testData/bytecodeListing/constructorVisibility.kt");
+  }
 
-    @Test
-    @TestMetadata("defaultParameters.kt")
-    public void testDefaultParameters() throws Exception {
-        runTest("plugins/noarg/testData/bytecodeListing/defaultParameters.kt");
-    }
+  @Test
+  @TestMetadata("defaultParameters.kt")
+  public void testDefaultParameters() {
+    runTest("plugins/noarg/testData/bytecodeListing/defaultParameters.kt");
+  }
 
-    @Test
-    @TestMetadata("inherited.kt")
-    public void testInherited() throws Exception {
-        runTest("plugins/noarg/testData/bytecodeListing/inherited.kt");
-    }
+  @Test
+  @TestMetadata("inherited.kt")
+  public void testInherited() {
+    runTest("plugins/noarg/testData/bytecodeListing/inherited.kt");
+  }
 
-    @Test
-    @TestMetadata("nestedClass.kt")
-    public void testNestedClass() throws Exception {
-        runTest("plugins/noarg/testData/bytecodeListing/nestedClass.kt");
-    }
+  @Test
+  @TestMetadata("nestedClass.kt")
+  public void testNestedClass() {
+    runTest("plugins/noarg/testData/bytecodeListing/nestedClass.kt");
+  }
 
-    @Test
-    @TestMetadata("noNoArg.kt")
-    public void testNoNoArg() throws Exception {
-        runTest("plugins/noarg/testData/bytecodeListing/noNoArg.kt");
-    }
+  @Test
+  @TestMetadata("noNoArg.kt")
+  public void testNoNoArg() {
+    runTest("plugins/noarg/testData/bytecodeListing/noNoArg.kt");
+  }
 
-    @Test
-    @TestMetadata("severalNoArg.kt")
-    public void testSeveralNoArg() throws Exception {
-        runTest("plugins/noarg/testData/bytecodeListing/severalNoArg.kt");
-    }
+  @Test
+  @TestMetadata("severalNoArg.kt")
+  public void testSeveralNoArg() {
+    runTest("plugins/noarg/testData/bytecodeListing/severalNoArg.kt");
+  }
 
-    @Test
-    @TestMetadata("simple.kt")
-    public void testSimple() throws Exception {
-        runTest("plugins/noarg/testData/bytecodeListing/simple.kt");
-    }
+  @Test
+  @TestMetadata("simple.kt")
+  public void testSimple() {
+    runTest("plugins/noarg/testData/bytecodeListing/simple.kt");
+  }
 
-    @Test
-    @TestMetadata("superTypes.kt")
-    public void testSuperTypes() throws Exception {
-        runTest("plugins/noarg/testData/bytecodeListing/superTypes.kt");
-    }
+  @Test
+  @TestMetadata("superTypes.kt")
+  public void testSuperTypes() {
+    runTest("plugins/noarg/testData/bytecodeListing/superTypes.kt");
+  }
 }

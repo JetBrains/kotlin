@@ -124,6 +124,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    fun `test - propertyWithObjCNameAnnotation`() {
+        doTest(headersTestDataDir.resolve("propertyWithObjCNameAnnotation"))
+    }
+
+    @Test
     fun `test - classWithKDoc`() {
         doTest(headersTestDataDir.resolve("classWithKDoc"))
     }
@@ -275,6 +280,35 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @Test
     fun `test - constructors`() {
         doTest(headersTestDataDir.resolve("constructors"))
+    }
+
+    @Test
+    fun `test - companion`() {
+        doTest(headersTestDataDir.resolve("companion"))
+    }
+
+    @Test
+    fun `test - anonymous functions`() {
+        doTest(headersTestDataDir.resolve("anonymousFunctions"))
+    }
+
+    @Test
+    fun `test - sam interface`() {
+        doTest(headersTestDataDir.resolve("samInterface"))
+    }
+
+    /**
+     * Requires some fixes: KT-65800
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - simple data class`() {
+        doTest(headersTestDataDir.resolve("simpleDataClass"))
+    }
+
+    @Test
+    fun `test - special function names`() {
+        doTest(headersTestDataDir.resolve("specialFunctionNames"))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {

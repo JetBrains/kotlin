@@ -1,26 +1,26 @@
 fun box(): String {
   return { // BLOCK
     local class <no name provided> {
-      constructor() /* primary */ {
-        super/*Any*/()
-        /* <init>() */
-
-      }
-
       val a: A
         field = <this>.A(ok = "OK")
         get
 
       local inner class A {
+        val ok: String
+          field = ok
+          get
+
         constructor(ok: String) /* primary */ {
           super/*Any*/()
           /* <init>() */
 
         }
 
-        val ok: String
-          field = ok
-          get
+      }
+
+      constructor() /* primary */ {
+        super/*Any*/()
+        /* <init>() */
 
       }
 
@@ -29,3 +29,4 @@ fun box(): String {
     <no name provided>()
   }.<get-a>().<get-ok>()
 }
+

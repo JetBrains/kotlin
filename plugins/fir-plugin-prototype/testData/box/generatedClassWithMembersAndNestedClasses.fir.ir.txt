@@ -7,11 +7,6 @@ FILE fqName:bar fileName:/generatedClassWithMembersAndNestedClasses.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:box visibility:public modality:FINAL <> ($this:bar.Foo) returnType:kotlin.String
-      $this: VALUE_PARAMETER name:<this> type:bar.Foo
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in bar.Foo'
-          CONST String type=kotlin.String value="OK"
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -25,6 +20,16 @@ FILE fqName:bar fileName:/generatedClassWithMembersAndNestedClasses.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:box visibility:public modality:FINAL <> ($this:bar.Foo) returnType:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:bar.Foo
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in bar.Foo'
+          CONST String type=kotlin.String value="OK"
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'public final fun testConstructor (): kotlin.Unit declared in bar' type=kotlin.Unit origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in bar'
+        CALL 'public final fun testNestedClasses (): kotlin.String declared in bar' type=kotlin.String origin=null
   FUN name:testConstructor visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:generatedClass type:foo.AllOpenGenerated [val]
@@ -37,8 +42,3 @@ FILE fqName:bar fileName:/generatedClassWithMembersAndNestedClasses.kt
         CALL 'public final fun box (): kotlin.String declared in bar.Foo' type=kotlin.String origin=null
           $this: CALL 'public final fun materialize (): bar.Foo declared in foo.AllOpenGenerated.NestedFoo' type=bar.Foo origin=null
             $this: GET_VAR 'val nestedFoo: foo.AllOpenGenerated.NestedFoo declared in bar.testNestedClasses' type=foo.AllOpenGenerated.NestedFoo origin=null
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
-    BLOCK_BODY
-      CALL 'public final fun testConstructor (): kotlin.Unit declared in bar' type=kotlin.Unit origin=null
-      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in bar'
-        CALL 'public final fun testNestedClasses (): kotlin.String declared in bar' type=kotlin.String origin=null

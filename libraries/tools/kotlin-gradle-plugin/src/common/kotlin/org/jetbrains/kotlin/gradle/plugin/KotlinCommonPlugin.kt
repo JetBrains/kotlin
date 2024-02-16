@@ -27,14 +27,14 @@ internal open class KotlinCommonPlugin(
         KotlinCommonSourceSetProcessor(KotlinCompilationInfo(compilation), tasksProvider)
 
     override fun apply(project: Project) {
-        @Suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION")
         val target = project.objects.newInstance(
             KotlinWithJavaTarget::class.java,
             project,
             KotlinPlatformType.common,
             targetName,
             {
-                object : HasCompilerOptions<KotlinMultiplatformCommonCompilerOptions> {
+                object : DeprecatedHasCompilerOptions<KotlinMultiplatformCommonCompilerOptions> {
                     override val options: KotlinMultiplatformCommonCompilerOptions = project.objects
                         .newInstance(KotlinMultiplatformCommonCompilerOptionsDefault::class.java)
                         .configureExperimentalTryNext(project)

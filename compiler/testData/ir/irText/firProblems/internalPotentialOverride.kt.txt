@@ -2,6 +2,10 @@
 // FILE: A.kt
 
 open class A {
+  internal open val bar: Int
+    field = 1
+    internal open get
+
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -12,16 +16,16 @@ open class A {
     return 1
   }
 
-  internal open val bar: Int
-    field = 1
-    internal open get
-
 }
 
 // MODULE: m2
 // FILE: B.kt
 
 class B : A {
+  val bar: Int
+    field = 2
+    get
+
   constructor() /* primary */ {
     super/*A*/()
     /* <init>() */
@@ -32,8 +36,5 @@ class B : A {
     return "OK"
   }
 
-  val bar: Int
-    field = 2
-    get
-
 }
+

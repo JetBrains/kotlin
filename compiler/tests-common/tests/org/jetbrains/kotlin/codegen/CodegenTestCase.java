@@ -513,17 +513,21 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     }
 
     @Override
-    protected void doTest(@NotNull String filePath) throws Exception {
+    protected void doTest(@NotNull String filePath) {
         doTestWithTransformer(filePath, s -> s);
     }
 
-    protected void doTestWithTransformer(@NotNull String filePath, @NotNull Function<String, String> sourceTransformer) throws Exception {
+    protected void doTestWithTransformer(@NotNull String filePath, @NotNull Function<String, String> sourceTransformer) {
         File file = new File(filePath);
 
         String expectedText = sourceTransformer.apply(KtTestUtil.doLoadFile(file));
         List<TestFile> testFiles = createTestFilesFromFile(file, expectedText);
 
-        doMultiFileTest(file, testFiles);
+        try {
+            doMultiFileTest(file, testFiles);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

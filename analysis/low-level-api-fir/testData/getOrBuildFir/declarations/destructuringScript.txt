@@ -3,27 +3,27 @@ FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-[ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = pair#
+[ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = R|/pair|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructuringScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringScript.kts>
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-destructuringScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] var b: <implicit> = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var b: R|kotlin/Int| = Int(0)
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] val pair: <implicit> = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val pair: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/Int|>(R|/a|, R|/b|)
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Pair<kotlin/Int, kotlin/Int>|
 
-        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = pair#
-        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val first: <implicit> = R|<local>/<destruct>|.component1#()
+        [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = R|/pair|
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val first: <implicit> = LAZY_EXPRESSION
 
 
-        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val last: <implicit> = R|<local>/<destruct>|.component2#()
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val last: <implicit> = LAZY_EXPRESSION

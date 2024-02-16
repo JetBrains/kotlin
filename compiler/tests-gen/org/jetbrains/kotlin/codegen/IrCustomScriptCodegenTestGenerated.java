@@ -22,41 +22,41 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IrCustomScriptCodegenTestGenerated extends AbstractIrCustomScriptCodegenTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInCustomScript() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/customScript"), Pattern.compile("^(.*)$"), null, TargetBackend.JVM_IR, true);
-    }
+  public void testAllFilesPresentInCustomScript() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/customScript"), Pattern.compile("^(.*)$"), null, TargetBackend.JVM_IR, true);
+  }
 
-    @TestMetadata("captureImplicitReceiverInDefaultValue.kts")
-    public void testCaptureImplicitReceiverInDefaultValue_kts() throws Exception {
-        runTest("compiler/testData/codegen/customScript/captureImplicitReceiverInDefaultValue.kts");
-    }
+  @TestMetadata("captureImplicitReceiverInDefaultValue.kts")
+  public void testCaptureImplicitReceiverInDefaultValue_kts() {
+    runTest("compiler/testData/codegen/customScript/captureImplicitReceiverInDefaultValue.kts");
+  }
 
-    @TestMetadata("pathPattern5.kts")
-    public void testPathPattern5_kts() throws Exception {
-        runTest("compiler/testData/codegen/customScript/pathPattern5.kts");
-    }
+  @TestMetadata("pathPattern5.kts")
+  public void testPathPattern5_kts() {
+    runTest("compiler/testData/codegen/customScript/pathPattern5.kts");
+  }
 
-    @TestMetadata("providedPropsInLambda.kts")
-    public void testProvidedPropsInLambda_kts() throws Exception {
-        runTest("compiler/testData/codegen/customScript/providedPropsInLambda.kts");
-    }
+  @TestMetadata("providedPropsInLambda.kts")
+  public void testProvidedPropsInLambda_kts() {
+    runTest("compiler/testData/codegen/customScript/providedPropsInLambda.kts");
+  }
 
-    @TestMetadata("simpleEnvVars.kts")
-    public void testSimpleEnvVars_kts() throws Exception {
-        runTest("compiler/testData/codegen/customScript/simpleEnvVars.kts");
-    }
+  @TestMetadata("simpleEnvVars.kts")
+  public void testSimpleEnvVars_kts() {
+    runTest("compiler/testData/codegen/customScript/simpleEnvVars.kts");
+  }
 
-    @TestMetadata("simple.customext")
-    public void testSimple_customext() throws Exception {
-        runTest("compiler/testData/codegen/customScript/simple.customext");
-    }
+  @TestMetadata("simple.customext")
+  public void testSimple_customext() {
+    runTest("compiler/testData/codegen/customScript/simple.customext");
+  }
 
-    @TestMetadata("stringReceiver.kts")
-    public void testStringReceiver_kts() throws Exception {
-        runTest("compiler/testData/codegen/customScript/stringReceiver.kts");
-    }
+  @TestMetadata("stringReceiver.kts")
+  public void testStringReceiver_kts() {
+    runTest("compiler/testData/codegen/customScript/stringReceiver.kts");
+  }
 }

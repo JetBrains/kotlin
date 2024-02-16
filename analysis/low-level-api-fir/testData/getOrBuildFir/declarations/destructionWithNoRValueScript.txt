@@ -3,16 +3,16 @@ FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-[ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = ERROR_EXPR(Initializer required for destructuring declaration)
+public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val o: <ERROR TYPE REF: Unresolved name: component1> = R|<local>/<destruct>|.<Unresolved name: component1>#()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructionWithNoRValueScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructionWithNoRValueScript.kts>
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-destructionWithNoRValueScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = ERROR_EXPR(Initializer required for destructuring declaration)
-        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val o: <implicit> = R|<local>/<destruct>|.component1#()
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <ERROR TYPE REF: Initializer required for destructuring declaration> = ERROR_EXPR(Initializer required for destructuring declaration)
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val o: <ERROR TYPE REF: Unresolved name: component1> = R|<local>/<destruct>|.<Unresolved name: component1>#()
 
 
-        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val r: <implicit> = R|<local>/<destruct>|.component2#()
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val r: <implicit> = LAZY_EXPRESSION

@@ -28,33 +28,33 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisScriptSourceModuleDeclaredMemberScopeTestGenerated extends AbstractDeclaredMemberScopeTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInDeclaredMemberScope() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope"), Pattern.compile("^(.+)\\.kts$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInDeclaredMemberScope() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("scriptWithClassDeclaration.kts")
-    public void testScriptWithClassDeclaration() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/scriptWithClassDeclaration.kts");
-    }
+  @Test
+  @TestMetadata("scriptWithClassDeclaration.kts")
+  public void testScriptWithClassDeclaration() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/scriptWithClassDeclaration.kts");
+  }
 
-    @Test
-    @TestMetadata("simpleScriptWithResultDeclaration.kts")
-    public void testSimpleScriptWithResultDeclaration() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/simpleScriptWithResultDeclaration.kts");
-    }
+  @Test
+  @TestMetadata("simpleScriptWithResultDeclaration.kts")
+  public void testSimpleScriptWithResultDeclaration() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/simpleScriptWithResultDeclaration.kts");
+  }
 }

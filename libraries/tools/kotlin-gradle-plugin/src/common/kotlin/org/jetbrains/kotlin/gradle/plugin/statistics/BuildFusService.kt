@@ -165,6 +165,7 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
         if (!parameters.useBuildFinishFlowAction.get()) {
             recordBuildFinished(buildFailed)
         }
+        KotlinBuildStatsBeanService.closeServices()
         log.kotlinDebug("Close ${this.javaClass.simpleName}")
     }
 
@@ -176,7 +177,6 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
             loggerService.initSessionLogger(buildId)
             loggerService.reportBuildFinished(fusMetricsConsumer)
         }
-        KotlinBuildStatsBeanService.closeServices()
     }
 }
 

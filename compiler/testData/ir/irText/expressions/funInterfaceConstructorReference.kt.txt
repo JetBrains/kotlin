@@ -1,21 +1,18 @@
-fun interface KRunnable {
-  abstract fun run()
-
-}
-
-typealias KR = KRunnable
-fun interface KSupplier<T : Any?> {
-  abstract fun get(): T
-
-}
-
-typealias KSS = KSupplier<String>
 fun interface KConsumer<T : Any?> {
   abstract fun accept(x: T)
 
 }
 
-typealias KCS = KConsumer<String>
+fun interface KRunnable {
+  abstract fun run()
+
+}
+
+fun interface KSupplier<T : Any?> {
+  abstract fun get(): T
+
+}
+
 fun test1(): KFunction1<@ParameterName(name = "function") Function0<Unit>, KRunnable> {
   return { // BLOCK
     local fun KRunnable(function: Function0<Unit>): KRunnable {
@@ -95,3 +92,7 @@ fun test3b(): KFunction<KConsumer<String>> {
     ::KConsumer
   }
 }
+
+typealias KCS = KConsumer<String>
+typealias KR = KRunnable
+typealias KSS = KSupplier<String>

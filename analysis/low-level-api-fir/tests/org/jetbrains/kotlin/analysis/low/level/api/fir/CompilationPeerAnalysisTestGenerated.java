@@ -19,44 +19,44 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/compilationPeers")
 @TestDataPath("$PROJECT_ROOT")
 public class CompilationPeerAnalysisTestGenerated extends AbstractCompilationPeerAnalysisTest {
-    @Test
-    public void testAllFilesPresentInCompilationPeers() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/compilationPeers"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInCompilationPeers() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/compilationPeers"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("functionCall.kt")
-    public void testFunctionCall() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/compilationPeers/functionCall.kt");
-    }
+  @Test
+  @TestMetadata("functionCall.kt")
+  public void testFunctionCall() {
+    runTest("analysis/low-level-api-fir/testData/compilationPeers/functionCall.kt");
+  }
 
-    @Test
-    @TestMetadata("functionCallDeep.kt")
-    public void testFunctionCallDeep() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/compilationPeers/functionCallDeep.kt");
-    }
+  @Test
+  @TestMetadata("functionCallDeep.kt")
+  public void testFunctionCallDeep() {
+    runTest("analysis/low-level-api-fir/testData/compilationPeers/functionCallDeep.kt");
+  }
 
-    @Test
-    @TestMetadata("inlinedClasses.kt")
-    public void testInlinedClasses() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/compilationPeers/inlinedClasses.kt");
-    }
+  @Test
+  @TestMetadata("inlinedClasses.kt")
+  public void testInlinedClasses() {
+    runTest("analysis/low-level-api-fir/testData/compilationPeers/inlinedClasses.kt");
+  }
 
-    @Test
-    @TestMetadata("libraryFunctionCall.kt")
-    public void testLibraryFunctionCall() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/compilationPeers/libraryFunctionCall.kt");
-    }
+  @Test
+  @TestMetadata("libraryFunctionCall.kt")
+  public void testLibraryFunctionCall() {
+    runTest("analysis/low-level-api-fir/testData/compilationPeers/libraryFunctionCall.kt");
+  }
 
-    @Test
-    @TestMetadata("noInline.kt")
-    public void testNoInline() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/compilationPeers/noInline.kt");
-    }
+  @Test
+  @TestMetadata("noInline.kt")
+  public void testNoInline() {
+    runTest("analysis/low-level-api-fir/testData/compilationPeers/noInline.kt");
+  }
 
-    @Test
-    @TestMetadata("propertyCall.kt")
-    public void testPropertyCall() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/compilationPeers/propertyCall.kt");
-    }
+  @Test
+  @TestMetadata("propertyCall.kt")
+  public void testPropertyCall() {
+    runTest("analysis/low-level-api-fir/testData/compilationPeers/propertyCall.kt");
+  }
 }

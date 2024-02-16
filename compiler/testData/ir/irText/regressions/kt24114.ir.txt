@@ -3,10 +3,6 @@ FILE fqName:<root> fileName:/kt24114.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun one (): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=1
-  FUN name:two visibility:public modality:FINAL <> () returnType:kotlin.Int
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun two (): kotlin.Int declared in <root>'
-        CONST Int type=kotlin.Int value=2
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Int
     BLOCK_BODY
       WHILE label=null origin=WHILE_LOOP
@@ -62,3 +58,7 @@ FILE fqName:<root> fileName:/kt24114.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.Int declared in <root>'
                   CONST Int type=kotlin.Int value=3
+  FUN name:two visibility:public modality:FINAL <> () returnType:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun two (): kotlin.Int declared in <root>'
+        CONST Int type=kotlin.Int value=2

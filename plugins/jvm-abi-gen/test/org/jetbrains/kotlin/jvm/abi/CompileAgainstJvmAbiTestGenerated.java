@@ -22,146 +22,146 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvmAbiTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInCompile() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compile"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
-    }
+  public void testAllFilesPresentInCompile() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compile"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
+  }
 
-    @TestMetadata("anonymousObject")
-    public void testAnonymousObject() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/anonymousObject/");
-    }
+  @TestMetadata("anonymousObject")
+  public void testAnonymousObject() {
+    runTest("plugins/jvm-abi-gen/testData/compile/anonymousObject/");
+  }
 
-    @TestMetadata("classes")
-    public void testClasses() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/classes/");
-    }
+  @TestMetadata("classes")
+  public void testClasses() {
+    runTest("plugins/jvm-abi-gen/testData/compile/classes/");
+  }
 
-    @TestMetadata("clinit")
-    public void testClinit() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/clinit/");
-    }
+  @TestMetadata("clinit")
+  public void testClinit() {
+    runTest("plugins/jvm-abi-gen/testData/compile/clinit/");
+  }
 
-    @TestMetadata("conflictingClasses")
-    public void testConflictingClasses() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/conflictingClasses/");
-    }
+  @TestMetadata("conflictingClasses")
+  public void testConflictingClasses() {
+    runTest("plugins/jvm-abi-gen/testData/compile/conflictingClasses/");
+  }
 
-    @TestMetadata("inlineAnnotationInstantiation")
-    public void testInlineAnnotationInstantiation() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/inlineAnnotationInstantiation/");
-    }
+  @TestMetadata("inlineAnnotationInstantiation")
+  public void testInlineAnnotationInstantiation() {
+    runTest("plugins/jvm-abi-gen/testData/compile/inlineAnnotationInstantiation/");
+  }
 
-    @TestMetadata("inlineAnonymousObject")
-    public void testInlineAnonymousObject() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/inlineAnonymousObject/");
-    }
+  @TestMetadata("inlineAnonymousObject")
+  public void testInlineAnonymousObject() {
+    runTest("plugins/jvm-abi-gen/testData/compile/inlineAnonymousObject/");
+  }
 
-    @TestMetadata("inlineCapture")
-    public void testInlineCapture() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/inlineCapture/");
-    }
+  @TestMetadata("inlineCapture")
+  public void testInlineCapture() {
+    runTest("plugins/jvm-abi-gen/testData/compile/inlineCapture/");
+  }
 
-    @TestMetadata("inlineClassWithPrivateConstructor")
-    public void testInlineClassWithPrivateConstructor() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/inlineClassWithPrivateConstructor/");
-    }
+  @TestMetadata("inlineClassWithPrivateConstructor")
+  public void testInlineClassWithPrivateConstructor() {
+    runTest("plugins/jvm-abi-gen/testData/compile/inlineClassWithPrivateConstructor/");
+  }
 
-    @TestMetadata("inlineClassWithPrivateConstructorK2")
-    public void testInlineClassWithPrivateConstructorK2() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/inlineClassWithPrivateConstructorK2/");
-    }
+  @TestMetadata("inlineClassWithPrivateConstructorK2")
+  public void testInlineClassWithPrivateConstructorK2() {
+    runTest("plugins/jvm-abi-gen/testData/compile/inlineClassWithPrivateConstructorK2/");
+  }
 
-    @TestMetadata("inlineNoRegeneration")
-    public void testInlineNoRegeneration() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/inlineNoRegeneration/");
-    }
+  @TestMetadata("inlineNoRegeneration")
+  public void testInlineNoRegeneration() {
+    runTest("plugins/jvm-abi-gen/testData/compile/inlineNoRegeneration/");
+  }
 
-    @TestMetadata("inlineReifiedFunction")
-    public void testInlineReifiedFunction() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/inlineReifiedFunction/");
-    }
+  @TestMetadata("inlineReifiedFunction")
+  public void testInlineReifiedFunction() {
+    runTest("plugins/jvm-abi-gen/testData/compile/inlineReifiedFunction/");
+  }
 
-    @TestMetadata("inlineWhenMappings")
-    public void testInlineWhenMappings() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/inlineWhenMappings/");
-    }
+  @TestMetadata("inlineWhenMappings")
+  public void testInlineWhenMappings() {
+    runTest("plugins/jvm-abi-gen/testData/compile/inlineWhenMappings/");
+  }
 
-    @TestMetadata("innerObjectRegeneration")
-    public void testInnerObjectRegeneration() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/innerObjectRegeneration/");
-    }
+  @TestMetadata("innerObjectRegeneration")
+  public void testInnerObjectRegeneration() {
+    runTest("plugins/jvm-abi-gen/testData/compile/innerObjectRegeneration/");
+  }
 
-    @TestMetadata("kt-40133")
-    public void testKt_40133() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/kt-40133/");
-    }
+  @TestMetadata("kt-40133")
+  public void testKt_40133() {
+    runTest("plugins/jvm-abi-gen/testData/compile/kt-40133/");
+  }
 
-    @TestMetadata("kt-40340")
-    public void testKt_40340() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/kt-40340/");
-    }
+  @TestMetadata("kt-40340")
+  public void testKt_40340() {
+    runTest("plugins/jvm-abi-gen/testData/compile/kt-40340/");
+  }
 
-    @TestMetadata("multifileClass")
-    public void testMultifileClass() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/multifileClass/");
-    }
+  @TestMetadata("multifileClass")
+  public void testMultifileClass() {
+    runTest("plugins/jvm-abi-gen/testData/compile/multifileClass/");
+  }
 
-    @TestMetadata("multifileClassOptimized")
-    public void testMultifileClassOptimized() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/multifileClassOptimized/");
-    }
+  @TestMetadata("multifileClassOptimized")
+  public void testMultifileClassOptimized() {
+    runTest("plugins/jvm-abi-gen/testData/compile/multifileClassOptimized/");
+  }
 
-    @TestMetadata("multifileClassOptimizedWithRemovePrivateOption")
-    public void testMultifileClassOptimizedWithRemovePrivateOption() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/multifileClassOptimizedWithRemovePrivateOption/");
-    }
+  @TestMetadata("multifileClassOptimizedWithRemovePrivateOption")
+  public void testMultifileClassOptimizedWithRemovePrivateOption() {
+    runTest("plugins/jvm-abi-gen/testData/compile/multifileClassOptimizedWithRemovePrivateOption/");
+  }
 
-    @TestMetadata("multifileClassWithRemovePrivateOption")
-    public void testMultifileClassWithRemovePrivateOption() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/multifileClassWithRemovePrivateOption/");
-    }
+  @TestMetadata("multifileClassWithRemovePrivateOption")
+  public void testMultifileClassWithRemovePrivateOption() {
+    runTest("plugins/jvm-abi-gen/testData/compile/multifileClassWithRemovePrivateOption/");
+  }
 
-    @TestMetadata("privateAnnotationsFromJavaApp")
-    public void testPrivateAnnotationsFromJavaApp() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/privateAnnotationsFromJavaApp/");
-    }
+  @TestMetadata("privateAnnotationsFromJavaApp")
+  public void testPrivateAnnotationsFromJavaApp() {
+    runTest("plugins/jvm-abi-gen/testData/compile/privateAnnotationsFromJavaApp/");
+  }
 
-    @TestMetadata("privateAnnotationsFromJavaLib")
-    public void testPrivateAnnotationsFromJavaLib() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/privateAnnotationsFromJavaLib/");
-    }
+  @TestMetadata("privateAnnotationsFromJavaLib")
+  public void testPrivateAnnotationsFromJavaLib() {
+    runTest("plugins/jvm-abi-gen/testData/compile/privateAnnotationsFromJavaLib/");
+  }
 
-    @TestMetadata("privateClassesFromJavaApp")
-    public void testPrivateClassesFromJavaApp() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/privateClassesFromJavaApp/");
-    }
+  @TestMetadata("privateClassesFromJavaApp")
+  public void testPrivateClassesFromJavaApp() {
+    runTest("plugins/jvm-abi-gen/testData/compile/privateClassesFromJavaApp/");
+  }
 
-    @TestMetadata("privateClassesFromJavaLib")
-    public void testPrivateClassesFromJavaLib() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/privateClassesFromJavaLib/");
-    }
+  @TestMetadata("privateClassesFromJavaLib")
+  public void testPrivateClassesFromJavaLib() {
+    runTest("plugins/jvm-abi-gen/testData/compile/privateClassesFromJavaLib/");
+  }
 
-    @TestMetadata("privateInterfaceImplementedByPublicClass")
-    public void testPrivateInterfaceImplementedByPublicClass() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/privateInterfaceImplementedByPublicClass/");
-    }
+  @TestMetadata("privateInterfaceImplementedByPublicClass")
+  public void testPrivateInterfaceImplementedByPublicClass() {
+    runTest("plugins/jvm-abi-gen/testData/compile/privateInterfaceImplementedByPublicClass/");
+  }
 
-    @TestMetadata("privateOnlyConstructors")
-    public void testPrivateOnlyConstructors() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/privateOnlyConstructors/");
-    }
+  @TestMetadata("privateOnlyConstructors")
+  public void testPrivateOnlyConstructors() {
+    runTest("plugins/jvm-abi-gen/testData/compile/privateOnlyConstructors/");
+  }
 
-    @TestMetadata("privateValueClassConstructor")
-    public void testPrivateValueClassConstructor() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/privateValueClassConstructor/");
-    }
+  @TestMetadata("privateValueClassConstructor")
+  public void testPrivateValueClassConstructor() {
+    runTest("plugins/jvm-abi-gen/testData/compile/privateValueClassConstructor/");
+  }
 
-    @TestMetadata("topLevel")
-    public void testTopLevel() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compile/topLevel/");
-    }
+  @TestMetadata("topLevel")
+  public void testTopLevel() {
+    runTest("plugins/jvm-abi-gen/testData/compile/topLevel/");
+  }
 }

@@ -29,7 +29,8 @@ internal fun TestCompilationArtifact.KLIB.dumpMetadata(
     klibFile = klibFile,
     functionName = "dumpMetadata",
     /* printSignatures= */ printSignatures,
-    /* signatureVersion= */ signatureVersion?.let { getSignatureVersionForIsolatedClassLoader(kotlinNativeClassLoader, signatureVersion) }
+    /* signatureVersion= */ signatureVersion?.let { getSignatureVersionForIsolatedClassLoader(kotlinNativeClassLoader, signatureVersion) },
+    /* testMode= */ true
 )
 
 internal fun TestCompilationArtifact.KLIB.dumpIr(

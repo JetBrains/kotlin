@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.tree.deserializer
 
-import kotlinx.metadata.*
+import kotlin.metadata.*
 import org.jetbrains.kotlin.commonizer.metadata.CirDeserializers
 import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
 import org.jetbrains.kotlin.commonizer.tree.CirTreeClass

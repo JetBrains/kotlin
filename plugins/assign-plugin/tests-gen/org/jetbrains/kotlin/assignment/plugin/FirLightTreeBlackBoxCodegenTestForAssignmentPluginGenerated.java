@@ -20,50 +20,50 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/assign-plugin/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLightTreeBlackBoxCodegenTestForAssignmentPluginGenerated extends AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin {
-    @Test
-    public void testAllFilesPresentInCodegen() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/assign-plugin/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
-    }
+  @Test
+  public void testAllFilesPresentInCodegen() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/assign-plugin/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+  }
 
-    @Test
-    @TestMetadata("annotation.kt")
-    public void testAnnotation() throws Exception {
-        runTest("plugins/assign-plugin/testData/codegen/annotation.kt");
-    }
+  @Test
+  @TestMetadata("annotation.kt")
+  public void testAnnotation() {
+    runTest("plugins/assign-plugin/testData/codegen/annotation.kt");
+  }
 
-    @Test
-    @TestMetadata("otherOperators.kt")
-    public void testOtherOperators() throws Exception {
-        runTest("plugins/assign-plugin/testData/codegen/otherOperators.kt");
-    }
+  @Test
+  @TestMetadata("otherOperators.kt")
+  public void testOtherOperators() {
+    runTest("plugins/assign-plugin/testData/codegen/otherOperators.kt");
+  }
 
-    @Test
-    @TestMetadata("plusAssignPrecedence.kt")
-    public void testPlusAssignPrecedence() throws Exception {
-        runTest("plugins/assign-plugin/testData/codegen/plusAssignPrecedence.kt");
-    }
+  @Test
+  @TestMetadata("plusAssignPrecedence.kt")
+  public void testPlusAssignPrecedence() {
+    runTest("plugins/assign-plugin/testData/codegen/plusAssignPrecedence.kt");
+  }
 
-    @Test
-    @TestMetadata("qualifiedAnnotation.kt")
-    public void testQualifiedAnnotation() throws Exception {
-        runTest("plugins/assign-plugin/testData/codegen/qualifiedAnnotation.kt");
-    }
+  @Test
+  @TestMetadata("qualifiedAnnotation.kt")
+  public void testQualifiedAnnotation() {
+    runTest("plugins/assign-plugin/testData/codegen/qualifiedAnnotation.kt");
+  }
 
-    @Test
-    @TestMetadata("supportedUsage.kt")
-    public void testSupportedUsage() throws Exception {
-        runTest("plugins/assign-plugin/testData/codegen/supportedUsage.kt");
-    }
+  @Test
+  @TestMetadata("supportedUsage.kt")
+  public void testSupportedUsage() {
+    runTest("plugins/assign-plugin/testData/codegen/supportedUsage.kt");
+  }
 
-    @Test
-    @TestMetadata("typealias.kt")
-    public void testTypealias() throws Exception {
-        runTest("plugins/assign-plugin/testData/codegen/typealias.kt");
-    }
+  @Test
+  @TestMetadata("typealias.kt")
+  public void testTypealias() {
+    runTest("plugins/assign-plugin/testData/codegen/typealias.kt");
+  }
 
-    @Test
-    @TestMetadata("varBehaviour.kt")
-    public void testVarBehaviour() throws Exception {
-        runTest("plugins/assign-plugin/testData/codegen/varBehaviour.kt");
-    }
+  @Test
+  @TestMetadata("varBehaviour.kt")
+  public void testVarBehaviour() {
+    runTest("plugins/assign-plugin/testData/codegen/varBehaviour.kt");
+  }
 }

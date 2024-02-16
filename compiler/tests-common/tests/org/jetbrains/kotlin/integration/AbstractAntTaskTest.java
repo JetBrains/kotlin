@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import java.io.File;
 
 public abstract class AbstractAntTaskTest extends KotlinIntegrationTestBase {
-    protected void doTest(String testFile) throws Exception {
+    protected void doTest(String testFile) {
         String testDataDir = new File(testFile).getAbsolutePath();
 
         String antClasspath = System.getProperty("kotlin.ant.classpath");

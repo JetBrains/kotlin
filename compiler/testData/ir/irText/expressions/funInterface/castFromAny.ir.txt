@@ -1,8 +1,6 @@
 FILE fqName:<root> fileName:/castFromAny.kt
   CLASS INTERFACE name:KRunnable modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KRunnable
-    FUN name:invoke visibility:public modality:ABSTRACT <> ($this:<root>.KRunnable) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.KRunnable
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -16,6 +14,8 @@ FILE fqName:<root> fileName:/castFromAny.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:invoke visibility:public modality:ABSTRACT <> ($this:<root>.KRunnable) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.KRunnable
   FUN name:test visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any?
     BLOCK_BODY

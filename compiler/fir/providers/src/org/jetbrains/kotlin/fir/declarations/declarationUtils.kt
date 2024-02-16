@@ -171,7 +171,7 @@ fun FirCallableSymbol<*>.dispatchReceiverScope(session: FirSession, scopeSession
 }
 
 fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenIntersectionsRecursively(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
-    if (member.origin != FirDeclarationOrigin.IntersectionOverride) return listOf(this)
+    if (member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>().origin != FirDeclarationOrigin.IntersectionOverride) return listOf(this)
 
     return baseScope.getDirectOverriddenMembersWithBaseScope(member).flatMap { it.flattenIntersectionsRecursively() }
 }

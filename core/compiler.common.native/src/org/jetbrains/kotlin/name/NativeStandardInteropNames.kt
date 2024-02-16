@@ -25,6 +25,9 @@ object NativeStandardInteropNames {
     val objCOutletClassId = ClassId(cInteropPackage, Name.identifier("ObjCOutlet"))
     val objCOverrideInitClassId = ClassId(cInteropPackage, Name.identifier("ObjCObjectBase.OverrideInit"))
 
+    object Annotations {
+        val objCSignatureOverrideClassId = ClassId(cInteropPackage, Name.identifier("ObjCSignatureOverride"))
+    }
 
     object ForwardDeclarations {
         private val cNamesPackage = FqName("cnames")

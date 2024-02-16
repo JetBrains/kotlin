@@ -6,9 +6,9 @@ FIR element rendered:
 @FILE:R|Ann|[Types]()
 
 FIR FILE:
-FILE: [ResolvedTo(IMPORTS)] file.kt
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] file.kt
     @FILE:R|Ann|[Types]()
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+    [ResolvedTo(ANNOTATION_ARGUMENTS)] annotations container
     public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|Ann| {
             LAZY_super<R|kotlin/Any|>

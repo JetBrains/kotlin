@@ -1,15 +1,17 @@
 FILE: scriptLevelDestructuringWithAnnotation.kts
     SCRIPT: <script-scriptLevelDestructuringWithAnnotation.kts>
 
-        @DestrAnno(LAZY_EXPRESSION) lval <destruct>: <implicit> = IntegerLiteral(0).to#(IntegerLiteral(1))
-        @LeftAnno(LAZY_EXPRESSION) public final val a: <implicit> = R|<local>/<destruct>|.component1#()
+        @DestrAnno(LAZY_EXPRESSION) lval <destruct>: <implicit> = LAZY_EXPRESSION
+        @LeftAnno(LAZY_EXPRESSION) public final val a: <implicit> = LAZY_EXPRESSION
 
 
-        @RightAnno(LAZY_EXPRESSION) public final val b: <implicit> = R|<local>/<destruct>|.component2#()
+        @RightAnno(LAZY_EXPRESSION) public final val b: <implicit> = LAZY_EXPRESSION
 
 
-        @Destr2Anno(LAZY_EXPRESSION) lval <destruct>: <implicit> = IntegerLiteral(2).to#(IntegerLiteral(3))
-        @SecondLeftAnno(LAZY_EXPRESSION) public final val c: <implicit> = R|<local>/<destruct>|.component1#()
+        @Destr2Anno(LAZY_EXPRESSION) lval <destruct>: <implicit> = LAZY_EXPRESSION
+        @SecondLeftAnno(LAZY_EXPRESSION) public final val c: <implicit> = LAZY_EXPRESSION
 
 
-        @SecondRightAnno(LAZY_EXPRESSION) public final val d: <implicit> = R|<local>/<destruct>|.component2#()
+        @SecondRightAnno(LAZY_EXPRESSION) public final val d: <implicit> = LAZY_EXPRESSION
+
+

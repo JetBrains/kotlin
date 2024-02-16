@@ -21,16 +21,16 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalK1JsKlibCompilerRunnerWithFriendModulesDisabledTestGenerated extends AbstractIncrementalK1JsKlibCompilerRunnerWithFriendModulesDisabledTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInFriendsModuleDisabled() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/js/friendsModuleDisabled"), Pattern.compile("^([^\\.]+)$"), null, false);
-    }
+  public void testAllFilesPresentInFriendsModuleDisabled() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/js/friendsModuleDisabled"), Pattern.compile("^([^\\.]+)$"), null, false);
+  }
 
-    @TestMetadata("internalInlineFunctionIsChanged")
-    public void testInternalInlineFunctionIsChanged() throws Exception {
-        runTest("jps/jps-plugin/testData/incremental/js/friendsModuleDisabled/internalInlineFunctionIsChanged/");
-    }
+  @TestMetadata("internalInlineFunctionIsChanged")
+  public void testInternalInlineFunctionIsChanged() {
+    runTest("jps/jps-plugin/testData/incremental/js/friendsModuleDisabled/internalInlineFunctionIsChanged/");
+  }
 }

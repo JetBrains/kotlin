@@ -19,38 +19,38 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider")
 @TestDataPath("$PROJECT_ROOT")
 public class SourceFileBasedKotlinDeclarationProviderTestGenerated extends AbstractSourceFileBasedKotlinDeclarationProviderTest {
-    @Test
-    public void testAllFilesPresentInFileBasedDeclarationProvider() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInFileBasedDeclarationProvider() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("defaultPackage.kt")
-    public void testDefaultPackage() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/defaultPackage.kt");
-    }
+  @Test
+  @TestMetadata("defaultPackage.kt")
+  public void testDefaultPackage() {
+    runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/defaultPackage.kt");
+  }
 
-    @Test
-    @TestMetadata("local.kt")
-    public void testLocal() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/local.kt");
-    }
+  @Test
+  @TestMetadata("local.kt")
+  public void testLocal() {
+    runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/local.kt");
+  }
 
-    @Test
-    @TestMetadata("nestedTypeAlias.kt")
-    public void testNestedTypeAlias() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/nestedTypeAlias.kt");
-    }
+  @Test
+  @TestMetadata("nestedTypeAlias.kt")
+  public void testNestedTypeAlias() {
+    runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/nestedTypeAlias.kt");
+  }
 
-    @Test
-    @TestMetadata("sameNames.kt")
-    public void testSameNames() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/sameNames.kt");
-    }
+  @Test
+  @TestMetadata("sameNames.kt")
+  public void testSameNames() {
+    runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/sameNames.kt");
+  }
 
-    @Test
-    @TestMetadata("simple.kt")
-    public void testSimple() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/simple.kt");
-    }
+  @Test
+  @TestMetadata("simple.kt")
+  public void testSimple() {
+    runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/simple.kt");
+  }
 }

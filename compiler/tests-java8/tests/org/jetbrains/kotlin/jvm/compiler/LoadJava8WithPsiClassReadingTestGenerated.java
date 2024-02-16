@@ -21,26 +21,26 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class LoadJava8WithPsiClassReadingTestGenerated extends AbstractLoadJava8WithPsiClassReadingTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInCompiledJava() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, true, "typeUseAnnotations", "typeParameterAnnotations");
-    }
+  public void testAllFilesPresentInCompiledJava() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, true, "typeUseAnnotations", "typeParameterAnnotations");
+  }
 
-    @TestMetadata("InnerClassTypeAnnotation.java")
-    public void testInnerClassTypeAnnotation() throws Exception {
-        runTest("compiler/testData/loadJava8/compiledJava/InnerClassTypeAnnotation.java");
-    }
+  @TestMetadata("InnerClassTypeAnnotation.java")
+  public void testInnerClassTypeAnnotation() {
+    runTest("compiler/testData/loadJava8/compiledJava/InnerClassTypeAnnotation.java");
+  }
 
-    @TestMetadata("MapRemove.java")
-    public void testMapRemove() throws Exception {
-        runTest("compiler/testData/loadJava8/compiledJava/MapRemove.java");
-    }
+  @TestMetadata("MapRemove.java")
+  public void testMapRemove() {
+    runTest("compiler/testData/loadJava8/compiledJava/MapRemove.java");
+  }
 
-    @TestMetadata("ParameterNames.java")
-    public void testParameterNames() throws Exception {
-        runTest("compiler/testData/loadJava8/compiledJava/ParameterNames.java");
-    }
+  @TestMetadata("ParameterNames.java")
+  public void testParameterNames() {
+    runTest("compiler/testData/loadJava8/compiledJava/ParameterNames.java");
+  }
 }

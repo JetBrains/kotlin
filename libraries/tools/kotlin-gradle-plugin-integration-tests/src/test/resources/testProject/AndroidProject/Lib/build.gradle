@@ -38,6 +38,8 @@ android {
         flavor2 { dimension "myFlavor" }
     }
 
-    publishNonDefault true
+    if (GradleVersion.current() < GradleVersion.version("8.5")) {
+        publishNonDefault true
+    }
     lintOptions.abortOnError = false
 }

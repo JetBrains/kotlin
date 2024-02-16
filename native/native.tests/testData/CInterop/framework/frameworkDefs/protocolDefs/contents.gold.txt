@@ -1,6 +1,18 @@
+library {
+  // module name: <pod1.def>
 
-package objcinterop {
-    @ExternalObjCClass(protocolGetter = "kniprot_objcinterop0_Simple") interface SimpleProtocol : ObjCObject
-    @ExternalObjCClass(protocolGetter = "kniprot_objcinterop0_Simple") interface SimpleProtocolMeta : ObjCObjectMeta /* = ObjCClass */
+  library fragment {
+    // package name: objcinterop
+
+    // class name: objcinterop/SimpleProtocol
+    // class name: objcinterop/SimpleProtocolMeta
+
+    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_objcinterop0_Simple")
+    public abstract interface objcinterop/SimpleProtocol : kotlinx/cinterop/ObjCObject {
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_objcinterop0_Simple")
+    public abstract interface objcinterop/SimpleProtocolMeta : kotlinx/cinterop/ObjCClass /* = kotlinx/cinterop/ObjCObjectMeta^ */ {
+    }
+  }
 }
-

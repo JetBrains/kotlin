@@ -186,9 +186,10 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
          *
          * Use [additionalImports] if the default value uses types/functions that are not otherwise imported.
          */
-        fun default(field: String, value: String) {
+        fun default(field: String, value: String, withGetter: Boolean = false) {
             default(field) {
                 this.value = value
+                this.withGetter = withGetter
             }
         }
 

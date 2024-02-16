@@ -19,38 +19,38 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases")
 @TestDataPath("$PROJECT_ROOT")
 public class CInteropIncludeCategoriesTestGenerated extends AbstractNativeCInteropIncludeCategoriesTest {
-    @Test
-    public void testAllFilesPresentInCases() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases"), Pattern.compile("^([^_](.+))$"), null, false);
-    }
+  @Test
+  public void testAllFilesPresentInCases() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases"), Pattern.compile("^([^_](.+))$"), null, false);
+  }
 
-    @Test
-    @TestMetadata("smoke0")
-    public void testSmoke0() throws Exception {
-        runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke0/");
-    }
+  @Test
+  @TestMetadata("smoke0")
+  public void testSmoke0() {
+    runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke0/");
+  }
 
-    @Test
-    @TestMetadata("smoke1")
-    public void testSmoke1() throws Exception {
-        runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke1/");
-    }
+  @Test
+  @TestMetadata("smoke1")
+  public void testSmoke1() {
+    runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke1/");
+  }
 
-    @Test
-    @TestMetadata("smoke2")
-    public void testSmoke2() throws Exception {
-        runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke2/");
-    }
+  @Test
+  @TestMetadata("smoke2")
+  public void testSmoke2() {
+    runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke2/");
+  }
 
-    @Test
-    @TestMetadata("smoke3")
-    public void testSmoke3() throws Exception {
-        runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke3/");
-    }
+  @Test
+  @TestMetadata("smoke3")
+  public void testSmoke3() {
+    runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke3/");
+  }
 
-    @Test
-    @TestMetadata("smoke4")
-    public void testSmoke4() throws Exception {
-        runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke4/");
-    }
+  @Test
+  @TestMetadata("smoke4")
+  public void testSmoke4() {
+    runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke4/");
+  }
 }

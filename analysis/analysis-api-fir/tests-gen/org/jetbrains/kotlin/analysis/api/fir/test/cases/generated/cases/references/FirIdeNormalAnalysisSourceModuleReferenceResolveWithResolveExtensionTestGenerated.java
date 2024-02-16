@@ -28,123 +28,123 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/resolveExtensions/referenceResolve")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleReferenceResolveWithResolveExtensionTestGenerated extends AbstractReferenceResolveWithResolveExtensionTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
+
+  @Test
+  public void testAllFilesPresentInReferenceResolve() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule")
+  @TestDataPath("$PROJECT_ROOT")
+  public class MultiModule {
+    @Test
+    public void testAllFilesPresentInMultiModule() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ExtendedModuleDependency {
+      @Test
+      public void testAllFilesPresentInExtendedModuleDependency() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("classMember.kt")
+      public void testClassMember() {
+        runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/classMember.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionFunction.kt")
+      public void testExtensionFunction() {
+        runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/extensionFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("shadowedDeclaration.kt")
+      public void testShadowedDeclaration() {
+        runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/shadowedDeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("shadowedJava.kt")
+      public void testShadowedJava() {
+        runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/shadowedJava.kt");
+      }
+
+      @Test
+      @TestMetadata("shadowedOverload.kt")
+      public void testShadowedOverload() {
+        runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/shadowedOverload.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelFunction.kt")
+      public void testTopLevelFunction() {
+        runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/topLevelFunction.kt");
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule")
+  @TestDataPath("$PROJECT_ROOT")
+  public class SingleModule {
+    @Test
+    public void testAllFilesPresentInSingleModule() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
-    public void testAllFilesPresentInReferenceResolve() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    @TestMetadata("classMember.kt")
+    public void testClassMember() {
+      runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/classMember.kt");
     }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule")
-    @TestDataPath("$PROJECT_ROOT")
-    public class MultiModule {
-        @Test
-        public void testAllFilesPresentInMultiModule() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Nested
-        @TestMetadata("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency")
-        @TestDataPath("$PROJECT_ROOT")
-        public class ExtendedModuleDependency {
-            @Test
-            public void testAllFilesPresentInExtendedModuleDependency() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency"), Pattern.compile("^(.+)\\.kt$"), null, true);
-            }
-
-            @Test
-            @TestMetadata("classMember.kt")
-            public void testClassMember() throws Exception {
-                runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/classMember.kt");
-            }
-
-            @Test
-            @TestMetadata("extensionFunction.kt")
-            public void testExtensionFunction() throws Exception {
-                runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/extensionFunction.kt");
-            }
-
-            @Test
-            @TestMetadata("shadowedDeclaration.kt")
-            public void testShadowedDeclaration() throws Exception {
-                runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/shadowedDeclaration.kt");
-            }
-
-            @Test
-            @TestMetadata("shadowedJava.kt")
-            public void testShadowedJava() throws Exception {
-                runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/shadowedJava.kt");
-            }
-
-            @Test
-            @TestMetadata("shadowedOverload.kt")
-            public void testShadowedOverload() throws Exception {
-                runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/shadowedOverload.kt");
-            }
-
-            @Test
-            @TestMetadata("topLevelFunction.kt")
-            public void testTopLevelFunction() throws Exception {
-                runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/topLevelFunction.kt");
-            }
-        }
+    @Test
+    @TestMetadata("extensionFunction.kt")
+    public void testExtensionFunction() {
+      runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/extensionFunction.kt");
     }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule")
-    @TestDataPath("$PROJECT_ROOT")
-    public class SingleModule {
-        @Test
-        public void testAllFilesPresentInSingleModule() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("classMember.kt")
-        public void testClassMember() throws Exception {
-            runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/classMember.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionFunction.kt")
-        public void testExtensionFunction() throws Exception {
-            runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/extensionFunction.kt");
-        }
-
-        @Test
-        @TestMetadata("shadowedDeclaration.kt")
-        public void testShadowedDeclaration() throws Exception {
-            runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/shadowedDeclaration.kt");
-        }
-
-        @Test
-        @TestMetadata("shadowedJava.kt")
-        public void testShadowedJava() throws Exception {
-            runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/shadowedJava.kt");
-        }
-
-        @Test
-        @TestMetadata("shadowedOverload.kt")
-        public void testShadowedOverload() throws Exception {
-            runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/shadowedOverload.kt");
-        }
-
-        @Test
-        @TestMetadata("topLevelFunction.kt")
-        public void testTopLevelFunction() throws Exception {
-            runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/topLevelFunction.kt");
-        }
+    @Test
+    @TestMetadata("shadowedDeclaration.kt")
+    public void testShadowedDeclaration() {
+      runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/shadowedDeclaration.kt");
     }
+
+    @Test
+    @TestMetadata("shadowedJava.kt")
+    public void testShadowedJava() {
+      runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/shadowedJava.kt");
+    }
+
+    @Test
+    @TestMetadata("shadowedOverload.kt")
+    public void testShadowedOverload() {
+      runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/shadowedOverload.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunction.kt")
+    public void testTopLevelFunction() {
+      runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/topLevelFunction.kt");
+    }
+  }
 }

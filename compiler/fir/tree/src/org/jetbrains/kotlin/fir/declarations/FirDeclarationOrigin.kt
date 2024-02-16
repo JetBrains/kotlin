@@ -35,6 +35,7 @@ sealed class FirDeclarationOrigin(
         object FakeFunction : Synthetic()
         object ForwardDeclaration : Synthetic()
         object ScriptTopLevelDestructuringDeclarationContainer : Synthetic()
+        object FakeHiddenInPreparationForNewJdk : Synthetic()
     }
     object DynamicScope : FirDeclarationOrigin()
     object SamConstructor : FirDeclarationOrigin()

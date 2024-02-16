@@ -1,7 +1,4 @@
 FILE fqName:<root> fileName:/exclExclOnPlatformType.kt
-  FUN name:use visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any
-    BLOCK_BODY
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use (a: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -16,3 +13,6 @@ FILE fqName:<root> fileName:/exclExclOnPlatformType.kt
           <T0>: @[FlexibleNullability] kotlin.String
           arg0: CALL 'public open fun getProperty (p0: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in java.lang.System' type=@[FlexibleNullability] kotlin.String? origin=null
             p0: CONST String type=kotlin.String value="abc"
+  FUN name:use visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any
+    BLOCK_BODY

@@ -5,11 +5,11 @@ class C {
 
   }
 
-  fun foo(): C {
+  fun bar(): C? {
     return <this>
   }
 
-  fun bar(): C? {
+  fun foo(): C {
     return <this>
   }
 
@@ -42,3 +42,4 @@ fun test(nc: C?): C? {
     }
   }
 }
+

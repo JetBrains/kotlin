@@ -43,7 +43,6 @@ class KotlinJvmApiTest : KGPBaseTest() {
                             it.source("src/main")
                             it.multiPlatformEnabled.set(false)
                             it.moduleName.set("main")
-                            it.ownModuleName.set("main")
                             it.sourceSetName.set("main")
                             it.useModuleDetection.set(false)
                             it.destinationDirectory.fileValue(new File(project.buildDir, "fooOutput"))
@@ -90,7 +89,6 @@ class KotlinJvmApiTest : KGPBaseTest() {
             )
 
             build(customTaskName) {
-                assertOutputDoesNotContain("No value has been specified for property 'ownModuleName'")
                 assertFileInProjectExists("build/$outputDirName/org/example/application/MainKt.class")
                 assertFileInProjectExists("build/$outputDirName/org/example/Lib.class")
                 assertFileInProjectExists("build/$outputDirName/META-INF/$customModuleName.kotlin_module")
@@ -136,7 +134,6 @@ class KotlinJvmApiTest : KGPBaseTest() {
                             it.source("src/main")
                             it.multiPlatformEnabled.set(false)
                             it.moduleName.set("main")
-                            it.ownModuleName.set("main")
                             it.sourceSetName.set("main")
                             it.useModuleDetection.set(false)
                             it.destinationDirectory.fileValue(new File(project.buildDir, "fooOutput"))

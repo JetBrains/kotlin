@@ -66,6 +66,7 @@ fun builder(c: suspend () -> Unit) {
 }
 
 fun box(): String {
+    StateMachineChecker.reset()
     val lambda = suspend {
         StateMachineChecker.suspendHere()
         StateMachineChecker.suspendHere()

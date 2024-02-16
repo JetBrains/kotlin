@@ -310,6 +310,7 @@ enum class LanguageFeature(
     DisableCompatibilityModeForNewInference(KOTLIN_2_0, kind = OTHER), // KT-63558 (umbrella), KT-64306, KT-64307, KT-64308
     DfaBooleanVariables(KOTLIN_2_0), // KT-25747
     LightweightLambdas(KOTLIN_2_0, kind = OTHER), // KT-45375
+    ObjCSignatureOverrideAnnotation(KOTLIN_2_0, sinceApiVersion = ApiVersion.KOTLIN_2_0, kind = OTHER), // KT-61323
 
     // 2.1
 
@@ -322,6 +323,7 @@ enum class LanguageFeature(
     JsAllowInvalidCharsIdentifiersEscaping(KOTLIN_2_1, kind = OTHER), // KT-31799
     SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced(KOTLIN_2_1, kind = BUG_FIX), // KT-63209
     ProhibitPrivateOperatorCallInInline(KOTLIN_2_1, kind = BUG_FIX), // KT-65494
+    ProhibitTypealiasAsCallableQualifierInImport(KOTLIN_2_1, kind = BUG_FIX), // KT-64350
 
     // End of 2.* language features --------------------------------------------------
 

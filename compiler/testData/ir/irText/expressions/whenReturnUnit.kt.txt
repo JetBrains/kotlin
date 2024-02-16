@@ -1,6 +1,3 @@
-fun run(block: Function0<Unit>) {
-}
-
 fun branch(x: Int) {
   return run(block = local fun <anonymous>() {
     { // BLOCK
@@ -13,3 +10,7 @@ fun branch(x: Int) {
   }
 )
 }
+
+fun run(block: Function0<Unit>) {
+}
+

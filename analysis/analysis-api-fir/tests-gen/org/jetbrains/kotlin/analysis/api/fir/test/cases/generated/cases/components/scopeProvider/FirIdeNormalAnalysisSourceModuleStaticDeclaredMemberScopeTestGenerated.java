@@ -28,51 +28,51 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleStaticDeclaredMemberScopeTestGenerated extends AbstractStaticDeclaredMemberScopeTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInStaticDeclaredMemberScope() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInStaticDeclaredMemberScope() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("class.kt")
-    public void testClass() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/class.kt");
-    }
+  @Test
+  @TestMetadata("class.kt")
+  public void testClass() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/class.kt");
+  }
 
-    @Test
-    @TestMetadata("classWithJavaSuperclass.kt")
-    public void testClassWithJavaSuperclass() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/classWithJavaSuperclass.kt");
-    }
+  @Test
+  @TestMetadata("classWithJavaSuperclass.kt")
+  public void testClassWithJavaSuperclass() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/classWithJavaSuperclass.kt");
+  }
 
-    @Test
-    @TestMetadata("enumClass.kt")
-    public void testEnumClass() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/enumClass.kt");
-    }
+  @Test
+  @TestMetadata("enumClass.kt")
+  public void testEnumClass() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/enumClass.kt");
+  }
 
-    @Test
-    @TestMetadata("innerClass.kt")
-    public void testInnerClass() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/innerClass.kt");
-    }
+  @Test
+  @TestMetadata("innerClass.kt")
+  public void testInnerClass() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/innerClass.kt");
+  }
 
-    @Test
-    @TestMetadata("javaClass.kt")
-    public void testJavaClass() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/javaClass.kt");
-    }
+  @Test
+  @TestMetadata("javaClass.kt")
+  public void testJavaClass() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/javaClass.kt");
+  }
 }

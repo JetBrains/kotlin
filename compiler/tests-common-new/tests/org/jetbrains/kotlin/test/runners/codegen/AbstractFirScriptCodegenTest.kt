@@ -63,6 +63,9 @@ open class AbstractFirScriptCodegenTest : AbstractKotlinCompilerWithTargetBacken
                 ::IrTextDumpHandler,
                 ::IrPrettyKotlinDumpHandler,
             )
+            useAfterAnalysisCheckers(
+                ::FirIrDumpIdenticalChecker,
+            )
         }
         facadeStep(::JvmIrBackendFacade)
         jvmArtifactsHandlersStep(init = {})

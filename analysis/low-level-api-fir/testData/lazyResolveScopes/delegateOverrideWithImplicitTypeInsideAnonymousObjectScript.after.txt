@@ -6,13 +6,13 @@ public open [ResolvedTo(BODY_RESOLVE)] fun isSchemeFile([ResolvedTo(BODY_RESOLVE
     ^isSchemeFile Boolean(true)
 }
 
-public open [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /BaseInterface.anotherFunction, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence| = STUB): R|kotlin/Boolean|
+public open override [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /BaseInterface.anotherFunction, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence|): R|kotlin/Boolean|
 
 public open [ResolvedTo(BODY_RESOLVE)] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence| = R|/genericCall|<R|kotlin/CharSequence|>()): R|kotlin/Boolean| {
     ^anotherFunction Boolean(true)
 }
 
-@R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public open [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirPropertySymbol /BaseInterface.propertyWithAnnotations, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0] var propertyWithAnnotations: R|kotlin/Int|
+@R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public open override [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirPropertySymbol /BaseInterface.propertyWithAnnotations, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0] var propertyWithAnnotations: R|kotlin/Int|
     @PROPERTY_GETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] get(): R|kotlin/Int|
     @PROPERTY_SETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
@@ -20,7 +20,7 @@ public open [ResolvedTo(BODY_RESOLVE)] fun anotherFunction([ResolvedTo(BODY_RESO
     @PROPERTY_GETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BaseInterface] get(): R|kotlin/Int|
     @PROPERTY_SETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BaseInterface] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) value: R|kotlin/Int|): R|kotlin/Unit|
 
-public open [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirPropertySymbol /BaseInterface.property, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0] var property: R|kotlin/Int|
+public open override [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirPropertySymbol /BaseInterface.property, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0] var property: R|kotlin/Int|
 
 
 

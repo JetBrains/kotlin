@@ -1,58 +1,7 @@
 FILE fqName:<root> fileName:/definitelyNotNullAsArgument.kt
-  CLASS INTERFACE name:I modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I<T of <root>.I>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    FUN name:input visibility:public modality:ABSTRACT <> ($this:<root>.I<T of <root>.I>, t:T of <root>.I) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.I<T of <root>.I>
-      VALUE_PARAMETER name:t index:0 type:T of <root>.I
-    FUN name:output visibility:public modality:ABSTRACT <> ($this:<root>.I<T of <root>.I>) returnType:T of <root>.I
-      $this: VALUE_PARAMETER name:<this> type:<root>.I<T of <root>.I>
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:foo visibility:public modality:FINAL <T> (i:<root>.I<{T of <root>.foo & Any}>) returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:i index:0 type:<root>.I<{T of <root>.foo & Any}>
-    BLOCK_BODY
-      CALL 'public abstract fun input (t: T of <root>.I): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
-        $this: GET_VAR 'i: <root>.I<{T of <root>.foo & Any}> declared in <root>.foo' type=<root>.I<{T of <root>.foo & Any}> origin=null
-        t: CALL 'public abstract fun output (): T of <root>.I declared in <root>.I' type={T of <root>.foo & Any} origin=null
-          $this: GET_VAR 'i: <root>.I<{T of <root>.foo & Any}> declared in <root>.foo' type=<root>.I<{T of <root>.foo & Any}> origin=null
-  FUN name:bar visibility:public modality:FINAL <T> (i:<root>.I<out {T of <root>.bar & Any}>) returnType:{T of <root>.bar & Any}
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:i index:0 type:<root>.I<out {T of <root>.bar & Any}>
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun bar <T> (i: <root>.I<out {T of <root>.bar & Any}>): {T of <root>.bar & Any} declared in <root>'
-        CALL 'public abstract fun output (): T of <root>.I declared in <root>.I' type={T of <root>.bar & Any} origin=null
-          $this: GET_VAR 'i: <root>.I<out {T of <root>.bar & Any}> declared in <root>.bar' type=<root>.I<out {T of <root>.bar & Any}> origin=null
-  FUN name:qux visibility:public modality:FINAL <T> (t:T of <root>.qux, i:<root>.I<in {T of <root>.qux & Any}>) returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:t index:0 type:T of <root>.qux
-    VALUE_PARAMETER name:i index:1 type:<root>.I<in {T of <root>.qux & Any}>
-    BLOCK_BODY
-      CALL 'public abstract fun input (t: T of <root>.I): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
-        $this: GET_VAR 'i: <root>.I<in {T of <root>.qux & Any}> declared in <root>.qux' type=<root>.I<in {T of <root>.qux & Any}> origin=null
-        t: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.qux & Any} origin=EXCLEXCL
-          <T0>: {T of <root>.qux & Any}
-          arg0: GET_VAR 't: T of <root>.qux declared in <root>.qux' type=T of <root>.qux origin=null
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.I<{TT of <root>.C & Any}>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C<TT of <root>.C>
     TYPE_PARAMETER name:TT index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (t:TT of <root>.C) returnType:<root>.C<TT of <root>.C> [primary]
-      VALUE_PARAMETER name:t index:0 type:TT of <root>.C
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.I<{TT of <root>.C & Any}>]'
     PROPERTY name:t visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:t type:TT of <root>.C visibility:private [final]
         EXPRESSION_BODY
@@ -64,6 +13,24 @@ FILE fqName:<root> fileName:/definitelyNotNullAsArgument.kt
           RETURN type=kotlin.Nothing from='public final fun <get-t> (): TT of <root>.C declared in <root>.C'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:t type:TT of <root>.C visibility:private [final]' type=TT of <root>.C origin=null
               receiver: GET_VAR '<this>: <root>.C<TT of <root>.C> declared in <root>.C.<get-t>' type=<root>.C<TT of <root>.C> origin=null
+    CONSTRUCTOR visibility:public <> (t:TT of <root>.C) returnType:<root>.C<TT of <root>.C> [primary]
+      VALUE_PARAMETER name:t index:0 type:TT of <root>.C
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.I<{TT of <root>.C & Any}>]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.I
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.I
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:input visibility:public modality:OPEN <> ($this:<root>.C<TT of <root>.C>, t:{TT of <root>.C & Any}) returnType:kotlin.Unit
       overridden:
         public abstract fun input (t: T of <root>.I): kotlin.Unit declared in <root>.I
@@ -80,19 +47,42 @@ FILE fqName:<root> fileName:/definitelyNotNullAsArgument.kt
             <T0>: {TT of <root>.C & Any}
             arg0: CALL 'public final fun <get-t> (): TT of <root>.C declared in <root>.C' type=TT of <root>.C origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.C<TT of <root>.C> declared in <root>.C.output' type=<root>.C<TT of <root>.C> origin=null
+  CLASS INTERFACE name:I modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I<T of <root>.I>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.I
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in <root>.I
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:input visibility:public modality:ABSTRACT <> ($this:<root>.I<T of <root>.I>, t:T of <root>.I) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.I<T of <root>.I>
+      VALUE_PARAMETER name:t index:0 type:T of <root>.I
+    FUN name:output visibility:public modality:ABSTRACT <> ($this:<root>.I<T of <root>.I>) returnType:T of <root>.I
+      $this: VALUE_PARAMETER name:<this> type:<root>.I<T of <root>.I>
+  FUN name:bar visibility:public modality:FINAL <T> (i:<root>.I<out {T of <root>.bar & Any}>) returnType:{T of <root>.bar & Any}
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:i index:0 type:<root>.I<out {T of <root>.bar & Any}>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun bar <T> (i: <root>.I<out {T of <root>.bar & Any}>): {T of <root>.bar & Any} declared in <root>'
+        CALL 'public abstract fun output (): T of <root>.I declared in <root>.I' type={T of <root>.bar & Any} origin=null
+          $this: GET_VAR 'i: <root>.I<out {T of <root>.bar & Any}> declared in <root>.bar' type=<root>.I<out {T of <root>.bar & Any}> origin=null
+  FUN name:foo visibility:public modality:FINAL <T> (i:<root>.I<{T of <root>.foo & Any}>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:i index:0 type:<root>.I<{T of <root>.foo & Any}>
+    BLOCK_BODY
+      CALL 'public abstract fun input (t: T of <root>.I): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
+        $this: GET_VAR 'i: <root>.I<{T of <root>.foo & Any}> declared in <root>.foo' type=<root>.I<{T of <root>.foo & Any}> origin=null
+        t: CALL 'public abstract fun output (): T of <root>.I declared in <root>.I' type={T of <root>.foo & Any} origin=null
+          $this: GET_VAR 'i: <root>.I<{T of <root>.foo & Any}> declared in <root>.foo' type=<root>.I<{T of <root>.foo & Any}> origin=null
   FUN name:foo2 visibility:public modality:FINAL <T1, T2> (p1:T1 of <root>.foo2, p2:T2 of <root>.foo2) returnType:kotlin.Unit
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:false
     TYPE_PARAMETER name:T2 index:1 variance: superTypes:[<root>.I<{T1 of <root>.foo2 & Any}>] reified:false
@@ -104,3 +94,13 @@ FILE fqName:<root> fileName:/definitelyNotNullAsArgument.kt
         t: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T1 of <root>.foo2 & Any} origin=EXCLEXCL
           <T0>: {T1 of <root>.foo2 & Any}
           arg0: GET_VAR 'p1: T1 of <root>.foo2 declared in <root>.foo2' type=T1 of <root>.foo2 origin=null
+  FUN name:qux visibility:public modality:FINAL <T> (t:T of <root>.qux, i:<root>.I<in {T of <root>.qux & Any}>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:t index:0 type:T of <root>.qux
+    VALUE_PARAMETER name:i index:1 type:<root>.I<in {T of <root>.qux & Any}>
+    BLOCK_BODY
+      CALL 'public abstract fun input (t: T of <root>.I): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
+        $this: GET_VAR 'i: <root>.I<in {T of <root>.qux & Any}> declared in <root>.qux' type=<root>.I<in {T of <root>.qux & Any}> origin=null
+        t: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.qux & Any} origin=EXCLEXCL
+          <T0>: {T of <root>.qux & Any}
+          arg0: GET_VAR 't: T of <root>.qux declared in <root>.qux' type=T of <root>.qux origin=null

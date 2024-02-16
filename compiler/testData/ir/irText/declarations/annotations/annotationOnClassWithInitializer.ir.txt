@@ -22,14 +22,14 @@ FILE fqName:<root> fileName:/annotationOnClassWithInitializer.kt
     annotations:
       SomeAnn
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.My
-    CONSTRUCTOR visibility:public <> () returnType:<root>.My [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:My modality:FINAL visibility:public superTypes:[kotlin.Any]'
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         VAR name:x type:kotlin.Int [val]
           CONST Int type=kotlin.Int value=1
+    CONSTRUCTOR visibility:public <> () returnType:<root>.My [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:My modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

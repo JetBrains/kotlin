@@ -1,23 +1,50 @@
+library {
+  // module name: <dependency.def>
 
-package dependency {
+  library fragment {
+    // package name: dependency
 
-    @ExternalObjCClass(protocolGetter = "kniprot_dependency0_MyProtocol") @ExperimentalForeignApi interface MyProtocolProtocol : ObjCObject {
-        var instanceProperty: Any?
-            @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "instanceProperty") get
-            @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setInstanceProperty:") set
-        @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "instanceMethod") fun instanceMethod(): Any?
-        @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "instanceProperty") fun instanceProperty(): Any?
-        @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setInstanceProperty:") fun setInstanceProperty(instanceProperty: Any?)
+    // class name: dependency/MyProtocolProtocol
+    // class name: dependency/MyProtocolProtocolMeta
+
+    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_dependency0_MyProtocol")
+    @kotlinx/cinterop/ExperimentalForeignApi
+    public abstract interface dependency/MyProtocolProtocol : kotlinx/cinterop/ObjCObject {
+
+      @kotlinx/cinterop/ObjCMethod(selector = "instanceMethod", encoding = "@16@0:8", isStret = false)
+      public abstract fun instanceMethod(): kotlin/Any?
+
+      @kotlinx/cinterop/ObjCMethod(selector = "instanceProperty", encoding = "@16@0:8", isStret = false)
+      public abstract fun instanceProperty(): kotlin/Any?
+
+      @kotlinx/cinterop/ObjCMethod(selector = "setInstanceProperty:", encoding = "v24@0:8@16", isStret = false)
+      public abstract fun setInstanceProperty(instanceProperty: kotlin/Any?): kotlin/Unit
+
+      public final var instanceProperty: kotlin/Any?
+        @kotlinx/cinterop/ObjCMethod(selector = "instanceProperty", encoding = "@16@0:8", isStret = false)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/ObjCMethod(selector = "setInstanceProperty:", encoding = "v24@0:8@16", isStret = false)
+        public final /* non-default */ external set(value: kotlin/Any?)
     }
 
-    @ExternalObjCClass(protocolGetter = "kniprot_dependency0_MyProtocol") @ExperimentalForeignApi interface MyProtocolProtocolMeta : ObjCObjectMeta /* = ObjCClass */ {
-        var classProperty: Int
-            @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "classProperty") get
-            @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setClassProperty:") set
-        @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "classMethod") fun classMethod(): Int
-        @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "classProperty") fun classProperty(): Int
-        @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setClassProperty:") fun setClassProperty(classProperty: Int)
-    }
+    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_dependency0_MyProtocol")
+    @kotlinx/cinterop/ExperimentalForeignApi
+    public abstract interface dependency/MyProtocolProtocolMeta : kotlinx/cinterop/ObjCClass /* = kotlinx/cinterop/ObjCObjectMeta^ */ {
 
+      @kotlinx/cinterop/ObjCMethod(selector = "classMethod", encoding = "i16@0:8", isStret = false)
+      public abstract fun classMethod(): kotlin/Int
+
+      @kotlinx/cinterop/ObjCMethod(selector = "classProperty", encoding = "i16@0:8", isStret = false)
+      public abstract fun classProperty(): kotlin/Int
+
+      @kotlinx/cinterop/ObjCMethod(selector = "setClassProperty:", encoding = "v20@0:8i16", isStret = false)
+      public abstract fun setClassProperty(classProperty: kotlin/Int): kotlin/Unit
+
+      public final var classProperty: kotlin/Int
+        @kotlinx/cinterop/ObjCMethod(selector = "classProperty", encoding = "i16@0:8", isStret = false)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/ObjCMethod(selector = "setClassProperty:", encoding = "v20@0:8i16", isStret = false)
+        public final /* non-default */ external set(value: kotlin/Int)
+    }
+  }
 }
-

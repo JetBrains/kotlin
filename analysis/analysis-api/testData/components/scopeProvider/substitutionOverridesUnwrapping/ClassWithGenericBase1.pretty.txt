@@ -1,10 +1,10 @@
 fun noGeneric()
 
-fun withOuterGeneric(t: test.Foo)
+override fun withOuterGeneric(t: test.Foo)
 
 fun <TT> withOwnGeneric(tt: TT)
 
-fun <TT> withOuterAndOwnGeneric(t: test.Foo, tt: TT)
+override fun <TT> withOuterAndOwnGeneric(t: test.Foo, tt: TT)
 
 open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 

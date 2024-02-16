@@ -19,56 +19,56 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/klib/dump-signatures")
 @TestDataPath("$PROJECT_ROOT")
 public class NativeKlibDumpMetadataSignaturesTestGenerated extends AbstractNativeKlibDumpMetadataSignaturesTest {
-    @Test
-    public void testAllFilesPresentInDump_signatures() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/dump-signatures"), Pattern.compile("^([^_](.+)).(kt|def)$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInDump_signatures() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/dump-signatures"), Pattern.compile("^([^_](.+)).(kt|def)$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("callables.kt")
-    public void testCallables() throws Exception {
-        runTest("native/native.tests/testData/klib/dump-signatures/callables.kt");
-    }
+  @Test
+  @TestMetadata("callables.kt")
+  public void testCallables() {
+    runTest("native/native.tests/testData/klib/dump-signatures/callables.kt");
+  }
 
-    @Test
-    @TestMetadata("imported_declarations.kt")
-    public void testImported_declarations() throws Exception {
-        runTest("native/native.tests/testData/klib/dump-signatures/imported_declarations.kt");
-    }
+  @Test
+  @TestMetadata("imported_declarations.kt")
+  public void testImported_declarations() {
+    runTest("native/native.tests/testData/klib/dump-signatures/imported_declarations.kt");
+  }
 
-    @Test
-    @TestMetadata("imported_from_cinterop.kt")
-    public void testImported_from_cinterop() throws Exception {
-        runTest("native/native.tests/testData/klib/dump-signatures/imported_from_cinterop.kt");
-    }
+  @Test
+  @TestMetadata("imported_from_cinterop.kt")
+  public void testImported_from_cinterop() {
+    runTest("native/native.tests/testData/klib/dump-signatures/imported_from_cinterop.kt");
+  }
 
-    @Test
-    @TestMetadata("imported_from_cinterop.lib.def")
-    public void testImported_from_cinterop_lib() throws Exception {
-        runTest("native/native.tests/testData/klib/dump-signatures/imported_from_cinterop.lib.def");
-    }
+  @Test
+  @TestMetadata("imported_from_cinterop.lib.def")
+  public void testImported_from_cinterop_lib() {
+    runTest("native/native.tests/testData/klib/dump-signatures/imported_from_cinterop.lib.def");
+  }
 
-    @Test
-    @TestMetadata("just_cinterop_c.def")
-    public void testJust_cinterop_c() throws Exception {
-        runTest("native/native.tests/testData/klib/dump-signatures/just_cinterop_c.def");
-    }
+  @Test
+  @TestMetadata("just_cinterop_c.def")
+  public void testJust_cinterop_c() {
+    runTest("native/native.tests/testData/klib/dump-signatures/just_cinterop_c.def");
+  }
 
-    @Test
-    @TestMetadata("just_cinterop_objc.def")
-    public void testJust_cinterop_objc() throws Exception {
-        runTest("native/native.tests/testData/klib/dump-signatures/just_cinterop_objc.def");
-    }
+  @Test
+  @TestMetadata("just_cinterop_objc.def")
+  public void testJust_cinterop_objc() {
+    runTest("native/native.tests/testData/klib/dump-signatures/just_cinterop_objc.def");
+  }
 
-    @Test
-    @TestMetadata("type_parameters.kt")
-    public void testType_parameters() throws Exception {
-        runTest("native/native.tests/testData/klib/dump-signatures/type_parameters.kt");
-    }
+  @Test
+  @TestMetadata("type_parameters.kt")
+  public void testType_parameters() {
+    runTest("native/native.tests/testData/klib/dump-signatures/type_parameters.kt");
+  }
 
-    @Test
-    @TestMetadata("visibility.kt")
-    public void testVisibility() throws Exception {
-        runTest("native/native.tests/testData/klib/dump-signatures/visibility.kt");
-    }
+  @Test
+  @TestMetadata("visibility.kt")
+  public void testVisibility() {
+    runTest("native/native.tests/testData/klib/dump-signatures/visibility.kt");
+  }
 }

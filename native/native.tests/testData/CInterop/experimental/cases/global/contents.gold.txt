@@ -1,11 +1,30 @@
+library {
+  // module name: <dependency.def>
 
-package dependency {
-    @ExperimentalForeignApi const val MACRO_CONST_GLOBAL: Int = 1
-    @ExperimentalForeignApi val MACRO_GLOBAL: Int
-        @CCall(id = "knifunptr_dependency3_MACRO_GLOBAL_getter") get
-    @CCall(id = "knifunptr_dependency0_getValue") @ExperimentalForeignApi external fun getValue(): Int
-    @ExperimentalForeignApi var global: Int
-        @CCall(id = "knifunptr_dependency1_global_getter") get
-        @CCall(id = "knifunptr_dependency2_global_setter") set
+  library fragment {
+    // package name: dependency
+
+    package {
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_dependency0_getValue")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun getValue(): kotlin/Int
+
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final const val MACRO_CONST_GLOBAL: kotlin/Int /* = 1 */
+        public final get
+
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final val MACRO_GLOBAL: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_dependency3_MACRO_GLOBAL_getter")
+        public final /* non-default */ external get
+
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final var global: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_dependency1_global_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_dependency2_global_setter")
+        public final /* non-default */ external set(value: kotlin/Int)
+    }
+  }
 }
-

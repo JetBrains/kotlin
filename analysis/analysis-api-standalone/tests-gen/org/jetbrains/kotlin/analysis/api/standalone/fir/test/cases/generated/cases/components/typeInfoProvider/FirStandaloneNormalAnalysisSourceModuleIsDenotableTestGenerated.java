@@ -28,45 +28,45 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModuleIsDenotableTestGenerated extends AbstractIsDenotableTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInIsDenotable() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile(".*\\.descriptors\\.kt$"), true);
-    }
+  @Test
+  public void testAllFilesPresentInIsDenotable() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile(".*\\.descriptors\\.kt$"), true);
+  }
 
-    @Test
-    @TestMetadata("localTypes.kt")
-    public void testLocalTypes() throws Exception {
-        runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/localTypes.kt");
-    }
+  @Test
+  @TestMetadata("localTypes.kt")
+  public void testLocalTypes() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/localTypes.kt");
+  }
 
-    @Test
-    @TestMetadata("simpleTypes.kt")
-    public void testSimpleTypes() throws Exception {
-        runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/simpleTypes.kt");
-    }
+  @Test
+  @TestMetadata("simpleTypes.kt")
+  public void testSimpleTypes() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/simpleTypes.kt");
+  }
 
-    @Test
-    @TestMetadata("smartcast.kt")
-    public void testSmartcast() throws Exception {
-        runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/smartcast.kt");
-    }
+  @Test
+  @TestMetadata("smartcast.kt")
+  public void testSmartcast() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/smartcast.kt");
+  }
 
-    @Test
-    @TestMetadata("typeParameter.kt")
-    public void testTypeParameter() throws Exception {
-        runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/typeParameter.kt");
-    }
+  @Test
+  @TestMetadata("typeParameter.kt")
+  public void testTypeParameter() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/typeParameter.kt");
+  }
 }

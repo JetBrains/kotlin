@@ -19,302 +19,302 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder")
 @TestDataPath("$PROJECT_ROOT")
 public class ByDecompiledPsiStubBuilderTestGenerated extends AbstractByDecompiledPsiStubBuilderTest {
-    @Test
-    public void testAllFilesPresentInClsFileStubBuilder() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder"), Pattern.compile("^([^\\.]+)$"), null, false);
-    }
+  @Test
+  public void testAllFilesPresentInClsFileStubBuilder() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder"), Pattern.compile("^([^\\.]+)$"), null, false);
+  }
 
-    @Test
-    @TestMetadata("AnnotatedFlexibleTypes")
-    public void testAnnotatedFlexibleTypes() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotatedFlexibleTypes/");
-    }
+  @Test
+  @TestMetadata("AnnotatedFlexibleTypes")
+  public void testAnnotatedFlexibleTypes() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotatedFlexibleTypes/");
+  }
 
-    @Test
-    @TestMetadata("AnnotatedParameterInEnumConstructor")
-    public void testAnnotatedParameterInEnumConstructor() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotatedParameterInEnumConstructor/");
-    }
+  @Test
+  @TestMetadata("AnnotatedParameterInEnumConstructor")
+  public void testAnnotatedParameterInEnumConstructor() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotatedParameterInEnumConstructor/");
+  }
 
-    @Test
-    @TestMetadata("AnnotatedParameterInInnerClassConstructor")
-    public void testAnnotatedParameterInInnerClassConstructor() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotatedParameterInInnerClassConstructor/");
-    }
+  @Test
+  @TestMetadata("AnnotatedParameterInInnerClassConstructor")
+  public void testAnnotatedParameterInInnerClassConstructor() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotatedParameterInInnerClassConstructor/");
+  }
 
-    @Test
-    @TestMetadata("AnnotationClass")
-    public void testAnnotationClass() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationClass/");
-    }
+  @Test
+  @TestMetadata("AnnotationClass")
+  public void testAnnotationClass() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationClass/");
+  }
 
-    @Test
-    @TestMetadata("AnnotationValues")
-    public void testAnnotationValues() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationValues/");
-    }
+  @Test
+  @TestMetadata("AnnotationValues")
+  public void testAnnotationValues() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationValues/");
+  }
 
-    @Test
-    @TestMetadata("Annotations")
-    public void testAnnotations() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Annotations/");
-    }
+  @Test
+  @TestMetadata("Annotations")
+  public void testAnnotations() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Annotations/");
+  }
 
-    @Test
-    @TestMetadata("AnnotationsOnNullableTypes")
-    public void testAnnotationsOnNullableTypes() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationsOnNullableTypes/");
-    }
+  @Test
+  @TestMetadata("AnnotationsOnNullableTypes")
+  public void testAnnotationsOnNullableTypes() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationsOnNullableTypes/");
+  }
 
-    @Test
-    @TestMetadata("AnnotationsOnParenthesizedTypes")
-    public void testAnnotationsOnParenthesizedTypes() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationsOnParenthesizedTypes/");
-    }
+  @Test
+  @TestMetadata("AnnotationsOnParenthesizedTypes")
+  public void testAnnotationsOnParenthesizedTypes() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationsOnParenthesizedTypes/");
+  }
 
-    @Test
-    @TestMetadata("AnonymousReturnWithGenericType")
-    public void testAnonymousReturnWithGenericType() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnonymousReturnWithGenericType/");
-    }
+  @Test
+  @TestMetadata("AnonymousReturnWithGenericType")
+  public void testAnonymousReturnWithGenericType() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnonymousReturnWithGenericType/");
+  }
 
-    @Test
-    @TestMetadata("ClassMembers")
-    public void testClassMembers() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ClassMembers/");
-    }
+  @Test
+  @TestMetadata("ClassMembers")
+  public void testClassMembers() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ClassMembers/");
+  }
 
-    @Test
-    @TestMetadata("ClassObject")
-    public void testClassObject() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ClassObject/");
-    }
+  @Test
+  @TestMetadata("ClassObject")
+  public void testClassObject() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ClassObject/");
+  }
 
-    @Test
-    @TestMetadata("Const")
-    public void testConst() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Const/");
-    }
+  @Test
+  @TestMetadata("Const")
+  public void testConst() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Const/");
+  }
 
-    @Test
-    @TestMetadata("ContextReceiversCallableMembers")
-    public void testContextReceiversCallableMembers() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversCallableMembers/");
-    }
+  @Test
+  @TestMetadata("ContextReceiversCallableMembers")
+  public void testContextReceiversCallableMembers() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversCallableMembers/");
+  }
 
-    @Test
-    @TestMetadata("ContextReceiversOnClass")
-    public void testContextReceiversOnClass() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnClass/");
-    }
+  @Test
+  @TestMetadata("ContextReceiversOnClass")
+  public void testContextReceiversOnClass() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnClass/");
+  }
 
-    @Test
-    @TestMetadata("ContextReceiversOnFunctionType")
-    public void testContextReceiversOnFunctionType() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnFunctionType/");
-    }
+  @Test
+  @TestMetadata("ContextReceiversOnFunctionType")
+  public void testContextReceiversOnFunctionType() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnFunctionType/");
+  }
 
-    @Test
-    @TestMetadata("ContextReceiversOnTopLevelCallables")
-    public void testContextReceiversOnTopLevelCallables() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnTopLevelCallables/");
-    }
+  @Test
+  @TestMetadata("ContextReceiversOnTopLevelCallables")
+  public void testContextReceiversOnTopLevelCallables() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnTopLevelCallables/");
+  }
 
-    @Test
-    @TestMetadata("Contracts")
-    public void testContracts() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Contracts/");
-    }
+  @Test
+  @TestMetadata("Contracts")
+  public void testContracts() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Contracts/");
+  }
 
-    @Test
-    @TestMetadata("DataClass")
-    public void testDataClass() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DataClass/");
-    }
+  @Test
+  @TestMetadata("DataClass")
+  public void testDataClass() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DataClass/");
+  }
 
-    @Test
-    @TestMetadata("DefinitelyNotNullTypes")
-    public void testDefinitelyNotNullTypes() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DefinitelyNotNullTypes/");
-    }
+  @Test
+  @TestMetadata("DefinitelyNotNullTypes")
+  public void testDefinitelyNotNullTypes() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DefinitelyNotNullTypes/");
+  }
 
-    @Test
-    @TestMetadata("Delegation")
-    public void testDelegation() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Delegation/");
-    }
+  @Test
+  @TestMetadata("Delegation")
+  public void testDelegation() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Delegation/");
+  }
 
-    @Test
-    @TestMetadata("DependencyOnNestedClasses")
-    public void testDependencyOnNestedClasses() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DependencyOnNestedClasses/");
-    }
+  @Test
+  @TestMetadata("DependencyOnNestedClasses")
+  public void testDependencyOnNestedClasses() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DependencyOnNestedClasses/");
+  }
 
-    @Test
-    @TestMetadata("Enum")
-    public void testEnum() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Enum/");
-    }
+  @Test
+  @TestMetadata("Enum")
+  public void testEnum() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Enum/");
+  }
 
-    @Test
-    @TestMetadata("FlexibleTypes")
-    public void testFlexibleTypes() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/FlexibleTypes/");
-    }
+  @Test
+  @TestMetadata("FlexibleTypes")
+  public void testFlexibleTypes() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/FlexibleTypes/");
+  }
 
-    @Test
-    @TestMetadata("FunInterfaceDeclaration")
-    public void testFunInterfaceDeclaration() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/FunInterfaceDeclaration/");
-    }
+  @Test
+  @TestMetadata("FunInterfaceDeclaration")
+  public void testFunInterfaceDeclaration() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/FunInterfaceDeclaration/");
+  }
 
-    @Test
-    @TestMetadata("InheritingClasses")
-    public void testInheritingClasses() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/InheritingClasses/");
-    }
+  @Test
+  @TestMetadata("InheritingClasses")
+  public void testInheritingClasses() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/InheritingClasses/");
+  }
 
-    @Test
-    @TestMetadata("InnerClassEnumEntry")
-    public void testInnerClassEnumEntry() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/InnerClassEnumEntry/");
-    }
+  @Test
+  @TestMetadata("InnerClassEnumEntry")
+  public void testInnerClassEnumEntry() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/InnerClassEnumEntry/");
+  }
 
-    @Test
-    @TestMetadata("InnerTypes")
-    public void testInnerTypes() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/InnerTypes/");
-    }
+  @Test
+  @TestMetadata("InnerTypes")
+  public void testInnerTypes() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/InnerTypes/");
+  }
 
-    @Test
-    @TestMetadata("LocalClass")
-    public void testLocalClass() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/LocalClass/");
-    }
+  @Test
+  @TestMetadata("LocalClass")
+  public void testLocalClass() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/LocalClass/");
+  }
 
-    @Test
-    @TestMetadata("Modifiers")
-    public void testModifiers() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Modifiers/");
-    }
+  @Test
+  @TestMetadata("Modifiers")
+  public void testModifiers() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Modifiers/");
+  }
 
-    @Test
-    @TestMetadata("MultifileClass")
-    public void testMultifileClass() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/MultifileClass/");
-    }
+  @Test
+  @TestMetadata("MultifileClass")
+  public void testMultifileClass() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/MultifileClass/");
+  }
 
-    @Test
-    @TestMetadata("NamedCompanionObject")
-    public void testNamedCompanionObject() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/NamedCompanionObject/");
-    }
+  @Test
+  @TestMetadata("NamedCompanionObject")
+  public void testNamedCompanionObject() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/NamedCompanionObject/");
+  }
 
-    @Test
-    @TestMetadata("NestedClasses")
-    public void testNestedClasses() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/NestedClasses/");
-    }
+  @Test
+  @TestMetadata("NestedClasses")
+  public void testNestedClasses() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/NestedClasses/");
+  }
 
-    @Test
-    @TestMetadata("Objects")
-    public void testObjects() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Objects/");
-    }
+  @Test
+  @TestMetadata("Objects")
+  public void testObjects() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Objects/");
+  }
 
-    @Test
-    @TestMetadata("PrivateConstField")
-    public void testPrivateConstField() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/PrivateConstField/");
-    }
+  @Test
+  @TestMetadata("PrivateConstField")
+  public void testPrivateConstField() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/PrivateConstField/");
+  }
 
-    @Test
-    @TestMetadata("PrivateToThis")
-    public void testPrivateToThis() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/PrivateToThis/");
-    }
+  @Test
+  @TestMetadata("PrivateToThis")
+  public void testPrivateToThis() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/PrivateToThis/");
+  }
 
-    @Test
-    @TestMetadata("Sealed")
-    public void testSealed() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Sealed/");
-    }
+  @Test
+  @TestMetadata("Sealed")
+  public void testSealed() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Sealed/");
+  }
 
-    @Test
-    @TestMetadata("SealedInterface")
-    public void testSealedInterface() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SealedInterface/");
-    }
+  @Test
+  @TestMetadata("SealedInterface")
+  public void testSealedInterface() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SealedInterface/");
+  }
 
-    @Test
-    @TestMetadata("SecondaryConstructors")
-    public void testSecondaryConstructors() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SecondaryConstructors/");
-    }
+  @Test
+  @TestMetadata("SecondaryConstructors")
+  public void testSecondaryConstructors() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SecondaryConstructors/");
+  }
 
-    @Test
-    @TestMetadata("SpecialNames")
-    public void testSpecialNames() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SpecialNames/");
-    }
+  @Test
+  @TestMetadata("SpecialNames")
+  public void testSpecialNames() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SpecialNames/");
+  }
 
-    @Test
-    @TestMetadata("SuspendLambda")
-    public void testSuspendLambda() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SuspendLambda/");
-    }
+  @Test
+  @TestMetadata("SuspendLambda")
+  public void testSuspendLambda() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SuspendLambda/");
+  }
 
-    @Test
-    @TestMetadata("TopJvmPackageName")
-    public void testTopJvmPackageName() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TopJvmPackageName/");
-    }
+  @Test
+  @TestMetadata("TopJvmPackageName")
+  public void testTopJvmPackageName() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TopJvmPackageName/");
+  }
 
-    @Test
-    @TestMetadata("TopLevelMembersAnnotatedKt")
-    public void testTopLevelMembersAnnotatedKt() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TopLevelMembersAnnotatedKt/");
-    }
+  @Test
+  @TestMetadata("TopLevelMembersAnnotatedKt")
+  public void testTopLevelMembersAnnotatedKt() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TopLevelMembersAnnotatedKt/");
+  }
 
-    @Test
-    @TestMetadata("TopLevelMembersKt")
-    public void testTopLevelMembersKt() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TopLevelMembersKt/");
-    }
+  @Test
+  @TestMetadata("TopLevelMembersKt")
+  public void testTopLevelMembersKt() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TopLevelMembersKt/");
+  }
 
-    @Test
-    @TestMetadata("TypeAliases")
-    public void testTypeAliases() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeAliases/");
-    }
+  @Test
+  @TestMetadata("TypeAliases")
+  public void testTypeAliases() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeAliases/");
+  }
 
-    @Test
-    @TestMetadata("TypeBoundsAndDelegationSpecifiers")
-    public void testTypeBoundsAndDelegationSpecifiers() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeBoundsAndDelegationSpecifiers/");
-    }
+  @Test
+  @TestMetadata("TypeBoundsAndDelegationSpecifiers")
+  public void testTypeBoundsAndDelegationSpecifiers() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeBoundsAndDelegationSpecifiers/");
+  }
 
-    @Test
-    @TestMetadata("TypeModifiers")
-    public void testTypeModifiers() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeModifiers/");
-    }
+  @Test
+  @TestMetadata("TypeModifiers")
+  public void testTypeModifiers() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeModifiers/");
+  }
 
-    @Test
-    @TestMetadata("TypeParams")
-    public void testTypeParams() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeParams/");
-    }
+  @Test
+  @TestMetadata("TypeParams")
+  public void testTypeParams() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeParams/");
+  }
 
-    @Test
-    @TestMetadata("Types")
-    public void testTypes() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Types/");
-    }
+  @Test
+  @TestMetadata("Types")
+  public void testTypes() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Types/");
+  }
 
-    @Test
-    @TestMetadata("UnderscoreParameterName")
-    public void testUnderscoreParameterName() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/UnderscoreParameterName/");
-    }
+  @Test
+  @TestMetadata("UnderscoreParameterName")
+  public void testUnderscoreParameterName() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/UnderscoreParameterName/");
+  }
 }

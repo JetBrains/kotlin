@@ -28,27 +28,27 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/symbols/multiModuleSymbolByPsi")
 @TestDataPath("$PROJECT_ROOT")
 public class Fe10IdeNormalAnalysisSourceModuleMultiModuleSymbolByPsiTestGenerated extends AbstractMultiModuleSymbolByPsiTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFe10TestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fe10,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFe10TestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fe10,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInMultiModuleSymbolByPsi() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/multiModuleSymbolByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInMultiModuleSymbolByPsi() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/multiModuleSymbolByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("expectActual.kt")
-    public void testExpectActual() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/multiModuleSymbolByPsi/expectActual.kt");
-    }
+  @Test
+  @TestMetadata("expectActual.kt")
+  public void testExpectActual() {
+    runTest("analysis/analysis-api/testData/symbols/multiModuleSymbolByPsi/expectActual.kt");
+  }
 }

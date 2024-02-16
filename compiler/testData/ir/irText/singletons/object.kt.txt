@@ -1,13 +1,4 @@
 object Z {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  fun test() {
-  }
-
   class A {
     constructor() /* primary */ {
       super/*Any*/()
@@ -21,4 +12,14 @@ object Z {
 
   }
 
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun test() {
+  }
+
 }
+

@@ -1,4 +1,6 @@
 FILE fqName:<root> fileName:/explicitIncrement.kt
+  FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:i type:kotlin.Int [var]
@@ -12,5 +14,3 @@ FILE fqName:<root> fileName:/explicitIncrement.kt
           SET_VAR 'var i: kotlin.Int declared in <root>.foo' type=kotlin.Unit origin=EQ
             CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'var i: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
-  FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit
-    BLOCK_BODY

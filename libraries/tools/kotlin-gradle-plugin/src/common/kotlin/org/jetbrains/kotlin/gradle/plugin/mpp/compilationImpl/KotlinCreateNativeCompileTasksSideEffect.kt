@@ -33,6 +33,7 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
 
     val kotlinNativeCompile = project.registerTask<KotlinNativeCompile>(
         compilation.compileKotlinTaskName,
+        @Suppress("DEPRECATION")
         listOf(compilationInfo, compilation.compilerOptions.options)
     ) { task ->
         task.group = BasePlugin.BUILD_GROUP

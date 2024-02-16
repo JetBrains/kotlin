@@ -1,20 +1,71 @@
-package <root> {
-    annotation class A constructor() : Annotation
-    class Bar @A constructor(x: Int)
-    class Baz private constructor(x: Int)
-    class Foo constructor(x: Int) {
-        constructor()
-        constructor(x: Double)
-        constructor(x: Double, y: Int)
-        protected constructor(x: String)
-        @A constructor(x: Foo)
+library {
+  // module name: <Constructors.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Bar
+    // class name: Baz
+    // class name: Foo
+    // class name: Qux
+    // class name: Typed
+
+    public final annotation class A : kotlin/Annotation {
+
+      public constructor()
     }
-    class Qux protected constructor(x: Int)
-    class Typed<T> constructor(x: Int) {
-        constructor()
-        constructor(x: Double)
-        constructor(x: Double, y: Int)
-        protected constructor(x: String)
-        @A constructor(x: Foo)
+
+    public final class Bar : kotlin/Any {
+
+      @A
+      public constructor(x: kotlin/Int)
     }
+
+    public final class Baz : kotlin/Any {
+
+      private constructor(x: kotlin/Int)
+    }
+
+    public final class Foo : kotlin/Any {
+
+      public /* secondary */ constructor()
+
+      @A
+      public /* secondary */ constructor(x: Foo)
+
+      public /* secondary */ constructor(x: kotlin/Double)
+
+      public constructor(x: kotlin/Int)
+
+      private /* secondary */ constructor(x: kotlin/Long)
+
+      protected /* secondary */ constructor(x: kotlin/String)
+
+      public /* secondary */ constructor(x: kotlin/Double, y: kotlin/Int)
+    }
+
+    public final class Qux : kotlin/Any {
+
+      protected constructor(x: kotlin/Int)
+    }
+
+    public final class Typed<T#0 /* T */> : kotlin/Any {
+
+      public /* secondary */ constructor()
+
+      @A
+      public /* secondary */ constructor(x: Foo)
+
+      public /* secondary */ constructor(x: kotlin/Double)
+
+      public constructor(x: kotlin/Int)
+
+      private /* secondary */ constructor(x: kotlin/Long)
+
+      protected /* secondary */ constructor(x: kotlin/String)
+
+      public /* secondary */ constructor(x: kotlin/Double, y: kotlin/Int)
+    }
+  }
 }

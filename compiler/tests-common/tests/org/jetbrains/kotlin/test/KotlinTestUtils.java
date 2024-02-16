@@ -433,10 +433,10 @@ public class KotlinTestUtils {
     }
 
     public interface DoTest {
-        void invoke(@NotNull String filePath) throws Exception;
+        void invoke(@NotNull String filePath);
     }
 
-    public static void runTest(@NotNull DoTest test, @NotNull TestCase testCase, @TestDataFile String testDataFile) throws Exception {
+    public static void runTest(@NotNull DoTest test, @NotNull TestCase testCase, @TestDataFile String testDataFile) {
         runTestImpl(testWithCustomIgnoreDirective(test, TargetBackend.ANY, IGNORE_BACKEND_DIRECTIVE_PREFIXES), testCase, testDataFile);
     }
 
@@ -458,11 +458,11 @@ public class KotlinTestUtils {
 
     // In this test runner version the `testDataFile` parameter is annotated by `TestDataFile`.
     // So only file paths passed to this parameter will be used in navigation actions, like "Navigate to testdata" and "Related Symbol..."
-    public static void runTest(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile) throws Exception {
+    public static void runTest(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile) {
         runTest0(test, targetBackend, testDataFile);
     }
 
-    public static void runTestWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile, String ignoreDirective) throws Exception {
+    public static void runTestWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile, String ignoreDirective) {
         runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, ignoreDirective), null, testDataFile);
     }
 
@@ -474,11 +474,11 @@ public class KotlinTestUtils {
     // Cons:
     // * sometimes, for too common/general names, it shows many variants to navigate
     // * it adds an additional step for navigation -- you must choose an exact file to navigate
-    public static void runTest0(DoTest test, TargetBackend targetBackend, String testDataFilePath) throws Exception {
+    public static void runTest0(DoTest test, TargetBackend targetBackend, String testDataFilePath) {
         runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, IGNORE_BACKEND_DIRECTIVE_PREFIXES), null, testDataFilePath);
     }
 
-    private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath) throws Exception {
+    private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath) {
         if (testCase != null && !isRunTestOverridden(testCase)) {
             Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseKt.wrapWithMuteInDatabase(testCase, () -> {
                 try {
@@ -510,7 +510,7 @@ public class KotlinTestUtils {
         return false;
     }
 
-    private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String... ignoreDirectives) throws Exception {
+    private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String... ignoreDirectives) {
         return filePath -> {
             File testDataFile = new File(filePath);
 
@@ -551,7 +551,11 @@ public class KotlinTestUtils {
 
                     if (!newText.equals(text)) {
                         System.err.println("\"" + directive + "\" was added to \"" + testDataFile + "\"");
-                        FileUtil.writeToFile(testDataFile, newText);
+                        try {
+                            FileUtil.writeToFile(testDataFile, newText);
+                        } catch (IOException ioException) {
+                            throw new RuntimeException(ioException);
+                        }
                     }
                 }
 
@@ -578,7 +582,11 @@ public class KotlinTestUtils {
                         String newText = Pattern.compile("^" + directive + "\n", Pattern.MULTILINE).matcher(text).replaceAll("");
                         if (!newText.equals(text)) {
                             System.err.println("\"" + directive + "\" was removed from \"" + testDataFile + "\"");
-                            FileUtil.writeToFile(testDataFile, newText);
+                            try {
+                                FileUtil.writeToFile(testDataFile, newText);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
                 }

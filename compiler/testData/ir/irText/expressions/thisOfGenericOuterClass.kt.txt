@@ -1,24 +1,24 @@
 class Outer<T : Any?> {
-  constructor(x: T) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: T
     field = x
     get
 
   open inner class Inner {
+    val y: Int
+      field = y
+      get
+
     constructor(y: Int) /* primary */ {
       super/*Any*/()
       /* <init>() */
 
     }
 
-    val y: Int
-      field = y
-      get
+  }
+
+  constructor(x: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
 
   }
 
@@ -27,18 +27,19 @@ class Outer<T : Any?> {
 fun Outer<Int>.test(): Inner<Int> {
   return { // BLOCK
     local class <no name provided> : Inner<Int> {
+      val xx: Int
+        field = <this>.<get-x>().plus(other = <this>.<get-y>())
+        get
+
       constructor() /* primary */ {
         <this>.super/*Inner*/(y = 42)
         /* <init>() */
 
       }
 
-      val xx: Int
-        field = <this>.<get-x>().plus(other = <this>.<get-y>())
-        get
-
     }
 
     <no name provided>()
   }
 }
+

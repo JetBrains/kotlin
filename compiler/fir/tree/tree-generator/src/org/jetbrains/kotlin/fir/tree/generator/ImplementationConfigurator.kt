@@ -518,7 +518,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(errorExpression) {
-            default("coneTypeOrNull", "ConeErrorType(ConeStubDiagnostic(diagnostic))")
+            default("coneTypeOrNull", "expression?.coneTypeOrNull ?: ConeErrorType(ConeStubDiagnostic(diagnostic))", withGetter = true)
             additionalImports(coneErrorTypeType, coneStubDiagnosticType)
         }
 

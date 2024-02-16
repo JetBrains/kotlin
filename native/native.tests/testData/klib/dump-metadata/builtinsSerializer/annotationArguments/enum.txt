@@ -1,15 +1,67 @@
-package test {
-    @JustEnum(weapon = Weapon.SCISSORS) @EnumArray(enumArray = {}) class C1 constructor()
-    @EnumArray(enumArray = {Weapon.PAPER, Weapon.ROCK}) class C2 constructor()
-    annotation class EnumArray constructor(enumArray: Array<Weapon>) : Annotation {
-        val enumArray: Array<Weapon>
+library {
+  // module name: <enum.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C1
+    // class name: test/C2
+    // class name: test/EnumArray
+    // class name: test/JustEnum
+    // class name: test/Weapon
+    // class name: test/Weapon.PAPER
+    // class name: test/Weapon.ROCK
+    // class name: test/Weapon.SCISSORS
+
+    @test/JustEnum(weapon = test/Weapon.SCISSORS)
+    @test/EnumArray(enumArray = [])
+    public final class test/C1 : kotlin/Any {
+
+      public constructor()
     }
-    annotation class JustEnum constructor(weapon: Weapon) : Annotation {
-        val weapon: Weapon
+
+    @test/EnumArray(enumArray = [test/Weapon.PAPER, test/Weapon.ROCK])
+    public final class test/C2 : kotlin/Any {
+
+      public constructor()
     }
-    enum class Weapon private constructor() : Enum<Weapon> {
-        enum entry ROCK
-        enum entry PAPER
-        enum entry SCISSORS
+
+    public final annotation class test/EnumArray : kotlin/Annotation {
+
+      public constructor(enumArray: kotlin/Array<test/Weapon>)
+
+      public final val enumArray: kotlin/Array<test/Weapon>
+        public final get
     }
+
+    public final annotation class test/JustEnum : kotlin/Annotation {
+
+      public constructor(weapon: test/Weapon)
+
+      public final val weapon: test/Weapon
+        public final get
+    }
+
+    public final enum class test/Weapon : kotlin/Enum<test/Weapon> {
+
+      private constructor()
+
+      ROCK,
+
+      PAPER,
+
+      SCISSORS,
+
+      // has Enum.entries
+    }
+
+    public final enum entry test/Weapon.PAPER : test/Weapon {
+    }
+
+    public final enum entry test/Weapon.ROCK : test/Weapon {
+    }
+
+    public final enum entry test/Weapon.SCISSORS : test/Weapon {
+    }
+  }
 }

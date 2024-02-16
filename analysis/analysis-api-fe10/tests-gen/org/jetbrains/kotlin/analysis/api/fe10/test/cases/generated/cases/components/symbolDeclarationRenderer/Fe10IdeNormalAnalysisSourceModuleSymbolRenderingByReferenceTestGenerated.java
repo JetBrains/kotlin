@@ -28,45 +28,45 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference")
 @TestDataPath("$PROJECT_ROOT")
 public class Fe10IdeNormalAnalysisSourceModuleSymbolRenderingByReferenceTestGenerated extends AbstractSymbolRenderingByReferenceTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFe10TestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fe10,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFe10TestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fe10,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInSymbolRenderingByReference() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInSymbolRenderingByReference() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("javaEnhancedType.kt")
-    public void testJavaEnhancedType() throws Exception {
-        runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaEnhancedType.kt");
-    }
+  @Test
+  @TestMetadata("javaEnhancedType.kt")
+  public void testJavaEnhancedType() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaEnhancedType.kt");
+  }
 
-    @Test
-    @TestMetadata("javaEnhancedTypeExternalAnnotation.kt")
-    public void testJavaEnhancedTypeExternalAnnotation() throws Exception {
-        runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaEnhancedTypeExternalAnnotation.kt");
-    }
+  @Test
+  @TestMetadata("javaEnhancedTypeExternalAnnotation.kt")
+  public void testJavaEnhancedTypeExternalAnnotation() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaEnhancedTypeExternalAnnotation.kt");
+  }
 
-    @Test
-    @TestMetadata("javaMethodWithMultipleTypeParametersBound.kt")
-    public void testJavaMethodWithMultipleTypeParametersBound() throws Exception {
-        runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaMethodWithMultipleTypeParametersBound.kt");
-    }
+  @Test
+  @TestMetadata("javaMethodWithMultipleTypeParametersBound.kt")
+  public void testJavaMethodWithMultipleTypeParametersBound() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaMethodWithMultipleTypeParametersBound.kt");
+  }
 
-    @Test
-    @TestMetadata("javaMethodWithTypeParametersBound.kt")
-    public void testJavaMethodWithTypeParametersBound() throws Exception {
-        runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaMethodWithTypeParametersBound.kt");
-    }
+  @Test
+  @TestMetadata("javaMethodWithTypeParametersBound.kt")
+  public void testJavaMethodWithTypeParametersBound() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaMethodWithTypeParametersBound.kt");
+  }
 }

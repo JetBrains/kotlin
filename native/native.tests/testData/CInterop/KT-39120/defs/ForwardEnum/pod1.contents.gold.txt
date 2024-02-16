@@ -1,6 +1,15 @@
-    enum class ForwardEnumPOD private constructor(value: Int) : Enum<ForwardEnumPOD>, CEnum {
-            var value: ForwardEnumPOD
-            @Deprecated(level = DeprecationLevel.WARNING, message = "Will be removed.", replaceWith = ReplaceWith(expression = "", imports = {})) fun byValue(value: Int): ForwardEnumPOD
-    var varPOD: ForwardEnumPOD
-        @CCall(id = "knifunptr_pod10_varPOD_getter") get
-        @CCall(id = "knifunptr_pod11_varPOD_setter") set
+    // class name: pod1/ForwardEnumPOD
+    // class name: pod1/ForwardEnumPOD.Companion
+    // class name: pod1/ForwardEnumPOD.Var
+    // class name: pod1/ForwardEnumPOD.Var.Companion
+    public final enum class pod1/ForwardEnumPOD : kotlin/Enum<pod1/ForwardEnumPOD>, kotlinx/cinterop/CEnum {
+    public final companion object pod1/ForwardEnumPOD.Companion {
+      public final fun byValue(value: kotlin/Int): pod1/ForwardEnumPOD
+    public final class pod1/ForwardEnumPOD.Var : kotlinx/cinterop/CEnumVar {
+      public final var value: pod1/ForwardEnumPOD
+        public final /* non-default */ external set(value: pod1/ForwardEnumPOD)
+    public final companion object pod1/ForwardEnumPOD.Var.Companion : kotlinx/cinterop/CPrimitiveVar.Type {
+      public final var varPOD: pod1/ForwardEnumPOD
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_varPOD_getter")
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_varPOD_setter")
+        public final /* non-default */ external set(value: pod1/ForwardEnumPOD)

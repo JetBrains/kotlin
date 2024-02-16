@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
-import com.intellij.psi.PsiModifierList
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -17,7 +17,7 @@ internal class NullabilityAnnotationsProvider(private val lazyNullabilityType: L
     override fun addAllAnnotations(
         currentRawAnnotations: MutableList<in PsiAnnotation>,
         foundQualifiers: MutableSet<String>,
-        owner: PsiModifierList
+        owner: PsiElement
     ) {
         val qualifier = lazyNullabilityType.qualifier ?: return
         addSimpleAnnotationIfMissing(qualifier, currentRawAnnotations, foundQualifiers, owner)
@@ -26,7 +26,7 @@ internal class NullabilityAnnotationsProvider(private val lazyNullabilityType: L
     override fun findSpecialAnnotation(
         annotationsBox: GranularAnnotationsBox,
         qualifiedName: String,
-        owner: PsiModifierList,
+        owner: PsiElement,
     ): PsiAnnotation? {
         if (!qualifiedName.isNullOrNotNullQualifiedName) {
             return null

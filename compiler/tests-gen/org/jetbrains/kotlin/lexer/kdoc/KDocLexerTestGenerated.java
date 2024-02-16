@@ -21,21 +21,21 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class KDocLexerTestGenerated extends AbstractKDocLexerTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInKdoc() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/lexer/kdoc"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  public void testAllFilesPresentInKdoc() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/lexer/kdoc"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @TestMetadata("codeBlocks.kt")
-    public void testCodeBlocks() throws Exception {
-        runTest("compiler/testData/lexer/kdoc/codeBlocks.kt");
-    }
+  @TestMetadata("codeBlocks.kt")
+  public void testCodeBlocks() {
+    runTest("compiler/testData/lexer/kdoc/codeBlocks.kt");
+  }
 
-    @TestMetadata("codeBlocksWithVerticalTabs.kt")
-    public void testCodeBlocksWithVerticalTabs() throws Exception {
-        runTest("compiler/testData/lexer/kdoc/codeBlocksWithVerticalTabs.kt");
-    }
+  @TestMetadata("codeBlocksWithVerticalTabs.kt")
+  public void testCodeBlocksWithVerticalTabs() {
+    runTest("compiler/testData/lexer/kdoc/codeBlocksWithVerticalTabs.kt");
+  }
 }

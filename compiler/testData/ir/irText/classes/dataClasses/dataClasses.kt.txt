@@ -1,10 +1,4 @@
 data class Test1 {
-  constructor(x: Int, y: String, z: Any) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: Int
     field = x
     get
@@ -16,6 +10,12 @@ data class Test1 {
   val z: Any
     field = z
     get
+
+  constructor(x: Int, y: String, z: Any) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
   operator fun component1(): Int {
     return <this>.#x
@@ -31,17 +31,6 @@ data class Test1 {
 
   fun copy(x: Int = <this>.#x, y: String = <this>.#y, z: Any = <this>.#z): Test1 {
     return Test1(x = x, y = y, z = z)
-  }
-
-  override fun toString(): String {
-    return "Test1(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ", " + "z=" + <this>.#z + ")"
-  }
-
-  override fun hashCode(): Int {
-    var result: Int = <this>.#x.hashCode()
-    result = result.times(other = 31).plus(other = <this>.#y.hashCode())
-    result = result.times(other = 31).plus(other = <this>.#z.hashCode())
-    return result
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -64,18 +53,29 @@ data class Test1 {
     return true
   }
 
+  override fun hashCode(): Int {
+    var result: Int = <this>.#x.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#y.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#z.hashCode())
+    return result
+  }
+
+  override fun toString(): String {
+    return "Test1(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ", " + "z=" + <this>.#z + ")"
+  }
+
 }
 
 data class Test2 {
+  val x: Any?
+    field = x
+    get
+
   constructor(x: Any?) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val x: Any?
-    field = x
-    get
 
   operator fun component1(): Any? {
     return <this>.#x
@@ -83,17 +83,6 @@ data class Test2 {
 
   fun copy(x: Any? = <this>.#x): Test2 {
     return Test2(x = x)
-  }
-
-  override fun toString(): String {
-    return "Test2(" + "x=" + <this>.#x + ")"
-  }
-
-  override fun hashCode(): Int {
-    return when {
-      EQEQ(arg0 = <this>.#x, arg1 = null) -> 0
-      else -> <this>.#x.hashCode()
-    }
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -110,15 +99,20 @@ data class Test2 {
     return true
   }
 
+  override fun hashCode(): Int {
+    return when {
+      EQEQ(arg0 = <this>.#x, arg1 = null) -> 0
+      else -> <this>.#x.hashCode()
+    }
+  }
+
+  override fun toString(): String {
+    return "Test2(" + "x=" + <this>.#x + ")"
+  }
+
 }
 
 data class Test3 {
-  constructor(d: Double, dn: Double?, f: Float, df: Float?) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val d: Double
     field = d
     get
@@ -134,6 +128,12 @@ data class Test3 {
   val df: Float?
     field = df
     get
+
+  constructor(d: Double, dn: Double?, f: Float, df: Float?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
   operator fun component1(): Double {
     return <this>.#d
@@ -153,24 +153,6 @@ data class Test3 {
 
   fun copy(d: Double = <this>.#d, dn: Double? = <this>.#dn, f: Float = <this>.#f, df: Float? = <this>.#df): Test3 {
     return Test3(d = d, dn = dn, f = f, df = df)
-  }
-
-  override fun toString(): String {
-    return "Test3(" + "d=" + <this>.#d + ", " + "dn=" + <this>.#dn + ", " + "f=" + <this>.#f + ", " + "df=" + <this>.#df + ")"
-  }
-
-  override fun hashCode(): Int {
-    var result: Int = <this>.#d.hashCode()
-    result = result.times(other = 31).plus(other = when {
-      EQEQ(arg0 = <this>.#dn, arg1 = null) -> 0
-      else -> <this>.#dn.hashCode()
-    })
-    result = result.times(other = 31).plus(other = <this>.#f.hashCode())
-    result = result.times(other = 31).plus(other = when {
-      EQEQ(arg0 = <this>.#df, arg1 = null) -> 0
-      else -> <this>.#df.hashCode()
-    })
-    return result
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -196,4 +178,23 @@ data class Test3 {
     return true
   }
 
+  override fun hashCode(): Int {
+    var result: Int = <this>.#d.hashCode()
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#dn, arg1 = null) -> 0
+      else -> <this>.#dn.hashCode()
+    })
+    result = result.times(other = 31).plus(other = <this>.#f.hashCode())
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#df, arg1 = null) -> 0
+      else -> <this>.#df.hashCode()
+    })
+    return result
+  }
+
+  override fun toString(): String {
+    return "Test3(" + "d=" + <this>.#d + ", " + "dn=" + <this>.#dn + ", " + "f=" + <this>.#f + ", " + "df=" + <this>.#df + ")"
+  }
+
 }
+

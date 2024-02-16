@@ -1,39 +1,39 @@
 class A<T : Any?> {
+  val a: T
+    field = a
+    get
+
   constructor(a: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val a: T
-    field = a
-    get
-
 }
 
 class B {
+  val b: Any
+    field = b
+    get
+
   constructor(b: Any) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val b: Any
-    field = b
-    get
-
 }
 
 class C {
+  val c: Any
+    field = c
+    get
+
   constructor(c: Any) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val c: Any
-    field = c
-    get
 
 }
 
@@ -53,3 +53,4 @@ val C.p: Int
     <this>.<get-c>() /*~> Unit */
     return 1
   }
+

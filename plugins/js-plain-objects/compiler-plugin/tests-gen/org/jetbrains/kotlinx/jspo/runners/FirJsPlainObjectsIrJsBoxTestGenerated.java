@@ -20,38 +20,38 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/js-plain-objects/compiler-plugin/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 public class FirJsPlainObjectsIrJsBoxTestGenerated extends AbstractFirJsPlainObjectsIrJsBoxTest {
-    @Test
-    public void testAllFilesPresentInBox() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/js-plain-objects/compiler-plugin/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
-    }
+  @Test
+  public void testAllFilesPresentInBox() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/js-plain-objects/compiler-plugin/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+  }
 
-    @Test
-    @TestMetadata("copy.kt")
-    public void testCopy() throws Exception {
-        runTest("plugins/js-plain-objects/compiler-plugin/testData/box/copy.kt");
-    }
+  @Test
+  @TestMetadata("copy.kt")
+  public void testCopy() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/copy.kt");
+  }
 
-    @Test
-    @TestMetadata("optional.kt")
-    public void testOptional() throws Exception {
-        runTest("plugins/js-plain-objects/compiler-plugin/testData/box/optional.kt");
-    }
+  @Test
+  @TestMetadata("optional.kt")
+  public void testOptional() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/optional.kt");
+  }
 
-    @Test
-    @TestMetadata("simple.kt")
-    public void testSimple() throws Exception {
-        runTest("plugins/js-plain-objects/compiler-plugin/testData/box/simple.kt");
-    }
+  @Test
+  @TestMetadata("simple.kt")
+  public void testSimple() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/simple.kt");
+  }
 
-    @Test
-    @TestMetadata("with-inheritance.kt")
-    public void testWith_inheritance() throws Exception {
-        runTest("plugins/js-plain-objects/compiler-plugin/testData/box/with-inheritance.kt");
-    }
+  @Test
+  @TestMetadata("with-inheritance.kt")
+  public void testWith_inheritance() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/with-inheritance.kt");
+  }
 
-    @Test
-    @TestMetadata("with-multiple-inheritance.kt")
-    public void testWith_multiple_inheritance() throws Exception {
-        runTest("plugins/js-plain-objects/compiler-plugin/testData/box/with-multiple-inheritance.kt");
-    }
+  @Test
+  @TestMetadata("with-multiple-inheritance.kt")
+  public void testWith_multiple_inheritance() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/with-multiple-inheritance.kt");
+  }
 }

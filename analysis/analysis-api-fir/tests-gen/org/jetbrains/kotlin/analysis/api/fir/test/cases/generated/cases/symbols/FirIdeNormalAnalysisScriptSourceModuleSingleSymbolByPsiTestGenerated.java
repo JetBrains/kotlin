@@ -28,51 +28,51 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisScriptSourceModuleSingleSymbolByPsiTestGenerated extends AbstractSingleSymbolByPsiTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
+  @Test
+  public void testAllFilesPresentInSingleSymbolByPsi() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Contracts {
     @Test
-    public void testAllFilesPresentInSingleSymbolByPsi() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    public void testAllFilesPresentInContracts() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+  }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Contracts {
-        @Test
-        public void testAllFilesPresentInContracts() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Destructuring {
+    @Test
+    public void testAllFilesPresentInDestructuring() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+  }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Destructuring {
-        @Test
-        public void testAllFilesPresentInDestructuring() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Errors {
+    @Test
+    public void testAllFilesPresentInErrors() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Errors {
-        @Test
-        public void testAllFilesPresentInErrors() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
+  }
 }

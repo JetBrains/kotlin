@@ -15,6 +15,7 @@ open class FirValueParameterRenderer {
     private val annotationRenderer get() = components.annotationRenderer
     protected val declarationRenderer get() = components.declarationRenderer
     private val modifierRenderer get() = components.modifierRenderer
+    protected val typeRenderer get() = components.typeRenderer
 
     fun renderParameters(valueParameters: List<FirValueParameter>) {
         printer.print("(")
@@ -34,8 +35,13 @@ open class FirValueParameterRenderer {
         if (valueParameter.name != SpecialNames.NO_NAME_PROVIDED) {
             printer.print(valueParameter.name.toString() + ": ")
         }
-        valueParameter.returnTypeRef.accept(visitor)
+
+        renderParameterType(valueParameter)
         renderDefaultValue(valueParameter)
+    }
+
+    protected open fun renderParameterType(valueParameter: FirValueParameter) {
+        valueParameter.returnTypeRef.accept(visitor)
     }
 
     protected open fun renderDefaultValue(valueParameter: FirValueParameter) {

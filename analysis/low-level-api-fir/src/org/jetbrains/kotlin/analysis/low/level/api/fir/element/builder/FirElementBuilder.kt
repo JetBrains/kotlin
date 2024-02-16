@@ -6,21 +6,21 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.annotations.TestOnly
+import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.requireTypeIntersectionWith
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
@@ -97,6 +97,7 @@ internal class FirElementBuilder(
 
         getFirForElementInsideAnnotations(element)?.let { return it }
         getFirForElementInsideTypes(element)?.let { return it }
+        getFirForElementInsideFileHeader(element)?.let { return it }
 
         val psi = getPsiAsFirElementSource(element) ?: return null
         val firFile = element.containingKtFile
@@ -107,46 +108,58 @@ internal class FirElementBuilder(
         return mappings.getFir(psi)
     }
 
-    private inline fun <T : KtElement> getFirForNonBodyElement(
+    private inline fun <T : KtElement, E : PsiElement> getFirForNonBodyElement(
         element: KtElement,
         anchorElementProvider: (KtElement) -> T?,
-        declarationProvider: (T) -> KtDeclaration?,
-        resolveAndFindFirForAnchor: (FirDeclaration, T) -> FirElement?,
+        elementOwnerProvider: (T) -> E?,
+        resolveAndFindFirForAnchor: (FirElementWithResolveState, T) -> FirElement?,
     ): FirElement? {
         val anchorElement = anchorElementProvider(element) ?: return null
-        val declaration = declarationProvider(anchorElement) ?: return null
-        val nonLocalDeclaration = declaration.getNonLocalContainingOrThisDeclaration()
-        if (declaration != nonLocalDeclaration) return null
+        val elementOwner = elementOwnerProvider(anchorElement) ?: return null
 
-        val firDeclaration = nonLocalDeclaration.findSourceNonLocalFirDeclaration(
-            firFileBuilder = moduleComponents.firFileBuilder,
-            provider = moduleComponents.session.firProvider,
-        )
+        val firElementContainer = if (elementOwner is KtFile) {
+            moduleComponents.firFileBuilder.buildRawFirFileWithCaching(elementOwner)
+        } else {
+            val nonLocalDeclaration = elementOwner.getNonLocalContainingOrThisDeclaration()
+            if (elementOwner != nonLocalDeclaration) return null
 
-        val anchorFir = resolveAndFindFirForAnchor(firDeclaration, anchorElement) ?: return null
+            nonLocalDeclaration.findSourceNonLocalFirDeclaration(
+                firFileBuilder = moduleComponents.firFileBuilder,
+                provider = moduleComponents.session.firProvider,
+            )
+        }
+
+        val anchorFir = resolveAndFindFirForAnchor(firElementContainer, anchorElement) ?: return null
         // We use identity comparison here intentionally to check that it is exactly the object we want to find
         if (element === anchorElement) return anchorFir
 
         return findElementInside(firElement = anchorFir, element = element, stopAt = anchorElement)
     }
 
-    private fun KtAnnotationEntry.owner(): KtDeclaration? {
-        val parent = parent
-        val modifierList = parent as? KtModifierList ?: (parent as? KtAnnotation)?.parent as? KtModifierList ?: return null
-        return modifierList.owner as? KtDeclaration
+    private fun KtAnnotationEntry.owner(): KtAnnotated? {
+        val modifierList = when (val parent = parent) {
+            is KtModifierList -> parent
+            is KtAnnotation -> parent.parent as? KtModifierList
+            is KtFileAnnotationList -> return parent.parent as? KtFile
+            else -> null
+        }
+
+        return modifierList?.owner as? KtDeclaration
     }
 
-    private fun getFirForElementInsideAnnotations(element: KtElement): FirElement? = getFirForNonBodyElement(
+    private fun getFirForElementInsideAnnotations(
+        element: KtElement,
+    ): FirElement? = getFirForNonBodyElement<KtAnnotationEntry, KtAnnotated>(
         element = element,
         anchorElementProvider = { it.parentOfType<KtAnnotationEntry>(withSelf = true) },
-        declarationProvider = { it.owner() },
+        elementOwnerProvider = { it.owner() },
         resolveAndFindFirForAnchor = { declaration, anchor -> declaration.resolveAndFindAnnotation(anchor, goDeep = true) },
     )
 
-    private fun getFirForElementInsideTypes(element: KtElement): FirElement? = getFirForNonBodyElement(
+    private fun getFirForElementInsideTypes(element: KtElement): FirElement? = getFirForNonBodyElement<KtTypeReference, KtDeclaration>(
         element = element,
         anchorElementProvider = { it.parentsOfType<KtTypeReference>(withSelf = true).lastOrNull() },
-        declarationProvider = {
+        elementOwnerProvider = {
             when (val parent = it.parent) {
                 is KtDeclaration -> parent
                 is KtSuperTypeListEntry, is KtConstructorCalleeExpression, is KtTypeConstraint -> parent.parentOfType<KtDeclaration>()
@@ -160,6 +173,38 @@ internal class FirElementBuilder(
         } else {
             firElement
         }
+    }
+
+    private fun getFirForElementInsideFileHeader(
+        element: KtElement,
+    ): FirElement? = getFirForNonBodyElement<KtElement, KtAnnotated>(
+        element = element,
+        anchorElementProvider = { it.fileHeaderAnchorElement() },
+        elementOwnerProvider = { it.containingKtFile },
+        resolveAndFindFirForAnchor = { declaration, anchor ->
+            declaration.requireTypeIntersectionWith<FirFile>()
+
+            when (anchor) {
+                is KtPackageDirective -> declaration.packageDirective
+                is KtFileAnnotationList -> declaration.annotationsContainer?.also { it.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS) }
+                is KtImportDirective -> {
+                    declaration.lazyResolveToPhase(FirResolvePhase.IMPORTS)
+                    declaration.imports.find { it.psi == anchor }
+                }
+                else -> errorWithAttachment("Unexpected element type: ${anchor::class.simpleName}") {
+                    withPsiEntry("anchor", anchor)
+                }
+            }
+        },
+    )
+
+    private fun KtElement.fileHeaderAnchorElement(): KtElement? {
+        /**
+         * File annotations already covered by [getFirForElementInsideAnnotations], but we have to cover the list itself
+         */
+        if (this is KtFileAnnotationList) return this
+
+        return parentsWithSelf.find { it is KtPackageDirective || it is KtImportDirective } as? KtElement
     }
 
     private fun findElementInside(firElement: FirElement, element: KtElement, stopAt: PsiElement): FirElement? {
@@ -178,7 +223,9 @@ internal class FirElementBuilder(
         return firElement
     }
 
-    private fun FirDeclaration.resolveAndFindTypeRefAnchor(typeReference: KtTypeReference): FirElement? {
+    private fun FirElementWithResolveState.resolveAndFindTypeRefAnchor(typeReference: KtTypeReference): FirElement? {
+        requireTypeIntersectionWith<FirAnnotationContainer>()
+
         lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
 
         if (this is FirCallableDeclaration) {
@@ -217,7 +264,12 @@ internal class FirElementBuilder(
         return null
     }
 
-    private fun FirDeclaration.resolveAndFindAnnotation(annotationEntry: KtAnnotationEntry, goDeep: Boolean = false): FirAnnotation? {
+    private fun FirElementWithResolveState.resolveAndFindAnnotation(
+        annotationEntry: KtAnnotationEntry,
+        goDeep: Boolean = false,
+    ): FirAnnotation? {
+        requireTypeIntersectionWith<FirAnnotationContainer>()
+
         lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
         findAnnotation(annotationEntry)?.let { return it }
 
@@ -239,12 +291,6 @@ internal class FirElementBuilder(
     private fun FirAnnotationContainer.findAnnotation(
         annotationEntry: KtAnnotationEntry,
     ): FirAnnotation? = annotations.find { it.psi == annotationEntry }
-
-    @TestOnly
-    fun getStructureElementFor(element: KtElement): FileStructureElement {
-        val fileStructure = moduleComponents.fileStructureCache.getFileStructure(element.containingKtFile)
-        return fileStructure.getStructureElementFor(element)
-    }
 }
 
 private fun KtDeclaration.isPartOf(callableDeclaration: KtCallableDeclaration): Boolean = when (this) {
@@ -290,7 +336,8 @@ internal fun getNonLocalContainingDeclaration(
                 parent is KtAnonymousInitializer ||
                 parent is KtObjectLiteralExpression ||
                 parent is KtCallElement ||
-                parent is KtCodeFragment
+                parent is KtCodeFragment ||
+                parent is PsiErrorElement
             ) {
                 // Candidate turned out to be local. Let's find another one.
                 candidate = null
@@ -302,6 +349,7 @@ internal fun getNonLocalContainingDeclaration(
             when (parent) {
                 is KtScript -> propose(parent)
                 is KtDestructuringDeclaration -> propose(parent)
+                is KtDestructuringDeclarationEntry -> propose(parent)
                 is KtScriptInitializer -> propose(parent)
                 is KtClassInitializer -> {
                     val container = parent.containingDeclaration

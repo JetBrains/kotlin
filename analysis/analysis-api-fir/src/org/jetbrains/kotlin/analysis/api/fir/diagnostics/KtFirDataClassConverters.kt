@@ -2718,6 +2718,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CANNOT_INFER_VISIBILITY) { firDiagnostic ->
+        CannotInferVisibilityImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES) { firDiagnostic ->
         MultipleDefaultsInheritedFromSupertypesImpl(
             firDiagnostic.a,
@@ -4885,6 +4892,22 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.OPERATOR_RENAMED_ON_IMPORT) { firDiagnostic ->
         OperatorRenamedOnImportImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT.errorFactory) { firDiagnostic ->
+        TypealiasAsCallableQualifierInImportErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT.warningFactory) { firDiagnostic ->
+        TypealiasAsCallableQualifierInImportWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

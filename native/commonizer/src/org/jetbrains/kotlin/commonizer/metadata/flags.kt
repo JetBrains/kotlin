@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.commonizer.metadata
 
-import kotlinx.metadata.*
-import kotlinx.metadata.Modality as KmModality
-import kotlinx.metadata.ClassKind as KmClassKind
+import kotlin.metadata.*
+import kotlin.metadata.Modality as KmModality
+import kotlin.metadata.ClassKind as KmClassKind
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind

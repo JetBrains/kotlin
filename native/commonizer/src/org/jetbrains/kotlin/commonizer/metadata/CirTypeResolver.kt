@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.metadata
 
-import kotlinx.metadata.KmTypeParameter
+import kotlin.metadata.KmTypeParameter
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirProvided
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers

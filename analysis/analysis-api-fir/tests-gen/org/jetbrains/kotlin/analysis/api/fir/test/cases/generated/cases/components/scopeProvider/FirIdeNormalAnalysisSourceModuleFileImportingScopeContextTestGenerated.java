@@ -28,51 +28,51 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleFileImportingScopeContextTestGenerated extends AbstractFileImportingScopeContextTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInImportingScopeContext() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInImportingScopeContext() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("errorImport.kt")
-    public void testErrorImport() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/errorImport.kt");
-    }
+  @Test
+  @TestMetadata("errorImport.kt")
+  public void testErrorImport() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/errorImport.kt");
+  }
 
-    @Test
-    @TestMetadata("importAlias.kt")
-    public void testImportAlias() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/importAlias.kt");
-    }
+  @Test
+  @TestMetadata("importAlias.kt")
+  public void testImportAlias() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/importAlias.kt");
+  }
 
-    @Test
-    @TestMetadata("noImports.kt")
-    public void testNoImports() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/noImports.kt");
-    }
+  @Test
+  @TestMetadata("noImports.kt")
+  public void testNoImports() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/noImports.kt");
+  }
 
-    @Test
-    @TestMetadata("simpleImport.kt")
-    public void testSimpleImport() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/simpleImport.kt");
-    }
+  @Test
+  @TestMetadata("simpleImport.kt")
+  public void testSimpleImport() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/simpleImport.kt");
+  }
 
-    @Test
-    @TestMetadata("starImport.kt")
-    public void testStarImport() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/starImport.kt");
-    }
+  @Test
+  @TestMetadata("starImport.kt")
+  public void testStarImport() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/starImport.kt");
+  }
 }

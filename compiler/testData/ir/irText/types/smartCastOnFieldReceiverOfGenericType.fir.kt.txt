@@ -1,11 +1,11 @@
+fun testGetField(a: Any): String {
+  a as JCell<String> /*~> Unit */
+  return a /*as JCell<String> */.#value /*!! String */
+}
+
 fun testSetField(a: Any, b: Any) {
   a as JCell<String> /*~> Unit */
   b as String /*~> Unit */
   a /*as JCell<String> */.#value = b /*as String */
-}
-
-fun testGetField(a: Any): String {
-  a as JCell<String> /*~> Unit */
-  return a /*as JCell<String> */.#value /*!! String */
 }
 

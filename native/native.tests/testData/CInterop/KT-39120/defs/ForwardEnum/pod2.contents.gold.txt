@@ -1,5 +1,13 @@
-    enum class ForwardEnumPOD private constructor(value: Int) : Enum<ForwardEnumPOD>, CEnum {
-        @ConstantValue.Int(value = 0) enum entry Value1POD
-        @ConstantValue.Int(value = 1) enum entry Value2POD
-            var value: ForwardEnumPOD
-            @Deprecated(level = DeprecationLevel.WARNING, message = "Will be removed.", replaceWith = ReplaceWith(expression = "", imports = {})) fun byValue(value: Int): ForwardEnumPOD
+    // class name: pod2/ForwardEnumPOD
+    // class name: pod2/ForwardEnumPOD.Companion
+    // class name: pod2/ForwardEnumPOD.Var
+    // class name: pod2/ForwardEnumPOD.Var.Companion
+    public final enum class pod2/ForwardEnumPOD : kotlin/Enum<pod2/ForwardEnumPOD>, kotlinx/cinterop/CEnum {
+      Value1POD,
+      Value2POD,
+    public final companion object pod2/ForwardEnumPOD.Companion {
+      public final fun byValue(value: kotlin/Int): pod2/ForwardEnumPOD
+    public final class pod2/ForwardEnumPOD.Var : kotlinx/cinterop/CEnumVar {
+      public final var value: pod2/ForwardEnumPOD
+        public final /* non-default */ external set(value: pod2/ForwardEnumPOD)
+    public final companion object pod2/ForwardEnumPOD.Var.Companion : kotlinx/cinterop/CPrimitiveVar.Type {

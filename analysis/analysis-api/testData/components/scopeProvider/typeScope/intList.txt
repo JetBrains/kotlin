@@ -148,6 +148,18 @@ KtFunctionLikeSignature:
   symbol = kotlin/Any.toString(<dispatch receiver>: kotlin.Any): kotlin.String
   valueParameters = []
   callableIdIfNonLocal = kotlin/Any.toString
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = kotlin/collections/List.getFirst(<dispatch receiver>: kotlin.collections.List<E>): E
+  valueParameters = []
+  callableIdIfNonLocal = kotlin/collections/List.getFirst
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = kotlin/collections/List.getLast(<dispatch receiver>: kotlin.collections.List<E>): E
+  valueParameters = []
+  callableIdIfNonLocal = kotlin/collections/List.getLast
 
 
 Declaration Scope:
@@ -794,6 +806,62 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/String
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/List.getFirst
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: getFirst
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtTypeParameterType:
+    annotationsList: []
+    type: E
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/List.getLast
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: getLast
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtTypeParameterType:
+    annotationsList: []
+    type: E
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []

@@ -1,0 +1,133 @@
+FILE fqName:<root> fileName:/typeAliasOfPrimitiveTypeInVarargArgument.kt
+  FUN name:checkBoolean visibility:public modality:FINAL <> (values:kotlin.BooleanArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.BooleanArray varargElementType:kotlin.Boolean [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkBoolean (vararg values: kotlin.Boolean): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkByte visibility:public modality:FINAL <> (values:kotlin.ByteArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.ByteArray varargElementType:kotlin.Byte [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkByte (vararg values: kotlin.Byte): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkChar visibility:public modality:FINAL <> (values:kotlin.CharArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.CharArray varargElementType:kotlin.Char [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkChar (vararg values: kotlin.Char): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkDouble visibility:public modality:FINAL <> (values:kotlin.DoubleArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.DoubleArray varargElementType:kotlin.Double [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkDouble (vararg values: kotlin.Double): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkFloat visibility:public modality:FINAL <> (values:kotlin.FloatArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.FloatArray varargElementType:kotlin.Float [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkFloat (vararg values: kotlin.Float): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkInt visibility:public modality:FINAL <> (values:kotlin.IntArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkInt (vararg values: kotlin.Int): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkLong visibility:public modality:FINAL <> (values:kotlin.LongArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.LongArray varargElementType:kotlin.Long [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkLong (vararg values: kotlin.Long): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkMyBoolean visibility:public modality:FINAL <> (values:kotlin.BooleanArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.BooleanArray varargElementType:kotlin.Boolean [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkMyBoolean (vararg values: kotlin.Boolean): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkMyByte visibility:public modality:FINAL <> (values:kotlin.ByteArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.ByteArray varargElementType:kotlin.Byte [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkMyByte (vararg values: kotlin.Byte): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkMyChar visibility:public modality:FINAL <> (values:kotlin.CharArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.CharArray varargElementType:kotlin.Char [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkMyChar (vararg values: kotlin.Char): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkMyDouble visibility:public modality:FINAL <> (values:kotlin.DoubleArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.DoubleArray varargElementType:kotlin.Double [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkMyDouble (vararg values: kotlin.Double): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkMyFloat visibility:public modality:FINAL <> (values:kotlin.FloatArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.FloatArray varargElementType:kotlin.Float [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkMyFloat (vararg values: kotlin.Float): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkMyInt visibility:public modality:FINAL <> (values:kotlin.IntArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkMyInt (vararg values: kotlin.Int): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkMyLong visibility:public modality:FINAL <> (values:kotlin.LongArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.LongArray varargElementType:kotlin.Long [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkMyLong (vararg values: kotlin.Long): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkMyShort visibility:public modality:FINAL <> (values:kotlin.ShortArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.ShortArray varargElementType:kotlin.Short [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkMyShort (vararg values: kotlin.Short): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkMyUByte visibility:public modality:FINAL <> (values:kotlin.UByteArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.UByteArray varargElementType:kotlin.UByte [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkMyUByte (vararg values: kotlin.UByte): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkMyUInt visibility:public modality:FINAL <> (values:kotlin.UIntArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.UIntArray varargElementType:kotlin.UInt [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkMyUInt (vararg values: kotlin.UInt): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkMyULong visibility:public modality:FINAL <> (values:kotlin.ULongArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.ULongArray varargElementType:kotlin.ULong [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkMyULong (vararg values: kotlin.ULong): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkMyUShort visibility:public modality:FINAL <> (values:kotlin.UShortArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.UShortArray varargElementType:kotlin.UShort [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkMyUShort (vararg values: kotlin.UShort): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkShort visibility:public modality:FINAL <> (values:kotlin.ShortArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.ShortArray varargElementType:kotlin.Short [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkShort (vararg values: kotlin.Short): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkUByte visibility:public modality:FINAL <> (values:kotlin.UByteArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.UByteArray varargElementType:kotlin.UByte [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkUByte (vararg values: kotlin.UByte): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkUInt visibility:public modality:FINAL <> (values:kotlin.UIntArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.UIntArray varargElementType:kotlin.UInt [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkUInt (vararg values: kotlin.UInt): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkULong visibility:public modality:FINAL <> (values:kotlin.ULongArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.ULongArray varargElementType:kotlin.ULong [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkULong (vararg values: kotlin.ULong): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:checkUShort visibility:public modality:FINAL <> (values:kotlin.UShortArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.UShortArray varargElementType:kotlin.UShort [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun checkUShort (vararg values: kotlin.UShort): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  TYPEALIAS name:MyBoolean visibility:public expandedType:kotlin.Boolean
+  TYPEALIAS name:MyByte visibility:public expandedType:kotlin.Byte
+  TYPEALIAS name:MyChar visibility:public expandedType:kotlin.Char
+  TYPEALIAS name:MyDouble visibility:public expandedType:kotlin.Double
+  TYPEALIAS name:MyFloat visibility:public expandedType:kotlin.Float
+  TYPEALIAS name:MyInt visibility:public expandedType:kotlin.Int
+  TYPEALIAS name:MyLong visibility:public expandedType:kotlin.Long
+  TYPEALIAS name:MyShort visibility:public expandedType:kotlin.Short
+  TYPEALIAS name:MyUByte visibility:public expandedType:kotlin.UByte
+  TYPEALIAS name:MyUInt visibility:public expandedType:kotlin.UInt
+  TYPEALIAS name:MyULong visibility:public expandedType:kotlin.ULong
+  TYPEALIAS name:MyUShort visibility:public expandedType:kotlin.UShort

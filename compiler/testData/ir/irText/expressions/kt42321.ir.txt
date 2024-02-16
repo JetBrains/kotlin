@@ -6,9 +6,6 @@ FILE fqName:<root> fileName:/kt42321.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
-    FUN name:takeT visibility:public modality:ABSTRACT <> ($this:<root>.C<L of <root>.C>, x:L of <root>.C) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.C<L of <root>.C>
-      VALUE_PARAMETER name:x index:0 type:L of <root>.C
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -22,6 +19,41 @@ FILE fqName:<root> fileName:/kt42321.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:takeT visibility:public modality:ABSTRACT <> ($this:<root>.C<L of <root>.C>, x:L of <root>.C) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.C<L of <root>.C>
+      VALUE_PARAMETER name:x index:0 type:L of <root>.C
+  FUN name:testByteDotCall visibility:public modality:FINAL <> (c3:<root>.C<kotlin.Byte>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:c3 index:0 type:<root>.C<kotlin.Byte>
+    BLOCK_BODY
+      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        $this: GET_VAR 'c3: <root>.C<kotlin.Byte> declared in <root>.testByteDotCall' type=<root>.C<kotlin.Byte> origin=null
+        x: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: CONST Int type=kotlin.Int value=1
+          other: CONST Int type=kotlin.Int value=2
+      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        $this: GET_VAR 'c3: <root>.C<kotlin.Byte> declared in <root>.testByteDotCall' type=<root>.C<kotlin.Byte> origin=null
+        x: CALL 'public final fun shr (bitCount: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: CONST Int type=kotlin.Int value=1
+          bitCount: CONST Int type=kotlin.Int value=2
+      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        $this: GET_VAR 'c3: <root>.C<kotlin.Byte> declared in <root>.testByteDotCall' type=<root>.C<kotlin.Byte> origin=null
+        x: CALL 'public final fun inv (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: CONST Int type=kotlin.Int value=1
+  FUN name:testByteOperatorInfixCall visibility:public modality:FINAL <> (c6:<root>.C<kotlin.Byte>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:c6 index:0 type:<root>.C<kotlin.Byte>
+    BLOCK_BODY
+      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        $this: GET_VAR 'c6: <root>.C<kotlin.Byte> declared in <root>.testByteOperatorInfixCall' type=<root>.C<kotlin.Byte> origin=null
+        x: CALL 'public open fun toByte (): kotlin.Byte declared in kotlin.Int' type=kotlin.Byte origin=null
+          $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+            $this: CONST Int type=kotlin.Int value=1
+            other: CONST Int type=kotlin.Int value=2
+      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        $this: GET_VAR 'c6: <root>.C<kotlin.Byte> declared in <root>.testByteOperatorInfixCall' type=<root>.C<kotlin.Byte> origin=null
+        x: CALL 'public open fun toByte (): kotlin.Byte declared in kotlin.Int' type=kotlin.Byte origin=null
+          $this: CALL 'public final fun shr (bitCount: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: CONST Int type=kotlin.Int value=1
+            bitCount: CONST Int type=kotlin.Int value=2
   FUN name:testLongDotCall visibility:public modality:FINAL <> (c1:<root>.C<kotlin.Long>) returnType:kotlin.Unit
     VALUE_PARAMETER name:c1 index:0 type:<root>.C<kotlin.Long>
     BLOCK_BODY
@@ -90,40 +122,6 @@ FILE fqName:<root> fileName:/kt42321.kt
           other: CONST Int type=kotlin.Int value=2
       CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
         $this: GET_VAR 'c1: <root>.C<kotlin.Long> declared in <root>.testLongDotCall' type=<root>.C<kotlin.Long> origin=null
-        x: CALL 'public final fun inv (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value=1
-  FUN name:testShortDotCall visibility:public modality:FINAL <> (c2:<root>.C<kotlin.Short>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:c2 index:0 type:<root>.C<kotlin.Short>
-    BLOCK_BODY
-      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
-        $this: GET_VAR 'c2: <root>.C<kotlin.Short> declared in <root>.testShortDotCall' type=<root>.C<kotlin.Short> origin=null
-        x: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value=1
-          other: CONST Int type=kotlin.Int value=2
-      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
-        $this: GET_VAR 'c2: <root>.C<kotlin.Short> declared in <root>.testShortDotCall' type=<root>.C<kotlin.Short> origin=null
-        x: CALL 'public final fun shr (bitCount: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value=1
-          bitCount: CONST Int type=kotlin.Int value=2
-      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
-        $this: GET_VAR 'c2: <root>.C<kotlin.Short> declared in <root>.testShortDotCall' type=<root>.C<kotlin.Short> origin=null
-        x: CALL 'public final fun inv (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value=1
-  FUN name:testByteDotCall visibility:public modality:FINAL <> (c3:<root>.C<kotlin.Byte>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:c3 index:0 type:<root>.C<kotlin.Byte>
-    BLOCK_BODY
-      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
-        $this: GET_VAR 'c3: <root>.C<kotlin.Byte> declared in <root>.testByteDotCall' type=<root>.C<kotlin.Byte> origin=null
-        x: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value=1
-          other: CONST Int type=kotlin.Int value=2
-      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
-        $this: GET_VAR 'c3: <root>.C<kotlin.Byte> declared in <root>.testByteDotCall' type=<root>.C<kotlin.Byte> origin=null
-        x: CALL 'public final fun shr (bitCount: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value=1
-          bitCount: CONST Int type=kotlin.Int value=2
-      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
-        $this: GET_VAR 'c3: <root>.C<kotlin.Byte> declared in <root>.testByteDotCall' type=<root>.C<kotlin.Byte> origin=null
         x: CALL 'public final fun inv (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CONST Int type=kotlin.Int value=1
   FUN name:testLongOperatorInfixCall visibility:public modality:FINAL <> (c4:<root>.C<kotlin.Long>) returnType:kotlin.Unit
@@ -201,6 +199,23 @@ FILE fqName:<root> fileName:/kt42321.kt
           $this: CALL 'public final fun xor (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=1
             other: CONST Int type=kotlin.Int value=2
+  FUN name:testShortDotCall visibility:public modality:FINAL <> (c2:<root>.C<kotlin.Short>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:c2 index:0 type:<root>.C<kotlin.Short>
+    BLOCK_BODY
+      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        $this: GET_VAR 'c2: <root>.C<kotlin.Short> declared in <root>.testShortDotCall' type=<root>.C<kotlin.Short> origin=null
+        x: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: CONST Int type=kotlin.Int value=1
+          other: CONST Int type=kotlin.Int value=2
+      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        $this: GET_VAR 'c2: <root>.C<kotlin.Short> declared in <root>.testShortDotCall' type=<root>.C<kotlin.Short> origin=null
+        x: CALL 'public final fun shr (bitCount: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: CONST Int type=kotlin.Int value=1
+          bitCount: CONST Int type=kotlin.Int value=2
+      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        $this: GET_VAR 'c2: <root>.C<kotlin.Short> declared in <root>.testShortDotCall' type=<root>.C<kotlin.Short> origin=null
+        x: CALL 'public final fun inv (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: CONST Int type=kotlin.Int value=1
   FUN name:testShortOperatorInfixCall visibility:public modality:FINAL <> (c5:<root>.C<kotlin.Short>) returnType:kotlin.Unit
     VALUE_PARAMETER name:c5 index:0 type:<root>.C<kotlin.Short>
     BLOCK_BODY
@@ -213,21 +228,6 @@ FILE fqName:<root> fileName:/kt42321.kt
       CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
         $this: GET_VAR 'c5: <root>.C<kotlin.Short> declared in <root>.testShortOperatorInfixCall' type=<root>.C<kotlin.Short> origin=null
         x: CALL 'public open fun toShort (): kotlin.Short declared in kotlin.Int' type=kotlin.Short origin=null
-          $this: CALL 'public final fun shr (bitCount: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-            $this: CONST Int type=kotlin.Int value=1
-            bitCount: CONST Int type=kotlin.Int value=2
-  FUN name:testByteOperatorInfixCall visibility:public modality:FINAL <> (c6:<root>.C<kotlin.Byte>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:c6 index:0 type:<root>.C<kotlin.Byte>
-    BLOCK_BODY
-      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
-        $this: GET_VAR 'c6: <root>.C<kotlin.Byte> declared in <root>.testByteOperatorInfixCall' type=<root>.C<kotlin.Byte> origin=null
-        x: CALL 'public open fun toByte (): kotlin.Byte declared in kotlin.Int' type=kotlin.Byte origin=null
-          $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
-            $this: CONST Int type=kotlin.Int value=1
-            other: CONST Int type=kotlin.Int value=2
-      CALL 'public abstract fun takeT (x: L of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
-        $this: GET_VAR 'c6: <root>.C<kotlin.Byte> declared in <root>.testByteOperatorInfixCall' type=<root>.C<kotlin.Byte> origin=null
-        x: CALL 'public open fun toByte (): kotlin.Byte declared in kotlin.Int' type=kotlin.Byte origin=null
           $this: CALL 'public final fun shr (bitCount: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=1
             bitCount: CONST Int type=kotlin.Int value=2

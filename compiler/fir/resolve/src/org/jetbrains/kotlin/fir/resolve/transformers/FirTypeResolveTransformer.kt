@@ -208,8 +208,8 @@ open class FirTypeResolveTransformer(
                     .transformAnnotations(this, data)
 
                 if (property.isFromVararg == true) {
-                    property.transformTypeToArrayType()
-                    property.backingField?.transformTypeToArrayType()
+                    property.transformTypeToArrayType(session)
+                    property.backingField?.transformTypeToArrayType(session)
                     setAccessorTypesByPropertyType(property)
                 }
 
@@ -339,7 +339,7 @@ open class FirTypeResolveTransformer(
         withDeclaration(valueParameter) {
             valueParameter.transformReturnTypeRef(this, data)
             valueParameter.transformAnnotations(this, data)
-            valueParameter.transformVarargTypeToArrayType()
+            valueParameter.transformVarargTypeToArrayType(session)
             valueParameter
         }
     }

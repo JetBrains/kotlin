@@ -55,7 +55,7 @@ fun test4() {
     require(x is String)
     runWithoutContract {
         x = ""
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
 }
 

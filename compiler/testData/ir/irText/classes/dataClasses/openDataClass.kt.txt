@@ -1,11 +1,5 @@
 @Suppress(names = ["INCOMPATIBLE_MODIFIERS"])
 open data class ValidatedProperties {
-  constructor(test1: String, test2: String) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   open val test1: String
     field = test1
     open get
@@ -13,6 +7,12 @@ open data class ValidatedProperties {
   open val test2: String
     field = test2
     open get
+
+  constructor(test1: String, test2: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
   operator fun component1(): String {
     return <this>.<get-test1>()
@@ -24,16 +24,6 @@ open data class ValidatedProperties {
 
   fun copy(test1: String = <this>.<get-test1>(), test2: String = <this>.<get-test2>()): ValidatedProperties {
     return ValidatedProperties(test1 = test1, test2 = test2)
-  }
-
-  override fun toString(): String {
-    return "ValidatedProperties(" + "test1=" + <this>.<get-test1>() + ", " + "test2=" + <this>.<get-test2>() + ")"
-  }
-
-  override fun hashCode(): Int {
-    var result: Int = <this>.<get-test1>().hashCode()
-    result = result.times(other = 31).plus(other = <this>.<get-test2>().hashCode())
-    return result
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -53,4 +43,15 @@ open data class ValidatedProperties {
     return true
   }
 
+  override fun hashCode(): Int {
+    var result: Int = <this>.<get-test1>().hashCode()
+    result = result.times(other = 31).plus(other = <this>.<get-test2>().hashCode())
+    return result
+  }
+
+  override fun toString(): String {
+    return "ValidatedProperties(" + "test1=" + <this>.<get-test1>() + ", " + "test2=" + <this>.<get-test2>() + ")"
+  }
+
 }
+

@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.library.SearchPathResolver
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
@@ -61,6 +66,50 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         ).forEach { (produceUnpackedKlibs, useLibraryNamesInCliArguments) ->
             modules.compileModules(produceUnpackedKlibs, useLibraryNamesInCliArguments)
         }
+    }
+
+    @Test
+    fun testIrProvidersMatch() {
+        testIrProvidersMismatchImpl(irProvidersMismatchSrcDir, TestCompilerArgs.EMPTY)
+    }
+
+    @Test
+    fun testIrProvidersMismatch() {
+        val freeCompilerArgs = TestCompilerArgs(listOf(
+            "-manifest",
+            irProvidersMismatchSrcDir.resolve("manifest.properties").absolutePath
+        ))
+        try {
+            testIrProvidersMismatchImpl(irProvidersMismatchSrcDir, freeCompilerArgs)
+        } catch (cte: CompilationToolException) {
+            if (!cte.reason.contains("The library requires unknown IR provider: UNSUPPORTED"))
+                throw cte
+        }
+    }
+
+    private fun testIrProvidersMismatchImpl(srcDir: File, freeCompilerArgs: TestCompilerArgs) {
+        val testCaseKlib = generateTestCaseWithSingleModule(srcDir.resolve("empty.kt"), freeCompilerArgs)
+        val klibResult = LibraryCompilation(
+            settings = testRunSettings,
+            freeCompilerArgs = testCaseKlib.freeCompilerArgs,
+            sourceModules = testCaseKlib.modules,
+            dependencies = listOf(),
+            expectedArtifact = getLibraryArtifact(testCaseKlib, buildDir)
+        ).result.assertSuccess()
+
+        val testCase = generateTestCaseWithSingleFile(
+            sourceFile = srcDir.resolve("irProvidersMismatch.kt"),
+            testKind = TestKind.STANDALONE_NO_TR,
+            extras = TestCase.NoTestRunnerExtras("main"),
+        )
+        val executableResult =
+            compileToExecutable(testCase, klibResult.resultingArtifact.asLibraryDependency()).assertSuccess()
+        val testExecutable = TestExecutable(
+            executableResult.resultingArtifact,
+            executableResult.loggedData,
+            listOf(TestName("testIrProvidersMismatch"))
+        )
+        runExecutableAndVerify(testCase, testExecutable)
     }
 
     private fun createModules(vararg modules: Module): List<Module> {
@@ -152,5 +201,6 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
     companion object {
         private const val USER_DIR = "user.dir"
+        private val irProvidersMismatchSrcDir = File("native/native.tests/testData/irProvidersMismatch")
     }
 }

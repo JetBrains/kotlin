@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package test
 
 annotation class Anno(val value: String)

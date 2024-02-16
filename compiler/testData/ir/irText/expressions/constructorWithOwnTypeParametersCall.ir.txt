@@ -1,27 +1,7 @@
 FILE fqName:<root> fileName:/constructorWithOwnTypeParametersCall.kt
-  FUN name:testKotlin visibility:public modality:FINAL <> () returnType:<root>.K1.K2<kotlin.String, kotlin.Int>
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testKotlin (): <root>.K1.K2<kotlin.String, kotlin.Int> declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.K1.K2' type=<root>.K1.K2<kotlin.String, kotlin.Int> origin=null
-          <class: T2>: kotlin.String
-          $outer: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.K1' type=<root>.K1<kotlin.Int> origin=null
-            <class: T1>: kotlin.Int
-  FUN name:testJava visibility:public modality:FINAL <> () returnType:<root>.J1.J2<kotlin.Double, kotlin.Int>
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testJava (): <root>.J1.J2<kotlin.Double, kotlin.Int> declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> <Y2> () declared in <root>.J1.J2' type=<root>.J1.J2<kotlin.Double, kotlin.Int> origin=null
-          <class: X2>: @[FlexibleNullability] kotlin.Double?
-          <Y2>: @[FlexibleNullability] kotlin.CharSequence?
-          $outer: CONSTRUCTOR_CALL 'public constructor <init> <Y1> () declared in <root>.J1' type=<root>.J1<kotlin.Int> origin=null
-            <class: X1>: @[FlexibleNullability] kotlin.Int?
-            <Y1>: @[FlexibleNullability] kotlin.String?
   CLASS CLASS name:K1 modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K1<T1 of <root>.K1>
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Number] reified:false
-    CONSTRUCTOR visibility:public <> () returnType:<root>.K1<T1 of <root>.K1> [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS CLASS name:K2 modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K1.K2<T2 of <root>.K1.K2, T1 of <root>.K1>
       TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.CharSequence] reified:false
@@ -43,6 +23,10 @@ FILE fqName:<root> fileName:/constructorWithOwnTypeParametersCall.kt
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    CONSTRUCTOR visibility:public <> () returnType:<root>.K1<T1 of <root>.K1> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -56,3 +40,19 @@ FILE fqName:<root> fileName:/constructorWithOwnTypeParametersCall.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:testJava visibility:public modality:FINAL <> () returnType:<root>.J1.J2<kotlin.Double, kotlin.Int>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testJava (): <root>.J1.J2<kotlin.Double, kotlin.Int> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> <Y2> () declared in <root>.J1.J2' type=<root>.J1.J2<kotlin.Double, kotlin.Int> origin=null
+          <class: X2>: @[FlexibleNullability] kotlin.Double?
+          <Y2>: @[FlexibleNullability] kotlin.CharSequence?
+          $outer: CONSTRUCTOR_CALL 'public constructor <init> <Y1> () declared in <root>.J1' type=<root>.J1<kotlin.Int> origin=null
+            <class: X1>: @[FlexibleNullability] kotlin.Int?
+            <Y1>: @[FlexibleNullability] kotlin.String?
+  FUN name:testKotlin visibility:public modality:FINAL <> () returnType:<root>.K1.K2<kotlin.String, kotlin.Int>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testKotlin (): <root>.K1.K2<kotlin.String, kotlin.Int> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.K1.K2' type=<root>.K1.K2<kotlin.String, kotlin.Int> origin=null
+          <class: T2>: kotlin.String
+          $outer: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.K1' type=<root>.K1<kotlin.Int> origin=null
+            <class: T1>: kotlin.Int

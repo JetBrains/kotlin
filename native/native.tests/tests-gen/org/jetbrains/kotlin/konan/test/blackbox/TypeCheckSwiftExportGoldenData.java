@@ -19,152 +19,152 @@ import java.util.regex.Pattern;
 @TestMetadata("native/swift/swift-export-standalone/testData")
 @TestDataPath("$PROJECT_ROOT")
 public class TypeCheckSwiftExportGoldenData extends SwiftTypeCheckBaseTest {
+  @Test
+  public void testAllFilesPresentInTestData() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData"), Pattern.compile("^(.+)\\.swift$"), null, true);
+  }
+
+  @Nested
+  @TestMetadata("native/swift/swift-export-standalone/testData/documentation")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Documentation {
     @Test
-    public void testAllFilesPresentInTestData() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData"), Pattern.compile("^(.+)\\.swift$"), null, true);
+    public void testAllFilesPresentInDocumentation() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/documentation"), Pattern.compile("^(.+)\\.swift$"), null, true);
     }
 
     @Nested
-    @TestMetadata("native/swift/swift-export-standalone/testData/documentation")
+    @TestMetadata("native/swift/swift-export-standalone/testData/documentation/golden_result")
     @TestDataPath("$PROJECT_ROOT")
-    public class Documentation {
-        @Test
-        public void testAllFilesPresentInDocumentation() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/documentation"), Pattern.compile("^(.+)\\.swift$"), null, true);
-        }
+    public class Golden_result {
+      @Test
+      public void testAllFilesPresentInGolden_result() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/documentation/golden_result"), Pattern.compile("^(.+)\\.swift$"), null, true);
+      }
 
-        @Nested
-        @TestMetadata("native/swift/swift-export-standalone/testData/documentation/golden_result")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Golden_result {
-            @Test
-            public void testAllFilesPresentInGolden_result() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/documentation/golden_result"), Pattern.compile("^(.+)\\.swift$"), null, true);
-            }
-
-            @Test
-            @TestMetadata("result.swift")
-            public void testResult() throws Exception {
-                runTest("native/swift/swift-export-standalone/testData/documentation/golden_result/result.swift");
-            }
-        }
-
-        @Nested
-        @TestMetadata("native/swift/swift-export-standalone/testData/documentation/input_root")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Input_root {
-            @Test
-            public void testAllFilesPresentInInput_root() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/documentation/input_root"), Pattern.compile("^(.+)\\.swift$"), null, true);
-            }
-        }
+      @Test
+      @TestMetadata("result.swift")
+      public void testResult() {
+        runTest("native/swift/swift-export-standalone/testData/documentation/golden_result/result.swift");
+      }
     }
 
     @Nested
-    @TestMetadata("native/swift/swift-export-standalone/testData/functions")
+    @TestMetadata("native/swift/swift-export-standalone/testData/documentation/input_root")
     @TestDataPath("$PROJECT_ROOT")
-    public class Functions {
-        @Test
-        public void testAllFilesPresentInFunctions() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/functions"), Pattern.compile("^(.+)\\.swift$"), null, true);
-        }
+    public class Input_root {
+      @Test
+      public void testAllFilesPresentInInput_root() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/documentation/input_root"), Pattern.compile("^(.+)\\.swift$"), null, true);
+      }
+    }
+  }
 
-        @Nested
-        @TestMetadata("native/swift/swift-export-standalone/testData/functions/golden_result")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Golden_result {
-            @Test
-            public void testAllFilesPresentInGolden_result() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/functions/golden_result"), Pattern.compile("^(.+)\\.swift$"), null, true);
-            }
-
-            @Test
-            @TestMetadata("result.swift")
-            public void testResult() throws Exception {
-                runTest("native/swift/swift-export-standalone/testData/functions/golden_result/result.swift");
-            }
-        }
-
-        @Nested
-        @TestMetadata("native/swift/swift-export-standalone/testData/functions/input_root")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Input_root {
-            @Test
-            public void testAllFilesPresentInInput_root() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/functions/input_root"), Pattern.compile("^(.+)\\.swift$"), null, true);
-            }
-        }
+  @Nested
+  @TestMetadata("native/swift/swift-export-standalone/testData/functions")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Functions {
+    @Test
+    public void testAllFilesPresentInFunctions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/functions"), Pattern.compile("^(.+)\\.swift$"), null, true);
     }
 
     @Nested
-    @TestMetadata("native/swift/swift-export-standalone/testData/no_package")
+    @TestMetadata("native/swift/swift-export-standalone/testData/functions/golden_result")
     @TestDataPath("$PROJECT_ROOT")
-    public class No_package {
-        @Test
-        public void testAllFilesPresentInNo_package() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/no_package"), Pattern.compile("^(.+)\\.swift$"), null, true);
-        }
+    public class Golden_result {
+      @Test
+      public void testAllFilesPresentInGolden_result() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/functions/golden_result"), Pattern.compile("^(.+)\\.swift$"), null, true);
+      }
 
-        @Nested
-        @TestMetadata("native/swift/swift-export-standalone/testData/no_package/golden_result")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Golden_result {
-            @Test
-            public void testAllFilesPresentInGolden_result() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/no_package/golden_result"), Pattern.compile("^(.+)\\.swift$"), null, true);
-            }
-
-            @Test
-            @TestMetadata("result.swift")
-            public void testResult() throws Exception {
-                runTest("native/swift/swift-export-standalone/testData/no_package/golden_result/result.swift");
-            }
-        }
-
-        @Nested
-        @TestMetadata("native/swift/swift-export-standalone/testData/no_package/input_root")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Input_root {
-            @Test
-            public void testAllFilesPresentInInput_root() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/no_package/input_root"), Pattern.compile("^(.+)\\.swift$"), null, true);
-            }
-        }
+      @Test
+      @TestMetadata("result.swift")
+      public void testResult() {
+        runTest("native/swift/swift-export-standalone/testData/functions/golden_result/result.swift");
+      }
     }
 
     @Nested
-    @TestMetadata("native/swift/swift-export-standalone/testData/variables")
+    @TestMetadata("native/swift/swift-export-standalone/testData/functions/input_root")
     @TestDataPath("$PROJECT_ROOT")
-    public class Variables {
-        @Test
-        public void testAllFilesPresentInVariables() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/variables"), Pattern.compile("^(.+)\\.swift$"), null, true);
-        }
-
-        @Nested
-        @TestMetadata("native/swift/swift-export-standalone/testData/variables/golden_result")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Golden_result {
-            @Test
-            public void testAllFilesPresentInGolden_result() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/variables/golden_result"), Pattern.compile("^(.+)\\.swift$"), null, true);
-            }
-
-            @Test
-            @TestMetadata("result.swift")
-            public void testResult() throws Exception {
-                runTest("native/swift/swift-export-standalone/testData/variables/golden_result/result.swift");
-            }
-        }
-
-        @Nested
-        @TestMetadata("native/swift/swift-export-standalone/testData/variables/input_root")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Input_root {
-            @Test
-            public void testAllFilesPresentInInput_root() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/variables/input_root"), Pattern.compile("^(.+)\\.swift$"), null, true);
-            }
-        }
+    public class Input_root {
+      @Test
+      public void testAllFilesPresentInInput_root() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/functions/input_root"), Pattern.compile("^(.+)\\.swift$"), null, true);
+      }
     }
+  }
+
+  @Nested
+  @TestMetadata("native/swift/swift-export-standalone/testData/no_package")
+  @TestDataPath("$PROJECT_ROOT")
+  public class No_package {
+    @Test
+    public void testAllFilesPresentInNo_package() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/no_package"), Pattern.compile("^(.+)\\.swift$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("native/swift/swift-export-standalone/testData/no_package/golden_result")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Golden_result {
+      @Test
+      public void testAllFilesPresentInGolden_result() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/no_package/golden_result"), Pattern.compile("^(.+)\\.swift$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("result.swift")
+      public void testResult() {
+        runTest("native/swift/swift-export-standalone/testData/no_package/golden_result/result.swift");
+      }
+    }
+
+    @Nested
+    @TestMetadata("native/swift/swift-export-standalone/testData/no_package/input_root")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Input_root {
+      @Test
+      public void testAllFilesPresentInInput_root() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/no_package/input_root"), Pattern.compile("^(.+)\\.swift$"), null, true);
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("native/swift/swift-export-standalone/testData/variables")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Variables {
+    @Test
+    public void testAllFilesPresentInVariables() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/variables"), Pattern.compile("^(.+)\\.swift$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("native/swift/swift-export-standalone/testData/variables/golden_result")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Golden_result {
+      @Test
+      public void testAllFilesPresentInGolden_result() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/variables/golden_result"), Pattern.compile("^(.+)\\.swift$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("result.swift")
+      public void testResult() {
+        runTest("native/swift/swift-export-standalone/testData/variables/golden_result/result.swift");
+      }
+    }
+
+    @Nested
+    @TestMetadata("native/swift/swift-export-standalone/testData/variables/input_root")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Input_root {
+      @Test
+      public void testAllFilesPresentInInput_root() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/variables/input_root"), Pattern.compile("^(.+)\\.swift$"), null, true);
+      }
+    }
+  }
 }

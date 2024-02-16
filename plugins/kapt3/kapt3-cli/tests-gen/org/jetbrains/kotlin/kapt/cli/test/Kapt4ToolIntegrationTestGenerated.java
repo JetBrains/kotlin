@@ -19,98 +19,98 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kapt3/kapt3-cli/testData/integration-kapt4")
 @TestDataPath("$PROJECT_ROOT")
 public class Kapt4ToolIntegrationTestGenerated extends AbstractKapt4ToolIntegrationTest {
-    @Test
-    public void testAllFilesPresentInIntegration_kapt4() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-cli/testData/integration-kapt4"), Pattern.compile("^([^\\.]+)$"), null, false);
-    }
+  @Test
+  public void testAllFilesPresentInIntegration_kapt4() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-cli/testData/integration-kapt4"), Pattern.compile("^([^\\.]+)$"), null, false);
+  }
 
-    @Test
-    @TestMetadata("argfile")
-    public void testArgfile() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/argfile/");
-    }
+  @Test
+  @TestMetadata("argfile")
+  public void testArgfile() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/argfile/");
+  }
 
-    @Test
-    @TestMetadata("compileModeUnsupported")
-    public void testCompileModeUnsupported() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/compileModeUnsupported/");
-    }
+  @Test
+  @TestMetadata("compileModeUnsupported")
+  public void testCompileModeUnsupported() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/compileModeUnsupported/");
+  }
 
-    @Test
-    @TestMetadata("correctErrorTypesOn")
-    public void testCorrectErrorTypesOn() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/correctErrorTypesOn/");
-    }
+  @Test
+  @TestMetadata("correctErrorTypesOn")
+  public void testCorrectErrorTypesOn() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/correctErrorTypesOn/");
+  }
 
-    @Test
-    @TestMetadata("defaultMethodsAllCompatibilityNoWarning")
-    public void testDefaultMethodsAllCompatibilityNoWarning() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultMethodsAllCompatibilityNoWarning/");
-    }
+  @Test
+  @TestMetadata("defaultMethodsAllCompatibilityNoWarning")
+  public void testDefaultMethodsAllCompatibilityNoWarning() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultMethodsAllCompatibilityNoWarning/");
+  }
 
-    @Test
-    @TestMetadata("defaultMethodsAllNoWarning")
-    public void testDefaultMethodsAllNoWarning() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultMethodsAllNoWarning/");
-    }
+  @Test
+  @TestMetadata("defaultMethodsAllNoWarning")
+  public void testDefaultMethodsAllNoWarning() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultMethodsAllNoWarning/");
+  }
 
-    @Test
-    @TestMetadata("defaultMethodsWarning")
-    public void testDefaultMethodsWarning() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultMethodsWarning/");
-    }
+  @Test
+  @TestMetadata("defaultMethodsWarning")
+  public void testDefaultMethodsWarning() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultMethodsWarning/");
+  }
 
-    @Test
-    @TestMetadata("defaultPackage")
-    public void testDefaultPackage() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultPackage/");
-    }
+  @Test
+  @TestMetadata("defaultPackage")
+  public void testDefaultPackage() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultPackage/");
+  }
 
-    @Test
-    @TestMetadata("kaptUseK2Flag")
-    public void testKaptUseK2Flag() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/kaptUseK2Flag/");
-    }
+  @Test
+  @TestMetadata("kaptUseK2Flag")
+  public void testKaptUseK2Flag() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/kaptUseK2Flag/");
+  }
 
-    @Test
-    @TestMetadata("kotlinFileGeneration")
-    public void testKotlinFileGeneration() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/kotlinFileGeneration/");
-    }
+  @Test
+  @TestMetadata("kotlinFileGeneration")
+  public void testKotlinFileGeneration() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/kotlinFileGeneration/");
+  }
 
-    @Test
-    @TestMetadata("kotlinFileGenerationDefaultOutput")
-    public void testKotlinFileGenerationDefaultOutput() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/kotlinFileGenerationDefaultOutput/");
-    }
+  @Test
+  @TestMetadata("kotlinFileGenerationDefaultOutput")
+  public void testKotlinFileGenerationDefaultOutput() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/kotlinFileGenerationDefaultOutput/");
+  }
 
-    @Test
-    @TestMetadata("kt33800")
-    public void testKt33800() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/kt33800/");
-    }
+  @Test
+  @TestMetadata("kt33800")
+  public void testKt33800() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/kt33800/");
+  }
 
-    @Test
-    @TestMetadata("multipass")
-    public void testMultipass() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/multipass/");
-    }
+  @Test
+  @TestMetadata("multipass")
+  public void testMultipass() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/multipass/");
+  }
 
-    @Test
-    @TestMetadata("separateStubAptCompilation")
-    public void testSeparateStubAptCompilation() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/separateStubAptCompilation/");
-    }
+  @Test
+  @TestMetadata("separateStubAptCompilation")
+  public void testSeparateStubAptCompilation() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/separateStubAptCompilation/");
+  }
 
-    @Test
-    @TestMetadata("simple")
-    public void testSimple() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/simple/");
-    }
+  @Test
+  @TestMetadata("simple")
+  public void testSimple() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/simple/");
+  }
 
-    @Test
-    @TestMetadata("withoutService")
-    public void testWithoutService() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/withoutService/");
-    }
+  @Test
+  @TestMetadata("withoutService")
+  public void testWithoutService() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/withoutService/");
+  }
 }

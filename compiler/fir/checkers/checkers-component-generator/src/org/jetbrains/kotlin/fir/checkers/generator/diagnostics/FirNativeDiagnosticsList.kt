@@ -103,5 +103,9 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val CONSTRUCTOR_MATCHES_SEVERAL_SUPER_CONSTRUCTORS by error<KtElement>() {
             parameter<FqName>("annotation")
         }
+        val CONFLICTING_OBJC_OVERLOADS by error<PsiElement>() {
+            parameter<Collection<Symbol>>("conflictingOverloads")
+        }
+        val INAPPLICABLE_OBJC_OVERRIDE by error<PsiElement>()
     }
 }

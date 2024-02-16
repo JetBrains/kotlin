@@ -28,33 +28,33 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleSymbolRestoreFromDifferentModuleTestGenerated extends AbstractSymbolRestoreFromDifferentModuleTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInSymbolRestoreFromDifferentModule() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInSymbolRestoreFromDifferentModule() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("noDependency.kt")
-    public void testNoDependency() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule/noDependency.kt");
-    }
+  @Test
+  @TestMetadata("noDependency.kt")
+  public void testNoDependency() {
+    runTest("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule/noDependency.kt");
+  }
 
-    @Test
-    @TestMetadata("withDependency.kt")
-    public void testWithDependency() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule/withDependency.kt");
-    }
+  @Test
+  @TestMetadata("withDependency.kt")
+  public void testWithDependency() {
+    runTest("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule/withDependency.kt");
+  }
 }

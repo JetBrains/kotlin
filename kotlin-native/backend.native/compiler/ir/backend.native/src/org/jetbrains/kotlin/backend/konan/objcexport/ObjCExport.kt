@@ -52,6 +52,7 @@ internal fun produceObjCExportInterface(
     val disableSwiftMemberNameMangling = config.configuration.getBoolean(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
     val ignoreInterfaceMethodCollisions = config.configuration.getBoolean(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
     val reportNameCollisions = config.configuration.getBoolean(BinaryOptions.objcExportReportNameCollisions)
+    val errorOnNameCollisions = config.configuration.getBoolean(BinaryOptions.objcExportErrorOnNameCollisions)
 
     val problemCollector = ObjCExportCompilerProblemCollector(context)
 
@@ -65,7 +66,11 @@ internal fun produceObjCExportInterface(
             objcGenerics = objcGenerics,
             disableSwiftMemberNameMangling = disableSwiftMemberNameMangling,
             ignoreInterfaceMethodCollisions = ignoreInterfaceMethodCollisions,
-            reportNameCollisions = reportNameCollisions,
+            nameCollisionMode = when {
+                errorOnNameCollisions -> ObjCExportNameCollisionMode.ERROR
+                reportNameCollisions -> ObjCExportNameCollisionMode.WARNING
+                else -> ObjCExportNameCollisionMode.NONE
+            }
     )
     val shouldExportKDoc = context.shouldExportKDoc()
     val additionalImports = context.config.configuration.getNotNull(KonanConfigKeys.FRAMEWORK_IMPORT_HEADERS)
@@ -77,19 +82,31 @@ internal fun produceObjCExportInterface(
 }
 
 private class ObjCExportCompilerProblemCollector(val context: PhaseContext) : ObjCExportProblemCollector {
+    private val DeclarationDescriptor.psiLocation
+        get() = (this@psiLocation as? DeclarationDescriptorWithSource)?.source?.getPsi()?.let { MessageUtil.psiElementToMessageLocation(it) }
+
     override fun reportWarning(text: String) {
         context.reportCompilationWarning(text)
     }
 
     override fun reportWarning(declaration: DeclarationDescriptor, text: String) {
-        val psi = (declaration as? DeclarationDescriptorWithSource)?.source?.getPsi()
-                ?: return reportWarning(
-                        "$text\n    (at ${DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declaration)})"
-                )
-
-        val location = MessageUtil.psiElementToMessageLocation(psi)
+        val location = declaration.psiLocation ?: return reportWarning(
+                "$text\n    (at ${DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declaration)})"
+        )
 
         context.messageCollector.report(CompilerMessageSeverity.WARNING, text, location)
+    }
+
+    override fun reportError(text: String) {
+        context.messageCollector.report(CompilerMessageSeverity.ERROR, text, null)
+    }
+
+    override fun reportError(declaration: DeclarationDescriptor, text: String) {
+        val location = declaration.psiLocation ?: return reportError(
+                "$text\n    (at ${DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declaration)})"
+        )
+
+        context.messageCollector.report(CompilerMessageSeverity.ERROR, text, location)
     }
 
     override fun reportException(throwable: Throwable) {

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -154,4 +155,28 @@ fun FirTypeProjection.toConeTypeProjection(): ConeTypeProjection = when (this) {
         type.toTypeProjection(this.variance)
     }
     else -> errorWithAttachment("Unexpected ${this::class.simpleName}") { withFirEntry("projection", this@toConeTypeProjection) }
+}
+
+fun ConeKotlinType.arrayElementType(checkUnsignedArrays: Boolean = true): ConeKotlinType? {
+    return when (val argument = arrayElementTypeArgument(checkUnsignedArrays)) {
+        is ConeKotlinTypeProjection -> argument.type
+        else -> null
+    }
+}
+
+fun ConeKotlinType.arrayElementTypeArgument(checkUnsignedArrays: Boolean = true): ConeTypeProjection? {
+    val type = this.lowerBoundIfFlexible()
+    if (type !is ConeClassLikeType) return null
+    val classId = type.lookupTag.classId
+    if (classId == StandardClassIds.Array) {
+        return type.typeArguments.first()
+    }
+    val elementType = StandardClassIds.elementTypeByPrimitiveArrayType[classId] ?: runIf(checkUnsignedArrays) {
+        StandardClassIds.elementTypeByUnsignedArrayType[classId]
+    }
+    if (elementType != null) {
+        return elementType.constructClassLikeType(emptyArray(), isNullable = false)
+    }
+
+    return null
 }

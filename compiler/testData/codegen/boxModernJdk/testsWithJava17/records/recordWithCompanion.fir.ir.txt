@@ -3,11 +3,6 @@ FILE fqName:<root> fileName:/recordWithCompanion.kt
     annotations:
       JvmRecord
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Tag
-    CONSTRUCTOR visibility:public <> (id:kotlin.String) returnType:<root>.Tag [primary]
-      VALUE_PARAMETER name:id index:0 type:kotlin.String
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'protected/*protected and package*/ constructor <init> () declared in java.lang.Record'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Tag modality:FINAL visibility:public [data] superTypes:[java.lang.Record]'
     PROPERTY name:id visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
@@ -38,6 +33,11 @@ FILE fqName:<root> fileName:/recordWithCompanion.kt
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    CONSTRUCTOR visibility:public <> (id:kotlin.String) returnType:<root>.Tag [primary]
+      VALUE_PARAMETER name:id index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'protected/*protected and package*/ constructor <init> () declared in java.lang.Record'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Tag modality:FINAL visibility:public [data] superTypes:[java.lang.Record]'
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Tag) returnType:kotlin.String [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Tag
       BLOCK_BODY
@@ -54,27 +54,6 @@ FILE fqName:<root> fileName:/recordWithCompanion.kt
         RETURN type=kotlin.Nothing from='public final fun copy (id: kotlin.String): <root>.Tag declared in <root>.Tag'
           CONSTRUCTOR_CALL 'public constructor <init> (id: kotlin.String) declared in <root>.Tag' type=<root>.Tag origin=null
             id: GET_VAR 'id: kotlin.String declared in <root>.Tag.copy' type=kotlin.String origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Tag) returnType:kotlin.String
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.Tag
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Tag'
-          STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Tag("
-            CONST String type=kotlin.String value="id="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: <root>.Tag declared in <root>.Tag.toString' type=<root>.Tag origin=null
-            CONST String type=kotlin.String value=")"
-    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Tag) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.Tag
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Tag'
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: <root>.Tag declared in <root>.Tag.hashCode' type=<root>.Tag origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Tag, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -109,6 +88,27 @@ FILE fqName:<root> fileName:/recordWithCompanion.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Tag'
           CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Tag) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Tag
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Tag'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.Tag declared in <root>.Tag.hashCode' type=<root>.Tag origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Tag) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Tag
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Tag'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="Tag("
+            CONST String type=kotlin.String value="id="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.Tag declared in <root>.Tag.toString' type=<root>.Tag origin=null
+            CONST String type=kotlin.String value=")"
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

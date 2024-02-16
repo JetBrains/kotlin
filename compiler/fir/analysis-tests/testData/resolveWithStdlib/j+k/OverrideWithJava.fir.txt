@@ -8,7 +8,7 @@ FILE: test.kt
             ^foo this@R|/B|
         }
 
-        public final fun bar(): R|B| {
+        public final override fun bar(): R|B| {
             ^bar this@R|/B|
         }
 

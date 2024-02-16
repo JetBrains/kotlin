@@ -1,4 +1,13 @@
 FILE fqName:<root> fileName:/contructorCall.kt
+  PROPERTY name:test visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:test type:<root>.A visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:<root>.A
+      correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-test> (): <root>.A declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:<root>.A visibility:private [final,static]' type=<root>.A origin=null
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
@@ -18,12 +27,3 @@ FILE fqName:<root> fileName:/contructorCall.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  PROPERTY name:test visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test type:<root>.A visibility:private [final,static]
-      EXPRESSION_BODY
-        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:<root>.A
-      correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test> (): <root>.A declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:<root>.A visibility:private [final,static]' type=<root>.A origin=null

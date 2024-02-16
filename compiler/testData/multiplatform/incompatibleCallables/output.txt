@@ -88,11 +88,11 @@ actual fun f16(s: String = "") {}
                ^^^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleCallables/jvm.kt:28:12: error: 'actual fun f17(s: Array<out String>): Unit' has no corresponding expected declaration
 The following declaration is incompatible because some value parameter is vararg in one declaration and non-vararg in the other:
-    expect fun f17(vararg s: Array<out String>): Unit
+    expect fun f17(vararg s: String): Unit
 
 actual fun f17(s: Array<out String>) {}
            ^^^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:29:12: error: 'actual fun f18(vararg s: Array<out String>): Unit' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:29:12: error: 'actual fun f18(vararg s: String): Unit' has no corresponding expected declaration
 The following declaration is incompatible because some value parameter is vararg in one declaration and non-vararg in the other:
     expect fun f18(s: Array<out String>): Unit
 

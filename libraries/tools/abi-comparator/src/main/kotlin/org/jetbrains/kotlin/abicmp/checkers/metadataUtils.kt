@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.abicmp.checkers
 
-import kotlinx.metadata.*
-import kotlinx.metadata.jvm.KotlinClassMetadata
-import kotlinx.metadata.jvm.getterSignature
-import kotlinx.metadata.jvm.localDelegatedProperties
-import kotlinx.metadata.jvm.signature
+import kotlin.metadata.*
+import kotlin.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.jvm.getterSignature
+import kotlin.metadata.jvm.localDelegatedProperties
+import kotlin.metadata.jvm.signature
 import org.jetbrains.kotlin.abicmp.reports.MetadataPropertyReport
 import org.jetbrains.kotlin.abicmp.tasks.GenericMetadataTask
-import org.jetbrains.kotlin.kotlinp.*
 
 fun loadProperties(container: KmDeclarationContainer) = container.properties.associateBy { it.getterSignature?.toString() ?: it.name }
 
@@ -27,27 +26,6 @@ fun loadLocalDelegatedProperties(kmPackage: KmPackage) =
 
 fun loadLocalDelegatedProperties(clazz: KotlinClassMetadata.Class) =
     clazz.kmClass.localDelegatedProperties.associateBy { it.getterSignature?.toString() ?: it.name }
-
-fun List<KmVersionRequirement>.stringifyRelevantRequirements() =
-    // older versions of requirements are redundant for compiler with version 1.9 or newer
-    filter { it.version.major >= 2 || (it.version.major == 1 && it.version.minor >= 8) }
-        .map(::printVersionRequirement).sorted().joinToString(prefix = "[", postfix = "]")
-
-fun List<KmType>.stringifyTypeListSorted() = map(::printType).sorted().joinToString(prefix = "[", postfix = "]")
-
-fun List<KmTypeParameter>.stringifyTypeParameters() = joinToString(prefix = "<", postfix = ">") { typeParam ->
-    printTypeParameter(
-        typeParam,
-        KotlinpSettings(
-            isVerbose = true,
-            sortDeclarations = true
-        )
-    )
-}
-
-fun List<KmValueParameter>.stringifyValueParameters() = joinToString(prefix = "(", postfix = ")", transform = ::printValueParameter)
-
-fun List<KmAnnotation>.stringifyAnnotations() = joinToString(prefix = "[", postfix = "]", transform = ::renderAnnotation)
 
 inline fun <R, T> checkMetadataMembers(
     metadata1: R,

@@ -1,13 +1,13 @@
 abstract class Base {
+  val lambda: Function0<Any>
+    field = lambda
+    get
+
   constructor(lambda: Function0<Any>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val lambda: Function0<Any>
-    field = lambda
-    get
 
 }
 
@@ -22,3 +22,4 @@ object Test : Base {
   }
 
 }
+

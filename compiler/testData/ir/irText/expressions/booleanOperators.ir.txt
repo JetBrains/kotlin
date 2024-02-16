@@ -11,6 +11,14 @@ FILE fqName:<root> fileName:/booleanOperators.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:test1x visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:a index:0 type:kotlin.Boolean
+    VALUE_PARAMETER name:b index:1 type:kotlin.Boolean
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test1x (a: kotlin.Boolean, b: kotlin.Boolean): kotlin.Boolean declared in <root>'
+        CALL 'public final fun and (other: kotlin.Boolean): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'a: kotlin.Boolean declared in <root>.test1x' type=kotlin.Boolean origin=null
+          other: GET_VAR 'b: kotlin.Boolean declared in <root>.test1x' type=kotlin.Boolean origin=null
   FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:kotlin.Boolean
     VALUE_PARAMETER name:a index:0 type:kotlin.Boolean
     VALUE_PARAMETER name:b index:1 type:kotlin.Boolean
@@ -23,14 +31,6 @@ FILE fqName:<root> fileName:/booleanOperators.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: GET_VAR 'b: kotlin.Boolean declared in <root>.test2' type=kotlin.Boolean origin=null
-  FUN name:test1x visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:kotlin.Boolean
-    VALUE_PARAMETER name:a index:0 type:kotlin.Boolean
-    VALUE_PARAMETER name:b index:1 type:kotlin.Boolean
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1x (a: kotlin.Boolean, b: kotlin.Boolean): kotlin.Boolean declared in <root>'
-        CALL 'public final fun and (other: kotlin.Boolean): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
-          $this: GET_VAR 'a: kotlin.Boolean declared in <root>.test1x' type=kotlin.Boolean origin=null
-          other: GET_VAR 'b: kotlin.Boolean declared in <root>.test1x' type=kotlin.Boolean origin=null
   FUN name:test2x visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:kotlin.Boolean
     VALUE_PARAMETER name:a index:0 type:kotlin.Boolean
     VALUE_PARAMETER name:b index:1 type:kotlin.Boolean

@@ -1,11 +1,6 @@
 FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
   CLASS CLASS name:O modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.O
-    CONSTRUCTOR visibility:public <> (o:kotlin.String) returnType:<root>.O [primary]
-      VALUE_PARAMETER name:o index:0 type:kotlin.String
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:O modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:o visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:o type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
@@ -17,6 +12,11 @@ FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
           RETURN type=kotlin.Nothing from='public final fun <get-o> (): kotlin.String declared in <root>.O'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:o type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.O declared in <root>.O.<get-o>' type=<root>.O origin=null
+    CONSTRUCTOR visibility:public <> (o:kotlin.String) returnType:<root>.O [primary]
+      VALUE_PARAMETER name:o index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:O modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -33,15 +33,6 @@ FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
   CLASS CLASS name:OK modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.OK
     FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.O visibility:private [final]
-    CONSTRUCTOR visibility:public <> ($context_receiver_0:<root>.O, k:kotlin.String) returnType:<root>.OK [primary]
-      VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.O
-      VALUE_PARAMETER name:k index:1 type:kotlin.String
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.O visibility:private [final]' type=kotlin.Unit origin=null
-          receiver: GET_VAR '<this>: <root>.OK declared in <root>.OK' type=<root>.OK origin=null
-          value: GET_VAR '$context_receiver_0: <root>.O declared in <root>.OK.<init>' type=<root>.O origin=null
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:OK modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:k visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:k type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
@@ -69,6 +60,15 @@ FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
           RETURN type=kotlin.Nothing from='public final fun <get-result> (): kotlin.String declared in <root>.OK'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.OK declared in <root>.OK.<get-result>' type=<root>.OK origin=null
+    CONSTRUCTOR visibility:public <> ($context_receiver_0:<root>.O, k:kotlin.String) returnType:<root>.OK [primary]
+      VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.O
+      VALUE_PARAMETER name:k index:1 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.O visibility:private [final]' type=kotlin.Unit origin=null
+          receiver: GET_VAR '<this>: <root>.OK declared in <root>.OK' type=<root>.OK origin=null
+          value: GET_VAR '$context_receiver_0: <root>.O declared in <root>.OK.<init>' type=<root>.O origin=null
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:OK modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

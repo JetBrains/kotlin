@@ -36,7 +36,16 @@ public abstract class AbstractDefaultArgumentsReflectionTest extends CodegenTest
     }
 
     @Override
-    protected void doTest(@NotNull String path) throws IOException {
+    protected void doTest(@NotNull String path) {
+        try {
+            doTestImpl(path);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void doTestImpl(@NotNull String path) throws IOException {
         loadFileByFullPath(path);
 
         File file = new File(path);

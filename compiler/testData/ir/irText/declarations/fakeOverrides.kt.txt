@@ -1,14 +1,3 @@
-interface IFooStr {
-  abstract fun foo(x: String)
-
-}
-
-interface IBar {
-  abstract val bar: Int
-    abstract get
-
-}
-
 abstract class CFoo<T : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
@@ -21,15 +10,27 @@ abstract class CFoo<T : Any?> {
 
 }
 
-class Test1 : CFoo<String>, IFooStr, IBar {
+class Test1 : CFoo<String>, IBar, IFooStr {
+  override val bar: Int
+    field = 42
+    override get
+
   constructor() /* primary */ {
     super/*CFoo*/<String>()
     /* <init>() */
 
   }
 
-  override val bar: Int
-    field = 42
-    override get
+}
+
+interface IBar {
+  abstract val bar: Int
+    abstract get
 
 }
+
+interface IFooStr {
+  abstract fun foo(x: String)
+
+}
+

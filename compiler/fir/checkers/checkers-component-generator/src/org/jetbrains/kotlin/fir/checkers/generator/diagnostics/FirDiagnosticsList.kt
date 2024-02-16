@@ -926,6 +926,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("overridden")
             parameter<Name>("containingClassName")
         }
+        val CANNOT_INFER_VISIBILITY by error<KtDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirCallableSymbol<*>>("callable")
+        }
 
         val MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<Name>("name")
@@ -1732,6 +1735,14 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val OPERATOR_RENAMED_ON_IMPORT by error<KtImportDirective>(PositioningStrategy.IMPORT_LAST_NAME)
+
+        val TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT by deprecationError<KtImportDirective>(
+            LanguageFeature.ProhibitTypealiasAsCallableQualifierInImport,
+            PositioningStrategy.IMPORT_LAST_BUT_ONE_NAME,
+        ) {
+            parameter<Name>("typealiasName")
+            parameter<Name>("originalClassName")
+        }
     }
 
     val SUSPEND by object : DiagnosticGroup("Suspend errors") {

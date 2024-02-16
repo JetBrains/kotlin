@@ -222,7 +222,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         }
         configuration.addJvmClasspathRoots(getLibraryFilesExceptRealRuntime(testServices, configurationKind, module.directives))
 
-        val isIr = module.targetBackend?.isIR == true
+        val isIr = module.targetBackend?.isIR != false
         configuration.put(JVMConfigurationKeys.IR, isIr)
         configuration.putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create())
 

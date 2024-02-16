@@ -364,11 +364,11 @@ abstract class AbstractFirStatusResolveTransformer(
     }
 
     private fun forceResolveStatusesOfClass(regularClass: FirRegularClass) {
-        if (regularClass.origin is FirDeclarationOrigin.Java || regularClass.origin == FirDeclarationOrigin.Precompiled) {
+        if (regularClass.origin != FirDeclarationOrigin.Source) {
             /*
-             * If regular class has no corresponding file then it is platform class,
+             * If regular class has no corresponding file then it is platform or binary class,
              *   so we need to resolve supertypes of this class because they could
-             *   come from kotlin sources
+             *   come from kotlin sources (e.g. for java classes or cases of classpath substitution)
              */
             val statusComputationStatus = statusComputationSession[regularClass]
             if (!statusComputationStatus.requiresComputation) return
@@ -380,7 +380,6 @@ abstract class AbstractFirStatusResolveTransformer(
             return
         }
 
-        if (regularClass.origin != FirDeclarationOrigin.Source) return
         val statusComputationStatus = statusComputationSession[regularClass]
         if (!statusComputationStatus.requiresComputation) return
         if (!resolveClassForSuperType(regularClass)) return

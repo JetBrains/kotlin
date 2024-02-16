@@ -1,4 +1,9 @@
 FILE fqName:<root> fileName:/whenByFloatingPoint.kt
+  FUN name:foo visibility:public modality:FINAL <> (x:kotlin.Double) returnType:kotlin.Double
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo (x: kotlin.Double): kotlin.Double declared in <root>'
+        GET_VAR 'x: kotlin.Double declared in <root>.foo' type=kotlin.Double origin=null
   FUN name:testSimple visibility:public modality:FINAL <> (x:kotlin.Double) returnType:kotlin.Int
     VALUE_PARAMETER name:x index:0 type:kotlin.Double
     BLOCK_BODY
@@ -10,29 +15,6 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
             BRANCH
               if: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val tmp_0: kotlin.Double declared in <root>.testSimple' type=kotlin.Double origin=null
-                arg1: CONST Double type=kotlin.Double value=0.0
-              then: CONST Int type=kotlin.Int value=0
-            BRANCH
-              if: CONST Boolean type=kotlin.Boolean value=true
-              then: CONST Int type=kotlin.Int value=1
-  FUN name:testSmartCastInWhenSubject visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Int
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any
-    BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
-        BRANCH
-          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
-            GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastInWhenSubject' type=kotlin.Any origin=null
-          then: RETURN type=kotlin.Nothing from='public final fun testSmartCastInWhenSubject (x: kotlin.Any): kotlin.Int declared in <root>'
-            CONST Int type=kotlin.Int value=-1
-      RETURN type=kotlin.Nothing from='public final fun testSmartCastInWhenSubject (x: kotlin.Any): kotlin.Int declared in <root>'
-        BLOCK type=kotlin.Int origin=WHEN
-          VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Double [val]
-            TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-              GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastInWhenSubject' type=kotlin.Any origin=null
-          WHEN type=kotlin.Int origin=WHEN
-            BRANCH
-              if: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_1: kotlin.Double declared in <root>.testSmartCastInWhenSubject' type=kotlin.Double origin=null
                 arg1: CONST Double type=kotlin.Double value=0.0
               then: CONST Int type=kotlin.Int value=0
             BRANCH
@@ -50,12 +32,12 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
             CONST Int type=kotlin.Int value=-1
       RETURN type=kotlin.Nothing from='public final fun testSmartCastInWhenCondition (x: kotlin.Double, y: kotlin.Any): kotlin.Int declared in <root>'
         BLOCK type=kotlin.Int origin=WHEN
-          VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Double [val]
+          VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Double [val]
             GET_VAR 'x: kotlin.Double declared in <root>.testSmartCastInWhenCondition' type=kotlin.Double origin=null
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
               if: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_2: kotlin.Double declared in <root>.testSmartCastInWhenCondition' type=kotlin.Double origin=null
+                arg0: GET_VAR 'val tmp_1: kotlin.Double declared in <root>.testSmartCastInWhenCondition' type=kotlin.Double origin=null
                 arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
                   GET_VAR 'y: kotlin.Any declared in <root>.testSmartCastInWhenCondition' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=0
@@ -67,17 +49,40 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testSmartCastInWhenConditionInBranch (x: kotlin.Any): kotlin.Int declared in <root>'
         BLOCK type=kotlin.Int origin=WHEN
-          VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Any [val]
+          VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Any [val]
             GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
-                GET_VAR 'val tmp_3: kotlin.Any declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
+                GET_VAR 'val tmp_2: kotlin.Any declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=-1
             BRANCH
               if: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  GET_VAR 'val tmp_3: kotlin.Any declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
+                  GET_VAR 'val tmp_2: kotlin.Any declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
+                arg1: CONST Double type=kotlin.Double value=0.0
+              then: CONST Int type=kotlin.Int value=0
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=1
+  FUN name:testSmartCastInWhenSubject visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Int
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
+            GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastInWhenSubject' type=kotlin.Any origin=null
+          then: RETURN type=kotlin.Nothing from='public final fun testSmartCastInWhenSubject (x: kotlin.Any): kotlin.Int declared in <root>'
+            CONST Int type=kotlin.Int value=-1
+      RETURN type=kotlin.Nothing from='public final fun testSmartCastInWhenSubject (x: kotlin.Any): kotlin.Int declared in <root>'
+        BLOCK type=kotlin.Int origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Double [val]
+            TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+              GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastInWhenSubject' type=kotlin.Any origin=null
+          WHEN type=kotlin.Int origin=WHEN
+            BRANCH
+              if: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp_3: kotlin.Double declared in <root>.testSmartCastInWhenSubject' type=kotlin.Double origin=null
                 arg1: CONST Double type=kotlin.Double value=0.0
               then: CONST Int type=kotlin.Int value=0
             BRANCH
@@ -115,11 +120,6 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Int type=kotlin.Int value=1
-  FUN name:foo visibility:public modality:FINAL <> (x:kotlin.Double) returnType:kotlin.Double
-    VALUE_PARAMETER name:x index:0 type:kotlin.Double
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo (x: kotlin.Double): kotlin.Double declared in <root>'
-        GET_VAR 'x: kotlin.Double declared in <root>.foo' type=kotlin.Double origin=null
   FUN name:testWithPrematureExitInConditionSubexpression visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Int
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY

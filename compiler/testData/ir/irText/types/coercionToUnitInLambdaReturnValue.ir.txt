@@ -1,7 +1,4 @@
 FILE fqName:<root> fileName:/coercionToUnitInLambdaReturnValue.kt
-  FUN name:use visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Unit>
-    BLOCK_BODY
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use (fn: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -10,3 +7,6 @@ FILE fqName:<root> fileName:/coercionToUnitInLambdaReturnValue.kt
             BLOCK_BODY
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 CONST Int type=kotlin.Int value=42
+  FUN name:use visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Unit>
+    BLOCK_BODY

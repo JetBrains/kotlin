@@ -1,10 +1,13 @@
-class Test {
+class ResourceTable {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+}
+
+class Test {
   var resourceTable: ResourceTable?
     field = null
     get(): ResourceTable? {
@@ -29,17 +32,15 @@ class Test {
     }
     set
 
-  fun getFileData(): String? {
-    return ""
-  }
-
-}
-
-class ResourceTable {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  fun getFileData(): String? {
+    return ""
+  }
+
 }
+

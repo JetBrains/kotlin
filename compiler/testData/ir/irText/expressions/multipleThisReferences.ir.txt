@@ -1,42 +1,22 @@
 FILE fqName:<root> fileName:/multipleThisReferences.kt
-  CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Outer [primary]
+  CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
+    PROPERTY name:y visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'y: kotlin.Int declared in <root>.Host.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.Host'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-y>' type=<root>.Host origin=null
+    CONSTRUCTOR visibility:public <> (y:kotlin.Int) returnType:<root>.Host [primary]
+      VALUE_PARAMETER name:y index:0 type:kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    CLASS CLASS name:Inner modality:OPEN visibility:public [inner] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner
-      CONSTRUCTOR visibility:public <> ($this:<root>.Outer, x:kotlin.Int) returnType:<root>.Outer.Inner [primary]
-        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer
-        VALUE_PARAMETER name:x index:0 type:kotlin.Int
-        BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:OPEN visibility:public [inner] superTypes:[kotlin.Any]'
-      PROPERTY name:x visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
-          EXPRESSION_BODY
-            GET_VAR 'x: kotlin.Int declared in <root>.Outer.Inner.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Outer.Inner) returnType:kotlin.Int
-          correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
-          $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Outer.Inner'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-                receiver: GET_VAR '<this>: <root>.Outer.Inner declared in <root>.Outer.Inner.<get-x>' type=<root>.Outer.Inner origin=null
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-        overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-        overridden:
-          public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-        overridden:
-          public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -50,24 +30,6 @@ FILE fqName:<root> fileName:/multipleThisReferences.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
-    CONSTRUCTOR visibility:public <> (y:kotlin.Int) returnType:<root>.Host [primary]
-      VALUE_PARAMETER name:y index:0 type:kotlin.Int
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    PROPERTY name:y visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]
-        EXPRESSION_BODY
-          GET_VAR 'y: kotlin.Int declared in <root>.Host.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Int
-        correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Host
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.Host'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-y>' type=<root>.Host origin=null
     FUN name:test visibility:public modality:FINAL <> ($this:<root>.Host, $receiver:<root>.Outer) returnType:<root>.Outer.Inner
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       $receiver: VALUE_PARAMETER name:<this> type:<root>.Outer
@@ -76,12 +38,6 @@ FILE fqName:<root> fileName:/multipleThisReferences.kt
           BLOCK type=<root>.Host.test.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host.test.<no name provided>
-              CONSTRUCTOR visibility:public <> () returnType:<root>.Host.test.<no name provided> [primary]
-                BLOCK_BODY
-                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) declared in <root>.Outer.Inner'
-                    $this: GET_VAR '<this>: <root>.Outer declared in <root>.Host.test' type=<root>.Outer origin=null
-                    x: CONST Int type=kotlin.Int value=42
-                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]'
               PROPERTY name:xx visibility:public modality:FINAL [val]
                 FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:private [final]
                   EXPRESSION_BODY
@@ -97,14 +53,12 @@ FILE fqName:<root> fileName:/multipleThisReferences.kt
                     RETURN type=kotlin.Nothing from='public final fun <get-xx> (): kotlin.Int declared in <root>.Host.test.<no name provided>'
                       GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                         receiver: GET_VAR '<this>: <root>.Host.test.<no name provided> declared in <root>.Host.test.<no name provided>.<get-xx>' type=<root>.Host.test.<no name provided> origin=null
-              PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
-                overridden:
-                  public final x: kotlin.Int
-                FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Outer.Inner) returnType:kotlin.Int [fake_override]
-                  correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
-                  overridden:
-                    public final fun <get-x> (): kotlin.Int declared in <root>.Outer.Inner
-                  $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner
+              CONSTRUCTOR visibility:public <> () returnType:<root>.Host.test.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) declared in <root>.Outer.Inner'
+                    $this: GET_VAR '<this>: <root>.Outer declared in <root>.Host.test' type=<root>.Outer origin=null
+                    x: CONST Int type=kotlin.Int value=42
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]'
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                 overridden:
                   public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Outer.Inner
@@ -118,7 +72,53 @@ FILE fqName:<root> fileName:/multipleThisReferences.kt
                 overridden:
                   public open fun toString (): kotlin.String declared in <root>.Outer.Inner
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+              PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
+                overridden:
+                  public final x: kotlin.Int
+                FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Outer.Inner) returnType:kotlin.Int [fake_override]
+                  correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
+                  overridden:
+                    public final fun <get-x> (): kotlin.Int declared in <root>.Outer.Inner
+                  $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner
             CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Host.test.<no name provided>' type=<root>.Host.test.<no name provided> origin=OBJECT_LITERAL
+  CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer
+    CLASS CLASS name:Inner modality:OPEN visibility:public [inner] superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner
+      PROPERTY name:x visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: kotlin.Int declared in <root>.Outer.Inner.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Outer.Inner) returnType:kotlin.Int
+          correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Outer.Inner'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                receiver: GET_VAR '<this>: <root>.Outer.Inner declared in <root>.Outer.Inner.<get-x>' type=<root>.Outer.Inner origin=null
+      CONSTRUCTOR visibility:public <> ($this:<root>.Outer, x:kotlin.Int) returnType:<root>.Outer.Inner [primary]
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer
+        VALUE_PARAMETER name:x index:0 type:kotlin.Int
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:OPEN visibility:public [inner] superTypes:[kotlin.Any]'
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Outer [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

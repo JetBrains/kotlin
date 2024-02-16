@@ -8,3 +8,5 @@ class ConstructorDouble(a: Int) {
     constructor(a: Int, b: Int): this(b)
     constructor(a: Int, b: Int, c: Int): this(c)
 }
+
+class ConstructorFunction(foo: () -> Unit)

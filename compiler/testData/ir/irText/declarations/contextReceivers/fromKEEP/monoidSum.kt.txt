@@ -1,15 +1,19 @@
-interface Semigroup<T : Any?> {
-  abstract infix fun T.combine(other: T): T
-
-}
-
 interface Monoid<T : Any?> : Semigroup<T> {
   abstract val unit: T
     abstract get
 
 }
 
+interface Semigroup<T : Any?> {
+  abstract infix fun T.combine(other: T): T
+
+}
+
 object IntMonoid : Monoid<Int> {
+  override val unit: Int
+    field = 0
+    override get
+
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -20,13 +24,13 @@ object IntMonoid : Monoid<Int> {
     return <this>.plus(other = other)
   }
 
-  override val unit: Int
-    field = 0
-    override get
-
 }
 
 object StringMonoid : Monoid<String> {
+  override val unit: String
+    field = ""
+    override get
+
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -37,17 +41,6 @@ object StringMonoid : Monoid<String> {
     return <this>.plus(other = other)
   }
 
-  override val unit: String
-    field = ""
-    override get
-
-}
-
-fun <T : Any?> List<T>.sum($context_receiver_0: Monoid<T>): T {
-  return <this>.fold<T, T>(initial = $context_receiver_0.<get-unit>(), operation = local fun <anonymous>(acc: T, e: T): T {
-    return ($context_receiver_0, acc).combine(other = e)
-  }
-)
 }
 
 fun box(): String {
@@ -60,3 +53,11 @@ fun box(): String {
   }
 )
 }
+
+fun <T : Any?> List<T>.sum($context_receiver_0: Monoid<T>): T {
+  return <this>.fold<T, T>(initial = $context_receiver_0.<get-unit>(), operation = local fun <anonymous>(acc: T, e: T): T {
+    return ($context_receiver_0, acc).combine(other = e)
+  }
+)
+}
+

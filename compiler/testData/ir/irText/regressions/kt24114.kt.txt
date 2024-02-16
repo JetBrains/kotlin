@@ -2,10 +2,6 @@ fun one(): Int {
   return 1
 }
 
-fun two(): Int {
-  return 2
-}
-
 fun test1(): Int {
   while (true) { // BLOCK
     { // BLOCK
@@ -41,3 +37,8 @@ fun test2(): Int {
     }
   }
 }
+
+fun two(): Int {
+  return 2
+}
+

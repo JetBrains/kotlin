@@ -19,26 +19,26 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib")
 @TestDataPath("$PROJECT_ROOT")
 public class StdLibBasedGetOrBuildFirTestGenerated extends AbstractStdLibBasedGetOrBuildFirTest {
-    @Test
-    public void testAllFilesPresentInGetOrBuildFirForStdLib() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInGetOrBuildFirForStdLib() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("emptyArray.kt")
-    public void testEmptyArray() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/emptyArray.kt");
-    }
+  @Test
+  @TestMetadata("emptyArray.kt")
+  public void testEmptyArray() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/emptyArray.kt");
+  }
 
-    @Test
-    @TestMetadata("flattenArray.kt")
-    public void testFlattenArray() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/flattenArray.kt");
-    }
+  @Test
+  @TestMetadata("flattenArray.kt")
+  public void testFlattenArray() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/flattenArray.kt");
+  }
 
-    @Test
-    @TestMetadata("fromBits.kt")
-    public void testFromBits() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/fromBits.kt");
-    }
+  @Test
+  @TestMetadata("fromBits.kt")
+  public void testFromBits() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/fromBits.kt");
+  }
 }

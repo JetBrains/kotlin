@@ -1,4 +1,10 @@
 FILE fqName:<root> fileName:/kt24804.kt
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CALL 'public final fun run (x: kotlin.Boolean, y: kotlin.Boolean): kotlin.String declared in <root>' type=kotlin.String origin=null
+          x: CONST Boolean type=kotlin.Boolean value=true
+          y: CONST Boolean type=kotlin.Boolean value=true
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Boolean [inline]
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Boolean declared in <root>'
@@ -34,9 +40,3 @@ FILE fqName:<root> fileName:/kt24804.kt
           condition: CALL 'public final fun foo (): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
       RETURN type=kotlin.Nothing from='public final fun run (x: kotlin.Boolean, y: kotlin.Boolean): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CALL 'public final fun run (x: kotlin.Boolean, y: kotlin.Boolean): kotlin.String declared in <root>' type=kotlin.String origin=null
-          x: CONST Boolean type=kotlin.Boolean value=true
-          y: CONST Boolean type=kotlin.Boolean value=true

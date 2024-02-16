@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_STDLIB
 
 class Wrapper(var baseUrl: String)

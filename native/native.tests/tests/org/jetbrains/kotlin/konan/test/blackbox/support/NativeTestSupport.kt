@@ -203,6 +203,7 @@ internal object NativeTestSupport {
         output += computeCustomKlibs(enforcedProperties)
         output += computeTestKind(enforcedProperties)
         output += computeForcedNoopTestRunner(enforcedProperties)
+        output += computeSharedExecutionTestRunner(enforcedProperties)
         output += computeTimeouts(enforcedProperties)
         // Parse annotations of current class, since there's no way to put annotations to upper-level enclosing class
         output += computePipelineType(enforcedProperties, testClass.get())
@@ -319,6 +320,15 @@ internal object NativeTestSupport {
     private fun computeForcedNoopTestRunner(enforcedProperties: EnforcedProperties): ForcedNoopTestRunner =
         ForcedNoopTestRunner(
             ClassLevelProperty.COMPILE_ONLY.readValue(
+                enforcedProperties,
+                String::toBooleanStrictOrNull,
+                default = false
+            )
+        )
+
+    private fun computeSharedExecutionTestRunner(enforcedProperties: EnforcedProperties): SharedExecutionTestRunner =
+        SharedExecutionTestRunner(
+            ClassLevelProperty.SHARED_TEST_EXECUTION.readValue(
                 enforcedProperties,
                 String::toBooleanStrictOrNull,
                 default = false

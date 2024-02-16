@@ -1554,7 +1554,12 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @DisplayName("test FAIL_ON_PROJECT_REPOS using custom repository")
     @GradleTest
     fun testFailOnProjectReposUsingCustomRepo(gradleVersion: GradleVersion) {
-        project("js-project-repos", gradleVersion) {
+        project(
+            "js-project-repos",
+            gradleVersion,
+            // we can remove this line, when the min version of Gradle be at least 8.1
+            dependencyManagement = DependencyManagement.DisabledDependencyManagement
+        ) {
             settingsGradleKts.modify {
                 it + """
                     
@@ -1601,7 +1606,12 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @DisplayName("test FAIL_ON_PROJECT_REPOS no download")
     @GradleTest
     fun testFailOnProjectReposNoDownload(gradleVersion: GradleVersion) {
-        project("js-project-repos", gradleVersion) {
+        project(
+            "js-project-repos",
+            gradleVersion,
+            // we can remove this line, when the min version of Gradle be at least 8.1
+            dependencyManagement = DependencyManagement.DisabledDependencyManagement
+        ) {
             buildGradleKts.modify {
                 it + """
                     

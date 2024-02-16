@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeParameterType
@@ -104,15 +103,13 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
     }
 
     if (fullyExpandedType is KtNonErrorClassType) {
-        val typeName = fullyExpandedType.classId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
-        val typeArguments = translateTypeArgumentsToObjC()
 
         // TODO NOW: create type translation test
-        if (classSymbol?.classKind == KtClassKind.INTERFACE) {
-            return ObjCProtocolType(typeName, classId)
+        return if (classSymbol?.classKind == KtClassKind.INTERFACE) {
+            ObjCProtocolType(fullyExpandedType.objCTypeName, classId)
+        } else {
+            ObjCClassType(fullyExpandedType.objCTypeName, translateTypeArgumentsToObjC(), classId)
         }
-
-        return ObjCClassType(typeName, typeArguments, classId)
     }
 
     if (fullyExpandedType is KtTypeParameterType) {
@@ -135,6 +132,12 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
     return objCErrorType
 }
 
+context(KtAnalysisSession, KtObjCExportSession)
+private val KtNonErrorClassType.objCTypeName: String
+    get() {
+        return getClassOrObjectSymbolByClassId(classId)?.getObjCClassOrProtocolName()?.objCName
+            ?: classId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
+    }
 
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtType.translateTypeArgumentsToObjC(): List<ObjCNonNullReferenceType> {
@@ -155,29 +158,6 @@ internal fun KtType.translateTypeArgumentsToObjC(): List<ObjCNonNullReferenceTyp
             }
         }
     }
-}
-
-context(KtAnalysisSession)
-private fun ObjCNonNullReferenceType.withNullabilityOf(kotlinType: KtType): ObjCReferenceType {
-    return if (kotlinType.isBinaryRepresentationNullable()) {
-        ObjCNullableReferenceType(this)
-    } else {
-        this
-    }
-}
-
-context(KtAnalysisSession)
-private fun KtType.isBinaryRepresentationNullable(): Boolean {
-    /* Convention to match K1 implementation */
-    if (this is KtErrorType) return false
-
-    if (fullyExpandedType.canBeNull) return true
-
-    getInlineTargetTypeOrNull()?.let { inlineTargetType ->
-        if (inlineTargetType.canBeNull) return true
-    }
-
-    return false
 }
 
 

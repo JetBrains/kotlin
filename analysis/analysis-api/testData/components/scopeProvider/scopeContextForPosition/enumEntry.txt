@@ -192,7 +192,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: true
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         modality: FINAL
@@ -485,7 +485,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         modality: FINAL
@@ -513,7 +513,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         modality: FINAL

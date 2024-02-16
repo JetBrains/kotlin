@@ -123,7 +123,7 @@ class NewTestGeneratorImpl(
 
         private fun generate(): String {
             val out = StringBuilder()
-            val p = Printer(out)
+            val p = Printer(out, indentUnit = Printer.TWO_SPACE_INDENT)
 
             val copyright = File("license/COPYRIGHT_HEADER.txt").takeIf { it.exists() }?.readText() ?: ""
             p.println(copyright)

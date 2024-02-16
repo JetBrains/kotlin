@@ -28,33 +28,33 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/fileScopeTest")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModuleFileScopeTestGenerated extends AbstractFileScopeTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInFileScopeTest() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/fileScopeTest"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInFileScopeTest() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/fileScopeTest"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("fileScope.kt")
-    public void testFileScope() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/fileScopeTest/fileScope.kt");
-    }
+  @Test
+  @TestMetadata("fileScope.kt")
+  public void testFileScope() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/fileScopeTest/fileScope.kt");
+  }
 
-    @Test
-    @TestMetadata("simpleFileScope.kt")
-    public void testSimpleFileScope() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/fileScopeTest/simpleFileScope.kt");
-    }
+  @Test
+  @TestMetadata("simpleFileScope.kt")
+  public void testSimpleFileScope() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/fileScopeTest/simpleFileScope.kt");
+  }
 }

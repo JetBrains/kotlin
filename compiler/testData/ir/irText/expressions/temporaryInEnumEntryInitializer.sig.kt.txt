@@ -33,15 +33,15 @@ enum class En : Enum<En> {
     get
 
   // CHECK:
+  //   Mangled name: En.ENTRY
+  //   Public signature: /En.ENTRY|null[0]
+  ENTRY
+
+  // CHECK:
   //   Mangled name: En#<init>(kotlin.String?){}
   //   Public signature: /En.<init>|392868513202821770[0]
   //   Public signature debug description: <init>(kotlin.String?){}
   private constructor(x: String?) /* primary */
-
-  // CHECK:
-  //   Mangled name: En.ENTRY
-  //   Public signature: /En.ENTRY|null[0]
-  ENTRY
 
   // CHECK JVM_IR:
   //   Mangled name: En#valueOf#static(kotlin.String){}En

@@ -1,11 +1,6 @@
 FILE fqName:<root> fileName:/arrayAccessOperators.kt
   CLASS CLASS name:MyContainer modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyContainer
-    CONSTRUCTOR visibility:public <> (s:kotlin.String) returnType:<root>.MyContainer [primary]
-      VALUE_PARAMETER name:s index:0 type:kotlin.String
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyContainer modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:s visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private
         EXPRESSION_BODY
@@ -25,6 +20,11 @@ FILE fqName:<root> fileName:/arrayAccessOperators.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.MyContainer declared in <root>.MyContainer.<set-s>' type=<root>.MyContainer origin=null
             value: GET_VAR '<set-?>: kotlin.String declared in <root>.MyContainer.<set-s>' type=kotlin.String origin=null
+    CONSTRUCTOR visibility:public <> (s:kotlin.String) returnType:<root>.MyContainer [primary]
+      VALUE_PARAMETER name:s index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyContainer modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.MyContainer) returnType:kotlin.String [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.MyContainer
       BLOCK_BODY
@@ -41,27 +41,6 @@ FILE fqName:<root> fileName:/arrayAccessOperators.kt
         RETURN type=kotlin.Nothing from='public final fun copy (s: kotlin.String): <root>.MyContainer declared in <root>.MyContainer'
           CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.MyContainer' type=<root>.MyContainer origin=null
             s: GET_VAR 's: kotlin.String declared in <root>.MyContainer.copy' type=kotlin.String origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.MyContainer) returnType:kotlin.String
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.MyContainer
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.MyContainer'
-          STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="MyContainer("
-            CONST String type=kotlin.String value="s="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: <root>.MyContainer declared in <root>.MyContainer.toString' type=<root>.MyContainer origin=null
-            CONST String type=kotlin.String value=")"
-    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.MyContainer) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.MyContainer
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.MyContainer'
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: <root>.MyContainer declared in <root>.MyContainer.hashCode' type=<root>.MyContainer origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.MyContainer, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -96,6 +75,62 @@ FILE fqName:<root> fileName:/arrayAccessOperators.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyContainer'
           CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.MyContainer) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyContainer
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.MyContainer'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.MyContainer declared in <root>.MyContainer.hashCode' type=<root>.MyContainer origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.MyContainer) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyContainer
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.MyContainer'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="MyContainer("
+            CONST String type=kotlin.String value="s="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.MyContainer declared in <root>.MyContainer.toString' type=<root>.MyContainer origin=null
+            CONST String type=kotlin.String value=")"
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.String origin=null
+          <T>: kotlin.Int
+          <R>: kotlin.String
+          receiver: CONST Int type=kotlin.Int value=42
+          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.Int) returnType:kotlin.String
+              $receiver: VALUE_PARAMETER name:$this$with type:kotlin.Int
+              BLOCK_BODY
+                VAR name:myContainer type:<root>.MyContainer [val]
+                  CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.MyContainer' type=<root>.MyContainer origin=null
+                    s: CONST String type=kotlin.String value="fail"
+                CALL 'public final fun set ($context_receiver_0: kotlin.Int, index: kotlin.Int, value: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+                  $receiver: GET_VAR 'val myContainer: <root>.MyContainer declared in <root>.box.<anonymous>' type=<root>.MyContainer origin=null
+                  $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                  index: CONST Int type=kotlin.Int value=0
+                  value: CONST String type=kotlin.String value="OK"
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
+                  BLOCK type=kotlin.String origin=ELVIS
+                    VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.String? [val]
+                      CALL 'public final fun get ($context_receiver_0: kotlin.Int, index: kotlin.Int): kotlin.String? declared in <root>' type=kotlin.String? origin=GET_ARRAY_ELEMENT
+                        $receiver: GET_VAR 'val myContainer: <root>.MyContainer declared in <root>.box.<anonymous>' type=<root>.MyContainer origin=null
+                        $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                        index: CONST Int type=kotlin.Int value=0
+                    WHEN type=kotlin.String origin=null
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                          arg0: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.box.<anonymous>' type=kotlin.String? origin=null
+                          arg1: CONST Null type=kotlin.Nothing? value=null
+                        then: CONST String type=kotlin.String value="fail"
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.box.<anonymous>' type=kotlin.String? origin=null
   FUN name:get visibility:public modality:FINAL <> ($receiver:<root>.MyContainer, $context_receiver_0:kotlin.Int, index:kotlin.Int) returnType:kotlin.String? [operator]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.MyContainer
@@ -148,38 +183,3 @@ FILE fqName:<root> fileName:/arrayAccessOperators.kt
       CALL 'public final fun <set-s> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.MyContainer' type=kotlin.Unit origin=EQ
         $this: GET_VAR '<this>: <root>.MyContainer declared in <root>.set' type=<root>.MyContainer origin=null
         <set-?>: GET_VAR 'value: kotlin.String declared in <root>.set' type=kotlin.String origin=null
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.String origin=null
-          <T>: kotlin.Int
-          <R>: kotlin.String
-          receiver: CONST Int type=kotlin.Int value=42
-          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.String> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.Int) returnType:kotlin.String
-              $receiver: VALUE_PARAMETER name:$this$with type:kotlin.Int
-              BLOCK_BODY
-                VAR name:myContainer type:<root>.MyContainer [val]
-                  CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.MyContainer' type=<root>.MyContainer origin=null
-                    s: CONST String type=kotlin.String value="fail"
-                CALL 'public final fun set ($context_receiver_0: kotlin.Int, index: kotlin.Int, value: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
-                  $receiver: GET_VAR 'val myContainer: <root>.MyContainer declared in <root>.box.<anonymous>' type=<root>.MyContainer origin=null
-                  $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
-                  index: CONST Int type=kotlin.Int value=0
-                  value: CONST String type=kotlin.String value="OK"
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
-                  BLOCK type=kotlin.String origin=ELVIS
-                    VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.String? [val]
-                      CALL 'public final fun get ($context_receiver_0: kotlin.Int, index: kotlin.Int): kotlin.String? declared in <root>' type=kotlin.String? origin=GET_ARRAY_ELEMENT
-                        $receiver: GET_VAR 'val myContainer: <root>.MyContainer declared in <root>.box.<anonymous>' type=<root>.MyContainer origin=null
-                        $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
-                        index: CONST Int type=kotlin.Int value=0
-                    WHEN type=kotlin.String origin=null
-                      BRANCH
-                        if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                          arg0: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.box.<anonymous>' type=kotlin.String? origin=null
-                          arg1: CONST Null type=kotlin.Nothing? value=null
-                        then: CONST String type=kotlin.String value="fail"
-                      BRANCH
-                        if: CONST Boolean type=kotlin.Boolean value=true
-                        then: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.box.<anonymous>' type=kotlin.String? origin=null

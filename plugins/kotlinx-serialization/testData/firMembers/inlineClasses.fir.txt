@@ -17,14 +17,14 @@ FILE: inlineClasses.kt
         }
 
         public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Foo>| {
-            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Foo|): R|kotlin/Unit|
+            public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Foo|): R|kotlin/Unit|
 
-            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Foo|
+            public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Foo|
 
             public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                 public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+            public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|Foo.$serializer| {
                 super<R|kotlin/Any|>()
@@ -51,14 +51,14 @@ FILE: inlineClasses.kt
         }
 
         public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Holder>| {
-            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Holder|): R|kotlin/Unit|
+            public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Holder|): R|kotlin/Unit|
 
-            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Holder|
+            public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Holder|
 
             public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                 public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+            public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|Holder.$serializer| {
                 super<R|kotlin/Any|>()

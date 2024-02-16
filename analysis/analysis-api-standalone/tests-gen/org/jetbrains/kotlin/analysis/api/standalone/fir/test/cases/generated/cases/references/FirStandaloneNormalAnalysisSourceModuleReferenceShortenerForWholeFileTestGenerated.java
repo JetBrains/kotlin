@@ -28,33 +28,33 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerForWholeFileTestGenerated extends AbstractReferenceShortenerForWholeFileTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInShortenWholeFile() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInShortenWholeFile() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("fileWithKDoc.kt")
-    public void testFileWithKDoc() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/fileWithKDoc.kt");
-    }
+  @Test
+  @TestMetadata("fileWithKDoc.kt")
+  public void testFileWithKDoc() {
+    runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/fileWithKDoc.kt");
+  }
 
-    @Test
-    @TestMetadata("fileWithMultipleDeclarations.kt")
-    public void testFileWithMultipleDeclarations() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/fileWithMultipleDeclarations.kt");
-    }
+  @Test
+  @TestMetadata("fileWithMultipleDeclarations.kt")
+  public void testFileWithMultipleDeclarations() {
+    runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/fileWithMultipleDeclarations.kt");
+  }
 }

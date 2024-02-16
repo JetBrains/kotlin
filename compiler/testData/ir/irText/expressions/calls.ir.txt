@@ -1,10 +1,4 @@
 FILE fqName:<root> fileName:/calls.kt
-  FUN name:foo visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:kotlin.Int
-    VALUE_PARAMETER name:x index:0 type:kotlin.Int
-    VALUE_PARAMETER name:y index:1 type:kotlin.Int
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo (x: kotlin.Int, y: kotlin.Int): kotlin.Int declared in <root>'
-        GET_VAR 'x: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
   FUN name:bar visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.Int
     VALUE_PARAMETER name:x index:0 type:kotlin.Int
     BLOCK_BODY
@@ -12,15 +6,6 @@ FILE fqName:<root> fileName:/calls.kt
         CALL 'public final fun foo (x: kotlin.Int, y: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
           x: GET_VAR 'x: kotlin.Int declared in <root>.bar' type=kotlin.Int origin=null
           y: CONST Int type=kotlin.Int value=1
-  FUN name:qux visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.Int
-    VALUE_PARAMETER name:x index:0 type:kotlin.Int
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun qux (x: kotlin.Int): kotlin.Int declared in <root>'
-        CALL 'public final fun foo (x: kotlin.Int, y: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          x: CALL 'public final fun foo (x: kotlin.Int, y: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-            x: GET_VAR 'x: kotlin.Int declared in <root>.qux' type=kotlin.Int origin=null
-            y: GET_VAR 'x: kotlin.Int declared in <root>.qux' type=kotlin.Int origin=null
-          y: GET_VAR 'x: kotlin.Int declared in <root>.qux' type=kotlin.Int origin=null
   FUN name:ext1 visibility:public modality:FINAL <> ($receiver:kotlin.Int) returnType:kotlin.Int
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
     BLOCK_BODY
@@ -43,3 +28,18 @@ FILE fqName:<root> fileName:/calls.kt
           x: CALL 'public final fun ext1 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
             $receiver: GET_VAR '<this>: kotlin.Int declared in <root>.ext3' type=kotlin.Int origin=null
           y: GET_VAR 'x: kotlin.Int declared in <root>.ext3' type=kotlin.Int origin=null
+  FUN name:foo visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:kotlin.Int
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int
+    VALUE_PARAMETER name:y index:1 type:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo (x: kotlin.Int, y: kotlin.Int): kotlin.Int declared in <root>'
+        GET_VAR 'x: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
+  FUN name:qux visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.Int
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun qux (x: kotlin.Int): kotlin.Int declared in <root>'
+        CALL 'public final fun foo (x: kotlin.Int, y: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+          x: CALL 'public final fun foo (x: kotlin.Int, y: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+            x: GET_VAR 'x: kotlin.Int declared in <root>.qux' type=kotlin.Int origin=null
+            y: GET_VAR 'x: kotlin.Int declared in <root>.qux' type=kotlin.Int origin=null
+          y: GET_VAR 'x: kotlin.Int declared in <root>.qux' type=kotlin.Int origin=null

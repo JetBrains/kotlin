@@ -28,51 +28,51 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCandidates")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisScriptSourceModuleResolveCandidatesTestGenerated extends AbstractResolveCandidatesTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
+  @Test
+  public void testAllFilesPresentInResolveCandidates() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates")
+  @TestDataPath("$PROJECT_ROOT")
+  public class MultipleCandidates {
     @Test
-    public void testAllFilesPresentInResolveCandidates() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    public void testAllFilesPresentInMultipleCandidates() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+  }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates")
-    @TestDataPath("$PROJECT_ROOT")
-    public class MultipleCandidates {
-        @Test
-        public void testAllFilesPresentInMultipleCandidates() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCandidates/noCandidates")
+  @TestDataPath("$PROJECT_ROOT")
+  public class NoCandidates {
+    @Test
+    public void testAllFilesPresentInNoCandidates() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates/noCandidates"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+  }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCandidates/noCandidates")
-    @TestDataPath("$PROJECT_ROOT")
-    public class NoCandidates {
-        @Test
-        public void testAllFilesPresentInNoCandidates() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates/noCandidates"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate")
+  @TestDataPath("$PROJECT_ROOT")
+  public class SingleCandidate {
+    @Test
+    public void testAllFilesPresentInSingleCandidate() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate")
-    @TestDataPath("$PROJECT_ROOT")
-    public class SingleCandidate {
-        @Test
-        public void testAllFilesPresentInSingleCandidate() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
+  }
 }

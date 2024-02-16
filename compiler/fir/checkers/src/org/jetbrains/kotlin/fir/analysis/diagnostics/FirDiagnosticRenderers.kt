@@ -42,7 +42,7 @@ object FirDiagnosticRenderers {
                 propertyAccessorRenderer = null,
                 callArgumentsRenderer = FirCallNoArgumentsRenderer(),
                 modifierRenderer = FirPartialModifierRenderer(),
-                valueParameterRenderer = FirValueParameterRendererNoDefaultValue(),
+                valueParameterRenderer = FirValueParameterRendererForReadability(),
                 declarationRenderer = FirDeclarationRenderer("local "),
                 annotationRenderer = FirAnnotationRendererForReadability(),
                 lineBreakAfterContextReceivers = false,
@@ -205,7 +205,17 @@ object FirDiagnosticRenderers {
     }
 
     val OPTIONAL_SENTENCE = Renderer { it: String? ->
-        if (!it.isNullOrBlank()) " $it." else ""
+        if (!it.isNullOrBlank()) {
+            buildString {
+                append(" ")
+                append(it.trim())
+                if (!endsWith(".")) {
+                    append(".")
+                }
+            }
+        } else {
+            ""
+        }
     }
 
     val FOR_OPTIONAL_OPERATOR = Renderer { it: String? ->

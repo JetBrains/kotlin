@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import junit.framework.TestCase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.fir.FirElement
@@ -19,10 +20,17 @@ import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractFirLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTest() {
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        builder.useDirectives(Directives)
+    }
+
     private val lazyChecker = object : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
             TestCase.assertFalse("${FirLazyBlock::class.qualifiedName} should not present in the tree", element is FirLazyBlock)
@@ -32,6 +40,8 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTes
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        if (Directives.IGNORE_BODY_CALCULATOR in mainModule.directives) return
+
         resolveWithClearCaches(mainFile) { firResolveSession ->
             val session = firResolveSession.useSiteFirSession
             val provider = session.kotlinScopeProvider
@@ -44,6 +54,7 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTes
 
             FirLazyBodiesCalculator.calculateAllLazyExpressionsInFile(laziedFirFile)
             laziedFirFile.accept(lazyChecker)
+            val laziedFirFileDump = FirRenderer().renderElementAsString(laziedFirFile)
 
             val fullFirFile = PsiRawFirBuilder(
                 session,
@@ -51,11 +62,14 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTes
                 bodyBuildingMode = BodyBuildingMode.NORMAL
             ).buildFirFile(mainFile)
 
-            val laziedFirFileDump = FirRenderer().renderElementAsString(laziedFirFile)
             val fullFirFileDump = FirRenderer().renderElementAsString(fullFirFile)
 
-            TestCase.assertEquals(laziedFirFileDump, fullFirFileDump)
+            TestCase.assertEquals(/* expected = */ fullFirFileDump, /* actual = */ laziedFirFileDump)
         }
+    }
+
+    private object Directives : SimpleDirectivesContainer() {
+        val IGNORE_BODY_CALCULATOR by stringDirective("Ignore body calculator")
     }
 }
 
@@ -65,4 +79,8 @@ abstract class AbstractFirSourceLazyBodiesCalculatorTest : AbstractFirLazyBodies
 
 abstract class AbstractFirOutOfContentRootLazyBodiesCalculatorTest : AbstractFirLazyBodiesCalculatorTest() {
     override val configurator = AnalysisApiFirOutOfContentRootTestConfigurator
+}
+
+abstract class AbstractFirScriptLazyBodiesCalculatorTest : AbstractFirLazyBodiesCalculatorTest() {
+    override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
 }

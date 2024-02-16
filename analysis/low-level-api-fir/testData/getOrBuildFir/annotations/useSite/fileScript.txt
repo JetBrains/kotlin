@@ -6,9 +6,9 @@ FIR element rendered:
 @FILE:R|Ann|[Types]()
 
 FIR FILE:
-FILE: [ResolvedTo(IMPORTS)] fileScript.kts
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fileScript.kts
     @FILE:R|Ann|[Types]()
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+    [ResolvedTo(ANNOTATION_ARGUMENTS)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|

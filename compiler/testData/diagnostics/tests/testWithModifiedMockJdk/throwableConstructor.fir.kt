@@ -1,6 +1,10 @@
 // !JDK_KIND: MODIFIED_MOCK_JDK
-abstract class A : Throwable(1.0) {}
+// K2 difference is in accordance with KT-65438 where we defined that members in the "grey list"
+// (i.e. neither explicitly visible nor hidden) are hidden in the declaring class and since constructors are not inheritable,
+// they're always hidden.
+
+abstract class A : <!NONE_APPLICABLE!>Throwable<!>(1.0) {}
 
 fun foo() {
-    Throwable(1.5)
+    <!NONE_APPLICABLE!>Throwable<!>(1.5)
 }

@@ -47,14 +47,14 @@ internal open class KotlinJvmPlugin(
         Kotlin2JvmSourceSetProcessor(tasksProvider, KotlinCompilationInfo(compilation))
 
     override fun apply(project: Project) {
-        @Suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION")
         val target = (project.objects.newInstance(
             KotlinWithJavaTarget::class.java,
             project,
             KotlinPlatformType.jvm,
             targetName,
             {
-                object : HasCompilerOptions<KotlinJvmCompilerOptions> {
+                object : DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> {
                     override val options: KotlinJvmCompilerOptions =
                         project.objects
                             .newInstance(KotlinJvmCompilerOptionsDefault::class.java)

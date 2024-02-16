@@ -19,14 +19,14 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/lazyResolveStdlibSources")
 @TestDataPath("$PROJECT_ROOT")
 public class StdLibSourcesLazyDeclarationResolveTestGenerated extends AbstractStdLibSourcesLazyDeclarationResolveTest {
-    @Test
-    public void testAllFilesPresentInLazyResolveStdlibSources() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveStdlibSources"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInLazyResolveStdlibSources() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveStdlibSources"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("wrappedInt.kt")
-    public void testWrappedInt() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/lazyResolveStdlibSources/wrappedInt.kt");
-    }
+  @Test
+  @TestMetadata("wrappedInt.kt")
+  public void testWrappedInt() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolveStdlibSources/wrappedInt.kt");
+  }
 }

@@ -722,7 +722,7 @@ tasks {
         (coreLibProjects + listOfNotNull(
             ":kotlin-stdlib:samples",
             ":kotlin-test:kotlin-test-js-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
-            ":kotlinx-metadata-jvm",
+            ":kotlin-metadata-jvm",
             ":tools:binary-compatibility-validator",
             ":tools:jdk-api-validator",
         )).forEach {
@@ -901,7 +901,7 @@ tasks {
     }
 
     register("toolsTest") {
-        dependsOn(":tools:kotlinp:test")
+        dependsOn(":tools:kotlinp-jvm:test")
         dependsOn(":native:kotlin-klib-commonizer:test")
         dependsOn(":native:kotlin-klib-commonizer-api:test")
         dependsOn(":kotlin-tooling-core:check")
@@ -976,6 +976,7 @@ tasks {
 
     named("checkBuild") {
         if (kotlinBuildProperties.isTeamcityBuild) {
+            val bootstrapKotlinVersion = bootstrapKotlinVersion
             doFirst {
                 println("##teamcity[setParameter name='bootstrap.kotlin.version' value='$bootstrapKotlinVersion']")
             }

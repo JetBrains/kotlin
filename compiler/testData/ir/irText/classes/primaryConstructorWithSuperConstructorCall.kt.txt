@@ -7,15 +7,6 @@ open class Base {
 
 }
 
-class TestImplicitPrimaryConstructor : Base {
-  constructor() /* primary */ {
-    super/*Base*/()
-    /* <init>() */
-
-  }
-
-}
-
 class TestExplicitPrimaryConstructor : Base {
   constructor() /* primary */ {
     super/*Base*/()
@@ -25,13 +16,16 @@ class TestExplicitPrimaryConstructor : Base {
 
 }
 
-class TestWithDelegatingConstructor : Base {
-  constructor(x: Int, y: Int) /* primary */ {
+class TestImplicitPrimaryConstructor : Base {
+  constructor() /* primary */ {
     super/*Base*/()
     /* <init>() */
 
   }
 
+}
+
+class TestWithDelegatingConstructor : Base {
   val x: Int
     field = x
     get
@@ -44,4 +38,11 @@ class TestWithDelegatingConstructor : Base {
     this/*TestWithDelegatingConstructor*/(x = x, y = 0)
   }
 
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
 }
+

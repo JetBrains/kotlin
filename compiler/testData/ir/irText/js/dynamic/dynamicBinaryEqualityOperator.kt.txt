@@ -2,12 +2,12 @@ fun testEqeq(d: dynamic): Boolean {
   return d == 3
 }
 
-fun testExclEq(d: dynamic): Boolean {
-  return d != 3
-}
-
 fun testEqeqeq(d: dynamic): Boolean {
   return d === 3
+}
+
+fun testExclEq(d: dynamic): Boolean {
+  return d != 3
 }
 
 fun testExclEqeq(d: dynamic): Boolean {

@@ -29,13 +29,6 @@ open enum class A : Enum<A> {
     get
     set
 
-  private constructor(arg: String) {
-    super/*Enum*/<A>()
-    /* <init>() */
-
-    <this>.#prop1 = arg
-  }
-
   private constructor() {
     super/*Enum*/<A>()
     /* <init>() */
@@ -44,20 +37,28 @@ open enum class A : Enum<A> {
     <this>.<set-prop3>(<set-?> = "empty")
   }
 
+  private constructor(arg: String) {
+    super/*Enum*/<A>()
+    /* <init>() */
+
+    <this>.#prop1 = arg
+  }
+
   private constructor(x: Int) {
     this/*A*/(arg = x.toString())
     <this>.<set-prop3>(<set-?> = "int")
   }
 
-  open fun f(): String {
-    return <this>.<get-prop1>() + "#" + <this>.<get-prop2>() + "#" + <this>.<get-prop3>()
-  }
+  fun valueOf(value: String): A /* Synthetic body for ENUM_VALUEOF */
 
   fun values(): Array<A> /* Synthetic body for ENUM_VALUES */
 
-  fun valueOf(value: String): A /* Synthetic body for ENUM_VALUEOF */
+  open fun f(): String {
+    return <this>.<get-prop1>() + "#" + <this>.<get-prop2>() + "#" + <this>.<get-prop3>()
+  }
 
   val entries: EnumEntries<A>
     get(): EnumEntries<A> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

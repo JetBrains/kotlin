@@ -1,10 +1,6 @@
 FILE fqName:<root> fileName:/backingFieldVisibility.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
-    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:a visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -55,19 +51,10 @@ FILE fqName:<root> fileName:/backingFieldVisibility.kt
           RETURN type=kotlin.Nothing from='public final fun <get-d> (): kotlin.Int declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-d>' type=<root>.A origin=null
-    FUN name:rest visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.A
+    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
       BLOCK_BODY
-        VAR name:aI type:kotlin.Int [val]
-          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
-            $this: CALL 'public final fun <get-a> (): kotlin.Number declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-              $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
-            other: CONST Int type=kotlin.Int value=10
-        VAR name:bI type:kotlin.Int [val]
-          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
-            $this: CALL 'public final fun <get-b> (): kotlin.Number declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-              $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
-            other: CONST Int type=kotlin.Int value=20
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -81,6 +68,19 @@ FILE fqName:<root> fileName:/backingFieldVisibility.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:rest visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.A
+      BLOCK_BODY
+        VAR name:aI type:kotlin.Int [val]
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+            $this: CALL 'public final fun <get-a> (): kotlin.Number declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
+            other: CONST Int type=kotlin.Int value=10
+        VAR name:bI type:kotlin.Int [val]
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+            $this: CALL 'public final fun <get-b> (): kotlin.Number declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
+              $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
+            other: CONST Int type=kotlin.Int value=20
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:bA type:kotlin.Int [val]

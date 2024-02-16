@@ -3,10 +3,9 @@
 //   Public signature: /MyEnum|null[0]
 enum class MyEnum : Enum<MyEnum> {
   // CHECK:
-  //   Mangled name: MyEnum#<init>(){}
-  //   Public signature: /MyEnum.<init>|-5645683436151566731[0]
-  //   Public signature debug description: <init>(){}
-  private constructor() /* primary */
+  //   Mangled name: MyEnum.Ok
+  //   Public signature: /MyEnum.Ok|null[0]
+  Ok
 
   // CHECK:
   //   Mangled name: MyEnum.Nope
@@ -14,9 +13,10 @@ enum class MyEnum : Enum<MyEnum> {
   Nope
 
   // CHECK:
-  //   Mangled name: MyEnum.Ok
-  //   Public signature: /MyEnum.Ok|null[0]
-  Ok
+  //   Mangled name: MyEnum#<init>(){}
+  //   Public signature: /MyEnum.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: MyEnum#valueOf#static(kotlin.String){}MyEnum

@@ -1,38 +1,32 @@
 class TestInitVarFromParameter {
+  var x: Int
+    field = x
+    get
+    set
+
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  var x: Int
-    field = x
-    get
-    set
-
 }
 
 class TestInitVarInClass {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   var x: Int
     field = 0
     get
     set
 
-}
-
-class TestInitVarInInitBlock {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+}
+
+class TestInitVarInInitBlock {
   var x: Int
     get
     set
@@ -41,21 +35,27 @@ class TestInitVarInInitBlock {
     <this>.<set-x>(<set-?> = 0)
   }
 
-}
-
-class TestInitVarWithCustomSetter {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+}
+
+class TestInitVarWithCustomSetter {
   var x: Int
     field = 0
     get
     set(value: Int) {
       <this>.#x = value
     }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 

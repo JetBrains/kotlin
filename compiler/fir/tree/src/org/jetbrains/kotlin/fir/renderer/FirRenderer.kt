@@ -78,7 +78,7 @@ class FirRenderer(
             propertyAccessorRenderer = null,
             callArgumentsRenderer = FirCallNoArgumentsRenderer(),
             modifierRenderer = FirPartialModifierRenderer(),
-            valueParameterRenderer = FirValueParameterRendererNoDefaultValue(),
+            valueParameterRenderer = FirValueParameterRendererForReadability(),
             declarationRenderer = FirDeclarationRenderer("local ")
         )
     }

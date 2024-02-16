@@ -1,4 +1,10 @@
 FILE fqName:<root> fileName:/dynamicUnaryOperator.kt
+  FUN name:testExcl visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic
+    VALUE_PARAMETER name:d index:0 type:dynamic
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testExcl (d: dynamic): dynamic declared in <root>'
+        DYN_OP operator=EXCL type=dynamic
+          receiver: GET_VAR 'd: dynamic declared in <root>.testExcl' type=dynamic origin=null
   FUN name:testUnaryMinus visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic
     VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
@@ -11,9 +17,3 @@ FILE fqName:<root> fileName:/dynamicUnaryOperator.kt
       RETURN type=kotlin.Nothing from='public final fun testUnaryPlus (d: dynamic): dynamic declared in <root>'
         DYN_OP operator=UNARY_PLUS type=dynamic
           receiver: GET_VAR 'd: dynamic declared in <root>.testUnaryPlus' type=dynamic origin=null
-  FUN name:testExcl visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic
-    VALUE_PARAMETER name:d index:0 type:dynamic
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testExcl (d: dynamic): dynamic declared in <root>'
-        DYN_OP operator=EXCL type=dynamic
-          receiver: GET_VAR 'd: dynamic declared in <root>.testExcl' type=dynamic origin=null

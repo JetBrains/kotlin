@@ -1,4 +1,2 @@
-    @ExternalObjCClass(binaryName = "_TtC4pod24Pod2") open class Pod2 : Pod1 {
-    @ExternalObjCClass(binaryName = "_TtC4pod24Pod2") open class Pod2Meta : Pod1Meta {
-    var pod2VersionNumber: Double
-    val pod2VersionString: CArrayPointer<UByteVar /* = UByteVarOf<UByte> */> /* = CPointer<UByteVar /* = UByteVarOf<UByte> */> */
+      public final var pod2VersionNumber: kotlin/Double
+      public final val pod2VersionString: kotlinx/cinterop/CPointer<kotlinx/cinterop/UByteVarOf<kotlin/UByte> /* = kotlinx/cinterop/UByteVar^ */> /* = kotlinx/cinterop/CArrayPointer^<kotlinx/cinterop/UByteVarOf<kotlin/UByte> /* = kotlinx/cinterop/UByteVar^ */> */

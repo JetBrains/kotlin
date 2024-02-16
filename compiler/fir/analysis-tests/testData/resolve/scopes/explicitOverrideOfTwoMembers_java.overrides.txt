@@ -4,7 +4,7 @@ C:
 
 D:
   [Java(Source)]: public open field x: R|kotlin/Int| from Java enhancement scope for /D [id: 0]
-  [IntersectionOverride]: public abstract val x: R|kotlin/Int| from Java enhancement scope for /D [id: 0]
+  [IntersectionOverride]: public abstract override val x: R|kotlin/Int| from Java enhancement scope for /D [id: 0]
     [Source]: public abstract val x: R|kotlin/Int| from Use site scope of /A [id: 1]
     [Source]: public abstract val x: R|kotlin/String| from Use site scope of /B [id: 2]
   [Java(Source)]: private open field y: R|kotlin/Int| from Java enhancement scope for /D [id: 0]
@@ -14,7 +14,7 @@ D:
   [Enhancement]: public abstract fun getX(): R|kotlin/Any!| from Java enhancement scope for /D [id: 0]
 
 E:
-  [IntersectionOverride]: public abstract val x: R|kotlin/Int| from Java enhancement scope for /E [id: 0]
+  [IntersectionOverride]: public abstract override val x: R|kotlin/Int| from Java enhancement scope for /E [id: 0]
     [Source]: public abstract val x: R|kotlin/Int| from Use site scope of /A [id: 1]
     [Source]: public abstract val x: R|kotlin/String| from Use site scope of /B [id: 2]
   [Enhancement]: public abstract fun getX(): R|kotlin/Any!| from Java enhancement scope for /E [id: 0]

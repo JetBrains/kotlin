@@ -914,44 +914,6 @@ standaloneTest("testing_stacktrace") {
     }
 }
 
-// Just check that the driver is able to produce runnable binaries.
-tasks.register("driver0", KonanDriverTest) {
-    disabled = isAggressiveGC // No need to test with different GC schedulers
-    useGoldenData = true
-    source = "runtime/basic/driver0.kt"
-}
-
-tasks.register("driver_opt", KonanDriverTest) {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
-        || isAggressiveGC // No need to test with different GC schedulers
-    useGoldenData = true
-    source = "runtime/basic/driver_opt.kt"
-    flags = ["-opt"]
-}
-
-def generateWithSpaceDefFile() {
-    def buildDirectory = project.layout.buildDirectory.get().asFile
-    def mapOption = "--Map \"$buildDirectory/cutom map.map\""
-    if (PlatformInfo.isAppleTarget(project)) {
-        mapOption = "-map \"$buildDirectory/cutom map.map\""
-    } else if (PlatformInfo.isWindowsTarget(project)) {
-        mapOption = "\"-Wl,--Map,$buildDirectory/cutom map.map\""
-    }
-
-    buildDirectory.mkdirs()
-    def file = new File("${buildDirectory}/withSpaces.def")
-    file.write """
-headers = stdio.h "${projectDir}/interop/basics/custom headers/custom.h"
-linkerOpts = $mapOption
----
-
-int customCompare(const char* str1, const char* str2) {
-    return custom_strcmp(str1, str2);
-}
-"""
-    return file.absolutePath
-}
-
 // A helper method to create interop artifacts
 void createInterop(String name, Closure conf) {
     konanArtifacts {
@@ -968,30 +930,6 @@ void createInterop(String name, Closure conf) {
 
 createInterop("sockets") {
     it.defFile 'interop/basics/sockets.def'
-}
-
-createInterop("embedStaticLibraries") {
-    it.defFile 'interop/embedStaticLibraries/embedStaticLibraries.def'
-    it.headers "$projectDir/interop/embedStaticLibraries/embedStaticLibraries.h"
-
-    // Note: also hardcoded in def file.
-    final File libDir = project.layout.buildDirectory.dir("embedStaticLibraries").get().asFile
-
-    it.getByTarget(target.name).configure {
-        doFirst {
-            1.upto(4) {
-                UtilsKt.buildStaticLibrary(
-                        project,
-                        [file("$projectDir/interop/embedStaticLibraries/${it}.c")],
-                        file("$libDir/${it}.a"),
-                        file("$libDir/${it}.objs"),
-                )
-            }
-        }
-    }
-
-    it.extraOpts '-staticLibrary', "1.a"
-    it.extraOpts '-staticLibrary', "2.a"
 }
 
 createInterop("kt43502") {
@@ -1016,22 +954,6 @@ createInterop("leakMemoryWithRunningThread") {
     it.defFile 'interop/leakMemoryWithRunningThread/leakMemory.def'
     it.headers "$projectDir/interop/leakMemoryWithRunningThread/leakMemory.h"
     it.extraOpts "-Xcompile-source", "$projectDir/interop/leakMemoryWithRunningThread/leakMemory.cpp"
-}
-
-createInterop("cppClass") {
-    it.defFile 'interop/cpp/cppClass.def'
-}
-
-createInterop("cppTypes") {
-    it.defFile 'interop/cpp/types.def'
-}
-
-createInterop("cppSkia") {
-    it.defFile 'interop/cpp/skia.def'
-}
-
-createInterop("cppSkiaSignature") {
-    it.defFile 'interop/cpp/skiaSignature.def'
 }
 
 createInterop("workerSignals") {
@@ -1118,10 +1040,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 }
 
-createInterop("withSpaces") {
-    it.defFile generateWithSpaceDefFile()
-}
-
 createInterop("exceptions_throwThroughBridge") {
     it.defFile "interop/exceptions/throwThroughBridge.def"
     it.extraOpts "-Xcompile-source", "$projectDir/interop/exceptions/throwThroughBridgeInterop.cpp"
@@ -1193,20 +1111,6 @@ standaloneTest("interop_objc_allocException") {
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
-interopTest("interop_embedStaticLibraries") {
-    source = "interop/embedStaticLibraries/main.kt"
-    interop = 'embedStaticLibraries'
-}
-
-interopTest("interop_withSpaces") {
-    interop ='withSpaces'
-    source = "interop/basics/withSpaces.kt"
-
-    doLast {
-        assert project.layout.buildDirectory.file("cutom map.map").get().asFile.exists()
-    }
-}
-
 dynamicTest("interop_kt43502") {
     interop = "kt43502"
     source = "interop/kt43502/main.kt"
@@ -1219,34 +1123,6 @@ interopTest("interop_leakMemoryWithRunningThreadChecked") {
     source = "interop/leakMemoryWithRunningThread/checked.kt"
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> s.contains("Cannot run checkers when there are 1 alive runtimes at the shutdown") }
-}
-
-interopTest("interop_cppClass") {
-    disabled = PlatformInfo.isAppleTarget(project) // KT-58422
-    source = "interop/cpp/cppClass.kt"
-    interop = 'cppClass'
-}
-
-interopTest("interop_cppTypes") {
-    disabled = PlatformInfo.isAppleTarget(project) // KT-58422
-    source = "interop/cpp/types.kt"
-    interop = 'cppTypes'
-}
-
-interopTest("interop_cppSkia") {
-    disabled = true // KT-58422
-    source = "interop/cpp/skia.kt"
-    interop = 'cppSkia'
-    useGoldenData = true
-    UtilsKt.dependsOnPlatformLibs(it)
-}
-
-interopTest("interop_cppSkiaSignature") {
-    disabled = PlatformInfo.isAppleTarget(project) // KT-58422
-    source = "interop/cpp/skiaSignature.kt"
-    interop = "cppSkiaSignature"
-    useGoldenData = true
-    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 interopTest("interop_workerSignals") {
@@ -1585,13 +1461,6 @@ standaloneTest("interop_libiconv") {
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
-standaloneTest("interop_zlib") {
-    enabled = (project.testTarget == null)
-    source = "interop/platform_zlib.kt"
-    useGoldenData = true
-    UtilsKt.dependsOnPlatformLibs(it)
-}
-
 standaloneTest("interop_objc_illegal_sharing") {
     disabled = !PlatformInfo.isAppleTarget(project)
     source = "interop/objc/illegal_sharing.kt"
@@ -1742,52 +1611,6 @@ dynamicTest("interop_kotlin_exception_hook") {
     outputChecker = { s -> s.contains("OK. Kotlin unhandled exception hook") }
 }
 
-standaloneTest("library_ir_provider_mismatch") {
-    enabled = !isAggressiveGC // No need to test with different GC schedulers
-
-    String librarySource = "$projectDir/link/ir_providers/library/empty.kt"
-    String invalidManifest = "$projectDir/link/ir_providers/library/manifest.properties"
-    String mainSource = "$projectDir/link/ir_providers/hello.kt"
-
-    File outputDir = project.layout.buildDirectory.dir(name).get().asFile
-    String currentTarget = project.target.name
-
-    inputs.files(librarySource, invalidManifest)
-    inputs.property("target", currentTarget)
-    outputs.dir(outputDir)
-    source = mainSource
-
-    doBeforeBuild {
-        konanc("$librarySource -target $currentTarget -p library -o $outputDir/unsupported_ir_provider/empty.klib -manifest $invalidManifest")
-        konanc("$librarySource -target $currentTarget -p library -o $outputDir/supported_ir_provider/empty.klib ")
-
-        // Should not be successful:
-        boolean failed = false
-        String command = "$mainSource -target $currentTarget -p program -o $outputDir/failed.kexe -l $outputDir/unsupported_ir_provider/empty.klib"
-        try {
-            konanc(command)
-        } catch (Throwable t) {
-            String exceptionText = t.message
-            exceptionText = PlatformInfo.isWindows() ? exceptionText.replace("\\", "/") : exceptionText
-
-            String expectedText = "warning: KLIB resolver: Skipping '$outputDir/unsupported_ir_provider/empty.klib'. The library requires unknown IR provider: UNSUPPORTED"
-            expectedText = PlatformInfo.isWindows() ? expectedText.replace("\\", "/") : expectedText
-
-            if (t instanceof GradleException && exceptionText.contains(expectedText)) {
-                failed = true
-            } else {
-                throw t
-            }
-        }
-
-        if (!failed) {
-            throw new GradleException("Kotlin/Natice invocation is successful but should fail:\n$command")
-        }
-    }
-
-    flags = ["-l", "$outputDir/supported_ir_provider/empty.klib"]
-}
-
 standaloneTest("kt51302") {
     enabled = project.target.name == project.hostName
     source = "serialization/KT-51302/main.kt"
@@ -1824,42 +1647,6 @@ standaloneTest("split_compilation_pipeline") {
     }
     flags = ["-Xread-dependencies-from=${dir}/split_compilation_pipeline.deps", "-Xcompile-from-bitcode=${dir}/tmp/split/out.bc"]
     useGoldenData = true
-}
-
-tasks.register("override_konan_properties0", KonanDriverTest) {
-    disabled = isAggressiveGC // No need to test with different GC schedulers
-    def overrides = PlatformInfo.isWindows()
-            ? '-Xoverride-konan-properties="llvmInlineThreshold=76"'
-            : '-Xoverride-konan-properties=llvmInlineThreshold=76'
-    flags = [
-            "-opt",
-            "-Xverbose-phases=MandatoryBitcodeLLVMPostprocessingPhase",
-            overrides
-    ]
-    compilerMessages = true
-    source = "link/ir_providers/hello.kt"
-    def messages = "inline_threshold: 76\nhello\n"
-    outputChecker = { out ->
-        messages.split("\n")
-                .collect { line -> out.contains(line) }
-                .every { it == true }
-    }
-}
-
-tasks.register("llvm_variant_dev", KonanDriverTest) {
-    // We use clang from Xcode on macOS for apple targets,
-    // so it is hard to reliably detect LLVM variant for these targets.
-    disabled = PlatformInfo.isAppleTarget(project)
-        || isAggressiveGC // No need to test with different GC schedulers
-    flags = [
-            "-Xllvm-variant=dev",
-            "-Xverbose-phases=ObjectFiles"
-    ]
-    compilerMessages = true
-    source = "link/ir_providers/hello.kt"
-    // User LLVM variant has "essentials" suffix.
-    def message = "-essentials"
-    outputChecker = { out -> !out.contains(message) }
 }
 
 /**

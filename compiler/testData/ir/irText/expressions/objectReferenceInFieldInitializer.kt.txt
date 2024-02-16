@@ -1,10 +1,4 @@
 object A {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   private val a: String
     field = "$"
     private get
@@ -17,4 +11,11 @@ object A {
     field = 10000
     private get
 
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+

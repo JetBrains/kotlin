@@ -7,10 +7,39 @@ open annotation class Ann : Annotation {
 
 }
 
+class DFoo : IFoo {
+  private /* final field */ val $$delegate_0: IFoo = d
+  constructor(d: IFoo) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @Ann
+  override fun String.testExtFun() {
+    (<this>.#$$delegate_0, <this>).testExtFun()
+  }
+
+  @Ann
+  override fun testFun() {
+    <this>.#$$delegate_0.testFun()
+  }
+
+  override val String.testExtVal: String
+    override get(): String {
+      return (<this>.#$$delegate_0, <this>).<get-testExtVal>()
+    }
+
+  override val testVal: String
+    override get(): String {
+      return <this>.#$$delegate_0.<get-testVal>()
+    }
+
+}
+
 interface IFoo {
   @Ann
-  abstract val testVal: String
-    abstract get
+  abstract fun String.testExtFun()
 
   @Ann
   abstract fun testFun()
@@ -20,36 +49,8 @@ interface IFoo {
     abstract get
 
   @Ann
-  abstract fun String.testExtFun()
+  abstract val testVal: String
+    abstract get
 
 }
 
-class DFoo : IFoo {
-  constructor(d: IFoo) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  private /* final field */ val $$delegate_0: IFoo = d
-  override val testVal: String
-    override get(): String {
-      return <this>.#$$delegate_0.<get-testVal>()
-    }
-
-  override val String.testExtVal: String
-    override get(): String {
-      return (<this>.#$$delegate_0, <this>).<get-testExtVal>()
-    }
-
-  @Ann
-  override fun testFun() {
-    <this>.#$$delegate_0.testFun()
-  }
-
-  @Ann
-  override fun String.testExtFun() {
-    (<this>.#$$delegate_0, <this>).testExtFun()
-  }
-
-}

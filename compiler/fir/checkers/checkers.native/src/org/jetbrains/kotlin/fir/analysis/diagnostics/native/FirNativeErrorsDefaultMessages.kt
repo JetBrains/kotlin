@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CANNOT_CHECK_FOR_FORWARD_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CONFLICTING_OBJC_OVERLOADS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CONSTRUCTOR_MATCHES_SEVERAL_SUPER_CONSTRUCTORS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.FORW
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_EXACT_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_OBJC_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_OBJC_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_THREAD_LOCAL
@@ -144,6 +146,15 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             CONSTRUCTOR_MATCHES_SEVERAL_SUPER_CONSTRUCTORS,
             "Constructor with ''@{0}'' matches more than one of super constructors.",
             TO_STRING
+        )
+        map.put(
+            CONFLICTING_OBJC_OVERLOADS,
+            "Conflicting overloads: {0}. Add @ObjCSignatureOverride to allow collision for functions inherited from Objective-C.",
+            SYMBOLS
+        )
+        map.put(
+            INAPPLICABLE_OBJC_OVERRIDE,
+            "@ObjCSignatureOverride is only allowed on methods overriding methods from Objective-C.",
         )
     }
 }

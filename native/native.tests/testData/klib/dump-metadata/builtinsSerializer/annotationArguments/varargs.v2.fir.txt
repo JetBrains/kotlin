@@ -1,0 +1,49 @@
+library {
+  // module name: <varargs.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/My
+    // class name: test/ann
+    // class name: test/annotated
+
+    // signature: test/My|null[0]
+    public final enum class test/My : kotlin/Enum<test/My> {
+
+      // signature: test/My.<init>|<init>(){}[0]
+      private constructor()
+
+      // signature: test/My.ALPHA|null[0]
+      ALPHA,
+
+      // signature: test/My.BETA|null[0]
+      BETA,
+
+      // signature: test/My.OMEGA|null[0]
+      OMEGA,
+
+      // has Enum.entries
+    }
+
+    // signature: test/ann|null[0]
+    public final annotation class test/ann : kotlin/Annotation {
+
+      // signature: test/ann.<init>|<init>(kotlin.Array<out|test.My>...){}[0]
+      public constructor(vararg m: test/My /* kotlin/Array<out test/My> */)
+
+      // signature: test/ann.m|{}m[0]
+      public final val m: kotlin/Array<out test/My>
+        // signature: test/ann.m.<get-m>|<get-m>(){}[0]
+        public final get
+    }
+
+    // signature: test/annotated|null[0]
+    @test/ann(m = [test/My.ALPHA, test/My.BETA])
+    public final annotation class test/annotated : kotlin/Annotation {
+
+      // signature: test/annotated.<init>|<init>(){}[0]
+      public constructor()
+    }
+  }
+}

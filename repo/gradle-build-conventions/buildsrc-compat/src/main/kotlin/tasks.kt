@@ -120,6 +120,10 @@ fun Project.projectTest(
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
+    val concurrencyLimitService =
+        project.gradle.sharedServices.registerIfAbsent("concurrencyLimitService", ConcurrencyLimitService::class) {
+            maxParallelUsages = 1
+        }
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
         .orNull?.toBoolean() != true
     if (shouldInstrument) {
@@ -202,6 +206,7 @@ fun Project.projectTest(
             defaultMaxMemoryPerTestWorkerMb
 
         maxHeapSize = "${memoryPerTestProcessMb}m"
+        usesService(concurrencyLimitService)
 
         if (minHeapSizeMb != null) {
             minHeapSize = "${minHeapSizeMb}m"
@@ -216,6 +221,7 @@ fun Project.projectTest(
         environment("PROJECT_BUILD_DIR", project.layout.buildDirectory.get().asFile)
         systemProperty("jps.kotlin.home", project.rootProject.extra["distKotlinHomeDir"]!!)
         systemProperty("org.jetbrains.kotlin.skip.muted.tests", if (project.rootProject.hasProperty("skipMutedTests")) "true" else "false")
+        systemProperty("kotlin.test.update.test.data", if (project.rootProject.hasProperty("kotlin.test.update.test.data")) "true" else "false")
         systemProperty("cacheRedirectorEnabled", project.rootProject.findProperty("cacheRedirectorEnabled")?.toString() ?: "false")
         project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution?.let { n ->
             systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")

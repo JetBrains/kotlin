@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone
 
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEBUG_MODE_ENABLED
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
@@ -12,11 +13,13 @@ import org.jetbrains.kotlin.swiftexport.standalone.builders.buildFunctionBridges
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSwiftModule
 import org.jetbrains.kotlin.swiftexport.standalone.transformation.transformToSwift
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpResultToFiles
+import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Path
 
 public data class SwiftExportConfig(
-    val settings: Map<String, String>,
-    val logger: SwiftExportLogger,
+    val settings: Map<String, String> = emptyMap(),
+    val logger: SwiftExportLogger = createDummyLogger(),
+    val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath)
 ) {
     public companion object {
         public const val DEBUG_MODE_ENABLED: String = "DEBUG_MODE_ENABLED"
@@ -73,18 +76,25 @@ public fun createDummyLogger(): SwiftExportLogger = object : SwiftExportLogger {
  */
 public fun runSwiftExport(
     input: SwiftExportInput,
-    config: SwiftExportConfig = SwiftExportConfig(emptyMap(), createDummyLogger()),
+    config: SwiftExportConfig = SwiftExportConfig(),
     output: SwiftExportOutput,
 ) {
     val isDebugModeEnabled = config.settings.containsKey(DEBUG_MODE_ENABLED)
     val bridgeModuleName = config.settings.getOrElse(BRIDGE_MODULE_NAME) {
-        config.logger.report(SwiftExportLogger.Severity.Warning,
-                             "Bridging header is not set. Using $DEFAULT_BRIDGE_MODULE_NAME instead")
+        config.logger.report(
+            SwiftExportLogger.Severity.Warning,
+            "Bridging header is not set. Using $DEFAULT_BRIDGE_MODULE_NAME instead"
+        )
         DEFAULT_BRIDGE_MODULE_NAME
     }
 
 
-    val module = buildSwiftModule(input, isDebugModeEnabled, bridgeModuleName)
+    val module = buildSwiftModule(
+        input,
+        config.distribution,
+        isDebugModeEnabled,
+        bridgeModuleName
+    )
         .transformToSwift()
     val bridgeRequests = module.buildFunctionBridges()
     module.dumpResultToFiles(bridgeRequests, output)

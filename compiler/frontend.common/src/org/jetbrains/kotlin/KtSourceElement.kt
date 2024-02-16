@@ -309,6 +309,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
 
     // For it.functionFromAny() calls on a stub type
     object CastToAnyForStubTypes : KtFakeSourceElementKind()
+
+    // For plugin-generated things
+    object PluginGenerated : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {

@@ -62,12 +62,16 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     protected boolean withForeignAnnotations() { return false; }
 
-    protected void doTestCompiledJava(@NotNull String javaFileName) throws Exception {
-        doTestCompiledJava(javaFileName, COMPARATOR_CONFIGURATION);
+    protected void doTestCompiledJava(@NotNull String javaFileName) {
+        try {
+            doTestCompiledJava(javaFileName, COMPARATOR_CONFIGURATION);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // Java-Kotlin dependencies are not supported in this method for simplicity
-    protected void doTestCompiledJavaAndKotlin(@NotNull String expectedFileName) throws Exception {
+    protected void doTestCompiledJavaAndKotlin(@NotNull String expectedFileName) {
         File expectedFile = new File(expectedFileName);
         File sourcesDir = new File(expectedFileName.replaceFirst("\\.txt$", ""));
 
@@ -110,23 +114,37 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         return Collections.emptyList();
     }
 
-    protected void doTestCompiledJavaIncludeObjectMethods(@NotNull String javaFileName) throws Exception {
+    protected void doTestCompiledJavaIncludeObjectMethods(@NotNull String javaFileName) {
         doTestCompiledJava(javaFileName, RECURSIVE.renderDeclarationsFromOtherModules(true));
     }
 
-    protected void doTestCompiledKotlin(@NotNull String ktFileName) throws Exception {
+    protected void doTestCompiledKotlin(@NotNull String ktFileName) {
         doTestCompiledKotlin(ktFileName, ConfigurationKind.JDK_ONLY, false);
     }
 
-    protected void doTestCompiledKotlinWithTypeTable(@NotNull String ktFileName) throws Exception {
+    protected void doTestCompiledKotlinWithTypeTable(@NotNull String ktFileName) {
         doTestCompiledKotlin(ktFileName, ConfigurationKind.JDK_ONLY, true);
     }
 
-    protected void doTestCompiledKotlinWithStdlib(@NotNull String ktFileName) throws Exception {
-        doTestCompiledKotlin(ktFileName, ConfigurationKind.ALL, false);
+    protected void doTestCompiledKotlinWithStdlib(@NotNull String ktFileName) {
+        try {
+            doTestCompiledKotlin(ktFileName, ConfigurationKind.ALL, false);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void doTestCompiledKotlin(
+            @NotNull String ktFileName, @NotNull ConfigurationKind configurationKind, boolean useTypeTableInSerializer
+    ) {
+        try {
+            doTestCompiledKotlinImpl(ktFileName, configurationKind, useTypeTableInSerializer);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void doTestCompiledKotlinImpl(
             @NotNull String ktFileName, @NotNull ConfigurationKind configurationKind, boolean useTypeTableInSerializer
     ) throws Exception {
         File ktFile = new File(ktFileName);
@@ -200,7 +218,16 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     protected void updateConfiguration(CompilerConfiguration configuration) {}
 
-    protected void doTestJavaAgainstKotlin(String expectedFileName) throws Exception {
+    protected void doTestJavaAgainstKotlin(String expectedFileName) {
+        try {
+            doTestJavaAgainstKotlinImpl(expectedFileName);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void doTestJavaAgainstKotlinImpl(String expectedFileName) throws Exception {
         File expectedFile = new File(expectedFileName);
         File sourcesDir = new File(expectedFileName.replaceFirst("\\.txt$", ""));
 
@@ -225,8 +252,16 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         checkJavaPackage(expectedFile, packageView, result.getBindingContext(), COMPARATOR_CONFIGURATION);
     }
 
+    protected void doTestKotlinAgainstCompiledJavaWithKotlin(@NotNull String expectedFileName) {
+        try {
+            doTestKotlinAgainstCompiledJavaWithKotlinImpl(expectedFileName);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     // TODO: add more tests on inherited parameter names, but currently impossible because of KT-4509
-    protected void doTestKotlinAgainstCompiledJavaWithKotlin(@NotNull String expectedFileName) throws Exception {
+    private void doTestKotlinAgainstCompiledJavaWithKotlinImpl(@NotNull String expectedFileName) throws Exception {
         File kotlinSrc = new File(expectedFileName);
         File librarySrc = new File(expectedFileName.replaceFirst("\\.kt$", ""));
         File expectedFile = new File(expectedFileName.replaceFirst("\\.kt$", ".txt"));
@@ -263,33 +298,43 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         return TestJdkKind.MOCK_JDK;
     }
 
-    protected void doTestSourceJava(@NotNull String javaFileName) throws Exception {
-        File originalJavaFile = new File(javaFileName);
-        File expectedFile = getTxtFile(javaFileName);
+    protected void doTestSourceJava(@NotNull String javaFileName) {
+        try {
+            File originalJavaFile = new File(javaFileName);
+            File expectedFile = getTxtFile(javaFileName);
 
-        File testPackageDir = new File(tmpdir, "test");
-        assertTrue(testPackageDir.mkdir());
-        FileUtil.copy(originalJavaFile, new File(testPackageDir, originalJavaFile.getName()));
+            File testPackageDir = new File(tmpdir, "test");
+            assertTrue(testPackageDir.mkdir());
+            FileUtil.copy(originalJavaFile, new File(testPackageDir, originalJavaFile.getName()));
 
-        Directives directives = KotlinTestUtils.parseDirectives(FileUtil.loadFile(originalJavaFile));
-        LanguageVersionSettings languageVersionSettings = parseLanguageVersionSettings(directives);
+            Directives directives = KotlinTestUtils.parseDirectives(FileUtil.loadFile(originalJavaFile));
+            LanguageVersionSettings languageVersionSettings = parseLanguageVersionSettings(directives);
 
-        Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = loadTestPackageAndBindingContextFromJavaRoot(
-                tmpdir, getTestRootDisposable(), getJdkKind(), ConfigurationKind.JDK_ONLY, false,
-                false, useJavacWrapper(), withForeignAnnotations(), languageVersionSettings);
+            Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = loadTestPackageAndBindingContextFromJavaRoot(
+                    tmpdir, getTestRootDisposable(), getJdkKind(), ConfigurationKind.JDK_ONLY, false,
+                    false, useJavacWrapper(), withForeignAnnotations(), languageVersionSettings);
 
-        checkJavaPackage(
-                expectedFile, javaPackageAndContext.first, javaPackageAndContext.second,
-                COMPARATOR_CONFIGURATION.withValidationStrategy(errorTypesAllowed())
-        );
+            checkJavaPackage(
+                    expectedFile, javaPackageAndContext.first, javaPackageAndContext.second,
+                    COMPARATOR_CONFIGURATION.withValidationStrategy(errorTypesAllowed())
+            );
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void doTestCompiledJava(@NotNull String javaFileName, Configuration configuration) throws Exception {
+    private void doTestCompiledJava(@NotNull String javaFileName, Configuration configuration) {
         File srcDir = new File(tmpdir, "src");
         File compiledDir = new File(tmpdir, "compiled");
         assertTrue(srcDir.mkdir());
         assertTrue(compiledDir.mkdir());
-        String fileContent = FileUtil.loadFile(new File(javaFileName));
+        String fileContent;
+        try {
+            fileContent = FileUtil.loadFile(new File(javaFileName));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         List<File> srcFiles = TestFiles.createTestFiles(
                 new File(javaFileName).getName(), fileContent,
@@ -335,11 +380,15 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
             @NotNull File outDir,
             @NotNull ConfigurationKind configurationKind,
             @Nullable LanguageVersionSettings explicitLanguageVersionSettings
-    ) throws IOException {
-        compileJavaWithAnnotationsJar(javaFiles, outDir, getAdditionalJavacArgs(), getJdkHomeForJavac(), withForeignAnnotations());
-        return loadTestPackageAndBindingContextFromJavaRoot(outDir, getTestRootDisposable(), getJdkKind(), configurationKind, true,
-                                                            usePsiClassFilesReading(), useJavacWrapper(), withForeignAnnotations(), explicitLanguageVersionSettings,
-                                                            getExtraClasspath(), this::configureEnvironment);
+    ) {
+        try {
+            compileJavaWithAnnotationsJar(javaFiles, outDir, getAdditionalJavacArgs(), getJdkHomeForJavac(), withForeignAnnotations());
+            return loadTestPackageAndBindingContextFromJavaRoot(outDir, getTestRootDisposable(), getJdkKind(), configurationKind, true,
+                                                                usePsiClassFilesReading(), useJavacWrapper(), withForeignAnnotations(), explicitLanguageVersionSettings,
+                                                                getExtraClasspath(), this::configureEnvironment);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected List<String> getAdditionalJavacArgs() {

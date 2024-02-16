@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -70,11 +71,15 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
     }
 
     private fun buildCommonCompilerOptions(module: TestModule): List<String> = buildList {
-        module.directives[LanguageSettingsDirectives.API_VERSION].firstOrNull()?.let { apiVersion ->
+        module.directives.singleOrZeroValue(LanguageSettingsDirectives.API_VERSION)?.let { apiVersion ->
             addAll(listOf(CommonCompilerArguments::apiVersion.cliArgument, apiVersion.versionString))
         }
 
-        module.directives[LanguageSettingsDirectives.LANGUAGE].firstOrNull()?.let {
+        module.directives.singleOrZeroValue(LanguageSettingsDirectives.LANGUAGE_VERSION)?.let { languageVersion ->
+            addAll(listOf(CommonCompilerArguments::languageVersion.cliArgument, languageVersion.versionString))
+        }
+
+        module.directives.singleOrZeroValue(LanguageSettingsDirectives.LANGUAGE)?.let {
             add("-XXLanguage:$it")
         }
 

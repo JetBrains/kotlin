@@ -28,71 +28,71 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisScriptSourceModuleResolveCallTestGenerated extends AbstractResolveCallTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
+  @Test
+  public void testAllFilesPresentInResolveCall() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/assignments")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Assignments {
     @Test
-    public void testAllFilesPresentInResolveCall() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    public void testAllFilesPresentInAssignments() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/assignments"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+  }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/assignments")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Assignments {
-        @Test
-        public void testAllFilesPresentInAssignments() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/assignments"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode")
+  @TestDataPath("$PROJECT_ROOT")
+  public class InvalidCode {
+    @Test
+    public void testAllFilesPresentInInvalidCode() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+  }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode")
-    @TestDataPath("$PROJECT_ROOT")
-    public class InvalidCode {
-        @Test
-        public void testAllFilesPresentInInvalidCode() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects")
+  @TestDataPath("$PROJECT_ROOT")
+  public class InvokeOnObjects {
+    @Test
+    public void testAllFilesPresentInInvokeOnObjects() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+  }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects")
-    @TestDataPath("$PROJECT_ROOT")
-    public class InvokeOnObjects {
-        @Test
-        public void testAllFilesPresentInInvokeOnObjects() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls")
+  @TestDataPath("$PROJECT_ROOT")
+  public class NonCalls {
+    @Test
+    public void testAllFilesPresentInNonCalls() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+  }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls")
-    @TestDataPath("$PROJECT_ROOT")
-    public class NonCalls {
-        @Test
-        public void testAllFilesPresentInNonCalls() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/withTestCompilerPluginEnabled")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WithTestCompilerPluginEnabled {
+    @Test
+    public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/withTestCompilerPluginEnabled")
-    @TestDataPath("$PROJECT_ROOT")
-    public class WithTestCompilerPluginEnabled {
-        @Test
-        public void testAllFilesPresentInWithTestCompilerPluginEnabled() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
+  }
 }

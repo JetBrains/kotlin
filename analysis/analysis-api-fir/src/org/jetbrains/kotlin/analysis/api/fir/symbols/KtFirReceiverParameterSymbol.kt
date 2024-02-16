@@ -31,7 +31,7 @@ internal class KtFirReceiverParameterSymbol(
     val analysisSession: KtFirAnalysisSession,
 ) : KtReceiverParameterSymbol(), KtLifetimeOwner {
     override val token: KtLifetimeToken get() = analysisSession.token
-    override val psi: PsiElement? = withValidityAssertion{ firSymbol.fir.receiverParameter?.typeRef?.psi }
+    override val psi: PsiElement? = withValidityAssertion { firSymbol.fir.receiverParameter?.typeRef?.psi }
 
     init {
         requireWithAttachment(firSymbol.fir.receiverParameter != null, { "${firSymbol::class} doesn't have an extension receiver." }) {
@@ -58,4 +58,11 @@ internal class KtFirReceiverParameterSymbol(
     override val annotationsList: KtAnnotationsList by cached {
         KtFirAnnotationListForReceiverParameter.create(firSymbol, builder = analysisSession.firSymbolBuilder)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other is KtFirReceiverParameterSymbol && this.firSymbol == other.firSymbol
+    }
+
+    override fun hashCode(): Int = 31 * firSymbol.hashCode()
 }

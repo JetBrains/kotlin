@@ -47,17 +47,14 @@ import java.lang.annotation.Retention
 
 abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
 
-    @Throws(IOException::class)
     protected fun doTestWithJavac(ktFilePath: String) {
         doTest(ktFilePath, true)
     }
 
-    @Throws(IOException::class)
     protected fun doTestWithoutJavac(ktFilePath: String) {
         doTest(ktFilePath, false)
     }
 
-    @Throws(IOException::class)
     protected open fun doTest(ktFilePath: String, useJavac: Boolean) {
         Assert.assertTrue(ktFilePath.endsWith(".kt"))
         val ktFile = File(ktFilePath)

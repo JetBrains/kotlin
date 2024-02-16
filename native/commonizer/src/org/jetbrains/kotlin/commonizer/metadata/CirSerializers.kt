@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.commonizer.metadata
 
-import kotlinx.metadata.*
-import kotlinx.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.*
+import kotlin.metadata.*
+import kotlin.metadata.internal.common.KmModuleFragment
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.metadata.TypeAliasExpansion.*
 import org.jetbrains.kotlin.commonizer.utils.DEFAULT_SETTER_VALUE_NAME

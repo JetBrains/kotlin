@@ -20,228 +20,228 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/boxWasmJsInterop")
 @TestDataPath("$PROJECT_ROOT")
 public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodegenInteropTest {
+  @Test
+  public void testAllFilesPresentInBoxWasmJsInterop() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+  }
+
+  @Test
+  @TestMetadata("callingWasmDirectly.kt")
+  public void testCallingWasmDirectly() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/callingWasmDirectly.kt");
+  }
+
+  @Test
+  @TestMetadata("defaultValues.kt")
+  public void testDefaultValues() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/defaultValues.kt");
+  }
+
+  @Test
+  @TestMetadata("externalTypeOperators.kt")
+  public void testExternalTypeOperators() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/externalTypeOperators.kt");
+  }
+
+  @Test
+  @TestMetadata("externals.kt")
+  public void testExternals() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/externals.kt");
+  }
+
+  @Test
+  @TestMetadata("externalsWithUnsigned.kt")
+  public void testExternalsWithUnsigned() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/externalsWithUnsigned.kt");
+  }
+
+  @Test
+  @TestMetadata("functionTypes.kt")
+  public void testFunctionTypes() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/functionTypes.kt");
+  }
+
+  @Test
+  @TestMetadata("imperativeWrapperInitialised.kt")
+  public void testImperativeWrapperInitialised() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/imperativeWrapperInitialised.kt");
+  }
+
+  @Test
+  @TestMetadata("imperativeWrapperUninitialised.kt")
+  public void testImperativeWrapperUninitialised() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/imperativeWrapperUninitialised.kt");
+  }
+
+  @Test
+  @TestMetadata("jsCode.kt")
+  public void testJsCode() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsCode.kt");
+  }
+
+  @Test
+  @TestMetadata("jsExport.kt")
+  public void testJsExport() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsExport.kt");
+  }
+
+  @Test
+  @TestMetadata("jsModule.kt")
+  public void testJsModule() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsModule.kt");
+  }
+
+  @Test
+  @TestMetadata("jsModuleWithQualifier.kt")
+  public void testJsModuleWithQualifier() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsModuleWithQualifier.kt");
+  }
+
+  @Test
+  @TestMetadata("jsQualifier.kt")
+  public void testJsQualifier() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsQualifier.kt");
+  }
+
+  @Test
+  @TestMetadata("jsToKotlinAdapters.kt")
+  public void testJsToKotlinAdapters() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsToKotlinAdapters.kt");
+  }
+
+  @Test
+  @TestMetadata("jsTypes.kt")
+  public void testJsTypes() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsTypes.kt");
+  }
+
+  @Test
+  @TestMetadata("kotlinToJsAdapters.kt")
+  public void testKotlinToJsAdapters() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/kotlinToJsAdapters.kt");
+  }
+
+  @Test
+  @TestMetadata("kt59082.kt")
+  public void testKt59082() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/kt59082.kt");
+  }
+
+  @Test
+  @TestMetadata("kt59084.kt")
+  public void testKt59084() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/kt59084.kt");
+  }
+
+  @Test
+  @TestMetadata("lambdaAdapterNameClash.kt")
+  public void testLambdaAdapterNameClash() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/lambdaAdapterNameClash.kt");
+  }
+
+  @Test
+  @TestMetadata("longStrings.kt")
+  public void testLongStrings() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/longStrings.kt");
+  }
+
+  @Test
+  @TestMetadata("nameClash.kt")
+  public void testNameClash() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nameClash.kt");
+  }
+
+  @Test
+  @TestMetadata("noExceptions.kt")
+  public void testNoExceptions() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/noExceptions.kt");
+  }
+
+  @Test
+  @TestMetadata("nullableExternRefs.kt")
+  public void testNullableExternRefs() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nullableExternRefs.kt");
+  }
+
+  @Test
+  @TestMetadata("types.kt")
+  public void testTypes() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/types.kt");
+  }
+
+  @Test
+  @TestMetadata("vararg.kt")
+  public void testVararg() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/vararg.kt");
+  }
+
+  @Test
+  @TestMetadata("wasmExport.kt")
+  public void testWasmExport() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/wasmExport.kt");
+  }
+
+  @Test
+  @TestMetadata("wasmImport.kt")
+  public void testWasmImport() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/wasmImport.kt");
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeScriptDeclarations {
     @Test
-    public void testAllFilesPresentInBoxWasmJsInterop() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+    public void testAllFilesPresentInTypeScriptDeclarations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
     }
 
     @Test
-    @TestMetadata("callingWasmDirectly.kt")
-    public void testCallingWasmDirectly() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/callingWasmDirectly.kt");
+    @TestMetadata("externalDeclarations.kt")
+    public void testExternalDeclarations() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/externalDeclarations.kt");
     }
 
     @Test
-    @TestMetadata("defaultValues.kt")
-    public void testDefaultValues() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/defaultValues.kt");
+    @TestMetadata("generics.kt")
+    public void testGenerics() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/generics.kt");
     }
 
     @Test
-    @TestMetadata("externalTypeOperators.kt")
-    public void testExternalTypeOperators() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/externalTypeOperators.kt");
+    @TestMetadata("jsPrimitives.kt")
+    public void testJsPrimitives() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/jsPrimitives.kt");
     }
 
     @Test
-    @TestMetadata("externals.kt")
-    public void testExternals() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/externals.kt");
+    @TestMetadata("nullableJsPrimitives.kt")
+    public void testNullableJsPrimitives() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/nullableJsPrimitives.kt");
     }
 
     @Test
-    @TestMetadata("externalsWithUnsigned.kt")
-    public void testExternalsWithUnsigned() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/externalsWithUnsigned.kt");
+    @TestMetadata("nullablePrimitives.kt")
+    public void testNullablePrimitives() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/nullablePrimitives.kt");
     }
 
     @Test
-    @TestMetadata("functionTypes.kt")
-    public void testFunctionTypes() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/functionTypes.kt");
+    @TestMetadata("nullableUnisnged.kt")
+    public void testNullableUnisnged() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/nullableUnisnged.kt");
     }
 
     @Test
-    @TestMetadata("imperativeWrapperInitialised.kt")
-    public void testImperativeWrapperInitialised() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/imperativeWrapperInitialised.kt");
+    @TestMetadata("primitives.kt")
+    public void testPrimitives() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/primitives.kt");
     }
 
     @Test
-    @TestMetadata("imperativeWrapperUninitialised.kt")
-    public void testImperativeWrapperUninitialised() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/imperativeWrapperUninitialised.kt");
+    @TestMetadata("unisnged.kt")
+    public void testUnisnged() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/unisnged.kt");
     }
-
-    @Test
-    @TestMetadata("jsCode.kt")
-    public void testJsCode() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/jsCode.kt");
-    }
-
-    @Test
-    @TestMetadata("jsExport.kt")
-    public void testJsExport() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/jsExport.kt");
-    }
-
-    @Test
-    @TestMetadata("jsModule.kt")
-    public void testJsModule() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/jsModule.kt");
-    }
-
-    @Test
-    @TestMetadata("jsModuleWithQualifier.kt")
-    public void testJsModuleWithQualifier() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/jsModuleWithQualifier.kt");
-    }
-
-    @Test
-    @TestMetadata("jsQualifier.kt")
-    public void testJsQualifier() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/jsQualifier.kt");
-    }
-
-    @Test
-    @TestMetadata("jsToKotlinAdapters.kt")
-    public void testJsToKotlinAdapters() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/jsToKotlinAdapters.kt");
-    }
-
-    @Test
-    @TestMetadata("jsTypes.kt")
-    public void testJsTypes() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/jsTypes.kt");
-    }
-
-    @Test
-    @TestMetadata("kotlinToJsAdapters.kt")
-    public void testKotlinToJsAdapters() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/kotlinToJsAdapters.kt");
-    }
-
-    @Test
-    @TestMetadata("kt59082.kt")
-    public void testKt59082() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/kt59082.kt");
-    }
-
-    @Test
-    @TestMetadata("kt59084.kt")
-    public void testKt59084() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/kt59084.kt");
-    }
-
-    @Test
-    @TestMetadata("lambdaAdapterNameClash.kt")
-    public void testLambdaAdapterNameClash() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/lambdaAdapterNameClash.kt");
-    }
-
-    @Test
-    @TestMetadata("longStrings.kt")
-    public void testLongStrings() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/longStrings.kt");
-    }
-
-    @Test
-    @TestMetadata("nameClash.kt")
-    public void testNameClash() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/nameClash.kt");
-    }
-
-    @Test
-    @TestMetadata("noExceptions.kt")
-    public void testNoExceptions() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/noExceptions.kt");
-    }
-
-    @Test
-    @TestMetadata("nullableExternRefs.kt")
-    public void testNullableExternRefs() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/nullableExternRefs.kt");
-    }
-
-    @Test
-    @TestMetadata("types.kt")
-    public void testTypes() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/types.kt");
-    }
-
-    @Test
-    @TestMetadata("vararg.kt")
-    public void testVararg() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/vararg.kt");
-    }
-
-    @Test
-    @TestMetadata("wasmExport.kt")
-    public void testWasmExport() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/wasmExport.kt");
-    }
-
-    @Test
-    @TestMetadata("wasmImport.kt")
-    public void testWasmImport() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/wasmImport.kt");
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations")
-    @TestDataPath("$PROJECT_ROOT")
-    public class TypeScriptDeclarations {
-        @Test
-        public void testAllFilesPresentInTypeScriptDeclarations() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
-        }
-
-        @Test
-        @TestMetadata("externalDeclarations.kt")
-        public void testExternalDeclarations() throws Exception {
-            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/externalDeclarations.kt");
-        }
-
-        @Test
-        @TestMetadata("generics.kt")
-        public void testGenerics() throws Exception {
-            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/generics.kt");
-        }
-
-        @Test
-        @TestMetadata("jsPrimitives.kt")
-        public void testJsPrimitives() throws Exception {
-            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/jsPrimitives.kt");
-        }
-
-        @Test
-        @TestMetadata("nullableJsPrimitives.kt")
-        public void testNullableJsPrimitives() throws Exception {
-            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/nullableJsPrimitives.kt");
-        }
-
-        @Test
-        @TestMetadata("nullablePrimitives.kt")
-        public void testNullablePrimitives() throws Exception {
-            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/nullablePrimitives.kt");
-        }
-
-        @Test
-        @TestMetadata("nullableUnisnged.kt")
-        public void testNullableUnisnged() throws Exception {
-            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/nullableUnisnged.kt");
-        }
-
-        @Test
-        @TestMetadata("primitives.kt")
-        public void testPrimitives() throws Exception {
-            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/primitives.kt");
-        }
-
-        @Test
-        @TestMetadata("unisnged.kt")
-        public void testUnisnged() throws Exception {
-            runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/unisnged.kt");
-        }
-    }
+  }
 }

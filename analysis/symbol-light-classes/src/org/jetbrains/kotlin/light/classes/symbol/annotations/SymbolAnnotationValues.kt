@@ -114,6 +114,6 @@ internal class SymbolPsiLiteral(
     override fun getValue(): Any? = psiLiteral.value
     override fun getText(): String = psiLiteral.text
     override fun getType(): PsiType? = psiLiteral.type
-    override fun getReference(): PsiReference? = psiLiteral.reference
-    override fun getReferences(): Array<out PsiReference> = psiLiteral.references
+    override fun getReference(): PsiReference? = references.firstOrNull()
+    override fun getReferences(): Array<out PsiReference> = kotlinOrigin?.references ?: PsiReference.EMPTY_ARRAY
 }

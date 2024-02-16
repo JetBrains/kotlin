@@ -1,60 +1,4 @@
 FILE fqName:<root> fileName:/partialSam.kt
-  CLASS INTERFACE name:Fn modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Fn<T of <root>.Fn, R of <root>.Fn>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false
-    FUN name:run visibility:public modality:ABSTRACT <> ($this:<root>.Fn<T of <root>.Fn, R of <root>.Fn>, s:kotlin.String, i:kotlin.Int, t:T of <root>.Fn) returnType:R of <root>.Fn
-      $this: VALUE_PARAMETER name:<this> type:<root>.Fn<T of <root>.Fn, R of <root>.Fn>
-      VALUE_PARAMETER name:s index:0 type:kotlin.String
-      VALUE_PARAMETER name:i index:1 type:kotlin.Int
-      VALUE_PARAMETER name:t index:2 type:T of <root>.Fn
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:J modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.J
-    CONSTRUCTOR visibility:public <> () returnType:<root>.J [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:J modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:runConversion visibility:public modality:FINAL <> ($this:<root>.J, f1:<root>.Fn<kotlin.String, kotlin.Int>, f2:<root>.Fn<kotlin.Int, kotlin.String>) returnType:kotlin.Int
-      $this: VALUE_PARAMETER name:<this> type:<root>.J
-      VALUE_PARAMETER name:f1 index:0 type:<root>.Fn<kotlin.String, kotlin.Int>
-      VALUE_PARAMETER name:f2 index:1 type:<root>.Fn<kotlin.Int, kotlin.String>
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun runConversion (f1: <root>.Fn<kotlin.String, kotlin.Int>, f2: <root>.Fn<kotlin.Int, kotlin.String>): kotlin.Int declared in <root>.J'
-          CALL 'public abstract fun run (s: kotlin.String, i: kotlin.Int, t: T of <root>.Fn): R of <root>.Fn declared in <root>.Fn' type=kotlin.Int origin=null
-            $this: GET_VAR 'f1: <root>.Fn<kotlin.String, kotlin.Int> declared in <root>.J.runConversion' type=<root>.Fn<kotlin.String, kotlin.Int> origin=null
-            s: CONST String type=kotlin.String value="Bar"
-            i: CONST Int type=kotlin.Int value=1
-            t: CALL 'public abstract fun run (s: kotlin.String, i: kotlin.Int, t: T of <root>.Fn): R of <root>.Fn declared in <root>.Fn' type=kotlin.String origin=null
-              $this: GET_VAR 'f2: <root>.Fn<kotlin.Int, kotlin.String> declared in <root>.J.runConversion' type=<root>.Fn<kotlin.Int, kotlin.String> origin=null
-              s: CONST String type=kotlin.String value="Foo"
-              i: CONST Int type=kotlin.Int value=42
-              t: CONST Int type=kotlin.Int value=239
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:fsi visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:fsi type:<root>.Fn<kotlin.String, kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
@@ -65,16 +9,6 @@ FILE fqName:<root> fileName:/partialSam.kt
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.String, kotlin.Int>]'
-            FUN name:run visibility:public modality:OPEN <> ($this:<root>.fsi.<no name provided>, s:kotlin.String, i:kotlin.Int, t:kotlin.String) returnType:kotlin.Int
-              overridden:
-                public abstract fun run (s: kotlin.String, i: kotlin.Int, t: T of <root>.Fn): R of <root>.Fn declared in <root>.Fn
-              $this: VALUE_PARAMETER name:<this> type:<root>.fsi.<no name provided>
-              VALUE_PARAMETER name:s index:0 type:kotlin.String
-              VALUE_PARAMETER name:i index:1 type:kotlin.Int
-              VALUE_PARAMETER name:t index:2 type:kotlin.String
-              BLOCK_BODY
-                RETURN type=kotlin.Nothing from='public open fun run (s: kotlin.String, i: kotlin.Int, t: kotlin.String): kotlin.Int declared in <root>.fsi.<no name provided>'
-                  CONST Int type=kotlin.Int value=1
             FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
               overridden:
                 public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Fn
@@ -88,6 +22,16 @@ FILE fqName:<root> fileName:/partialSam.kt
               overridden:
                 public open fun toString (): kotlin.String declared in <root>.Fn
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+            FUN name:run visibility:public modality:OPEN <> ($this:<root>.fsi.<no name provided>, s:kotlin.String, i:kotlin.Int, t:kotlin.String) returnType:kotlin.Int
+              overridden:
+                public abstract fun run (s: kotlin.String, i: kotlin.Int, t: T of <root>.Fn): R of <root>.Fn declared in <root>.Fn
+              $this: VALUE_PARAMETER name:<this> type:<root>.fsi.<no name provided>
+              VALUE_PARAMETER name:s index:0 type:kotlin.String
+              VALUE_PARAMETER name:i index:1 type:kotlin.Int
+              VALUE_PARAMETER name:t index:2 type:kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='public open fun run (s: kotlin.String, i: kotlin.Int, t: kotlin.String): kotlin.Int declared in <root>.fsi.<no name provided>'
+                  CONST Int type=kotlin.Int value=1
           CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.fsi.<no name provided>' type=<root>.fsi.<no name provided> origin=OBJECT_LITERAL
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fsi> visibility:public modality:FINAL <> () returnType:<root>.Fn<kotlin.String, kotlin.Int>
       correspondingProperty: PROPERTY name:fsi visibility:public modality:FINAL [val]
@@ -104,16 +48,6 @@ FILE fqName:<root> fileName:/partialSam.kt
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.Int, kotlin.String>]'
-            FUN name:run visibility:public modality:OPEN <> ($this:<root>.fis.<no name provided>, s:kotlin.String, i:kotlin.Int, t:kotlin.Int) returnType:kotlin.String
-              overridden:
-                public abstract fun run (s: kotlin.String, i: kotlin.Int, t: T of <root>.Fn): R of <root>.Fn declared in <root>.Fn
-              $this: VALUE_PARAMETER name:<this> type:<root>.fis.<no name provided>
-              VALUE_PARAMETER name:s index:0 type:kotlin.String
-              VALUE_PARAMETER name:i index:1 type:kotlin.Int
-              VALUE_PARAMETER name:t index:2 type:kotlin.Int
-              BLOCK_BODY
-                RETURN type=kotlin.Nothing from='public open fun run (s: kotlin.String, i: kotlin.Int, t: kotlin.Int): kotlin.String declared in <root>.fis.<no name provided>'
-                  CONST String type=kotlin.String value=""
             FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
               overridden:
                 public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Fn
@@ -127,12 +61,78 @@ FILE fqName:<root> fileName:/partialSam.kt
               overridden:
                 public open fun toString (): kotlin.String declared in <root>.Fn
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+            FUN name:run visibility:public modality:OPEN <> ($this:<root>.fis.<no name provided>, s:kotlin.String, i:kotlin.Int, t:kotlin.Int) returnType:kotlin.String
+              overridden:
+                public abstract fun run (s: kotlin.String, i: kotlin.Int, t: T of <root>.Fn): R of <root>.Fn declared in <root>.Fn
+              $this: VALUE_PARAMETER name:<this> type:<root>.fis.<no name provided>
+              VALUE_PARAMETER name:s index:0 type:kotlin.String
+              VALUE_PARAMETER name:i index:1 type:kotlin.Int
+              VALUE_PARAMETER name:t index:2 type:kotlin.Int
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='public open fun run (s: kotlin.String, i: kotlin.Int, t: kotlin.Int): kotlin.String declared in <root>.fis.<no name provided>'
+                  CONST String type=kotlin.String value=""
           CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.fis.<no name provided>' type=<root>.fis.<no name provided> origin=OBJECT_LITERAL
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fis> visibility:public modality:FINAL <> () returnType:<root>.Fn<kotlin.Int, kotlin.String>
       correspondingProperty: PROPERTY name:fis visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-fis> (): <root>.Fn<kotlin.Int, kotlin.String> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fis type:<root>.Fn<kotlin.Int, kotlin.String> visibility:private [final,static]' type=<root>.Fn<kotlin.Int, kotlin.String> origin=null
+  CLASS CLASS name:J modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.J
+    CONSTRUCTOR visibility:public <> () returnType:<root>.J [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:J modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:runConversion visibility:public modality:FINAL <> ($this:<root>.J, f1:<root>.Fn<kotlin.String, kotlin.Int>, f2:<root>.Fn<kotlin.Int, kotlin.String>) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:<root>.J
+      VALUE_PARAMETER name:f1 index:0 type:<root>.Fn<kotlin.String, kotlin.Int>
+      VALUE_PARAMETER name:f2 index:1 type:<root>.Fn<kotlin.Int, kotlin.String>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun runConversion (f1: <root>.Fn<kotlin.String, kotlin.Int>, f2: <root>.Fn<kotlin.Int, kotlin.String>): kotlin.Int declared in <root>.J'
+          CALL 'public abstract fun run (s: kotlin.String, i: kotlin.Int, t: T of <root>.Fn): R of <root>.Fn declared in <root>.Fn' type=kotlin.Int origin=null
+            $this: GET_VAR 'f1: <root>.Fn<kotlin.String, kotlin.Int> declared in <root>.J.runConversion' type=<root>.Fn<kotlin.String, kotlin.Int> origin=null
+            s: CONST String type=kotlin.String value="Bar"
+            i: CONST Int type=kotlin.Int value=1
+            t: CALL 'public abstract fun run (s: kotlin.String, i: kotlin.Int, t: T of <root>.Fn): R of <root>.Fn declared in <root>.Fn' type=kotlin.String origin=null
+              $this: GET_VAR 'f2: <root>.Fn<kotlin.Int, kotlin.String> declared in <root>.J.runConversion' type=<root>.Fn<kotlin.Int, kotlin.String> origin=null
+              s: CONST String type=kotlin.String value="Foo"
+              i: CONST Int type=kotlin.Int value=42
+              t: CONST Int type=kotlin.Int value=239
+  CLASS INTERFACE name:Fn modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Fn<T of <root>.Fn, R of <root>.Fn>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:run visibility:public modality:ABSTRACT <> ($this:<root>.Fn<T of <root>.Fn, R of <root>.Fn>, s:kotlin.String, i:kotlin.Int, t:T of <root>.Fn) returnType:R of <root>.Fn
+      $this: VALUE_PARAMETER name:<this> type:<root>.Fn<T of <root>.Fn, R of <root>.Fn>
+      VALUE_PARAMETER name:s index:0 type:kotlin.String
+      VALUE_PARAMETER name:i index:1 type:kotlin.Int
+      VALUE_PARAMETER name:t index:2 type:T of <root>.Fn
   FUN name:test visibility:public modality:FINAL <> (j:<root>.J) returnType:kotlin.Unit
     VALUE_PARAMETER name:j index:0 type:<root>.J
     BLOCK_BODY

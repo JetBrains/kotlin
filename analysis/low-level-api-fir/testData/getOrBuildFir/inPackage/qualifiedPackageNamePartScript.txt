@@ -6,7 +6,7 @@ FIR element rendered:
 package a.b.c
 
 FIR FILE:
-FILE: [ResolvedTo(IMPORTS)] qualifiedPackageNamePartScript.kts
+FILE: [ResolvedTo(RAW_FIR)] qualifiedPackageNamePartScript.kts
     package a.b.c
 
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)

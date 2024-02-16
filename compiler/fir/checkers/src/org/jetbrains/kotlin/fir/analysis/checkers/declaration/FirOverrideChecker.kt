@@ -12,24 +12,27 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.*
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirDeprecationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.Experimentality
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
-import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.overridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.CallToPotentiallyHiddenSymbolResult.VisibleWithDeprecation
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
+import org.jetbrains.kotlin.fir.scopes.processAllFunctions
+import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.scopes.retrieveDirectOverriddenOf
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -40,6 +43,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 
@@ -127,10 +132,24 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
 
         val firTypeScope = declaration.unsubstitutedScope(context)
 
-        for (it in declaration.declarations) {
-            if (it is FirSimpleFunction || it is FirProperty) {
-                val callable = it as FirCallableDeclaration
-                checkMember(callable.symbol, declaration, reporter, typeCheckerState, firTypeScope, context)
+        // Types from substitution overrides may not be compatible with the types before substitution due to variance.
+        // For example, there is `Enum<E>::getDeclaringClass()` that returns `Class<E>`, and we may create a SO
+        // `MyEnum::getDeclaringClass()` returning `Class<MyEnum>`, but `Class<T>` is invariant w.r.t. `T`.
+        // Or we can also create a substitution override for a final function.
+        // Since substitution overrides are allowed to be incorrect overrides, they are skipped below.
+
+        // Other kinds of fake overrides may also be incorrect, but not to that extent, so we can
+        // check them more granularly. See the relevant comments.
+
+        firTypeScope.processAllProperties {
+            if (it.containingClassLookupTag() == declaration.symbol.toLookupTag() && !it.isSubstitutionOverride) {
+                checkMember(it, declaration, reporter, typeCheckerState, firTypeScope, context)
+            }
+        }
+
+        firTypeScope.processAllFunctions {
+            if (it.containingClassLookupTag() == declaration.symbol.toLookupTag() && !it.isSubstitutionOverride) {
+                checkMember(it, declaration, reporter, typeCheckerState, firTypeScope, context)
             }
         }
     }
@@ -159,6 +178,16 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         overriddenSymbols: List<FirCallableSymbol<*>>,
         context: CheckerContext
     ) {
+        if (visibility == Visibilities.Unknown) {
+            // MANY_*_NOT_IMPLEMENTED implies CANNOT_INFER_VISIBILITY as per KT-63741
+            val isManyNotImplementedDiagnosticReported = overriddenSymbols.count { !it.isAbstract } != 1
+            val isSimpleToReasonAboutSituation = overriddenSymbols.none { it.isIntersectionOverride }
+            if (!(isManyNotImplementedDiagnosticReported && isSimpleToReasonAboutSituation)) {
+                reporter.reportOn(source, FirErrors.CANNOT_INFER_VISIBILITY, this, context)
+            }
+            return
+        }
+
         if (overriddenSymbols.isEmpty()) return
         val visibilities = overriddenSymbols.map {
             it to it.visibility
@@ -221,7 +250,8 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
     private fun FirCallableSymbol<*>.checkDeprecation(
         reporter: DiagnosticReporter,
         overriddenSymbols: List<FirCallableSymbol<*>>,
-        context: CheckerContext
+        context: CheckerContext,
+        firTypeScope: FirTypeScope,
     ) {
         val ownDeprecation = this.getDeprecation(context.session.languageVersionSettings)
         if (ownDeprecation == null || ownDeprecation.isNotEmpty()) return
@@ -233,6 +263,24 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
                 ?: continue
             reporter.reportOn(source, FirErrors.OVERRIDE_DEPRECATION, overriddenSymbol, deprecationFromOverriddenSymbol, context)
             return
+        }
+
+        if (this is FirNamedFunctionSymbol) {
+            val callableName = this.name.asString()
+
+            if (callableName in FirDeprecationChecker.DeprecatedOverrideOfHiddenReplacements) {
+                firTypeScope.processOverriddenFunctions(this) {
+                    if (it.hiddenStatusOfCall(isSuperCall = false, isCallToOverride = true) == VisibleWithDeprecation) {
+                        val message = FirDeprecationChecker.getDeprecatedOverrideOfHiddenMessage(callableName)
+                        val deprecationInfo =
+                            SimpleDeprecationInfo(DeprecationLevelValue.WARNING, propagatesToOverrides = false, message)
+                        reporter.reportOn(source, FirErrors.OVERRIDE_DEPRECATION, it, deprecationInfo, context)
+                        return@processOverriddenFunctions ProcessorAction.STOP
+                    }
+
+                    ProcessorAction.NEXT
+                }
+            }
         }
     }
 
@@ -268,8 +316,9 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
     ) {
         val overriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(member)
         val hasOverrideKeyword = member.hasModifier(KtTokens.OVERRIDE_KEYWORD)
+        val isOverride = member.isOverride && (member.origin != FirDeclarationOrigin.Source || hasOverrideKeyword)
 
-        if (!member.isOverride || !hasOverrideKeyword) {
+        if (!isOverride) {
             if (overriddenMemberSymbols.isEmpty() ||
                 context.session.overridesBackwardCompatibilityHelper.overrideCanBeOmitted(overriddenMemberSymbols, context)
             ) {
@@ -277,23 +326,6 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
             }
             val kind = member.source?.kind
             // Only report if the current member has real source or it's a member property declared inside the primary constructor.
-
-            if (kind is KtFakeSourceElementKind.DataClassGeneratedMembers) {
-                overriddenMemberSymbols.find { it.isFinal }?.let { base ->
-                    reporter.reportOn(
-                        containingClass.source,
-                        FirErrors.DATA_CLASS_OVERRIDE_CONFLICT,
-                        member,
-                        base,
-                        context
-                    )
-                }
-                if (member.name == StandardNames.DATA_CLASS_COPY) {
-                    member.checkDataClassCopy(reporter, overriddenMemberSymbols, containingClass, context)
-                }
-                return
-            }
-
             if (kind !is KtRealSourceElementKind && kind !is KtFakeSourceElementKind.PropertyFromParameter) return
 
             val visibilityChecker = context.session.visibilityChecker
@@ -323,6 +355,22 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
             return
         }
 
+        if (member.source?.kind is KtFakeSourceElementKind.DataClassGeneratedMembers) {
+            overriddenMemberSymbols.find { it.isFinal }?.let { base ->
+                reporter.reportOn(
+                    containingClass.source,
+                    FirErrors.DATA_CLASS_OVERRIDE_CONFLICT,
+                    member,
+                    base,
+                    context
+                )
+            }
+            if (member.name == StandardNames.DATA_CLASS_COPY) {
+                member.checkDataClassCopy(reporter, overriddenMemberSymbols, containingClass, context)
+            }
+            return
+        }
+
         if (overriddenMemberSymbols.isEmpty()) {
             reporter.reportNothingToOverride(member, context)
             return
@@ -330,11 +378,18 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
 
         checkOverriddenExperimentalities(member, overriddenMemberSymbols, context, reporter)
 
-        checkModality(overriddenMemberSymbols)?.let {
-            reporter.reportOverridingFinalMember(member, it, context)
+        // The compiler may generate an intersection override for a case where in the resulting
+        // JVM bytecode there would be no override (a superclass implicitly overrides a function from a superinterface).
+        // The superclass function may be final, which would render the IO invalid.
+        // Delegated are handled by `OVERRIDING_FINAL_MEMBER_BY_DELEGATION`
+        if (!member.isIntersectionOverride && !member.isDelegated) {
+            checkModality(overriddenMemberSymbols)?.let {
+                reporter.reportOverridingFinalMember(member, it, context)
+            }
         }
 
-        if (member is FirPropertySymbol) {
+        // Delegated members are checked by `VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION`
+        if (member is FirPropertySymbol && !member.isDelegated) {
             member.checkMutability(overriddenMemberSymbols)?.let {
                 reporter.reportVarOverriddenByVal(member, it, context)
             }
@@ -342,10 +397,19 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
 
         member.checkVisibility(containingClass, reporter, overriddenMemberSymbols, context)
 
-        member.checkDeprecation(reporter, overriddenMemberSymbols, context)
+        if (member.origin == FirDeclarationOrigin.Source) {
+            member.checkDeprecation(reporter, overriddenMemberSymbols, context, firTypeScope)
+        }
 
-        if (member is FirFunctionSymbol) {
+        // Data class members are already checked by `DATA_CLASS_OVERRIDE_DEFAULT_VALUES`
+        if (member is FirFunctionSymbol && member.origin != FirDeclarationOrigin.Synthetic.DataClassMember) {
             member.checkDefaultValues(reporter, context)
+        }
+
+        // These cases are checked separately by diagnostics like
+        // `RETURN_TYPE_MISMATCH_ON_INHERITANCE`
+        if (member.isIntersectionOverride || member.isDelegated) {
+            return
         }
 
         val restriction = member.checkReturnType(

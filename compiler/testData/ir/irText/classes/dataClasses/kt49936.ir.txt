@@ -1,11 +1,6 @@
 FILE fqName:<root> fileName:/kt49936.kt
   CLASS CLASS name:A modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.A [primary]
-      VALUE_PARAMETER name:x index:0 type:kotlin.Int
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -17,14 +12,11 @@ FILE fqName:<root> fileName:/kt49936.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-x>' type=<root>.A origin=null
-    PROPERTY name:x visibility:public modality:FINAL [val]
-      FUN name:<get-x> visibility:public modality:FINAL <> ($this:<root>.A, $receiver:kotlin.String) returnType:kotlin.String
-        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.A
-        $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.String declared in <root>.A'
-            GET_VAR '<this>: kotlin.String declared in <root>.A.<get-x>' type=kotlin.String origin=null
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.A [primary]
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
@@ -41,27 +33,6 @@ FILE fqName:<root> fileName:/kt49936.kt
         RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Int): <root>.A declared in <root>.A'
           CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) declared in <root>.A' type=<root>.A origin=null
             x: GET_VAR 'x: kotlin.Int declared in <root>.A.copy' type=kotlin.Int origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.String
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.A
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.A'
-          STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="A("
-            CONST String type=kotlin.String value="x="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.toString' type=<root>.A origin=null
-            CONST String type=kotlin.String value=")"
-    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.A
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.A'
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.hashCode' type=<root>.A origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.A, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -96,3 +67,32 @@ FILE fqName:<root> fileName:/kt49936.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A'
           CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.A
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.A'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.hashCode' type=<root>.A origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.A
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.A'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="A("
+            CONST String type=kotlin.String value="x="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.toString' type=<root>.A origin=null
+            CONST String type=kotlin.String value=")"
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FUN name:<get-x> visibility:public modality:FINAL <> ($this:<root>.A, $receiver:kotlin.String) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.String declared in <root>.A'
+            GET_VAR '<this>: kotlin.String declared in <root>.A.<get-x>' type=kotlin.String origin=null

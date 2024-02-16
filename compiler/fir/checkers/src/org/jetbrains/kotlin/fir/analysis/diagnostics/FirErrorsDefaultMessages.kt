@@ -124,6 +124,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_BE_IMPORTE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_CHECK_FOR_ERASED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_INFER_PARAMETER_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_INFER_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_OVERRIDE_INVISIBLE_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT
@@ -611,6 +612,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.THROWABLE_TYPE_MI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOO_MANY_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOPLEVEL_TYPEALIASES_ONLY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANSION_DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANSION_DEPRECATION_ERROR
@@ -1651,6 +1653,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             DECLARATION_NAME,
             TO_STRING
         )
+        map.put(
+            CANNOT_INFER_VISIBILITY,
+            "Cannot infer visibility for ''{0}''. Please specify it explicitly",
+            DECLARATION_NAME,
+        )
 
         map.put(
             ABSTRACT_MEMBER_NOT_IMPLEMENTED,
@@ -2511,6 +2518,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             TO_STRING
         )
         map.put(OPERATOR_RENAMED_ON_IMPORT, "Operator renamed to a different operator on import.")
+        map.put(
+            TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT,
+            "Cannot use typealias ''{0}'' as a callable qualifier in import. " +
+                    "Use original class ''{1}'' instead or rewrite calls with ''{0}'' as a qualifier. " +
+                    "See https://youtrack.jetbrains.com/issue/KT-64431.",
+            NAME, NAME
+        )
 
         // Suspend
         map.put(

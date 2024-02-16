@@ -1,3 +1,16 @@
+class C {
+  val c: Int
+    field = 42
+    get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
 class Param {
   constructor() /* primary */ {
     super/*Any*/()
@@ -7,29 +20,16 @@ class Param {
 
 }
 
-class C {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val c: Int
-    field = 42
-    get
-
-}
-
 class R {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val r: Int
     field = 42
     get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
@@ -97,3 +97,4 @@ fun test() {
   }
 )
 }
+

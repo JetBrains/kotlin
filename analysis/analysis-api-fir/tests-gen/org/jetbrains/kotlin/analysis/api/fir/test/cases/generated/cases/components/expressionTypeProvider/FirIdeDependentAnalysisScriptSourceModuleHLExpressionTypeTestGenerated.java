@@ -28,41 +28,41 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeDependentAnalysisScriptSourceModuleHLExpressionTypeTestGenerated extends AbstractHLExpressionTypeTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Dependent,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Dependent,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
+  @Test
+  public void testAllFilesPresentInExpressionType() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Assignment {
     @Test
-    public void testAllFilesPresentInExpressionType() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    public void testAllFilesPresentInAssignment() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+  }
 
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Assignment {
-        @Test
-        public void testAllFilesPresentInAssignment() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference")
+  @TestDataPath("$PROJECT_ROOT")
+  public class NameReference {
+    @Test
+    public void testAllFilesPresentInNameReference() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference")
-    @TestDataPath("$PROJECT_ROOT")
-    public class NameReference {
-        @Test
-        public void testAllFilesPresentInNameReference() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference"), Pattern.compile("^(.+)\\.kts$"), null, true);
-        }
-    }
+  }
 }

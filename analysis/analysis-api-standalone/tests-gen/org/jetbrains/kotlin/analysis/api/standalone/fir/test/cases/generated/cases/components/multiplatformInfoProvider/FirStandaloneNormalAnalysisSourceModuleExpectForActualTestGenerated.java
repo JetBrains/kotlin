@@ -28,39 +28,39 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModuleExpectForActualTestGenerated extends AbstractExpectForActualTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    @TestMetadata("actual_object.kt")
-    public void testActual_object() throws Exception {
-        runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/actual_object.kt");
-    }
+  @Test
+  @TestMetadata("actual_object.kt")
+  public void testActual_object() {
+    runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/actual_object.kt");
+  }
 
-    @Test
-    public void testAllFilesPresentInExpectForActual() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInExpectForActual() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("matchingButIncompatibleExpect.kt")
-    public void testMatchingButIncompatibleExpect() throws Exception {
-        runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/matchingButIncompatibleExpect.kt");
-    }
+  @Test
+  @TestMetadata("matchingButIncompatibleExpect.kt")
+  public void testMatchingButIncompatibleExpect() {
+    runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/matchingButIncompatibleExpect.kt");
+  }
 
-    @Test
-    @TestMetadata("multipleExpects.kt")
-    public void testMultipleExpects() throws Exception {
-        runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/multipleExpects.kt");
-    }
+  @Test
+  @TestMetadata("multipleExpects.kt")
+  public void testMultipleExpects() {
+    runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/multipleExpects.kt");
+  }
 }

@@ -314,6 +314,7 @@ class FakeOverrideGenerator(
         val baseSymbol = originalSymbol.unwrapSubstitutionAndIntersectionOverrides() as S
 
         if (!session.visibilityChecker.isVisibleForOverriding(klass.moduleData, klass.symbol, baseSymbol.fir)) return
+        if (originalDeclaration.originalOrSelf().origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk) return
 
         val (fakeOverrideFirDeclaration, baseFirSymbolsForFakeOverride) = when {
             originalSymbol.shouldHaveComputedBaseSymbolsForClass(classLookupTag) -> {

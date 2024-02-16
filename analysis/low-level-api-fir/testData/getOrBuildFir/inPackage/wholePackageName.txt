@@ -6,5 +6,5 @@ FIR element rendered:
 package a.b.c
 
 FIR FILE:
-FILE: [ResolvedTo(IMPORTS)] wholePackageName.kt
+FILE: [ResolvedTo(RAW_FIR)] wholePackageName.kt
     package a.b.c

@@ -1,29 +1,79 @@
+library {
+  // module name: <dependency.def>
 
-package dependency {
+  library fragment {
+    // package name: dependency
 
-    @ExperimentalForeignApi enum class E1 private constructor(value: UInt) : Enum<E1>, CEnum {
-        @ConstantValue.UInt(value = 0.toUInt()) enum entry ONE
-        @ConstantValue.UInt(value = 1.toUInt()) enum entry TWO
-        @ConstantValue.UInt(value = 2.toUInt()) enum entry THREE
-        override val value: UInt
+    // class name: dependency/E1
+    // class name: dependency/E1.Companion
+    // class name: dependency/E1.Var
+    // class name: dependency/E1.Var.Companion
 
-        class Var constructor(rawPtr: NativePtr /* = NativePtr */) : CEnumVar {
-            var value: E1
-            @CEnumVarTypeSize(size = 4) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CPrimitiveVar.Type
-        }
+    @kotlinx/cinterop/ExperimentalForeignApi
+    public final enum class dependency/E1 : kotlin/Enum<dependency/E1>, kotlinx/cinterop/CEnum {
 
-        companion object {
-            @Deprecated(level = DeprecationLevel.WARNING, message = "Will be removed.", replaceWith = ReplaceWith(expression = "", imports = {})) fun byValue(value: UInt): E1
-        }
+      private constructor(value: kotlin/UInt)
 
+      public open val value: kotlin/UInt
+        public open /* non-default */ get
+
+      // companion object: Companion
+
+      // nested class: Var
+
+      // nested class: Companion
+
+      @kotlinx/cinterop/internal/ConstantValue.UInt(value = 0u)
+      ONE,
+
+      @kotlinx/cinterop/internal/ConstantValue.UInt(value = 1u)
+      TWO,
+
+      @kotlinx/cinterop/internal/ConstantValue.UInt(value = 2u)
+      THREE,
     }
 
-}
+    public final companion object dependency/E1.Companion {
 
-package dependency {
-    @ExperimentalForeignApi typealias E2 = UInt
-    @ExperimentalForeignApi typealias E2Var = UIntVarOf<E2 /* = UInt */>
-    @ExperimentalForeignApi const val EIGHT: E2 /* = UInt */ = 8.toUInt()
-    @ExperimentalForeignApi const val FOUR: E2 /* = UInt */ = 4.toUInt()
-}
+      private constructor()
 
+      @kotlin/Deprecated(message = "Will be removed.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+      public final fun byValue(value: kotlin/UInt): dependency/E1
+    }
+
+    public final class dependency/E1.Var : kotlinx/cinterop/CEnumVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var value: dependency/E1
+        public final /* non-default */ external get
+        public final /* non-default */ external set(value: dependency/E1)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CEnumVarTypeSize(size = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object dependency/E1.Var.Companion : kotlinx/cinterop/CPrimitiveVar.Type {
+
+      private constructor()
+    }
+
+    package {
+
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final const val EIGHT: kotlin/UInt /* = dependency/E2^ */ /* = 8u */
+        public final get
+
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final const val FOUR: kotlin/UInt /* = dependency/E2^ */ /* = 4u */
+        public final get
+
+      public typealias E2 = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias E2Var = kotlinx/cinterop/UIntVarOf<dependency/E2^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = dependency/E2^ */> */
+    }
+  }
+}

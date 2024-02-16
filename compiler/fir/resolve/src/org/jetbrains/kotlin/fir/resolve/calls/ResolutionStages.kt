@@ -755,7 +755,7 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
         /** Actual declarations are checked by [FirDeprecationChecker] */
         if (symbol.isActual) return
         val deprecation = symbol.getDeprecation(context.session, callInfo.callSite)
-        if (deprecation?.deprecationLevel == DeprecationLevelValue.HIDDEN || isHiddenForThisCallSite(symbol, callInfo, candidate, context.session)) {
+        if (deprecation?.deprecationLevel == DeprecationLevelValue.HIDDEN || isHiddenForThisCallSite(symbol, callInfo, candidate, context.session, sink)) {
             sink.yieldDiagnostic(HiddenCandidate)
         }
     }
@@ -764,35 +764,48 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
         symbol: FirCallableSymbol<*>,
         callInfo: CallInfo,
         candidate: Candidate,
-        session: FirSession
+        session: FirSession,
+        sink: CheckerSink,
     ): Boolean {
-        val isSuperCall = callInfo.callSite.isSuperCall(session)
+        /**
+         * The logic for synthetic properties itself is in [FirSyntheticPropertiesScope.computeGetterCompatibility].
+         */
+        if (symbol is FirSimpleSyntheticPropertySymbol && symbol.deprecatedOverrideOfHidden) {
+            sink.reportDiagnostic(CallToDeprecatedOverrideOfHidden)
+        }
+
         if (symbol.fir.dispatchReceiverType == null || symbol !is FirNamedFunctionSymbol) return false
-        if (symbol.isHidden(isSuperCall)) return true
+        val isSuperCall = callInfo.callSite.isSuperCall(session)
+        if (symbol.hiddenStatusOfCall(isSuperCall, isCallToOverride = false) == CallToPotentiallyHiddenSymbolResult.Hidden) return true
 
         val scope = candidate.originScope as? FirTypeScope ?: return false
 
-        var result = false
+        var hidden = false
+        var deprecated = false
         scope.processOverriddenFunctions(symbol) {
-            if (it.isHidden(isSuperCall)) {
-                result = true
+            val result = it.hiddenStatusOfCall(isSuperCall, isCallToOverride = true)
+            if (result != CallToPotentiallyHiddenSymbolResult.Visible) {
+                if (result == CallToPotentiallyHiddenSymbolResult.Hidden) {
+                    hidden = true
+                } else if (result == CallToPotentiallyHiddenSymbolResult.VisibleWithDeprecation) {
+                    deprecated = true
+                }
                 ProcessorAction.STOP
             } else {
                 ProcessorAction.NEXT
             }
         }
 
-        return result
-    }
+        if (deprecated) {
+            sink.reportDiagnostic(CallToDeprecatedOverrideOfHidden)
+        }
 
-    private fun FirElement.isSuperCall(session: FirSession): Boolean =
-        this is FirQualifiedAccessExpression && explicitReceiver?.toReference(session) is FirSuperReference
-
-    private fun FirCallableSymbol<*>.isHidden(isSuperCall: Boolean): Boolean {
-        val fir = fir
-        return !isSuperCall && fir.isHiddenEverywhereBesideSuperCalls == true || fir.isHiddenToOvercomeSignatureClash == true
+        return hidden
     }
 }
+
+internal fun FirElement.isSuperCall(session: FirSession): Boolean =
+    this is FirQualifiedAccessExpression && explicitReceiver?.toReference(session) is FirSuperReference
 
 private val DYNAMIC_EXTENSION_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(DYNAMIC_EXTENSION_FQ_NAME)
 

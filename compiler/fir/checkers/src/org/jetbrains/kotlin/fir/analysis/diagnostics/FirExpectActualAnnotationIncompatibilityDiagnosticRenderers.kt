@@ -25,7 +25,7 @@ internal object FirExpectActualAnnotationIncompatibilityDiagnosticRenderers {
             annotationRenderer = null,
             modifierRenderer = null,
             contractRenderer = null,
-            valueParameterRenderer = FirValueParameterRendererNoDefaultValue(),
+            valueParameterRenderer = FirValueParameterRendererForReadability(),
         ).renderElementAsString(it.fir, trim = true)
             // Write property accessors on the same line as the property
             .run { replace(Printer.LINE_SEPARATOR, "") }

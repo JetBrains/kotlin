@@ -1927,6 +1927,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val containingClassName: Name
     }
 
+    interface CannotInferVisibility : KtFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = CannotInferVisibility::class
+        val callable: KtCallableSymbol
+    }
+
     interface MultipleDefaultsInheritedFromSupertypes : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = MultipleDefaultsInheritedFromSupertypes::class
         val name: Name
@@ -3404,6 +3409,18 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface OperatorRenamedOnImport : KtFirDiagnostic<KtImportDirective> {
         override val diagnosticClass get() = OperatorRenamedOnImport::class
+    }
+
+    interface TypealiasAsCallableQualifierInImportError : KtFirDiagnostic<KtImportDirective> {
+        override val diagnosticClass get() = TypealiasAsCallableQualifierInImportError::class
+        val typealiasName: Name
+        val originalClassName: Name
+    }
+
+    interface TypealiasAsCallableQualifierInImportWarning : KtFirDiagnostic<KtImportDirective> {
+        override val diagnosticClass get() = TypealiasAsCallableQualifierInImportWarning::class
+        val typealiasName: Name
+        val originalClassName: Name
     }
 
     interface IllegalSuspendFunctionCall : KtFirDiagnostic<PsiElement> {

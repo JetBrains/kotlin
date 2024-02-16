@@ -11,13 +11,8 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.overrides.isOverridableFunction
-import org.jetbrains.kotlin.ir.overrides.isOverridableProperty
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.KotlinMangler
-import org.jetbrains.kotlin.ir.util.isFacadeClass
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -277,4 +272,13 @@ class IdSignatureFactory(
             }
         }
     }
+
+    private fun IrSimpleFunction.isOverridableFunction(): Boolean =
+        !DescriptorVisibilities.isPrivate(visibility) && hasDispatchReceiver
+
+    private fun IrProperty.isOverridableProperty(): Boolean =
+        !DescriptorVisibilities.isPrivate(visibility) && (getter.hasDispatchReceiver || setter.hasDispatchReceiver)
+
+    private val IrSimpleFunction?.hasDispatchReceiver: Boolean
+        get() = this?.dispatchReceiverParameter != null
 }

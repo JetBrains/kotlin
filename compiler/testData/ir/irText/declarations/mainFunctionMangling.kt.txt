@@ -1,14 +1,5 @@
 // FILE: a.kt
 
-fun main() {
-  println(message = "main()")
-}
-
-fun <T : Any?> main(t: T): T {
-  println(message = "main(T): T")
-  return t
-}
-
 class C {
   constructor() /* primary */ {
     super/*Any*/()
@@ -45,17 +36,17 @@ object O {
 
 }
 
-// FILE: b.kt
-package foo
-
 fun main() {
-  println(message = "foo.main()")
+  println(message = "main()")
 }
 
 fun <T : Any?> main(t: T): T {
-  println(message = "foo.main(T): T")
+  println(message = "main(T): T")
   return t
 }
+
+// FILE: b.kt
+package foo
 
 class C {
   constructor() /* primary */ {
@@ -91,5 +82,14 @@ object O {
     return t
   }
 
+}
+
+fun main() {
+  println(message = "foo.main()")
+}
+
+fun <T : Any?> main(t: T): T {
+  println(message = "foo.main(T): T")
+  return t
 }
 

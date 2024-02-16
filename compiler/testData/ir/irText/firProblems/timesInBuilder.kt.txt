@@ -1,37 +1,20 @@
-private fun test(x: Long) {
-  return countIssues(restrictionsBuilder = local fun ArgumentsBuilder.<anonymous>() {
-    ($this$countIssues, <get-spentTime>().lessEq<Int>(t = 2.times(other = 60))).unaryPlus()
-    ($this$countIssues, <get-spentTime>().lessEq<Int>(t = id<Int>(arg = 2.times(other = 60)))).unaryPlus()
-    ($this$countIssues, <get-spentTime>().select<Long>(t = 2.times(other = 60).toLong(), r = x)).unaryPlus()
-  }
-)
-}
-
 val spentTime: Column
   field = integer(name = "spentTime")
   get
 
-fun integer(name: String): Column {
-  return Column()
-}
+class ArgumentsBuilder {
+  val arguments: MutableList<Expression>
+    field = mutableListOf<Expression>()
+    get
 
-fun <I : Any?> id(arg: I): I {
-  return arg
-}
-
-infix fun <T : Comparable<T>> Column.lessEq(t: T): Expression {
-  return Expression()
-}
-
-fun <T : Comparable<T>> Column.select(t: T, r: T): Expression {
-  return Expression()
-}
-
-class Expression {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  operator fun Expression.unaryPlus() {
+    <this>.<get-arguments>().add(element = <this>) /*~> Unit */
   }
 
 }
@@ -45,22 +28,40 @@ class Column {
 
 }
 
-class ArgumentsBuilder {
+class Expression {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val arguments: MutableList<Expression>
-    field = mutableListOf<Expression>()
-    get
-
-  operator fun Expression.unaryPlus() {
-    <this>.<get-arguments>().add(element = <this>) /*~> Unit */
-  }
-
 }
 
 private fun countIssues(restrictionsBuilder: @ExtensionFunctionType Function1<ArgumentsBuilder, Unit>) {
 }
+
+fun <I : Any?> id(arg: I): I {
+  return arg
+}
+
+fun integer(name: String): Column {
+  return Column()
+}
+
+infix fun <T : Comparable<T>> Column.lessEq(t: T): Expression {
+  return Expression()
+}
+
+fun <T : Comparable<T>> Column.select(t: T, r: T): Expression {
+  return Expression()
+}
+
+private fun test(x: Long) {
+  return countIssues(restrictionsBuilder = local fun ArgumentsBuilder.<anonymous>() {
+    ($this$countIssues, <get-spentTime>().lessEq<Int>(t = 2.times(other = 60))).unaryPlus()
+    ($this$countIssues, <get-spentTime>().lessEq<Int>(t = id<Int>(arg = 2.times(other = 60)))).unaryPlus()
+    ($this$countIssues, <get-spentTime>().select<Long>(t = 2.times(other = 60).toLong(), r = x)).unaryPlus()
+  }
+)
+}
+

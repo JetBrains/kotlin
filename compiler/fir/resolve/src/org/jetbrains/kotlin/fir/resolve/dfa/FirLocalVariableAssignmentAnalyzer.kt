@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.contracts.description.isInPlace
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -15,8 +16,11 @@ import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.expressions.explicitReceiver
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 /**
  *  Helper that checks if an access to a local variable access is stable.
@@ -28,8 +32,9 @@ import org.jetbrains.kotlin.name.Name
 internal class FirLocalVariableAssignmentAnalyzer {
     private var rootFunction: FirFunctionSymbol<*>? = null
     private var assignedLocalVariablesByDeclaration: Map<FirBasedSymbol<*>, Fork>? = null
+    private var variableAssignments: Map<FirProperty, List<Assignment>>? = null
 
-    private val scopes: Stack<Pair<Fork?, MutableSet<FirProperty>>> = stackOf()
+    private val scopes: Stack<Pair<Fork?, VariableAssignments>> = stackOf()
 
     // Example of control-flow-postponed lambdas: callBoth({ a.x }, { a = null })
     // Lambdas are called in an unknown order, so control flow edges to both of them go from before the call.
@@ -47,19 +52,20 @@ internal class FirLocalVariableAssignmentAnalyzer {
     fun reset() {
         rootFunction = null
         assignedLocalVariablesByDeclaration = null
+        variableAssignments = null
         postponedLambdas.reset()
         scopes.reset()
     }
 
     /** Checks whether the given access is an unstable access to a local variable at this moment. */
     @OptIn(DfaInternals::class)
-    fun isAccessToUnstableLocalVariable(fir: FirExpression): Boolean {
+    fun isAccessToUnstableLocalVariable(fir: FirExpression, targetType: ConeKotlinType?, session: FirSession): Boolean {
         if (assignedLocalVariablesByDeclaration == null) return false
 
         val realFir = fir.unwrapElement() as? FirQualifiedAccessExpression ?: return false
         val property = realFir.calleeReference.toResolvedPropertySymbol()?.fir ?: return false
         // Have data => have a root function => `scopes` is not empty.
-        return property in scopes.top().second || postponedLambdas.all().any { lambdas ->
+        return !isStableType(scopes.top().second[property], targetType, session) || postponedLambdas.all().any { lambdas ->
             // Control-flow-postponed lambdas' assignments should be in `functionScopes.top()`.
             // The reason we can't check them here is that one of the entries may be the lambda
             // that is currently being analyzed, and assignments in it are, in fact, totally fine.
@@ -67,20 +73,40 @@ internal class FirLocalVariableAssignmentAnalyzer {
         }
     }
 
+    private fun isStableType(assignments: Collection<Assignment>?, targetType: ConeKotlinType?, session: FirSession): Boolean {
+        if (assignments == null) return true // No assignments => always stable.
+        if (targetType == null) return false // No target type => always unstable.
+        if (assignments.any { it.type == null }) return false // At least 1 unknown assignment type => always unstable.
+
+        // Stability is determined by assignments. All assignments must be a subtype of the target type.
+        return assignments.all { AbstractTypeChecker.isSubtypeOf(session.typeContext, it.type!!, targetType) }
+    }
+
     private fun getInfoForDeclaration(symbol: FirBasedSymbol<*>): Fork? {
         val root = rootFunction ?: return null
         if (root == symbol) return null
-        val cachedMap = assignedLocalVariablesByDeclaration ?: run {
-            val data = MiniCfgBuilder.MiniCfgData()
-            MiniCfgBuilder().visitElement(root.fir, data)
-            data.forks.also { assignedLocalVariablesByDeclaration = it }
-        }
+        val cachedMap = buildInfoForRoot(root)
         return cachedMap[symbol]
     }
 
-    private fun enterScope(symbol: FirBasedSymbol<*>, evaluatedInPlace: Boolean): Pair<Fork?, MutableSet<FirProperty>> {
+    private fun buildInfoForRoot(root: FirFunctionSymbol<*>): Map<FirBasedSymbol<*>, Fork> {
+        assignedLocalVariablesByDeclaration?.let { return it }
+
+        val data = MiniCfgBuilder.MiniCfgData()
+        MiniCfgBuilder().visitElement(root.fir, data)
+
+        assignedLocalVariablesByDeclaration = data.forks
+        variableAssignments = data.assignments
+
+        return data.forks
+    }
+
+    private fun enterScope(
+        symbol: FirBasedSymbol<*>,
+        evaluatedInPlace: Boolean,
+    ): Pair<Fork?, VariableAssignments> {
         val currentInfo = getInfoForDeclaration(symbol)
-        val prohibitInThisScope = scopes.top().second.toMutableSet()
+        val prohibitInThisScope = scopes.top().second.copy()
         scopes.push(currentInfo to prohibitInThisScope)
         if (!evaluatedInPlace) {
             for ((outerInfo, prohibitInOuterScope) in scopes.all()) {
@@ -100,9 +126,9 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 //    }
                 //   FE1.0 has the same behavior.
                 //   KT-59692
-                currentInfo?.assignedInside?.let(prohibitInOuterScope::addAll)
+                prohibitInOuterScope.merge(currentInfo?.assignedInside)
                 // => any write to a variable outside the callable invalidates smart casts inside it
-                outerInfo?.assignedLater?.let(prohibitInThisScope::addAll)
+                prohibitInThisScope.merge(outerInfo?.assignedLater)
             }
         }
         return scopes.top()
@@ -111,7 +137,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
     fun enterFunction(function: FirFunction) {
         if (rootFunction == null) {
             rootFunction = function.symbol
-            scopes.push(null to mutableSetOf())
+            scopes.push(null to VariableAssignments())
             return
         }
         val (info, prohibitSmartCasts) =
@@ -119,7 +145,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
         for (concurrentLambdas in postponedLambdas.all()) {
             for ((otherLambda, dataFlowOnly) in concurrentLambdas) {
                 if (!dataFlowOnly && otherLambda != info) {
-                    prohibitSmartCasts += otherLambda.assignedInside
+                    prohibitSmartCasts.merge(otherLambda.assignedInside)
                 }
             }
         }
@@ -130,6 +156,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
         if (scopes.isEmpty) {
             rootFunction = null
             assignedLocalVariablesByDeclaration = null
+            variableAssignments = null
         }
     }
 
@@ -138,7 +165,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
         val (info, prohibitSmartCasts) = enterScope(klass.symbol, klass is FirAnonymousObject)
         if (klass is FirAnonymousObject && info != null) {
             // Assignments in initializers and methods invalidate smart casts in other members.
-            prohibitSmartCasts.addAll(info.assignedInside)
+            prohibitSmartCasts.merge(info.assignedInside)
         }
     }
 
@@ -173,6 +200,13 @@ internal class FirLocalVariableAssignmentAnalyzer {
             //  apparently the compiler attempts to continue somewhere...
             lambdasInCall.keys.associateWithTo(postponedLambdas.topOrNull() ?: return) { true }
         }
+    }
+
+    fun visitAssignment(property: FirProperty, type: ConeKotlinType) {
+        buildInfoForRoot(rootFunction ?: return)
+        val assignments = variableAssignments?.get(property) ?: return
+        val assignment = assignments.firstOrNull { it.type == null } ?: return
+        assignment.type = type
     }
 
     companion object {
@@ -253,13 +287,50 @@ internal class FirLocalVariableAssignmentAnalyzer {
          * so that shadowed names are handled correctly. This works because local variables at any scope have higher priority
          * than members on implicit receivers, even if the implicit receiver is introduced by a later scope.
          */
-        class Fork(
-            val assignedLater: Set<FirProperty>,
-            val assignedInside: Set<FirProperty>,
+        private class Fork(
+            val assignedLater: VariableAssignments,
+            val assignedInside: VariableAssignments,
         )
 
+        private class Assignment(
+            var type: ConeKotlinType? = null,
+        )
+
+        private class VariableAssignments {
+            private val assignments: MutableMap<FirProperty, MutableSet<Assignment>> = mutableMapOf()
+
+            operator fun get(property: FirProperty): Set<Assignment>? {
+                return assignments[property]
+            }
+
+            operator fun contains(property: FirProperty): Boolean {
+                return property in assignments
+            }
+
+            fun add(property: FirProperty, assignment: Assignment) {
+                assignments.getOrPut(property) { mutableSetOf() }.add(assignment)
+            }
+
+            fun copy(): VariableAssignments {
+                val copy = VariableAssignments()
+                copy.assignments += this.assignments
+                return copy
+            }
+
+            fun merge(other: VariableAssignments?) {
+                if (other == null) return
+                for ((property, values) in other.assignments) {
+                    assignments.getOrPut(property) { mutableSetOf() }.addAll(values)
+                }
+            }
+
+            fun retain(properties: Set<FirProperty>) {
+                assignments.keys.retainAll(properties)
+            }
+        }
+
         private class MiniFlow(val parents: Set<MiniFlow>) {
-            val assignedLater: MutableSet<FirProperty> = mutableSetOf()
+            val assignedLater = VariableAssignments()
 
             fun fork(): MiniFlow = MiniFlow(setOf(this))
 
@@ -273,13 +344,13 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 element.acceptChildren(this, data)
             }
 
-            private fun visitElementWithLexicalScope(element: FirElement, data: MiniCfgData): Set<FirProperty> {
+            private fun visitElementWithLexicalScope(element: FirElement, data: MiniCfgData): VariableAssignments {
                 // Detach the flow so that variables declared inside the structure do not leak into the outside.
                 val flow = MiniFlow.start()
                 val freeVariables = data.variableDeclarations.flatMapTo(mutableSetOf()) { it.values }
                 data.flow = flow
                 element.acceptChildren(this, data)
-                return flow.assignedLater.apply { retainAll(freeVariables) }
+                return flow.assignedLater.apply { retain(freeVariables) }
             }
 
             override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: MiniCfgData) =
@@ -397,19 +468,26 @@ internal class FirLocalVariableAssignmentAnalyzer {
             private fun MiniCfgData.recordAssignment(reference: FirReference) {
                 val name = (reference as? FirNamedReference)?.name ?: return
                 val property = variableDeclarations.lastOrNull { name in it }?.get(name) ?: return
-                flow.recordAssignments(setOf(property))
+
+                val assignment = Assignment()
+                assignments.getOrPut(property) { mutableListOf() }.add(assignment)
+                flow.recordAssignment(property, assignment)
             }
 
-            private fun MiniFlow.recordAssignments(properties: Set<FirProperty>) {
-                // All assignments already recorded here should also have been recorded in all parents,
-                // so if (properties - assignedLater) is empty, no point in continuing.
-                if (!assignedLater.addAll(properties)) return
+            private fun MiniFlow.recordAssignment(property: FirProperty, assignment: Assignment) {
+                assignedLater.add(property, assignment)
+                parents.forEach { it.recordAssignment(property, assignment) }
+            }
+
+            private fun MiniFlow.recordAssignments(properties: VariableAssignments) {
+                assignedLater.merge(properties)
                 parents.forEach { it.recordAssignments(properties) }
             }
 
             class MiniCfgData {
                 var flow: MiniFlow = MiniFlow.start()
                 val variableDeclarations: ArrayDeque<MutableMap<Name, FirProperty>> = ArrayDeque(listOf(mutableMapOf()))
+                val assignments: MutableMap<FirProperty, MutableList<Assignment>> = mutableMapOf()
                 val forks: MutableMap<FirBasedSymbol<*>, Fork> = mutableMapOf()
             }
         }

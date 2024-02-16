@@ -10,13 +10,6 @@ class Controller<K : Any?> {
 
 }
 
-fun <T : Any?> generate(lambda: @ExtensionFunctionType Function1<Controller<T>, Unit>) {
-}
-
-fun <E : Any?> id(e: E): E {
-  return e
-}
-
 fun bar(s: String) {
 }
 
@@ -27,3 +20,11 @@ fun foo() {
   }
 )
 }
+
+fun <T : Any?> generate(lambda: @ExtensionFunctionType Function1<Controller<T>, Unit>) {
+}
+
+fun <E : Any?> id(e: E): E {
+  return e
+}
+

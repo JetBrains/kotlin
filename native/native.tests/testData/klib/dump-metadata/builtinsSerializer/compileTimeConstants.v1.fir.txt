@@ -1,0 +1,148 @@
+library {
+  // module name: <compileTimeConstants.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Class
+    // class name: test/Weapon
+
+    // signature: test/Class|null[0]
+    public final class test/Class : kotlin/Any {
+
+      // signature: test/Class.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: test/Class.arrayConst|-5420156590449024299[0]
+      public final val arrayConst: kotlin/Any /* = [1.toByte(), 2.toByte()] */
+        // signature: test/Class.arrayConst.<get-arrayConst>|1136504332961129324[0]
+        public final get
+
+      // signature: test/Class.booleanConst|-4426657168193867786[0]
+      public final val booleanConst: kotlin/Boolean /* = true */
+        // signature: test/Class.booleanConst.<get-booleanConst>|-3209475031645787396[0]
+        public final get
+
+      // signature: test/Class.byteConst|-838020094916250484[0]
+      public final val byteConst: kotlin/Byte /* = 10.toByte() */
+        // signature: test/Class.byteConst.<get-byteConst>|684938813843616350[0]
+        public final get
+
+      // signature: test/Class.charConst|-3386388106267045546[0]
+      public final val charConst: kotlin/Char /* = 'A' */
+        // signature: test/Class.charConst.<get-charConst>|-4454976750212930583[0]
+        public final get
+
+      // signature: test/Class.doubleConst|-3410345003879286930[0]
+      public final val doubleConst: kotlin/Double /* = 3.0 */
+        // signature: test/Class.doubleConst.<get-doubleConst>|7033796687657075491[0]
+        public final get
+
+      // signature: test/Class.enumConst|1893601016514874327[0]
+      public final val enumConst: test/Weapon? /* = test/Weapon.ROCK */
+        // signature: test/Class.enumConst.<get-enumConst>|2301643281552555608[0]
+        public final get
+
+      // signature: test/Class.floatConst|-7988261885828380685[0]
+      public final val floatConst: kotlin/Float /* = 2.0f */
+        // signature: test/Class.floatConst.<get-floatConst>|-6871236235153349527[0]
+        public final get
+
+      // signature: test/Class.intConst|-4862245503535493206[0]
+      public final val intConst: kotlin/Int /* = 30 */
+        // signature: test/Class.intConst.<get-intConst>|6557109391861272199[0]
+        public final get
+
+      // signature: test/Class.longConst|-6740116794455248124[0]
+      public final val longConst: kotlin/Long /* = 40L */
+        // signature: test/Class.longConst.<get-longConst>|5521321965939239959[0]
+        public final get
+
+      // signature: test/Class.shortConst|4526352702631103302[0]
+      public final val shortConst: kotlin/Short /* = 20.toShort() */
+        // signature: test/Class.shortConst.<get-shortConst>|3931419575068595596[0]
+        public final get
+
+      // signature: test/Class.stringConst|7958415035753538639[0]
+      public final val stringConst: kotlin/String /* = "abcd" */
+        // signature: test/Class.stringConst.<get-stringConst>|6980866378150668988[0]
+        public final get
+    }
+
+    // signature: test/Weapon|null[0]
+    public final enum class test/Weapon : kotlin/Enum<test/Weapon> {
+
+      // signature: test/Weapon.<init>|-5645683436151566731[0]
+      private constructor()
+
+      // signature: test/Weapon.ROCK|null[0]
+      ROCK,
+
+      // signature: test/Weapon.PAPER|null[0]
+      PAPER,
+
+      // signature: test/Weapon.SCISSORS|null[0]
+      SCISSORS,
+
+      // has Enum.entries
+    }
+
+    package {
+
+      // signature: test/arrayConst|-5420156590449024299[0]
+      public final val arrayConst: kotlin/Any /* = [1.toByte(), 2.toByte()] */
+        // signature: test/arrayConst.<get-arrayConst>|1136504332961129324[0]
+        public final get
+
+      // signature: test/booleanConst|-4426657168193867786[0]
+      public final val booleanConst: kotlin/Boolean /* = true */
+        // signature: test/booleanConst.<get-booleanConst>|-3209475031645787396[0]
+        public final get
+
+      // signature: test/byteConst|-838020094916250484[0]
+      public final val byteConst: kotlin/Byte /* = 10.toByte() */
+        // signature: test/byteConst.<get-byteConst>|684938813843616350[0]
+        public final get
+
+      // signature: test/charConst|-3386388106267045546[0]
+      public final val charConst: kotlin/Char /* = 'A' */
+        // signature: test/charConst.<get-charConst>|-4454976750212930583[0]
+        public final get
+
+      // signature: test/doubleConst|-3410345003879286930[0]
+      public final val doubleConst: kotlin/Double /* = 3.0 */
+        // signature: test/doubleConst.<get-doubleConst>|7033796687657075491[0]
+        public final get
+
+      // signature: test/enumConst|1893601016514874327[0]
+      public final val enumConst: test/Weapon? /* = test/Weapon.ROCK */
+        // signature: test/enumConst.<get-enumConst>|2301643281552555608[0]
+        public final get
+
+      // signature: test/floatConst|-7988261885828380685[0]
+      public final val floatConst: kotlin/Float /* = 2.0f */
+        // signature: test/floatConst.<get-floatConst>|-6871236235153349527[0]
+        public final get
+
+      // signature: test/intConst|-4862245503535493206[0]
+      public final val intConst: kotlin/Int /* = 30 */
+        // signature: test/intConst.<get-intConst>|6557109391861272199[0]
+        public final get
+
+      // signature: test/longConst|-6740116794455248124[0]
+      public final val longConst: kotlin/Long /* = 40L */
+        // signature: test/longConst.<get-longConst>|5521321965939239959[0]
+        public final get
+
+      // signature: test/shortConst|4526352702631103302[0]
+      public final val shortConst: kotlin/Short /* = 20.toShort() */
+        // signature: test/shortConst.<get-shortConst>|3931419575068595596[0]
+        public final get
+
+      // signature: test/stringConst|7958415035753538639[0]
+      public final val stringConst: kotlin/String /* = "abcd" */
+        // signature: test/stringConst.<get-stringConst>|6980866378150668988[0]
+        public final get
+    }
+  }
+}

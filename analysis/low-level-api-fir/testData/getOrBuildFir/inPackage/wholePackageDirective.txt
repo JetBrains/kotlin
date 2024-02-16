@@ -6,5 +6,5 @@ FIR element rendered:
 package a.b.c
 
 FIR FILE:
-FILE: [ResolvedTo(IMPORTS)] wholePackageDirective.kt
+FILE: [ResolvedTo(RAW_FIR)] wholePackageDirective.kt
     package a.b.c

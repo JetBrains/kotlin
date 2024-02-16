@@ -20,20 +20,20 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/multiModuleOrder")
 @TestDataPath("$PROJECT_ROOT")
 public class FirMultiModuleOrderTestGenerated extends AbstractFirMultiModuleOrderTest {
-    @Test
-    public void testAllFilesPresentInMultiModuleOrder() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/multiModuleOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
-    }
+  @Test
+  public void testAllFilesPresentInMultiModuleOrder() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/multiModuleOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+  }
 
-    @Test
-    @TestMetadata("plain.kt")
-    public void testPlain() throws Exception {
-        runTest("js/js.translator/testData/multiModuleOrder/plain.kt");
-    }
+  @Test
+  @TestMetadata("plain.kt")
+  public void testPlain() {
+    runTest("js/js.translator/testData/multiModuleOrder/plain.kt");
+  }
 
-    @Test
-    @TestMetadata("umd.kt")
-    public void testUmd() throws Exception {
-        runTest("js/js.translator/testData/multiModuleOrder/umd.kt");
-    }
+  @Test
+  @TestMetadata("umd.kt")
+  public void testUmd() {
+    runTest("js/js.translator/testData/multiModuleOrder/umd.kt");
+  }
 }

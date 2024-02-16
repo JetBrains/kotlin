@@ -1,40 +1,67 @@
-object X1 {
+class B {
+  var s: Int
+    field = s
+    get
+    set
+
+  constructor(s: Int = 0) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+object Host {
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  operator fun B.plusAssign(b: B) {
+    <this>.<set-s>(<set-?> = <this>.<get-s>().plus(other = b.<get-s>()))
+  }
+
+}
+
+object X1 {
   var x1: Int
     field = 0
     get
     set
 
   object X2 {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
     var x2: Int
       field = 0
       get
       set
 
     object X3 {
+      var x3: Int
+        field = 0
+        get
+        set
+
       private constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 
       }
 
-      var x3: Int
-        field = 0
-        get
-        set
+    }
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
 
     }
+
+  }
+
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
 
   }
 
@@ -71,33 +98,7 @@ fun test2() {
   } /*~> Unit */
 }
 
-class B {
-  constructor(s: Int = 0) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  var s: Int
-    field = s
-    get
-    set
-
-}
-
-object Host {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  operator fun B.plusAssign(b: B) {
-    <this>.<set-s>(<set-?> = <this>.<get-s>().plus(other = b.<get-s>()))
-  }
-
-}
-
 fun Host.test3(v: B) {
   (<this>, v).plusAssign(b = B(s = 1000))
 }
+

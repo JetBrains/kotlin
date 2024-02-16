@@ -141,7 +141,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
     @GradleTest
     fun `test - sample1 - ide dependencies`(gradleVersion: GradleVersion) {
         project("mpp-composite-build/sample1", gradleVersion) {
-            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle()
+            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", KOTLIN_VERSION)
 
@@ -171,7 +171,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
             "mpp-composite-build/sample1",
             gradleVersion,
         ) {
-            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle()
+            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", KOTLIN_VERSION)
 
@@ -203,7 +203,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 reason = "KGP 1.7.21 produces deprecation warnings with Gradle 8.4"
             ) { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4) }
         ) {
-            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle()
+            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", "1.7.21")
 

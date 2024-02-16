@@ -1,5 +1,9 @@
-class ResolvedCall<C : Any?> {
-  constructor() /* primary */ {
+class MyCandidate {
+  val resolvedCall: ResolvedCall<*>
+    field = resolvedCall
+    get
+
+  constructor(resolvedCall: ResolvedCall<*>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
@@ -7,16 +11,12 @@ class ResolvedCall<C : Any?> {
 
 }
 
-class MyCandidate {
-  constructor(resolvedCall: ResolvedCall<*>) /* primary */ {
+class ResolvedCall<C : Any?> {
+  constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val resolvedCall: ResolvedCall<*>
-    field = resolvedCall
-    get
 
 }
 

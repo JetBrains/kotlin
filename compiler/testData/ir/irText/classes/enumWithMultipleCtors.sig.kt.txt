@@ -3,74 +3,6 @@
 //   Public signature: /A|null[0]
 open enum class A : Enum<A> {
   // CHECK:
-  //   Mangled name: A{}prop1
-  //   Public signature: /A.prop1|-8329482664683066904[0]
-  //   Public signature debug description: {}prop1
-  val prop1: String
-    // CHECK JVM_IR:
-    //   Mangled name: A#<get-prop1>(){}kotlin.String
-    //   Public signature: /A.prop1.<get-prop1>|-4492148362286235808[0]
-    //   Public signature debug description: <get-prop1>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
-    //   Mangled name: A#<get-prop1>(){}
-    //   Public signature: /A.prop1.<get-prop1>|-5264940751743936228[0]
-    //   Public signature debug description: <get-prop1>(){}
-    get
-
-  // CHECK:
-  //   Mangled name: A{}prop2
-  //   Public signature: /A.prop2|4028676822563871521[0]
-  //   Public signature debug description: {}prop2
-  val prop2: String
-    // CHECK JVM_IR:
-    //   Mangled name: A#<get-prop2>(){}kotlin.String
-    //   Public signature: /A.prop2.<get-prop2>|-8475233937604972170[0]
-    //   Public signature debug description: <get-prop2>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
-    //   Mangled name: A#<get-prop2>(){}
-    //   Public signature: /A.prop2.<get-prop2>|-7428780384219162019[0]
-    //   Public signature debug description: <get-prop2>(){}
-    get
-
-  // CHECK:
-  //   Mangled name: A{}prop3
-  //   Public signature: /A.prop3|-8425624005164692994[0]
-  //   Public signature debug description: {}prop3
-  var prop3: String
-    // CHECK JVM_IR:
-    //   Mangled name: A#<get-prop3>(){}kotlin.String
-    //   Public signature: /A.prop3.<get-prop3>|-7199457926449641523[0]
-    //   Public signature debug description: <get-prop3>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
-    //   Mangled name: A#<get-prop3>(){}
-    //   Public signature: /A.prop3.<get-prop3>|-2432765917107722645[0]
-    //   Public signature debug description: <get-prop3>(){}
-    get
-    // CHECK:
-    //   Mangled name: A#<set-prop3>(kotlin.String){}
-    //   Public signature: /A.prop3.<set-prop3>|-8957114365133646196[0]
-    //   Public signature debug description: <set-prop3>(kotlin.String){}
-    set
-
-  // CHECK:
-  //   Mangled name: A#<init>(){}
-  //   Public signature: /A.<init>|-5645683436151566731[0]
-  //   Public signature debug description: <init>(){}
-  private constructor()
-
-  // CHECK:
-  //   Mangled name: A#<init>(kotlin.String){}
-  //   Public signature: /A.<init>|1280618353163213788[0]
-  //   Public signature debug description: <init>(kotlin.String){}
-  private constructor(arg: String)
-
-  // CHECK:
-  //   Mangled name: A#<init>(kotlin.Int){}
-  //   Public signature: /A.<init>|-5182794243525578284[0]
-  //   Public signature debug description: <init>(kotlin.Int){}
-  private constructor(x: Int)
-
-  // CHECK:
   //   Mangled name: A.X
   //   Public signature: /A.X|null[0]
   X
@@ -226,6 +158,74 @@ open enum class A : Enum<A> {
   //   Mangled name: A.Z
   //   Public signature: /A.Z|null[0]
   Z
+
+  // CHECK:
+  //   Mangled name: A{}prop1
+  //   Public signature: /A.prop1|-8329482664683066904[0]
+  //   Public signature debug description: {}prop1
+  val prop1: String
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-prop1>(){}kotlin.String
+    //   Public signature: /A.prop1.<get-prop1>|-4492148362286235808[0]
+    //   Public signature debug description: <get-prop1>(){}kotlin.String
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-prop1>(){}
+    //   Public signature: /A.prop1.<get-prop1>|-5264940751743936228[0]
+    //   Public signature debug description: <get-prop1>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: A{}prop2
+  //   Public signature: /A.prop2|4028676822563871521[0]
+  //   Public signature debug description: {}prop2
+  val prop2: String
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-prop2>(){}kotlin.String
+    //   Public signature: /A.prop2.<get-prop2>|-8475233937604972170[0]
+    //   Public signature debug description: <get-prop2>(){}kotlin.String
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-prop2>(){}
+    //   Public signature: /A.prop2.<get-prop2>|-7428780384219162019[0]
+    //   Public signature debug description: <get-prop2>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: A{}prop3
+  //   Public signature: /A.prop3|-8425624005164692994[0]
+  //   Public signature debug description: {}prop3
+  var prop3: String
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-prop3>(){}kotlin.String
+    //   Public signature: /A.prop3.<get-prop3>|-7199457926449641523[0]
+    //   Public signature debug description: <get-prop3>(){}kotlin.String
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-prop3>(){}
+    //   Public signature: /A.prop3.<get-prop3>|-2432765917107722645[0]
+    //   Public signature debug description: <get-prop3>(){}
+    get
+    // CHECK:
+    //   Mangled name: A#<set-prop3>(kotlin.String){}
+    //   Public signature: /A.prop3.<set-prop3>|-8957114365133646196[0]
+    //   Public signature debug description: <set-prop3>(kotlin.String){}
+    set
+
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor()
+
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.String){}
+  //   Public signature: /A.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
+  private constructor(arg: String)
+
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.Int){}
+  //   Public signature: /A.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  private constructor(x: Int)
 
   // CHECK JVM_IR:
   //   Mangled name: A#valueOf#static(kotlin.String){}A

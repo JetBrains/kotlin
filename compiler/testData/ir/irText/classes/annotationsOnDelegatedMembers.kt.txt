@@ -7,6 +7,36 @@ open annotation class Ann : Annotation {
 
 }
 
+class Delegated : Base {
+  private /* final field */ val $$delegate_0: Base = b
+  constructor(b: Base) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @Ann
+  override fun func() {
+    <this>.#$$delegate_0.func()
+  }
+
+  override val prop: Int
+    override get(): Int {
+      return <this>.#$$delegate_0.<get-prop>()
+    }
+
+  override var propWithAccessors: Int
+    @Ann
+    override get(): Int {
+      return <this>.#$$delegate_0.<get-propWithAccessors>()
+    }
+    @Ann
+    override set(<set-?>: Int) {
+      <this>.#$$delegate_0.<set-propWithAccessors>(<set-?> = <set-?>)
+    }
+
+}
+
 interface Base {
   @Ann
   abstract fun func()
@@ -23,32 +53,3 @@ interface Base {
 
 }
 
-class Delegated : Base {
-  constructor(b: Base) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  private /* final field */ val $$delegate_0: Base = b
-  override val prop: Int
-    override get(): Int {
-      return <this>.#$$delegate_0.<get-prop>()
-    }
-
-  override var propWithAccessors: Int
-    @Ann
-    override get(): Int {
-      return <this>.#$$delegate_0.<get-propWithAccessors>()
-    }
-    @Ann
-    override set(<set-?>: Int) {
-      <this>.#$$delegate_0.<set-propWithAccessors>(<set-?> = <set-?>)
-    }
-
-  @Ann
-  override fun func() {
-    <this>.#$$delegate_0.func()
-  }
-
-}

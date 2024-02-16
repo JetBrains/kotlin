@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 
 
-internal fun FirFunctionSymbol<*>.getObjCMethodInfoFromOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): ObjCMethodInfo? {
+fun FirFunctionSymbol<*>.getObjCMethodInfoFromOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): ObjCMethodInfo? {
     decodeObjCMethodAnnotation(session)?.let {
         return it
     }

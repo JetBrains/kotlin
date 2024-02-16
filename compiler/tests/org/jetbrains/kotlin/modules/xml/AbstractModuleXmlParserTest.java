@@ -35,7 +35,7 @@ import java.io.IOException;
 public abstract class AbstractModuleXmlParserTest extends TestCase {
 
     @SuppressWarnings("MethodMayBeStatic")
-    protected void doTest(String xmlPath) throws IOException {
+    protected void doTest(String xmlPath) {
         File txtFile = new File(FileUtil.getNameWithoutExtension(xmlPath) + ".txt");
 
         ModuleChunk result = ModuleXmlParser.parseModuleScript(xmlPath, new MessageCollector() {
@@ -65,7 +65,12 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
         String actual = sb.toString();
 
         if (!txtFile.exists()) {
-            FileUtil.writeToFile(txtFile, actual);
+            try {
+                FileUtil.writeToFile(txtFile, actual);
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             fail("Expected data file does not exist. A new file created: " + txtFile);
         }
 

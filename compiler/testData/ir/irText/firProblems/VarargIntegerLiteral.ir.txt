@@ -9,14 +9,6 @@ FILE fqName:<root> fileName:/VarargIntegerLiteral.kt
     VALUE_PARAMETER name:values index:0 type:kotlin.Array<out T of <root>.arrayLongInheritedData> varargElementType:T of <root>.arrayLongInheritedData [vararg]
     VALUE_PARAMETER name:toArray index:1 type:@[ExtensionFunctionType] kotlin.Function1<kotlin.Array<T of <root>.arrayLongInheritedData>, kotlin.Unit>
     BLOCK_BODY
-  FUN name:longArrayData visibility:public modality:FINAL <> (values:kotlin.LongArray, toArray:@[ExtensionFunctionType] kotlin.Function1<kotlin.LongArray, kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:values index:0 type:kotlin.LongArray varargElementType:kotlin.Long [vararg]
-    VALUE_PARAMETER name:toArray index:1 type:@[ExtensionFunctionType] kotlin.Function1<kotlin.LongArray, kotlin.Unit>
-    BLOCK_BODY
-  FUN name:shortArrayData visibility:public modality:FINAL <> (values:kotlin.ShortArray, toArray:@[ExtensionFunctionType] kotlin.Function1<kotlin.ShortArray, kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:values index:0 type:kotlin.ShortArray varargElementType:kotlin.Short [vararg]
-    VALUE_PARAMETER name:toArray index:1 type:@[ExtensionFunctionType] kotlin.Function1<kotlin.ShortArray, kotlin.Unit>
-    BLOCK_BODY
   FUN name:arrayOfLongData visibility:public modality:FINAL <> (values:kotlin.LongArray, toArray:@[ExtensionFunctionType] kotlin.Function1<kotlin.Array<kotlin.Long>, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:values index:0 type:kotlin.LongArray varargElementType:kotlin.Long [vararg]
     VALUE_PARAMETER name:toArray index:1 type:@[ExtensionFunctionType] kotlin.Function1<kotlin.Array<kotlin.Long>, kotlin.Unit>
@@ -85,3 +77,11 @@ FILE fqName:<root> fileName:/VarargIntegerLiteral.kt
                 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
+  FUN name:longArrayData visibility:public modality:FINAL <> (values:kotlin.LongArray, toArray:@[ExtensionFunctionType] kotlin.Function1<kotlin.LongArray, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.LongArray varargElementType:kotlin.Long [vararg]
+    VALUE_PARAMETER name:toArray index:1 type:@[ExtensionFunctionType] kotlin.Function1<kotlin.LongArray, kotlin.Unit>
+    BLOCK_BODY
+  FUN name:shortArrayData visibility:public modality:FINAL <> (values:kotlin.ShortArray, toArray:@[ExtensionFunctionType] kotlin.Function1<kotlin.ShortArray, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:values index:0 type:kotlin.ShortArray varargElementType:kotlin.Short [vararg]
+    VALUE_PARAMETER name:toArray index:1 type:@[ExtensionFunctionType] kotlin.Function1<kotlin.ShortArray, kotlin.Unit>
+    BLOCK_BODY

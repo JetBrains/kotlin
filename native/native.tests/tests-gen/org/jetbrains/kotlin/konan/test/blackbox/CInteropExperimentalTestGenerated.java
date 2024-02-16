@@ -19,62 +19,62 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/CInterop/experimental/cases")
 @TestDataPath("$PROJECT_ROOT")
 public class CInteropExperimentalTestGenerated extends AbstractNativeCInteropExperimentalTest {
-    @Test
-    public void testAllFilesPresentInCases() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/experimental/cases"), Pattern.compile("^([^_](.+))$"), null, false);
-    }
+  @Test
+  public void testAllFilesPresentInCases() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/experimental/cases"), Pattern.compile("^([^_](.+))$"), null, false);
+  }
 
-    @Test
-    @TestMetadata("enum")
-    public void testEnum() throws Exception {
-        runTest("native/native.tests/testData/CInterop/experimental/cases/enum/");
-    }
+  @Test
+  @TestMetadata("enum")
+  public void testEnum() {
+    runTest("native/native.tests/testData/CInterop/experimental/cases/enum/");
+  }
 
-    @Test
-    @TestMetadata("function")
-    public void testFunction() throws Exception {
-        runTest("native/native.tests/testData/CInterop/experimental/cases/function/");
-    }
+  @Test
+  @TestMetadata("function")
+  public void testFunction() {
+    runTest("native/native.tests/testData/CInterop/experimental/cases/function/");
+  }
 
-    @Test
-    @TestMetadata("global")
-    public void testGlobal() throws Exception {
-        runTest("native/native.tests/testData/CInterop/experimental/cases/global/");
-    }
+  @Test
+  @TestMetadata("global")
+  public void testGlobal() {
+    runTest("native/native.tests/testData/CInterop/experimental/cases/global/");
+  }
 
-    @Test
-    @TestMetadata("objccategory")
-    public void testObjccategory() throws Exception {
-        runTest("native/native.tests/testData/CInterop/experimental/cases/objccategory/");
-    }
+  @Test
+  @TestMetadata("objccategory")
+  public void testObjccategory() {
+    runTest("native/native.tests/testData/CInterop/experimental/cases/objccategory/");
+  }
 
-    @Test
-    @TestMetadata("objcclass")
-    public void testObjcclass() throws Exception {
-        runTest("native/native.tests/testData/CInterop/experimental/cases/objcclass/");
-    }
+  @Test
+  @TestMetadata("objcclass")
+  public void testObjcclass() {
+    runTest("native/native.tests/testData/CInterop/experimental/cases/objcclass/");
+  }
 
-    @Test
-    @TestMetadata("objcprotocol")
-    public void testObjcprotocol() throws Exception {
-        runTest("native/native.tests/testData/CInterop/experimental/cases/objcprotocol/");
-    }
+  @Test
+  @TestMetadata("objcprotocol")
+  public void testObjcprotocol() {
+    runTest("native/native.tests/testData/CInterop/experimental/cases/objcprotocol/");
+  }
 
-    @Test
-    @TestMetadata("objctypedef")
-    public void testObjctypedef() throws Exception {
-        runTest("native/native.tests/testData/CInterop/experimental/cases/objctypedef/");
-    }
+  @Test
+  @TestMetadata("objctypedef")
+  public void testObjctypedef() {
+    runTest("native/native.tests/testData/CInterop/experimental/cases/objctypedef/");
+  }
 
-    @Test
-    @TestMetadata("struct")
-    public void testStruct() throws Exception {
-        runTest("native/native.tests/testData/CInterop/experimental/cases/struct/");
-    }
+  @Test
+  @TestMetadata("struct")
+  public void testStruct() {
+    runTest("native/native.tests/testData/CInterop/experimental/cases/struct/");
+  }
 
-    @Test
-    @TestMetadata("typedef")
-    public void testTypedef() throws Exception {
-        runTest("native/native.tests/testData/CInterop/experimental/cases/typedef/");
-    }
+  @Test
+  @TestMetadata("typedef")
+  public void testTypedef() {
+    runTest("native/native.tests/testData/CInterop/experimental/cases/typedef/");
+  }
 }

@@ -22,14 +22,14 @@ FILE: serializerInLocalClass.kt
             }
 
             public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<<local>/Carrier>| {
-                public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|<local>/Carrier|): R|kotlin/Unit|
+                public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|<local>/Carrier|): R|kotlin/Unit|
 
-                public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|<local>/Carrier|
+                public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|<local>/Carrier|
 
                 public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                     public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-                public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+                public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
                 private constructor(): R|<local>/Carrier.$serializer| {
                     super<R|kotlin/Any|>()

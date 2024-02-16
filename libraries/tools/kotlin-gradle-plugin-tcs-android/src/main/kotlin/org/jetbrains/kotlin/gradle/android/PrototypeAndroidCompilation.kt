@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.gradle.android
 
@@ -17,6 +17,10 @@ class PrototypeAndroidCompilation(delegate: Delegate) : DecoratedExternalKotlinC
     override val kotlinOptions: KotlinCommonOptions
         get() = super.kotlinOptions as KotlinJvmOptions
 
+    @Deprecated(
+        "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
+                "    compilerOptions {}\n}"
+    )
     @Suppress("UNCHECKED_CAST")
     override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions>
         get() = super.compilerOptions as HasCompilerOptions<KotlinJvmCompilerOptions>

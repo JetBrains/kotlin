@@ -28,105 +28,105 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleCombinedDeclaredMemberScopeTestGenerated extends AbstractCombinedDeclaredMemberScopeTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInCombinedDeclaredMemberScope() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInCombinedDeclaredMemberScope() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("class.kt")
-    public void testClass() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/class.kt");
-    }
+  @Test
+  @TestMetadata("class.kt")
+  public void testClass() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/class.kt");
+  }
 
-    @Test
-    @TestMetadata("classWithJavaSuperclass.kt")
-    public void testClassWithJavaSuperclass() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/classWithJavaSuperclass.kt");
-    }
+  @Test
+  @TestMetadata("classWithJavaSuperclass.kt")
+  public void testClassWithJavaSuperclass() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/classWithJavaSuperclass.kt");
+  }
 
-    @Test
-    @TestMetadata("enumClass.kt")
-    public void testEnumClass() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumClass.kt");
-    }
+  @Test
+  @TestMetadata("enumClass.kt")
+  public void testEnumClass() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumClass.kt");
+  }
 
-    @Test
-    @TestMetadata("enumClassWithAbstractMembers.kt")
-    public void testEnumClassWithAbstractMembers() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumClassWithAbstractMembers.kt");
-    }
+  @Test
+  @TestMetadata("enumClassWithAbstractMembers.kt")
+  public void testEnumClassWithAbstractMembers() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumClassWithAbstractMembers.kt");
+  }
 
-    @Test
-    @TestMetadata("enumClassWithFinalMembers.kt")
-    public void testEnumClassWithFinalMembers() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumClassWithFinalMembers.kt");
-    }
+  @Test
+  @TestMetadata("enumClassWithFinalMembers.kt")
+  public void testEnumClassWithFinalMembers() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumClassWithFinalMembers.kt");
+  }
 
-    @Test
-    @TestMetadata("enumEntryInitializer.kt")
-    public void testEnumEntryInitializer() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumEntryInitializer.kt");
-    }
+  @Test
+  @TestMetadata("enumEntryInitializer.kt")
+  public void testEnumEntryInitializer() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumEntryInitializer.kt");
+  }
 
-    @Test
-    @TestMetadata("enumEntryInitializerWithEmptyBody.kt")
-    public void testEnumEntryInitializerWithEmptyBody() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumEntryInitializerWithEmptyBody.kt");
-    }
+  @Test
+  @TestMetadata("enumEntryInitializerWithEmptyBody.kt")
+  public void testEnumEntryInitializerWithEmptyBody() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumEntryInitializerWithEmptyBody.kt");
+  }
 
-    @Test
-    @TestMetadata("enumEntryInitializerWithFinalEnumMember.kt")
-    public void testEnumEntryInitializerWithFinalEnumMember() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumEntryInitializerWithFinalEnumMember.kt");
-    }
+  @Test
+  @TestMetadata("enumEntryInitializerWithFinalEnumMember.kt")
+  public void testEnumEntryInitializerWithFinalEnumMember() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumEntryInitializerWithFinalEnumMember.kt");
+  }
 
-    @Test
-    @TestMetadata("enumEntryInitializerWithOverriddenMember.kt")
-    public void testEnumEntryInitializerWithOverriddenMember() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumEntryInitializerWithOverriddenMember.kt");
-    }
+  @Test
+  @TestMetadata("enumEntryInitializerWithOverriddenMember.kt")
+  public void testEnumEntryInitializerWithOverriddenMember() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumEntryInitializerWithOverriddenMember.kt");
+  }
 
-    @Test
-    @TestMetadata("innerClass.kt")
-    public void testInnerClass() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/innerClass.kt");
-    }
+  @Test
+  @TestMetadata("innerClass.kt")
+  public void testInnerClass() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/innerClass.kt");
+  }
 
-    @Test
-    @TestMetadata("javaClass.kt")
-    public void testJavaClass() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/javaClass.kt");
-    }
+  @Test
+  @TestMetadata("javaClass.kt")
+  public void testJavaClass() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/javaClass.kt");
+  }
 
-    @Test
-    @TestMetadata("javaDeclaredEnhancementScope.kt")
-    public void testJavaDeclaredEnhancementScope() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/javaDeclaredEnhancementScope.kt");
-    }
+  @Test
+  @TestMetadata("javaDeclaredEnhancementScope.kt")
+  public void testJavaDeclaredEnhancementScope() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/javaDeclaredEnhancementScope.kt");
+  }
 
-    @Test
-    @TestMetadata("javaDeclaredInheritList.kt")
-    public void testJavaDeclaredInheritList() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/javaDeclaredInheritList.kt");
-    }
+  @Test
+  @TestMetadata("javaDeclaredInheritList.kt")
+  public void testJavaDeclaredInheritList() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/javaDeclaredInheritList.kt");
+  }
 
-    @Test
-    @TestMetadata("javaInnerClassConstructor.kt")
-    public void testJavaInnerClassConstructor() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/javaInnerClassConstructor.kt");
-    }
+  @Test
+  @TestMetadata("javaInnerClassConstructor.kt")
+  public void testJavaInnerClassConstructor() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/javaInnerClassConstructor.kt");
+  }
 }

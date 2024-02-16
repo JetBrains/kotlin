@@ -4,8 +4,8 @@ FILE: privateToThis.fir.kt
             super<R|kotlin/Any|>()
         }
 
-        private/*private to this*/ final val t: R|T| = R|<local>/t|
-            private/*private to this*/ get(): R|T|
+        private final val t: R|T| = R|<local>/t|
+            private get(): R|T|
 
         private final val i: R|A.B<T>| = this@R|/A|.R|SubstitutionOverride</A.B.B>|()
             private get(): R|A.B<T>|
@@ -16,11 +16,11 @@ FILE: privateToThis.fir.kt
         }
 
         public final fun foo(a: R|A<kotlin/String>|): R|kotlin/Unit| {
-            lval x: R|kotlin/String| = R|<local>/a|.R|SubstitutionOverride</A.t: R|kotlin/String|><HIDDEN: /A.t is invisible>#|
+            lval x: R|kotlin/String| = R|<local>/a|.R|SubstitutionOverride</A.t: R|kotlin/String|>|
         }
 
         public final fun bar(a: R|A<*>|): R|kotlin/Unit| {
-            R|<local>/a|.R|SubstitutionOverride</A.t: R|CapturedType(*)|><HIDDEN: /A.t is invisible>#|
+            R|<local>/a|.R|SubstitutionOverride</A.t: R|CapturedType(*)|>|
         }
 
         public final inner class B<in Outer(T)> : R|kotlin/Any| {
@@ -32,6 +32,22 @@ FILE: privateToThis.fir.kt
                 R|<local>/a|.R|SubstitutionOverride</A.i: R|A.B<CapturedType(*)>|>|
             }
 
+        }
+
+    }
+    public final class C<in T> : R|kotlin/Any| {
+        public constructor<in T>(t: R|T|): R|C<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val t: R|T| = R|<local>/t|
+            private get(): R|T|
+
+        private final val tt: R|T| = R|<local>/t|
+            private get(): R|T|
+
+        public final fun foo(a: R|C<kotlin/String>|): R|kotlin/Unit| {
+            lval x: R|kotlin/String| = R|<local>/a|.R|SubstitutionOverride</C.tt: R|kotlin/String|>|
         }
 
     }

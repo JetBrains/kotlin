@@ -18,14 +18,6 @@ FILE fqName:<root> fileName:/cannotCastToFunction.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:dumpKotlinLike visibility:public modality:FINAL <> ($receiver:<root>.IrElement, options:kotlin.String) returnType:kotlin.String
-    $receiver: VALUE_PARAMETER name:<this> type:<root>.IrElement
-    VALUE_PARAMETER name:options index:0 type:kotlin.String
-      EXPRESSION_BODY
-        CONST String type=kotlin.String value=""
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun dumpKotlinLike (options: kotlin.String): kotlin.String declared in <root>'
-        CONST String type=kotlin.String value="O"
   FUN name:dump visibility:public modality:FINAL <> ($receiver:<root>.IrElement, normalizeNames:kotlin.Boolean, stableOrder:kotlin.Boolean) returnType:kotlin.String
     $receiver: VALUE_PARAMETER name:<this> type:<root>.IrElement
     VALUE_PARAMETER name:normalizeNames index:0 type:kotlin.Boolean
@@ -69,3 +61,11 @@ FILE fqName:<root> fileName:/cannotCastToFunction.kt
         CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.String origin=INVOKE
           $this: GET_VAR 'val dump: @[ExtensionFunctionType] kotlin.Function1<<root>.IrElement, kotlin.String> declared in <root>.dump' type=@[ExtensionFunctionType] kotlin.Function1<<root>.IrElement, kotlin.String> origin=VARIABLE_AS_FUNCTION
           p1: GET_VAR 'data: <root>.IrElement declared in <root>.dump' type=<root>.IrElement origin=null
+  FUN name:dumpKotlinLike visibility:public modality:FINAL <> ($receiver:<root>.IrElement, options:kotlin.String) returnType:kotlin.String
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.IrElement
+    VALUE_PARAMETER name:options index:0 type:kotlin.String
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value=""
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun dumpKotlinLike (options: kotlin.String): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="O"

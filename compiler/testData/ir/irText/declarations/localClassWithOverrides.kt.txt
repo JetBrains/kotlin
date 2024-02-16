@@ -18,15 +18,6 @@ fun outer() {
   }
 
   local class Local : ALocal {
-    constructor() /* primary */ {
-      super/*ALocal*/()
-      /* <init>() */
-
-    }
-
-    override fun afun() {
-    }
-
     override val aval: Int
       field = 1
       override get
@@ -36,6 +27,16 @@ fun outer() {
       override get
       override set
 
+    constructor() /* primary */ {
+      super/*ALocal*/()
+      /* <init>() */
+
+    }
+
+    override fun afun() {
+    }
+
   }
 
 }
+

@@ -121,7 +121,7 @@ KtKotlinPropertySymbol:
     isDefault: true
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     modality: OPEN
     origin: SOURCE
     receiverParameter: null
@@ -152,7 +152,7 @@ KtKotlinPropertySymbol:
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isVal: false
   modality: OPEN
@@ -172,7 +172,7 @@ KtKotlinPropertySymbol:
     isDefault: true
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     modality: OPEN
     origin: SOURCE
     parameter: KtValueParameterSymbol:
@@ -289,7 +289,7 @@ KtKotlinPropertySymbol:
     isDefault: true
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     modality: OPEN
     origin: SOURCE
     receiverParameter: KtReceiverParameterSymbol:
@@ -330,7 +330,7 @@ KtKotlinPropertySymbol:
   isExtension: true
   isFromPrimaryConstructor: false
   isLateInit: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isVal: true
   modality: OPEN
@@ -382,7 +382,7 @@ KtFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   modality: OPEN
@@ -438,7 +438,7 @@ KtKotlinPropertySymbol:
     isDefault: true
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     modality: OPEN
     origin: SOURCE
     receiverParameter: null
@@ -469,7 +469,7 @@ KtKotlinPropertySymbol:
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isVal: true
   modality: OPEN
@@ -529,7 +529,7 @@ KtKotlinPropertySymbol:
     isDefault: true
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     modality: OPEN
     origin: SOURCE
     receiverParameter: KtReceiverParameterSymbol:
@@ -570,7 +570,7 @@ KtKotlinPropertySymbol:
   isExtension: true
   isFromPrimaryConstructor: false
   isLateInit: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isVal: false
   modality: OPEN
@@ -600,7 +600,7 @@ KtKotlinPropertySymbol:
     isDefault: true
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     modality: OPEN
     origin: SOURCE
     parameter: KtValueParameterSymbol:
@@ -709,7 +709,7 @@ KtFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   modality: OPEN

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.KtAssert.fail
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -39,6 +40,22 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
     private val testSuiteDir = File("native/native.tests/testData/framework")
     private val extras = TestCase.NoTestRunnerExtras("There's no entrypoint in Swift program")
     private val testCompilationFactory = TestCompilationFactory()
+
+    @Test
+    fun testKT65659() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val testDataFile = testSuiteDir.resolve("kt65659.kt")
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR,
+            extras,
+            "kt65659",
+            listOf(testDataFile),
+            TestCompilerArgs(listOf("-Xbinary=bundleId=kt65659")),
+        )
+        val objCFrameworkCompilation = testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings)
+        val compilationResult = objCFrameworkCompilation.result.assertSuccess()
+        assertTrue(compilationResult.resultingArtifact.mainHeader.readText().contains("aliasedAndReturnError"))
+    }
 
     @Test
     fun testSignextZeroext() {

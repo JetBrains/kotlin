@@ -144,7 +144,7 @@ internal class FileStructure private constructor(
                 structureElements += structureElement
 
                 // Go down only in the case of container declaration
-                val canHaveInnerStructure = dcl is KtClassOrObject || dcl is KtScript
+                val canHaveInnerStructure = dcl is KtClassOrObject || dcl is KtScript || dcl is KtDestructuringDeclaration
                 if (canHaveInnerStructure) {
                     dcl.acceptChildren(this)
                 }
@@ -199,8 +199,7 @@ internal class FileStructure private constructor(
         }
         container is KtFile -> {
             val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
-            firFile.lazyResolveToPhase(FirResolvePhase.IMPORTS)
-            firFile.annotationsContainer?.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            firFile.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
             RootStructureElement(firFile, moduleComponents)
         }

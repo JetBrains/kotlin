@@ -1,10 +1,4 @@
 FILE fqName:<root> fileName:/typeParameterAsContextReceiver.kt
-  FUN name:useContext visibility:public modality:FINAL <T> ($context_receiver_0:T of <root>.useContext, block:kotlin.Function1<T of <root>.useContext, kotlin.Unit>) returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    contextReceiverParametersCount: 1
-    VALUE_PARAMETER name:$context_receiver_0 index:0 type:T of <root>.useContext
-    VALUE_PARAMETER name:block index:1 type:kotlin.Function1<T of <root>.useContext, kotlin.Unit>
-    BLOCK_BODY
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
@@ -25,3 +19,9 @@ FILE fqName:<root> fileName:/typeParameterAsContextReceiver.kt
                       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                         CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Int' type=kotlin.Double origin=null
                           $this: GET_VAR 'i: kotlin.Int declared in <root>.test.<anonymous>.<anonymous>' type=kotlin.Int origin=null
+  FUN name:useContext visibility:public modality:FINAL <T> ($context_receiver_0:T of <root>.useContext, block:kotlin.Function1<T of <root>.useContext, kotlin.Unit>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    contextReceiverParametersCount: 1
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:T of <root>.useContext
+    VALUE_PARAMETER name:block index:1 type:kotlin.Function1<T of <root>.useContext, kotlin.Unit>
+    BLOCK_BODY

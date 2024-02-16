@@ -2,11 +2,6 @@ FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
   CLASS CLASS name:Cell modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Cell<T of <root>.Cell>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (value:T of <root>.Cell) returnType:<root>.Cell<T of <root>.Cell> [primary]
-      VALUE_PARAMETER name:value index:0 type:T of <root>.Cell
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Cell modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Cell visibility:private [final]
         EXPRESSION_BODY
@@ -18,6 +13,11 @@ FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
           RETURN type=kotlin.Nothing from='public final fun <get-value> (): T of <root>.Cell declared in <root>.Cell'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Cell visibility:private [final]' type=T of <root>.Cell origin=null
               receiver: GET_VAR '<this>: <root>.Cell<T of <root>.Cell> declared in <root>.Cell.<get-value>' type=<root>.Cell<T of <root>.Cell> origin=null
+    CONSTRUCTOR visibility:public <> (value:T of <root>.Cell) returnType:<root>.Cell<T of <root>.Cell> [primary]
+      VALUE_PARAMETER name:value index:0 type:T of <root>.Cell
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Cell modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -31,10 +31,10 @@ FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  TYPEALIAS name:IntAlias visibility:public expandedType:<root>.Cell<kotlin.Int>
   FUN name:test visibility:public modality:FINAL <> () returnType:<root>.Cell<kotlin.Int>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (): <root>.Cell<kotlin.Int> declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Cell) declared in <root>.Cell' type=<root>.Cell<kotlin.Int> origin=null
           <class: T>: kotlin.Int
           value: CONST Int type=kotlin.Int value=42
+  TYPEALIAS name:IntAlias visibility:public expandedType:<root>.Cell<kotlin.Int>

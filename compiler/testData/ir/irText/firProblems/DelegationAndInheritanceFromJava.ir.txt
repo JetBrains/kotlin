@@ -1,29 +1,14 @@
 FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
   CLASS CLASS name:Impl modality:FINAL visibility:public superTypes:[<root>.Foo.A; <root>.Foo.B]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Impl
+    FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]
+      EXPRESSION_BODY
+        GET_VAR 'b: <root>.Foo.B declared in <root>.Impl.<init>' type=<root>.Foo.B origin=null
     CONSTRUCTOR visibility:public <> (b:<root>.Foo.B) returnType:<root>.Impl [primary]
       VALUE_PARAMETER name:b index:0 type:<root>.Foo.B
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Impl modality:FINAL visibility:public superTypes:[<root>.Foo.A; <root>.Foo.B]'
-    FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]
-      EXPRESSION_BODY
-        GET_VAR 'b: <root>.Foo.B declared in <root>.Impl.<init>' type=<root>.Foo.B origin=null
-    PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
-      overridden:
-        public abstract size: kotlin.Int
-        public abstract size: kotlin.Int
-      FUN DELEGATED_MEMBER name:<get-size> visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.Int
-        correspondingProperty: PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
-        overridden:
-          public abstract fun <get-size> (): kotlin.Int declared in <root>.Foo.A
-          public abstract fun <get-size> (): kotlin.Int declared in <root>.Foo.B
-        $this: VALUE_PARAMETER name:<this> type:<root>.Impl
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public open fun <get-size> (): kotlin.Int declared in <root>.Impl'
-            CALL 'public abstract fun <get-size> (): kotlin.Int declared in <root>.Foo.B' type=kotlin.Int origin=null
-              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
-                receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.<get-size>' type=<root>.Impl origin=null
     FUN DELEGATED_MEMBER name:add visibility:public modality:OPEN <> ($this:<root>.Impl, element:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Boolean
       overridden:
         public abstract fun add (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.A
@@ -153,6 +138,21 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
         public open fun toString (): kotlin.String declared in <root>.Foo.A
         public open fun toString (): kotlin.String declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
+      overridden:
+        public abstract size: kotlin.Int
+        public abstract size: kotlin.Int
+      FUN DELEGATED_MEMBER name:<get-size> visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.Int
+        correspondingProperty: PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
+        overridden:
+          public abstract fun <get-size> (): kotlin.Int declared in <root>.Foo.A
+          public abstract fun <get-size> (): kotlin.Int declared in <root>.Foo.B
+        $this: VALUE_PARAMETER name:<this> type:<root>.Impl
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-size> (): kotlin.Int declared in <root>.Impl'
+            CALL 'public abstract fun <get-size> (): kotlin.Int declared in <root>.Foo.B' type=kotlin.Int origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
+                receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.<get-size>' type=<root>.Impl origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

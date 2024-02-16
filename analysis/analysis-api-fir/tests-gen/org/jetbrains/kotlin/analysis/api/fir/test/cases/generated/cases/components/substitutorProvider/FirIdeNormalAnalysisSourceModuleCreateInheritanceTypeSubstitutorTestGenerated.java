@@ -28,87 +28,87 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleCreateInheritanceTypeSubstitutorTestGenerated extends AbstractCreateInheritanceTypeSubstitutorTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInCreateInheritanceTypeSubstitutor() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInCreateInheritanceTypeSubstitutor() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("chain.kt")
-    public void testChain() throws Exception {
-        runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/chain.kt");
-    }
+  @Test
+  @TestMetadata("chain.kt")
+  public void testChain() {
+    runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/chain.kt");
+  }
 
-    @Test
-    @TestMetadata("cycle.kt")
-    public void testCycle() throws Exception {
-        runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/cycle.kt");
-    }
+  @Test
+  @TestMetadata("cycle.kt")
+  public void testCycle() {
+    runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/cycle.kt");
+  }
 
-    @Test
-    @TestMetadata("diamond.kt")
-    public void testDiamond() throws Exception {
-        runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/diamond.kt");
-    }
+  @Test
+  @TestMetadata("diamond.kt")
+  public void testDiamond() {
+    runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/diamond.kt");
+  }
 
-    @Test
-    @TestMetadata("directComplexSubstitution.kt")
-    public void testDirectComplexSubstitution() throws Exception {
-        runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/directComplexSubstitution.kt");
-    }
+  @Test
+  @TestMetadata("directComplexSubstitution.kt")
+  public void testDirectComplexSubstitution() {
+    runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/directComplexSubstitution.kt");
+  }
 
-    @Test
-    @TestMetadata("directType.kt")
-    public void testDirectType() throws Exception {
-        runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/directType.kt");
-    }
+  @Test
+  @TestMetadata("directType.kt")
+  public void testDirectType() {
+    runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/directType.kt");
+  }
 
-    @Test
-    @TestMetadata("directTypeParam.kt")
-    public void testDirectTypeParam() throws Exception {
-        runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/directTypeParam.kt");
-    }
+  @Test
+  @TestMetadata("directTypeParam.kt")
+  public void testDirectTypeParam() {
+    runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/directTypeParam.kt");
+  }
 
-    @Test
-    @TestMetadata("errorInUpperBound.kt")
-    public void testErrorInUpperBound() throws Exception {
-        runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/errorInUpperBound.kt");
-    }
+  @Test
+  @TestMetadata("errorInUpperBound.kt")
+  public void testErrorInUpperBound() {
+    runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/errorInUpperBound.kt");
+  }
 
-    @Test
-    @TestMetadata("extraTypeArgument.kt")
-    public void testExtraTypeArgument() throws Exception {
-        runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/extraTypeArgument.kt");
-    }
+  @Test
+  @TestMetadata("extraTypeArgument.kt")
+  public void testExtraTypeArgument() {
+    runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/extraTypeArgument.kt");
+  }
 
-    @Test
-    @TestMetadata("missingTypeArgument.kt")
-    public void testMissingTypeArgument() throws Exception {
-        runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/missingTypeArgument.kt");
-    }
+  @Test
+  @TestMetadata("missingTypeArgument.kt")
+  public void testMissingTypeArgument() {
+    runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/missingTypeArgument.kt");
+  }
 
-    @Test
-    @TestMetadata("multipleInheritance.kt")
-    public void testMultipleInheritance() throws Exception {
-        runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/multipleInheritance.kt");
-    }
+  @Test
+  @TestMetadata("multipleInheritance.kt")
+  public void testMultipleInheritance() {
+    runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/multipleInheritance.kt");
+  }
 
-    @Test
-    @TestMetadata("self.kt")
-    public void testSelf() throws Exception {
-        runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/self.kt");
-    }
+  @Test
+  @TestMetadata("self.kt")
+  public void testSelf() {
+    runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/self.kt");
+  }
 }

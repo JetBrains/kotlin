@@ -1,30 +1,11 @@
 open enum class MyEnum : Enum<MyEnum> {
-  private constructor() /* primary */ {
-    super/*Enum*/<MyEnum>()
-    /* <init>() */
-
-  }
 
   Z = Z()
   private enum entry class Z : MyEnum {
-    private constructor() /* primary */ {
-      super/*MyEnum*/()
-      /* <init>() */
-
-    }
-
     var counter: Int
       field = 0
       get
       set
-
-    fun foo() {
-    }
-
-    fun bar() {
-      <this>.<set-counter>(<set-?> = 1)
-      <this>.foo()
-    }
 
     val aLambda: Function0<Unit>
       field = local fun <anonymous>() {
@@ -37,15 +18,15 @@ open enum class MyEnum : Enum<MyEnum> {
     val anObject: <no name provided>
       field = { // BLOCK
         local class <no name provided> {
+          init {
+            <this>.<set-counter>(<set-?> = 1)
+            <this>.foo()
+          }
+
           constructor() /* primary */ {
             super/*Any*/()
             /* <init>() */
 
-          }
-
-          init {
-            <this>.<set-counter>(<set-?> = 1)
-            <this>.foo()
           }
 
           fun test() {
@@ -59,13 +40,34 @@ open enum class MyEnum : Enum<MyEnum> {
       }
       get
 
+    private constructor() /* primary */ {
+      super/*MyEnum*/()
+      /* <init>() */
+
+    }
+
+    fun bar() {
+      <this>.<set-counter>(<set-?> = 1)
+      <this>.foo()
+    }
+
+    fun foo() {
+    }
+
   }
 
-  fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
+  private constructor() /* primary */ {
+    super/*Enum*/<MyEnum>()
+    /* <init>() */
+
+  }
 
   fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
 
   val entries: EnumEntries<MyEnum>
     get(): EnumEntries<MyEnum> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

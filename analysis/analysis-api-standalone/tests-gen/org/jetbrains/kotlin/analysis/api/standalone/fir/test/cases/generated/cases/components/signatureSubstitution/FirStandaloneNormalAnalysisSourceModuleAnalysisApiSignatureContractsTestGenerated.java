@@ -28,33 +28,33 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/signatureSubstitution/signatureContracts")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiSignatureContractsTestGenerated extends AbstractAnalysisApiSignatureContractsTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInSignatureContracts() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/signatureSubstitution/signatureContracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInSignatureContracts() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/signatureSubstitution/signatureContracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("members.kt")
-    public void testMembers() throws Exception {
-        runTest("analysis/analysis-api/testData/components/signatureSubstitution/signatureContracts/members.kt");
-    }
+  @Test
+  @TestMetadata("members.kt")
+  public void testMembers() {
+    runTest("analysis/analysis-api/testData/components/signatureSubstitution/signatureContracts/members.kt");
+  }
 
-    @Test
-    @TestMetadata("topLevel.kt")
-    public void testTopLevel() throws Exception {
-        runTest("analysis/analysis-api/testData/components/signatureSubstitution/signatureContracts/topLevel.kt");
-    }
+  @Test
+  @TestMetadata("topLevel.kt")
+  public void testTopLevel() {
+    runTest("analysis/analysis-api/testData/components/signatureSubstitution/signatureContracts/topLevel.kt");
+  }
 }

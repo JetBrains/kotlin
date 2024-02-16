@@ -19,62 +19,62 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/classId")
 @TestDataPath("$PROJECT_ROOT")
 public class SourceClassIdTestGenerated extends AbstractSourceClassIdTest {
-    @Test
-    public void testAllFilesPresentInClassId() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/classId"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInClassId() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/classId"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("classWithMembers.kt")
-    public void testClassWithMembers() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/classId/classWithMembers.kt");
-    }
+  @Test
+  @TestMetadata("classWithMembers.kt")
+  public void testClassWithMembers() {
+    runTest("analysis/low-level-api-fir/testData/classId/classWithMembers.kt");
+  }
 
-    @Test
-    @TestMetadata("enum.kt")
-    public void testEnum() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/classId/enum.kt");
-    }
+  @Test
+  @TestMetadata("enum.kt")
+  public void testEnum() {
+    runTest("analysis/low-level-api-fir/testData/classId/enum.kt");
+  }
 
-    @Test
-    @TestMetadata("enumEntry.kt")
-    public void testEnumEntry() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/classId/enumEntry.kt");
-    }
+  @Test
+  @TestMetadata("enumEntry.kt")
+  public void testEnumEntry() {
+    runTest("analysis/low-level-api-fir/testData/classId/enumEntry.kt");
+  }
 
-    @Test
-    @TestMetadata("invalidForJvmClassName.kt")
-    public void testInvalidForJvmClassName() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/classId/invalidForJvmClassName.kt");
-    }
+  @Test
+  @TestMetadata("invalidForJvmClassName.kt")
+  public void testInvalidForJvmClassName() {
+    runTest("analysis/low-level-api-fir/testData/classId/invalidForJvmClassName.kt");
+  }
 
-    @Test
-    @TestMetadata("localClassInsideFunctionLiteral.kt")
-    public void testLocalClassInsideFunctionLiteral() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/classId/localClassInsideFunctionLiteral.kt");
-    }
+  @Test
+  @TestMetadata("localClassInsideFunctionLiteral.kt")
+  public void testLocalClassInsideFunctionLiteral() {
+    runTest("analysis/low-level-api-fir/testData/classId/localClassInsideFunctionLiteral.kt");
+  }
 
-    @Test
-    @TestMetadata("localClassInsideLambdaCallInsideStringTemplate.kt")
-    public void testLocalClassInsideLambdaCallInsideStringTemplate() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/classId/localClassInsideLambdaCallInsideStringTemplate.kt");
-    }
+  @Test
+  @TestMetadata("localClassInsideLambdaCallInsideStringTemplate.kt")
+  public void testLocalClassInsideLambdaCallInsideStringTemplate() {
+    runTest("analysis/low-level-api-fir/testData/classId/localClassInsideLambdaCallInsideStringTemplate.kt");
+  }
 
-    @Test
-    @TestMetadata("localClassInsideSuperEntryCall.kt")
-    public void testLocalClassInsideSuperEntryCall() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/classId/localClassInsideSuperEntryCall.kt");
-    }
+  @Test
+  @TestMetadata("localClassInsideSuperEntryCall.kt")
+  public void testLocalClassInsideSuperEntryCall() {
+    runTest("analysis/low-level-api-fir/testData/classId/localClassInsideSuperEntryCall.kt");
+  }
 
-    @Test
-    @TestMetadata("namelessClasses.kt")
-    public void testNamelessClasses() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/classId/namelessClasses.kt");
-    }
+  @Test
+  @TestMetadata("namelessClasses.kt")
+  public void testNamelessClasses() {
+    runTest("analysis/low-level-api-fir/testData/classId/namelessClasses.kt");
+  }
 
-    @Test
-    @TestMetadata("namelessInsideNamelessClasses.kt")
-    public void testNamelessInsideNamelessClasses() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/classId/namelessInsideNamelessClasses.kt");
-    }
+  @Test
+  @TestMetadata("namelessInsideNamelessClasses.kt")
+  public void testNamelessInsideNamelessClasses() {
+    runTest("analysis/low-level-api-fir/testData/classId/namelessInsideNamelessClasses.kt");
+  }
 }

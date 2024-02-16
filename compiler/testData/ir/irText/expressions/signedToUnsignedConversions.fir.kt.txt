@@ -13,39 +13,17 @@ open annotation class ImplicitIntegerCoercion : Annotation {
 // FILE: signedToUnsignedConversions_test.kt
 
 @ImplicitIntegerCoercion
-const val IMPLICIT_INT: Int
-  field = 255
-  get
-
-@ImplicitIntegerCoercion
-const val EXPLICIT_INT: Int
-  field = 255
-  get
-
-@ImplicitIntegerCoercion
-const val LONG_CONST: Long
-  field = 255L
-  get
-
-@ImplicitIntegerCoercion
 val NON_CONST: Int
   field = 255
   get
 
-@ImplicitIntegerCoercion
-const val BIGGER_THAN_UBYTE: Int
-  field = 256
-  get
-
-@ImplicitIntegerCoercion
-const val UINT_CONST: UInt
-  field = 42
-  get
+fun takeLong(@ImplicitIntegerCoercion l: Long) {
+}
 
 fun takeUByte(@ImplicitIntegerCoercion u: UByte) {
 }
 
-fun takeUShort(@ImplicitIntegerCoercion u: UShort) {
+fun takeUBytes(@ImplicitIntegerCoercion vararg u: UByte) {
 }
 
 fun takeUInt(@ImplicitIntegerCoercion u: UInt) {
@@ -54,10 +32,7 @@ fun takeUInt(@ImplicitIntegerCoercion u: UInt) {
 fun takeULong(@ImplicitIntegerCoercion u: ULong) {
 }
 
-fun takeUBytes(@ImplicitIntegerCoercion vararg u: UByte) {
-}
-
-fun takeLong(@ImplicitIntegerCoercion l: Long) {
+fun takeUShort(@ImplicitIntegerCoercion u: UShort) {
 }
 
 fun test() {
@@ -69,3 +44,29 @@ fun test() {
   takeULong(u = 255.toULong())
   takeUBytes(u = [255.toUByte(), 255.toUByte(), 42B])
 }
+
+@ImplicitIntegerCoercion
+const val BIGGER_THAN_UBYTE: Int
+  field = 256
+  get
+
+@ImplicitIntegerCoercion
+const val EXPLICIT_INT: Int
+  field = 255
+  get
+
+@ImplicitIntegerCoercion
+const val IMPLICIT_INT: Int
+  field = 255
+  get
+
+@ImplicitIntegerCoercion
+const val LONG_CONST: Long
+  field = 255L
+  get
+
+@ImplicitIntegerCoercion
+const val UINT_CONST: UInt
+  field = 42
+  get
+

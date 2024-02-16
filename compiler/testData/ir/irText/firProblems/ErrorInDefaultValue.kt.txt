@@ -1,8 +1,3 @@
-interface A {
-  abstract fun f(x: String = "OK"): String
-
-}
-
 class B : A {
   constructor() /* primary */ {
     super/*Any*/()
@@ -17,18 +12,24 @@ class B : A {
 }
 
 class C : A {
+  val x: A
+    field = x
+    get
+
   constructor(x: A) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: A
-    field = x
-    get
-
   override fun f(x: String): String {
     return <this>.#x.f(x = x)
   }
 
 }
+
+interface A {
+  abstract fun f(x: String = "OK"): String
+
+}
+

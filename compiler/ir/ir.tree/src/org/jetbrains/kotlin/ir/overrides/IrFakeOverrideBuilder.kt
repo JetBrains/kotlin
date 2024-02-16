@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.collectAndFilterRealOverrides
+import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.ir.util.isClass
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
@@ -204,7 +207,7 @@ class IrFakeOverrideBuilder(
 
         // because of binary incompatible changes, it's possible to have private member colliding with fake override
         // In that case we shouldn't generate fake override, but also shouldn't mark them as overridden
-        if (fromCurrent.isOverridableMemberOrAccessor()) {
+        if (!DescriptorVisibilities.isPrivate(fromCurrent.visibility)) {
             fromCurrent.overriddenSymbols = overridden.memoryOptimizedMap { it.original.symbol }
         }
 
@@ -527,15 +530,3 @@ private val IrOverridableMember.returnType: IrType
         is IrProperty -> getter!!.returnType
         else -> error("Unexpected type of declaration: ${this::class.java}, $this")
     }
-
-fun IrSimpleFunction.isOverridableFunction(): Boolean =
-    !DescriptorVisibilities.isPrivate(visibility) && (hasDispatchReceiver || isFromJava())
-
-fun IrProperty.isOverridableProperty(): Boolean =
-    !DescriptorVisibilities.isPrivate(visibility) && (getter.hasDispatchReceiver || setter.hasDispatchReceiver || isFromJava())
-
-fun IrDeclaration.isOverridableMemberOrAccessor(): Boolean = when (this) {
-    is IrSimpleFunction -> isOverridableFunction()
-    is IrProperty -> isOverridableProperty()
-    else -> false
-}

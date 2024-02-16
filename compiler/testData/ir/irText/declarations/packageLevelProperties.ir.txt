@@ -8,12 +8,6 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Int declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
-  PROPERTY name:test2 visibility:public modality:FINAL [val]
-    FUN name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Int
-      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Int declared in <root>'
-          CONST Int type=kotlin.Int value=0
   PROPERTY name:test3 visibility:public modality:FINAL [var]
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:private [static]
       EXPRESSION_BODY
@@ -114,3 +108,9 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
             thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'public final test8: kotlin.Int' field=null getter='public final fun <get-test8> (): kotlin.Int declared in <root>' setter='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-test8>' type=kotlin.Int origin=null
+  PROPERTY name:test2 visibility:public modality:FINAL [val]
+    FUN name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Int declared in <root>'
+          CONST Int type=kotlin.Int value=0

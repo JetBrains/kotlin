@@ -1,16 +1,3 @@
-fun <T : Any?> castFun(x: Any): T {
-  return x as T
-}
-
-fun <T : Any?> Any.castExtFun(): T {
-  return <this> as T
-}
-
-val <T : Any?> T.castExtVal: T
-  get(): T {
-    return <this> as T
-  }
-
 class Host<T : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
@@ -18,8 +5,8 @@ class Host<T : Any?> {
 
   }
 
-  fun castMemberFun(x: Any): T {
-    return x as T
+  fun <TF : Any?> Any.castGenericMemberExtFun(): TF {
+    return <this> as TF
   }
 
   fun <TF : Any?> castGenericMemberFun(x: Any): TF {
@@ -30,18 +17,32 @@ class Host<T : Any?> {
     return <this> as T
   }
 
-  fun <TF : Any?> Any.castGenericMemberExtFun(): TF {
-    return <this> as TF
+  fun castMemberFun(x: Any): T {
+    return x as T
   }
-
-  val Any.castMemberExtVal: T
-    get(): T {
-      return <this> as T
-    }
 
   val <TV : Any?> TV.castGenericMemberExtVal: TV
     get(): TV {
       return <this> as TV
     }
 
+  val Any.castMemberExtVal: T
+    get(): T {
+      return <this> as T
+    }
+
 }
+
+fun <T : Any?> Any.castExtFun(): T {
+  return <this> as T
+}
+
+fun <T : Any?> castFun(x: Any): T {
+  return x as T
+}
+
+val <T : Any?> T.castExtVal: T
+  get(): T {
+    return <this> as T
+  }
+

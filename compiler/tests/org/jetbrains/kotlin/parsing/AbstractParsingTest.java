@@ -78,23 +78,31 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
         }
     }
 
-    protected void doParsingTest(@NotNull String filePath) throws Exception {
+    protected void doParsingTest(@NotNull String filePath) {
         doBaseTest(filePath, KtNodeTypes.KT_FILE, null);
     }
 
-    protected void doParsingTest(@NotNull String filePath, Function1<String, String> contentFilter) throws Exception {
+    protected void doParsingTest(@NotNull String filePath, Function1<String, String> contentFilter) {
         doBaseTest(filePath, KtNodeTypes.KT_FILE, contentFilter);
     }
 
-    protected void doExpressionCodeFragmentParsingTest(@NotNull String filePath) throws Exception {
+    protected void doExpressionCodeFragmentParsingTest(@NotNull String filePath) {
         doBaseTest(filePath, KtNodeTypes.EXPRESSION_CODE_FRAGMENT, null);
     }
 
-    protected void doBlockCodeFragmentParsingTest(@NotNull String filePath) throws Exception {
+    protected void doBlockCodeFragmentParsingTest(@NotNull String filePath) {
         doBaseTest(filePath, KtNodeTypes.BLOCK_CODE_FRAGMENT, null);
     }
 
-    private void doBaseTest(@NotNull String filePath, @NotNull IElementType fileType, Function1<String, String> contentFilter) throws Exception {
+    private void doBaseTest(@NotNull String filePath, @NotNull IElementType fileType, Function1<String, String> contentFilter) {
+        try {
+            doBaseTestImpl(filePath, fileType, contentFilter);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void doBaseTestImpl(@NotNull String filePath, @NotNull IElementType fileType, Function1<String, String> contentFilter) throws Exception {
         String fileContent = loadFile(filePath);
 
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath));

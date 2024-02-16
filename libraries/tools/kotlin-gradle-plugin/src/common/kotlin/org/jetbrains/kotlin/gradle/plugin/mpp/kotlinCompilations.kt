@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.internal.KAPT_GENERATE_STUBS_PREFIX
 import org.jetbrains.kotlin.gradle.internal.getKaptTaskName
-import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.fileExtensionCasePermutations
@@ -107,8 +106,9 @@ internal inline fun <reified T : KotlinCommonOptions> InternalKotlinCompilation<
     return this as InternalKotlinCompilation<T>
 }
 
-internal inline fun <reified T : KotlinCommonCompilerOptions> HasCompilerOptions<*>.castCompilerOptionsType(): HasCompilerOptions<T> {
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+internal inline fun <reified T : KotlinCommonCompilerOptions> DeprecatedHasCompilerOptions<*>.castCompilerOptionsType(): DeprecatedHasCompilerOptions<T> {
     this.options as T
     @Suppress("UNCHECKED_CAST")
-    return this as HasCompilerOptions<T>
+    return this as DeprecatedHasCompilerOptions<T>
 }

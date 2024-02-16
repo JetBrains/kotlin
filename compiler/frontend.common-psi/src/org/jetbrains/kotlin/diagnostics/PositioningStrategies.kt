@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
 import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 
 object PositioningStrategies {
@@ -1009,6 +1011,20 @@ object PositioningStrategies {
                 }
                 return super.mark(element.importedReference ?: element)
             }
+            return super.mark(element)
+        }
+    }
+
+    @OptIn(UnsafeCastFunction::class)
+    val IMPORT_LAST_BUT_ONE_NAME: PositioningStrategy<KtImportDirective> = object : PositioningStrategy<KtImportDirective>() {
+        override fun mark(element: KtImportDirective): List<TextRange> {
+            element.importedReference
+                ?.safeAs<KtDotQualifiedExpression>()
+                ?.receiverExpression
+                ?.safeAs<KtDotQualifiedExpression>()
+                ?.selectorExpression
+                ?.let { return markElement(it) }
+
             return super.mark(element)
         }
     }

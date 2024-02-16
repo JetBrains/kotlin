@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.moduleNameForCompilation
 
 internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinCompilationImplFactory.PostConfigure {
     override fun configure(compilation: DecoratedKotlinCompilation<*>) {
-        when (val compilationCompilerOptions = compilation.compilerOptions.options) {
+        when (@Suppress("DEPRECATION") val compilationCompilerOptions = compilation.compilerOptions.options) {
             is KotlinJvmCompilerOptions -> compilation.configureJvmCompilerOptions(compilationCompilerOptions)
             is KotlinJsCompilerOptions -> compilation.configureJsCompilerOptions(compilationCompilerOptions)
             is KotlinNativeCompilerOptions -> {

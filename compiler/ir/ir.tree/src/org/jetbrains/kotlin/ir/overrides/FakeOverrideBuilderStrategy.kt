@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.ir.overrides
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.render
@@ -39,7 +41,7 @@ abstract class FakeOverrideBuilderStrategy(
      * if no fake override should be created for this member
      */
     fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
-        return if (member.isOverridableMemberOrAccessor() && isVisibleForOverrideInClass(member, clazz))
+        return if (isVisibleForOverrideInClass(member, clazz))
             buildFakeOverrideMember(superType, member, clazz, unimplementedOverridesStrategy)
         else
             null

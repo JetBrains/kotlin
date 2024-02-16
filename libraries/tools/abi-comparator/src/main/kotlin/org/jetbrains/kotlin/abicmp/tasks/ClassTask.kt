@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.abicmp.tasks
 
-import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.jvm.KotlinClassMetadata
 import org.jetbrains.kotlin.abicmp.checkers.loadFields
 import org.jetbrains.kotlin.abicmp.checkers.loadMethods
 import org.jetbrains.kotlin.abicmp.classFlags
@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.abicmp.isSynthetic
 import org.jetbrains.kotlin.abicmp.reports.ClassReport
 import org.jetbrains.kotlin.abicmp.reports.ListEntryDiff
 import org.jetbrains.kotlin.abicmp.tag
-import org.jetbrains.kotlin.kotlinp.Kotlinp
-import org.jetbrains.kotlin.kotlinp.KotlinpSettings
-import org.jetbrains.kotlin.kotlinp.readKotlinClassHeader
+import org.jetbrains.kotlin.kotlinp.Settings
+import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
+import org.jetbrains.kotlin.kotlinp.jvm.readKotlinClassHeader
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -50,7 +50,7 @@ class ClassTask(
             return classReader.readKotlinClassHeader()?.run { KotlinClassMetadata.readStrict(this) }
         }
 
-        val kotlinp = Kotlinp(KotlinpSettings(isVerbose = false, sortDeclarations = true))
+        val kotlinp = JvmKotlinp(Settings(isVerbose = false, sortDeclarations = true))
         val metadata1 = class1.getMetadata()
         val metadata2 = class2.getMetadata()
 
@@ -59,8 +59,8 @@ class ClassTask(
         if (metadata1 == null || metadata2 == null) {
             report.addMetadataDiff(
                 ListEntryDiff(
-                    metadata1?.run { kotlinp.renderClassFile(metadata1) },
-                    metadata2?.run { kotlinp.renderClassFile(metadata2) })
+                    metadata1?.run { kotlinp.printClassFile(metadata1) },
+                    metadata2?.run { kotlinp.printClassFile(metadata2) })
             )
             return
         }

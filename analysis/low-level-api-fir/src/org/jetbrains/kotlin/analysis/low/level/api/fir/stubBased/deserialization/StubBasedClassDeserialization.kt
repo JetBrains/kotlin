@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -218,8 +219,27 @@ internal fun deserializeClassToSymbol(
         }
 
         if (classOrObject.isData() && firPrimaryConstructor != null) {
-            val zippedParameters =
-                classOrObject.primaryConstructorParameters zip declarations.filterIsInstance<FirProperty>()
+            // This is a workaround for KT-64884 as we cannot guaranty the correct order
+            // in the metadata from old compilers
+            val properties = declarations.associateBy { declaration ->
+                (declaration as? FirProperty)?.name?.asString()
+            }
+
+            val zippedParameters = classOrObject.primaryConstructorParameters.map { parameter ->
+                val property = properties[parameter.name] ?: errorWithAttachment("Property is not found") {
+                    withPsiEntry("parameter", parameter)
+                    withEntry("parameterName", parameter.name)
+                    withEntryGroup("properties") {
+                        for ((index, value) in properties.entries.withIndex()) {
+                            if (value.key == null) continue
+                            withFirEntry("property$index", value.value)
+                        }
+                    }
+                }
+
+                parameter to (property as FirProperty)
+            }
+
             addDeclaration(
                 // Explicit type arguments are needed to workaround KT-62544
                 createDataClassCopyFunction<Any, KtClassOrObject, KtParameter>(

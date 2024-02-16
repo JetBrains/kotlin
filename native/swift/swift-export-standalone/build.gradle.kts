@@ -41,9 +41,8 @@ sourceSets {
 
 val testDataDir = projectDir.resolve("testData")
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
+val test by nativeTest("test", null) {
     inputs.dir(testDataDir)
-    dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform { }
 }

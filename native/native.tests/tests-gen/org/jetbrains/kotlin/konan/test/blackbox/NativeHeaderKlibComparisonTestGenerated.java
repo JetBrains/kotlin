@@ -19,110 +19,110 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/klib/header-klibs/comparison")
 @TestDataPath("$PROJECT_ROOT")
 public class NativeHeaderKlibComparisonTestGenerated extends AbstractNativeHeaderKlibComparisonTest {
-    @Test
-    public void testAllFilesPresentInComparison() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/header-klibs/comparison"), Pattern.compile("^([^\\.]+)$"), null, false);
-    }
+  @Test
+  public void testAllFilesPresentInComparison() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/header-klibs/comparison"), Pattern.compile("^([^\\.]+)$"), null, false);
+  }
 
-    @Test
-    @TestMetadata("anonymousObjects")
-    public void testAnonymousObjects() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/anonymousObjects/");
-    }
+  @Test
+  @TestMetadata("anonymousObjects")
+  public void testAnonymousObjects() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/anonymousObjects/");
+  }
 
-    @Test
-    @TestMetadata("classFlags")
-    public void testClassFlags() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/classFlags/");
-    }
+  @Test
+  @TestMetadata("classFlags")
+  public void testClassFlags() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/classFlags/");
+  }
 
-    @Test
-    @TestMetadata("classPrivateMembers")
-    public void testClassPrivateMembers() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/classPrivateMembers/");
-    }
+  @Test
+  @TestMetadata("classPrivateMembers")
+  public void testClassPrivateMembers() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/classPrivateMembers/");
+  }
 
-    @Test
-    @TestMetadata("constant")
-    public void testConstant() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/constant/");
-    }
+  @Test
+  @TestMetadata("constant")
+  public void testConstant() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/constant/");
+  }
 
-    @Test
-    @TestMetadata("declarationOrderInline")
-    public void testDeclarationOrderInline() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/declarationOrderInline/");
-    }
+  @Test
+  @TestMetadata("declarationOrderInline")
+  public void testDeclarationOrderInline() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/declarationOrderInline/");
+  }
 
-    @Test
-    @TestMetadata("functionBody")
-    public void testFunctionBody() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/functionBody/");
-    }
+  @Test
+  @TestMetadata("functionBody")
+  public void testFunctionBody() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/functionBody/");
+  }
 
-    @Test
-    @TestMetadata("inlineFunInPrivateClass")
-    public void testInlineFunInPrivateClass() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/inlineFunInPrivateClass/");
-    }
+  @Test
+  @TestMetadata("inlineFunInPrivateClass")
+  public void testInlineFunInPrivateClass() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/inlineFunInPrivateClass/");
+  }
 
-    @Test
-    @TestMetadata("inlineFunInPrivateNestedClass")
-    public void testInlineFunInPrivateNestedClass() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/inlineFunInPrivateNestedClass/");
-    }
+  @Test
+  @TestMetadata("inlineFunInPrivateNestedClass")
+  public void testInlineFunInPrivateNestedClass() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/inlineFunInPrivateNestedClass/");
+  }
 
-    @Test
-    @TestMetadata("inlineFunctionBody")
-    public void testInlineFunctionBody() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/inlineFunctionBody/");
-    }
+  @Test
+  @TestMetadata("inlineFunctionBody")
+  public void testInlineFunctionBody() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/inlineFunctionBody/");
+  }
 
-    @Test
-    @TestMetadata("lambdas")
-    public void testLambdas() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/lambdas/");
-    }
+  @Test
+  @TestMetadata("lambdas")
+  public void testLambdas() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/lambdas/");
+  }
 
-    @Test
-    @TestMetadata("parameterName")
-    public void testParameterName() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/parameterName/");
-    }
+  @Test
+  @TestMetadata("parameterName")
+  public void testParameterName() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/parameterName/");
+  }
 
-    @Test
-    @TestMetadata("privateInterface")
-    public void testPrivateInterface() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/privateInterface/");
-    }
+  @Test
+  @TestMetadata("privateInterface")
+  public void testPrivateInterface() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/privateInterface/");
+  }
 
-    @Test
-    @TestMetadata("privateTypealias")
-    public void testPrivateTypealias() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/privateTypealias/");
-    }
+  @Test
+  @TestMetadata("privateTypealias")
+  public void testPrivateTypealias() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/privateTypealias/");
+  }
 
-    @Test
-    @TestMetadata("returnType")
-    public void testReturnType() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/returnType/");
-    }
+  @Test
+  @TestMetadata("returnType")
+  public void testReturnType() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/returnType/");
+  }
 
-    @Test
-    @TestMetadata("superClass")
-    public void testSuperClass() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/superClass/");
-    }
+  @Test
+  @TestMetadata("superClass")
+  public void testSuperClass() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/superClass/");
+  }
 
-    @Test
-    @TestMetadata("syntheticAccessors")
-    public void testSyntheticAccessors() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/syntheticAccessors/");
-    }
+  @Test
+  @TestMetadata("syntheticAccessors")
+  public void testSyntheticAccessors() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/syntheticAccessors/");
+  }
 
-    @Test
-    @TestMetadata("topLevelPrivateMembers")
-    public void testTopLevelPrivateMembers() throws Exception {
-        runTest("native/native.tests/testData/klib/header-klibs/comparison/topLevelPrivateMembers/");
-    }
+  @Test
+  @TestMetadata("topLevelPrivateMembers")
+  public void testTopLevelPrivateMembers() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/topLevelPrivateMembers/");
+  }
 }

@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.kapt3.test.handlers
 
 import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.Pretty
-import kotlinx.metadata.jvm.KotlinClassMetadata
-import org.jetbrains.kotlin.kotlinp.Kotlinp
-import org.jetbrains.kotlin.kotlinp.KotlinpSettings
+import kotlin.metadata.jvm.KotlinClassMetadata
+import org.jetbrains.kotlin.kotlinp.Settings
+import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.model.TestModule
@@ -37,7 +37,7 @@ fun renderMetadata(pretty: Pretty, tree: JCAnnotation): String {
         extraString = args[JvmAnnotationNames.METADATA_EXTRA_STRING_FIELD_NAME].stringValue() ?: "",
         packageName = args[JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME].stringValue() ?: "",
     )
-    val text = Kotlinp(KotlinpSettings(isVerbose = true, sortDeclarations = true)).renderClassFile(KotlinClassMetadata.readStrict(metadata))
+    val text = JvmKotlinp(Settings(isVerbose = true, sortDeclarations = true)).printClassFile(KotlinClassMetadata.readStrict(metadata))
     // "/*" and "*/" delimiters are used in kotlinp, for example to render type parameter names. Replace them with something else
     // to avoid them being interpreted as Java comments.
     val sanitized = text.split('\n').dropLast(1).map { it.replace("/*", "(*").replace("*/", "*)") }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -146,11 +146,14 @@ class PsiClassRenderer private constructor(
     private fun Array<PsiTypeParameter>.renderTypeParams() =
         if (isEmpty()) ""
         else "<" + joinToString {
-            val bounds =
-                if (it.extendsListTypes.isNotEmpty())
-                    " extends " + it.extendsListTypes.joinToString(" & ", transform = { it.renderType() })
-                else ""
-            it.name!! + bounds
+            val extendsListTypes = it.extendsListTypes
+            val bounds = if (extendsListTypes.isNotEmpty()) {
+                " extends " + extendsListTypes.joinToString(" & ", transform = { it.renderType() })
+            } else {
+                ""
+            }
+
+            it.renderModifiers() + it.name!! + bounds
         } + "> "
 
     private fun KtLightPsiLiteral.renderKtLightPsiLiteral(): String {
@@ -294,7 +297,7 @@ class PsiClassRenderer private constructor(
             val renderedAnnotation = annotation.renderAnnotation()
             if (renderedAnnotation.isNotEmpty()) {
                 annotationsBuffer.add(
-                    renderedAnnotation + (if (this is PsiParameter) " " else "\n")
+                    renderedAnnotation + (if (this is PsiParameter || this is PsiTypeParameter) " " else "\n")
                 )
             }
         }

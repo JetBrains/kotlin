@@ -2,11 +2,6 @@ FILE fqName:<root> fileName:/inlineClassSyntheticMethods.kt
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C<T of <root>.C>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (t:T of <root>.C) returnType:<root>.C<T of <root>.C> [primary]
-      VALUE_PARAMETER name:t index:0 type:T of <root>.C
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:t visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:t type:T of <root>.C visibility:private [final]
         EXPRESSION_BODY
@@ -18,15 +13,11 @@ FILE fqName:<root> fileName:/inlineClassSyntheticMethods.kt
           RETURN type=kotlin.Nothing from='public final fun <get-t> (): T of <root>.C declared in <root>.C'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:t type:T of <root>.C visibility:private [final]' type=T of <root>.C origin=null
               receiver: GET_VAR '<this>: <root>.C<T of <root>.C> declared in <root>.C.<get-t>' type=<root>.C<T of <root>.C> origin=null
-    FUN name:hashCode visibility:public modality:OPEN <> ($this:<root>.C<T of <root>.C>) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.C<T of <root>.C>
+    CONSTRUCTOR visibility:public <> (t:T of <root>.C) returnType:<root>.C<T of <root>.C> [primary]
+      VALUE_PARAMETER name:t index:0 type:T of <root>.C
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.C'
-          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
-            CALL 'public final fun <get-t> (): T of <root>.C declared in <root>.C' type=T of <root>.C origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.C<T of <root>.C> declared in <root>.C.hashCode' type=<root>.C<T of <root>.C> origin=null
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -36,14 +27,18 @@ FILE fqName:<root> fileName:/inlineClassSyntheticMethods.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:hashCode visibility:public modality:OPEN <> ($this:<root>.C<T of <root>.C>) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.C<T of <root>.C>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.C'
+          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun <get-t> (): T of <root>.C declared in <root>.C' type=T of <root>.C origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.C<T of <root>.C> declared in <root>.C.hashCode' type=<root>.C<T of <root>.C> origin=null
   CLASS CLASS name:IC modality:FINAL visibility:public [value] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IC<TT of <root>.IC>
     TYPE_PARAMETER name:TT index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (c:<root>.C<TT of <root>.IC>) returnType:<root>.IC<TT of <root>.IC> [primary]
-      VALUE_PARAMETER name:c index:0 type:<root>.C<TT of <root>.IC>
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IC modality:FINAL visibility:public [value] superTypes:[kotlin.Any]'
     PROPERTY name:c visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:c type:<root>.C<TT of <root>.IC> visibility:private [final]
         EXPRESSION_BODY
@@ -55,34 +50,11 @@ FILE fqName:<root> fileName:/inlineClassSyntheticMethods.kt
           RETURN type=kotlin.Nothing from='public final fun <get-c> (): <root>.C<TT of <root>.IC> declared in <root>.IC'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:<root>.C<TT of <root>.IC> visibility:private [final]' type=<root>.C<TT of <root>.IC> origin=null
               receiver: GET_VAR '<this>: <root>.IC<TT of <root>.IC> declared in <root>.IC.<get-c>' type=<root>.IC<TT of <root>.IC> origin=null
-    FUN name:foo visibility:public modality:FINAL <> ($this:<root>.IC<TT of <root>.IC>) returnType:kotlin.Int
-      $this: VALUE_PARAMETER name:<this> type:<root>.IC<TT of <root>.IC>
+    CONSTRUCTOR visibility:public <> (c:<root>.C<TT of <root>.IC>) returnType:<root>.IC<TT of <root>.IC> [primary]
+      VALUE_PARAMETER name:c index:0 type:<root>.C<TT of <root>.IC>
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>.IC'
-          CALL 'public open fun hashCode (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
-            $this: CALL 'public final fun <get-c> (): <root>.C<TT of <root>.IC> declared in <root>.IC' type=<root>.C<TT of <root>.IC> origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.IC<TT of <root>.IC> declared in <root>.IC.foo' type=<root>.IC<TT of <root>.IC> origin=null
-    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.IC<TT of <root>.IC>) returnType:kotlin.String
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.IC<TT of <root>.IC>
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.IC'
-          STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="IC("
-            CONST String type=kotlin.String value="c="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:<root>.C<TT of <root>.IC> visibility:private [final]' type=<root>.C<TT of <root>.IC> origin=null
-              receiver: GET_VAR '<this>: <root>.IC<TT of <root>.IC> declared in <root>.IC.toString' type=<root>.IC<TT of <root>.IC> origin=null
-            CONST String type=kotlin.String value=")"
-    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.IC<TT of <root>.IC>) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.IC<TT of <root>.IC>
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.IC'
-          CALL 'public open fun hashCode (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:<root>.C<TT of <root>.IC> visibility:private [final]' type=<root>.C<TT of <root>.IC> origin=null
-              receiver: GET_VAR '<this>: <root>.IC<TT of <root>.IC> declared in <root>.IC.hashCode' type=<root>.IC<TT of <root>.IC> origin=null
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IC modality:FINAL visibility:public [value] superTypes:[kotlin.Any]'
     FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.IC<TT of <root>.IC>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -110,6 +82,34 @@ FILE fqName:<root> fileName:/inlineClassSyntheticMethods.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IC'
           CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.IC<TT of <root>.IC>) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.IC<TT of <root>.IC>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.IC'
+          CALL 'public open fun hashCode (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:<root>.C<TT of <root>.IC> visibility:private [final]' type=<root>.C<TT of <root>.IC> origin=null
+              receiver: GET_VAR '<this>: <root>.IC<TT of <root>.IC> declared in <root>.IC.hashCode' type=<root>.IC<TT of <root>.IC> origin=null
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.IC<TT of <root>.IC>) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.IC<TT of <root>.IC>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.IC'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="IC("
+            CONST String type=kotlin.String value="c="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:<root>.C<TT of <root>.IC> visibility:private [final]' type=<root>.C<TT of <root>.IC> origin=null
+              receiver: GET_VAR '<this>: <root>.IC<TT of <root>.IC> declared in <root>.IC.toString' type=<root>.IC<TT of <root>.IC> origin=null
+            CONST String type=kotlin.String value=")"
+    FUN name:foo visibility:public modality:FINAL <> ($this:<root>.IC<TT of <root>.IC>) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:<root>.IC<TT of <root>.IC>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>.IC'
+          CALL 'public open fun hashCode (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
+            $this: CALL 'public final fun <get-c> (): <root>.C<TT of <root>.IC> declared in <root>.IC' type=<root>.C<TT of <root>.IC> origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.IC<TT of <root>.IC> declared in <root>.IC.foo' type=<root>.IC<TT of <root>.IC> origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:ic type:<root>.IC<kotlin.Int> [val]

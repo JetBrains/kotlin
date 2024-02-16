@@ -328,9 +328,7 @@ class FirCallCompletionResultsWriterTransformer(
         result.replaceConeTypeOrNull(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, qualifiedAccessExpression.source, context.file.source)
 
-        if (calleeReference.candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()) {
-            result.addNonFatalDiagnostic(ConeResolutionResultOverridesOtherToPreserveCompatibility)
-        }
+        result.addNonFatalDiagnostics(calleeReference)
         return result
     }
 
@@ -384,10 +382,18 @@ class FirCallCompletionResultsWriterTransformer(
             return arrayOfCallTransformer.transformFunctionCall(result, session)
         }
 
-        if (calleeReference.candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()) {
-            result.addNonFatalDiagnostic(ConeResolutionResultOverridesOtherToPreserveCompatibility)
-        }
+        result.addNonFatalDiagnostics(calleeReference)
         return result
+    }
+
+    private fun FirQualifiedAccessExpression.addNonFatalDiagnostics(calleeReference: FirNamedReferenceWithCandidate) {
+        if (calleeReference.candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()) {
+            addNonFatalDiagnostic(ConeResolutionResultOverridesOtherToPreserveCompatibility)
+        }
+
+        if (CallToDeprecatedOverrideOfHidden in calleeReference.candidate.diagnostics) {
+            addNonFatalDiagnostic(ConeCallToDeprecatedOverrideOfHidden)
+        }
     }
 
     private fun FirCall.transformWithExpectedTypes(expectedArgumentsTypeMapping: ExpectedArgumentType.ArgumentsMap?) {
@@ -579,9 +585,7 @@ class FirCallCompletionResultsWriterTransformer(
             replaceCalleeReference(resolvedReference)
             replaceDispatchReceiver(dispatchReceiver)
             replaceExtensionReceiver(extensionReceiver)
-            if (calleeReference.candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()) {
-                addNonFatalDiagnostic(ConeResolutionResultOverridesOtherToPreserveCompatibility)
-            }
+            addNonFatalDiagnostics(calleeReference)
         }
     }
 

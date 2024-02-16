@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.abicmp.checkers
 
-import kotlinx.metadata.KmPackage
+import kotlin.metadata.KmPackage
 import org.jetbrains.kotlin.abicmp.reports.PackageMetadataReport
 
 abstract class PackageMetadataListChecker(name: String) : PackageMetadataChecker {

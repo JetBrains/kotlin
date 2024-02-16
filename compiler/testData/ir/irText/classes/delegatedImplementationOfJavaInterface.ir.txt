@@ -1,11 +1,6 @@
 FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
   CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.J]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
-    CONSTRUCTOR visibility:public <> (j:<root>.J) returnType:<root>.Test [primary]
-      VALUE_PARAMETER name:j index:0 type:<root>.J
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.J]'
     PROPERTY name:j visibility:private modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]
         EXPRESSION_BODY
@@ -17,6 +12,11 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
           RETURN type=kotlin.Nothing from='private final fun <get-j> (): <root>.J declared in <root>.Test'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-j>' type=<root>.Test origin=null
+    CONSTRUCTOR visibility:public <> (j:<root>.J) returnType:<root>.Test [primary]
+      VALUE_PARAMETER name:j index:0 type:<root>.J
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.J]'
     FUN DELEGATED_MEMBER name:returnNotNull visibility:public modality:OPEN <> ($this:<root>.Test) returnType:@[EnhancedNullability] kotlin.String
       annotations:
         NotNull(value = <null>)

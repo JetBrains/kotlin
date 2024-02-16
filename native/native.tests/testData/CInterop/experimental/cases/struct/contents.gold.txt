@@ -1,12 +1,34 @@
+library {
+  // module name: <dependency.def>
 
-package dependency {
+  library fragment {
+    // package name: dependency
 
-    @CStruct(spelling = "struct  { int x; }") @ExperimentalForeignApi class Foo constructor(rawPtr: NativePtr /* = NativePtr */) : CStructVar {
-        var x: Int
-            @CStruct.MemberAt(offset = 0.toLong()) get
-            @CStruct.MemberAt(offset = 0.toLong()) set
-        @CStruct.VarType(align = 4, size = 4.toLong()) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CStructVar.Type
+    // class name: dependency/Foo
+    // class name: dependency/Foo.Companion
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { int x; }")
+    @kotlinx/cinterop/ExperimentalForeignApi
+    public final class dependency/Foo : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var x: kotlin/Int
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      // companion object: Companion
+
+      // nested class: Companion
     }
 
-}
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 4L, align = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object dependency/Foo.Companion : kotlinx/cinterop/CStructVar.Type {
 
+      private constructor()
+    }
+  }
+}

@@ -3,12 +3,6 @@
 //   Public signature: /En|null[0]
 enum class En : Enum<En> {
   // CHECK:
-  //   Mangled name: En#<init>(){}
-  //   Public signature: /En.<init>|-5645683436151566731[0]
-  //   Public signature debug description: <init>(){}
-  private constructor() /* primary */
-
-  // CHECK:
   //   Mangled name: En.A
   //   Public signature: /En.A|null[0]
   A
@@ -22,6 +16,12 @@ enum class En : Enum<En> {
   //   Mangled name: En.C
   //   Public signature: /En.C|null[0]
   C
+
+  // CHECK:
+  //   Mangled name: En#<init>(){}
+  //   Public signature: /En.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: En#valueOf#static(kotlin.String){}En

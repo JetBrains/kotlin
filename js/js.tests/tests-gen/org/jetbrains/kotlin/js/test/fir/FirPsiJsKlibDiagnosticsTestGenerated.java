@@ -20,20 +20,20 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/klibSerializationTests")
 @TestDataPath("$PROJECT_ROOT")
 public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagnosticWithBackendTest {
-    @Test
-    public void testAllFilesPresentInKlibSerializationTests() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
-    }
+  @Test
+  public void testAllFilesPresentInKlibSerializationTests() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+  }
 
-    @Test
-    @TestMetadata("signatureClash.kt")
-    public void testSignatureClash() throws Exception {
-        runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClash.kt");
-    }
+  @Test
+  @TestMetadata("signatureClash.kt")
+  public void testSignatureClash() {
+    runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClash.kt");
+  }
 
-    @Test
-    @TestMetadata("signatureClash_MPP.kt")
-    public void testSignatureClash_MPP() throws Exception {
-        runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClash_MPP.kt");
-    }
+  @Test
+  @TestMetadata("signatureClash_MPP.kt")
+  public void testSignatureClash_MPP() {
+    runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClash_MPP.kt");
+  }
 }

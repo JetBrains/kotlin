@@ -29,10 +29,12 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
     val superProtocols: List<String> = superProtocols()
     val constructors = getMemberScope().getConstructors().filter { !it.hasExportForCompilerAnnotation }
 
-    val members: List<ObjCExportStub> = getMemberScope().getCallableSymbols().plus(constructors)
+    val members = getMemberScope().getCallableSymbols().plus(constructors)
         .sortedWith(StableCallableOrder)
         .flatMap { it.translateToObjCExportStubs() }
-        .toList()
+        .toMutableList()
+
+    if (needsCompanionProperty) members.add(buildCompanionProperty())
 
     val categoryName: String? = null
 
@@ -57,15 +59,7 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
     )
 }
 
-private fun abbreviate(name: String): String {
-    val normalizedName = name
-        .replaceFirstChar(Char::uppercaseChar)
-        .replace("-|\\.".toRegex(), "_")
 
-    val uppers = normalizedName.filterIndexed { index, character -> index == 0 || character.isUpperCase() }
-    if (uppers.length >= 3) return uppers
-    return normalizedName
-}
 
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtNonErrorClassType.getSuperClassName(): ObjCExportClassOrProtocolName? {

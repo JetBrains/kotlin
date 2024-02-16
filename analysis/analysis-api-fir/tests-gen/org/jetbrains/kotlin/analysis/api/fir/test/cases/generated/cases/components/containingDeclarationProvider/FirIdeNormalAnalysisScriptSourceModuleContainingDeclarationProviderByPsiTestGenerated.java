@@ -28,27 +28,27 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisScriptSourceModuleContainingDeclarationProviderByPsiTestGenerated extends AbstractContainingDeclarationProviderByPsiTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.ScriptSource,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInContainingDeclarationByPsi() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi"), Pattern.compile("^(.+)\\.kts$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInContainingDeclarationByPsi() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("scriptWithResultProperty.kts")
-    public void testScriptWithResultProperty() throws Exception {
-        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/scriptWithResultProperty.kts");
-    }
+  @Test
+  @TestMetadata("scriptWithResultProperty.kts")
+  public void testScriptWithResultProperty() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/scriptWithResultProperty.kts");
+  }
 }

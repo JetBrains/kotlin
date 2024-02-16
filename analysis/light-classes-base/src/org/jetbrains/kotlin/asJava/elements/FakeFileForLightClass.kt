@@ -24,7 +24,6 @@ import com.intellij.reference.SoftReference
 import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import java.lang.ref.Reference
@@ -102,18 +101,15 @@ open class FakeFileForLightClass(
     // this should be equal to current compiler target language level
     override fun getLanguageLevel() = LanguageLevel.JDK_1_8
 
-    override fun hashCode(): Int = if (lightClass is KtLightClassForSourceDeclaration) ktFile.hashCode() else lightClass.hashCode()
+    override fun hashCode(): Int =
+        (lightClass.takeIf { it is KtLightClassForFacade && it.files.size > 1 } ?: ktFile).hashCode()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is FakeFileForLightClass) return false
 
-        val anotherClass = other.lightClass
-        if (lightClass is KtLightClassForSourceDeclaration) {
-            return anotherClass is KtLightClassForSourceDeclaration && ktFile == other.ktFile
-        }
-
-        return lightClass == anotherClass
+        return (lightClass is KtLightClassForFacade && lightClass.files.size > 1 && lightClass == other.lightClass) ||
+                ktFile == other.ktFile
     }
 
     override fun isEquivalentTo(another: PsiElement?) = this == another

@@ -22,31 +22,31 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalK2JvmWithPluginCompilerRunnerTestGenerated extends AbstractIncrementalK2JvmWithPluginCompilerRunnerTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+  }
 
-    @TestMetadata("addMethodToGeneratedClass")
-    public void testAddMethodToGeneratedClass() throws Exception {
-        runTest("plugins/fir-plugin-prototype/fir-plugin-ic-test/testData/pureKotlin/addMethodToGeneratedClass/");
-    }
+  @TestMetadata("addMethodToGeneratedClass")
+  public void testAddMethodToGeneratedClass() {
+    runTest("plugins/fir-plugin-prototype/fir-plugin-ic-test/testData/pureKotlin/addMethodToGeneratedClass/");
+  }
 
-    @TestMetadata("addMethodToGeneratedSupertype")
-    public void testAddMethodToGeneratedSupertype() throws Exception {
-        runTest("plugins/fir-plugin-prototype/fir-plugin-ic-test/testData/pureKotlin/addMethodToGeneratedSupertype/");
-    }
+  @TestMetadata("addMethodToGeneratedSupertype")
+  public void testAddMethodToGeneratedSupertype() {
+    runTest("plugins/fir-plugin-prototype/fir-plugin-ic-test/testData/pureKotlin/addMethodToGeneratedSupertype/");
+  }
 
-    @TestMetadata("addNewSerializableClass")
-    public void testAddNewSerializableClass() throws Exception {
-        runTest("plugins/fir-plugin-prototype/fir-plugin-ic-test/testData/pureKotlin/addNewSerializableClass/");
-    }
+  @TestMetadata("addNewSerializableClass")
+  public void testAddNewSerializableClass() {
+    runTest("plugins/fir-plugin-prototype/fir-plugin-ic-test/testData/pureKotlin/addNewSerializableClass/");
+  }
 
-    public void testAllFilesPresentInPureKotlin() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/fir-plugin-ic-test/testData/pureKotlin"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
-    }
+  public void testAllFilesPresentInPureKotlin() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/fir-plugin-ic-test/testData/pureKotlin"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
+  }
 
-    @TestMetadata("generateNewTopLevelFunction")
-    public void testGenerateNewTopLevelFunction() throws Exception {
-        runTest("plugins/fir-plugin-prototype/fir-plugin-ic-test/testData/pureKotlin/generateNewTopLevelFunction/");
-    }
+  @TestMetadata("generateNewTopLevelFunction")
+  public void testGenerateNewTopLevelFunction() {
+    runTest("plugins/fir-plugin-prototype/fir-plugin-ic-test/testData/pureKotlin/generateNewTopLevelFunction/");
+  }
 }

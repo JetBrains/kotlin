@@ -145,6 +145,7 @@ open class Printer private constructor(
 
     companion object {
         private const val DEFAULT_INDENTATION_UNIT = "    "
+        const val TWO_SPACE_INDENT = "  ";
 
         @JvmField
         val LINE_SEPARATOR: String = System.getProperty("line.separator")

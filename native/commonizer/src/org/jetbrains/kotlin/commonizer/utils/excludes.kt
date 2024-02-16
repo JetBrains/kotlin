@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.utils
 
-import kotlinx.metadata.*
+import kotlin.metadata.*
 import kotlinx.metadata.klib.annotations
 
 internal const val KNI_BRIDGE_FUNCTION_PREFIX = "kniBridge"

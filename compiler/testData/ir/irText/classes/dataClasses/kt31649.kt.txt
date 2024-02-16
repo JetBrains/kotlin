@@ -1,13 +1,13 @@
 data class TestData {
+  val nn: Nothing?
+    field = nn
+    get
+
   constructor(nn: Nothing?) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val nn: Nothing?
-    field = nn
-    get
 
   operator fun component1(): Nothing? {
     return <this>.#nn
@@ -15,17 +15,6 @@ data class TestData {
 
   fun copy(nn: Nothing? = <this>.#nn): TestData {
     return TestData(nn = nn)
-  }
-
-  override fun toString(): String {
-    return "TestData(" + "nn=" + <this>.#nn + ")"
-  }
-
-  override fun hashCode(): Int {
-    return when {
-      EQEQ(arg0 = <this>.#nn, arg1 = null) -> 0
-      else -> <this>.#nn.hashCode()
-    }
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -42,28 +31,28 @@ data class TestData {
     return true
   }
 
-}
-
-value class TestInline {
-  constructor(nn: Nothing?) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val nn: Nothing?
-    field = nn
-    get
-
-  override fun toString(): String {
-    return "TestInline(" + "nn=" + <this>.#nn + ")"
-  }
-
   override fun hashCode(): Int {
     return when {
       EQEQ(arg0 = <this>.#nn, arg1 = null) -> 0
       else -> <this>.#nn.hashCode()
     }
+  }
+
+  override fun toString(): String {
+    return "TestData(" + "nn=" + <this>.#nn + ")"
+  }
+
+}
+
+value class TestInline {
+  val nn: Nothing?
+    field = nn
+    get
+
+  constructor(nn: Nothing?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -77,4 +66,16 @@ value class TestInline {
     return true
   }
 
+  override fun hashCode(): Int {
+    return when {
+      EQEQ(arg0 = <this>.#nn, arg1 = null) -> 0
+      else -> <this>.#nn.hashCode()
+    }
+  }
+
+  override fun toString(): String {
+    return "TestInline(" + "nn=" + <this>.#nn + ")"
+  }
+
 }
+

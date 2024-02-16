@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.transformers.addNonFatalDiagnostic
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -391,6 +392,10 @@ class FirCallResolver(
                 replaceDispatchReceiver(candidate.dispatchReceiverExpression())
                 replaceExtensionReceiver(candidate.chosenExtensionReceiverExpression())
                 replaceContextReceiverArguments(candidate.contextReceiverArguments())
+
+                if (CallToDeprecatedOverrideOfHidden in candidate.diagnostics) {
+                    addNonFatalDiagnostic(ConeCallToDeprecatedOverrideOfHidden)
+                }
             }
         }
         transformer.storeTypeFromCallee(qualifiedAccess, isLhsOfAssignment = callSite is FirVariableAssignment)

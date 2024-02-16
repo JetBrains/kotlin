@@ -131,10 +131,36 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Requests -----------------------------------
 
-    fun isAccessToUnstableLocalVariable(expression: FirExpression): Boolean =
-        context.variableAssignmentAnalyzer.isAccessToUnstableLocalVariable(expression)
+    /**
+     * When variable access resolution encounters a variable access which has smartcast information, assignments associated with that
+     * variable are checked to determine variable stability, and therefore smartcast stability. These assignments are tracked by
+     * [FirLocalVariableAssignmentAnalyzer], which knows how each assignment may limit variable stability, like assignments within or after
+     * a non-in-place lambda body. So for a given lexical scope (function body, lambda body, and even local class init) and a given
+     * variable, [FirLocalVariableAssignmentAnalyzer] knows all associated assignments (past and/or future) which could limit stability.
+     *
+     * When a [targetType] is provided, all assignments are checked for the specified variable access expression:
+     * 1. If there are no assignments, the variable is always considered **stable**.
+     * 2. If there is an unresolved assignment type, the variable is considered **unstable**.
+     * 3. If any resolved assignment type is not a subtype of the [targetType], the variable is considered **unstable**.
+     * 4. If none of the previous conditions are true, the variable is considered **stable**.
+     *
+     * When a [targetType] is **not** provided, **any** assignments cause the variable to be considered **unstable**.
+     *
+     * @param expression The variable access expression.
+     * @param targetType Smartcast target type (optional: see function description).
+     *
+     * @see [getTypeUsingSmartcastInfo]
+     * @see [FirLocalVariableAssignmentAnalyzer.isAccessToUnstableLocalVariable]
+     * @see [FirLocalVariableAssignmentAnalyzer.isStableType]
+     */
+    fun isAccessToUnstableLocalVariable(expression: FirExpression, targetType: ConeKotlinType?): Boolean =
+        context.variableAssignmentAnalyzer.isAccessToUnstableLocalVariable(expression, targetType, components.session)
 
     /**
+     * Retrieve smartcast type information [FirDataFlowAnalyzer] may have for the specified variable access expression. Type information
+     * is **stateful** and changes as the FIR tree is navigated by [FirDataFlowAnalyzer].
+     *
+     * @param expression The variable access expression.
      * @param ignoreCallArguments Should be set to `true` when call argument flow should not be used for smart-casting. This is important
      * because the receiver of implicit `invoke` calls is visited *after* the call arguments due to tower resolution.
      */
@@ -170,6 +196,12 @@ abstract class FirDataFlowAnalyzer(
         }
         localFunctionNode?.mergeIncomingFlow()
         functionEnterNode.mergeIncomingFlow { _, flow ->
+            /*
+             * Anonymous functions which can be revisited, either in-place or not in-place, are treated as repeatable statements. This
+             * causes any assignments to local variables within the anonymous function body to clear type statements for those local
+             * variables.
+             * TODO(KT-57678): is it possible for FirLocalVariableAssignmentAnalyzer to handle this for both lambdas and loops?
+             */
             if (function is FirAnonymousFunction && function.invocationKind?.canBeRevisited() != false) {
                 enterRepeatableStatement(flow, function)
             }
@@ -1044,8 +1076,13 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun exitVariableAssignment(assignment: FirVariableAssignment) {
+        val property = assignment.calleeReference?.toResolvedPropertySymbol()?.fir
+        if (property != null && property.isLocal) {
+            context.variableAssignmentAnalyzer.visitAssignment(property, assignment.rValue.resolvedType)
+        }
+
         graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow { _, flow ->
-            val property = assignment.calleeReference?.toResolvedPropertySymbol()?.fir ?: return@mergeIncomingFlow
+            property ?: return@mergeIncomingFlow
             if (property.isLocal || property.isVal) {
                 exitVariableInitialization(flow, assignment.rValue, property, assignment.lValue, hasExplicitType = false)
             } else {
@@ -1110,7 +1147,7 @@ abstract class FirDataFlowAnalyzer(
     private val RealVariable.hasLocalStability get() = stability == PropertyStability.LOCAL_VAR
 
     private fun RealVariable.isStableOrLocalStableAccess(access: FirExpression): Boolean {
-        return isStable || (hasLocalStability && !isAccessToUnstableLocalVariable(access))
+        return isStable || (hasLocalStability && !isAccessToUnstableLocalVariable(access, targetType = null))
     }
 
     fun exitThrowExceptionNode(throwExpression: FirThrowExpression) {

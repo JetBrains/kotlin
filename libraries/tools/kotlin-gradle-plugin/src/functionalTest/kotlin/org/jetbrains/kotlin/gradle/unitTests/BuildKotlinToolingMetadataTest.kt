@@ -142,7 +142,9 @@ class BuildKotlinToolingMetadataTest {
         project.plugins.apply("kotlin-multiplatform")
         val kotlin = multiplatformExtension
         val jvm = kotlin.jvm()
+        @Suppress("DEPRECATION")
         jvm.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).compilerOptions.options.jvmTarget.set(JvmTarget.JVM_12)
+        @Suppress("DEPRECATION")
         jvm.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME).compilerOptions.options.jvmTarget.set(JvmTarget.JVM_10)
 
         assertEquals(

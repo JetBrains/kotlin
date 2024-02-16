@@ -1,10 +1,6 @@
 FILE fqName:<root> fileName:/initValInLambda.kt
   CLASS CLASS name:TestInitValInLambdaCalledOnce modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestInitValInLambdaCalledOnce
-    CONSTRUCTOR visibility:public <> () returnType:<root>.TestInitValInLambdaCalledOnce [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInitValInLambdaCalledOnce modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestInitValInLambdaCalledOnce) returnType:kotlin.Int
@@ -27,6 +23,10 @@ FILE fqName:<root> fileName:/initValInLambda.kt
                 SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
                   receiver: GET_VAR '<this>: <root>.TestInitValInLambdaCalledOnce declared in <root>.TestInitValInLambdaCalledOnce' type=<root>.TestInitValInLambdaCalledOnce origin=null
                   value: CONST Int type=kotlin.Int value=0
+    CONSTRUCTOR visibility:public <> () returnType:<root>.TestInitValInLambdaCalledOnce [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInitValInLambdaCalledOnce modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

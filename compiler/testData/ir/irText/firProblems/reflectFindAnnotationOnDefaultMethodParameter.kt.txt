@@ -1,3 +1,18 @@
+open annotation class Ann : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface I {
+  fun m(@Ann s: String) {
+  }
+
+}
+
 fun box(): String {
   val impl: <no name provided> = { // BLOCK
     local class <no name provided> : I {
@@ -20,17 +35,3 @@ fun box(): String {
   return "ERR: " + size
 }
 
-open annotation class Ann : Annotation {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-}
-
-interface I {
-  fun m(@Ann s: String) {
-  }
-
-}

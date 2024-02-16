@@ -1,25 +1,18 @@
 class O {
+  val o: String
+    field = o
+    get
+
   constructor(o: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val o: String
-    field = o
-    get
-
 }
 
 class OK {
   private /* final field */ val contextReceiverField0: O
-  constructor($context_receiver_0: O, k: String) /* primary */ {
-    super/*Any*/()
-    <this>.#contextReceiverField0 = $context_receiver_0
-    /* <init>() */
-
-  }
-
   val k: String
     field = k
     get
@@ -27,6 +20,13 @@ class OK {
   val result: String
     field = <this>.#contextReceiverField0.<get-o>().plus(other = <this>.<get-k>())
     get
+
+  constructor($context_receiver_0: O, k: String) /* primary */ {
+    super/*Any*/()
+    <this>.#contextReceiverField0 = $context_receiver_0
+    /* <init>() */
+
+  }
 
 }
 
@@ -37,3 +37,4 @@ fun box(): String {
   }
 )
 }
+

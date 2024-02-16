@@ -22,61 +22,61 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class JvmAbiContentTestGenerated extends AbstractJvmAbiContentTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInContent() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/content"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
-    }
+  public void testAllFilesPresentInContent() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/content"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
+  }
 
-    @TestMetadata("annotation")
-    public void testAnnotation() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/annotation/");
-    }
+  @TestMetadata("annotation")
+  public void testAnnotation() {
+    runTest("plugins/jvm-abi-gen/testData/content/annotation/");
+  }
 
-    @TestMetadata("annotationInstantiation")
-    public void testAnnotationInstantiation() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/annotationInstantiation/");
-    }
+  @TestMetadata("annotationInstantiation")
+  public void testAnnotationInstantiation() {
+    runTest("plugins/jvm-abi-gen/testData/content/annotationInstantiation/");
+  }
 
-    @TestMetadata("anonymousAnnotationInstantiation")
-    public void testAnonymousAnnotationInstantiation() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/anonymousAnnotationInstantiation/");
-    }
+  @TestMetadata("anonymousAnnotationInstantiation")
+  public void testAnonymousAnnotationInstantiation() {
+    runTest("plugins/jvm-abi-gen/testData/content/anonymousAnnotationInstantiation/");
+  }
 
-    @TestMetadata("anonymousWhenMapping")
-    public void testAnonymousWhenMapping() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/anonymousWhenMapping/");
-    }
+  @TestMetadata("anonymousWhenMapping")
+  public void testAnonymousWhenMapping() {
+    runTest("plugins/jvm-abi-gen/testData/content/anonymousWhenMapping/");
+  }
 
-    @TestMetadata("class")
-    public void testClass() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/class/");
-    }
+  @TestMetadata("class")
+  public void testClass() {
+    runTest("plugins/jvm-abi-gen/testData/content/class/");
+  }
 
-    @TestMetadata("effectivelyPrivateAnnotation")
-    public void testEffectivelyPrivateAnnotation() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/effectivelyPrivateAnnotation/");
-    }
+  @TestMetadata("effectivelyPrivateAnnotation")
+  public void testEffectivelyPrivateAnnotation() {
+    runTest("plugins/jvm-abi-gen/testData/content/effectivelyPrivateAnnotation/");
+  }
 
-    @TestMetadata("innerClasses")
-    public void testInnerClasses() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/innerClasses/");
-    }
+  @TestMetadata("innerClasses")
+  public void testInnerClasses() {
+    runTest("plugins/jvm-abi-gen/testData/content/innerClasses/");
+  }
 
-    @TestMetadata("kt50005")
-    public void testKt50005() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/kt50005/");
-    }
+  @TestMetadata("kt50005")
+  public void testKt50005() {
+    runTest("plugins/jvm-abi-gen/testData/content/kt50005/");
+  }
 
-    @TestMetadata("preserveDeclarationOrderKeepsClassIntact")
-    public void testPreserveDeclarationOrderKeepsClassIntact() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/preserveDeclarationOrderKeepsClassIntact/");
-    }
+  @TestMetadata("preserveDeclarationOrderKeepsClassIntact")
+  public void testPreserveDeclarationOrderKeepsClassIntact() {
+    runTest("plugins/jvm-abi-gen/testData/content/preserveDeclarationOrderKeepsClassIntact/");
+  }
 
-    @TestMetadata("whenMapping")
-    public void testWhenMapping() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/whenMapping/");
-    }
+  @TestMetadata("whenMapping")
+  public void testWhenMapping() {
+    runTest("plugins/jvm-abi-gen/testData/content/whenMapping/");
+  }
 }

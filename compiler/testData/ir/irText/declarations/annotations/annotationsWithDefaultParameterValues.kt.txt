@@ -1,10 +1,4 @@
 open annotation class A : Annotation {
-  constructor(x: String = "", y: Int = 42) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: String
     field = x
     get
@@ -12,6 +6,12 @@ open annotation class A : Annotation {
   val y: Int
     field = y
     get
+
+  constructor(x: String = "", y: Int = 42) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
@@ -34,3 +34,4 @@ fun test4() {
 @A
 fun test5() {
 }
+

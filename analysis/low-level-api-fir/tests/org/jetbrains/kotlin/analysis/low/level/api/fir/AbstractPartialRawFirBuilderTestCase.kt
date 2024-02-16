@@ -125,12 +125,11 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractAnalysisApiBasedTe
         val designation = designationBuilder.resultDesignation
         TestCase.assertTrue(designation != null)
 
-        val firElement = RawFirNonLocalDeclarationBuilder.buildWithReplacement(
+        val firElement = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
             session = session,
             scopeProvider = scopeProvider,
             designation!!,
             elementToBuild,
-            null
         )
 
         val firDump = FirRenderer(idRenderer = ConeIdFullRenderer()).renderElementAsString(firElement)

@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
+@file:Suppress("PackageDirectoryMismatch", "TYPEALIAS_EXPANSION_DEPRECATION") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.DeprecatedHasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPreConfigure
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJvmCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationDependencyConfigurationsFactory
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.filesProvider
 
 class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> internal constructor(
     override val target: KotlinWithJavaTarget<KotlinOptionsType, CO>,
-    val compilerOptionsFactory: () -> HasCompilerOptions<CO>,
+    val compilerOptionsFactory: () -> DeprecatedHasCompilerOptions<CO>,
     val kotlinOptionsFactory: (CO) -> KotlinOptionsType
 ) : KotlinCompilationFactory<KotlinWithJavaCompilation<KotlinOptionsType, CO>> {
 

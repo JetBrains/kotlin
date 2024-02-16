@@ -17,14 +17,14 @@ FILE: classWithCompanionObject.kt
         }
 
         public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<SomeClass>| {
-            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|SomeClass|): R|kotlin/Unit|
+            public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|SomeClass|): R|kotlin/Unit|
 
-            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|SomeClass|
+            public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|SomeClass|
 
             public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                 public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+            public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|SomeClass.$serializer| {
                 super<R|kotlin/Any|>()

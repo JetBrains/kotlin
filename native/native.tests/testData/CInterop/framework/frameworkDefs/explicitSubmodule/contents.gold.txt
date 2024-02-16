@@ -1,32 +1,91 @@
+library {
+  // module name: <pod1.def>
 
-package pod1 {
+  library fragment {
+    // package name: pod1
 
-    @CStruct(spelling = "struct  { int x; }") class IOGPoint constructor(rawPtr: NativePtr /* = NativePtr */) : CStructVar {
-        var x: Int
-            @CStruct.MemberAt(offset = 0.toLong()) get
-            @CStruct.MemberAt(offset = 0.toLong()) set
-        @CStruct.VarType(align = 4, size = 4.toLong()) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CStructVar.Type
+    // class name: pod1/IOGPoint
+    // class name: pod1/IOGPoint.Companion
+    // class name: pod1/NXMouseButton
+    // class name: pod1/NXMouseButton.Companion
+    // class name: pod1/NXMouseButton.Var
+    // class name: pod1/NXMouseButton.Var.Companion
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { int x; }")
+    public final class pod1/IOGPoint : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var x: kotlin/Int
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      // companion object: Companion
+
+      // nested class: Companion
     }
 
-    enum class NXMouseButton private constructor(value: UInt) : Enum<NXMouseButton>, CEnum {
-        @ConstantValue.UInt(value = 0.toUInt()) enum entry NX_OneButton
-        override val value: UInt
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 4L, align = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/IOGPoint.Companion : kotlinx/cinterop/CStructVar.Type {
 
-        class Var constructor(rawPtr: NativePtr /* = NativePtr */) : CEnumVar {
-            var value: NXMouseButton
-            @CEnumVarTypeSize(size = 4) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CPrimitiveVar.Type
-        }
-
-        companion object {
-            @Deprecated(level = DeprecationLevel.WARNING, message = "Will be removed.", replaceWith = ReplaceWith(expression = "", imports = {})) fun byValue(value: UInt): NXMouseButton
-        }
-
+      private constructor()
     }
 
-}
+    public final enum class pod1/NXMouseButton : kotlin/Enum<pod1/NXMouseButton>, kotlinx/cinterop/CEnum {
 
-package pod1 {
-    @CCall(id = "knifunptr_pod11_IOHIDGetButtonEventNum") external fun IOHIDGetButtonEventNum(button: NXMouseButton): Int
-    @CCall(id = "knifunptr_pod10_IOHIDPostEvent") external fun IOHIDPostEvent(location: CValue<IOGPoint>): Int
-}
+      private constructor(value: kotlin/UInt)
 
+      public open val value: kotlin/UInt
+        public open /* non-default */ get
+
+      // companion object: Companion
+
+      // nested class: Var
+
+      // nested class: Companion
+
+      @kotlinx/cinterop/internal/ConstantValue.UInt(value = 0u)
+      NX_OneButton,
+    }
+
+    public final companion object pod1/NXMouseButton.Companion {
+
+      private constructor()
+
+      @kotlin/Deprecated(message = "Will be removed.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+      public final fun byValue(value: kotlin/UInt): pod1/NXMouseButton
+    }
+
+    public final class pod1/NXMouseButton.Var : kotlinx/cinterop/CEnumVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var value: pod1/NXMouseButton
+        public final /* non-default */ external get
+        public final /* non-default */ external set(value: pod1/NXMouseButton)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CEnumVarTypeSize(size = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/NXMouseButton.Var.Companion : kotlinx/cinterop/CPrimitiveVar.Type {
+
+      private constructor()
+    }
+
+    package {
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_IOHIDGetButtonEventNum")
+      public final external fun IOHIDGetButtonEventNum(button: pod1/NXMouseButton): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_IOHIDPostEvent")
+      public final external fun IOHIDPostEvent(location: kotlinx/cinterop/CValue<pod1/IOGPoint>): kotlin/Int
+    }
+  }
+}

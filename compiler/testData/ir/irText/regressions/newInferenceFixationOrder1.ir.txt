@@ -1,10 +1,4 @@
 FILE fqName:<root> fileName:/newInferenceFixationOrder1.kt
-  FUN name:foo visibility:public modality:FINAL <X, Y> () returnType:kotlin.Function1<X of <root>.foo, Y of <root>.foo>
-    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
-    TYPE_PARAMETER name:Y index:1 variance: superTypes:[kotlin.Any?] reified:false
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo <X, Y> (): kotlin.Function1<X of <root>.foo, Y of <root>.foo> declared in <root>'
-        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
   CLASS INTERFACE name:Inv2 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Inv2<A of <root>.Inv2, B of <root>.Inv2>
     TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -22,6 +16,12 @@ FILE fqName:<root> fileName:/newInferenceFixationOrder1.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:x type:<root>.Inv2<kotlin.String, kotlin.Int> [val]
+        CALL 'public final fun test (): <root>.Inv2<kotlin.String, kotlin.Int> declared in <root>' type=<root>.Inv2<kotlin.String, kotlin.Int> origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
   FUN name:check visibility:public modality:FINAL <T, R> (x:T of <root>.check, y:R of <root>.check, f:kotlin.Function1<T of <root>.check, R of <root>.check>) returnType:<root>.Inv2<T of <root>.check, R of <root>.check>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false
@@ -30,6 +30,12 @@ FILE fqName:<root> fileName:/newInferenceFixationOrder1.kt
     VALUE_PARAMETER name:f index:2 type:kotlin.Function1<T of <root>.check, R of <root>.check>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun check <T, R> (x: T of <root>.check, y: R of <root>.check, f: kotlin.Function1<T of <root>.check, R of <root>.check>): <root>.Inv2<T of <root>.check, R of <root>.check> declared in <root>'
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+  FUN name:foo visibility:public modality:FINAL <X, Y> () returnType:kotlin.Function1<X of <root>.foo, Y of <root>.foo>
+    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:Y index:1 variance: superTypes:[kotlin.Any?] reified:false
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo <X, Y> (): kotlin.Function1<X of <root>.foo, Y of <root>.foo> declared in <root>'
         CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
   FUN name:test visibility:public modality:FINAL <> () returnType:<root>.Inv2<kotlin.String, kotlin.Int>
     BLOCK_BODY
@@ -42,9 +48,3 @@ FILE fqName:<root> fileName:/newInferenceFixationOrder1.kt
           f: CALL 'public final fun foo <X, Y> (): kotlin.Function1<X of <root>.foo, Y of <root>.foo> declared in <root>' type=kotlin.Function1<kotlin.String, kotlin.Int> origin=null
             <X>: kotlin.String
             <Y>: kotlin.Int
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
-    BLOCK_BODY
-      VAR name:x type:<root>.Inv2<kotlin.String, kotlin.Int> [val]
-        CALL 'public final fun test (): <root>.Inv2<kotlin.String, kotlin.Int> declared in <root>' type=<root>.Inv2<kotlin.String, kotlin.Int> origin=null
-      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CONST String type=kotlin.String value="OK"

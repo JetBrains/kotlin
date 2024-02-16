@@ -10,7 +10,7 @@ version = "1.0.0"
 
 publishing {
     repositories {
-        maven(rootProject.buildDir.resolve("repo"))
+        maven("<localRepo>")
     }
 }
 

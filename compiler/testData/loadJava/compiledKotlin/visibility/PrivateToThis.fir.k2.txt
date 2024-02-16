@@ -1,19 +1,19 @@
 public final class A<in I> : R|kotlin/Any| {
-    private/*private to this*/ final fun bas(): R|I|
+    private final fun bas(): R|I|
 
-    private/*private to this*/ final val foo: R|I|
-        private/*private to this*/ get(): R|I|
+    private final val foo: R|I|
+        private get(): R|I|
 
-    private/*private to this*/ final var bar: R|I|
-        private/*private to this*/ get(): R|I|
-        private/*private to this*/ set(value: R|I|): R|kotlin/Unit|
+    private final var bar: R|I|
+        private get(): R|I|
+        private set(value: R|I|): R|kotlin/Unit|
 
-    private/*private to this*/ final val val_with_accessors: R|I|
-        private/*private to this*/ get(): R|I|
+    private final val val_with_accessors: R|I|
+        private get(): R|I|
 
-    private/*private to this*/ final var var_with_accessors: R|I|
-        private/*private to this*/ get(): R|I|
-        private/*private to this*/ set(value: R|I|): R|kotlin/Unit|
+    private final var var_with_accessors: R|I|
+        private get(): R|I|
+        private set(value: R|I|): R|kotlin/Unit|
 
     public constructor<in I>(): R|test/A<I>|
 

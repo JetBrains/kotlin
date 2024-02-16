@@ -1,6 +1,18 @@
+library {
+  // module name: <dependency.def>
 
-package dependency {
-    @CCall(id = "knifunptr_dependency1_bar") @ExperimentalForeignApi external fun bar()
-    @CCall(id = "knifunptr_dependency0_foo") @ExperimentalForeignApi external fun foo()
+  library fragment {
+    // package name: dependency
+
+    package {
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_dependency1_bar")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun bar(): kotlin/Unit
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_dependency0_foo")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun foo(): kotlin/Unit
+    }
+  }
 }
-

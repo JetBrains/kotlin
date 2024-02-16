@@ -1,0 +1,34 @@
+library {
+  // module name: <Enum.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: E
+
+    public final enum class E : kotlin/Enum<E> {
+
+      private constructor(x: kotlin/Int /* = ... */)
+
+      public open fun enumFun(): kotlin/Int
+
+      public final val enumVal: kotlin/Int /* = 0 */
+        public final get
+
+      public final var enumVar: kotlin/String
+        public final get
+        public final set
+
+      public final val x: kotlin/Int
+        public final get
+
+      A,
+
+      B,
+
+      C,
+
+      // has Enum.entries
+    }
+  }
+}

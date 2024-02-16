@@ -63,3 +63,21 @@ public annotation class BetaInteropApi
 @Retention(AnnotationRetention.BINARY)
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 public annotation class ExperimentalForeignApi
+
+/**
+ * Marks functions for which Objective-C rules should be used for determinating whether two functions are conflicting.
+ *
+ * Objective-C allows overloads by selector. Such functions can have same types, and differ only by parameter names in Kotlin,
+ * while it is not generally supported.
+ *
+ * This leads to an error, when a Kotlin class attempts to override both versions of a method that is overloaded by names only.
+ *
+ * If all such methods are annotated by this annotation, the error would be suppressed.
+ *
+ * Annotation is only applicable to overrides of methods coming from Objective-C interop.
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.SOURCE)
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+@SinceKotlin("2.0")
+public annotation class ObjCSignatureOverride

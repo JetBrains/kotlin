@@ -59,6 +59,11 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
 
     val compileKotlinTaskName: String
 
+    @Deprecated(
+        "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
+                "    compilerOptions {}\n}"
+    )
+    @Suppress("DEPRECATION")
     val compilerOptions: HasCompilerOptions<*>
 
     @Deprecated(

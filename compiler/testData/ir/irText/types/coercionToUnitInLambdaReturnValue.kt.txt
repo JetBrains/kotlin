@@ -1,9 +1,10 @@
-fun use(fn: Function0<Unit>) {
-}
-
 fun test() {
   use(fn = local fun <anonymous>() {
     42 /*~> Unit */
   }
 )
 }
+
+fun use(fn: Function0<Unit>) {
+}
+

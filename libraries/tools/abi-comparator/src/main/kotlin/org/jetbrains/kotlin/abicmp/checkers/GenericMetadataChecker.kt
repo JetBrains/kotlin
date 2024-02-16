@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.abicmp.checkers
 
-import kotlinx.metadata.KmConstructor
-import kotlinx.metadata.KmFunction
-import kotlinx.metadata.KmProperty
-import kotlinx.metadata.KmTypeAlias
+import kotlin.metadata.KmConstructor
+import kotlin.metadata.KmFunction
+import kotlin.metadata.KmProperty
+import kotlin.metadata.KmTypeAlias
 import org.jetbrains.kotlin.abicmp.reports.MetadataPropertyReport
 import org.jetbrains.kotlin.abicmp.reports.NamedDiffEntry
 

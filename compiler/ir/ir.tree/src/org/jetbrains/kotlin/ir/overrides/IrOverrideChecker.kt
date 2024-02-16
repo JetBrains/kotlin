@@ -191,9 +191,6 @@ class IrOverrideChecker(
 private val IrSimpleFunction?.hasExtensionReceiver: Boolean
     get() = this?.extensionReceiverParameter != null
 
-internal val IrSimpleFunction?.hasDispatchReceiver: Boolean
-    get() = this?.dispatchReceiverParameter != null
-
 private val IrSimpleFunction.compiledValueParameters: List<IrValueParameter>
     get() = ArrayList<IrValueParameter>(valueParameters.size + 1).apply {
         extensionReceiverParameter?.let(::add)

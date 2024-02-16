@@ -28,369 +28,369 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated extends AbstractSingleSymbolByPsiTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
+
+  @Test
+  public void testAllFilesPresentInSingleSymbolByPsi() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("ExpandedParameterType.kt")
+  public void testExpandedParameterType() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/ExpandedParameterType.kt");
+  }
+
+  @Test
+  @TestMetadata("ExpandedReturnType.kt")
+  public void testExpandedReturnType() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/ExpandedReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithReceiverAnnotation.kt")
+  public void testFunctionWithReceiverAnnotation() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/functionWithReceiverAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("getterWithAnnotations.kt")
+  public void testGetterWithAnnotations() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/getterWithAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("getterWithReceiverAndAnnotations.kt")
+  public void testGetterWithReceiverAndAnnotations() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/getterWithReceiverAndAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedTypeAnnotationWithTypeAlias.kt")
+  public void testNestedTypeAnnotationWithTypeAlias() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/nestedTypeAnnotationWithTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedTypeAnnotationWithTypeAliasAsAnnotation.kt")
+  public void testNestedTypeAnnotationWithTypeAliasAsAnnotation() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/nestedTypeAnnotationWithTypeAliasAsAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithAnnotations.kt")
+  public void testPropertyWithAnnotations() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyWithAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithAnnotationsAndAccessors.kt")
+  public void testPropertyWithAnnotationsAndAccessors() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyWithAnnotationsAndAccessors.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithDelegateAndAnnotations.kt")
+  public void testPropertyWithDelegateAndAnnotations() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyWithDelegateAndAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithReceiverAnnotation.kt")
+  public void testPropertyWithReceiverAnnotation() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyWithReceiverAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("setterWithAnnotations.kt")
+  public void testSetterWithAnnotations() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/setterWithAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationWithArgument.kt")
+  public void testTypeAnnotationWithArgument() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationWithArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationsOnFunctionParameterType.kt")
+  public void testTypeAnnotationsOnFunctionParameterType() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnFunctionParameterType.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationsOnFunctionReceiverType.kt")
+  public void testTypeAnnotationsOnFunctionReceiverType() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnFunctionReceiverType.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationsOnFunctionalTypeWithTypeAlias.kt")
+  public void testTypeAnnotationsOnFunctionalTypeWithTypeAlias() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnFunctionalTypeWithTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationsOnPropertyGetterReturnType.kt")
+  public void testTypeAnnotationsOnPropertyGetterReturnType() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnPropertyGetterReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationsOnPropertyReceiverType.kt")
+  public void testTypeAnnotationsOnPropertyReceiverType() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnPropertyReceiverType.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationsOnPropertyReturnType.kt")
+  public void testTypeAnnotationsOnPropertyReturnType() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnPropertyReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationsOnPropertySetterParameterType.kt")
+  public void testTypeAnnotationsOnPropertySetterParameterType() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnPropertySetterParameterType.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation.kt")
+  public void testTypeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationsOnSuperClassCall.kt")
+  public void testTypeAnnotationsOnSuperClassCall() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnSuperClassCall.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationsOnSuperClassCallOnAnonymousObject.kt")
+  public void testTypeAnnotationsOnSuperClassCallOnAnonymousObject() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnSuperClassCallOnAnonymousObject.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationsOnSuperInterface.kt")
+  public void testTypeAnnotationsOnSuperInterface() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnSuperInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationsOnSuperInterfaceOnAnonymousObject.kt")
+  public void testTypeAnnotationsOnSuperInterfaceOnAnonymousObject() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnSuperInterfaceOnAnonymousObject.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationsWithTypeAlias.kt")
+  public void testTypeAnnotationsWithTypeAlias() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsWithTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClass.kt")
+  public void testValueClass() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/valueClass.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Contracts {
+    @Test
+    public void testAllFilesPresentInContracts() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
-    public void testAllFilesPresentInSingleSymbolByPsi() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    @TestMetadata("booleanConstReferenceInImplies.kt")
+    public void testBooleanConstReferenceInImplies() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/booleanConstReferenceInImplies.kt");
     }
 
     @Test
-    @TestMetadata("ExpandedParameterType.kt")
-    public void testExpandedParameterType() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/ExpandedParameterType.kt");
+    @TestMetadata("booleanExprContract.kt")
+    public void testBooleanExprContract() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/booleanExprContract.kt");
     }
 
     @Test
-    @TestMetadata("ExpandedReturnType.kt")
-    public void testExpandedReturnType() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/ExpandedReturnType.kt");
+    @TestMetadata("callsInPlaceAtLeastOnceContract.kt")
+    public void testCallsInPlaceAtLeastOnceContract() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/callsInPlaceAtLeastOnceContract.kt");
     }
 
     @Test
-    @TestMetadata("functionWithReceiverAnnotation.kt")
-    public void testFunctionWithReceiverAnnotation() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/functionWithReceiverAnnotation.kt");
+    @TestMetadata("callsInPlaceAtMostOnceContract.kt")
+    public void testCallsInPlaceAtMostOnceContract() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/callsInPlaceAtMostOnceContract.kt");
     }
 
     @Test
-    @TestMetadata("getterWithAnnotations.kt")
-    public void testGetterWithAnnotations() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/getterWithAnnotations.kt");
+    @TestMetadata("callsInPlaceExactlyOnceContract.kt")
+    public void testCallsInPlaceExactlyOnceContract() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/callsInPlaceExactlyOnceContract.kt");
     }
 
     @Test
-    @TestMetadata("getterWithReceiverAndAnnotations.kt")
-    public void testGetterWithReceiverAndAnnotations() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/getterWithReceiverAndAnnotations.kt");
+    @TestMetadata("callsInPlaceUnknownContract.kt")
+    public void testCallsInPlaceUnknownContract() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/callsInPlaceUnknownContract.kt");
     }
 
     @Test
-    @TestMetadata("nestedTypeAnnotationWithTypeAlias.kt")
-    public void testNestedTypeAnnotationWithTypeAlias() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/nestedTypeAnnotationWithTypeAlias.kt");
+    @TestMetadata("invalidContractParameterPassedToReturns.kt")
+    public void testInvalidContractParameterPassedToReturns() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/invalidContractParameterPassedToReturns.kt");
     }
 
     @Test
-    @TestMetadata("nestedTypeAnnotationWithTypeAliasAsAnnotation.kt")
-    public void testNestedTypeAnnotationWithTypeAliasAsAnnotation() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/nestedTypeAnnotationWithTypeAliasAsAnnotation.kt");
+    @TestMetadata("isInstancePredicateContract.kt")
+    public void testIsInstancePredicateContract() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/isInstancePredicateContract.kt");
     }
 
     @Test
-    @TestMetadata("propertyWithAnnotations.kt")
-    public void testPropertyWithAnnotations() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyWithAnnotations.kt");
+    @TestMetadata("logicalNotContract.kt")
+    public void testLogicalNotContract() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/logicalNotContract.kt");
     }
 
     @Test
-    @TestMetadata("propertyWithAnnotationsAndAccessors.kt")
-    public void testPropertyWithAnnotationsAndAccessors() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyWithAnnotationsAndAccessors.kt");
+    @TestMetadata("referenceBooleanReceiverInContract.kt")
+    public void testReferenceBooleanReceiverInContract() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/referenceBooleanReceiverInContract.kt");
     }
 
     @Test
-    @TestMetadata("propertyWithDelegateAndAnnotations.kt")
-    public void testPropertyWithDelegateAndAnnotations() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyWithDelegateAndAnnotations.kt");
+    @TestMetadata("referenceReceiverInContract.kt")
+    public void testReferenceReceiverInContract() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/referenceReceiverInContract.kt");
     }
 
     @Test
-    @TestMetadata("propertyWithReceiverAnnotation.kt")
-    public void testPropertyWithReceiverAnnotation() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyWithReceiverAnnotation.kt");
+    @TestMetadata("returnsContract.kt")
+    public void testReturnsContract() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsContract.kt");
     }
 
     @Test
-    @TestMetadata("setterWithAnnotations.kt")
-    public void testSetterWithAnnotations() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/setterWithAnnotations.kt");
+    @TestMetadata("returnsFalseContract.kt")
+    public void testReturnsFalseContract() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsFalseContract.kt");
     }
 
     @Test
-    @TestMetadata("typeAnnotationWithArgument.kt")
-    public void testTypeAnnotationWithArgument() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationWithArgument.kt");
+    @TestMetadata("returnsNotNullContract.kt")
+    public void testReturnsNotNullContract() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsNotNullContract.kt");
     }
 
     @Test
-    @TestMetadata("typeAnnotationsOnFunctionParameterType.kt")
-    public void testTypeAnnotationsOnFunctionParameterType() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnFunctionParameterType.kt");
+    @TestMetadata("returnsNullContract.kt")
+    public void testReturnsNullContract() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsNullContract.kt");
     }
 
     @Test
-    @TestMetadata("typeAnnotationsOnFunctionReceiverType.kt")
-    public void testTypeAnnotationsOnFunctionReceiverType() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnFunctionReceiverType.kt");
+    @TestMetadata("returnsTrueContract.kt")
+    public void testReturnsTrueContract() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsTrueContract.kt");
     }
 
     @Test
-    @TestMetadata("typeAnnotationsOnFunctionalTypeWithTypeAlias.kt")
-    public void testTypeAnnotationsOnFunctionalTypeWithTypeAlias() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnFunctionalTypeWithTypeAlias.kt");
+    @TestMetadata("twoContracts.kt")
+    public void testTwoContracts() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/twoContracts.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Destructuring {
+    @Test
+    public void testAllFilesPresentInDestructuring() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
-    @TestMetadata("typeAnnotationsOnPropertyGetterReturnType.kt")
-    public void testTypeAnnotationsOnPropertyGetterReturnType() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnPropertyGetterReturnType.kt");
+    @TestMetadata("destructuringDeclaration.kt")
+    public void testDestructuringDeclaration() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/destructuringDeclaration.kt");
     }
 
     @Test
-    @TestMetadata("typeAnnotationsOnPropertyReceiverType.kt")
-    public void testTypeAnnotationsOnPropertyReceiverType() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnPropertyReceiverType.kt");
+    @TestMetadata("destructuringDeclarationInLambda.kt")
+    public void testDestructuringDeclarationInLambda() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/destructuringDeclarationInLambda.kt");
     }
 
     @Test
-    @TestMetadata("typeAnnotationsOnPropertyReturnType.kt")
-    public void testTypeAnnotationsOnPropertyReturnType() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnPropertyReturnType.kt");
+    @TestMetadata("destructuringDeclarationParameterInLambda.kt")
+    public void testDestructuringDeclarationParameterInLambda() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/destructuringDeclarationParameterInLambda.kt");
     }
 
     @Test
-    @TestMetadata("typeAnnotationsOnPropertySetterParameterType.kt")
-    public void testTypeAnnotationsOnPropertySetterParameterType() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnPropertySetterParameterType.kt");
+    @TestMetadata("entryInDestructuringDeclaration.kt")
+    public void testEntryInDestructuringDeclaration() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryInDestructuringDeclaration.kt");
     }
 
     @Test
-    @TestMetadata("typeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation.kt")
-    public void testTypeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation.kt");
+    @TestMetadata("entryInDestructuringDeclarationParameterInLambda.kt")
+    public void testEntryInDestructuringDeclarationParameterInLambda() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryInDestructuringDeclarationParameterInLambda.kt");
     }
 
     @Test
-    @TestMetadata("typeAnnotationsOnSuperClassCall.kt")
-    public void testTypeAnnotationsOnSuperClassCall() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnSuperClassCall.kt");
+    @TestMetadata("entryUnderscoreInDestructuringDeclaration.kt")
+    public void testEntryUnderscoreInDestructuringDeclaration() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryUnderscoreInDestructuringDeclaration.kt");
     }
 
     @Test
-    @TestMetadata("typeAnnotationsOnSuperClassCallOnAnonymousObject.kt")
-    public void testTypeAnnotationsOnSuperClassCallOnAnonymousObject() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnSuperClassCallOnAnonymousObject.kt");
+    @TestMetadata("entryUnderscoreInDestructuringDeclarationParameterInLambda.kt")
+    public void testEntryUnderscoreInDestructuringDeclarationParameterInLambda() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryUnderscoreInDestructuringDeclarationParameterInLambda.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Errors {
+    @Test
+    public void testAllFilesPresentInErrors() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
-    @TestMetadata("typeAnnotationsOnSuperInterface.kt")
-    public void testTypeAnnotationsOnSuperInterface() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnSuperInterface.kt");
+    @TestMetadata("anonymousObjectInInvalidPosition.kt")
+    public void testAnonymousObjectInInvalidPosition() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/anonymousObjectInInvalidPosition.kt");
     }
 
     @Test
-    @TestMetadata("typeAnnotationsOnSuperInterfaceOnAnonymousObject.kt")
-    public void testTypeAnnotationsOnSuperInterfaceOnAnonymousObject() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnSuperInterfaceOnAnonymousObject.kt");
+    @TestMetadata("objectWithTypeArgsAsExpression.kt")
+    public void testObjectWithTypeArgsAsExpression() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/objectWithTypeArgsAsExpression.kt");
     }
-
-    @Test
-    @TestMetadata("typeAnnotationsWithTypeAlias.kt")
-    public void testTypeAnnotationsWithTypeAlias() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsWithTypeAlias.kt");
-    }
-
-    @Test
-    @TestMetadata("valueClass.kt")
-    public void testValueClass() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/valueClass.kt");
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Contracts {
-        @Test
-        public void testAllFilesPresentInContracts() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("booleanConstReferenceInImplies.kt")
-        public void testBooleanConstReferenceInImplies() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/booleanConstReferenceInImplies.kt");
-        }
-
-        @Test
-        @TestMetadata("booleanExprContract.kt")
-        public void testBooleanExprContract() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/booleanExprContract.kt");
-        }
-
-        @Test
-        @TestMetadata("callsInPlaceAtLeastOnceContract.kt")
-        public void testCallsInPlaceAtLeastOnceContract() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/callsInPlaceAtLeastOnceContract.kt");
-        }
-
-        @Test
-        @TestMetadata("callsInPlaceAtMostOnceContract.kt")
-        public void testCallsInPlaceAtMostOnceContract() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/callsInPlaceAtMostOnceContract.kt");
-        }
-
-        @Test
-        @TestMetadata("callsInPlaceExactlyOnceContract.kt")
-        public void testCallsInPlaceExactlyOnceContract() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/callsInPlaceExactlyOnceContract.kt");
-        }
-
-        @Test
-        @TestMetadata("callsInPlaceUnknownContract.kt")
-        public void testCallsInPlaceUnknownContract() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/callsInPlaceUnknownContract.kt");
-        }
-
-        @Test
-        @TestMetadata("invalidContractParameterPassedToReturns.kt")
-        public void testInvalidContractParameterPassedToReturns() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/invalidContractParameterPassedToReturns.kt");
-        }
-
-        @Test
-        @TestMetadata("isInstancePredicateContract.kt")
-        public void testIsInstancePredicateContract() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/isInstancePredicateContract.kt");
-        }
-
-        @Test
-        @TestMetadata("logicalNotContract.kt")
-        public void testLogicalNotContract() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/logicalNotContract.kt");
-        }
-
-        @Test
-        @TestMetadata("referenceBooleanReceiverInContract.kt")
-        public void testReferenceBooleanReceiverInContract() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/referenceBooleanReceiverInContract.kt");
-        }
-
-        @Test
-        @TestMetadata("referenceReceiverInContract.kt")
-        public void testReferenceReceiverInContract() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/referenceReceiverInContract.kt");
-        }
-
-        @Test
-        @TestMetadata("returnsContract.kt")
-        public void testReturnsContract() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsContract.kt");
-        }
-
-        @Test
-        @TestMetadata("returnsFalseContract.kt")
-        public void testReturnsFalseContract() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsFalseContract.kt");
-        }
-
-        @Test
-        @TestMetadata("returnsNotNullContract.kt")
-        public void testReturnsNotNullContract() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsNotNullContract.kt");
-        }
-
-        @Test
-        @TestMetadata("returnsNullContract.kt")
-        public void testReturnsNullContract() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsNullContract.kt");
-        }
-
-        @Test
-        @TestMetadata("returnsTrueContract.kt")
-        public void testReturnsTrueContract() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsTrueContract.kt");
-        }
-
-        @Test
-        @TestMetadata("twoContracts.kt")
-        public void testTwoContracts() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/twoContracts.kt");
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Destructuring {
-        @Test
-        public void testAllFilesPresentInDestructuring() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("destructuringDeclaration.kt")
-        public void testDestructuringDeclaration() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/destructuringDeclaration.kt");
-        }
-
-        @Test
-        @TestMetadata("destructuringDeclarationInLambda.kt")
-        public void testDestructuringDeclarationInLambda() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/destructuringDeclarationInLambda.kt");
-        }
-
-        @Test
-        @TestMetadata("destructuringDeclarationParameterInLambda.kt")
-        public void testDestructuringDeclarationParameterInLambda() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/destructuringDeclarationParameterInLambda.kt");
-        }
-
-        @Test
-        @TestMetadata("entryInDestructuringDeclaration.kt")
-        public void testEntryInDestructuringDeclaration() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryInDestructuringDeclaration.kt");
-        }
-
-        @Test
-        @TestMetadata("entryInDestructuringDeclarationParameterInLambda.kt")
-        public void testEntryInDestructuringDeclarationParameterInLambda() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryInDestructuringDeclarationParameterInLambda.kt");
-        }
-
-        @Test
-        @TestMetadata("entryUnderscoreInDestructuringDeclaration.kt")
-        public void testEntryUnderscoreInDestructuringDeclaration() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryUnderscoreInDestructuringDeclaration.kt");
-        }
-
-        @Test
-        @TestMetadata("entryUnderscoreInDestructuringDeclarationParameterInLambda.kt")
-        public void testEntryUnderscoreInDestructuringDeclarationParameterInLambda() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryUnderscoreInDestructuringDeclarationParameterInLambda.kt");
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Errors {
-        @Test
-        public void testAllFilesPresentInErrors() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("anonymousObjectInInvalidPosition.kt")
-        public void testAnonymousObjectInInvalidPosition() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/anonymousObjectInInvalidPosition.kt");
-        }
-
-        @Test
-        @TestMetadata("objectWithTypeArgsAsExpression.kt")
-        public void testObjectWithTypeArgsAsExpression() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/objectWithTypeArgsAsExpression.kt");
-        }
-    }
+  }
 }

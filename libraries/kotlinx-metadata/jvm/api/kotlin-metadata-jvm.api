@@ -1,0 +1,1671 @@
+public final class kotlin/metadata/Attributes {
+	public static final fun getDeclaresDefaultValue (Lkotlin/metadata/KmValueParameter;)Z
+	public static final fun getHasAnnotations (Lkotlin/metadata/KmClass;)Z
+	public static final fun getHasAnnotations (Lkotlin/metadata/KmConstructor;)Z
+	public static final fun getHasAnnotations (Lkotlin/metadata/KmFunction;)Z
+	public static final fun getHasAnnotations (Lkotlin/metadata/KmProperty;)Z
+	public static final fun getHasAnnotations (Lkotlin/metadata/KmPropertyAccessorAttributes;)Z
+	public static final fun getHasAnnotations (Lkotlin/metadata/KmTypeAlias;)Z
+	public static final fun getHasAnnotations (Lkotlin/metadata/KmValueParameter;)Z
+	public static final fun getHasConstant (Lkotlin/metadata/KmProperty;)Z
+	public static final fun getHasEnumEntries (Lkotlin/metadata/KmClass;)Z
+	public static final fun getHasGetter (Lkotlin/metadata/KmProperty;)Z
+	public static final fun getHasNonStableParameterNames (Lkotlin/metadata/KmConstructor;)Z
+	public static final fun getHasNonStableParameterNames (Lkotlin/metadata/KmFunction;)Z
+	public static final fun getHasSetter (Lkotlin/metadata/KmProperty;)Z
+	public static final fun getKind (Lkotlin/metadata/KmClass;)Lkotlin/metadata/ClassKind;
+	public static final fun getKind (Lkotlin/metadata/KmFunction;)Lkotlin/metadata/MemberKind;
+	public static final fun getKind (Lkotlin/metadata/KmProperty;)Lkotlin/metadata/MemberKind;
+	public static final fun getModality (Lkotlin/metadata/KmClass;)Lkotlin/metadata/Modality;
+	public static final fun getModality (Lkotlin/metadata/KmFunction;)Lkotlin/metadata/Modality;
+	public static final fun getModality (Lkotlin/metadata/KmProperty;)Lkotlin/metadata/Modality;
+	public static final fun getModality (Lkotlin/metadata/KmPropertyAccessorAttributes;)Lkotlin/metadata/Modality;
+	public static final fun getVisibility (Lkotlin/metadata/KmClass;)Lkotlin/metadata/Visibility;
+	public static final fun getVisibility (Lkotlin/metadata/KmConstructor;)Lkotlin/metadata/Visibility;
+	public static final fun getVisibility (Lkotlin/metadata/KmFunction;)Lkotlin/metadata/Visibility;
+	public static final fun getVisibility (Lkotlin/metadata/KmProperty;)Lkotlin/metadata/Visibility;
+	public static final fun getVisibility (Lkotlin/metadata/KmPropertyAccessorAttributes;)Lkotlin/metadata/Visibility;
+	public static final fun getVisibility (Lkotlin/metadata/KmTypeAlias;)Lkotlin/metadata/Visibility;
+	public static final fun isConst (Lkotlin/metadata/KmProperty;)Z
+	public static final fun isCrossinline (Lkotlin/metadata/KmValueParameter;)Z
+	public static final fun isData (Lkotlin/metadata/KmClass;)Z
+	public static final fun isDefinitelyNonNull (Lkotlin/metadata/KmType;)Z
+	public static final fun isDelegated (Lkotlin/metadata/KmProperty;)Z
+	public static final fun isExpect (Lkotlin/metadata/KmClass;)Z
+	public static final fun isExpect (Lkotlin/metadata/KmFunction;)Z
+	public static final fun isExpect (Lkotlin/metadata/KmProperty;)Z
+	public static final fun isExternal (Lkotlin/metadata/KmClass;)Z
+	public static final fun isExternal (Lkotlin/metadata/KmFunction;)Z
+	public static final fun isExternal (Lkotlin/metadata/KmProperty;)Z
+	public static final fun isExternal (Lkotlin/metadata/KmPropertyAccessorAttributes;)Z
+	public static final fun isFunInterface (Lkotlin/metadata/KmClass;)Z
+	public static final fun isInfix (Lkotlin/metadata/KmFunction;)Z
+	public static final fun isInline (Lkotlin/metadata/KmFunction;)Z
+	public static final fun isInline (Lkotlin/metadata/KmPropertyAccessorAttributes;)Z
+	public static final fun isInner (Lkotlin/metadata/KmClass;)Z
+	public static final fun isLateinit (Lkotlin/metadata/KmProperty;)Z
+	public static final fun isNegated (Lkotlin/metadata/KmEffectExpression;)Z
+	public static final fun isNoinline (Lkotlin/metadata/KmValueParameter;)Z
+	public static final fun isNotDefault (Lkotlin/metadata/KmPropertyAccessorAttributes;)Z
+	public static final fun isNullCheckPredicate (Lkotlin/metadata/KmEffectExpression;)Z
+	public static final fun isNullable (Lkotlin/metadata/KmType;)Z
+	public static final fun isOperator (Lkotlin/metadata/KmFunction;)Z
+	public static final fun isReified (Lkotlin/metadata/KmTypeParameter;)Z
+	public static final fun isSecondary (Lkotlin/metadata/KmConstructor;)Z
+	public static final fun isSuspend (Lkotlin/metadata/KmFunction;)Z
+	public static final fun isSuspend (Lkotlin/metadata/KmType;)Z
+	public static final fun isTailrec (Lkotlin/metadata/KmFunction;)Z
+	public static final fun isValue (Lkotlin/metadata/KmClass;)Z
+	public static final fun isVar (Lkotlin/metadata/KmProperty;)Z
+	public static final fun setConst (Lkotlin/metadata/KmProperty;Z)V
+	public static final fun setCrossinline (Lkotlin/metadata/KmValueParameter;Z)V
+	public static final fun setData (Lkotlin/metadata/KmClass;Z)V
+	public static final fun setDeclaresDefaultValue (Lkotlin/metadata/KmValueParameter;Z)V
+	public static final fun setDefinitelyNonNull (Lkotlin/metadata/KmType;Z)V
+	public static final fun setDelegated (Lkotlin/metadata/KmProperty;Z)V
+	public static final fun setExpect (Lkotlin/metadata/KmClass;Z)V
+	public static final fun setExpect (Lkotlin/metadata/KmFunction;Z)V
+	public static final fun setExpect (Lkotlin/metadata/KmProperty;Z)V
+	public static final fun setExternal (Lkotlin/metadata/KmClass;Z)V
+	public static final fun setExternal (Lkotlin/metadata/KmFunction;Z)V
+	public static final fun setExternal (Lkotlin/metadata/KmProperty;Z)V
+	public static final fun setExternal (Lkotlin/metadata/KmPropertyAccessorAttributes;Z)V
+	public static final fun setFunInterface (Lkotlin/metadata/KmClass;Z)V
+	public static final fun setHasAnnotations (Lkotlin/metadata/KmClass;Z)V
+	public static final fun setHasAnnotations (Lkotlin/metadata/KmConstructor;Z)V
+	public static final fun setHasAnnotations (Lkotlin/metadata/KmFunction;Z)V
+	public static final fun setHasAnnotations (Lkotlin/metadata/KmProperty;Z)V
+	public static final fun setHasAnnotations (Lkotlin/metadata/KmPropertyAccessorAttributes;Z)V
+	public static final fun setHasAnnotations (Lkotlin/metadata/KmTypeAlias;Z)V
+	public static final fun setHasAnnotations (Lkotlin/metadata/KmValueParameter;Z)V
+	public static final fun setHasConstant (Lkotlin/metadata/KmProperty;Z)V
+	public static final fun setHasEnumEntries (Lkotlin/metadata/KmClass;Z)V
+	public static final fun setHasGetter (Lkotlin/metadata/KmProperty;Z)V
+	public static final fun setHasNonStableParameterNames (Lkotlin/metadata/KmConstructor;Z)V
+	public static final fun setHasNonStableParameterNames (Lkotlin/metadata/KmFunction;Z)V
+	public static final fun setHasSetter (Lkotlin/metadata/KmProperty;Z)V
+	public static final fun setInfix (Lkotlin/metadata/KmFunction;Z)V
+	public static final fun setInline (Lkotlin/metadata/KmFunction;Z)V
+	public static final fun setInline (Lkotlin/metadata/KmPropertyAccessorAttributes;Z)V
+	public static final fun setInner (Lkotlin/metadata/KmClass;Z)V
+	public static final fun setKind (Lkotlin/metadata/KmClass;Lkotlin/metadata/ClassKind;)V
+	public static final fun setKind (Lkotlin/metadata/KmFunction;Lkotlin/metadata/MemberKind;)V
+	public static final fun setKind (Lkotlin/metadata/KmProperty;Lkotlin/metadata/MemberKind;)V
+	public static final fun setLateinit (Lkotlin/metadata/KmProperty;Z)V
+	public static final fun setModality (Lkotlin/metadata/KmClass;Lkotlin/metadata/Modality;)V
+	public static final fun setModality (Lkotlin/metadata/KmFunction;Lkotlin/metadata/Modality;)V
+	public static final fun setModality (Lkotlin/metadata/KmProperty;Lkotlin/metadata/Modality;)V
+	public static final fun setModality (Lkotlin/metadata/KmPropertyAccessorAttributes;Lkotlin/metadata/Modality;)V
+	public static final fun setNegated (Lkotlin/metadata/KmEffectExpression;Z)V
+	public static final fun setNoinline (Lkotlin/metadata/KmValueParameter;Z)V
+	public static final fun setNotDefault (Lkotlin/metadata/KmPropertyAccessorAttributes;Z)V
+	public static final fun setNullCheckPredicate (Lkotlin/metadata/KmEffectExpression;Z)V
+	public static final fun setNullable (Lkotlin/metadata/KmType;Z)V
+	public static final fun setOperator (Lkotlin/metadata/KmFunction;Z)V
+	public static final fun setReified (Lkotlin/metadata/KmTypeParameter;Z)V
+	public static final fun setSecondary (Lkotlin/metadata/KmConstructor;Z)V
+	public static final fun setSuspend (Lkotlin/metadata/KmFunction;Z)V
+	public static final fun setSuspend (Lkotlin/metadata/KmType;Z)V
+	public static final fun setTailrec (Lkotlin/metadata/KmFunction;Z)V
+	public static final fun setValue (Lkotlin/metadata/KmClass;Z)V
+	public static final fun setVar (Lkotlin/metadata/KmProperty;Z)V
+	public static final fun setVisibility (Lkotlin/metadata/KmClass;Lkotlin/metadata/Visibility;)V
+	public static final fun setVisibility (Lkotlin/metadata/KmConstructor;Lkotlin/metadata/Visibility;)V
+	public static final fun setVisibility (Lkotlin/metadata/KmFunction;Lkotlin/metadata/Visibility;)V
+	public static final fun setVisibility (Lkotlin/metadata/KmProperty;Lkotlin/metadata/Visibility;)V
+	public static final fun setVisibility (Lkotlin/metadata/KmPropertyAccessorAttributes;Lkotlin/metadata/Visibility;)V
+	public static final fun setVisibility (Lkotlin/metadata/KmTypeAlias;Lkotlin/metadata/Visibility;)V
+}
+
+public final class kotlin/metadata/ClassKind : java/lang/Enum {
+	public static final field ANNOTATION_CLASS Lkotlin/metadata/ClassKind;
+	public static final field CLASS Lkotlin/metadata/ClassKind;
+	public static final field COMPANION_OBJECT Lkotlin/metadata/ClassKind;
+	public static final field ENUM_CLASS Lkotlin/metadata/ClassKind;
+	public static final field ENUM_ENTRY Lkotlin/metadata/ClassKind;
+	public static final field INTERFACE Lkotlin/metadata/ClassKind;
+	public static final field OBJECT Lkotlin/metadata/ClassKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/metadata/ClassKind;
+	public static fun values ()[Lkotlin/metadata/ClassKind;
+}
+
+public final class kotlin/metadata/ClassNameKt {
+	public static final fun isLocal (Ljava/lang/String;)Z
+	public static final fun isLocalClassName (Ljava/lang/String;)Z
+}
+
+public abstract interface annotation class kotlin/metadata/ExperimentalContextReceivers : java/lang/annotation/Annotation {
+}
+
+public final class kotlin/metadata/Flag {
+	public static final field Common Lkotlin/metadata/Flag$Common;
+	public static final field HAS_ANNOTATIONS Lkotlin/metadata/Flag;
+	public static final field IS_ABSTRACT Lkotlin/metadata/Flag;
+	public static final field IS_FINAL Lkotlin/metadata/Flag;
+	public static final field IS_INTERNAL Lkotlin/metadata/Flag;
+	public static final field IS_LOCAL Lkotlin/metadata/Flag;
+	public static final field IS_OPEN Lkotlin/metadata/Flag;
+	public static final field IS_PRIVATE Lkotlin/metadata/Flag;
+	public static final field IS_PRIVATE_TO_THIS Lkotlin/metadata/Flag;
+	public static final field IS_PROTECTED Lkotlin/metadata/Flag;
+	public static final field IS_PUBLIC Lkotlin/metadata/Flag;
+	public static final field IS_SEALED Lkotlin/metadata/Flag;
+	public fun <init> (III)V
+	public final fun invoke (I)Z
+}
+
+public final class kotlin/metadata/Flag$Class {
+	public static final field HAS_ENUM_ENTRIES Lkotlin/metadata/Flag;
+	public static final field INSTANCE Lkotlin/metadata/Flag$Class;
+	public static final field IS_ANNOTATION_CLASS Lkotlin/metadata/Flag;
+	public static final field IS_CLASS Lkotlin/metadata/Flag;
+	public static final field IS_COMPANION_OBJECT Lkotlin/metadata/Flag;
+	public static final field IS_DATA Lkotlin/metadata/Flag;
+	public static final field IS_ENUM_CLASS Lkotlin/metadata/Flag;
+	public static final field IS_ENUM_ENTRY Lkotlin/metadata/Flag;
+	public static final field IS_EXPECT Lkotlin/metadata/Flag;
+	public static final field IS_EXTERNAL Lkotlin/metadata/Flag;
+	public static final field IS_FUN Lkotlin/metadata/Flag;
+	public static final field IS_INLINE Lkotlin/metadata/Flag;
+	public static final field IS_INNER Lkotlin/metadata/Flag;
+	public static final field IS_INTERFACE Lkotlin/metadata/Flag;
+	public static final field IS_OBJECT Lkotlin/metadata/Flag;
+	public static final field IS_VALUE Lkotlin/metadata/Flag;
+}
+
+public final class kotlin/metadata/Flag$Common {
+}
+
+public final class kotlin/metadata/Flag$Constructor {
+	public static final field HAS_NON_STABLE_PARAMETER_NAMES Lkotlin/metadata/Flag;
+	public static final field INSTANCE Lkotlin/metadata/Flag$Constructor;
+	public static final field IS_PRIMARY Lkotlin/metadata/Flag;
+	public static final field IS_SECONDARY Lkotlin/metadata/Flag;
+}
+
+public final class kotlin/metadata/Flag$EffectExpression {
+	public static final field INSTANCE Lkotlin/metadata/Flag$EffectExpression;
+	public static final field IS_NEGATED Lkotlin/metadata/Flag;
+	public static final field IS_NULL_CHECK_PREDICATE Lkotlin/metadata/Flag;
+}
+
+public final class kotlin/metadata/Flag$Function {
+	public static final field HAS_NON_STABLE_PARAMETER_NAMES Lkotlin/metadata/Flag;
+	public static final field INSTANCE Lkotlin/metadata/Flag$Function;
+	public static final field IS_DECLARATION Lkotlin/metadata/Flag;
+	public static final field IS_DELEGATION Lkotlin/metadata/Flag;
+	public static final field IS_EXPECT Lkotlin/metadata/Flag;
+	public static final field IS_EXTERNAL Lkotlin/metadata/Flag;
+	public static final field IS_FAKE_OVERRIDE Lkotlin/metadata/Flag;
+	public static final field IS_INFIX Lkotlin/metadata/Flag;
+	public static final field IS_INLINE Lkotlin/metadata/Flag;
+	public static final field IS_OPERATOR Lkotlin/metadata/Flag;
+	public static final field IS_SUSPEND Lkotlin/metadata/Flag;
+	public static final field IS_SYNTHESIZED Lkotlin/metadata/Flag;
+	public static final field IS_TAILREC Lkotlin/metadata/Flag;
+}
+
+public final class kotlin/metadata/Flag$Property {
+	public static final field HAS_CONSTANT Lkotlin/metadata/Flag;
+	public static final field HAS_GETTER Lkotlin/metadata/Flag;
+	public static final field HAS_SETTER Lkotlin/metadata/Flag;
+	public static final field INSTANCE Lkotlin/metadata/Flag$Property;
+	public static final field IS_CONST Lkotlin/metadata/Flag;
+	public static final field IS_DECLARATION Lkotlin/metadata/Flag;
+	public static final field IS_DELEGATED Lkotlin/metadata/Flag;
+	public static final field IS_DELEGATION Lkotlin/metadata/Flag;
+	public static final field IS_EXPECT Lkotlin/metadata/Flag;
+	public static final field IS_EXTERNAL Lkotlin/metadata/Flag;
+	public static final field IS_FAKE_OVERRIDE Lkotlin/metadata/Flag;
+	public static final field IS_LATEINIT Lkotlin/metadata/Flag;
+	public static final field IS_SYNTHESIZED Lkotlin/metadata/Flag;
+	public static final field IS_VAR Lkotlin/metadata/Flag;
+}
+
+public final class kotlin/metadata/Flag$PropertyAccessor {
+	public static final field INSTANCE Lkotlin/metadata/Flag$PropertyAccessor;
+	public static final field IS_EXTERNAL Lkotlin/metadata/Flag;
+	public static final field IS_INLINE Lkotlin/metadata/Flag;
+	public static final field IS_NOT_DEFAULT Lkotlin/metadata/Flag;
+}
+
+public final class kotlin/metadata/Flag$Type {
+	public static final field INSTANCE Lkotlin/metadata/Flag$Type;
+	public static final field IS_DEFINITELY_NON_NULL Lkotlin/metadata/Flag;
+	public static final field IS_NULLABLE Lkotlin/metadata/Flag;
+	public static final field IS_SUSPEND Lkotlin/metadata/Flag;
+}
+
+public final class kotlin/metadata/Flag$TypeParameter {
+	public static final field INSTANCE Lkotlin/metadata/Flag$TypeParameter;
+	public static final field IS_REIFIED Lkotlin/metadata/Flag;
+}
+
+public final class kotlin/metadata/Flag$ValueParameter {
+	public static final field DECLARES_DEFAULT_VALUE Lkotlin/metadata/Flag;
+	public static final field INSTANCE Lkotlin/metadata/Flag$ValueParameter;
+	public static final field IS_CROSSINLINE Lkotlin/metadata/Flag;
+	public static final field IS_NOINLINE Lkotlin/metadata/Flag;
+}
+
+public final class kotlin/metadata/FlagsKt {
+	public static final fun flagsOf ([Lkotlin/metadata/Flag;)I
+}
+
+public final class kotlin/metadata/KmAnnotation {
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArguments ()Ljava/util/Map;
+	public final fun getClassName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class kotlin/metadata/KmAnnotationArgument {
+	public abstract fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$AnnotationValue : kotlin/metadata/KmAnnotationArgument {
+	public fun <init> (Lkotlin/metadata/KmAnnotation;)V
+	public final fun component1 ()Lkotlin/metadata/KmAnnotation;
+	public final fun copy (Lkotlin/metadata/KmAnnotation;)Lkotlin/metadata/KmAnnotationArgument$AnnotationValue;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmAnnotationArgument$AnnotationValue;Lkotlin/metadata/KmAnnotation;ILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$AnnotationValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnnotation ()Lkotlin/metadata/KmAnnotation;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$ArrayKClassValue : kotlin/metadata/KmAnnotationArgument {
+	public fun <init> (Ljava/lang/String;I)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun copy (Ljava/lang/String;I)Lkotlin/metadata/KmAnnotationArgument$ArrayKClassValue;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmAnnotationArgument$ArrayKClassValue;Ljava/lang/String;IILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$ArrayKClassValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArrayDimensionCount ()I
+	public final fun getClassName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$ArrayValue : kotlin/metadata/KmAnnotationArgument {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lkotlin/metadata/KmAnnotationArgument$ArrayValue;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmAnnotationArgument$ArrayValue;Ljava/util/List;ILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$ArrayValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getElements ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$BooleanValue : kotlin/metadata/KmAnnotationArgument$LiteralValue {
+	public fun <init> (Z)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lkotlin/metadata/KmAnnotationArgument$BooleanValue;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmAnnotationArgument$BooleanValue;ZILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$BooleanValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getValue ()Ljava/lang/Boolean;
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$ByteValue : kotlin/metadata/KmAnnotationArgument$LiteralValue {
+	public fun <init> (B)V
+	public final fun component1 ()B
+	public final fun copy (B)Lkotlin/metadata/KmAnnotationArgument$ByteValue;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmAnnotationArgument$ByteValue;BILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$ByteValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getValue ()Ljava/lang/Byte;
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$CharValue : kotlin/metadata/KmAnnotationArgument$LiteralValue {
+	public fun <init> (C)V
+	public final fun component1 ()C
+	public final fun copy (C)Lkotlin/metadata/KmAnnotationArgument$CharValue;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmAnnotationArgument$CharValue;CILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$CharValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getValue ()Ljava/lang/Character;
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$DoubleValue : kotlin/metadata/KmAnnotationArgument$LiteralValue {
+	public fun <init> (D)V
+	public final fun component1 ()D
+	public final fun copy (D)Lkotlin/metadata/KmAnnotationArgument$DoubleValue;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmAnnotationArgument$DoubleValue;DILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$DoubleValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getValue ()Ljava/lang/Double;
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$EnumValue : kotlin/metadata/KmAnnotationArgument {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lkotlin/metadata/KmAnnotationArgument$EnumValue;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmAnnotationArgument$EnumValue;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$EnumValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEnumClassName ()Ljava/lang/String;
+	public final fun getEnumEntryName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$FloatValue : kotlin/metadata/KmAnnotationArgument$LiteralValue {
+	public fun <init> (F)V
+	public final fun component1 ()F
+	public final fun copy (F)Lkotlin/metadata/KmAnnotationArgument$FloatValue;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmAnnotationArgument$FloatValue;FILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$FloatValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getValue ()Ljava/lang/Float;
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$IntValue : kotlin/metadata/KmAnnotationArgument$LiteralValue {
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lkotlin/metadata/KmAnnotationArgument$IntValue;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmAnnotationArgument$IntValue;IILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$IntValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getValue ()Ljava/lang/Integer;
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$KClassValue : kotlin/metadata/KmAnnotationArgument {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;I)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun copy (Ljava/lang/String;I)Lkotlin/metadata/KmAnnotationArgument$KClassValue;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmAnnotationArgument$KClassValue;Ljava/lang/String;IILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$KClassValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArrayDimensionCount ()I
+	public final fun getClassName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class kotlin/metadata/KmAnnotationArgument$LiteralValue : kotlin/metadata/KmAnnotationArgument {
+	public abstract fun getValue ()Ljava/lang/Object;
+	public final fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$LongValue : kotlin/metadata/KmAnnotationArgument$LiteralValue {
+	public fun <init> (J)V
+	public final fun component1 ()J
+	public final fun copy (J)Lkotlin/metadata/KmAnnotationArgument$LongValue;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmAnnotationArgument$LongValue;JILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$LongValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getValue ()Ljava/lang/Long;
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$ShortValue : kotlin/metadata/KmAnnotationArgument$LiteralValue {
+	public fun <init> (S)V
+	public final fun component1 ()S
+	public final fun copy (S)Lkotlin/metadata/KmAnnotationArgument$ShortValue;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmAnnotationArgument$ShortValue;SILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$ShortValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun getValue ()Ljava/lang/Short;
+	public fun hashCode ()I
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$StringValue : kotlin/metadata/KmAnnotationArgument$LiteralValue {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lkotlin/metadata/KmAnnotationArgument$StringValue;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmAnnotationArgument$StringValue;Ljava/lang/String;ILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$StringValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$UByteValue : kotlin/metadata/KmAnnotationArgument$LiteralValue {
+	public synthetic fun <init> (BLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-w2LRezQ ()B
+	public final fun copy-7apg3OU (B)Lkotlin/metadata/KmAnnotationArgument$UByteValue;
+	public static synthetic fun copy-7apg3OU$default (Lkotlin/metadata/KmAnnotationArgument$UByteValue;BILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$UByteValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun getValue-w2LRezQ ()B
+	public fun hashCode ()I
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$UIntValue : kotlin/metadata/KmAnnotationArgument$LiteralValue {
+	public synthetic fun <init> (ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-pVg5ArA ()I
+	public final fun copy-WZ4Q5Ns (I)Lkotlin/metadata/KmAnnotationArgument$UIntValue;
+	public static synthetic fun copy-WZ4Q5Ns$default (Lkotlin/metadata/KmAnnotationArgument$UIntValue;IILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$UIntValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun getValue-pVg5ArA ()I
+	public fun hashCode ()I
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$ULongValue : kotlin/metadata/KmAnnotationArgument$LiteralValue {
+	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-s-VKNKU ()J
+	public final fun copy-VKZWuLQ (J)Lkotlin/metadata/KmAnnotationArgument$ULongValue;
+	public static synthetic fun copy-VKZWuLQ$default (Lkotlin/metadata/KmAnnotationArgument$ULongValue;JILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$ULongValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun getValue-s-VKNKU ()J
+	public fun hashCode ()I
+}
+
+public final class kotlin/metadata/KmAnnotationArgument$UShortValue : kotlin/metadata/KmAnnotationArgument$LiteralValue {
+	public synthetic fun <init> (SLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-Mh2AYeg ()S
+	public final fun copy-xj2QHRw (S)Lkotlin/metadata/KmAnnotationArgument$UShortValue;
+	public static synthetic fun copy-xj2QHRw$default (Lkotlin/metadata/KmAnnotationArgument$UShortValue;SILjava/lang/Object;)Lkotlin/metadata/KmAnnotationArgument$UShortValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun getValue-Mh2AYeg ()S
+	public fun hashCode ()I
+}
+
+public final class kotlin/metadata/KmClass : kotlin/metadata/KmClassVisitor, kotlin/metadata/KmDeclarationContainer {
+	public field name Ljava/lang/String;
+	public fun <init> ()V
+	public final fun accept (Lkotlin/metadata/KmClassVisitor;)V
+	public final fun getCompanionObject ()Ljava/lang/String;
+	public final fun getConstructors ()Ljava/util/List;
+	public final fun getContextReceiverTypes ()Ljava/util/List;
+	public final fun getEnumEntries ()Ljava/util/List;
+	public final fun getFlags ()I
+	public fun getFunctions ()Ljava/util/List;
+	public final fun getInlineClassUnderlyingPropertyName ()Ljava/lang/String;
+	public final fun getInlineClassUnderlyingType ()Lkotlin/metadata/KmType;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getNestedClasses ()Ljava/util/List;
+	public fun getProperties ()Ljava/util/List;
+	public final fun getSealedSubclasses ()Ljava/util/List;
+	public final fun getSupertypes ()Ljava/util/List;
+	public fun getTypeAliases ()Ljava/util/List;
+	public final fun getTypeParameters ()Ljava/util/List;
+	public final fun getVersionRequirements ()Ljava/util/List;
+	public final fun setCompanionObject (Ljava/lang/String;)V
+	public final fun setFlags (I)V
+	public final fun setInlineClassUnderlyingPropertyName (Ljava/lang/String;)V
+	public final fun setInlineClassUnderlyingType (Lkotlin/metadata/KmType;)V
+	public final fun setName (Ljava/lang/String;)V
+	public fun visit (ILjava/lang/String;)V
+	public fun visitCompanionObject (Ljava/lang/String;)V
+	public fun visitConstructor (I)Lkotlin/metadata/KmConstructorVisitor;
+	public fun visitContextReceiverType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitEnumEntry (Ljava/lang/String;)V
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmClassExtensionVisitor;
+	public synthetic fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmDeclarationContainerExtensionVisitor;
+	public fun visitFunction (ILjava/lang/String;)Lkotlin/metadata/KmFunctionVisitor;
+	public fun visitInlineClassUnderlyingPropertyName (Ljava/lang/String;)V
+	public fun visitInlineClassUnderlyingType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitNestedClass (Ljava/lang/String;)V
+	public fun visitProperty (ILjava/lang/String;II)Lkotlin/metadata/KmPropertyVisitor;
+	public fun visitSealedSubclass (Ljava/lang/String;)V
+	public fun visitSupertype (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitTypeAlias (ILjava/lang/String;)Lkotlin/metadata/KmTypeAliasVisitor;
+	public fun visitTypeParameter (ILjava/lang/String;ILkotlin/metadata/KmVariance;)Lkotlin/metadata/KmTypeParameterVisitor;
+	public fun visitVersionRequirement ()Lkotlin/metadata/KmVersionRequirementVisitor;
+}
+
+public abstract interface class kotlin/metadata/KmClassExtensionVisitor : kotlin/metadata/KmDeclarationContainerExtensionVisitor {
+}
+
+public abstract class kotlin/metadata/KmClassVisitor : kotlin/metadata/KmDeclarationContainerVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/KmClassVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmClassVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun getDelegate ()Lkotlin/metadata/KmClassVisitor;
+	public synthetic fun getDelegate ()Lkotlin/metadata/KmDeclarationContainerVisitor;
+	public fun visit (ILjava/lang/String;)V
+	public fun visitCompanionObject (Ljava/lang/String;)V
+	public fun visitConstructor (I)Lkotlin/metadata/KmConstructorVisitor;
+	public fun visitContextReceiverType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitEnd ()V
+	public fun visitEnumEntry (Ljava/lang/String;)V
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmClassExtensionVisitor;
+	public synthetic fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmDeclarationContainerExtensionVisitor;
+	public fun visitInlineClassUnderlyingPropertyName (Ljava/lang/String;)V
+	public fun visitInlineClassUnderlyingType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitNestedClass (Ljava/lang/String;)V
+	public fun visitSealedSubclass (Ljava/lang/String;)V
+	public fun visitSupertype (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitTypeParameter (ILjava/lang/String;ILkotlin/metadata/KmVariance;)Lkotlin/metadata/KmTypeParameterVisitor;
+	public fun visitVersionRequirement ()Lkotlin/metadata/KmVersionRequirementVisitor;
+}
+
+public abstract class kotlin/metadata/KmClassifier {
+}
+
+public final class kotlin/metadata/KmClassifier$Class : kotlin/metadata/KmClassifier {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lkotlin/metadata/KmClassifier$Class;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmClassifier$Class;Ljava/lang/String;ILjava/lang/Object;)Lkotlin/metadata/KmClassifier$Class;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/KmClassifier$TypeAlias : kotlin/metadata/KmClassifier {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lkotlin/metadata/KmClassifier$TypeAlias;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmClassifier$TypeAlias;Ljava/lang/String;ILjava/lang/Object;)Lkotlin/metadata/KmClassifier$TypeAlias;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/KmClassifier$TypeParameter : kotlin/metadata/KmClassifier {
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lkotlin/metadata/KmClassifier$TypeParameter;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmClassifier$TypeParameter;IILjava/lang/Object;)Lkotlin/metadata/KmClassifier$TypeParameter;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getId ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/KmConstantValue {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lkotlin/metadata/KmConstantValue;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmConstantValue;Ljava/lang/Object;ILjava/lang/Object;)Lkotlin/metadata/KmConstantValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/KmConstructor : kotlin/metadata/KmConstructorVisitor {
+	public fun <init> ()V
+	public fun <init> (I)V
+	public final fun accept (Lkotlin/metadata/KmConstructorVisitor;)V
+	public final fun getFlags ()I
+	public final fun getValueParameters ()Ljava/util/List;
+	public final fun getVersionRequirements ()Ljava/util/List;
+	public final fun setFlags (I)V
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmConstructorExtensionVisitor;
+	public fun visitValueParameter (ILjava/lang/String;)Lkotlin/metadata/KmValueParameterVisitor;
+	public fun visitVersionRequirement ()Lkotlin/metadata/KmVersionRequirementVisitor;
+}
+
+public abstract interface class kotlin/metadata/KmConstructorExtensionVisitor : kotlin/metadata/KmExtensionVisitor {
+}
+
+public abstract class kotlin/metadata/KmConstructorVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/KmConstructorVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmConstructorVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun visitEnd ()V
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmConstructorExtensionVisitor;
+	public fun visitValueParameter (ILjava/lang/String;)Lkotlin/metadata/KmValueParameterVisitor;
+	public fun visitVersionRequirement ()Lkotlin/metadata/KmVersionRequirementVisitor;
+}
+
+public final class kotlin/metadata/KmContract : kotlin/metadata/KmContractVisitor {
+	public fun <init> ()V
+	public final fun accept (Lkotlin/metadata/KmContractVisitor;)V
+	public final fun getEffects ()Ljava/util/List;
+	public fun visitEffect (Lkotlin/metadata/KmEffectType;Lkotlin/metadata/KmEffectInvocationKind;)Lkotlin/metadata/KmEffectVisitor;
+}
+
+public abstract class kotlin/metadata/KmContractVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/KmContractVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmContractVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun visitEffect (Lkotlin/metadata/KmEffectType;Lkotlin/metadata/KmEffectInvocationKind;)Lkotlin/metadata/KmEffectVisitor;
+	public fun visitEnd ()V
+}
+
+public abstract interface class kotlin/metadata/KmDeclarationContainer {
+	public abstract fun getFunctions ()Ljava/util/List;
+	public abstract fun getProperties ()Ljava/util/List;
+	public abstract fun getTypeAliases ()Ljava/util/List;
+}
+
+public abstract interface class kotlin/metadata/KmDeclarationContainerExtensionVisitor : kotlin/metadata/KmExtensionVisitor {
+}
+
+public abstract class kotlin/metadata/KmDeclarationContainerVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/KmDeclarationContainerVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmDeclarationContainerVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun getDelegate ()Lkotlin/metadata/KmDeclarationContainerVisitor;
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmDeclarationContainerExtensionVisitor;
+	public fun visitFunction (ILjava/lang/String;)Lkotlin/metadata/KmFunctionVisitor;
+	public fun visitProperty (ILjava/lang/String;II)Lkotlin/metadata/KmPropertyVisitor;
+	public fun visitTypeAlias (ILjava/lang/String;)Lkotlin/metadata/KmTypeAliasVisitor;
+}
+
+public final class kotlin/metadata/KmEffect : kotlin/metadata/KmEffectVisitor {
+	public fun <init> (Lkotlin/metadata/KmEffectType;Lkotlin/metadata/KmEffectInvocationKind;)V
+	public final fun accept (Lkotlin/metadata/KmEffectVisitor;)V
+	public final fun getConclusion ()Lkotlin/metadata/KmEffectExpression;
+	public final fun getConstructorArguments ()Ljava/util/List;
+	public final fun getInvocationKind ()Lkotlin/metadata/KmEffectInvocationKind;
+	public final fun getType ()Lkotlin/metadata/KmEffectType;
+	public final fun setConclusion (Lkotlin/metadata/KmEffectExpression;)V
+	public final fun setInvocationKind (Lkotlin/metadata/KmEffectInvocationKind;)V
+	public final fun setType (Lkotlin/metadata/KmEffectType;)V
+	public fun visitConclusionOfConditionalEffect ()Lkotlin/metadata/KmEffectExpressionVisitor;
+	public fun visitConstructorArgument ()Lkotlin/metadata/KmEffectExpressionVisitor;
+}
+
+public final class kotlin/metadata/KmEffectExpression : kotlin/metadata/KmEffectExpressionVisitor {
+	public fun <init> ()V
+	public final fun accept (Lkotlin/metadata/KmEffectExpressionVisitor;)V
+	public final fun getAndArguments ()Ljava/util/List;
+	public final fun getConstantValue ()Lkotlin/metadata/KmConstantValue;
+	public final fun getFlags ()I
+	public final fun getOrArguments ()Ljava/util/List;
+	public final fun getParameterIndex ()Ljava/lang/Integer;
+	public final fun isInstanceType ()Lkotlin/metadata/KmType;
+	public final fun setConstantValue (Lkotlin/metadata/KmConstantValue;)V
+	public final fun setFlags (I)V
+	public final fun setInstanceType (Lkotlin/metadata/KmType;)V
+	public final fun setParameterIndex (Ljava/lang/Integer;)V
+	public fun visit (ILjava/lang/Integer;)V
+	public fun visitAndArgument ()Lkotlin/metadata/KmEffectExpressionVisitor;
+	public fun visitConstantValue (Ljava/lang/Object;)V
+	public fun visitIsInstanceType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitOrArgument ()Lkotlin/metadata/KmEffectExpressionVisitor;
+}
+
+public abstract class kotlin/metadata/KmEffectExpressionVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/KmEffectExpressionVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmEffectExpressionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun visit (ILjava/lang/Integer;)V
+	public fun visitAndArgument ()Lkotlin/metadata/KmEffectExpressionVisitor;
+	public fun visitConstantValue (Ljava/lang/Object;)V
+	public fun visitEnd ()V
+	public fun visitIsInstanceType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitOrArgument ()Lkotlin/metadata/KmEffectExpressionVisitor;
+}
+
+public final class kotlin/metadata/KmEffectInvocationKind : java/lang/Enum {
+	public static final field AT_LEAST_ONCE Lkotlin/metadata/KmEffectInvocationKind;
+	public static final field AT_MOST_ONCE Lkotlin/metadata/KmEffectInvocationKind;
+	public static final field EXACTLY_ONCE Lkotlin/metadata/KmEffectInvocationKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/metadata/KmEffectInvocationKind;
+	public static fun values ()[Lkotlin/metadata/KmEffectInvocationKind;
+}
+
+public final class kotlin/metadata/KmEffectType : java/lang/Enum {
+	public static final field CALLS Lkotlin/metadata/KmEffectType;
+	public static final field RETURNS_CONSTANT Lkotlin/metadata/KmEffectType;
+	public static final field RETURNS_NOT_NULL Lkotlin/metadata/KmEffectType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/metadata/KmEffectType;
+	public static fun values ()[Lkotlin/metadata/KmEffectType;
+}
+
+public abstract class kotlin/metadata/KmEffectVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/KmEffectVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmEffectVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun visitConclusionOfConditionalEffect ()Lkotlin/metadata/KmEffectExpressionVisitor;
+	public fun visitConstructorArgument ()Lkotlin/metadata/KmEffectExpressionVisitor;
+	public fun visitEnd ()V
+}
+
+public final class kotlin/metadata/KmExtensionType {
+	public fun <init> (Lkotlin/reflect/KClass;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class kotlin/metadata/KmExtensionVisitor {
+	public abstract fun getType ()Lkotlin/metadata/KmExtensionType;
+}
+
+public final class kotlin/metadata/KmFlexibleTypeUpperBound {
+	public fun <init> (Lkotlin/metadata/KmType;Ljava/lang/String;)V
+	public final fun component1 ()Lkotlin/metadata/KmType;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Lkotlin/metadata/KmType;Ljava/lang/String;)Lkotlin/metadata/KmFlexibleTypeUpperBound;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmFlexibleTypeUpperBound;Lkotlin/metadata/KmType;Ljava/lang/String;ILjava/lang/Object;)Lkotlin/metadata/KmFlexibleTypeUpperBound;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getType ()Lkotlin/metadata/KmType;
+	public final fun getTypeFlexibilityId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun setType (Lkotlin/metadata/KmType;)V
+	public final fun setTypeFlexibilityId (Ljava/lang/String;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/KmFunction : kotlin/metadata/KmFunctionVisitor {
+	public field returnType Lkotlin/metadata/KmType;
+	public fun <init> (ILjava/lang/String;)V
+	public fun <init> (Ljava/lang/String;)V
+	public final fun accept (Lkotlin/metadata/KmFunctionVisitor;)V
+	public final fun getContextReceiverTypes ()Ljava/util/List;
+	public final fun getContract ()Lkotlin/metadata/KmContract;
+	public final fun getFlags ()I
+	public final fun getName ()Ljava/lang/String;
+	public final fun getReceiverParameterType ()Lkotlin/metadata/KmType;
+	public final fun getReturnType ()Lkotlin/metadata/KmType;
+	public final fun getTypeParameters ()Ljava/util/List;
+	public final fun getValueParameters ()Ljava/util/List;
+	public final fun getVersionRequirements ()Ljava/util/List;
+	public final fun setContract (Lkotlin/metadata/KmContract;)V
+	public final fun setFlags (I)V
+	public final fun setName (Ljava/lang/String;)V
+	public final fun setReceiverParameterType (Lkotlin/metadata/KmType;)V
+	public final fun setReturnType (Lkotlin/metadata/KmType;)V
+	public fun visitContextReceiverType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitContract ()Lkotlin/metadata/KmContractVisitor;
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmFunctionExtensionVisitor;
+	public fun visitReceiverParameterType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitReturnType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitTypeParameter (ILjava/lang/String;ILkotlin/metadata/KmVariance;)Lkotlin/metadata/KmTypeParameterVisitor;
+	public fun visitValueParameter (ILjava/lang/String;)Lkotlin/metadata/KmValueParameterVisitor;
+	public fun visitVersionRequirement ()Lkotlin/metadata/KmVersionRequirementVisitor;
+}
+
+public abstract interface class kotlin/metadata/KmFunctionExtensionVisitor : kotlin/metadata/KmExtensionVisitor {
+}
+
+public abstract class kotlin/metadata/KmFunctionVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/KmFunctionVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmFunctionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun visitContextReceiverType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitContract ()Lkotlin/metadata/KmContractVisitor;
+	public fun visitEnd ()V
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmFunctionExtensionVisitor;
+	public fun visitReceiverParameterType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitReturnType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitTypeParameter (ILjava/lang/String;ILkotlin/metadata/KmVariance;)Lkotlin/metadata/KmTypeParameterVisitor;
+	public fun visitValueParameter (ILjava/lang/String;)Lkotlin/metadata/KmValueParameterVisitor;
+	public fun visitVersionRequirement ()Lkotlin/metadata/KmVersionRequirementVisitor;
+}
+
+public final class kotlin/metadata/KmLambda : kotlin/metadata/KmLambdaVisitor {
+	public field function Lkotlin/metadata/KmFunction;
+	public fun <init> ()V
+	public final fun accept (Lkotlin/metadata/KmLambdaVisitor;)V
+	public final fun getFunction ()Lkotlin/metadata/KmFunction;
+	public final fun setFunction (Lkotlin/metadata/KmFunction;)V
+	public fun visitFunction (ILjava/lang/String;)Lkotlin/metadata/KmFunctionVisitor;
+}
+
+public abstract class kotlin/metadata/KmLambdaVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/KmLambdaVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmLambdaVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun visitEnd ()V
+	public fun visitFunction (ILjava/lang/String;)Lkotlin/metadata/KmFunctionVisitor;
+}
+
+public final class kotlin/metadata/KmPackage : kotlin/metadata/KmPackageVisitor, kotlin/metadata/KmDeclarationContainer {
+	public fun <init> ()V
+	public final fun accept (Lkotlin/metadata/KmPackageVisitor;)V
+	public fun getFunctions ()Ljava/util/List;
+	public fun getProperties ()Ljava/util/List;
+	public fun getTypeAliases ()Ljava/util/List;
+	public synthetic fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmDeclarationContainerExtensionVisitor;
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmPackageExtensionVisitor;
+	public fun visitFunction (ILjava/lang/String;)Lkotlin/metadata/KmFunctionVisitor;
+	public fun visitProperty (ILjava/lang/String;II)Lkotlin/metadata/KmPropertyVisitor;
+	public fun visitTypeAlias (ILjava/lang/String;)Lkotlin/metadata/KmTypeAliasVisitor;
+}
+
+public abstract interface class kotlin/metadata/KmPackageExtensionVisitor : kotlin/metadata/KmDeclarationContainerExtensionVisitor {
+}
+
+public abstract class kotlin/metadata/KmPackageVisitor : kotlin/metadata/KmDeclarationContainerVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/KmPackageVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmPackageVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun getDelegate ()Lkotlin/metadata/KmDeclarationContainerVisitor;
+	protected fun getDelegate ()Lkotlin/metadata/KmPackageVisitor;
+	public fun visitEnd ()V
+	public synthetic fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmDeclarationContainerExtensionVisitor;
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmPackageExtensionVisitor;
+}
+
+public final class kotlin/metadata/KmProperty : kotlin/metadata/KmPropertyVisitor {
+	public field returnType Lkotlin/metadata/KmType;
+	public fun <init> (ILjava/lang/String;II)V
+	public fun <init> (Ljava/lang/String;)V
+	public final fun accept (Lkotlin/metadata/KmPropertyVisitor;)V
+	public final fun getContextReceiverTypes ()Ljava/util/List;
+	public final fun getFlags ()I
+	public final fun getGetter ()Lkotlin/metadata/KmPropertyAccessorAttributes;
+	public final fun getGetterFlags ()I
+	public final fun getName ()Ljava/lang/String;
+	public final fun getReceiverParameterType ()Lkotlin/metadata/KmType;
+	public final fun getReturnType ()Lkotlin/metadata/KmType;
+	public final fun getSetter ()Lkotlin/metadata/KmPropertyAccessorAttributes;
+	public final fun getSetterFlags ()I
+	public final fun getSetterParameter ()Lkotlin/metadata/KmValueParameter;
+	public final fun getTypeParameters ()Ljava/util/List;
+	public final fun getVersionRequirements ()Ljava/util/List;
+	public final fun setFlags (I)V
+	public final fun setGetterFlags (I)V
+	public final fun setName (Ljava/lang/String;)V
+	public final fun setReceiverParameterType (Lkotlin/metadata/KmType;)V
+	public final fun setReturnType (Lkotlin/metadata/KmType;)V
+	public final fun setSetter (Lkotlin/metadata/KmPropertyAccessorAttributes;)V
+	public final fun setSetterFlags (I)V
+	public final fun setSetterParameter (Lkotlin/metadata/KmValueParameter;)V
+	public fun visitContextReceiverType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmPropertyExtensionVisitor;
+	public fun visitReceiverParameterType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitReturnType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitSetterParameter (ILjava/lang/String;)Lkotlin/metadata/KmValueParameterVisitor;
+	public fun visitTypeParameter (ILjava/lang/String;ILkotlin/metadata/KmVariance;)Lkotlin/metadata/KmTypeParameterVisitor;
+	public fun visitVersionRequirement ()Lkotlin/metadata/KmVersionRequirementVisitor;
+}
+
+public final class kotlin/metadata/KmPropertyAccessorAttributes {
+	public fun <init> ()V
+}
+
+public abstract interface class kotlin/metadata/KmPropertyExtensionVisitor : kotlin/metadata/KmExtensionVisitor {
+}
+
+public abstract class kotlin/metadata/KmPropertyVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/KmPropertyVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmPropertyVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun visitContextReceiverType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitEnd ()V
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmPropertyExtensionVisitor;
+	public fun visitReceiverParameterType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitReturnType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitSetterParameter (ILjava/lang/String;)Lkotlin/metadata/KmValueParameterVisitor;
+	public fun visitTypeParameter (ILjava/lang/String;ILkotlin/metadata/KmVariance;)Lkotlin/metadata/KmTypeParameterVisitor;
+	public fun visitVersionRequirement ()Lkotlin/metadata/KmVersionRequirementVisitor;
+}
+
+public final class kotlin/metadata/KmType : kotlin/metadata/KmTypeVisitor {
+	public field classifier Lkotlin/metadata/KmClassifier;
+	public fun <init> ()V
+	public fun <init> (I)V
+	public final fun accept (Lkotlin/metadata/KmTypeVisitor;)V
+	public final fun getAbbreviatedType ()Lkotlin/metadata/KmType;
+	public final fun getArguments ()Ljava/util/List;
+	public final fun getClassifier ()Lkotlin/metadata/KmClassifier;
+	public final fun getFlags ()I
+	public final fun getFlexibleTypeUpperBound ()Lkotlin/metadata/KmFlexibleTypeUpperBound;
+	public final fun getOuterType ()Lkotlin/metadata/KmType;
+	public final fun setAbbreviatedType (Lkotlin/metadata/KmType;)V
+	public final fun setClassifier (Lkotlin/metadata/KmClassifier;)V
+	public final fun setFlags (I)V
+	public final fun setFlexibleTypeUpperBound (Lkotlin/metadata/KmFlexibleTypeUpperBound;)V
+	public final fun setOuterType (Lkotlin/metadata/KmType;)V
+	public fun visitAbbreviatedType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitArgument (ILkotlin/metadata/KmVariance;)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitClass (Ljava/lang/String;)V
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmTypeExtensionVisitor;
+	public fun visitFlexibleTypeUpperBound (ILjava/lang/String;)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitOuterType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitStarProjection ()V
+	public fun visitTypeAlias (Ljava/lang/String;)V
+	public fun visitTypeParameter (I)V
+}
+
+public final class kotlin/metadata/KmTypeAlias : kotlin/metadata/KmTypeAliasVisitor {
+	public field expandedType Lkotlin/metadata/KmType;
+	public field underlyingType Lkotlin/metadata/KmType;
+	public fun <init> (ILjava/lang/String;)V
+	public fun <init> (Ljava/lang/String;)V
+	public final fun accept (Lkotlin/metadata/KmTypeAliasVisitor;)V
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getExpandedType ()Lkotlin/metadata/KmType;
+	public final fun getFlags ()I
+	public final fun getName ()Ljava/lang/String;
+	public final fun getTypeParameters ()Ljava/util/List;
+	public final fun getUnderlyingType ()Lkotlin/metadata/KmType;
+	public final fun getVersionRequirements ()Ljava/util/List;
+	public final fun setExpandedType (Lkotlin/metadata/KmType;)V
+	public final fun setFlags (I)V
+	public final fun setName (Ljava/lang/String;)V
+	public final fun setUnderlyingType (Lkotlin/metadata/KmType;)V
+	public fun visitAnnotation (Lkotlin/metadata/KmAnnotation;)V
+	public fun visitExpandedType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmTypeAliasExtensionVisitor;
+	public fun visitTypeParameter (ILjava/lang/String;ILkotlin/metadata/KmVariance;)Lkotlin/metadata/KmTypeParameterVisitor;
+	public fun visitUnderlyingType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitVersionRequirement ()Lkotlin/metadata/KmVersionRequirementVisitor;
+}
+
+public abstract interface class kotlin/metadata/KmTypeAliasExtensionVisitor : kotlin/metadata/KmExtensionVisitor {
+}
+
+public abstract class kotlin/metadata/KmTypeAliasVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/KmTypeAliasVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmTypeAliasVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun visitAnnotation (Lkotlin/metadata/KmAnnotation;)V
+	public fun visitEnd ()V
+	public fun visitExpandedType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmTypeAliasExtensionVisitor;
+	public fun visitTypeParameter (ILjava/lang/String;ILkotlin/metadata/KmVariance;)Lkotlin/metadata/KmTypeParameterVisitor;
+	public fun visitUnderlyingType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitVersionRequirement ()Lkotlin/metadata/KmVersionRequirementVisitor;
+}
+
+public abstract interface class kotlin/metadata/KmTypeExtensionVisitor : kotlin/metadata/KmExtensionVisitor {
+}
+
+public final class kotlin/metadata/KmTypeParameter : kotlin/metadata/KmTypeParameterVisitor {
+	public fun <init> (ILjava/lang/String;ILkotlin/metadata/KmVariance;)V
+	public fun <init> (Ljava/lang/String;ILkotlin/metadata/KmVariance;)V
+	public final fun accept (Lkotlin/metadata/KmTypeParameterVisitor;)V
+	public final fun getFlags ()I
+	public final fun getId ()I
+	public final fun getName ()Ljava/lang/String;
+	public final fun getUpperBounds ()Ljava/util/List;
+	public final fun getVariance ()Lkotlin/metadata/KmVariance;
+	public final fun setFlags (I)V
+	public final fun setId (I)V
+	public final fun setName (Ljava/lang/String;)V
+	public final fun setVariance (Lkotlin/metadata/KmVariance;)V
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmTypeParameterExtensionVisitor;
+	public fun visitUpperBound (I)Lkotlin/metadata/KmTypeVisitor;
+}
+
+public abstract interface class kotlin/metadata/KmTypeParameterExtensionVisitor : kotlin/metadata/KmExtensionVisitor {
+}
+
+public abstract class kotlin/metadata/KmTypeParameterVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/KmTypeParameterVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmTypeParameterVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun visitEnd ()V
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmTypeParameterExtensionVisitor;
+	public fun visitUpperBound (I)Lkotlin/metadata/KmTypeVisitor;
+}
+
+public final class kotlin/metadata/KmTypeProjection {
+	public static final field Companion Lkotlin/metadata/KmTypeProjection$Companion;
+	public static final field STAR Lkotlin/metadata/KmTypeProjection;
+	public fun <init> (Lkotlin/metadata/KmVariance;Lkotlin/metadata/KmType;)V
+	public final fun component1 ()Lkotlin/metadata/KmVariance;
+	public final fun component2 ()Lkotlin/metadata/KmType;
+	public final fun copy (Lkotlin/metadata/KmVariance;Lkotlin/metadata/KmType;)Lkotlin/metadata/KmTypeProjection;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmTypeProjection;Lkotlin/metadata/KmVariance;Lkotlin/metadata/KmType;ILjava/lang/Object;)Lkotlin/metadata/KmTypeProjection;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getType ()Lkotlin/metadata/KmType;
+	public final fun getVariance ()Lkotlin/metadata/KmVariance;
+	public fun hashCode ()I
+	public final fun setType (Lkotlin/metadata/KmType;)V
+	public final fun setVariance (Lkotlin/metadata/KmVariance;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/KmTypeProjection$Companion {
+}
+
+public abstract class kotlin/metadata/KmTypeVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/KmTypeVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmTypeVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun visitAbbreviatedType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitArgument (ILkotlin/metadata/KmVariance;)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitClass (Ljava/lang/String;)V
+	public fun visitEnd ()V
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmTypeExtensionVisitor;
+	public fun visitFlexibleTypeUpperBound (ILjava/lang/String;)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitOuterType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitStarProjection ()V
+	public fun visitTypeAlias (Ljava/lang/String;)V
+	public fun visitTypeParameter (I)V
+}
+
+public final class kotlin/metadata/KmValueParameter : kotlin/metadata/KmValueParameterVisitor {
+	public field type Lkotlin/metadata/KmType;
+	public fun <init> (ILjava/lang/String;)V
+	public fun <init> (Ljava/lang/String;)V
+	public final fun accept (Lkotlin/metadata/KmValueParameterVisitor;)V
+	public final fun getFlags ()I
+	public final fun getName ()Ljava/lang/String;
+	public final fun getType ()Lkotlin/metadata/KmType;
+	public final fun getVarargElementType ()Lkotlin/metadata/KmType;
+	public final fun setFlags (I)V
+	public final fun setName (Ljava/lang/String;)V
+	public final fun setType (Lkotlin/metadata/KmType;)V
+	public final fun setVarargElementType (Lkotlin/metadata/KmType;)V
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmValueParameterExtensionVisitor;
+	public fun visitType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitVarargElementType (I)Lkotlin/metadata/KmTypeVisitor;
+}
+
+public abstract interface class kotlin/metadata/KmValueParameterExtensionVisitor : kotlin/metadata/KmExtensionVisitor {
+}
+
+public abstract class kotlin/metadata/KmValueParameterVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/KmValueParameterVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmValueParameterVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun visitEnd ()V
+	public fun visitExtensions (Lkotlin/metadata/KmExtensionType;)Lkotlin/metadata/KmValueParameterExtensionVisitor;
+	public fun visitType (I)Lkotlin/metadata/KmTypeVisitor;
+	public fun visitVarargElementType (I)Lkotlin/metadata/KmTypeVisitor;
+}
+
+public final class kotlin/metadata/KmVariance : java/lang/Enum {
+	public static final field IN Lkotlin/metadata/KmVariance;
+	public static final field INVARIANT Lkotlin/metadata/KmVariance;
+	public static final field OUT Lkotlin/metadata/KmVariance;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/metadata/KmVariance;
+	public static fun values ()[Lkotlin/metadata/KmVariance;
+}
+
+public final class kotlin/metadata/KmVersion {
+	public fun <init> (III)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun copy (III)Lkotlin/metadata/KmVersion;
+	public static synthetic fun copy$default (Lkotlin/metadata/KmVersion;IIIILjava/lang/Object;)Lkotlin/metadata/KmVersion;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMajor ()I
+	public final fun getMinor ()I
+	public final fun getPatch ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/KmVersionRequirement : kotlin/metadata/KmVersionRequirementVisitor {
+	public field kind Lkotlin/metadata/KmVersionRequirementVersionKind;
+	public field level Lkotlin/metadata/KmVersionRequirementLevel;
+	public field version Lkotlin/metadata/KmVersion;
+	public fun <init> ()V
+	public final fun accept (Lkotlin/metadata/KmVersionRequirementVisitor;)V
+	public final fun getErrorCode ()Ljava/lang/Integer;
+	public final fun getKind ()Lkotlin/metadata/KmVersionRequirementVersionKind;
+	public final fun getLevel ()Lkotlin/metadata/KmVersionRequirementLevel;
+	public final fun getMessage ()Ljava/lang/String;
+	public final fun getVersion ()Lkotlin/metadata/KmVersion;
+	public final fun setErrorCode (Ljava/lang/Integer;)V
+	public final fun setKind (Lkotlin/metadata/KmVersionRequirementVersionKind;)V
+	public final fun setLevel (Lkotlin/metadata/KmVersionRequirementLevel;)V
+	public final fun setMessage (Ljava/lang/String;)V
+	public final fun setVersion (Lkotlin/metadata/KmVersion;)V
+	public fun toString ()Ljava/lang/String;
+	public fun visit (Lkotlin/metadata/KmVersionRequirementVersionKind;Lkotlin/metadata/KmVersionRequirementLevel;Ljava/lang/Integer;Ljava/lang/String;)V
+	public fun visitVersion (III)V
+}
+
+public final class kotlin/metadata/KmVersionRequirementLevel : java/lang/Enum {
+	public static final field ERROR Lkotlin/metadata/KmVersionRequirementLevel;
+	public static final field HIDDEN Lkotlin/metadata/KmVersionRequirementLevel;
+	public static final field WARNING Lkotlin/metadata/KmVersionRequirementLevel;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/metadata/KmVersionRequirementLevel;
+	public static fun values ()[Lkotlin/metadata/KmVersionRequirementLevel;
+}
+
+public final class kotlin/metadata/KmVersionRequirementVersionKind : java/lang/Enum {
+	public static final field API_VERSION Lkotlin/metadata/KmVersionRequirementVersionKind;
+	public static final field COMPILER_VERSION Lkotlin/metadata/KmVersionRequirementVersionKind;
+	public static final field LANGUAGE_VERSION Lkotlin/metadata/KmVersionRequirementVersionKind;
+	public static final field UNKNOWN Lkotlin/metadata/KmVersionRequirementVersionKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/metadata/KmVersionRequirementVersionKind;
+	public static fun values ()[Lkotlin/metadata/KmVersionRequirementVersionKind;
+}
+
+public abstract class kotlin/metadata/KmVersionRequirementVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/KmVersionRequirementVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmVersionRequirementVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun visit (Lkotlin/metadata/KmVersionRequirementVersionKind;Lkotlin/metadata/KmVersionRequirementLevel;Ljava/lang/Integer;Ljava/lang/String;)V
+	public fun visitEnd ()V
+	public fun visitVersion (III)V
+}
+
+public final class kotlin/metadata/MemberKind : java/lang/Enum {
+	public static final field DECLARATION Lkotlin/metadata/MemberKind;
+	public static final field DELEGATION Lkotlin/metadata/MemberKind;
+	public static final field FAKE_OVERRIDE Lkotlin/metadata/MemberKind;
+	public static final field SYNTHESIZED Lkotlin/metadata/MemberKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/metadata/MemberKind;
+	public static fun values ()[Lkotlin/metadata/MemberKind;
+}
+
+public final class kotlin/metadata/Modality : java/lang/Enum {
+	public static final field ABSTRACT Lkotlin/metadata/Modality;
+	public static final field FINAL Lkotlin/metadata/Modality;
+	public static final field OPEN Lkotlin/metadata/Modality;
+	public static final field SEALED Lkotlin/metadata/Modality;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/metadata/Modality;
+	public static fun values ()[Lkotlin/metadata/Modality;
+}
+
+public final class kotlin/metadata/Visibility : java/lang/Enum {
+	public static final field INTERNAL Lkotlin/metadata/Visibility;
+	public static final field LOCAL Lkotlin/metadata/Visibility;
+	public static final field PRIVATE Lkotlin/metadata/Visibility;
+	public static final field PRIVATE_TO_THIS Lkotlin/metadata/Visibility;
+	public static final field PROTECTED Lkotlin/metadata/Visibility;
+	public static final field PUBLIC Lkotlin/metadata/Visibility;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/metadata/Visibility;
+	public static fun values ()[Lkotlin/metadata/Visibility;
+}
+
+public final class kotlin/metadata/jvm/JvmAttributes {
+	public static final fun getHasMethodBodiesInInterface (Lkotlin/metadata/KmClass;)Z
+	public static final fun isCompiledInCompatibilityMode (Lkotlin/metadata/KmClass;)Z
+	public static final fun isMovedFromInterfaceCompanion (Lkotlin/metadata/KmProperty;)Z
+	public static final fun setCompiledInCompatibilityMode (Lkotlin/metadata/KmClass;Z)V
+	public static final fun setHasMethodBodiesInInterface (Lkotlin/metadata/KmClass;Z)V
+	public static final fun setMovedFromInterfaceCompanion (Lkotlin/metadata/KmProperty;Z)V
+}
+
+public class kotlin/metadata/jvm/JvmClassExtensionVisitor : kotlin/metadata/jvm/JvmDeclarationContainerExtensionVisitor, kotlin/metadata/KmClassExtensionVisitor {
+	public static final field Companion Lkotlin/metadata/jvm/JvmClassExtensionVisitor$Companion;
+	public static final field TYPE Lkotlin/metadata/KmExtensionType;
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/jvm/JvmClassExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/jvm/JvmClassExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun getDelegate ()Lkotlin/metadata/jvm/JvmClassExtensionVisitor;
+	public synthetic fun getDelegate ()Lkotlin/metadata/jvm/JvmDeclarationContainerExtensionVisitor;
+	public final fun getType ()Lkotlin/metadata/KmExtensionType;
+	public fun visitAnonymousObjectOriginName (Ljava/lang/String;)V
+	public fun visitEnd ()V
+	public fun visitJvmFlags (I)V
+}
+
+public final class kotlin/metadata/jvm/JvmClassExtensionVisitor$Companion {
+}
+
+public class kotlin/metadata/jvm/JvmConstructorExtensionVisitor : kotlin/metadata/KmConstructorExtensionVisitor {
+	public static final field Companion Lkotlin/metadata/jvm/JvmConstructorExtensionVisitor$Companion;
+	public static final field TYPE Lkotlin/metadata/KmExtensionType;
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/jvm/JvmConstructorExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/jvm/JvmConstructorExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getType ()Lkotlin/metadata/KmExtensionType;
+	public fun visit (Lkotlin/metadata/jvm/JvmMethodSignature;)V
+}
+
+public final class kotlin/metadata/jvm/JvmConstructorExtensionVisitor$Companion {
+}
+
+public abstract class kotlin/metadata/jvm/JvmDeclarationContainerExtensionVisitor : kotlin/metadata/KmDeclarationContainerExtensionVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/jvm/JvmDeclarationContainerExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/jvm/JvmDeclarationContainerExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun getDelegate ()Lkotlin/metadata/jvm/JvmDeclarationContainerExtensionVisitor;
+	public fun visitLocalDelegatedProperty (ILjava/lang/String;II)Lkotlin/metadata/KmPropertyVisitor;
+	public fun visitModuleName (Ljava/lang/String;)V
+}
+
+public final class kotlin/metadata/jvm/JvmExtensionsKt {
+	public static final fun getAnnotations (Lkotlin/metadata/KmType;)Ljava/util/List;
+	public static final fun getAnnotations (Lkotlin/metadata/KmTypeParameter;)Ljava/util/List;
+	public static final fun getAnonymousObjectOriginName (Lkotlin/metadata/KmClass;)Ljava/lang/String;
+	public static final fun getFieldSignature (Lkotlin/metadata/KmProperty;)Lkotlin/metadata/jvm/JvmFieldSignature;
+	public static final fun getGetterSignature (Lkotlin/metadata/KmProperty;)Lkotlin/metadata/jvm/JvmMethodSignature;
+	public static final fun getJvmFlags (Lkotlin/metadata/KmClass;)I
+	public static final fun getJvmFlags (Lkotlin/metadata/KmProperty;)I
+	public static final fun getLambdaClassOriginName (Lkotlin/metadata/KmFunction;)Ljava/lang/String;
+	public static final fun getLocalDelegatedProperties (Lkotlin/metadata/KmClass;)Ljava/util/List;
+	public static final fun getLocalDelegatedProperties (Lkotlin/metadata/KmPackage;)Ljava/util/List;
+	public static final fun getModuleName (Lkotlin/metadata/KmClass;)Ljava/lang/String;
+	public static final fun getModuleName (Lkotlin/metadata/KmPackage;)Ljava/lang/String;
+	public static final fun getSetterSignature (Lkotlin/metadata/KmProperty;)Lkotlin/metadata/jvm/JvmMethodSignature;
+	public static final fun getSignature (Lkotlin/metadata/KmConstructor;)Lkotlin/metadata/jvm/JvmMethodSignature;
+	public static final fun getSignature (Lkotlin/metadata/KmFunction;)Lkotlin/metadata/jvm/JvmMethodSignature;
+	public static final fun getSyntheticMethodForAnnotations (Lkotlin/metadata/KmProperty;)Lkotlin/metadata/jvm/JvmMethodSignature;
+	public static final fun getSyntheticMethodForDelegate (Lkotlin/metadata/KmProperty;)Lkotlin/metadata/jvm/JvmMethodSignature;
+	public static final fun isRaw (Lkotlin/metadata/KmType;)Z
+	public static final fun setAnonymousObjectOriginName (Lkotlin/metadata/KmClass;Ljava/lang/String;)V
+	public static final fun setFieldSignature (Lkotlin/metadata/KmProperty;Lkotlin/metadata/jvm/JvmFieldSignature;)V
+	public static final fun setGetterSignature (Lkotlin/metadata/KmProperty;Lkotlin/metadata/jvm/JvmMethodSignature;)V
+	public static final fun setJvmFlags (Lkotlin/metadata/KmClass;I)V
+	public static final fun setJvmFlags (Lkotlin/metadata/KmProperty;I)V
+	public static final fun setLambdaClassOriginName (Lkotlin/metadata/KmFunction;Ljava/lang/String;)V
+	public static final fun setModuleName (Lkotlin/metadata/KmClass;Ljava/lang/String;)V
+	public static final fun setModuleName (Lkotlin/metadata/KmPackage;Ljava/lang/String;)V
+	public static final fun setRaw (Lkotlin/metadata/KmType;Z)V
+	public static final fun setSetterSignature (Lkotlin/metadata/KmProperty;Lkotlin/metadata/jvm/JvmMethodSignature;)V
+	public static final fun setSignature (Lkotlin/metadata/KmConstructor;Lkotlin/metadata/jvm/JvmMethodSignature;)V
+	public static final fun setSignature (Lkotlin/metadata/KmFunction;Lkotlin/metadata/jvm/JvmMethodSignature;)V
+	public static final fun setSyntheticMethodForAnnotations (Lkotlin/metadata/KmProperty;Lkotlin/metadata/jvm/JvmMethodSignature;)V
+	public static final fun setSyntheticMethodForDelegate (Lkotlin/metadata/KmProperty;Lkotlin/metadata/jvm/JvmMethodSignature;)V
+}
+
+public final class kotlin/metadata/jvm/JvmFieldSignature : kotlin/metadata/jvm/JvmMemberSignature {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lkotlin/metadata/jvm/JvmFieldSignature;
+	public static synthetic fun copy$default (Lkotlin/metadata/jvm/JvmFieldSignature;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lkotlin/metadata/jvm/JvmFieldSignature;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDescriptor ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/jvm/JvmFlag {
+	public static final field INSTANCE Lkotlin/metadata/jvm/JvmFlag;
+}
+
+public final class kotlin/metadata/jvm/JvmFlag$Class {
+	public static final field HAS_METHOD_BODIES_IN_INTERFACE Lkotlin/metadata/Flag;
+	public static final field INSTANCE Lkotlin/metadata/jvm/JvmFlag$Class;
+	public static final field IS_COMPILED_IN_COMPATIBILITY_MODE Lkotlin/metadata/Flag;
+}
+
+public final class kotlin/metadata/jvm/JvmFlag$Property {
+	public static final field INSTANCE Lkotlin/metadata/jvm/JvmFlag$Property;
+	public static final field IS_MOVED_FROM_INTERFACE_COMPANION Lkotlin/metadata/Flag;
+}
+
+public class kotlin/metadata/jvm/JvmFunctionExtensionVisitor : kotlin/metadata/KmFunctionExtensionVisitor {
+	public static final field Companion Lkotlin/metadata/jvm/JvmFunctionExtensionVisitor$Companion;
+	public static final field TYPE Lkotlin/metadata/KmExtensionType;
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/jvm/JvmFunctionExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/jvm/JvmFunctionExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getType ()Lkotlin/metadata/KmExtensionType;
+	public fun visit (Lkotlin/metadata/jvm/JvmMethodSignature;)V
+	public fun visitEnd ()V
+	public fun visitLambdaClassOriginName (Ljava/lang/String;)V
+}
+
+public final class kotlin/metadata/jvm/JvmFunctionExtensionVisitor$Companion {
+}
+
+public abstract class kotlin/metadata/jvm/JvmMemberSignature {
+	public final fun asString ()Ljava/lang/String;
+	public final fun getDesc ()Ljava/lang/String;
+	public abstract fun getDescriptor ()Ljava/lang/String;
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/jvm/JvmMetadataUtil {
+	public static final fun Metadata (Ljava/lang/Integer;[I[Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lkotlin/Metadata;
+	public static synthetic fun Metadata$default (Ljava/lang/Integer;[I[Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lkotlin/Metadata;
+	public static final fun getJvmInternalName (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun toJvmInternalName (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class kotlin/metadata/jvm/JvmMetadataVersion : java/lang/Comparable {
+	public static final field Companion Lkotlin/metadata/jvm/JvmMetadataVersion$Companion;
+	public static final field LATEST_STABLE_SUPPORTED Lkotlin/metadata/jvm/JvmMetadataVersion;
+	public fun <init> (II)V
+	public fun <init> (III)V
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lkotlin/metadata/jvm/JvmMetadataVersion;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMajor ()I
+	public final fun getMinor ()I
+	public final fun getPatch ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/jvm/JvmMetadataVersion$Companion {
+}
+
+public final class kotlin/metadata/jvm/JvmMethodSignature : kotlin/metadata/jvm/JvmMemberSignature {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lkotlin/metadata/jvm/JvmMethodSignature;
+	public static synthetic fun copy$default (Lkotlin/metadata/jvm/JvmMethodSignature;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lkotlin/metadata/jvm/JvmMethodSignature;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDescriptor ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public class kotlin/metadata/jvm/JvmPackageExtensionVisitor : kotlin/metadata/jvm/JvmDeclarationContainerExtensionVisitor, kotlin/metadata/KmPackageExtensionVisitor {
+	public static final field Companion Lkotlin/metadata/jvm/JvmPackageExtensionVisitor$Companion;
+	public static final field TYPE Lkotlin/metadata/KmExtensionType;
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/jvm/JvmPackageExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/jvm/JvmPackageExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun getDelegate ()Lkotlin/metadata/jvm/JvmDeclarationContainerExtensionVisitor;
+	protected fun getDelegate ()Lkotlin/metadata/jvm/JvmPackageExtensionVisitor;
+	public final fun getType ()Lkotlin/metadata/KmExtensionType;
+	public fun visitEnd ()V
+}
+
+public final class kotlin/metadata/jvm/JvmPackageExtensionVisitor$Companion {
+}
+
+public class kotlin/metadata/jvm/JvmPropertyExtensionVisitor : kotlin/metadata/KmPropertyExtensionVisitor {
+	public static final field Companion Lkotlin/metadata/jvm/JvmPropertyExtensionVisitor$Companion;
+	public static final field TYPE Lkotlin/metadata/KmExtensionType;
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/jvm/JvmPropertyExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/jvm/JvmPropertyExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getType ()Lkotlin/metadata/KmExtensionType;
+	public fun visit (ILkotlin/metadata/jvm/JvmFieldSignature;Lkotlin/metadata/jvm/JvmMethodSignature;Lkotlin/metadata/jvm/JvmMethodSignature;)V
+	public fun visit (Lkotlin/metadata/jvm/JvmFieldSignature;Lkotlin/metadata/jvm/JvmMethodSignature;Lkotlin/metadata/jvm/JvmMethodSignature;)V
+	public fun visitEnd ()V
+	public fun visitSyntheticMethodForAnnotations (Lkotlin/metadata/jvm/JvmMethodSignature;)V
+	public fun visitSyntheticMethodForDelegate (Lkotlin/metadata/jvm/JvmMethodSignature;)V
+}
+
+public final class kotlin/metadata/jvm/JvmPropertyExtensionVisitor$Companion {
+}
+
+public class kotlin/metadata/jvm/JvmTypeExtensionVisitor : kotlin/metadata/KmTypeExtensionVisitor {
+	public static final field Companion Lkotlin/metadata/jvm/JvmTypeExtensionVisitor$Companion;
+	public static final field PLATFORM_TYPE_ID Ljava/lang/String;
+	public static final field TYPE Lkotlin/metadata/KmExtensionType;
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/jvm/JvmTypeExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/jvm/JvmTypeExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getType ()Lkotlin/metadata/KmExtensionType;
+	public fun visit (Z)V
+	public fun visitAnnotation (Lkotlin/metadata/KmAnnotation;)V
+	public fun visitEnd ()V
+}
+
+public final class kotlin/metadata/jvm/JvmTypeExtensionVisitor$Companion {
+}
+
+public class kotlin/metadata/jvm/JvmTypeParameterExtensionVisitor : kotlin/metadata/KmTypeParameterExtensionVisitor {
+	public static final field Companion Lkotlin/metadata/jvm/JvmTypeParameterExtensionVisitor$Companion;
+	public static final field TYPE Lkotlin/metadata/KmExtensionType;
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/jvm/JvmTypeParameterExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/jvm/JvmTypeParameterExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getType ()Lkotlin/metadata/KmExtensionType;
+	public fun visitAnnotation (Lkotlin/metadata/KmAnnotation;)V
+	public fun visitEnd ()V
+}
+
+public final class kotlin/metadata/jvm/JvmTypeParameterExtensionVisitor$Companion {
+}
+
+public final class kotlin/metadata/jvm/KmModule : kotlin/metadata/jvm/KmModuleVisitor {
+	public fun <init> ()V
+	public final fun accept (Lkotlin/metadata/jvm/KmModuleVisitor;)V
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getOptionalAnnotationClasses ()Ljava/util/List;
+	public final fun getPackageParts ()Ljava/util/Map;
+	public fun visitAnnotation (Lkotlin/metadata/KmAnnotation;)V
+	public fun visitOptionalAnnotationClass ()Lkotlin/metadata/KmClass;
+	public synthetic fun visitOptionalAnnotationClass ()Lkotlin/metadata/KmClassVisitor;
+	public fun visitPackageParts (Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)V
+}
+
+public abstract class kotlin/metadata/jvm/KmModuleVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/metadata/jvm/KmModuleVisitor;)V
+	public synthetic fun <init> (Lkotlin/metadata/jvm/KmModuleVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun visitAnnotation (Lkotlin/metadata/KmAnnotation;)V
+	public fun visitEnd ()V
+	public fun visitOptionalAnnotationClass ()Lkotlin/metadata/KmClassVisitor;
+	public fun visitPackageParts (Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)V
+}
+
+public final class kotlin/metadata/jvm/KmPackageParts {
+	public fun <init> (Ljava/util/List;Ljava/util/Map;)V
+	public final fun getFileFacades ()Ljava/util/List;
+	public final fun getMultiFileClassParts ()Ljava/util/Map;
+}
+
+public final class kotlin/metadata/jvm/KotlinClassHeader : kotlin/Metadata {
+	public static final field CLASS_KIND I
+	public static final field COMPATIBLE_METADATA_VERSION [I
+	public static final field FILE_FACADE_KIND I
+	public static final field MULTI_FILE_CLASS_FACADE_KIND I
+	public static final field MULTI_FILE_CLASS_PART_KIND I
+	public static final field SYNTHETIC_CLASS_KIND I
+	public fun <init> (Ljava/lang/Integer;[I[Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)V
+	public fun annotationType ()Ljava/lang/Class;
+	public fun bv ()[I
+	public fun d1 ()[Ljava/lang/String;
+	public fun d2 ()[Ljava/lang/String;
+	public fun k ()I
+	public fun mv ()[I
+	public fun pn ()Ljava/lang/String;
+	public fun xi ()I
+	public fun xs ()Ljava/lang/String;
+}
+
+public abstract class kotlin/metadata/jvm/KotlinClassMetadata {
+	public static final field CLASS_KIND I
+	public static final field COMPATIBLE_METADATA_VERSION [I
+	public static final field Companion Lkotlin/metadata/jvm/KotlinClassMetadata$Companion;
+	public static final field FILE_FACADE_KIND I
+	public static final field MULTI_FILE_CLASS_FACADE_KIND I
+	public static final field MULTI_FILE_CLASS_PART_KIND I
+	public static final field SYNTHETIC_CLASS_KIND I
+	public abstract fun getFlags ()I
+	public abstract fun getVersion ()Lkotlin/metadata/jvm/JvmMetadataVersion;
+	public static final fun read (Lkotlin/Metadata;)Lkotlin/metadata/jvm/KotlinClassMetadata;
+	public static final fun readLenient (Lkotlin/Metadata;)Lkotlin/metadata/jvm/KotlinClassMetadata;
+	public static final fun readStrict (Lkotlin/Metadata;)Lkotlin/metadata/jvm/KotlinClassMetadata;
+	public abstract fun setFlags (I)V
+	public abstract fun setVersion (Lkotlin/metadata/jvm/JvmMetadataVersion;)V
+	public abstract fun write ()Lkotlin/Metadata;
+	public static final fun writeClass (Lkotlin/metadata/KmClass;)Lkotlin/Metadata;
+	public static final fun writeClass (Lkotlin/metadata/KmClass;[I)Lkotlin/Metadata;
+	public static final fun writeClass (Lkotlin/metadata/KmClass;[II)Lkotlin/Metadata;
+	public static final fun writeFileFacade (Lkotlin/metadata/KmPackage;)Lkotlin/Metadata;
+	public static final fun writeFileFacade (Lkotlin/metadata/KmPackage;[I)Lkotlin/Metadata;
+	public static final fun writeFileFacade (Lkotlin/metadata/KmPackage;[II)Lkotlin/Metadata;
+	public static final fun writeLambda (Lkotlin/metadata/KmLambda;)Lkotlin/Metadata;
+	public static final fun writeLambda (Lkotlin/metadata/KmLambda;[I)Lkotlin/Metadata;
+	public static final fun writeLambda (Lkotlin/metadata/KmLambda;[II)Lkotlin/Metadata;
+	public static final fun writeMultiFileClassFacade (Ljava/util/List;)Lkotlin/Metadata;
+	public static final fun writeMultiFileClassFacade (Ljava/util/List;[I)Lkotlin/Metadata;
+	public static final fun writeMultiFileClassFacade (Ljava/util/List;[II)Lkotlin/Metadata;
+	public static final fun writeMultiFileClassPart (Lkotlin/metadata/KmPackage;Ljava/lang/String;)Lkotlin/Metadata;
+	public static final fun writeMultiFileClassPart (Lkotlin/metadata/KmPackage;Ljava/lang/String;[I)Lkotlin/Metadata;
+	public static final fun writeMultiFileClassPart (Lkotlin/metadata/KmPackage;Ljava/lang/String;[II)Lkotlin/Metadata;
+	public static final fun writeSyntheticClass ()Lkotlin/Metadata;
+	public static final fun writeSyntheticClass ([I)Lkotlin/Metadata;
+	public static final fun writeSyntheticClass ([II)Lkotlin/Metadata;
+}
+
+public final class kotlin/metadata/jvm/KotlinClassMetadata$Class : kotlin/metadata/jvm/KotlinClassMetadata {
+	public fun <init> (Lkotlin/metadata/KmClass;Lkotlin/metadata/jvm/JvmMetadataVersion;I)V
+	public final fun accept (Lkotlin/metadata/KmClassVisitor;)V
+	public fun getFlags ()I
+	public final fun getKmClass ()Lkotlin/metadata/KmClass;
+	public fun getVersion ()Lkotlin/metadata/jvm/JvmMetadataVersion;
+	public fun setFlags (I)V
+	public final fun setKmClass (Lkotlin/metadata/KmClass;)V
+	public fun setVersion (Lkotlin/metadata/jvm/JvmMetadataVersion;)V
+	public final fun toKmClass ()Lkotlin/metadata/KmClass;
+	public fun write ()Lkotlin/Metadata;
+}
+
+public final class kotlin/metadata/jvm/KotlinClassMetadata$Class$Writer : kotlin/metadata/internal/ClassWriter {
+	public fun <init> ()V
+	public final fun write ()Lkotlin/metadata/jvm/KotlinClassMetadata$Class;
+	public final fun write ([I)Lkotlin/metadata/jvm/KotlinClassMetadata$Class;
+	public final fun write ([II)Lkotlin/metadata/jvm/KotlinClassMetadata$Class;
+	public static synthetic fun write$default (Lkotlin/metadata/jvm/KotlinClassMetadata$Class$Writer;[IIILjava/lang/Object;)Lkotlin/metadata/jvm/KotlinClassMetadata$Class;
+}
+
+public final class kotlin/metadata/jvm/KotlinClassMetadata$Companion {
+	public final fun read (Lkotlin/Metadata;)Lkotlin/metadata/jvm/KotlinClassMetadata;
+	public final fun readLenient (Lkotlin/Metadata;)Lkotlin/metadata/jvm/KotlinClassMetadata;
+	public final fun readStrict (Lkotlin/Metadata;)Lkotlin/metadata/jvm/KotlinClassMetadata;
+	public final fun transform (Lkotlin/Metadata;Lkotlin/jvm/functions/Function1;)Lkotlin/Metadata;
+	public final fun writeClass (Lkotlin/metadata/KmClass;)Lkotlin/Metadata;
+	public final fun writeClass (Lkotlin/metadata/KmClass;[I)Lkotlin/Metadata;
+	public final fun writeClass (Lkotlin/metadata/KmClass;[II)Lkotlin/Metadata;
+	public static synthetic fun writeClass$default (Lkotlin/metadata/jvm/KotlinClassMetadata$Companion;Lkotlin/metadata/KmClass;[IIILjava/lang/Object;)Lkotlin/Metadata;
+	public final fun writeFileFacade (Lkotlin/metadata/KmPackage;)Lkotlin/Metadata;
+	public final fun writeFileFacade (Lkotlin/metadata/KmPackage;[I)Lkotlin/Metadata;
+	public final fun writeFileFacade (Lkotlin/metadata/KmPackage;[II)Lkotlin/Metadata;
+	public static synthetic fun writeFileFacade$default (Lkotlin/metadata/jvm/KotlinClassMetadata$Companion;Lkotlin/metadata/KmPackage;[IIILjava/lang/Object;)Lkotlin/Metadata;
+	public final fun writeLambda (Lkotlin/metadata/KmLambda;)Lkotlin/Metadata;
+	public final fun writeLambda (Lkotlin/metadata/KmLambda;[I)Lkotlin/Metadata;
+	public final fun writeLambda (Lkotlin/metadata/KmLambda;[II)Lkotlin/Metadata;
+	public static synthetic fun writeLambda$default (Lkotlin/metadata/jvm/KotlinClassMetadata$Companion;Lkotlin/metadata/KmLambda;[IIILjava/lang/Object;)Lkotlin/Metadata;
+	public final fun writeMultiFileClassFacade (Ljava/util/List;)Lkotlin/Metadata;
+	public final fun writeMultiFileClassFacade (Ljava/util/List;[I)Lkotlin/Metadata;
+	public final fun writeMultiFileClassFacade (Ljava/util/List;[II)Lkotlin/Metadata;
+	public static synthetic fun writeMultiFileClassFacade$default (Lkotlin/metadata/jvm/KotlinClassMetadata$Companion;Ljava/util/List;[IIILjava/lang/Object;)Lkotlin/Metadata;
+	public final fun writeMultiFileClassPart (Lkotlin/metadata/KmPackage;Ljava/lang/String;)Lkotlin/Metadata;
+	public final fun writeMultiFileClassPart (Lkotlin/metadata/KmPackage;Ljava/lang/String;[I)Lkotlin/Metadata;
+	public final fun writeMultiFileClassPart (Lkotlin/metadata/KmPackage;Ljava/lang/String;[II)Lkotlin/Metadata;
+	public static synthetic fun writeMultiFileClassPart$default (Lkotlin/metadata/jvm/KotlinClassMetadata$Companion;Lkotlin/metadata/KmPackage;Ljava/lang/String;[IIILjava/lang/Object;)Lkotlin/Metadata;
+	public final fun writeSyntheticClass ()Lkotlin/Metadata;
+	public final fun writeSyntheticClass ([I)Lkotlin/Metadata;
+	public final fun writeSyntheticClass ([II)Lkotlin/Metadata;
+	public static synthetic fun writeSyntheticClass$default (Lkotlin/metadata/jvm/KotlinClassMetadata$Companion;[IIILjava/lang/Object;)Lkotlin/Metadata;
+}
+
+public final class kotlin/metadata/jvm/KotlinClassMetadata$FileFacade : kotlin/metadata/jvm/KotlinClassMetadata {
+	public fun <init> (Lkotlin/metadata/KmPackage;Lkotlin/metadata/jvm/JvmMetadataVersion;I)V
+	public final fun accept (Lkotlin/metadata/KmPackageVisitor;)V
+	public fun getFlags ()I
+	public final fun getKmPackage ()Lkotlin/metadata/KmPackage;
+	public fun getVersion ()Lkotlin/metadata/jvm/JvmMetadataVersion;
+	public fun setFlags (I)V
+	public final fun setKmPackage (Lkotlin/metadata/KmPackage;)V
+	public fun setVersion (Lkotlin/metadata/jvm/JvmMetadataVersion;)V
+	public final fun toKmPackage ()Lkotlin/metadata/KmPackage;
+	public fun write ()Lkotlin/Metadata;
+}
+
+public final class kotlin/metadata/jvm/KotlinClassMetadata$FileFacade$Writer : kotlin/metadata/internal/PackageWriter {
+	public fun <init> ()V
+	public final fun write ()Lkotlin/metadata/jvm/KotlinClassMetadata$FileFacade;
+	public final fun write ([I)Lkotlin/metadata/jvm/KotlinClassMetadata$FileFacade;
+	public final fun write ([II)Lkotlin/metadata/jvm/KotlinClassMetadata$FileFacade;
+	public static synthetic fun write$default (Lkotlin/metadata/jvm/KotlinClassMetadata$FileFacade$Writer;[IIILjava/lang/Object;)Lkotlin/metadata/jvm/KotlinClassMetadata$FileFacade;
+}
+
+public final class kotlin/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade : kotlin/metadata/jvm/KotlinClassMetadata {
+	public fun <init> (Ljava/util/List;Lkotlin/metadata/jvm/JvmMetadataVersion;I)V
+	public fun getFlags ()I
+	public final fun getPartClassNames ()Ljava/util/List;
+	public fun getVersion ()Lkotlin/metadata/jvm/JvmMetadataVersion;
+	public fun setFlags (I)V
+	public final fun setPartClassNames (Ljava/util/List;)V
+	public fun setVersion (Lkotlin/metadata/jvm/JvmMetadataVersion;)V
+	public fun write ()Lkotlin/Metadata;
+}
+
+public final class kotlin/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade$Writer {
+	public fun <init> ()V
+	public final fun write (Ljava/util/List;)Lkotlin/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
+	public final fun write (Ljava/util/List;[I)Lkotlin/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
+	public final fun write (Ljava/util/List;[II)Lkotlin/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
+	public static synthetic fun write$default (Lkotlin/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade$Writer;Ljava/util/List;[IIILjava/lang/Object;)Lkotlin/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
+}
+
+public final class kotlin/metadata/jvm/KotlinClassMetadata$MultiFileClassPart : kotlin/metadata/jvm/KotlinClassMetadata {
+	public fun <init> (Lkotlin/metadata/KmPackage;Ljava/lang/String;Lkotlin/metadata/jvm/JvmMetadataVersion;I)V
+	public final fun accept (Lkotlin/metadata/KmPackageVisitor;)V
+	public final fun getFacadeClassName ()Ljava/lang/String;
+	public fun getFlags ()I
+	public final fun getKmPackage ()Lkotlin/metadata/KmPackage;
+	public fun getVersion ()Lkotlin/metadata/jvm/JvmMetadataVersion;
+	public final fun setFacadeClassName (Ljava/lang/String;)V
+	public fun setFlags (I)V
+	public final fun setKmPackage (Lkotlin/metadata/KmPackage;)V
+	public fun setVersion (Lkotlin/metadata/jvm/JvmMetadataVersion;)V
+	public final fun toKmPackage ()Lkotlin/metadata/KmPackage;
+	public fun write ()Lkotlin/Metadata;
+}
+
+public final class kotlin/metadata/jvm/KotlinClassMetadata$MultiFileClassPart$Writer : kotlin/metadata/internal/PackageWriter {
+	public fun <init> ()V
+	public final fun write (Ljava/lang/String;)Lkotlin/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
+	public final fun write (Ljava/lang/String;[I)Lkotlin/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
+	public final fun write (Ljava/lang/String;[II)Lkotlin/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
+	public static synthetic fun write$default (Lkotlin/metadata/jvm/KotlinClassMetadata$MultiFileClassPart$Writer;Ljava/lang/String;[IIILjava/lang/Object;)Lkotlin/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
+}
+
+public final class kotlin/metadata/jvm/KotlinClassMetadata$SyntheticClass : kotlin/metadata/jvm/KotlinClassMetadata {
+	public fun <init> (Lkotlin/metadata/KmLambda;Lkotlin/metadata/jvm/JvmMetadataVersion;I)V
+	public final fun accept (Lkotlin/metadata/KmLambdaVisitor;)V
+	public fun getFlags ()I
+	public final fun getKmLambda ()Lkotlin/metadata/KmLambda;
+	public fun getVersion ()Lkotlin/metadata/jvm/JvmMetadataVersion;
+	public final fun isLambda ()Z
+	public fun setFlags (I)V
+	public final fun setKmLambda (Lkotlin/metadata/KmLambda;)V
+	public fun setVersion (Lkotlin/metadata/jvm/JvmMetadataVersion;)V
+	public final fun toKmLambda ()Lkotlin/metadata/KmLambda;
+	public fun write ()Lkotlin/Metadata;
+}
+
+public final class kotlin/metadata/jvm/KotlinClassMetadata$SyntheticClass$Writer : kotlin/metadata/internal/LambdaWriter {
+	public fun <init> ()V
+	public final fun write ()Lkotlin/metadata/jvm/KotlinClassMetadata$SyntheticClass;
+	public final fun write ([I)Lkotlin/metadata/jvm/KotlinClassMetadata$SyntheticClass;
+	public final fun write ([II)Lkotlin/metadata/jvm/KotlinClassMetadata$SyntheticClass;
+	public static synthetic fun write$default (Lkotlin/metadata/jvm/KotlinClassMetadata$SyntheticClass$Writer;[IIILjava/lang/Object;)Lkotlin/metadata/jvm/KotlinClassMetadata$SyntheticClass;
+}
+
+public final class kotlin/metadata/jvm/KotlinClassMetadata$Unknown : kotlin/metadata/jvm/KotlinClassMetadata {
+	public static final field Companion Lkotlin/metadata/jvm/KotlinClassMetadata$Unknown$Companion;
+	public static final field INSTANCE Lkotlin/metadata/jvm/KotlinClassMetadata$Unknown;
+	public fun getFlags ()I
+	public fun getVersion ()Lkotlin/metadata/jvm/JvmMetadataVersion;
+	public fun setFlags (I)V
+	public fun setVersion (Lkotlin/metadata/jvm/JvmMetadataVersion;)V
+	public fun write ()Lkotlin/Metadata;
+}
+
+public final class kotlin/metadata/jvm/KotlinClassMetadata$Unknown$Companion {
+}
+
+public final class kotlin/metadata/jvm/KotlinModuleMetadata {
+	public static final field Companion Lkotlin/metadata/jvm/KotlinModuleMetadata$Companion;
+	public fun <init> (Lkotlin/metadata/jvm/KmModule;Lkotlin/metadata/jvm/JvmMetadataVersion;)V
+	public final fun accept (Lkotlin/metadata/jvm/KmModuleVisitor;)V
+	public final fun getKmModule ()Lkotlin/metadata/jvm/KmModule;
+	public final fun getVersion ()Lkotlin/metadata/jvm/JvmMetadataVersion;
+	public static final fun read ([B)Lkotlin/metadata/jvm/KotlinModuleMetadata;
+	public final fun setKmModule (Lkotlin/metadata/jvm/KmModule;)V
+	public final fun setVersion (Lkotlin/metadata/jvm/JvmMetadataVersion;)V
+	public final fun toKmModule ()Lkotlin/metadata/jvm/KmModule;
+	public final fun write ()[B
+	public static final fun write (Lkotlin/metadata/jvm/KmModule;)[B
+	public static final fun write (Lkotlin/metadata/jvm/KmModule;Lkotlin/metadata/jvm/JvmMetadataVersion;)[B
+}
+
+public final class kotlin/metadata/jvm/KotlinModuleMetadata$Companion {
+	public final fun read ([B)Lkotlin/metadata/jvm/KotlinModuleMetadata;
+	public final fun write (Lkotlin/metadata/jvm/KmModule;)[B
+	public final fun write (Lkotlin/metadata/jvm/KmModule;Lkotlin/metadata/jvm/JvmMetadataVersion;)[B
+	public static synthetic fun write$default (Lkotlin/metadata/jvm/KotlinModuleMetadata$Companion;Lkotlin/metadata/jvm/KmModule;Lkotlin/metadata/jvm/JvmMetadataVersion;ILjava/lang/Object;)[B
+}
+
+public final class kotlin/metadata/jvm/KotlinModuleMetadata$Writer {
+	public fun <init> ()V
+	public final fun write ([I)[B
+	public static synthetic fun write$default (Lkotlin/metadata/jvm/KotlinModuleMetadata$Writer;[IILjava/lang/Object;)[B
+}
+
+public abstract interface annotation class kotlin/metadata/jvm/UnstableMetadataApi : java/lang/annotation/Annotation {
+}
+

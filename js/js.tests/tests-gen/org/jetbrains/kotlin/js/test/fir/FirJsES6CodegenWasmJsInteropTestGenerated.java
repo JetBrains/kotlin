@@ -20,102 +20,102 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/boxWasmJsInterop")
 @TestDataPath("$PROJECT_ROOT")
 public class FirJsES6CodegenWasmJsInteropTestGenerated extends AbstractFirJsES6CodegenWasmJsInteropTest {
-    @Test
-    public void testAllFilesPresentInBoxWasmJsInterop() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-    }
+  @Test
+  public void testAllFilesPresentInBoxWasmJsInterop() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+  }
 
-    @Test
-    @TestMetadata("defaultValues.kt")
-    public void testDefaultValues() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/defaultValues.kt");
-    }
+  @Test
+  @TestMetadata("defaultValues.kt")
+  public void testDefaultValues() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/defaultValues.kt");
+  }
 
-    @Test
-    @TestMetadata("externalTypeOperators.kt")
-    public void testExternalTypeOperators() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/externalTypeOperators.kt");
-    }
+  @Test
+  @TestMetadata("externalTypeOperators.kt")
+  public void testExternalTypeOperators() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/externalTypeOperators.kt");
+  }
 
-    @Test
-    @TestMetadata("externals.kt")
-    public void testExternals() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/externals.kt");
-    }
+  @Test
+  @TestMetadata("externals.kt")
+  public void testExternals() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/externals.kt");
+  }
 
-    @Test
-    @TestMetadata("functionTypes.kt")
-    public void testFunctionTypes() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/functionTypes.kt");
-    }
+  @Test
+  @TestMetadata("functionTypes.kt")
+  public void testFunctionTypes() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/functionTypes.kt");
+  }
 
-    @Test
-    @TestMetadata("jsCode.kt")
-    public void testJsCode() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/jsCode.kt");
-    }
+  @Test
+  @TestMetadata("jsCode.kt")
+  public void testJsCode() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsCode.kt");
+  }
 
-    @Test
-    @TestMetadata("jsModule.kt")
-    public void testJsModule() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/jsModule.kt");
-    }
+  @Test
+  @TestMetadata("jsModule.kt")
+  public void testJsModule() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsModule.kt");
+  }
 
-    @Test
-    @TestMetadata("jsModuleWithQualifier.kt")
-    public void testJsModuleWithQualifier() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/jsModuleWithQualifier.kt");
-    }
+  @Test
+  @TestMetadata("jsModuleWithQualifier.kt")
+  public void testJsModuleWithQualifier() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsModuleWithQualifier.kt");
+  }
 
-    @Test
-    @TestMetadata("jsQualifier.kt")
-    public void testJsQualifier() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/jsQualifier.kt");
-    }
+  @Test
+  @TestMetadata("jsQualifier.kt")
+  public void testJsQualifier() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsQualifier.kt");
+  }
 
-    @Test
-    @TestMetadata("jsToKotlinAdapters.kt")
-    public void testJsToKotlinAdapters() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/jsToKotlinAdapters.kt");
-    }
+  @Test
+  @TestMetadata("jsToKotlinAdapters.kt")
+  public void testJsToKotlinAdapters() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsToKotlinAdapters.kt");
+  }
 
-    @Test
-    @TestMetadata("kotlinToJsAdapters.kt")
-    public void testKotlinToJsAdapters() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/kotlinToJsAdapters.kt");
-    }
+  @Test
+  @TestMetadata("kotlinToJsAdapters.kt")
+  public void testKotlinToJsAdapters() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/kotlinToJsAdapters.kt");
+  }
 
-    @Test
-    @TestMetadata("longStrings.kt")
-    public void testLongStrings() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/longStrings.kt");
-    }
+  @Test
+  @TestMetadata("longStrings.kt")
+  public void testLongStrings() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/longStrings.kt");
+  }
 
-    @Test
-    @TestMetadata("nameClash.kt")
-    public void testNameClash() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/nameClash.kt");
-    }
+  @Test
+  @TestMetadata("nameClash.kt")
+  public void testNameClash() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nameClash.kt");
+  }
 
-    @Test
-    @TestMetadata("types.kt")
-    public void testTypes() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/types.kt");
-    }
+  @Test
+  @TestMetadata("types.kt")
+  public void testTypes() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/types.kt");
+  }
 
-    @Test
-    @TestMetadata("vararg.kt")
-    public void testVararg() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/vararg.kt");
-    }
+  @Test
+  @TestMetadata("vararg.kt")
+  public void testVararg() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/vararg.kt");
+  }
 
-    @Nested
-    @TestMetadata("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations")
-    @TestDataPath("$PROJECT_ROOT")
-    public class TypeScriptDeclarations {
-        @Test
-        public void testAllFilesPresentInTypeScriptDeclarations() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-        }
+  @Nested
+  @TestMetadata("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeScriptDeclarations {
+    @Test
+    public void testAllFilesPresentInTypeScriptDeclarations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
     }
+  }
 }

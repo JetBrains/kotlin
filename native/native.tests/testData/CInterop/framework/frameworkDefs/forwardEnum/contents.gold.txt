@@ -1,44 +1,121 @@
+library {
+  // module name: <pod1.def>
 
-package pod1 {
+  library fragment {
+    // package name: pod1
 
-    enum class EnumWithoutConstant private constructor(value: Long) : Enum<EnumWithoutConstant>, CEnum {
-        override val value: Long
+    // class name: pod1/EnumWithoutConstant
+    // class name: pod1/EnumWithoutConstant.Companion
+    // class name: pod1/EnumWithoutConstant.Var
+    // class name: pod1/EnumWithoutConstant.Var.Companion
+    // class name: pod1/ForwardEnum
+    // class name: pod1/ForwardEnum.Companion
+    // class name: pod1/ForwardEnum.Var
+    // class name: pod1/ForwardEnum.Var.Companion
 
-        class Var constructor(rawPtr: NativePtr /* = NativePtr */) : CEnumVar {
-            var value: EnumWithoutConstant
-            @CEnumVarTypeSize(size = 8) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CPrimitiveVar.Type
-        }
+    public final enum class pod1/EnumWithoutConstant : kotlin/Enum<pod1/EnumWithoutConstant>, kotlinx/cinterop/CEnum {
 
-        companion object {
-            @Deprecated(level = DeprecationLevel.WARNING, message = "Will be removed.", replaceWith = ReplaceWith(expression = "", imports = {})) fun byValue(value: Long): EnumWithoutConstant
-        }
+      private constructor(value: kotlin/Long)
 
+      public open val value: kotlin/Long
+        public open /* non-default */ get
+
+      // companion object: Companion
+
+      // nested class: Var
+
+      // nested class: Companion
     }
 
-    enum class ForwardEnum private constructor(value: Long) : Enum<ForwardEnum>, CEnum {
-        @ConstantValue.Long(value = 0.toLong()) enum entry A
-        @ConstantValue.Long(value = 1.toLong()) enum entry B
-        override val value: Long
+    public final companion object pod1/EnumWithoutConstant.Companion {
 
-        class Var constructor(rawPtr: NativePtr /* = NativePtr */) : CEnumVar {
-            var value: ForwardEnum
-            @CEnumVarTypeSize(size = 8) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CPrimitiveVar.Type
-        }
+      private constructor()
 
-        companion object {
-            @Deprecated(level = DeprecationLevel.WARNING, message = "Will be removed.", replaceWith = ReplaceWith(expression = "", imports = {})) fun byValue(value: Long): ForwardEnum
-        }
-
+      @kotlin/Deprecated(message = "Will be removed.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+      public final fun byValue(value: kotlin/Long): pod1/EnumWithoutConstant
     }
 
-}
+    public final class pod1/EnumWithoutConstant.Var : kotlinx/cinterop/CEnumVar {
 
-package pod1 {
-    var enumWithoutConstantVar: EnumWithoutConstant
-        @CCall(id = "knifunptr_pod10_enumWithoutConstantVar_getter") get
-        @CCall(id = "knifunptr_pod11_enumWithoutConstantVar_setter") set
-    var forwardEnumVar: ForwardEnum
-        @CCall(id = "knifunptr_pod12_forwardEnumVar_getter") get
-        @CCall(id = "knifunptr_pod13_forwardEnumVar_setter") set
-}
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
 
+      public final var value: pod1/EnumWithoutConstant
+        public final /* non-default */ external get
+        public final /* non-default */ external set(value: pod1/EnumWithoutConstant)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CEnumVarTypeSize(size = 8)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/EnumWithoutConstant.Var.Companion : kotlinx/cinterop/CPrimitiveVar.Type {
+
+      private constructor()
+    }
+
+    public final enum class pod1/ForwardEnum : kotlin/Enum<pod1/ForwardEnum>, kotlinx/cinterop/CEnum {
+
+      private constructor(value: kotlin/Long)
+
+      public open val value: kotlin/Long
+        public open /* non-default */ get
+
+      // companion object: Companion
+
+      // nested class: Var
+
+      // nested class: Companion
+
+      @kotlinx/cinterop/internal/ConstantValue.Long(value = 0L)
+      A,
+
+      @kotlinx/cinterop/internal/ConstantValue.Long(value = 1L)
+      B,
+    }
+
+    public final companion object pod1/ForwardEnum.Companion {
+
+      private constructor()
+
+      @kotlin/Deprecated(message = "Will be removed.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+      public final fun byValue(value: kotlin/Long): pod1/ForwardEnum
+    }
+
+    public final class pod1/ForwardEnum.Var : kotlinx/cinterop/CEnumVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var value: pod1/ForwardEnum
+        public final /* non-default */ external get
+        public final /* non-default */ external set(value: pod1/ForwardEnum)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CEnumVarTypeSize(size = 8)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/ForwardEnum.Var.Companion : kotlinx/cinterop/CPrimitiveVar.Type {
+
+      private constructor()
+    }
+
+    package {
+
+      public final var enumWithoutConstantVar: pod1/EnumWithoutConstant
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_enumWithoutConstantVar_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_enumWithoutConstantVar_setter")
+        public final /* non-default */ external set(value: pod1/EnumWithoutConstant)
+
+      public final var forwardEnumVar: pod1/ForwardEnum
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_forwardEnumVar_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_forwardEnumVar_setter")
+        public final /* non-default */ external set(value: pod1/ForwardEnum)
+    }
+  }
+}

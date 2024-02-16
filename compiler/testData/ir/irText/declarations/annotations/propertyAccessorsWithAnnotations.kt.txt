@@ -1,13 +1,25 @@
+val test3: String
+  field = ""
+  @TestAnn(x = "test3.get")
+  get
+
+var test4: String
+  field = ""
+  @TestAnn(x = "test4.get")
+  get
+  @TestAnn(x = "test4.set")
+  set
+
 open annotation class TestAnn : Annotation {
+  val x: String
+    field = x
+    get
+
   constructor(x: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val x: String
-    field = x
-    get
 
 }
 
@@ -26,14 +38,3 @@ var test2: String
   set(value: String) {
   }
 
-val test3: String
-  field = ""
-  @TestAnn(x = "test3.get")
-  get
-
-var test4: String
-  field = ""
-  @TestAnn(x = "test4.get")
-  get
-  @TestAnn(x = "test4.set")
-  set
