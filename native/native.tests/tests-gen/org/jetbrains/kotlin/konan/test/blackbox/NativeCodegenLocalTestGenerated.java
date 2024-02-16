@@ -27,6 +27,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
   }
 
+  @Test
+  @TestMetadata("fake_overrides.kt")
+  public void testFake_overrides() {
+    runTest("native/native.tests/testData/codegen/fake_overrides.kt");
+  }
+
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/annotations")
   @TestDataPath("$PROJECT_ROOT")
