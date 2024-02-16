@@ -43,17 +43,17 @@ private class KlibRepoDeprecationWarning {
     }
 }
 
-internal class Library(val libraryNameOrPath: String, requestedRepository: String?) {
+internal class KlibToolCommand(private val args: KlibToolArguments) {
 
     private val klibRepoDeprecationWarning = KlibRepoDeprecationWarning()
 
-    private val repository = requestedRepository?.let {
+    private val repository = args.repository?.let {
         klibRepoDeprecationWarning.logOnceIfNecessary() // Due to use of "-repository" option.
         KFile(it)
     } ?: defaultRepository
 
     fun info() {
-        val library = libraryInRepoOrCurrentDir(repository, libraryNameOrPath)
+        val library = libraryInRepoOrCurrentDir(repository, args.libraryNameOrPath)
         val headerAbiVersion = library.versions.abiVersion
         val headerCompilerVersion = library.versions.compilerVersion
         val headerLibraryVersion = library.versions.libraryVersion
@@ -82,8 +82,8 @@ internal class Library(val libraryNameOrPath: String, requestedRepository: Strin
             repository.mkdirs()
         }
 
-        val libraryTrueName = KFile(libraryNameOrPath).name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT)
-        val library = libraryInCurrentDir(libraryNameOrPath)
+        val libraryTrueName = KFile(args.libraryNameOrPath).name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT)
+        val library = libraryInCurrentDir(args.libraryNameOrPath)
 
         val installLibDir = KFile(repository, libraryTrueName)
 
@@ -98,8 +98,8 @@ internal class Library(val libraryNameOrPath: String, requestedRepository: Strin
         if (!repository.exists) logError("Repository does not exist: $repository")
 
         val library = try {
-            val library = libraryInRepo(repository, libraryNameOrPath)
-            if (blind) logWarning("Removing The previously installed $libraryNameOrPath from $repository")
+            val library = libraryInRepo(repository, args.libraryNameOrPath)
+            if (blind) logWarning("Removing The previously installed ${args.libraryNameOrPath} from $repository")
             library
 
         } catch (e: Throwable) {
@@ -111,11 +111,11 @@ internal class Library(val libraryNameOrPath: String, requestedRepository: Strin
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun dumpIr(output: Appendable, printSignatures: Boolean, signatureVersion: KotlinIrSignatureVersion?) {
-        val library = libraryInRepoOrCurrentDir(repository, libraryNameOrPath)
+    fun dumpIr(output: Appendable) {
+        val library = libraryInRepoOrCurrentDir(repository, args.libraryNameOrPath)
         checkLibraryHasIr(library)
 
-        if (signatureVersion != null && signatureVersion != KotlinIrSignatureVersion.V2) {
+        if (args.signatureVersion != null && args.signatureVersion != KotlinIrSignatureVersion.V2) {
             // TODO: support passing any signature version through `DumpIrTreeOptions`, KT-62828
             logWarning("using a non-default signature version in \"dump-ir\" is not supported yet")
         }
@@ -136,15 +136,15 @@ internal class Library(val libraryNameOrPath: String, requestedRepository: Strin
         linker.resolveModuleDeserializer(module, null).init()
         linker.modulesWithReachableTopLevels.forEach(IrModuleDeserializer::deserializeReachableDeclarations)
 
-        output.append(irFragment.dump(DumpIrTreeOptions(printSignatures = printSignatures)))
+        output.append(irFragment.dump(DumpIrTreeOptions(printSignatures = args.printSignatures)))
     }
 
     @OptIn(ExperimentalLibraryAbiReader::class)
-    fun dumpAbi(output: Appendable, signatureVersion: KotlinIrSignatureVersion?) {
-        val library = libraryInCurrentDir(libraryNameOrPath)
+    fun dumpAbi(output: Appendable) {
+        val library = libraryInCurrentDir(args.libraryNameOrPath)
         checkLibraryHasIr(library)
 
-        val abiSignatureVersion = if (signatureVersion != null) {
+        val abiSignatureVersion = args.signatureVersion?.let { signatureVersion ->
             signatureVersion.checkSupportedInLibrary(library)
 
             val abiSignatureVersion = AbiSignatureVersion.resolveByVersionNumber(signatureVersion.number)
@@ -155,7 +155,7 @@ internal class Library(val libraryNameOrPath: String, requestedRepository: Strin
                 )
 
             abiSignatureVersion
-        } else {
+        } ?: run {
             val versionsSupportedByAbiReader: Map<Int, AbiSignatureVersion> = AbiSignatureVersion.allSupportedByAbiReader
                     .associateBy { it.versionNumber }
 
@@ -189,11 +189,11 @@ internal class Library(val libraryNameOrPath: String, requestedRepository: Strin
     }
 
     // TODO: This command is deprecated. Drop it after 2.0. KT-65380
-    fun contents(output: Appendable, printSignatures: Boolean, signatureVersion: KotlinIrSignatureVersion?) {
+    fun contents(output: Appendable) {
         logWarning("\"contents\" has been renamed to \"dump-metadata\". Please, use new command name.")
-        val module = ModuleDescriptorLoader.load(libraryInRepoOrCurrentDir(repository, libraryNameOrPath))
-        val signatureRenderer = if (printSignatures)
-            DefaultKlibSignatureRenderer(signatureVersion, "// Signature: ")
+        val module = ModuleDescriptorLoader.load(libraryInRepoOrCurrentDir(repository, args.libraryNameOrPath))
+        val signatureRenderer = if (args.printSignatures)
+            DefaultKlibSignatureRenderer(args.signatureVersion, "// Signature: ")
         else
             KlibSignatureRenderer.NO_SIGNATURE
         val printer = DeclarationPrinter(output, signatureRenderer)
@@ -207,30 +207,30 @@ internal class Library(val libraryNameOrPath: String, requestedRepository: Strin
      *        - package fragments with the same package FQN are merged
      *        - classes are sorted in alphabetical order
      */
-    fun dumpMetadata(output: Appendable, printSignatures: Boolean, signatureVersion: KotlinIrSignatureVersion?, testMode: Boolean) {
-        KotlinpBasedMetadataDumper(output, printSignatures, signatureVersion).dumpLibrary(libraryInCurrentDir(libraryNameOrPath), testMode)
+    fun dumpMetadata(output: Appendable, testMode: Boolean) {
+        KotlinpBasedMetadataDumper(output, args.printSignatures, args.signatureVersion).dumpLibrary(libraryInCurrentDir(args.libraryNameOrPath), testMode)
     }
 
-    fun signatures(output: Appendable, signatureVersion: KotlinIrSignatureVersion?) {
+    fun signatures(output: Appendable) {
         logWarning("\"signatures\" has been renamed to \"dump-metadata-signatures\". Please, use new command name.")
-        dumpMetadataSignatures(output, signatureVersion)
+        dumpMetadataSignatures(output)
     }
 
-    fun dumpMetadataSignatures(output: Appendable, signatureVersion: KotlinIrSignatureVersion?) {
-        val module = ModuleDescriptorLoader.load(libraryInRepoOrCurrentDir(repository, libraryNameOrPath))
+    fun dumpMetadataSignatures(output: Appendable) {
+        val module = ModuleDescriptorLoader.load(libraryInRepoOrCurrentDir(repository, args.libraryNameOrPath))
         // Don't call `checkSupportedInLibrary()` - the signatures are anyway generated on the fly.
-        val printer = SignaturePrinter(output, DefaultKlibSignatureRenderer(signatureVersion))
+        val printer = SignaturePrinter(output, DefaultKlibSignatureRenderer(args.signatureVersion))
 
         printer.print(module)
     }
 
-    fun dumpIrSignatures(output: Appendable, signatureVersion: KotlinIrSignatureVersion?) {
-        val library = libraryInCurrentDir(libraryNameOrPath)
+    fun dumpIrSignatures(output: Appendable) {
+        val library = libraryInCurrentDir(args.libraryNameOrPath)
         checkLibraryHasIr(library)
-        signatureVersion?.checkSupportedInLibrary(library)
+        args.signatureVersion?.checkSupportedInLibrary(library)
 
         val signatures = IrSignaturesExtractor(library).extract()
-        IrSignaturesRenderer(output, signatureVersion).render(signatures)
+        IrSignaturesRenderer(output, args.signatureVersion).render(signatures)
     }
 
     private fun checkLibraryHasIr(library: KotlinLibrary) {
@@ -255,19 +255,19 @@ private fun libraryInRepoOrCurrentDir(repository: KFile, name: String) =
 
 fun main(rawArgs: Array<String>) {
     val args = KlibToolArgumentsParser().parseArguments(rawArgs)
-    val library = Library(args.libraryNameOrPath, args.repository)
+    val command = KlibToolCommand(args)
 
     when (args.commandName) {
-        "dump-abi" -> library.dumpAbi(System.out, args.signatureVersion)
-        "dump-ir" -> library.dumpIr(System.out, args.printSignatures, args.signatureVersion)
-        "dump-ir-signatures" -> library.dumpIrSignatures(System.out, args.signatureVersion)
-        "dump-metadata" -> library.dumpMetadata(System.out, args.printSignatures, args.signatureVersion, testMode = false)
-        "dump-metadata-signatures" -> library.dumpMetadataSignatures(System.out, args.signatureVersion)
-        "contents" -> library.contents(System.out, args.printSignatures, args.signatureVersion)
-        "signatures" -> library.signatures(System.out, args.signatureVersion)
-        "info" -> library.info()
-        "install" -> library.install()
-        "remove" -> library.remove()
+        "dump-abi" -> command.dumpAbi(System.out)
+        "dump-ir" -> command.dumpIr(System.out)
+        "dump-ir-signatures" -> command.dumpIrSignatures(System.out)
+        "dump-metadata" -> command.dumpMetadata(System.out, testMode = false)
+        "dump-metadata-signatures" -> command.dumpMetadataSignatures(System.out)
+        "contents" -> command.contents(System.out)
+        "signatures" -> command.signatures(System.out)
+        "info" -> command.info()
+        "install" -> command.install()
+        "remove" -> command.remove()
         else -> logError("Unknown command: ${args.commandName}")
     }
 }
