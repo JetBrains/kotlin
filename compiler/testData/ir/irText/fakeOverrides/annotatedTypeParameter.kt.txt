@@ -1,0 +1,21 @@
+// FILE: A.kt
+
+class A : Base<Int> {
+  constructor() /* primary */ {
+    super/*Base*/<Int>()
+    /* <init>() */
+
+  }
+
+}
+
+// FILE: B.kt
+
+abstract class B : SortedMap<Boolean, Boolean> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}

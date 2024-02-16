@@ -2693,6 +2693,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
     }
 
     @Test
+    @TestMetadata("annotatedTypeParameter.kt")
+    public void testAnnotatedTypeParameter() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/annotatedTypeParameter.kt");
+    }
+
+    @Test
     @TestMetadata("fakeOverrideOfRaw.kt")
     public void testFakeOverrideOfRaw() {
       runTest("compiler/testData/ir/irText/fakeOverrides/fakeOverrideOfRaw.kt");
