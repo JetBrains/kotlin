@@ -39,38 +39,25 @@ import java.io.File
 import kotlin.system.exitProcess
 import org.jetbrains.kotlin.konan.file.File as KFile
 
-internal class KlibToolArguments(args: Array<String>) {
-    val commandName: String
-    val libraryNameOrPath: String
-
-    val repository: String?
-    val printSignatures: Boolean
-    val signatureVersion: KotlinIrSignatureVersion?
-
-    init {
-        if (args.size < 2) {
+internal class KlibToolArgumentsParser {
+    fun parseArguments(rawArgs: Array<String>): KlibToolArguments {
+        if (rawArgs.size < 2) {
             printUsage()
             exitProcess(0)
         }
 
-        commandName = args[0]
-        libraryNameOrPath = args[1]
-
-        val extraOptions: Map<ExtraOption, List<String>> = parseOptions(args.drop(2).toTypedArray<String>())
+        val extraArgs: Map<ExtraOption, List<String>> = parseOptions(rawArgs.drop(2).toTypedArray<String>())
                 .entries
                 .mapNotNull { (option, values) ->
                     val knownOption = ExtraOption.parseOrNull(option)
                     if (knownOption == null) {
-                        logWarning("Unrecognized command-line option: $option")
+                        logWarning("Unrecognized command-line argument: $option")
                         return@mapNotNull null
                     }
                     knownOption to values
                 }.toMap()
 
-        repository = extraOptions[ExtraOption.REPOSITORY]?.last()
-        printSignatures = extraOptions[ExtraOption.PRINT_SIGNATURES]?.last()?.toBoolean() == true
-
-        signatureVersion = extraOptions[ExtraOption.SIGNATURE_VERSION]?.last()?.let { rawSignatureVersion ->
+        val signatureVersion = extraArgs[ExtraOption.SIGNATURE_VERSION]?.last()?.let { rawSignatureVersion ->
             rawSignatureVersion.toIntOrNull()?.let(::KotlinIrSignatureVersion)
                     ?: logError("Invalid signature version: $rawSignatureVersion")
         }
@@ -78,6 +65,14 @@ internal class KlibToolArguments(args: Array<String>) {
         if (signatureVersion != null && signatureVersion !in KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS)
             logError("Unsupported signature version: ${signatureVersion.number}")
 
+
+        return KlibToolArguments(
+                commandName = rawArgs[0],
+                libraryNameOrPath = rawArgs[1],
+                repository = extraArgs[ExtraOption.REPOSITORY]?.last(),
+                printSignatures = extraArgs[ExtraOption.PRINT_SIGNATURES]?.last()?.toBoolean() == true,
+                signatureVersion,
+        )
     }
 
     private fun parseOptions(args: Array<String>): Map<String, List<String>> {
@@ -137,6 +132,15 @@ internal class KlibToolArguments(args: Array<String>) {
         )
     }
 }
+
+internal class KlibToolArguments(
+        val commandName: String,
+        val libraryNameOrPath: String,
+        val repository: String?,
+        val printSignatures: Boolean,
+        val signatureVersion: KotlinIrSignatureVersion?,
+)
+
 
 private enum class ExtraOption(val option: String) {
     REPOSITORY("-repository"),
@@ -445,7 +449,7 @@ private fun libraryInRepoOrCurrentDir(repository: KFile, name: String) =
         resolverByName(listOf(repository.absolutePath), logger = KlibToolLogger).resolve(name)
 
 fun main(rawArgs: Array<String>) {
-    val args = KlibToolArguments(rawArgs)
+    val args = KlibToolArgumentsParser().parseArguments(rawArgs)
     val library = Library(args.libraryNameOrPath, args.repository)
 
     when (args.commandName) {
