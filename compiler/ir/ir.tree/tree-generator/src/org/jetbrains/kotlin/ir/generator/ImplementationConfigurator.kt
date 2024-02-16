@@ -127,10 +127,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         impl(file) {
             implementation.doPrint = false
         }
-
-        impl(typeAlias) {
-            implementation.doPrint = false
-        }
     }
 
     private fun ImplementationContext.configureDeclarationWithLateBindinig(symbolType: ClassRef<*>) {
