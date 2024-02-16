@@ -75,7 +75,8 @@ object FirNativeObjCNameUtilities {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val overriddenSymbols = firTypeScope.retrieveDirectOverriddenOf(memberSymbol).map { it.originalForSubstitutionOverride ?: it }
+        val overriddenSymbols =
+            firTypeScope.retrieveDirectOverriddenOf(memberSymbol).map { it.unwrapSubstitutionOverrides() }
         if (overriddenSymbols.isEmpty()) return
         val objCNames = overriddenSymbols.map { it.getFirstBaseSymbol(context).getObjCNames(context.session) }
         if (!objCNames.allNamesEquals()) {
@@ -96,7 +97,7 @@ object FirNativeObjCNameUtilities {
         val session = context.session
         val ownScope = containingClassLookupTag()?.toSymbol(session)?.fullyExpandedClass(session)?.unsubstitutedScope(context)
             ?: return this
-        val overriddenMemberSymbols = ownScope.retrieveDirectOverriddenOf(this).map { it.originalForSubstitutionOverride ?: it }
+        val overriddenMemberSymbols = ownScope.retrieveDirectOverriddenOf(this).map { it.unwrapSubstitutionOverrides() }
         return if (overriddenMemberSymbols.isEmpty()) this else overriddenMemberSymbols.first().getFirstBaseSymbol(context)
     }
 

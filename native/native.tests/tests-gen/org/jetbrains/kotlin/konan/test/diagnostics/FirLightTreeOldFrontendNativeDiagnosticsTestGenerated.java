@@ -113,6 +113,12 @@ public class FirLightTreeOldFrontendNativeDiagnosticsTestGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("objCName6.kt")
+  public void testObjCName6() {
+    runTest("compiler/testData/diagnostics/nativeTests/objCName6.kt");
+  }
+
+  @Test
   @TestMetadata("objCNameWIthDifferentSwiftName.kt")
   public void testObjCNameWIthDifferentSwiftName() {
     runTest("compiler/testData/diagnostics/nativeTests/objCNameWIthDifferentSwiftName.kt");
