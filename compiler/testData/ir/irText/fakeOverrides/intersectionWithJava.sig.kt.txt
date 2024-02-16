@@ -9,16 +9,16 @@ abstract class C<R : Any?> : Java1<R>, KotlinInterface<R> {
   constructor() /* primary */
 
   // CHECK JVM_IR:
-  //   Mangled name: C#bar(){}java.util.ArrayList<kotlin.Int?>?
-  //   Public signature: /C.bar|6344786471503787921[0]
-  //   Public signature debug description: bar(){}java.util.ArrayList<kotlin.Int?>?
-  /* fake */ override fun bar(): ArrayList<Int?>?
+  //   Mangled name: C#bar(){}java.util.ArrayList<kotlin.Int>
+  //   Public signature: /C.bar|3123552224271008170[0]
+  //   Public signature debug description: bar(){}java.util.ArrayList<kotlin.Int>
+  /* fake */ override fun bar(): ArrayList<Int>
 
   // CHECK JVM_IR:
-  //   Mangled name: C#foo(){}1:0?
-  //   Public signature: /C.foo|-1179576840814333363[0]
-  //   Public signature debug description: foo(){}1:0?
-  /* fake */ override fun foo(): R?
+  //   Mangled name: C#foo(){}1:0
+  //   Public signature: /C.foo|-5478580208809996038[0]
+  //   Public signature debug description: foo(){}1:0
+  /* fake */ override fun foo(): R
 
 }
 
