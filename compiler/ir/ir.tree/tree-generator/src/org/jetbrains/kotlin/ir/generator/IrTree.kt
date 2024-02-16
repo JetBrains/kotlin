@@ -537,6 +537,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(metadataSourceOwner)
 
         +symbol(scriptSymbolType)
+        +descriptor("ScriptDescriptor")
         // NOTE: is the result of the FE conversion, because there script interpreted as a class and has receiver
         // TODO: consider removing from here and handle appropriately in the lowering
         +field("thisReceiver", valueParameter, nullable = true) // K1

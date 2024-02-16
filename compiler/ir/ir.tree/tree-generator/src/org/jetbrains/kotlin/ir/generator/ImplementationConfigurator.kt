@@ -98,7 +98,14 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(script) {
-            implementation.doPrint = false
+            implementation.putImplementationOptInInConstructor = false
+            implementation.constructorParameterOrderOverride = listOf("symbol", "name", "factory", "startOffset", "endOffset")
+            defaultNull(
+                "thisReceiver", "baseClass", "resultProperty", "earlierScriptsParameter",
+                "importedScripts", "earlierScripts", "targetClass", "constructor"
+            )
+            isLateinit("explicitCallParameters", "implicitReceiversParameters", "providedProperties", "providedPropertiesParameters")
+            default("origin", "SCRIPT_ORIGIN")
         }
 
         impl(moduleFragment) {
