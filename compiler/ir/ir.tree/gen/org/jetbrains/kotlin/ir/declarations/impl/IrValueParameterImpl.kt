@@ -1,7 +1,12 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// DO NOT MODIFY IT MANUALLY.
+
+@file:Suppress("DuplicatedCode", "unused")
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
@@ -18,34 +23,32 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
-// IMPORTANT: This class is used in the Compose IDE plugin (platform 233).
-// Don't rename it or change its constructor's signature so as not to break binary compatibility when an older version of
-// the Compose IDE plugin is used with a newer version of the Kotlin IDE plugin that vendors the updated compiler version.
 class IrValueParameterImpl @IrImplementationDetail constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
-    override val symbol: IrValueParameterSymbol,
+    override val factory: IrFactory,
     override var name: Name,
-    override var index: Int,
     override var type: IrType,
+    override val isAssignable: Boolean,
+    override val symbol: IrValueParameterSymbol,
+    override var index: Int,
     override var varargElementType: IrType?,
     override var isCrossinline: Boolean,
     override var isNoinline: Boolean,
     override var isHidden: Boolean,
-    override val isAssignable: Boolean,
-    override val factory: IrFactory = IrFactoryImpl,
 ) : IrValueParameter() {
+    override var annotations: List<IrConstructorCall> = emptyList()
+
+    override lateinit var parent: IrDeclarationParent
+
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ParameterDescriptor
         get() = symbol.descriptor
 
+    override var defaultValue: IrExpressionBody? = null
+
     init {
         symbol.bind(this)
     }
-
-    override lateinit var parent: IrDeclarationParent
-    override var annotations: List<IrConstructorCall> = emptyList()
-
-    override var defaultValue: IrExpressionBody? = null
 }
