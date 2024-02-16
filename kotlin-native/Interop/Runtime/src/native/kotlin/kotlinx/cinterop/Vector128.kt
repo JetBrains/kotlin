@@ -59,8 +59,23 @@ public external fun vectorOf(f0: Float, f1: Float, f2: Float, f3: Float): Vector
 
 @SinceKotlin("1.9")
 @ExperimentalForeignApi
+@GCUnsafeCall("Kotlin_Interop_Vector2f64_of")
+public external fun vectorOf(f0: Double, f1: Double): Vector128
+
+@SinceKotlin("1.9")
+@ExperimentalForeignApi
 @GCUnsafeCall("Kotlin_Interop_Vector4i32_of")
-public external fun vectorOf(f0: Int, f1: Int, f2: Int, f3: Int): Vector128
+public external fun vectorOf(i0: Int, i1: Int, i2: Int, i3: Int): Vector128
+
+@SinceKotlin("1.9")
+@ExperimentalForeignApi
+@GCUnsafeCall("Kotlin_Interop_Vector2i64_of")
+public external fun vectorOf(l0: Long, l1: Long): Vector128
+
+@SinceKotlin("1.9")
+@ExperimentalForeignApi
+@GCUnsafeCall("Kotlin_Interop_Vector8i16_of")
+public external fun vectorOf(s0: Short, s1: Short, s2: Short, s3: Short, s4: Short, s5: Short, s6: Short, s7: Short): Vector128
 
 
 @SinceKotlin("1.9")
