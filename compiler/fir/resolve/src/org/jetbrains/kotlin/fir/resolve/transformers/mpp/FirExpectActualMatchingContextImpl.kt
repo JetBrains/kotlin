@@ -49,12 +49,6 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val shouldCheckDefaultParams: Boolean
         get() = true
 
-    override val allowClassActualizationWithWiderVisibility: Boolean
-        get() = true
-
-    override val allowTransitiveSupertypesActualization: Boolean
-        get() = true
-
     override val expectScopeSession: ScopeSession
         // todo KT-63773 design a way for managing scope sessions for common scopes during matching.
         //  Right now we create a new session every time
