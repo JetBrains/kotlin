@@ -92,18 +92,15 @@ internal class KlibToolCommand(private val args: KlibToolArguments) {
         library.libraryFile.unpackZippedKonanLibraryTo(installLibDir)
     }
 
-    fun remove(blind: Boolean = false) {
+    fun remove() {
         klibRepoDeprecationWarning.logOnceIfNecessary()
 
         if (!repository.exists) logError("Repository does not exist: $repository")
 
         val library = try {
-            val library = libraryInRepo(repository, args.libraryNameOrPath)
-            if (blind) logWarning("Removing The previously installed ${args.libraryNameOrPath} from $repository")
-            library
-
+            libraryInRepo(repository, args.libraryNameOrPath)
         } catch (e: Throwable) {
-            if (!blind) println(e.message)
+            println(e.message)
             null
 
         }
