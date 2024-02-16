@@ -16,8 +16,11 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             isLateinit("body")
         }
 
-        impl(simpleFunction) {
-            implementation.doPrint = false
+        impl(simpleFunction, "IrFunctionImpl") {
+            defaultEmptyList("valueParameters")
+            defaultNull("dispatchReceiverParameter", "extensionReceiverParameter", "body", "correspondingPropertySymbol")
+            default("contextReceiverParametersCount", "0")
+            isLateinit("returnType")
         }
         impl(functionWithLateBinding) {
             implementation.doPrint = false

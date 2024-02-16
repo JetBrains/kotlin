@@ -555,6 +555,9 @@ object IrTree : AbstractTreeBuilder() {
         parent(attributeContainer)
 
         +symbol(simpleFunctionSymbolType)
+        +listField("overriddenSymbols", simpleFunctionSymbolType, mutability = Var) {
+            skipInIrFactory()
+        }
         +field("isTailrec", boolean)
         +field("isSuspend", boolean)
         +isFakeOverrideField()
