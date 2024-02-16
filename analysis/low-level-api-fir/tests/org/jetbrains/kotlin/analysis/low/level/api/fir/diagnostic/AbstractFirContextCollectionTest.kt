@@ -56,7 +56,7 @@ abstract class AbstractFirContextCollectionTest : AbstractAnalysisApiBasedTest()
             val fileStructure = fileStructureCache.getFileStructure(mainFile)
             val allStructureElements = fileStructure.getAllStructureElements()
 
-            handler.elementsToCheckContext = allStructureElements.map(FileStructureElement::firDeclaration)
+            handler.elementsToCheckContext = allStructureElements.map(FileStructureElement::declaration)
             handler.firFile = mainFile.getOrBuildFirFile(firResolveSession)
 
             mainFile.getDiagnostics(firResolveSession, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
