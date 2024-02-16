@@ -15,10 +15,24 @@ package org.jetbrains.kotlin.fir.declarations
  * - The CLI compiler mode (aka full resolution mode): the compiler executes all phases sequentially for all declarations.
  *   This means that the processor for phase `A` will transform all declarations in the first round.
  *   In the next round, the processor for phase `B` (which follows `A`) will transform all declarations.
+ *   This mode can be expressed by pseudocode like:
+ *   ```kotlin
+ *    for (phase in allFirResolvePhases) {
+ *      for (file in allFirFiles) {
+ *        runPhaseOnFile(file, phase)
+ *      }
+ *    }
+ *    ```
  *
  * - The Analysis API mode (aka lazy resolution mode):
  *   the compiler executes the requested phase [lazily][org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase]
  *   (on demand) for some particular declaration (not for all declarations in contrast to the CLI mode).
+ *   This mode can be expressed by pseudocode like:
+ *   ```kotlin
+ *    for (phase in allFirResolvePhases) {
+ *      runPhaseOnDeclaration(declaration, phase)
+ *    }
+ *    ```
  *
  * ### Contracts
  *
@@ -96,6 +110,7 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
 
     /**
      * The compiler resolves all supertypes of classes and performs type alias expansion.
+     * Breaks loops in the type hierarchy if needed.
      *
      * This is a [*jumping phase*][FirResolvePhase].
      */
