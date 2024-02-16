@@ -126,7 +126,6 @@ public class StandaloneAnalysisAPISessionBuilder(
             val declarationProviderFactory = KotlinStaticDeclarationProviderFactory(
                 this,
                 sourceKtFiles,
-                kotlinCoreProjectEnvironment.environment.jarFileSystem as CoreJarFileSystem
             )
             registerService(
                 KotlinDeclarationProviderFactory::class.java,
