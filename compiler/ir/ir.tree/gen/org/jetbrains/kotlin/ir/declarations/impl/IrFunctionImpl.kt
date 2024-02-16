@@ -6,25 +6,27 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
-import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
+// IMPORTANT: This class is used in the Compose IDE plugin (platform 233).
+// Don't rename it or change its constructor's signature so as not to break binary compatibility when an older version of
+// the Compose IDE plugin is used with a newer version of the Kotlin IDE plugin that vendors the updated compiler version.
+class IrFunctionImpl @IrImplementationDetail constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
+    override val symbol: IrSimpleFunctionSymbol,
     override var name: Name,
     override var visibility: DescriptorVisibility,
     override var modality: Modality,
@@ -35,34 +37,19 @@ class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
     override var isOperator: Boolean,
     override var isInfix: Boolean,
     override var isExpect: Boolean,
-    override var isFakeOverride: Boolean,
-    override val factory: IrFactory
-) : IrFunctionWithLateBinding() {
-
-    private var _symbol: IrSimpleFunctionSymbol? = null
-
-    override val symbol: IrSimpleFunctionSymbol
-        get() = _symbol ?: error("$this has not acquired a symbol yet")
-
+    override var isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    override var containerSource: DeserializedContainerSource? = null,
+    override val factory: IrFactory = IrFactoryImpl,
+) : IrSimpleFunction() {
     @ObsoleteDescriptorBasedAPI
-    override val descriptor
-        get() = _symbol?.descriptor ?: this.toIrBasedDescriptor()
+    override val descriptor: FunctionDescriptor
+        get() = symbol.descriptor
 
-    override fun acquireSymbol(symbol: IrSimpleFunctionSymbol): IrFunctionWithLateBinding {
-        assert(_symbol == null) { "$this already has symbol _symbol" }
-        _symbol = symbol
+    init {
         symbol.bind(this)
-        return this
     }
 
-    override val isBound: Boolean
-        get() = _symbol != null
-
-    override val containerSource: DeserializedContainerSource?
-        get() = null
-
     override lateinit var parent: IrDeclarationParent
-
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var typeParameters: List<IrTypeParameter> = emptyList()
@@ -82,8 +69,8 @@ class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList()
 
     override var attributeOwnerId: IrAttributeContainer = this
-
     override var originalBeforeInline: IrAttributeContainer? = null
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 }
+
