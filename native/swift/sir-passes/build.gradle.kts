@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 description = "Infrastructure of transformations over SIR"

@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 description = "SIR to Kotlin bindings generator"
