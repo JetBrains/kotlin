@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.ClassDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileDiagnosticRetriever
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileStructureElementDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileStructureElementDiagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.ScriptDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
@@ -27,9 +26,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 internal sealed class FileStructureElement(
     val declaration: FirDeclaration,
-    firFile: FirFile,
-    retriever: FileStructureElementDiagnosticRetriever,
-    moduleComponents: LLFirModuleResolveComponents,
+    val diagnostics: FileStructureElementDiagnostics,
 ) {
     init {
         val actualResolvePhase = declaration.resolvePhase
@@ -47,12 +44,6 @@ internal sealed class FileStructureElement(
     }
 
     val mappings: KtToFirMapping = KtToFirMapping(declaration)
-
-    val diagnostics: FileStructureElementDiagnostics = FileStructureElementDiagnostics(
-        firFile,
-        retriever,
-        moduleComponents,
-    )
 
     companion object {
         fun recorderFor(fir: FirDeclaration): FirElementsRecorder = when (fir) {
@@ -146,9 +137,13 @@ internal class RootScriptStructureElement(
     moduleComponents: LLFirModuleResolveComponents,
 ) : FileStructureElement(
     declaration = script,
-    firFile = file,
-    retriever = ScriptDiagnosticRetriever(script),
-    moduleComponents = moduleComponents,
+    diagnostics = FileStructureElementDiagnostics(
+        ScriptDiagnosticRetriever(
+            declaration = script,
+            file = file,
+            moduleComponents = moduleComponents,
+        )
+    ),
 ) {
     object Recorder : FirElementsRecorder() {
         override fun visitScript(script: FirScript, data: MutableMap<KtElement, FirElement>) {
@@ -169,9 +164,13 @@ internal class ClassDeclarationStructureElement(
     moduleComponents: LLFirModuleResolveComponents,
 ) : FileStructureElement(
     declaration = clazz,
-    firFile = file,
-    retriever = ClassDiagnosticRetriever(clazz),
-    moduleComponents = moduleComponents
+    diagnostics = FileStructureElementDiagnostics(
+        ClassDiagnosticRetriever(
+            declaration = clazz,
+            file = file,
+            moduleComponents = moduleComponents,
+        )
+    ),
 ) {
     class Recorder(private val firClass: FirRegularClass) : FirElementsRecorder() {
         override fun visitProperty(property: FirProperty, data: MutableMap<KtElement, FirElement>) {
@@ -217,9 +216,13 @@ internal class DeclarationStructureElement(
     moduleComponents: LLFirModuleResolveComponents,
 ) : FileStructureElement(
     declaration = declaration,
-    firFile = file,
-    retriever = SingleNonLocalDeclarationDiagnosticRetriever(declaration),
-    moduleComponents = moduleComponents,
+    diagnostics = FileStructureElementDiagnostics(
+        SingleNonLocalDeclarationDiagnosticRetriever(
+            declaration = declaration,
+            file = file,
+            moduleComponents = moduleComponents,
+        )
+    ),
 ) {
     object Recorder : FirElementsRecorder() {
         override fun visitConstructor(constructor: FirConstructor, data: MutableMap<KtElement, FirElement>) {
@@ -241,9 +244,13 @@ internal class RootStructureElement(
     moduleComponents: LLFirModuleResolveComponents,
 ) : FileStructureElement(
     declaration = file,
-    firFile = file,
-    retriever = FileDiagnosticRetriever,
-    moduleComponents = moduleComponents
+    diagnostics = FileStructureElementDiagnostics(
+        FileDiagnosticRetriever(
+            declaration = file,
+            file = file,
+            moduleComponents = moduleComponents,
+        )
+    ),
 ) {
     object Recorder : FirElementsRecorder() {
         override fun visitElement(element: FirElement, data: MutableMap<KtElement, FirElement>) {
