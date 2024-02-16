@@ -158,13 +158,7 @@ abstract class AbstractNativeSwiftExportTest() : AbstractNativeSimpleTest() {
                 )
             ),
             nominalPackageName = PackageName(testName),
-            checks = TestRunChecks(
-                executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(testRunSettings.get<Timeouts>().executionTimeout),
-                exitCodeCheck = TestRunCheck.ExitCode.Expected(0),
-                outputDataFile = null,
-                outputMatcher = null,
-                fileCheckMatcher = null,
-            ),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
             extras = TestCase.NoTestRunnerExtras(entryPoint = "main")
         ).apply {
             initialize(null, null)

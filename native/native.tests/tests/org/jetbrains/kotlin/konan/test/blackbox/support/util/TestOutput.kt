@@ -17,6 +17,13 @@ internal class TestReport(
     val ignoredTests: Collection<TestName>
 ) {
     fun isEmpty(): Boolean = passedTests.isEmpty() && failedTests.isEmpty() && ignoredTests.isEmpty()
+
+    override fun toString(): String = """
+        TestReport:
+         * Passed:  $passedTests
+         * Failed:  $failedTests
+         * Ignored: $ignoredTests
+    """.trimIndent()
 }
 
 internal interface TestOutputFilter {

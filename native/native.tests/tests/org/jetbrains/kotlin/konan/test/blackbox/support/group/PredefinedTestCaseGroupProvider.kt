@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.group
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
+import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.expandGlobTo
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
@@ -66,7 +68,8 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
                 freeCompilerArgs = predefinedTestCase.freeCompilerArgs
                     .parseCompilerArgs(settings) { "Failed to parse free compiler arguments for test case $testCaseId" },
                 nominalPackageName = PackageName(testCaseId.uniqueName),
-                checks = TestRunChecks.Default(settings.get<Timeouts>().executionTimeout),
+                checks = TestRunChecks.Default(settings.get<Timeouts>().executionTimeout)
+                    .copy(testFiltering = TestRunCheck.TestFiltering(TCTestOutputFilter)),
                 extras = WithTestRunnerExtras(
                     runnerType = predefinedTestCase.runnerType,
                     ignoredTests = predefinedTestCase.ignoredTests.toSet()

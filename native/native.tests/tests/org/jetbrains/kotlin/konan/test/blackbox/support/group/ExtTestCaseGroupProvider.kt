@@ -539,9 +539,10 @@ private class ExtTestDataFile(
             nominalPackageName = testDataFileSettings.nominalPackageName,
             expectedFailure = isExpectedFailure,
             checks = TestRunChecks.Default(timeouts.executionTimeout).copy(
-                fileCheckMatcher = fileCheckStage?.let { TestRunCheck.FileCheckMatcher(settings, testDataFile) },
+                testFiltering = TestRunCheck.TestFiltering(TCTestOutputFilter),
                 // for expected failures, it does not matter, which exit code would the process have, since test might fail with other reasons
                 exitCodeCheck = TestRunCheck.ExitCode.Expected(0).takeUnless { isExpectedFailure },
+                fileCheckMatcher = fileCheckStage?.let { TestRunCheck.FileCheckMatcher(settings, testDataFile) }
             ),
             fileCheckStage = fileCheckStage,
             extras = WithTestRunnerExtras(runnerType = TestRunnerType.DEFAULT)

@@ -127,12 +127,8 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
                 "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi",
             )),
             nominalPackageName = PackageName(moduleName),
-            checks = TestRunChecks(
-                executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(testRunSettings.get<Timeouts>().executionTimeout),
-                exitCodeCheck = TestRunCheck.ExitCode.Expected(0),
-                outputDataFile = goldenData?.let { TestRunCheck.OutputDataFile(file = it) },
-                outputMatcher = null,
-                fileCheckMatcher = null,
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(
+                outputDataFile = goldenData?.let { TestRunCheck.OutputDataFile(file = it) }
             ),
             extras = TestCase.NoTestRunnerExtras(entryPoint = "main")
         ).apply {

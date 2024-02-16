@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExecutionTimeout
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExitCode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestReport
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.junit.jupiter.api.Assumptions
@@ -39,10 +39,10 @@ internal class ResultHandler(
         val diagnostics = buildList<String> {
             checks.forEach { check ->
                 when (check) {
-                    is ExecutionTimeout.ShouldNotExceed -> if(!runResult.hasFinishedOnTime) add(
+                    is ExecutionTimeout.ShouldNotExceed -> if (!runResult.hasFinishedOnTime) add(
                         "Timeout exceeded during test execution."
                     )
-                    is ExecutionTimeout.ShouldExceed -> if(runResult.hasFinishedOnTime) add(
+                    is ExecutionTimeout.ShouldExceed -> if (runResult.hasFinishedOnTime) add(
                         "Test is expected to fail with exceeded timeout, which hasn't happened."
                     )
                     is ExitCode -> {
@@ -63,13 +63,13 @@ internal class ResultHandler(
 
                         // Don't use verifyExpectation(expected, actual) to avoid exposing potentially large test output in exception message
                         // and blowing up test logs.
-                        if(convertLineSeparators(expectedOutput) != convertLineSeparators(actualFilteredOutput)) add(
+                        if (convertLineSeparators(expectedOutput) != convertLineSeparators(actualFilteredOutput)) add(
                             "Tested process output mismatch. See \"TEST STDOUT\" and \"EXPECTED OUTPUT DATA FILE\" below."
                         )
                     }
                     is TestRunCheck.OutputMatcher -> {
                         try {
-                            if(!check.match(runResult.processOutputAsString(check.output))) add(
+                            if (!check.match(runResult.processOutputAsString(check.output))) add(
                                 "Tested process output has not passed validation."
                             )
                         } catch (t: Throwable) {
@@ -87,11 +87,43 @@ internal class ResultHandler(
                         if (!(result.stdout.isEmpty() && result.stderr.isEmpty())) {
                             val shortOutText = result.stdout.lines().take(100)
                             val shortErrText = result.stderr.lines().take(100)
-                            add("FileCheck matching of ${fileCheckDump.absolutePath}\n" +
+                            add(
+                                "FileCheck matching of ${fileCheckDump.absolutePath}\n" +
                                         "with '--check-prefixes ${check.prefixes}'\n" +
                                         "failed with result=$result:\n" +
                                         shortOutText.joinToString("\n") + "\n" +
                                         shortErrText.joinToString("\n")
+                            )
+                        }
+                    }
+                    is TestRunCheck.TestFiltering -> {
+                        if (check.testOutputFilter != TestOutputFilter.NO_FILTERING) {
+                            val testReport = runResult.processOutput.stdOut.testReport
+
+                            if (testReport == null) {
+                                add("TestRun has TestFiltering enabled, but test report is null")
+                            }
+                            checkNotNull(testReport)
+
+                            if (testReport.isEmpty()) add("No tests have been found. Test report is empty")
+
+                            testRun.runParameters.get<TestRunParameter.WithFilter> {
+                                verifyNoSuchTests(
+                                    testReport.passedTests.filter { testName -> !testMatches(testName) },
+                                    "Excessive tests have been executed"
+                                )
+
+                                verifyNoSuchTests(
+                                    testReport.ignoredTests.filter { testName -> !testMatches(testName) },
+                                    "Excessive tests have been ignored"
+                                )
+                            }
+
+                            verifyNoSuchTests(testReport.failedTests, "Failed tests found in the test report")
+
+                            Assumptions.assumeFalse(
+                                testReport.ignoredTests.isNotEmpty() && testReport.passedTests.isEmpty(),
+                                "Test case is disabled"
                             )
                         }
                     }
@@ -103,12 +135,16 @@ internal class ResultHandler(
                 diagnostics.joinToString("\n")
             }
         } else {
-            val runResultInfo = "TestCaseId: ${testRun.testCase.id}\nExit code: ${runResult.exitCode}\nFiltered test output is${
-                runResult.processOutput.stdOut.filteredOutput.let {
+            val runResultInfo = buildString {
+                appendLine("TestCaseId: ${testRun.testCase.id}")
+                appendLine("Exit code: ${runResult.exitCode}")
+                appendLine("Filtered test output is")
+                appendLine(runResult.processOutput.stdOut.filteredOutput.let {
                     if (it.isNotEmpty()) ":\n$it" else " empty."
-                }
-            }"
-            verifyExpectation(diagnostics.isNotEmpty() || runResult.processOutput.stdOut.testReport?.failedTests?.isNotEmpty() == true) {
+                })
+                appendLine(runResult.processOutput.stdOut.testReport)
+            }
+            verifyExpectation(diagnostics.isNotEmpty()) {
                 "Test did not fail as expected: $runResultInfo"
             }
             println("Test failed as expected.\n$runResultInfo")
@@ -117,36 +153,16 @@ internal class ResultHandler(
                 diagnostics.forEach(::println)
             }
         }
-
-        verifyTestReport(runResult.processOutput.stdOut.testReport)
     }
 
-    private fun verifyTestReport(testReport: TestReport?) {
-        if (testReport == null) return
-
-        verifyExpectation(!testReport.isEmpty()) { "No tests have been found." }
-
-        testRun.runParameters.get<TestRunParameter.WithFilter> {
-            verifyNoSuchTests(
-                testReport.passedTests.filter { testName -> !testMatches(testName) },
-                "Excessive tests have been executed"
+    private fun MutableList<String>.verifyNoSuchTests(tests: Collection<TestName>, subject: String) {
+        if (tests.isNotEmpty()) {
+            add(
+                buildString {
+                    append(subject).append(':')
+                    tests.forEach { appendLine().append(" - ").append(it) }
+                }
             )
-
-            verifyNoSuchTests(
-                testReport.ignoredTests.filter { testName -> !testMatches(testName) },
-                "Excessive tests have been ignored"
-            )
-        }
-
-        if (!testRun.expectedFailure)
-            verifyNoSuchTests(testReport.failedTests, "There are failed tests")
-        Assumptions.assumeFalse(testReport.ignoredTests.isNotEmpty() && testReport.passedTests.isEmpty(), "Test case is disabled")
-    }
-
-    private fun verifyNoSuchTests(tests: Collection<TestName>, subject: String) = verifyExpectation(tests.isEmpty()) {
-        buildString {
-            append(subject).append(':')
-            tests.forEach { appendLine().append(" - ").append(it) }
         }
     }
 }

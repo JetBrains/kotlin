@@ -24,7 +24,7 @@ internal open class RunnerWithExecutor(
     private val executable get() = testRun.executable
 
     private val outputFilter: TestOutputFilter
-        get() = if (testRun.runParameters.has<TestRunParameter.WithTCTestLogger>()) TCTestOutputFilter else TestOutputFilter.NO_FILTERING
+        get() = testRun.checks.testFiltering.testOutputFilter
 
     private val programArgs = mutableListOf<String>().apply {
         add(executable.executable.executableFile.absolutePath)

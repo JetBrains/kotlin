@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import java.io.File
@@ -41,7 +42,9 @@ internal sealed interface TestRunCheck {
 
     class OutputDataFile(val output: Output = Output.ALL, val file: File) : TestRunCheck
 
-    class OutputMatcher(val output: Output = Output.ALL, val match: (String) -> Boolean): TestRunCheck
+    class OutputMatcher(val output: Output = Output.ALL, val match: (String) -> Boolean) : TestRunCheck
+
+    class TestFiltering(val testOutputFilter: TestOutputFilter) : TestRunCheck
 
     class FileCheckMatcher(val settings: Settings, val testDataFile: File) : TestRunCheck {
         val prefixes: String
@@ -71,6 +74,7 @@ internal sealed interface TestRunCheck {
 
 internal data class TestRunChecks(
     val executionTimeoutCheck: ExecutionTimeout,
+    val testFiltering: TestFiltering,
     private val exitCodeCheck: ExitCode?,
     val outputDataFile: OutputDataFile?,
     val outputMatcher: OutputMatcher?,
@@ -79,6 +83,7 @@ internal data class TestRunChecks(
 
     override fun iterator() = iterator {
         yield(executionTimeoutCheck)
+        yield(testFiltering)
         yieldIfNotNull(exitCodeCheck)
         yieldIfNotNull(outputDataFile)
         yieldIfNotNull(outputMatcher)
@@ -90,6 +95,7 @@ internal data class TestRunChecks(
         @Suppress("TestFunctionName")
         fun Default(timeout: Duration) = TestRunChecks(
             executionTimeoutCheck = ExecutionTimeout.ShouldNotExceed(timeout),
+            testFiltering = TestFiltering(TestOutputFilter.NO_FILTERING),
             exitCodeCheck = ExitCode.Expected(0),
             outputDataFile = null,
             outputMatcher = null,

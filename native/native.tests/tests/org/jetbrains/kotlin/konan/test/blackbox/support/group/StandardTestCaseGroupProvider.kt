@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.NoTestRunnerExt
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunParameter
+import org.jetbrains.kotlin.konan.test.blackbox.support.runner.has
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.test.directives.model.Directive
@@ -225,6 +227,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             expectedFailure = settings.isIgnoredTarget(registeredDirectives),
             checks = TestRunChecks(
                 computeExecutionTimeoutCheck(settings, expectedTimeoutFailure),
+                computeTestOutputFiltering(testKind),
                 computeExitCodeCheck(testKind, registeredDirectives, location),
                 computeOutputDataFileCheck(testDataFile, registeredDirectives, location),
                 outputMatcher,
@@ -301,5 +304,9 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             registeredDirectives: RegisteredDirectives,
             location: Location
         ): OutputDataFile? = parseOutputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location)
+
+        private fun computeTestOutputFiltering(testKind: TestKind): TestFiltering = TestFiltering(
+            if (testKind in listOf(TestKind.REGULAR, TestKind.STANDALONE)) TCTestOutputFilter else TestOutputFilter.NO_FILTERING
+        )
     }
 }
