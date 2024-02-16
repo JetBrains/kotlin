@@ -34,7 +34,7 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
     private val classesInPackageCache = ConcurrentHashMap<FqName, Collection<PsiClass>>()
 
     private fun getClassesInPackage(fqName: FqName): Collection<PsiClass> {
-        return classesInPackageCache.getOrPut(fqName) {
+        return classesInPackageCache.computeIfAbsent(fqName) {
             // `javaFileManager.findPackage(fqName).classes` triggers reading decompiled text from stub for built-in,
             // which will fail since such stubs are fake, i.e., no mirror to render decompiled text.
             // Instead, we will find/use potential class names in the package, while considering package parts.
@@ -44,7 +44,7 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
                 (javaFileManager as? KotlinCliJavaFileManager)?.knownClassNamesInPackage(fqName)?.map { name ->
                     fqName.child(Name.identifier(name)).asString()
                 }
-            } ?: return@getOrPut emptyList()
+            } ?: return@computeIfAbsent emptyList()
             fqNames.flatMap { fqName ->
                 javaFileManager.findClasses(fqName, scope).asIterable()
             }.distinct()
