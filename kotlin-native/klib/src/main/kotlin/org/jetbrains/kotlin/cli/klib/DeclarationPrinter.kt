@@ -40,7 +40,7 @@ internal class DeclarationPrinter(
 
     private fun Printer.printPlain(header: String, signature: String? = null, suffix: String? = null) {
         if (signature != null) println(signature)
-        println(if (suffix != null ) header + suffix else header)
+        println(if (suffix != null) header + suffix else header)
     }
 
     private inner class PrinterVisitor : DeclarationDescriptorVisitorEmptyBodies<Unit, Unit>() {

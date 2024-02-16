@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.cli.klib
 
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 
-internal class IrSignaturesRenderer(private val output: Appendable, signatureVersion: KotlinIrSignatureVersion?) {
-    private val individualSignatureRenderer = signatureVersion.getMostSuitableSignatureRenderer()
+internal class IrSignaturesRenderer(private val output: Appendable, private val individualSignatureRenderer: IdSignatureRenderer) {
 
     fun render(signatures: IrSignaturesExtractor.Signatures) {
         header("Declared signatures: ${signatures.declaredSignatures.size}")

@@ -18,12 +18,14 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 internal class KlibToolIrLinker(
+        output: KlibToolOutput,
         module: ModuleDescriptor,
         irBuiltIns: IrBuiltIns,
         symbolTable: SymbolTable
-) : KotlinIrLinker(module, KlibToolLogger, irBuiltIns, symbolTable, exportedDependencies = emptyList()) {
+) : KotlinIrLinker(module, KlibToolLogger(output), irBuiltIns, symbolTable, exportedDependencies = emptyList()) {
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
             linker = this,
             symbolTable = symbolTable,
@@ -35,7 +37,7 @@ internal class KlibToolIrLinker(
 
     override val returnUnboundSymbolsIfSignatureNotFound get() = true
 
-    override val translationPluginContext get() = TODO("Not needed for ir dumping")
+    override val translationPluginContext get() = shouldNotBeCalled()
 
     override fun createModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,

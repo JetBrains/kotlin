@@ -7,15 +7,22 @@ package org.jetbrains.kotlin.cli.klib
 
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.util.Logger
-import kotlin.system.exitProcess
 
-internal object KlibToolLogger : Logger, IrMessageLogger {
-    override fun log(message: String) = println(message)
-    override fun warning(message: String) = logWarning(message)
-    override fun error(message: String) = logWarning(message)
+internal class KlibToolLogger(private val output: KlibToolOutput) : Logger, IrMessageLogger {
+    override fun log(message: String) {
+        output.logInfo(message)
+    }
+
+    override fun warning(message: String) {
+        output.logWarning(message)
+    }
+
+    override fun error(message: String) {
+        output.logError(message)
+    }
 
     @Deprecated(Logger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(Logger.FATAL_REPLACEMENT))
-    override fun fatal(message: String) = logError(message, withStacktrace = true)
+    override fun fatal(message: String) = throw IllegalStateException("error: $message")
 
     override fun report(severity: IrMessageLogger.Severity, message: String, location: IrMessageLogger.Location?) {
         when (severity) {
@@ -23,18 +30,5 @@ internal object KlibToolLogger : Logger, IrMessageLogger {
             IrMessageLogger.Severity.WARNING -> warning(message)
             IrMessageLogger.Severity.ERROR -> error(message)
         }
-    }
-}
-
-internal fun logWarning(text: String) {
-    println("warning: $text")
-}
-
-internal fun logError(text: String, withStacktrace: Boolean = false): Nothing {
-    if (withStacktrace)
-        error("error: $text")
-    else {
-        System.err.println("error: $text")
-        exitProcess(1)
     }
 }

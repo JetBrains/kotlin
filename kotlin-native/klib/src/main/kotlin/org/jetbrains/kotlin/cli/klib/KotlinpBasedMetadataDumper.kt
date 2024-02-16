@@ -22,21 +22,16 @@ import org.jetbrains.kotlin.kotlinp.Printer
 import org.jetbrains.kotlin.kotlinp.Settings
 import org.jetbrains.kotlin.kotlinp.klib.*
 import org.jetbrains.kotlin.kotlinp.klib.TypeArgumentId.VarianceId
-import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal class KotlinpBasedMetadataDumper(
-        output: Appendable,
-        printSignatures: Boolean,
-        signatureVersion: KotlinIrSignatureVersion?
+        private val output: KlibToolOutput,
+        private val signatureRenderer: IdSignatureRenderer?, // `null` means no signatures should be rendered.
 ) {
-    // `null` means no signatures should be rendered.
-    private val signatureRenderer = runIf(printSignatures) { signatureVersion.getMostSuitableSignatureRenderer() }
 
     private val printer = Printer(output)
 
@@ -102,7 +97,7 @@ internal class KotlinpBasedMetadataDumper(
     private fun prepareSignatureComputer(library: KotlinLibrary, moduleMetadata: KlibModuleMetadata): ExternalSignatureComputer? {
         val signatureCollector = SignaturesCollector(signatureRenderer ?: return null)
 
-        val moduleDescriptor = ModuleDescriptorLoader.load(library)
+        val moduleDescriptor = ModuleDescriptorLoader(output).load(library)
         moduleDescriptor.accept(signatureCollector, Unit)
 
         return ExternalSignatureComputer(moduleMetadata, signatureCollector.signatures::get)

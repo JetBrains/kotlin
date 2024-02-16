@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 
-internal object ModuleDescriptorLoader {
+internal class ModuleDescriptorLoader(output: KlibToolOutput) {
+    private val logger = KlibToolLogger(output)
+
     fun load(library: KotlinLibrary): ModuleDescriptorImpl {
         val storageManager = LockBasedStorageManager("klib")
 
@@ -31,7 +33,7 @@ internal object ModuleDescriptorLoader {
                     emptyList(),
                     distributionKlib = Distribution(KotlinNativePaths.homePath.absolutePath).klib,
                     skipCurrentDir = true,
-                    logger = KlibToolLogger
+                    logger = logger
             )
             resolver.defaultLinks(noStdLib = false, noDefaultLibs = true, noEndorsedLibs = true).mapTo(defaultModules) {
                 KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptor(it, languageVersionSettings, storageManager, module.builtIns, null)
@@ -45,7 +47,9 @@ internal object ModuleDescriptorLoader {
         return module
     }
 
-    val languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
+    companion object {
+        val languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
 
-    private val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
+        private val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
+    }
 }

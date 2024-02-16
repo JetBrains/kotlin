@@ -6,34 +6,37 @@
 package org.jetbrains.kotlin.cli.klib
 
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
-import kotlin.system.exitProcess
 
-internal class KlibToolArgumentsParser {
-    fun parseArguments(rawArgs: Array<String>): KlibToolArguments {
+internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
+    fun parseArguments(rawArgs: Array<String>): KlibToolArguments? {
         if (rawArgs.size < 2) {
             printUsage()
-            exitProcess(0)
+            return null
         }
 
         val extraArgs: Map<ExtraOption, List<String>> = parseOptions(rawArgs.drop(2).toTypedArray<String>())
-                .entries
-                .mapNotNull { (option, values) ->
+                ?.entries
+                ?.mapNotNull { (option, values) ->
                     val knownOption = ExtraOption.parseOrNull(option)
                     if (knownOption == null) {
-                        logWarning("Unrecognized command-line argument: $option")
+                        output.logWarning("Unrecognized command-line argument: $option")
                         return@mapNotNull null
                     }
                     knownOption to values
-                }.toMap()
+                }?.toMap()
+                ?: return null
 
         val signatureVersion = extraArgs[ExtraOption.SIGNATURE_VERSION]?.last()?.let { rawSignatureVersion ->
-            rawSignatureVersion.toIntOrNull()?.let(::KotlinIrSignatureVersion)
-                    ?: logError("Invalid signature version: $rawSignatureVersion")
+            rawSignatureVersion.toIntOrNull()?.let(::KotlinIrSignatureVersion) ?: run {
+                output.logError("Invalid signature version: $rawSignatureVersion")
+                return null
+            }
         }
 
-        if (signatureVersion != null && signatureVersion !in KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS)
-            logError("Unsupported signature version: ${signatureVersion.number}")
-
+        if (signatureVersion != null && signatureVersion !in KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS) {
+            output.logError("Unsupported signature version: ${signatureVersion.number}")
+            return null
+        }
 
         return KlibToolArguments(
                 commandName = rawArgs[0],
@@ -45,15 +48,17 @@ internal class KlibToolArgumentsParser {
         )
     }
 
-    private fun parseOptions(args: Array<String>): Map<String, List<String>> {
+    private fun parseOptions(args: Array<String>): Map<String, List<String>>? {
         val options = mutableMapOf<String, MutableList<String>>()
         for (index in args.indices step 2) {
             val key = args[index]
             if (key[0] != '-') {
-                logError("Expected a flag with initial dash: $key")
+                output.logError("Expected a flag with initial dash: $key")
+                return null
             }
             if (index + 1 == args.size) {
-                logError("Expected an value after $key")
+                output.logError("Expected an value after $key")
+                return null
             }
             val value = listOf(args[index + 1])
             options[key]?.addAll(value) ?: options.put(key, value.toMutableList())
@@ -62,7 +67,7 @@ internal class KlibToolArgumentsParser {
     }
 
     private fun printUsage() {
-        println(
+        output.stderr.appendLine(
                 """
                 Usage: klib <command> <library> [<option>]
 
