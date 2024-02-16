@@ -141,7 +141,6 @@ public class KotlinStaticDeclarationProvider internal constructor(
 public class KotlinStaticDeclarationProviderFactory(
     private val project: Project,
     files: Collection<KtFile>,
-    private val jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
     additionalRoots: List<VirtualFile> = emptyList(),
     skipBuiltins: Boolean = false,
 ) : KotlinDeclarationProviderFactory() {
