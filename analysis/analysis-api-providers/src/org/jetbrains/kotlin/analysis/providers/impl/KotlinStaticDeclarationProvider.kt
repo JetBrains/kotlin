@@ -381,9 +381,6 @@ public class KotlinFakeClsStubsCache {
             storage: (VirtualFile) -> Map<VirtualFile, KotlinFileStubImpl>
         ): Map<VirtualFile, KotlinFileStubImpl>? {
             val service = ApplicationManager.getApplication().getService(KotlinFakeClsStubsCache::class.java) ?: return null
-            if (service.fakeFileClsStubs[root.path] == null) {
-                service.fakeFileClsStubs[root.path] = storage(root)
-            }
             return service.fakeFileClsStubs.computeIfAbsent(root.path) { _ ->
                 storage(root)
             }
