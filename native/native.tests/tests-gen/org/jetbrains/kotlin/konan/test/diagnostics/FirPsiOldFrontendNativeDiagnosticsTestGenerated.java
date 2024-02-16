@@ -113,6 +113,12 @@ public class FirPsiOldFrontendNativeDiagnosticsTestGenerated extends AbstractFir
   }
 
   @Test
+  @TestMetadata("objCNameWIthDifferentSwiftName.kt")
+  public void testObjCNameWIthDifferentSwiftName() {
+    runTest("compiler/testData/diagnostics/nativeTests/objCNameWIthDifferentSwiftName.kt");
+  }
+
+  @Test
   @TestMetadata("objCNameWithTwoModules.kt")
   public void testObjCNameWithTwoModules() {
     runTest("compiler/testData/diagnostics/nativeTests/objCNameWithTwoModules.kt");

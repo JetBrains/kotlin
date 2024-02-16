@@ -132,9 +132,11 @@ fun FirAnnotation.findArgumentByName(name: Name): FirExpression? {
             return argument.expression
         }
     }
-    // I'm lucky today!
-    // TODO: this line is still needed. However it should be replaced with 'return null'
-    return arguments.singleOrNull()
+
+    // The condition is required for annotation arguments that are not fully resolved. For example, CompilerRequiredAnnotations.
+    // When the annotation is resolved, and we did not find an argument with the given name,
+    // there is no argument and we should return null.
+    return if (!resolved) arguments.firstOrNull() else null
 }
 
 fun FirAnnotation.getBooleanArgument(name: Name): Boolean? = getPrimitiveArgumentValue(name)
