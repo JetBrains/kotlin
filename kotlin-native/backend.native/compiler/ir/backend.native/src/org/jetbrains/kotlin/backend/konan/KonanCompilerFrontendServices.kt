@@ -24,6 +24,8 @@ internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
         useInstance(object : ObjCExportProblemCollector {
             override fun reportWarning(text: String) {}
             override fun reportWarning(declaration: DeclarationDescriptor, text: String) {}
+            override fun reportError(text: String) {}
+            override fun reportError(declaration: DeclarationDescriptor, text: String) {}
             override fun reportException(throwable: Throwable) = throw throwable
         })
 
