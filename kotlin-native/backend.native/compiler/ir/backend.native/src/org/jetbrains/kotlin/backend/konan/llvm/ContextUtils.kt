@@ -578,7 +578,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val llvmEhTypeidFor = llvmIntrinsic(
             "llvm.eh.typeid.for",
             functionType(int32Type, false, int8PtrType),
-            "nounwind", "readnone"
+            "nounwind"
     )
 
     var tlsCount = 0
