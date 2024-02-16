@@ -106,7 +106,6 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         return File(filePath)
     }
 
-    @Throws(Exception::class)
     public override fun doTest(filePath: String) {
         val file = createTestFileFromPath(filePath)
         val expectedText = KtTestUtil.doLoadFile(file)

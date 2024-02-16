@@ -84,7 +84,7 @@ public class KtTestUtil {
         return doLoadFile(new File(fullName));
     }
 
-    public static String doLoadFile(@NotNull File file) throws IOException {
+    public static String doLoadFile(@NotNull File file) {
         try {
             return FileUtil.loadFile(file, CharsetToolkit.UTF8, true);
         }
@@ -94,11 +94,16 @@ public class KtTestUtil {
              * This clarifies the exception by showing the full path.
              */
             String messageWithFullPath = file.getAbsolutePath() + " (No such file or directory)";
-            throw new IOException(
-                    "Ensure you have your 'Working Directory' configured correctly as the root " +
-                    "Kotlin project directory in your test configuration\n\t" +
-                    messageWithFullPath,
-                    fileNotFoundException);
+            throw new RuntimeException(
+                    new IOException(
+                        "Ensure you have your 'Working Directory' configured correctly as the root " +
+                        "Kotlin project directory in your test configuration\n\t" +
+                        messageWithFullPath,
+                        fileNotFoundException
+                    )
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

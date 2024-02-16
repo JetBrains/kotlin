@@ -34,6 +34,6 @@ object RunTestMethodGenerator : MethodGenerator<RunTestMethodModel>() {
 
     override fun generateSignature(method: RunTestMethodModel, p: Printer) {
         val optionalTransformer = if (method.withTransformer) ", ${Function::class.java.canonicalName}<String, String> transformer" else ""
-        p.print("private void ${method.name}(String testDataFilePath${optionalTransformer}) throws Exception")
+        p.print("private void ${method.name}(String testDataFilePath${optionalTransformer})")
     }
 }

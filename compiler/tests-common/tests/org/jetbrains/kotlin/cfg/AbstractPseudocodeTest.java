@@ -49,12 +49,20 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironmentManagement {
-    protected void doTestWithStdLib(String fileName) throws Exception {
-        doTestWithEnvironment(fileName, createEnvironmentWithMockJdk(ConfigurationKind.NO_KOTLIN_REFLECT));
+    protected void doTestWithStdLib(String fileName) {
+        try {
+            doTestWithEnvironment(fileName, createEnvironmentWithMockJdk(ConfigurationKind.NO_KOTLIN_REFLECT));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    protected void doTest(String fileName) throws Exception {
-        doTestWithEnvironment(fileName, createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY));
+    protected void doTest(String fileName) {
+        try {
+            doTestWithEnvironment(fileName, createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void doTestWithEnvironment(String fileName, KotlinCoreEnvironment environment) throws Exception {
