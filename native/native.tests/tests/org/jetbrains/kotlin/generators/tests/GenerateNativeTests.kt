@@ -480,7 +480,7 @@ fun main() {
                             *frontend.value
                         )
                     ) {
-                        model("CExport", pattern = "^([^_](.+))$", recursive = false)
+                        model("CExport/InterfaceV1", pattern = "^([^_](.+))$", recursive = false)
                     }
                 }
             }
