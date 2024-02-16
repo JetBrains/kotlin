@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.generator
 
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.ClassRef
 import org.jetbrains.kotlin.generators.tree.ImportCollector
@@ -75,7 +76,14 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(variable) {
-            implementation.doPrint = false
+            implementation.putImplementationOptInInConstructor = false
+            implementation.constructorParameterOrderOverride =
+                listOf("startOffset", "endOffset", "origin", "symbol", "name", "type", "isVar", "isConst", "isLateinit")
+            defaultNull("initializer")
+            default("factory") {
+                value = "error(\"Create IrVariableImpl directly\")"
+                withGetter = true
+            }
         }
 
         impl(`class`) {
