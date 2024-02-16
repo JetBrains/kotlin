@@ -6,181 +6,29 @@
 package org.jetbrains.kotlin.cli.klib
 
 // TODO: Extract `library` package as a shared jar?
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
-import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
-import org.jetbrains.kotlin.backend.common.serialization.BasicIrModuleDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
-import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolverByName
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION_WITH_DOT
+import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
+import org.jetbrains.kotlin.library.unpackZippedKonanLibraryTo
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
-import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.io.File
-import kotlin.system.exitProcess
 import org.jetbrains.kotlin.konan.file.File as KFile
-
-internal class KlibToolArgumentsParser {
-    fun parseArguments(rawArgs: Array<String>): KlibToolArguments {
-        if (rawArgs.size < 2) {
-            printUsage()
-            exitProcess(0)
-        }
-
-        val extraArgs: Map<ExtraOption, List<String>> = parseOptions(rawArgs.drop(2).toTypedArray<String>())
-                .entries
-                .mapNotNull { (option, values) ->
-                    val knownOption = ExtraOption.parseOrNull(option)
-                    if (knownOption == null) {
-                        logWarning("Unrecognized command-line argument: $option")
-                        return@mapNotNull null
-                    }
-                    knownOption to values
-                }.toMap()
-
-        val signatureVersion = extraArgs[ExtraOption.SIGNATURE_VERSION]?.last()?.let { rawSignatureVersion ->
-            rawSignatureVersion.toIntOrNull()?.let(::KotlinIrSignatureVersion)
-                    ?: logError("Invalid signature version: $rawSignatureVersion")
-        }
-
-        if (signatureVersion != null && signatureVersion !in KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS)
-            logError("Unsupported signature version: ${signatureVersion.number}")
-
-
-        return KlibToolArguments(
-                commandName = rawArgs[0],
-                libraryNameOrPath = rawArgs[1],
-                repository = extraArgs[ExtraOption.REPOSITORY]?.last(),
-                printSignatures = extraArgs[ExtraOption.PRINT_SIGNATURES]?.last()?.toBoolean() == true,
-                signatureVersion,
-        )
-    }
-
-    private fun parseOptions(args: Array<String>): Map<String, List<String>> {
-        val options = mutableMapOf<String, MutableList<String>>()
-        for (index in args.indices step 2) {
-            val key = args[index]
-            if (key[0] != '-') {
-                logError("Expected a flag with initial dash: $key")
-            }
-            if (index + 1 == args.size) {
-                logError("Expected an value after $key")
-            }
-            val value = listOf(args[index + 1])
-            options[key]?.addAll(value) ?: options.put(key, value.toMutableList())
-        }
-        return options
-    }
-
-    private fun printUsage() {
-        println(
-                """
-                Usage: klib <command> <library> [<option>]
-
-                where the commands are:
-                   info                      General information about the library
-                   install                   [DEPRECATED] Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
-                                               Install the library to the local repository.
-                   remove                    [DEPRECATED] Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
-                                               Remove the library from the local repository.
-                   dump-abi                  Dump the ABI snapshot of the library. Each line in the snapshot corresponds exactly to one
-                                               declaration. Whenever an ABI-incompatible change happens to a declaration, this should
-                                               be visible in the corresponding line of the snapshot.
-                   dump-ir                   Dump the intermediate representation (IR) of all declarations in the library. The output of this
-                                               command is intended to be used for debugging purposes only.
-                   dump-ir-signatures        Dump IR signatures of all non-private declarations in the library and all non-private declarations
-                                               consumed by this library (as two separate lists). This command relies purely on the data in IR.
-                   dump-metadata-signatures  Dump IR signatures of all non-private declarations in the library. Note, that this command renders
-                                               the signatures based on the library metadata. This is different from "dump-ir-signatures",
-                                               which renders signatures based on the IR. On practice, in most cases there is no difference
-                                               between output of these two commands. However, if IR transforming compiler plugins
-                                               (such as Compose) were used during compilation of the library, there would be different
-                                               signatures for patched declarations.
-                   signatures                [DEPRECATED] Renamed to "dump-metadata-signatures". Please, use new command name.
-                   dump-metadata             Dump the metadata of all declarations in the library. The output of this command is intended
-                                               to be used for debugging purposes only.
-                   contents                  [DEPRECATED] Reworked and renamed to "dump-metadata". Please, use new command name.
-
-                and the options are:
-                   -repository <path>        [DEPRECATED] Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
-                                               Work with the specified repository.
-                   -signature-version {${KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.joinToString("|") { it.number.toString() }}}
-                                             Render IR signatures of a specific version. By default, the most up-to-date signature version
-                                               that is supported in the library is used.
-                   -print-signatures {true|false}
-                                             Print IR signature for every declaration. Applicable only to "dump-metadata" and "dump-ir" commands.
-                """.trimIndent()
-        )
-    }
-}
-
-internal class KlibToolArguments(
-        val commandName: String,
-        val libraryNameOrPath: String,
-        val repository: String?,
-        val printSignatures: Boolean,
-        val signatureVersion: KotlinIrSignatureVersion?,
-)
-
-
-private enum class ExtraOption(val option: String) {
-    REPOSITORY("-repository"),
-    PRINT_SIGNATURES("-print-signatures"),
-    SIGNATURE_VERSION("-signature-version");
-
-    companion object {
-        fun parseOrNull(option: String): ExtraOption? = entries.firstOrNull { it.option == option }
-    }
-}
-
-internal object KlibToolLogger : Logger, IrMessageLogger {
-    override fun log(message: String) = println(message)
-    override fun warning(message: String) = logWarning(message)
-    override fun error(message: String) = logWarning(message)
-
-    @Deprecated(Logger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(Logger.FATAL_REPLACEMENT))
-    override fun fatal(message: String) = logError(message, withStacktrace = true)
-
-    override fun report(severity: IrMessageLogger.Severity, message: String, location: IrMessageLogger.Location?) {
-        when (severity) {
-            IrMessageLogger.Severity.INFO -> log(message)
-            IrMessageLogger.Severity.WARNING -> warning(message)
-            IrMessageLogger.Severity.ERROR -> error(message)
-        }
-    }
-}
-
-internal fun logWarning(text: String) {
-    println("warning: $text")
-}
-
-internal fun logError(text: String, withStacktrace: Boolean = false): Nothing {
-    if (withStacktrace)
-        error("error: $text")
-    else {
-        System.err.println("error: $text")
-        exitProcess(1)
-    }
-}
 
 private val defaultRepository = KFile(DependencyDirectories.localKonanDir.resolve("klib").absolutePath)
 
@@ -260,49 +108,6 @@ internal class Library(val libraryNameOrPath: String, requestedRepository: Strin
 
         }
         library?.libraryFile?.deleteRecursively()
-    }
-
-    class KlibToolIrLinker(
-            module: ModuleDescriptor,
-            irBuiltIns: IrBuiltIns,
-            symbolTable: SymbolTable
-    ) : KotlinIrLinker(module, KlibToolLogger, irBuiltIns, symbolTable, exportedDependencies = emptyList()) {
-        override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
-                linker = this,
-                symbolTable = symbolTable,
-                mangler = KonanManglerIr,
-                typeSystem = IrTypeSystemContextImpl(builtIns),
-                friendModules = emptyMap(),
-                partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
-        )
-
-        override val returnUnboundSymbolsIfSignatureNotFound get() = true
-
-        override val translationPluginContext get() = TODO("Not needed for ir dumping")
-
-        override fun createModuleDeserializer(
-                moduleDescriptor: ModuleDescriptor,
-                klib: KotlinLibrary?,
-                strategyResolver: (String) -> DeserializationStrategy
-        ): IrModuleDeserializer = KlibToolModuleDeserializer(
-                module = moduleDescriptor,
-                klib = klib ?: error("Expecting kotlin library for $moduleDescriptor"),
-                strategyResolver = strategyResolver
-        )
-
-        override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor) = false
-
-        private inner class KlibToolModuleDeserializer(
-                module: ModuleDescriptor,
-                klib: KotlinLibrary,
-                strategyResolver: (String) -> DeserializationStrategy
-        ) : BasicIrModuleDeserializer(
-                this,
-                module,
-                klib,
-                strategyResolver,
-                klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
-        )
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
