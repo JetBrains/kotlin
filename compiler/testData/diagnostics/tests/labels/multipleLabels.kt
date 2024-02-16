@@ -35,3 +35,11 @@ fun foo6() {
 fun foo7() {
     l3@ l2@ l1@ fun bar() {}
 }
+
+fun func(y: (Unit) -> Unit) {}
+
+fun foo8() {
+    func(l@ {})
+    func(l2@ l1@ {})
+    func(<!UNDERSCORE_IS_RESERVED!>_<!>@ {})
+}
