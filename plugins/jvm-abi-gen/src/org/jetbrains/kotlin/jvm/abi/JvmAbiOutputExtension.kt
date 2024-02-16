@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
+import kotlinx.metadata.jvm.KotlinModuleMetadata
+import kotlinx.metadata.jvm.UnstableMetadataApi
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputBinaryFile
@@ -25,6 +27,7 @@ import java.io.File
 class JvmAbiOutputExtension(
     private val outputPath: File,
     private val abiClassInfoBuilder: () -> Map<String, AbiClassInfo>,
+    private val removedFileClasses: Map<String?, Set<String>>,
     private val messageCollector: MessageCollector,
     private val removeDebugInfo: Boolean,
     private val removeDataClassCopyIfConstructorIsPrivate: Boolean,
@@ -34,7 +37,7 @@ class JvmAbiOutputExtension(
         // We need to wait until the end to produce any output in order to strip classes
         // from the InnerClasses attributes.
         val outputFiles =
-            AbiOutputFiles(abiClassInfoBuilder(), factory, removeDebugInfo, removeDataClassCopyIfConstructorIsPrivate, preserveDeclarationOrder)
+            AbiOutputFiles(abiClassInfoBuilder(), removedFileClasses, factory, removeDebugInfo, removeDataClassCopyIfConstructorIsPrivate, preserveDeclarationOrder)
         if (outputPath.extension == "jar") {
             // We don't include the runtime or main class in interface jars and always reset time stamps.
             CompileEnvironmentUtil.writeToJar(
@@ -55,6 +58,7 @@ class JvmAbiOutputExtension(
 
     private class AbiOutputFiles(
         val abiClassInfos: Map<String, AbiClassInfo>,
+        val removedFileClasses: Map<String?, Set<String>>,
         val outputFiles: OutputFileCollection,
         val removeDebugInfo: Boolean,
         val removeCopyAlongWithConstructor: Boolean,
@@ -69,9 +73,13 @@ class JvmAbiOutputExtension(
         }
 
         override fun asList(): List<OutputFile> {
-            val metadata = outputFiles.asList().filter {
-                !it.relativePath.endsWith(".class")
-            }.sortedBy { it.relativePath }
+            val metadata = outputFiles
+                .asList()
+                .asSequence()
+                .filter { !it.relativePath.endsWith(".class") }
+                .sortedBy { it.relativePath }
+                .map { outputFile -> removeFileClassesFromModuleMetadata(outputFile, removedFileClasses) }
+                .toList()
 
             val classFiles = abiClassInfos.keys.sorted().mapNotNull { internalName ->
                 // Note that outputFile may be null, e.g., for empty $DefaultImpls classes in the JVM backend.
@@ -243,4 +251,26 @@ private class DebugInfoRemovingMethodVisitor(visitor: MethodVisitor) : MethodVis
     override fun visitLineNumber(line: Int, start: Label?) {}
 
     override fun visitLocalVariable(name: String?, descriptor: String?, signature: String?, start: Label?, end: Label?, index: Int) {}
+}
+
+@OptIn(UnstableMetadataApi::class)
+private fun removeFileClassesFromModuleMetadata(outputFile: OutputFile, removedFileClasses: Map<String?, Set<String>>): OutputFile {
+    if (removedFileClasses.isEmpty()) return outputFile
+
+    val metadata = KotlinModuleMetadata.read(outputFile.asByteArray())
+    val iterator = metadata.kmModule.packageParts.iterator()
+
+    var changed = false
+
+    while (iterator.hasNext()) {
+        val (pkg, parts) = iterator.next()
+        val removedClasses = removedFileClasses[pkg].orEmpty()
+
+        val oldSize = parts.fileFacades.size
+        parts.fileFacades.removeAll { it in removedClasses }
+        changed = changed || oldSize != parts.fileFacades.size
+
+        if (parts.fileFacades.isEmpty() && parts.multiFileClassParts.isEmpty()) iterator.remove()
+    }
+    return if (changed) SimpleOutputBinaryFile(outputFile.sourceFiles, outputFile.relativePath, metadata.write()) else outputFile
 }

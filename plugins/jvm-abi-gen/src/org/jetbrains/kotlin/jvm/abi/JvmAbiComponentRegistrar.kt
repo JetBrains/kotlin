@@ -26,6 +26,7 @@ class JvmAbiComponentRegistrar : CompilerPluginRegistrar() {
         )
         val outputExtension = JvmAbiOutputExtension(
             File(outputPath), builderExtension::buildAbiClassInfoAndReleaseResources,
+            builderExtension.removedEmptyFileClassesWithoutAliases,
             messageCollector, configuration.getBoolean(JvmAbiConfigurationKeys.REMOVE_DEBUG_INFO),
             removeDataClassCopy,
             configuration.getBoolean(JvmAbiConfigurationKeys.PRESERVE_DECLARATION_ORDER),

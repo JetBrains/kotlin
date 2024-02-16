@@ -100,6 +100,11 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderPrivateInline/");
     }
 
+    @TestMetadata("emptyKtClassIsRemoved")
+    public void testEmptyKtClassIsRemoved() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/emptyKtClassIsRemoved/");
+    }
+
     @TestMetadata("fieldOrder")
     public void testFieldOrder() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/fieldOrder/");
