@@ -607,8 +607,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
     }
 
-    // Avoid Standalone mode because of KT-65813.
-    component("visibilityChecker", filter = frontendIs(FrontendKind.Fir) and analysisApiModeIs(AnalysisApiMode.Ide)) {
+    component("visibilityChecker", filter = frontendIs(FrontendKind.Fir)) {
         test<AbstractVisibilityCheckerTest> {
             model(it, "visibility")
         }

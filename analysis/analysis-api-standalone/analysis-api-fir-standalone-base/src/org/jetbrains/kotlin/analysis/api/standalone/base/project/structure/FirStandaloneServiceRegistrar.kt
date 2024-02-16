@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.providers.KotlinStandal
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLRealFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService
@@ -58,6 +60,7 @@ object FirStandaloneServiceRegistrar : AnalysisApiStandaloneServiceRegistrar {
             registerService(LLFirGlobalResolveComponents::class.java)
             registerService(LLFirBuiltinsSessionFactory::class.java)
             registerService(LLFirLibrarySymbolProviderFactory::class.java, LLStubBasedLibrarySymbolProviderFactory::class.java)
+            registerService(LLFirElementByPsiElementChooser::class.java, LLRealFirElementByPsiElementChooser::class.java)
             registerService(KotlinReferenceProviderContributor::class.java, KotlinFirReferenceContributor::class.java)
             registerService(ReadWriteAccessChecker::class.java, ReadWriteAccessCheckerFirImpl::class.java)
 

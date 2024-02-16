@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
@@ -12,11 +13,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWith
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.getProperties
@@ -29,15 +28,21 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 /**
  * Allows to search for FIR declarations by compiled [KtDeclaration]s.
  */
 internal class FirDeclarationForCompiledElementSearcher(private val symbolProvider: FirSymbolProvider) {
+    private val project = symbolProvider.session.llFirModuleData.ktModule.project
+
     private val projectStructureProvider by lazy {
-        val project = symbolProvider.session.llFirModuleData.ktModule.project
         ProjectStructureProvider.getInstance(project)
+    }
+
+    private val firElementByPsiElementChooser by lazy {
+        LLFirElementByPsiElementChooser.getInstance(project)
     }
 
     fun findNonLocalDeclaration(ktDeclaration: KtDeclaration): FirDeclaration = when (ktDeclaration) {
@@ -101,7 +106,9 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
             fir = firDeclaration,
         )
 
-        return firTypeParameterRefOwner.typeParameters.find { it.realPsi === param } as FirDeclaration
+        return firTypeParameterRefOwner.typeParameters.find { typeParameterRef ->
+            firElementByPsiElementChooser.isMatchingTypeParameter(param, typeParameterRef.symbol.fir)
+        } as FirDeclaration
     }
 
     private fun findParameter(param: KtParameter): FirDeclaration {
@@ -112,7 +119,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
             psi = ownerFunction,
             fir = firDeclaration
         )
-        return firFunction.valueParameters.find { it.realPsi === param }
+        return firFunction.valueParameters.find { firElementByPsiElementChooser.isMatchingValueParameter(param, it) }
             ?: errorWithFirSpecificEntries("No fir value parameter found", psi = param, fir = firFunction)
     }
 
@@ -121,7 +128,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
             ?: errorWithFirSpecificEntries("Enum entry must have containing class", psi = declaration)
 
         return (classCandidate as FirRegularClass).declarations.first {
-            it is FirEnumEntry && it.realPsi === declaration
+            it is FirEnumEntry && firElementByPsiElementChooser.isMatchingEnumEntry(declaration, it)
         } as FirEnumEntry
     }
 
@@ -156,7 +163,8 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
             ?: errorWithFirSpecificEntries("Constructor must have outer class", psi = declaration)
 
         val containingFirClass = findNonLocalClassLikeDeclaration(containingClass) as FirClass
-        val constructorCandidate = containingFirClass.constructors(symbolProvider.session).singleOrNull { it.fir.realPsi === declaration }
+        val constructorCandidate = containingFirClass.constructors(symbolProvider.session)
+            .singleOrNull { firElementByPsiElementChooser.isMatchingCallableDeclaration(declaration, it.fir) }
             ?: errorWithFirSpecificEntries("We should be able to find a constructor", psi = declaration, fir = containingFirClass)
 
         return constructorCandidate.fir
@@ -166,7 +174,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         require(!declaration.isLocal)
 
         val candidates = symbolProvider.findFunctionCandidates(declaration)
-        val functionCandidate = candidates.firstOrNull { it.fir.realPsi === declaration }
+        val functionCandidate = candidates.firstOrNull { firElementByPsiElementChooser.isMatchingCallableDeclaration(declaration, it.fir) }
             ?: errorWithFirSpecificEntries("We should be able to find a symbol for function", psi = declaration) {
                 withCandidates(candidates)
             }
@@ -174,12 +182,11 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         return functionCandidate.fir
     }
 
-
     private fun findNonLocalProperty(declaration: KtProperty): FirProperty {
         require(!declaration.isLocal)
 
         val candidates = symbolProvider.findPropertyCandidates(declaration)
-        val propertyCandidate = candidates.firstOrNull { it.fir.realPsi === declaration }
+        val propertyCandidate = candidates.firstOrNull { firElementByPsiElementChooser.isMatchingCallableDeclaration(declaration, it.fir) }
             ?: errorWithFirSpecificEntries("We should be able to find a symbol for property", psi = declaration) {
                 withCandidates(candidates)
             }
