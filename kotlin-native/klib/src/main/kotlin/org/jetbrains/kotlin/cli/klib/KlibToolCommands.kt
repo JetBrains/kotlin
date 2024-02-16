@@ -30,16 +30,74 @@ import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-internal class KlibToolCommand(private val output: KlibToolOutput, private val args: KlibToolArguments) {
+internal sealed class KlibToolCommand(
+        protected val output: KlibToolOutput,
+        protected val args: KlibToolArguments
+) {
+    protected val klibRepoDeprecationWarning = KlibRepoDeprecationWarning()
 
-    private val klibRepoDeprecationWarning = KlibRepoDeprecationWarning(output)
-
-    private val repository = args.repository?.let {
+    protected val repository: File = args.repository?.let {
         klibRepoDeprecationWarning.logOnceIfNecessary() // Due to use of "-repository" option.
         File(it)
-    } ?: defaultRepository
+    } ?: getDefaultRepository()
 
-    fun info() {
+    abstract fun execute()
+
+    protected fun checkLibraryHasIr(library: KotlinLibrary): Boolean {
+        if (!library.hasIr) {
+            output.logError("Library ${library.libraryFile} is an IR-less library")
+            return false
+        }
+        return true
+    }
+
+    protected fun KotlinIrSignatureVersion?.checkSupportedInLibrary(library: KotlinLibrary): Boolean {
+        if (this != null) {
+            val supportedSignatureVersions = library.versions.irSignatureVersions
+            if (this !in supportedSignatureVersions) {
+                output.logError("Signature version ${this.number} is not supported in library ${library.libraryFile}." +
+                        " Supported versions: ${supportedSignatureVersions.joinToString { it.number.toString() }}")
+                return false
+            }
+        }
+        return true
+    }
+
+    protected fun KotlinIrSignatureVersion?.getMostSuitableSignatureRenderer(): IdSignatureRenderer? = when (this) {
+        KotlinIrSignatureVersion.V1 -> IdSignatureRenderer.LEGACY
+        null, KotlinIrSignatureVersion.V2 -> IdSignatureRenderer.DEFAULT
+        else -> {
+            output.logError("Unsupported signature version: $number")
+            null
+        }
+    }
+
+    protected fun libraryInRepo(repository: File, name: String) =
+            resolverByName(listOf(repository.absolutePath), skipCurrentDir = true, logger = KlibToolLogger(output)).resolve(name)
+
+    protected fun libraryInCurrentDir(name: String) = resolverByName(emptyList(), logger = KlibToolLogger(output)).resolve(name)
+
+    protected fun libraryInRepoOrCurrentDir(repository: File, name: String) =
+            resolverByName(listOf(repository.absolutePath), logger = KlibToolLogger(output)).resolve(name)
+
+    protected inner class KlibRepoDeprecationWarning {
+        private var alreadyLogged = false
+
+        fun logOnceIfNecessary() {
+            if (!alreadyLogged) {
+                alreadyLogged = true
+                output.logWarning("Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098")
+            }
+        }
+    }
+
+    companion object {
+        private fun getDefaultRepository(): File = File(DependencyDirectories.localKonanDir.resolve("klib").absolutePath)
+    }
+}
+
+internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
+    override fun execute() {
         val library = libraryInRepoOrCurrentDir(repository, args.libraryNameOrPath)
         val headerAbiVersion = library.versions.abiVersion
         val headerCompilerVersion = library.versions.compilerVersion
@@ -59,8 +117,10 @@ internal class KlibToolCommand(private val output: KlibToolOutput, private val a
             output.appendLine("Available targets: ${library.targetList.joinToString()}")
         }
     }
+}
 
-    fun install() {
+internal class LegacyInstall(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
+    override fun execute() {
         klibRepoDeprecationWarning.logOnceIfNecessary()
 
         if (!repository.exists) {
@@ -77,8 +137,10 @@ internal class KlibToolCommand(private val output: KlibToolOutput, private val a
 
         library.libraryFile.unpackZippedKonanLibraryTo(installLibDir)
     }
+}
 
-    fun remove() {
+internal class LegacyRemove(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
+    override fun execute() {
         klibRepoDeprecationWarning.logOnceIfNecessary()
 
         if (!repository.exists) {
@@ -90,9 +152,11 @@ internal class KlibToolCommand(private val output: KlibToolOutput, private val a
             libraryInRepo(repository, args.libraryNameOrPath).libraryFile.deleteRecursively()
         }
     }
+}
 
+internal class DumpIr(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun dumpIr() {
+    override fun execute() {
         val library = libraryInRepoOrCurrentDir(repository, args.libraryNameOrPath)
 
         if (!checkLibraryHasIr(library)) return
@@ -120,9 +184,11 @@ internal class KlibToolCommand(private val output: KlibToolOutput, private val a
 
         output.append(irFragment.dump(DumpIrTreeOptions(printSignatures = args.printSignatures)))
     }
+}
 
+internal class DumpAbi(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     @OptIn(ExperimentalLibraryAbiReader::class)
-    fun dumpAbi() {
+    override fun execute() {
         val library = libraryInCurrentDir(args.libraryNameOrPath)
 
         if (!checkLibraryHasIr(library)) return
@@ -174,9 +240,11 @@ internal class KlibToolCommand(private val output: KlibToolOutput, private val a
                         )
         )
     }
+}
 
-    // TODO: This command is deprecated. Drop it after 2.0. KT-65380
-    fun contents() {
+// TODO: This command is deprecated. Drop it after 2.0. KT-65380
+internal class LegacyContents(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
+    override fun execute() {
         output.logWarning("\"contents\" has been renamed to \"dump-metadata\". Please, use new command name.")
 
         val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
@@ -190,20 +258,26 @@ internal class KlibToolCommand(private val output: KlibToolOutput, private val a
 
         printer.print(module)
     }
+}
 
-    fun dumpMetadata() {
+internal class DumpMetadata(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
+    override fun execute() {
         val idSignatureRenderer: IdSignatureRenderer? = runIf(args.printSignatures) {
             args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
         }
         KotlinpBasedMetadataDumper(output, idSignatureRenderer).dumpLibrary(libraryInCurrentDir(args.libraryNameOrPath), args.testMode)
     }
+}
 
-    fun signatures() {
+internal class LegacySignatures(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
+    override fun execute() {
         output.logWarning("\"signatures\" has been renamed to \"dump-metadata-signatures\". Please, use new command name.")
-        dumpMetadataSignatures()
+        DumpMetadataSignatures(output, args).execute()
     }
+}
 
-    fun dumpMetadataSignatures() {
+internal class DumpMetadataSignatures(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
+    override fun execute() {
         // Don't call `checkSupportedInLibrary()` - the signatures are anyway generated on the fly.
 
         val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
@@ -213,8 +287,10 @@ internal class KlibToolCommand(private val output: KlibToolOutput, private val a
 
         printer.print(module)
     }
+}
 
-    fun dumpIrSignatures() {
+internal class DumpIrSignatures(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
+    override fun execute() {
         val library = libraryInCurrentDir(args.libraryNameOrPath)
 
         if (!checkLibraryHasIr(library) || !args.signatureVersion.checkSupportedInLibrary(library)) return
@@ -223,56 +299,5 @@ internal class KlibToolCommand(private val output: KlibToolOutput, private val a
 
         val signatures = IrSignaturesExtractor(library).extract()
         IrSignaturesRenderer(output, idSignatureRenderer).render(signatures)
-    }
-
-    private fun checkLibraryHasIr(library: KotlinLibrary): Boolean {
-        if (!library.hasIr) {
-            output.logError("Library ${library.libraryFile} is an IR-less library")
-            return false
-        }
-        return true
-    }
-
-    private fun KotlinIrSignatureVersion?.checkSupportedInLibrary(library: KotlinLibrary): Boolean {
-        if (this != null) {
-            val supportedSignatureVersions = library.versions.irSignatureVersions
-            if (this !in supportedSignatureVersions) {
-                output.logError("Signature version ${this.number} is not supported in library ${library.libraryFile}." +
-                        " Supported versions: ${supportedSignatureVersions.joinToString { it.number.toString() }}")
-                return false
-            }
-        }
-        return true
-    }
-
-    private fun KotlinIrSignatureVersion?.getMostSuitableSignatureRenderer(): IdSignatureRenderer? = when (this) {
-        KotlinIrSignatureVersion.V1 -> IdSignatureRenderer.LEGACY
-        null, KotlinIrSignatureVersion.V2 -> IdSignatureRenderer.DEFAULT
-        else -> {
-            output.logError("Unsupported signature version: $number")
-            null
-        }
-    }
-
-    private fun libraryInRepo(repository: File, name: String) =
-            resolverByName(listOf(repository.absolutePath), skipCurrentDir = true, logger = KlibToolLogger(output)).resolve(name)
-
-    private fun libraryInCurrentDir(name: String) = resolverByName(emptyList(), logger = KlibToolLogger(output)).resolve(name)
-
-    private fun libraryInRepoOrCurrentDir(repository: File, name: String) =
-            resolverByName(listOf(repository.absolutePath), logger = KlibToolLogger(output)).resolve(name)
-}
-
-
-private val defaultRepository = File(DependencyDirectories.localKonanDir.resolve("klib").absolutePath)
-
-private class KlibRepoDeprecationWarning(private val output: KlibToolOutput) {
-    private var alreadyLogged = false
-
-    fun logOnceIfNecessary() {
-        if (!alreadyLogged) {
-            alreadyLogged = true
-            output.logWarning("Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098")
-        }
     }
 }

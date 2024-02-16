@@ -13,22 +13,25 @@ fun main(rawArgs: Array<String>) {
 
     val args = KlibToolArgumentsParser(output).parseArguments(rawArgs)
     if (args != null) {
-        val command = KlibToolCommand(output, args)
+        val command = when (args.commandName) {
+            "dump-abi" -> DumpAbi(output, args)
+            "dump-ir" -> DumpIr(output, args)
+            "dump-ir-signatures" -> DumpIrSignatures(output, args)
+            "dump-metadata" -> DumpMetadata(output, args)
+            "dump-metadata-signatures" -> DumpMetadataSignatures(output, args)
+            "contents" -> LegacyContents(output, args)
+            "signatures" -> LegacySignatures(output, args)
+            "info" -> Info(output, args)
+            "install" -> LegacyInstall(output, args)
+            "remove" -> LegacyRemove(output, args)
+            else -> {
+                output.logError("Unknown command: ${args.commandName}")
+                null
+            }
+        }
 
         try {
-            when (args.commandName) {
-                "dump-abi" -> command.dumpAbi()
-                "dump-ir" -> command.dumpIr()
-                "dump-ir-signatures" -> command.dumpIrSignatures()
-                "dump-metadata" -> command.dumpMetadata()
-                "dump-metadata-signatures" -> command.dumpMetadataSignatures()
-                "contents" -> command.contents()
-                "signatures" -> command.signatures()
-                "info" -> command.info()
-                "install" -> command.install()
-                "remove" -> command.remove()
-                else -> output.logError("Unknown command: ${args.commandName}")
-            }
+            command?.execute()
         } catch (t: Throwable) {
             output.logErrorWithStackTrace(t)
         }
