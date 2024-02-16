@@ -28,13 +28,10 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 context(JvmBirBackendContext)
 class BirJvmStaticInObjectLowering : BirLoweringPhase() {
-    private val JvmStaticAnnotation by lz { birBuiltIns.findClass(JVM_STATIC_ANNOTATION_FQ_NAME) }
-
     private val staticDeclarations = registerIndexKey<BirDeclaration>(BirSimpleFunction or BirProperty, true) { declaration ->
-        val annotation = JvmStaticAnnotation ?: return@registerIndexKey false
-        declaration.hasAnnotation(annotation) ||
-                (declaration as? BirSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(annotation) == true ||
-                (declaration as? BirProperty)?.getter?.hasAnnotation(annotation) == true
+        declaration.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) ||
+                (declaration as? BirSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true ||
+                (declaration as? BirProperty)?.getter?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true
     }
     private val memberAccesses =
         registerBackReferencesKeyWithUntypedSymbolProperty(BirMemberAccessExpression, BirMemberAccessExpression<*>::symbol)

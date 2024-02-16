@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.bir.expressions.BirConst
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.set
 import org.jetbrains.kotlin.bir.util.constructedClass
+import org.jetbrains.kotlin.bir.util.isAnnotation
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl.origin
@@ -24,10 +25,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 context(JvmBirBackendContext)
 class BirJvmNameLowering : BirLoweringPhase() {
-    private val JvmNameAnnotation by lz { birBuiltIns.findClass(DescriptorUtils.JVM_NAME) }
-
     private val jvmNameAnnotations = registerIndexKey(BirConstructorCall, false) {
-        it.constructedClass == JvmNameAnnotation
+        it.isAnnotation(DescriptorUtils.JVM_NAME)
     }
 
     override fun lower(module: BirModuleFragment) {

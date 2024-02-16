@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.bir.backend.jvm.BirArrayBuilder
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.backend.jvm.birArray
 import org.jetbrains.kotlin.bir.backend.jvm.birArrayOf
+import org.jetbrains.kotlin.bir.declarations.BirClass
+import org.jetbrains.kotlin.bir.declarations.BirFunction
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
+import org.jetbrains.kotlin.bir.declarations.BirPackageFragment
 import org.jetbrains.kotlin.bir.expressions.*
 import org.jetbrains.kotlin.bir.types.utils.makeNotNull
 import org.jetbrains.kotlin.bir.types.utils.substitute
@@ -20,8 +23,15 @@ import org.jetbrains.kotlin.bir.util.*
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 context(JvmBirBackendContext)
 class BirVarargLowering : BirLoweringPhase() {
@@ -67,7 +77,7 @@ class BirVarargLowering : BirLoweringPhase() {
                 is BirExpression -> +element
                 is BirSpreadElement -> {
                     val spread = element.expression!!
-                    if (spread is BirFunctionAccessExpression && spread.symbol.owner in primitiveArrayOfFunctions) {
+                    if (spread is BirFunctionAccessExpression && spread.symbol.owner.isArrayOf()) {
                         // Skip empty arrays and don't copy immediately created arrays
                         val argument = spread.valueArguments[0] ?: continue
                         if (argument is BirVararg) {
@@ -84,17 +94,24 @@ class BirVarargLowering : BirLoweringPhase() {
 
     private fun BirElement.isInsideAnnotation(): Boolean =
         ancestors().takeWhile { it is BirExpression }.any { it is BirConstructorCall && it.isAnnotation }
-
-    private val primitiveArrayOfFunctions by lz {
-        (PrimitiveType.entries.map { type -> type.name } + UnsignedType.entries.map { type -> type.typeName.asString() })
-            .map { name -> name.toLowerCaseAsciiOnly() + "ArrayOf" }
-            .plus("arrayOf")
-            .flatMap { name -> birBuiltIns.findFunctions(Name.identifier(name), StandardNames.BUILT_INS_PACKAGE_FQ_NAME.asString()) }
-            .filter {
-                it.extensionReceiverParameter == null &&
-                        it.dispatchReceiverParameter == null &&
-                        it.valueParameters.size == 1 &&
-                        it.valueParameters[0].isVararg
-            }.toSet()
-    }
 }
+
+internal val PRIMITIVE_ARRAY_OF_NAMES: Set<String> =
+    (PrimitiveType.values().map { type -> type.name } + UnsignedType.values().map { type -> type.typeName.asString() })
+        .map { name -> name.toLowerCaseAsciiOnly() + "ArrayOf" }.toSet()
+
+internal const val ARRAY_OF_NAME = "arrayOf"
+
+internal fun BirFunction.isArrayOf(): Boolean {
+    val parent = ancestors().firstIsInstanceOrNull<BirPackageFragment>() ?: return false
+    return parent.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME &&
+            name.asString().let { it in PRIMITIVE_ARRAY_OF_NAMES || it == ARRAY_OF_NAME } &&
+            extensionReceiverParameter == null &&
+            dispatchReceiverParameter == null &&
+            valueParameters.size == 1 &&
+            valueParameters[0].isVararg
+}
+
+internal fun BirFunction.isEmptyArray(): Boolean =
+    name.asString() == "emptyArray" &&
+            (parent as? BirPackageFragment)?.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME

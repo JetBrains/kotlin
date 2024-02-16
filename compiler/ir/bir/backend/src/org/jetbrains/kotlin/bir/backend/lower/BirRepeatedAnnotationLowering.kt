@@ -30,9 +30,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 context(JvmBirBackendContext)
 class BirRepeatedAnnotationLowering : BirLoweringPhase() {
-    private val KotlinRepeatableAnnotation by lz { birBuiltIns.findClass(StandardNames.FqNames.repeatable) }
-    private val JavaRepeatableAnnotation by lz { birBuiltIns.findClass(JvmAnnotationNames.REPEATABLE_ANNOTATION)!! }
-
     private val declaredAnnotations = registerIndexKey(BirClass, false) {
         it.kind == ClassKind.ANNOTATION_CLASS
     }
@@ -45,8 +42,8 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
     override fun lower(module: BirModuleFragment) {
         getAllElementsWithIndex(declaredAnnotations).forEach { annotationClass ->
             if (
-                KotlinRepeatableAnnotation?.let { annotationClass.hasAnnotation(it) } == true
-                && !annotationClass.hasAnnotation(JavaRepeatableAnnotation)
+                annotationClass.hasAnnotation(StandardNames.FqNames.repeatable)
+                && !annotationClass.hasAnnotation(JvmAnnotationNames.REPEATABLE_ANNOTATION)
             ) {
                 val repeatedAnnotationSyntheticContainer = createRepeatedAnnotationSyntheticContainer(annotationClass)
                 annotationClass.declarations += repeatedAnnotationSyntheticContainer
@@ -84,7 +81,7 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
     }
 
     private fun getOrCreateContainerClass(annotationClass: BirClass): BirClass {
-        val jvmRepeatable = annotationClass.getAnnotation(JavaRepeatableAnnotation)
+        val jvmRepeatable = annotationClass.getAnnotation(JvmAnnotationNames.REPEATABLE_ANNOTATION)
         return if (jvmRepeatable != null) {
             val containerClassReference = jvmRepeatable.valueArguments[0]
             require(containerClassReference is BirClassReference) {
