@@ -3,6 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// DO NOT MODIFY IT MANUALLY.
+
+@file:Suppress("DuplicatedCode", "unused")
+
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
@@ -21,37 +26,41 @@ class IrConstructorImpl @IrImplementationDetail constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
-    override val symbol: IrConstructorSymbol,
-    override var name: Name,
-    override var visibility: DescriptorVisibility,
-    override var isInline: Boolean,
-    override var isExternal: Boolean,
-    override var isPrimary: Boolean,
-    override var isExpect: Boolean,
-    override var containerSource: DeserializedContainerSource?,
     override val factory: IrFactory,
+    override var name: Name,
+    override var isExternal: Boolean,
+    override var visibility: DescriptorVisibility,
+    override val containerSource: DeserializedContainerSource?,
+    override var isInline: Boolean,
+    override var isExpect: Boolean,
+    override val symbol: IrConstructorSymbol,
+    override var isPrimary: Boolean,
 ) : IrConstructor() {
-    init {
-        symbol.bind(this)
-    }
+    override var annotations: List<IrConstructorCall> = emptyList()
 
     override lateinit var parent: IrDeclarationParent
-    override var annotations: List<IrConstructorCall> = emptyList()
 
     override var typeParameters: List<IrTypeParameter> = emptyList()
 
-    override var dispatchReceiverParameter: IrValueParameter? = null
-    override var extensionReceiverParameter: IrValueParameter? = null
-    override var contextReceiverParametersCount: Int = 0
-    override var valueParameters: List<IrValueParameter> = emptyList()
+    override var metadata: MetadataSource? = null
 
     override lateinit var returnType: IrType
 
-    override var body: IrBody? = null
+    override var dispatchReceiverParameter: IrValueParameter? = null
 
-    override var metadata: MetadataSource? = null
+    override var extensionReceiverParameter: IrValueParameter? = null
+
+    override var valueParameters: List<IrValueParameter> = emptyList()
+
+    override var contextReceiverParametersCount: Int = 0
+
+    override var body: IrBody? = null
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassConstructorDescriptor
         get() = symbol.descriptor
+
+    init {
+        symbol.bind(this)
+    }
 }
