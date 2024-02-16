@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 
-internal object LLFirResolveMultiDesignationCollector {
+internal object LLFirResolveDesignationCollector {
     fun getDesignationToResolve(target: FirElementWithResolveState): LLFirResolveTarget? {
         return getDesignationToResolve(target, FirDesignation::asResolveTarget)
     }

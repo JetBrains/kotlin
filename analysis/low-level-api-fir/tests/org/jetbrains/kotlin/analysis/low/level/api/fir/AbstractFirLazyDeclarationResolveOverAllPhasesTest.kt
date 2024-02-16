@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveMultiDesignationCollector
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.allKtFiles
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -41,7 +41,7 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
                 testServices.allKtFiles().map(firResolveSession::getOrBuildFirFile)
             } else {
                 val firFile = firResolveSession.getOrBuildFirFile(ktFile)
-                val designation = LLFirResolveMultiDesignationCollector.getDesignationToResolve(elementToResolve)
+                val designation = LLFirResolveDesignationCollector.getDesignationToResolve(elementToResolve)
                 listOfNotNull(firFile, designation?.firFile).distinct()
             }
 

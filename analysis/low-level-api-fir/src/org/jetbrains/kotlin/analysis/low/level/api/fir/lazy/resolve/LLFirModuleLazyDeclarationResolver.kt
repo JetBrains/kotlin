@@ -35,7 +35,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         toPhase: FirResolvePhase,
     ) {
         if (target.resolvePhase >= toPhase) return
-        lazyResolve(target, scopeSession, toPhase, LLFirResolveMultiDesignationCollector::getDesignationToResolve)
+        lazyResolve(target, scopeSession, toPhase, LLFirResolveDesignationCollector::getDesignationToResolve)
     }
 
     /**
@@ -50,7 +50,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
     ) {
-        lazyResolve(target, scopeSession, toPhase, LLFirResolveMultiDesignationCollector::getDesignationToResolveWithCallableMembers)
+        lazyResolve(target, scopeSession, toPhase, LLFirResolveDesignationCollector::getDesignationToResolveWithCallableMembers)
     }
 
     /**
@@ -65,7 +65,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
     ) {
-        lazyResolve(target, scopeSession, toPhase, LLFirResolveMultiDesignationCollector::getDesignationToResolveRecursively)
+        lazyResolve(target, scopeSession, toPhase, LLFirResolveDesignationCollector::getDesignationToResolveRecursively)
     }
 
     private inline fun <T : FirElementWithResolveState> lazyResolve(
