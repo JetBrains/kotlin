@@ -2705,6 +2705,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
     }
 
     @Test
+    @TestMetadata("intersectionWithJava.kt")
+    public void testIntersectionWithJava() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/intersectionWithJava.kt");
+    }
+
+    @Test
     @TestMetadata("intersectionWithMappedSignature.kt")
     public void testIntersectionWithMappedSignature() {
       runTest("compiler/testData/ir/irText/fakeOverrides/intersectionWithMappedSignature.kt");
