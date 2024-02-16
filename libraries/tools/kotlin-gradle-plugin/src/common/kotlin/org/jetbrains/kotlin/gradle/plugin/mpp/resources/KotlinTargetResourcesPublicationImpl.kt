@@ -19,12 +19,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.KotlinAndroidTargetResourcesPublication
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.resourcesVariantViewFromCompileDependencyConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.AggregateResourcesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.ResolveResourcesFromDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
 import java.io.File
 import javax.inject.Inject
 
@@ -144,7 +146,7 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
         project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
             val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
             resolveResourcesFromDependencies(
-                resourcesConfiguration = mainCompilation.internal.configurations.resourcesConfiguration,
+                compilation = mainCompilation,
                 resolveResourcesFromDependenciesTask = resolveResourcesFromDependenciesTask,
                 targetName = target.targetName,
             )
@@ -159,13 +161,16 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
     }
 
     private fun resolveResourcesFromDependencies(
-        resourcesConfiguration: Configuration,
+        compilation: KotlinCompilation<*>,
         resolveResourcesFromDependenciesTask: TaskProvider<ResolveResourcesFromDependenciesTask>,
         targetName: String,
     ) {
         resolveResourcesFromDependenciesTask.configure {
-            it.dependsOn(resourcesConfiguration)
-            it.archivesFromDependencies.from(resourcesConfiguration.incoming.artifactView { view -> view.lenient(true) }.files)
+            // FIXME: ???
+//            it.dependsOn(resourcesConfiguration)
+            it.archivesFromDependencies.from(
+                compilation.resourcesVariantViewFromCompileDependencyConfiguration { lenient(true) }.files
+            )
             it.outputDirectory.set(
                 project.layout.buildDirectory.dir("$MULTIPLATFORM_RESOURCES_DIRECTORY/resources-from-dependencies/${targetName}")
             )
