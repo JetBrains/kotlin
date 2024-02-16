@@ -177,7 +177,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             when (result) {
                 is FirQualifiedAccessExpression -> {
                     dataFlowAnalyzer.exitQualifiedAccessExpression(result)
-                    result = components.transformQualifiedAccessUsingSmartcastInfo(result, ignoreCallArguments = false)
+                    result = components.transformQualifiedAccessUsingSmartcastInfo(result)
                     if (result is FirSmartCastExpression) {
                         dataFlowAnalyzer.exitSmartCastExpression(result)
                     }

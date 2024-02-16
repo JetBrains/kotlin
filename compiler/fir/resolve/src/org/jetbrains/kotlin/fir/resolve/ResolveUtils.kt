@@ -366,9 +366,8 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>): Fir
 
 fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
     qualifiedAccessExpression: FirQualifiedAccessExpression,
-    ignoreCallArguments: Boolean,
 ): FirExpression {
-    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression, ignoreCallArguments)
+    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression)
         ?: return qualifiedAccessExpression
 
     return transformExpressionUsingSmartcastInfo(qualifiedAccessExpression, stability, typesFromSmartCast) ?: qualifiedAccessExpression
@@ -377,7 +376,7 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
 fun BodyResolveComponents.transformWhenSubjectExpressionUsingSmartcastInfo(
     whenSubjectExpression: FirWhenSubjectExpression,
 ): FirExpression {
-    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(whenSubjectExpression, ignoreCallArguments = false)
+    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(whenSubjectExpression)
         ?: return whenSubjectExpression
 
     return transformExpressionUsingSmartcastInfo(whenSubjectExpression, stability, typesFromSmartCast) ?: whenSubjectExpression
@@ -387,7 +386,7 @@ fun BodyResolveComponents.transformDesugaredAssignmentValueUsingSmartcastInfo(
     expression: FirDesugaredAssignmentValueReferenceExpression,
 ): FirExpression {
     val (stability, typesFromSmartCast) =
-        dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression.expressionRef.value, ignoreCallArguments = false)
+        dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression.expressionRef.value)
             ?: return expression
 
     return transformExpressionUsingSmartcastInfo(expression, stability, typesFromSmartCast) ?: expression

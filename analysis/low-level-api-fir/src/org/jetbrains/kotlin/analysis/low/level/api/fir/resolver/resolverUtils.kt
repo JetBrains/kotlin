@@ -58,10 +58,7 @@ internal open class StubBodyResolveTransformerComponents(
             override fun receiverUpdated(symbol: FirBasedSymbol<*>, info: TypeStatement?) =
                 error("Should not be called")
 
-            override fun getTypeUsingSmartcastInfo(
-                expression: FirExpression,
-                ignoreCallArguments: Boolean,
-            ): Pair<PropertyStability, MutableList<ConeKotlinType>>? =
+            override fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<PropertyStability, MutableList<ConeKotlinType>>? =
                 null
         }
 }
