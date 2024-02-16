@@ -114,16 +114,14 @@ class Fir2IrTypeConverter(
                         ?: (lookupTag as? ConeClassLikeLookupTag)?.let(classifiersGenerator::createIrClassForNotFoundClass)?.symbol
                         ?: return createErrorType()
 
-                when {
-                    hasFlexibleNullability -> {
-                        builtIns.flexibleNullabilityAnnotationConstructorCall()?.let {
-                            typeAnnotations += it
-                        }
+                if (hasEnhancedNullability) {
+                    builtIns.enhancedNullabilityAnnotationConstructorCall()?.let {
+                        typeAnnotations += it
                     }
-                    hasEnhancedNullability -> {
-                        builtIns.enhancedNullabilityAnnotationConstructorCall()?.let {
-                            typeAnnotations += it
-                        }
+                }
+                if (hasFlexibleNullability) {
+                    builtIns.flexibleNullabilityAnnotationConstructorCall()?.let {
+                        typeAnnotations += it
                     }
                 }
                 if (hasFlexibleMutability) {
