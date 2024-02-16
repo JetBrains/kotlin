@@ -63,10 +63,10 @@ abstract class B : ArrayList<Int>, Java1 {
   /* fake */ override fun ensureCapacity(p0: Int): Unit
 
   // CHECK JVM_IR:
-  //   Mangled name: B#equals(kotlin.Any?){}kotlin.Boolean
-  //   Public signature: /B.equals|722809408929142791[0]
-  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  /* fake */ override operator fun equals(p0: Any?): Boolean
+  //   Mangled name: B#equals(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /B.equals|4126616015386471185[0]
+  //   Public signature debug description: equals(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override operator fun equals(p0: @EnhancedNullability Any?): Boolean
 
   // CHECK:
   //   Mangled name: B#forEach(java.util.function.Consumer<in|kotlin.Int?>?){}
@@ -123,10 +123,12 @@ abstract class B : ArrayList<Int>, Java1 {
   /* fake */ override fun listIterator(p0: Int): @EnhancedNullability MutableListIterator<@EnhancedNullability Int>
 
   // CHECK JVM_IR:
-  //   Mangled name: B#parallelStream(){}java.util.stream.Stream<kotlin.Int?>{EnhancedNullability}
-  //   Public signature: /B.parallelStream|-4126444245712748289[0]
-  //   Public signature debug description: parallelStream(){}java.util.stream.Stream<kotlin.Int?>{EnhancedNullability}
-  /* fake */ override fun parallelStream(): @EnhancedNullability Stream<Int?>
+  //   Mangled name: B#parallelStream(){}java.util.stream.Stream<kotlin.Int?{EnhancedNullability}>{EnhancedNullability}
+  //   Mangled name for the signature by IR:       parallelStream(){}java.util.stream.Stream<kotlin.Int?{EnhancedNullability}>{EnhancedNullability}
+  //   Mangled name for the signature by Frontend: parallelStream(){}java.util.stream.Stream<kotlin.Int?>{EnhancedNullability}
+  //   Public signature: /B.parallelStream|-8395108522211591010[0]
+  //   Public signature debug description: parallelStream(){}java.util.stream.Stream<kotlin.Int?{EnhancedNullability}>{EnhancedNullability}
+  /* fake */ override fun parallelStream(): @EnhancedNullability Stream<@EnhancedNullability Int?>
 
   // CHECK JVM_IR:
   //   Mangled name: B#remove(kotlin.Int{EnhancedNullability}){}kotlin.Boolean
@@ -189,10 +191,12 @@ abstract class B : ArrayList<Int>, Java1 {
   /* fake */ override fun spliterator(): @EnhancedNullability Spliterator<Int?>
 
   // CHECK JVM_IR:
-  //   Mangled name: B#stream(){}java.util.stream.Stream<kotlin.Int?>{EnhancedNullability}
-  //   Public signature: /B.stream|2853909100718896833[0]
-  //   Public signature debug description: stream(){}java.util.stream.Stream<kotlin.Int?>{EnhancedNullability}
-  /* fake */ override fun stream(): @EnhancedNullability Stream<Int?>
+  //   Mangled name: B#stream(){}java.util.stream.Stream<kotlin.Int?{EnhancedNullability}>{EnhancedNullability}
+  //   Mangled name for the signature by IR:       stream(){}java.util.stream.Stream<kotlin.Int?{EnhancedNullability}>{EnhancedNullability}
+  //   Mangled name for the signature by Frontend: stream(){}java.util.stream.Stream<kotlin.Int?>{EnhancedNullability}
+  //   Public signature: /B.stream|1565529915260485250[0]
+  //   Public signature debug description: stream(){}java.util.stream.Stream<kotlin.Int?{EnhancedNullability}>{EnhancedNullability}
+  /* fake */ override fun stream(): @EnhancedNullability Stream<@EnhancedNullability Int?>
 
   // CHECK JVM_IR:
   //   Mangled name: B#subList(kotlin.Int;kotlin.Int){}kotlin.collections.MutableList<kotlin.Int{EnhancedNullability}>{EnhancedNullability}
@@ -236,3 +240,4 @@ abstract class B : ArrayList<Int>, Java1 {
     /* fake */ override get(): Int
 
 }
+

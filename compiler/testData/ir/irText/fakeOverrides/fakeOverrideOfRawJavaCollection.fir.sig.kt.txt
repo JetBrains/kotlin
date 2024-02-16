@@ -67,10 +67,10 @@ abstract class E : Java1 {
   /* fake */ override fun ensureCapacity(p0: Int): Unit
 
   // CHECK JVM_IR:
-  //   Mangled name: E#equals(kotlin.Any?){}kotlin.Boolean
-  //   Public signature: /E.equals|722809408929142791[0]
-  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  /* fake */ override operator fun equals(p0: Any?): Boolean
+  //   Mangled name: E#equals(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /E.equals|4126616015386471185[0]
+  //   Public signature debug description: equals(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override operator fun equals(p0: @EnhancedNullability Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: E#get(kotlin.Int){}kotlin.Any?
@@ -206,3 +206,4 @@ abstract class E : Java1 {
     /* fake */ override get(): Int
 
 }
+

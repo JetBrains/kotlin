@@ -26,10 +26,10 @@ class Test : J {
   override fun returnNotNull(): @EnhancedNullability String
 
   // CHECK JVM_IR:
-  //   Mangled name: Test#returnNullable(){}kotlin.String?
-  //   Public signature: /Test.returnNullable|-8543835017469041188[0]
-  //   Public signature debug description: returnNullable(){}kotlin.String?
-  override fun returnNullable(): String?
+  //   Mangled name: Test#returnNullable(){}kotlin.String?{EnhancedNullability}
+  //   Public signature: /Test.returnNullable|-404622903433277680[0]
+  //   Public signature debug description: returnNullable(){}kotlin.String?{EnhancedNullability}
+  override fun returnNullable(): @EnhancedNullability String?
 
   // CHECK JVM_IR:
   //   Mangled name: Test#returnsFlexible(){}kotlin.String?
@@ -50,9 +50,10 @@ class Test : J {
   override fun takeNotNull(x: @EnhancedNullability String): Unit
 
   // CHECK:
-  //   Mangled name: Test#takeNullable(kotlin.String?){}
-  //   Public signature: /Test.takeNullable|5724815424219841897[0]
-  //   Public signature debug description: takeNullable(kotlin.String?){}
-  override fun takeNullable(x: String?): Unit
+  //   Mangled name: Test#takeNullable(kotlin.String?{EnhancedNullability}){}
+  //   Public signature: /Test.takeNullable|-558980523272297075[0]
+  //   Public signature debug description: takeNullable(kotlin.String?{EnhancedNullability}){}
+  override fun takeNullable(x: @EnhancedNullability String?): Unit
 
 }
+
