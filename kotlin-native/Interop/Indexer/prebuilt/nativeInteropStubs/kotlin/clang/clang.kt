@@ -1187,7 +1187,7 @@ enum class CXCursorKind(value: Int) : CEnum {
     CXCursor_OMPUnrollDirective(293),
     CXCursor_OMPMetaDirective(294),
     CXCursor_OMPGenericLoopDirective(295),
-    CXCursor_TranslationUnit(300),
+    CXCursor_TranslationUnit(350),
     CXCursor_UnexposedAttr(400),
     CXCursor_IBActionAttr(401),
     CXCursor_IBOutletAttr(402),

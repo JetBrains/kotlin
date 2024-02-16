@@ -53,13 +53,20 @@ class Runtime(llvmContext: LLVMContextRef, bitcodeFile: String) {
     val typeInfoObjCExportAddition by lazy { getStructType("TypeInfoObjCExportAddition") }
 
     val objCClassObjectType by lazy { getStructType("_class_t") }
-    val objCCache by lazy { getStructType("_objc_cache") }
-    val objCClassRoType by lazy { getStructType("_class_ro_t") }
-    val objCMethodType by lazy { getStructType("_objc_method") }
-    val objCMethodListType by lazy { getStructType("__method_list_t") }
-    val objCProtocolListType by lazy { getStructType("_objc_protocol_list") }
-    val objCIVarListType by lazy { getStructType("_ivar_list_t") }
-    val objCPropListType by lazy { getStructType("_prop_list_t") }
+    val objCCache by lazy { LLVMStructCreateNamed(llvmContext, "_objc_cache")!! }
+    val objCClassRoType by lazy {
+        val i32 = LLVMInt32TypeInContext(llvmContext)!!
+        val pt = pointerType(i32)
+        LLVMStructTypeInContext(llvmContext, (List(3) { i32 } + List(7) { pt }).toCValues(), 10, 0)
+    }
+    val objCMethodType by lazy {
+        val pt = pointerType(LLVMInt32TypeInContext(llvmContext)!!)
+        LLVMStructTypeInContext(llvmContext, List(3) { pt }.toCValues(), 3, 0)
+    }
+    val objCMethodListType by lazy { LLVMStructCreateNamed(llvmContext, "__method_list_t")!! }
+    val objCProtocolListType by lazy { LLVMStructCreateNamed(llvmContext, "_objc_protocol_list")!! }
+    val objCIVarListType by lazy { LLVMStructCreateNamed(llvmContext, "_ivar_list_t")!! }
+    val objCPropListType by lazy { LLVMStructCreateNamed(llvmContext, "_prop_list_t")!! }
 
     val kRefSharedHolderType by lazy { LLVMGetTypeByName(llvmModule, "class.KRefSharedHolder")!! }
     val blockLiteralType by lazy { getStructType("Block_literal_1") }
