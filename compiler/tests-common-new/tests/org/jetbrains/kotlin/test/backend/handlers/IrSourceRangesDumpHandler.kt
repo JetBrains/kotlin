@@ -40,7 +40,16 @@ class IrSourceRangesDumpHandler(
         get() = listOf(CodegenTestDirectives, FirDiagnosticsDirectives)
 
     override val additionalAfterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>
-        get() = listOf(::FirIrSourceRangesIdenticalChecker)
+        get() = listOf(::IdenticalChecker)
+
+    class IdenticalChecker(testServices: TestServices) : SimpleFirIrIdenticalChecker(testServices) {
+        override val dumpExtension: String
+            get() = DUMP_EXTENSION
+
+        override fun shouldRun(): Boolean {
+            return CodegenTestDirectives.DUMP_SOURCE_RANGES_IR in testServices.moduleStructure.allDirectives
+        }
+    }
 
     private val baseDumper = MultiModuleInfoDumper()
     private val buildersForSeparateFileDumps: MutableMap<File, StringBuilder> = mutableMapOf()
