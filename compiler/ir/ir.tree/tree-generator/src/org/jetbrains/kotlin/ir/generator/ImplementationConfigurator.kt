@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.generator
 
-import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.ArbitraryImportable
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.ClassRef
 import org.jetbrains.kotlin.generators.tree.ImportCollector
 import org.jetbrains.kotlin.generators.tree.StandardTypes
@@ -109,7 +109,11 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(moduleFragment) {
-            implementation.doPrint = false
+            implementation.putImplementationOptInInConstructor = false
+            additionalImports(ArbitraryImportable(Packages.tree, "UNDEFINED_OFFSET"))
+            default("startOffset", "UNDEFINED_OFFSET", withGetter = true)
+            default("endOffset", "UNDEFINED_OFFSET", withGetter = true)
+            default("name", "descriptor.name", withGetter = true)
         }
 
         impl(errorDeclaration) {
