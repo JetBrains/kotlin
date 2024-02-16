@@ -56,7 +56,9 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             defaultNull("backingField", "getter", "setter")
         }
         impl(propertyWithLateBinding) {
-            implementation.doPrint = false
+            defaultNull("backingField", "getter", "setter")
+            defaultNull("containerSource", withGetter = true)
+            configureDeclarationWithLateBindinig(propertySymbolType)
         }
 
         impl(localDelegatedProperty) {
