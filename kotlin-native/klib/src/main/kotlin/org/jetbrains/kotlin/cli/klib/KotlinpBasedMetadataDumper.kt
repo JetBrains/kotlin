@@ -40,6 +40,12 @@ internal class KotlinpBasedMetadataDumper(
 
     private val printer = Printer(output)
 
+    /**
+     * @param testMode if `true` then a special pre-processing is performed towards the metadata before rendering:
+     *        - empty package fragments are removed
+     *        - package fragments with the same package FQN are merged
+     *        - classes are sorted in alphabetical order
+     */
     fun dumpLibrary(library: KotlinLibrary, testMode: Boolean) {
         val moduleMetadata = loadModuleMetadata(library)
                 .let { originalModuleMetadata -> if (testMode) preprocessMetadataForTests(originalModuleMetadata) else originalModuleMetadata }

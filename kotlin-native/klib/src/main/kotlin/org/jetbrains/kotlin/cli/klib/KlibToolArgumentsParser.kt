@@ -41,6 +41,7 @@ internal class KlibToolArgumentsParser {
                 repository = extraArgs[ExtraOption.REPOSITORY]?.last(),
                 printSignatures = extraArgs[ExtraOption.PRINT_SIGNATURES]?.last()?.toBoolean() == true,
                 signatureVersion,
+                testMode = extraArgs[ExtraOption.INTERNAL_TEST_MODE]?.last()?.toBoolean() == true
         )
     }
 
@@ -105,7 +106,17 @@ internal class KlibToolArgumentsParser {
 private enum class ExtraOption(val option: String) {
     REPOSITORY("-repository"),
     PRINT_SIGNATURES("-print-signatures"),
-    SIGNATURE_VERSION("-signature-version");
+    SIGNATURE_VERSION("-signature-version"),
+
+    /**
+     * This is an option that allows running the commands that support it in a special "test mode".
+     * The "test mode" means (but not limited to) that a command may, for example, sort the output
+     * which is unsorted by default, and this way guarantee stable output. This is essentially helpful
+     * for tests, which rely on the command output.
+     *
+     * NOTE: This option is not supposed to be advertised in KLIB tool's "usage info".
+     */
+    INTERNAL_TEST_MODE("-test-mode");
 
     companion object {
         fun parseOrNull(option: String): ExtraOption? = entries.firstOrNull { it.option == option }

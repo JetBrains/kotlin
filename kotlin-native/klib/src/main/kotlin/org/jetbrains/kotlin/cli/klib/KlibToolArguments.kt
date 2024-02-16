@@ -13,4 +13,5 @@ internal class KlibToolArguments(
         val repository: String?,
         val printSignatures: Boolean,
         val signatureVersion: KotlinIrSignatureVersion?,
+        val testMode: Boolean,
 )

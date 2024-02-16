@@ -198,14 +198,8 @@ internal class KlibToolCommand(private val args: KlibToolArguments) {
         printer.print(module)
     }
 
-    /**
-     * @param testMode if `true` then a special pre-processing is performed towards the metadata before rendering:
-     *        - empty package fragments are removed
-     *        - package fragments with the same package FQN are merged
-     *        - classes are sorted in alphabetical order
-     */
-    fun dumpMetadata(output: Appendable, testMode: Boolean) {
-        KotlinpBasedMetadataDumper(output, args.printSignatures, args.signatureVersion).dumpLibrary(libraryInCurrentDir(args.libraryNameOrPath), testMode)
+    fun dumpMetadata(output: Appendable) {
+        KotlinpBasedMetadataDumper(output, args.printSignatures, args.signatureVersion).dumpLibrary(libraryInCurrentDir(args.libraryNameOrPath), args.testMode)
     }
 
     fun signatures(output: Appendable) {
@@ -258,7 +252,7 @@ fun main(rawArgs: Array<String>) {
         "dump-abi" -> command.dumpAbi(System.out)
         "dump-ir" -> command.dumpIr(System.out)
         "dump-ir-signatures" -> command.dumpIrSignatures(System.out)
-        "dump-metadata" -> command.dumpMetadata(System.out, testMode = false)
+        "dump-metadata" -> command.dumpMetadata(System.out)
         "dump-metadata-signatures" -> command.dumpMetadataSignatures(System.out)
         "contents" -> command.contents(System.out)
         "signatures" -> command.signatures(System.out)
