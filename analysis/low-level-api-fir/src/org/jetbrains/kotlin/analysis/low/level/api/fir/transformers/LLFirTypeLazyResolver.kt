@@ -31,15 +31,12 @@ import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES) {
-    override fun resolve(
+    override fun createTargetResolver(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
-    ) {
-        val resolver = LLFirTypeTargetResolver(target, lockProvider, scopeSession)
-        resolver.resolveDesignation()
-    }
+    ): LLFirTargetResolver = LLFirTypeTargetResolver(target, lockProvider, scopeSession)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target is FirAnnotationContainer) {

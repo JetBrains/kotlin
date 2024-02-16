@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 internal abstract class LLFirTargetResolver(
     protected val resolveTarget: LLFirResolveTarget,
     protected val lockProvider: LLFirLockProvider,
-    protected val resolverPhase: FirResolvePhase,
+    val resolverPhase: FirResolvePhase,
     private val isJumpingPhase: Boolean = false,
 ) : LLFirResolveTargetVisitor {
     val resolveTargetSession: LLFirSession get() = resolveTarget.session

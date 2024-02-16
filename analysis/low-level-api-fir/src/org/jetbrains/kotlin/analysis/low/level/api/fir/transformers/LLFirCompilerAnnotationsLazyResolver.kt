@@ -33,15 +33,12 @@ import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.util.PrivateForInline
 
 internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
-    override fun resolve(
+    override fun createTargetResolver(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
-    ) {
-        val resolver = LLFirCompilerRequiredAnnotationsTargetResolver(target, lockProvider, scopeSession)
-        resolver.resolveDesignation()
-    }
+    ): LLFirTargetResolver = LLFirCompilerRequiredAnnotationsTargetResolver(target, lockProvider, scopeSession)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         when (target) {

@@ -26,15 +26,12 @@ import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.util.PrivateForInline
 
 internal object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.CONTRACTS) {
-    override fun resolve(
+    override fun createTargetResolver(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
-    ) {
-        val resolver = LLFirContractsTargetResolver(target, lockProvider, scopeSession, towerDataContextCollector)
-        resolver.resolveDesignation()
-    }
+    ): LLFirTargetResolver = LLFirContractsTargetResolver(target, lockProvider, scopeSession, towerDataContextCollector)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target !is FirContractDescriptionOwner) return

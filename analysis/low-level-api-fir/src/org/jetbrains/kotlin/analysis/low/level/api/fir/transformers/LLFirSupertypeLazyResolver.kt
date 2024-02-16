@@ -34,15 +34,12 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 
 internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.SUPER_TYPES) {
-    override fun resolve(
+    override fun createTargetResolver(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
-    ) {
-        val resolver = LLFirSuperTypeTargetResolver(target, lockProvider, scopeSession)
-        resolver.resolveDesignation()
-    }
+    ): LLFirTargetResolver = LLFirSuperTypeTargetResolver(target, lockProvider, scopeSession)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         when (target) {

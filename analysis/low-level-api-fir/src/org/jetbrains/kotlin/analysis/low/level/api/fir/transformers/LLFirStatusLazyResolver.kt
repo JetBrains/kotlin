@@ -31,21 +31,17 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 
 internal object LLFirStatusLazyResolver : LLFirLazyResolver(FirResolvePhase.STATUS) {
-    override fun resolve(
+    override fun createTargetResolver(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
-    ) {
-        val resolver = LLFirStatusTargetResolver(
-            target = target,
-            lockProvider = lockProvider,
-            scopeSession = scopeSession,
-            resolveMode = target.resolveMode(),
-        )
-
-        resolver.resolveDesignation()
-    }
+    ): LLFirTargetResolver = LLFirStatusTargetResolver(
+        target = target,
+        lockProvider = lockProvider,
+        scopeSession = scopeSession,
+        resolveMode = target.resolveMode(),
+    )
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target !is FirMemberDeclaration) return

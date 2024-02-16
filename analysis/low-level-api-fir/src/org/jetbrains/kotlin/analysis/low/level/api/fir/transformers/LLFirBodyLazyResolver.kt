@@ -52,15 +52,12 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_RESOLVE) {
-    override fun resolve(
+    override fun createTargetResolver(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
-    ) {
-        val resolver = LLFirBodyTargetResolver(target, lockProvider, scopeSession, towerDataContextCollector)
-        resolver.resolveDesignation()
-    }
+    ): LLFirTargetResolver = LLFirBodyTargetResolver(target, lockProvider, scopeSession, towerDataContextCollector)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         when (target) {
@@ -527,5 +524,5 @@ private fun delegatedConstructorCallGuard(fir: FirDelegatedConstructorCall): Fir
 
 private class LLFirCodeFragmentContext(
     override val towerDataContext: FirTowerDataContext,
-    override val smartCasts: Map<RealVariable, Set<ConeKotlinType>>
+    override val smartCasts: Map<RealVariable, Set<ConeKotlinType>>,
 ) : FirCodeFragmentContext
