@@ -39,7 +39,7 @@ import java.io.File
 import kotlin.system.exitProcess
 import org.jetbrains.kotlin.konan.file.File as KFile
 
-internal class Command(args: Array<String>) {
+internal class KlibToolArguments(args: Array<String>) {
     val commandName: String
     val libraryNameOrPath: String
 
@@ -444,21 +444,21 @@ private fun libraryInCurrentDir(name: String) = resolverByName(emptyList(), logg
 private fun libraryInRepoOrCurrentDir(repository: KFile, name: String) =
         resolverByName(listOf(repository.absolutePath), logger = KlibToolLogger).resolve(name)
 
-fun main(args: Array<String>) {
-    val command = Command(args)
-    val library = Library(command.libraryNameOrPath, command.repository)
+fun main(rawArgs: Array<String>) {
+    val args = KlibToolArguments(rawArgs)
+    val library = Library(args.libraryNameOrPath, args.repository)
 
-    when (command.commandName) {
-        "dump-abi" -> library.dumpAbi(System.out, command.signatureVersion)
-        "dump-ir" -> library.dumpIr(System.out, command.printSignatures, command.signatureVersion)
-        "dump-ir-signatures" -> library.dumpIrSignatures(System.out, command.signatureVersion)
-        "dump-metadata" -> library.dumpMetadata(System.out, command.printSignatures, command.signatureVersion, testMode = false)
-        "dump-metadata-signatures" -> library.dumpMetadataSignatures(System.out, command.signatureVersion)
-        "contents" -> library.contents(System.out, command.printSignatures, command.signatureVersion)
-        "signatures" -> library.signatures(System.out, command.signatureVersion)
+    when (args.commandName) {
+        "dump-abi" -> library.dumpAbi(System.out, args.signatureVersion)
+        "dump-ir" -> library.dumpIr(System.out, args.printSignatures, args.signatureVersion)
+        "dump-ir-signatures" -> library.dumpIrSignatures(System.out, args.signatureVersion)
+        "dump-metadata" -> library.dumpMetadata(System.out, args.printSignatures, args.signatureVersion, testMode = false)
+        "dump-metadata-signatures" -> library.dumpMetadataSignatures(System.out, args.signatureVersion)
+        "contents" -> library.contents(System.out, args.printSignatures, args.signatureVersion)
+        "signatures" -> library.signatures(System.out, args.signatureVersion)
         "info" -> library.info()
         "install" -> library.install()
         "remove" -> library.remove()
-        else -> logError("Unknown command: ${command.commandName}")
+        else -> logError("Unknown command: ${args.commandName}")
     }
 }
