@@ -876,6 +876,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("kt40426.kt")
+    public void testKt40426() {
+      runTest("native/native.tests/testData/codegen/cinterop/kt40426.kt");
+    }
+
+    @Test
     @TestMetadata("kt43265.kt")
     public void testKt43265() {
       runTest("native/native.tests/testData/codegen/cinterop/kt43265.kt");

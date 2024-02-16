@@ -1112,13 +1112,6 @@ if (PlatformInfo.isAppleTarget(project)) {
         UtilsKt.dependsOnPlatformLibs(it)
     }
 
-    standaloneTest("interop_kt40426") {
-        // Test depends on iOS-specific UIKit
-        enabled = (project.testTarget == 'ios_x64' || project.testTarget == 'ios_simulator_arm64' || project.testTarget == 'ios_arm64')
-        source = "interop/objc/kt40426/main.kt"
-        useGoldenData = true
-        UtilsKt.dependsOnPlatformLibs(it)
-    }
 
     interopTest("interop_objc_kt63423_dispose_on_main_stress") {
         // Test depends on macOS-specific AppKit
