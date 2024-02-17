@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirImplicitBodyTargetResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirImplicitTypesLazyResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLImplicitBodyResolveComputationSession
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 internal class LLFirReturnTypeCalculatorWithJump(
     scopeSession: ScopeSession,
     implicitBodyResolveComputationSession: LLImplicitBodyResolveComputationSession,
-    private val lockProvider: LLFirLockProvider,
 ) : ReturnTypeCalculatorWithJump(scopeSession, implicitBodyResolveComputationSession) {
     override fun resolveDeclaration(declaration: FirCallableDeclaration): FirResolvedTypeRef {
         if (declaration.returnTypeRef !is FirImplicitTypeRef) {
@@ -34,11 +34,10 @@ internal class LLFirReturnTypeCalculatorWithJump(
         val computationSession = implicitBodyResolveComputationSession as LLImplicitBodyResolveComputationSession
         val resolver = LLFirImplicitBodyTargetResolver(
             designation,
-            lockProvider = lockProvider,
             llImplicitBodyResolveComputationSessionParameter = computationSession,
         )
 
-        lockProvider.withGlobalPhaseLock(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
+        LLFirGlobalResolveComponents.getInstance(designation.session).lockProvider.withGlobalPhaseLock(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
             resolver.resolveDesignation()
         }
 

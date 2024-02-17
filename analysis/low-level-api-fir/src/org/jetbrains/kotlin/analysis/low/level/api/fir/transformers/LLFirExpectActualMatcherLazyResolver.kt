@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkExpectForActualIsResolved
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -18,10 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherT
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 
 internal object LLFirExpectActualMatcherLazyResolver : LLFirLazyResolver(FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
-    override fun createTargetResolver(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-    ): LLFirTargetResolver = LLFirExpectActualMatchingTargetResolver(target, lockProvider)
+    override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirExpectActualMatchingTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target.moduleData.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) &&
@@ -33,10 +29,10 @@ internal object LLFirExpectActualMatcherLazyResolver : LLFirLazyResolver(FirReso
     }
 }
 
-private class LLFirExpectActualMatchingTargetResolver(
-    target: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
-) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
+private class LLFirExpectActualMatchingTargetResolver(target: LLFirResolveTarget) : LLFirTargetResolver(
+    target,
+    FirResolvePhase.EXPECT_ACTUAL_MATCHING
+) {
     private val enabled = resolveTargetSession.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)

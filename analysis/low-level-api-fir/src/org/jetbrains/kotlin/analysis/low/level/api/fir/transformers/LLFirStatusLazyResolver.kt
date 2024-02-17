@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleRe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeclarationStatusIsResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
@@ -29,12 +28,8 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 
 internal object LLFirStatusLazyResolver : LLFirLazyResolver(FirResolvePhase.STATUS) {
-    override fun createTargetResolver(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-    ): LLFirTargetResolver = LLFirStatusTargetResolver(
+    override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirStatusTargetResolver(
         target = target,
-        lockProvider = lockProvider,
         resolveMode = target.resolveMode(),
     )
 
@@ -98,10 +93,9 @@ private class LLStatusComputationSession(val useSiteSession: FirSession) : Statu
 
 private class LLFirStatusTargetResolver(
     target: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
     private val statusComputationSession: LLStatusComputationSession = LLStatusComputationSession(target.session),
     private val resolveMode: StatusResolveMode,
-) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.STATUS, isJumpingPhase = false) {
+) : LLFirTargetResolver(target, FirResolvePhase.STATUS, isJumpingPhase = false) {
     private val transformer = Transformer(resolveTargetSession, resolveTargetScopeSession)
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
@@ -250,7 +244,6 @@ private class LLFirStatusTargetResolver(
             val target = regularClass.tryCollectDesignation()?.asResolveTarget() ?: return false
             val resolver = LLFirStatusTargetResolver(
                 target,
-                lockProvider,
                 computationSession,
                 resolveMode = resolveMode,
             )

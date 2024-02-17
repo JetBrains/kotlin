@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.blockGuard
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkContractDescriptionIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isCallableWithSpecialBody
@@ -22,10 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolv
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 
 internal object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.CONTRACTS) {
-    override fun createTargetResolver(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-    ): LLFirTargetResolver = LLFirContractsTargetResolver(target, lockProvider)
+    override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirContractsTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target !is FirContractDescriptionOwner) return
@@ -33,12 +29,8 @@ internal object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.C
     }
 }
 
-private class LLFirContractsTargetResolver(
-    target: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
-) : LLFirAbstractBodyTargetResolver(
+private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(
     target,
-    lockProvider,
     FirResolvePhase.CONTRACTS,
 ) {
     override val transformer = FirContractResolveTransformer(resolveTargetSession, resolveTargetScopeSession)

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleRe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
@@ -32,10 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 
 internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.SUPER_TYPES) {
-    override fun createTargetResolver(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-    ): LLFirTargetResolver = LLFirSuperTypeTargetResolver(target, lockProvider)
+    override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirSuperTypeTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         when (target) {
@@ -54,10 +50,9 @@ internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.S
 
 private class LLFirSuperTypeTargetResolver(
     target: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
     private val supertypeComputationSession: LLFirSupertypeComputationSession = LLFirSupertypeComputationSession(target.session),
     private val visitedElements: MutableSet<FirElementWithResolveState> = hashSetOf(),
-) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.SUPER_TYPES, isJumpingPhase = false) {
+) : LLFirTargetResolver(target, FirResolvePhase.SUPER_TYPES, isJumpingPhase = false) {
     private val supertypeResolver = object : FirSupertypeResolverVisitor(
         session = resolveTargetSession,
         supertypeComputationSession = supertypeComputationSession,
@@ -181,7 +176,6 @@ private class LLFirSuperTypeTargetResolver(
     private fun resolveToSupertypePhase(target: LLFirSingleResolveTarget) {
         LLFirSuperTypeTargetResolver(
             target = target,
-            lockProvider = lockProvider,
             supertypeComputationSession = supertypeComputationSession,
             visitedElements = visitedElements,
         ).resolveDesignation()

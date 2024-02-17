@@ -19,7 +19,7 @@ internal object LLFirLazyResolverRunner {
         val lockProvider = LLFirGlobalResolveComponents.getInstance(target.session).lockProvider
         lockProvider.withGlobalLock {
             lockProvider.withGlobalPhaseLock(phase) {
-                lazyResolver.resolve(target, lockProvider)
+                lazyResolver.resolve(target)
             }
         }
 

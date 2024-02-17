@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirReturnTypeCalculatorWithJump
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
@@ -18,15 +17,13 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal abstract class LLFirAbstractBodyTargetResolver(
     resolveTarget: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
     resolvePhase: FirResolvePhase,
     protected val llImplicitBodyResolveComputationSession: LLImplicitBodyResolveComputationSession = LLImplicitBodyResolveComputationSession(),
     isJumpingPhase: Boolean = false,
-) : LLFirTargetResolver(resolveTarget, lockProvider, resolvePhase, isJumpingPhase) {
+) : LLFirTargetResolver(resolveTarget, resolvePhase, isJumpingPhase) {
     protected fun createReturnTypeCalculator(): LLFirReturnTypeCalculatorWithJump = LLFirReturnTypeCalculatorWithJump(
         resolveTargetScopeSession,
         llImplicitBodyResolveComputationSession,
-        lockProvider,
     )
 
     abstract val transformer: FirAbstractBodyResolveTransformerDispatcher

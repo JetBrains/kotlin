@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -20,8 +19,8 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * @see LLFirTargetResolver
  */
 internal abstract class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
-    fun resolve(target: LLFirResolveTarget, lockProvider: LLFirLockProvider) {
-        val resolver = createTargetResolver(target, lockProvider)
+    fun resolve(target: LLFirResolveTarget) {
+        val resolver = createTargetResolver(target)
         requireWithAttachment(
             resolverPhase == resolver.resolverPhase,
             {
@@ -35,10 +34,7 @@ internal abstract class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
         resolver.resolveDesignation()
     }
 
-    protected abstract fun createTargetResolver(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-    ): LLFirTargetResolver
+    protected abstract fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver
 
     fun checkIsResolved(target: FirElementWithResolveState) {
         target.checkPhase(resolverPhase)

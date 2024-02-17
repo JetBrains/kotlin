@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
@@ -39,12 +40,12 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 internal abstract class LLFirTargetResolver(
     protected val resolveTarget: LLFirResolveTarget,
-    protected val lockProvider: LLFirLockProvider,
     val resolverPhase: FirResolvePhase,
     private val isJumpingPhase: Boolean = false,
 ) : LLFirResolveTargetVisitor {
     val resolveTargetSession: LLFirSession get() = resolveTarget.session
     val resolveTargetScopeSession: ScopeSession get() = resolveTargetSession.getScopeSession()
+    private val lockProvider: LLFirLockProvider get() = LLFirGlobalResolveComponents.getInstance(resolveTargetSession).lockProvider
 
     private val _containingDeclarations = mutableListOf<FirDeclaration>()
 

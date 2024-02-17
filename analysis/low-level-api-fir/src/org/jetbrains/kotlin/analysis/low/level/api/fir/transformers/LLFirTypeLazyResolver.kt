@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationTypeIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkContextReceiverTypeRefIsResolved
@@ -28,10 +27,7 @@ import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES) {
-    override fun createTargetResolver(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-    ): LLFirTargetResolver = LLFirTypeTargetResolver(target, lockProvider)
+    override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirTypeTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target is FirAnnotationContainer) {
@@ -60,10 +56,7 @@ internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES)
     }
 }
 
-private class LLFirTypeTargetResolver(
-    target: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
-) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.TYPES) {
+private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetResolver(target, FirResolvePhase.TYPES) {
     private val transformer = object : FirTypeResolveTransformer(resolveTargetSession, resolveTargetScopeSession) {
         override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
             FirLazyBodiesCalculator.calculateAnnotations(typeRef, session)

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirReturnTypeCalculatorWithJump
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
@@ -16,7 +15,6 @@ internal object PersistentCheckerContextFactory {
         val returnTypeCalculator = LLFirReturnTypeCalculatorWithJump(
             scopeSession = sessionHolder.scopeSession,
             implicitBodyResolveComputationSession = LLImplicitBodyResolveComputationSession(),
-            lockProvider = LLFirGlobalResolveComponents.getInstance(sessionHolder.session).lockProvider,
         )
 
         return PersistentCheckerContext(sessionHolder, returnTypeCalculator)
