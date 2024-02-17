@@ -36,6 +36,7 @@ object KotlinUsages {
      */
     const val KOTLIN_COMMONIZED_CINTEROP = "kotlin-commonized-cinterop"
     const val KOTLIN_SOURCES = "kotlin-sources"
+    const val KOTLIN_RESOURCES = "kotlin-multiplatformresources"
 
     // Following two constants were removed in Gradle 8.0 from 'Usages' class
     private const val JAVA_RUNTIME_CLASSES = "java-runtime-classes"
@@ -125,6 +126,31 @@ object KotlinUsages {
         }
     }
 
+    private class KotlinResourcesCompatibility : AttributeCompatibilityRule<Usage> {
+        override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
+            /**
+             * When resolving resources using KotlinTarget.resourcesConfiguration, if a dependency doesn't have resources variant, we must
+             * take dependencies from apiElements because they might contain transitive resources variants.
+             * */
+            if (consumerValue?.name == KOTLIN_RESOURCES && producerValue?.name == KOTLIN_API) {
+                compatible()
+            }
+        }
+    }
+
+    private class KotlinResourcesDisambiguation : AttributeDisambiguationRule<Usage> {
+        override fun execute(details: MultipleCandidatesDetails<Usage?>) = details.run {
+            if (consumerValue?.name == KOTLIN_RESOURCES) {
+                val candidateNames = candidateValues.map { it?.name }
+                when {
+                    KOTLIN_RESOURCES in candidateNames -> chooseCandidateByName(KOTLIN_RESOURCES)
+                    KOTLIN_API in candidateNames -> chooseCandidateByName(KOTLIN_API)
+                    else -> Unit
+                }
+            }
+        }
+    }
+
     private class KotlinCinteropDisambiguation : AttributeDisambiguationRule<Usage> {
         override fun execute(details: MultipleCandidatesDetails<Usage?>) = details.run {
             if (consumerValue?.name == KOTLIN_CINTEROP) {
@@ -198,6 +224,10 @@ object KotlinUsages {
                 strategy.compatibilityRules.add(KotlinMetadataCompatibility::class.java)
                 strategy.disambiguationRules.add(KotlinMetadataDisambiguation::class.java)
             }
+
+            strategy.compatibilityRules.add(KotlinResourcesCompatibility::class.java)
+            // FIXME: Is there ever a case when disambiguation may be needed?
+            // strategy.disambiguationRules.add(KotlinResourcesDisambiguation::class.java)
         }
     }
 }

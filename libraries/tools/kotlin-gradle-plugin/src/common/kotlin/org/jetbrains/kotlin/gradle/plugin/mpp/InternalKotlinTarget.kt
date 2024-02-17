@@ -39,6 +39,8 @@ internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
 
     @Deprecated(TOOLCHAIN_DSL_WRONG_USAGE_ERROR, level = DeprecationLevel.ERROR)
     fun jvmToolchain(jdkVersion: Int): Unit = error(TOOLCHAIN_DSL_WRONG_USAGE_ERROR)
+
+    val resourcesElementsConfigurationName: String
 }
 
 private const val TOOLCHAIN_DSL_WRONG_USAGE_ERROR =

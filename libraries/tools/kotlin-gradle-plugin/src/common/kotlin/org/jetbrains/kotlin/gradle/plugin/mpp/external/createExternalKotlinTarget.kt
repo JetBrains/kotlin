@@ -59,6 +59,10 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
         .maybeCreateDependencyScope(lowerCamelCaseName(descriptor.targetName, "sourcesElements-published"))
         .notVisible()
 
+    val resourcesElementsPublishedConfiguration = project.configurations
+        .maybeCreateDependencyScope(lowerCamelCaseName(descriptor.targetName, "resourcesElements-published"))
+        .notVisible()
+
     val kotlinTargetComponent = ExternalKotlinTargetComponent(
         ExternalKotlinTargetComponent.TargetProvider.byTargetName(this, descriptor.targetName)
     )
@@ -88,6 +92,7 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
         apiElementsPublishedConfiguration = apiElementsPublishedConfiguration,
         runtimeElementsPublishedConfiguration = runtimeElementsPublishedConfiguration,
         sourcesElementsPublishedConfiguration = sourcesElementsPublishedConfiguration,
+        resourcesElementsPublishedConfiguration = resourcesElementsPublishedConfiguration,
         kotlinTargetComponent = kotlinTargetComponent,
         artifactsTaskLocator = artifactsTaskLocator
     )
