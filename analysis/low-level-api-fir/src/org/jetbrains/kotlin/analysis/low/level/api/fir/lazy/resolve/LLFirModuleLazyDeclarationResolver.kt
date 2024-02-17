@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -28,13 +27,10 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      *
      * Resolution is performed under the lock specific to each declaration that is going to be resolved.
      */
-    fun lazyResolve(
-        target: FirElementWithResolveState,
-        scopeSession: ScopeSession,
-        toPhase: FirResolvePhase,
-    ) {
+    fun lazyResolve(target: FirElementWithResolveState, toPhase: FirResolvePhase) {
         if (target.resolvePhase >= toPhase) return
-        lazyResolve(target, scopeSession, toPhase, LLFirResolveDesignationCollector::getDesignationToResolve)
+
+        lazyResolve(target, toPhase, LLFirResolveDesignationCollector::getDesignationToResolve)
     }
 
     /**
@@ -44,12 +40,8 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      *
      * Resolution is performed under the lock specific to each declaration that is going to be resolved.
      */
-    fun lazyResolveWithCallableMembers(
-        target: FirRegularClass,
-        scopeSession: ScopeSession,
-        toPhase: FirResolvePhase,
-    ) {
-        lazyResolve(target, scopeSession, toPhase, LLFirResolveDesignationCollector::getDesignationToResolveWithCallableMembers)
+    fun lazyResolveWithCallableMembers(target: FirRegularClass, toPhase: FirResolvePhase) {
+        lazyResolve(target, toPhase, LLFirResolveDesignationCollector::getDesignationToResolveWithCallableMembers)
     }
 
     /**
@@ -59,17 +51,12 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      *
      * Resolution is performed under the lock specific to each declaration that is going to be resolved.
      */
-    fun lazyResolveRecursively(
-        target: FirElementWithResolveState,
-        scopeSession: ScopeSession,
-        toPhase: FirResolvePhase,
-    ) {
-        lazyResolve(target, scopeSession, toPhase, LLFirResolveDesignationCollector::getDesignationToResolveRecursively)
+    fun lazyResolveRecursively(target: FirElementWithResolveState, toPhase: FirResolvePhase) {
+        lazyResolve(target, toPhase, LLFirResolveDesignationCollector::getDesignationToResolveRecursively)
     }
 
     private inline fun <T : FirElementWithResolveState> lazyResolve(
         targetElement: T,
-        scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
         resolveTarget: (T) -> LLFirResolveTarget?,
     ) {
@@ -79,11 +66,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
             if (toPhase == FirResolvePhase.IMPORTS) return
 
             val target = resolveTarget(targetElement) ?: return
-            lazyResolveTargets(
-                target,
-                scopeSession,
-                toPhase,
-            )
+            lazyResolveTargets(target, toPhase)
         } catch (e: Exception) {
             handleExceptionFromResolve(e, targetElement, fromPhase, toPhase)
         }
@@ -105,11 +88,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
             target.firFile?.let(::resolveFileToImportsWithLock)
             if (toPhase == FirResolvePhase.IMPORTS) return
 
-            lazyResolveTargets(
-                target,
-                moduleComponents.scopeSessionProvider.getScopeSession(),
-                toPhase,
-            )
+            lazyResolveTargets(target, toPhase)
         } catch (e: Exception) {
             handleExceptionFromResolve(e, target, toPhase)
         }
@@ -127,28 +106,20 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         }
     }
 
-    private fun lazyResolveTargets(
-        target: LLFirResolveTarget,
-        scopeSession: ScopeSession,
-        toPhase: FirResolvePhase,
-    ) {
+    private fun lazyResolveTargets(target: LLFirResolveTarget, toPhase: FirResolvePhase) {
         var currentPhase = getMinResolvePhase(target).coerceAtLeast(FirResolvePhase.IMPORTS)
         if (currentPhase >= toPhase) return
 
-        val lockProvider = moduleComponents.globalResolveComponents.lockProvider
-
         // to catch a contract violation for jumping phases
-        lockProvider.checkContractViolations(toPhase)
+        moduleComponents.globalResolveComponents.lockProvider.checkContractViolations(toPhase)
 
         while (currentPhase < toPhase) {
             currentPhase = currentPhase.next
             checkCanceled()
 
             LLFirLazyResolverRunner.runLazyResolverByPhase(
-                currentPhase,
-                target,
-                scopeSession,
-                lockProvider,
+                phase = currentPhase,
+                target = target,
             )
         }
     }
