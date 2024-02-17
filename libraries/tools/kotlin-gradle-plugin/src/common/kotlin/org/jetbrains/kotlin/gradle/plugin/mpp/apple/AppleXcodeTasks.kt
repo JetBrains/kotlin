@@ -17,6 +17,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -217,11 +218,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     val envSign = XcodeEnvironment.sign
     val userScriptSandboxingEnabled = XcodeEnvironment.userScriptSandboxingEnabled
 
-    val frameworkTaskName = lowerCamelCaseName(
-        AppleXcodeTasks.embedAndSignTaskPrefix,
-        framework.namePrefix,
-        AppleXcodeTasks.embedAndSignTaskPostfix
-    )
+    val frameworkTaskName = framework.embedAndSignTaskName()
 
     if (envBuildType == null || envTargets.isEmpty() || envEmbeddedFrameworksDir == null) {
         locateOrRegisterTask<DefaultTask>(frameworkTaskName) { task ->
@@ -250,7 +247,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
         }
     }
 
-    val embedAndSignTask = locateOrRegisterTask<FrameworkCopy>(frameworkTaskName) { task ->
+    val embedAndSignTask = locateOrRegisterTask<EmbedAndSignTask>(frameworkTaskName) { task ->
         task.group = BasePlugin.BUILD_GROUP
         task.description = "Embed and sign ${framework.namePrefix} framework as requested by Xcode's environment variables"
         task.isEnabled = !framework.isStatic
@@ -288,6 +285,12 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     }
 }
 
+private fun Framework.embedAndSignTaskName(): String = lowerCamelCaseName(
+    AppleXcodeTasks.embedAndSignTaskPrefix,
+    namePrefix,
+    AppleXcodeTasks.embedAndSignTaskPostfix
+)
+
 private val Framework.namePrefix: String
     get() = KotlinNativeBinaryContainer.extractPrefixFromBinaryName(
         name,
@@ -316,7 +319,7 @@ private fun Project.appleFrameworkDir(frameworkTaskName: String): Provider<File>
  * To preserve these symlinks we are using the `cp` command instead.
  * See https://youtrack.jetbrains.com/issue/KT-48594.
  */
-@DisableCachingByDefault
+@DisableCachingByDefault(because = "Caching breaks symlinks inside frameworks")
 internal abstract class FrameworkCopy : DefaultTask() {
 
     @get:Inject
@@ -359,3 +362,6 @@ internal abstract class FrameworkCopy : DefaultTask() {
         fun dsymFile(framework: Provider<File>): Provider<File> = framework.map { File(it.path + ".dSYM") }
     }
 }
+
+@DisableCachingByDefault(because = "Caching breaks symlinks inside frameworks")
+internal abstract class EmbedAndSignTask : FrameworkCopy(), UsesKotlinToolingDiagnostics
