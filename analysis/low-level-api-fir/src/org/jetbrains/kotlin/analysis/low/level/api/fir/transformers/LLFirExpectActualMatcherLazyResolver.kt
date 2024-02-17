@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherTransformer
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 
@@ -24,7 +23,6 @@ internal object LLFirExpectActualMatcherLazyResolver : LLFirLazyResolver(FirReso
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
         scopeSession: ScopeSession,
-        towerDataContextCollector: FirResolveContextCollector?,
     ): LLFirTargetResolver = LLFirExpectActualMatchingTargetResolver(target, lockProvider, scopeSession)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {

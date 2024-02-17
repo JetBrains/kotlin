@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -77,7 +77,6 @@ open class FirDeclarationsResolveTransformer(
     }
 
     protected fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
-        transformer.firResolveContextCollector?.addDeclarationContext(declaration, context)
         return transformer.transformDeclarationContent(declaration, data)
     }
 
@@ -678,7 +677,7 @@ open class FirDeclarationsResolveTransformer(
         context.withContainingClass(regularClass) {
             val isLocal = regularClass.isLocal
             if (isLocal && regularClass !in context.targetedLocalClasses) {
-                return regularClass.runAllPhasesForLocalClass(components, data, transformer.firResolveContextCollector)
+                return regularClass.runAllPhasesForLocalClass(components, data)
             }
 
             if (isLocal || !implicitTypeOnly) {
@@ -724,14 +723,13 @@ open class FirDeclarationsResolveTransformer(
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias = whileAnalysing(session, typeAlias) {
         if (implicitTypeOnly) return typeAlias
         if (typeAlias.isLocal && typeAlias !in context.targetedLocalClasses) {
-            return typeAlias.runAllPhasesForLocalClass(components, data, transformer.firResolveContextCollector)
+            return typeAlias.runAllPhasesForLocalClass(components, data)
         }
 
         @OptIn(PrivateForInline::class)
         context.withContainer(typeAlias) {
             doTransformTypeParameters(typeAlias)
             typeAlias.transformAnnotations(transformer, data)
-            transformer.firResolveContextCollector?.addDeclarationContext(typeAlias, context)
             typeAlias.transformExpandedTypeRef(transformer, data)
         }
 
@@ -742,8 +740,6 @@ open class FirDeclarationsResolveTransformer(
         file: FirFile,
         data: ResolutionMode,
     ): FirFile = withFile(file) {
-        transformer.firResolveContextCollector?.addFileContext(file, context.towerDataContext)
-
         transformDeclarationContent(file, data) as FirFile
     }
 
@@ -798,7 +794,7 @@ open class FirDeclarationsResolveTransformer(
     ): FirAnonymousObject = whileAnalysing(session, anonymousObject) {
         context.withContainingClass(anonymousObject) {
             if (anonymousObject !in context.targetedLocalClasses) {
-                return anonymousObject.runAllPhasesForLocalClass(components, data, transformer.firResolveContextCollector)
+                return anonymousObject.runAllPhasesForLocalClass(components, data)
             }
 
             require(anonymousObject.controlFlowGraphReference == null)
@@ -895,7 +891,6 @@ open class FirDeclarationsResolveTransformer(
         val bodyResolved = function.bodyResolved
         dataFlowAnalyzer.enterFunction(function)
 
-        transformer.firResolveContextCollector?.addDeclarationContext(function, context)
         if (shouldResolveEverything) {
             // Annotations here are required only in the case of a local class member function.
             // Separate annotation transformers are responsible in the case of non-local functions.

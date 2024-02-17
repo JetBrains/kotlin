@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 /**
@@ -26,9 +25,8 @@ internal abstract class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
         scopeSession: ScopeSession,
-        towerDataContextCollector: FirResolveContextCollector?,
     ) {
-        val resolver = createTargetResolver(target, lockProvider, scopeSession, towerDataContextCollector)
+        val resolver = createTargetResolver(target, lockProvider, scopeSession)
         requireWithAttachment(
             resolverPhase == resolver.resolverPhase,
             {
@@ -46,7 +44,6 @@ internal abstract class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
         scopeSession: ScopeSession,
-        towerDataContextCollector: FirResolveContextCollector?,
     ): LLFirTargetResolver
 
     fun checkIsResolved(target: FirElementWithResolveState) {

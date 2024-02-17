@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal abstract class LLFirAbstractBodyTargetResolver(
@@ -26,13 +25,10 @@ internal abstract class LLFirAbstractBodyTargetResolver(
     protected val llImplicitBodyResolveComputationSession: LLImplicitBodyResolveComputationSession = LLImplicitBodyResolveComputationSession(),
     isJumpingPhase: Boolean = false,
 ) : LLFirTargetResolver(resolveTarget, lockProvider, resolvePhase, isJumpingPhase) {
-    protected fun createReturnTypeCalculator(
-        firResolveContextCollector: FirResolveContextCollector?,
-    ): LLFirReturnTypeCalculatorWithJump = LLFirReturnTypeCalculatorWithJump(
+    protected fun createReturnTypeCalculator(): LLFirReturnTypeCalculatorWithJump = LLFirReturnTypeCalculatorWithJump(
         scopeSession,
         llImplicitBodyResolveComputationSession,
         lockProvider,
-        firResolveContextCollector,
     )
 
     abstract val transformer: FirAbstractBodyResolveTransformerDispatcher

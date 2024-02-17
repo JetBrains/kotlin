@@ -73,8 +73,7 @@ class FirImplicitTypeBodyResolveTransformerAdapter(session: FirSession, scopeSes
 fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
     components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     resolutionMode: ResolutionMode,
-    localClassesNavigationInfo: LocalClassesNavigationInfo,
-    firResolveContextCollector: FirResolveContextCollector? = null
+    localClassesNavigationInfo: LocalClassesNavigationInfo
 ): F {
     val currentReturnTypeCalculator = components.context.returnTypeCalculator as? ReturnTypeCalculatorWithJump
     val prevDesignation = currentReturnTypeCalculator?.designationMapForLocalClasses ?: emptyMap()
@@ -106,7 +105,6 @@ fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
         implicitTypeOnly = false,
         returnTypeCalculator,
         outerBodyResolveContext = newContext,
-        firResolveContextCollector = firResolveContextCollector,
     )
 
     return this.transform(transformer, resolutionMode)
@@ -120,7 +118,6 @@ open class FirImplicitAwareBodyResolveTransformer(
     implicitTypeOnly: Boolean,
     returnTypeCalculator: ReturnTypeCalculatorWithJump,
     outerBodyResolveContext: BodyResolveContext? = null,
-    firResolveContextCollector: FirResolveContextCollector? = null,
 ) : FirBodyResolveTransformer(
     session,
     phase,
@@ -128,7 +125,6 @@ open class FirImplicitAwareBodyResolveTransformer(
     scopeSession,
     returnTypeCalculator,
     outerBodyResolveContext,
-    firResolveContextCollector
 ) {
     override fun transformForeignAnnotationCall(symbol: FirBasedSymbol<*>, annotationCall: FirAnnotationCall): FirAnnotationCall {
         val outerTransformer = (returnTypeCalculator as ReturnTypeCalculatorWithJump).outerTransformer

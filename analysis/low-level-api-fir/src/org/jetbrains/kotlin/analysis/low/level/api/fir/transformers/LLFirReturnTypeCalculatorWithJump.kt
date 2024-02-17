@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirImplici
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ReturnTypeCalculatorWithJump
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
@@ -24,7 +23,6 @@ internal class LLFirReturnTypeCalculatorWithJump(
     scopeSession: ScopeSession,
     implicitBodyResolveComputationSession: LLImplicitBodyResolveComputationSession,
     private val lockProvider: LLFirLockProvider,
-    private val towerDataContextCollector: FirResolveContextCollector?,
 ) : ReturnTypeCalculatorWithJump(scopeSession, implicitBodyResolveComputationSession) {
     override fun resolveDeclaration(declaration: FirCallableDeclaration): FirResolvedTypeRef {
         if (declaration.returnTypeRef !is FirImplicitTypeRef) {
@@ -40,7 +38,6 @@ internal class LLFirReturnTypeCalculatorWithJump(
             designation,
             lockProvider = lockProvider,
             scopeSession = targetSession.getScopeSession(),
-            firResolveContextCollector = towerDataContextCollector,
             llImplicitBodyResolveComputationSessionParameter = computationSession,
         )
 

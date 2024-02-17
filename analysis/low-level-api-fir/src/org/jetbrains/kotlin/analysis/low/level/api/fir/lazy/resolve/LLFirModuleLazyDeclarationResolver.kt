@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
@@ -84,7 +83,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 target,
                 scopeSession,
                 toPhase,
-                towerDataContextCollector = null,
             )
         } catch (e: Exception) {
             handleExceptionFromResolve(e, targetElement, fromPhase, toPhase)
@@ -102,7 +100,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
     fun lazyResolveTarget(
         target: LLFirResolveTarget,
         toPhase: FirResolvePhase,
-        towerDataContextCollector: FirResolveContextCollector?,
     ) {
         try {
             target.firFile?.let(::resolveFileToImportsWithLock)
@@ -112,7 +109,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 target,
                 moduleComponents.scopeSessionProvider.getScopeSession(),
                 toPhase,
-                towerDataContextCollector,
             )
         } catch (e: Exception) {
             handleExceptionFromResolve(e, target, toPhase)
@@ -135,7 +131,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         target: LLFirResolveTarget,
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
-        towerDataContextCollector: FirResolveContextCollector?,
     ) {
         var currentPhase = getMinResolvePhase(target).coerceAtLeast(FirResolvePhase.IMPORTS)
         if (currentPhase >= toPhase) return
@@ -154,7 +149,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 target,
                 scopeSession,
                 lockProvider,
-                towerDataContextCollector,
             )
         }
     }
