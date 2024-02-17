@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveTransformer
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 
@@ -26,8 +25,7 @@ internal object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.C
     override fun createTargetResolver(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-    ): LLFirTargetResolver = LLFirContractsTargetResolver(target, lockProvider, scopeSession)
+    ): LLFirTargetResolver = LLFirContractsTargetResolver(target, lockProvider)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target !is FirContractDescriptionOwner) return
@@ -38,14 +36,12 @@ internal object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.C
 private class LLFirContractsTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    scopeSession: ScopeSession,
 ) : LLFirAbstractBodyTargetResolver(
     target,
     lockProvider,
-    scopeSession,
     FirResolvePhase.CONTRACTS,
 ) {
-    override val transformer = FirContractResolveTransformer(resolveTargetSession, scopeSession)
+    override val transformer = FirContractResolveTransformer(resolveTargetSession, resolveTargetScopeSession)
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         // There is no sense to resolve such declarations as they do not have contracts

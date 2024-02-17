@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
@@ -36,8 +35,7 @@ internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.S
     override fun createTargetResolver(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-    ): LLFirTargetResolver = LLFirSuperTypeTargetResolver(target, lockProvider, scopeSession)
+    ): LLFirTargetResolver = LLFirSuperTypeTargetResolver(target, lockProvider)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         when (target) {
@@ -57,14 +55,13 @@ internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.S
 private class LLFirSuperTypeTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    private val scopeSession: ScopeSession,
     private val supertypeComputationSession: LLFirSupertypeComputationSession = LLFirSupertypeComputationSession(target.session),
     private val visitedElements: MutableSet<FirElementWithResolveState> = hashSetOf(),
 ) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.SUPER_TYPES, isJumpingPhase = false) {
     private val supertypeResolver = object : FirSupertypeResolverVisitor(
         session = resolveTargetSession,
         supertypeComputationSession = supertypeComputationSession,
-        scopeSession = scopeSession,
+        scopeSession = resolveTargetScopeSession,
     ) {
         /**
          * We can do nothing here because at a call moment we've already resolved [outerClass]
@@ -108,7 +105,7 @@ private class LLFirSuperTypeTargetResolver(
                 resolver = { supertypeResolver.resolveSpecificClassLikeSupertypes(target, it) },
                 superTypeUpdater = {
                     target.replaceSuperTypeRefs(it)
-                    resolveTargetSession.platformSupertypeUpdater?.updateSupertypesIfNeeded(target, scopeSession)
+                    resolveTargetSession.platformSupertypeUpdater?.updateSupertypesIfNeeded(target, resolveTargetScopeSession)
                 },
             )
             is FirTypeAlias -> performResolve(
@@ -185,7 +182,6 @@ private class LLFirSuperTypeTargetResolver(
         LLFirSuperTypeTargetResolver(
             target = target,
             lockProvider = lockProvider,
-            scopeSession = target.session.getScopeSession(),
             supertypeComputationSession = supertypeComputationSession,
             visitedElements = visitedElements,
         ).resolveDesignation()

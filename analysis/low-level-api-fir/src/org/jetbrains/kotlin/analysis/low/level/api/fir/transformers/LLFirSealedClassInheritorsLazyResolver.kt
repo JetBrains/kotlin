@@ -9,13 +9,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
 internal object LLFirSealedClassInheritorsLazyResolver : LLFirLazyResolver(FirResolvePhase.SEALED_CLASS_INHERITORS) {
     override fun createTargetResolver(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
     ): LLFirTargetResolver = LLFirSealedClassInheritorsDesignatedResolver(target, lockProvider)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {}

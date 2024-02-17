@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.originalIfFakeOverrideOrDelegated
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.DataClassResolver
@@ -43,6 +44,7 @@ internal abstract class LLFirTargetResolver(
     private val isJumpingPhase: Boolean = false,
 ) : LLFirResolveTargetVisitor {
     val resolveTargetSession: LLFirSession get() = resolveTarget.session
+    val resolveTargetScopeSession: ScopeSession get() = resolveTargetSession.getScopeSession()
 
     private val _containingDeclarations = mutableListOf<FirDeclaration>()
 

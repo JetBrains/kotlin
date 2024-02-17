@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -31,8 +30,7 @@ internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePha
     override fun createTargetResolver(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-    ): LLFirTargetResolver = LLFirImplicitBodyTargetResolver(target, lockProvider, scopeSession)
+    ): LLFirTargetResolver = LLFirImplicitBodyTargetResolver(target, lockProvider)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target !is FirCallableDeclaration) return
@@ -126,12 +124,10 @@ internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComp
 internal class LLFirImplicitBodyTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    scopeSession: ScopeSession,
     llImplicitBodyResolveComputationSessionParameter: LLImplicitBodyResolveComputationSession? = null,
 ) : LLFirAbstractBodyTargetResolver(
     target,
     lockProvider,
-    scopeSession,
     FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
     llImplicitBodyResolveComputationSession = llImplicitBodyResolveComputationSessionParameter ?: LLImplicitBodyResolveComputationSession(),
     isJumpingPhase = true,
@@ -141,7 +137,7 @@ internal class LLFirImplicitBodyTargetResolver(
         implicitBodyResolveComputationSession = llImplicitBodyResolveComputationSession,
         phase = resolverPhase,
         implicitTypeOnly = true,
-        scopeSession = scopeSession,
+        scopeSession = resolveTargetScopeSession,
         returnTypeCalculator = createReturnTypeCalculator(),
     ) {
         override val preserveCFGForClasses: Boolean get() = false

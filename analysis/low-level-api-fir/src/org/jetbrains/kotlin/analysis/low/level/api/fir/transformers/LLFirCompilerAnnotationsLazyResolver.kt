@@ -35,8 +35,7 @@ internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirReso
     override fun createTargetResolver(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-    ): LLFirTargetResolver = LLFirCompilerRequiredAnnotationsTargetResolver(target, lockProvider, scopeSession)
+    ): LLFirTargetResolver = LLFirCompilerRequiredAnnotationsTargetResolver(target, lockProvider)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         when (target) {
@@ -49,7 +48,6 @@ internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirReso
 private class LLFirCompilerRequiredAnnotationsTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    scopeSession: ScopeSession,
     computationSession: LLFirCompilerRequiredAnnotationsComputationSession? = null,
 ) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS, isJumpingPhase = false) {
     inner class LLFirCompilerRequiredAnnotationsComputationSession : CompilerRequiredAnnotationsComputationSession() {
@@ -59,11 +57,9 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
 
             symbol.lazyResolveToPhase(resolverPhase.previous)
             val designation = regularClass.collectDesignation().asResolveTarget()
-            val targetSession = designation.target.llFirSession
             val resolver = LLFirCompilerRequiredAnnotationsTargetResolver(
                 designation,
                 lockProvider,
-                targetSession.getScopeSession(),
                 this,
             )
 
@@ -75,7 +71,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
 
     private val transformer = FirCompilerRequiredAnnotationsResolveTransformer(
         resolveTargetSession,
-        scopeSession,
+        resolveTargetScopeSession,
         computationSession ?: LLFirCompilerRequiredAnnotationsComputationSession(),
     )
 

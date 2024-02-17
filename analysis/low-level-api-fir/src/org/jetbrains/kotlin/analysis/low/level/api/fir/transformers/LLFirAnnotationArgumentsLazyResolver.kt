@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsTransformer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -33,8 +32,7 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
     override fun createTargetResolver(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-    ): LLFirTargetResolver = LLFirAnnotationArgumentsTargetResolver(target, lockProvider, scopeSession)
+    ): LLFirTargetResolver = LLFirAnnotationArgumentsTargetResolver(target, lockProvider)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target !is FirAnnotationContainer) return
@@ -76,11 +74,9 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
 private class LLFirAnnotationArgumentsTargetResolver(
     resolveTarget: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    scopeSession: ScopeSession,
 ) : LLFirAbstractBodyTargetResolver(
     resolveTarget,
     lockProvider,
-    scopeSession,
     FirResolvePhase.ANNOTATION_ARGUMENTS,
 ) {
     /**
@@ -97,7 +93,7 @@ private class LLFirAnnotationArgumentsTargetResolver(
      */
     override val transformer = FirAnnotationArgumentsTransformer(
         resolveTargetSession,
-        scopeSession,
+        resolveTargetScopeSession,
         resolverPhase,
         returnTypeCalculator = createReturnTypeCalculator(),
     )

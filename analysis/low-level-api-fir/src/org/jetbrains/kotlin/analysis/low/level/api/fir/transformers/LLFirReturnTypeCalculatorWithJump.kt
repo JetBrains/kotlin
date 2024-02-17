@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirImplicitBodyTargetResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirImplicitTypesLazyResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLImplicitBodyResolveComputationSession
@@ -32,12 +31,10 @@ internal class LLFirReturnTypeCalculatorWithJump(
         declaration.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE.previous)
 
         val designation = declaration.collectDesignation().asResolveTarget()
-        val targetSession = designation.target.llFirSession
         val computationSession = implicitBodyResolveComputationSession as LLImplicitBodyResolveComputationSession
         val resolver = LLFirImplicitBodyTargetResolver(
             designation,
             lockProvider = lockProvider,
-            scopeSession = targetSession.getScopeSession(),
             llImplicitBodyResolveComputationSessionParameter = computationSession,
         )
 

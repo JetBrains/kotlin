@@ -54,8 +54,7 @@ internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_R
     override fun createTargetResolver(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-    ): LLFirTargetResolver = LLFirBodyTargetResolver(target, lockProvider, scopeSession)
+    ): LLFirTargetResolver = LLFirBodyTargetResolver(target, lockProvider)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         when (target) {
@@ -73,18 +72,16 @@ internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_R
 private class LLFirBodyTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    scopeSession: ScopeSession,
 ) : LLFirAbstractBodyTargetResolver(
     target,
     lockProvider,
-    scopeSession,
     FirResolvePhase.BODY_RESOLVE,
 ) {
     override val transformer = object : FirBodyResolveTransformer(
         resolveTargetSession,
         phase = resolverPhase,
         implicitTypeOnly = false,
-        scopeSession = scopeSession,
+        scopeSession = resolveTargetScopeSession,
         returnTypeCalculator = createReturnTypeCalculator(),
     ) {
         override val preserveCFGForClasses: Boolean get() = false

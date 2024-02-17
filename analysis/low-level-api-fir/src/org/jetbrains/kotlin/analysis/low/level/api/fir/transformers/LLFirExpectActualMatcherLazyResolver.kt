@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherTransformer
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 
@@ -22,8 +21,7 @@ internal object LLFirExpectActualMatcherLazyResolver : LLFirLazyResolver(FirReso
     override fun createTargetResolver(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-    ): LLFirTargetResolver = LLFirExpectActualMatchingTargetResolver(target, lockProvider, scopeSession)
+    ): LLFirTargetResolver = LLFirExpectActualMatchingTargetResolver(target, lockProvider)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target.moduleData.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) &&
@@ -38,7 +36,6 @@ internal object LLFirExpectActualMatcherLazyResolver : LLFirLazyResolver(FirReso
 private class LLFirExpectActualMatchingTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    scopeSession: ScopeSession,
 ) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
     private val enabled = resolveTargetSession.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
 
@@ -52,7 +49,7 @@ private class LLFirExpectActualMatchingTargetResolver(
         action()
     }
 
-    private val transformer = object : FirExpectActualMatcherTransformer(resolveTargetSession, scopeSession) {
+    private val transformer = object : FirExpectActualMatcherTransformer(resolveTargetSession, resolveTargetScopeSession) {
         override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
             transformMemberDeclaration(regularClass)
             return regularClass
