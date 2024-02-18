@@ -187,13 +187,13 @@ class B(var a: Int = 0) {
  * TESTCASE NUMBER: 7
  * NOTE: for-loop operators
  * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-36898
+ * ISSUES: KT-36898, KT-62356
  */
 package testPackCase7
 
 fun case7 () {
     val iterable: Iterable = Iterable(Inv('s'))
-    for (i in iterable) {
+    for (i in <!PROPERTY_AS_OPERATOR!>iterable<!>) {
         println(i)
     }
 }
@@ -220,13 +220,13 @@ class Inv(val c: Char) {
  * TESTCASE NUMBER: 8
  * NOTE: for-loop operators
  * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-36898
+ * ISSUES: KT-36898, KT-62356
  */
 package testPackCase8
 
 fun case8 () {
     val iterable: Iterable = Iterable()
-    for (i in iterable) {
+    for (i in <!PROPERTY_AS_OPERATOR!>iterable<!>) {
         println(i)
     }
 }

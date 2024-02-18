@@ -2743,6 +2743,7 @@ open class PsiRawFirBuilder(
                             name = OperatorNameConventions.ITERATOR
                         }
                         explicitReceiver = rangeExpression
+                        origin = FirFunctionCallOrigin.Operator
                     },
                 )
                 statements += iteratorVal
@@ -2755,6 +2756,7 @@ open class PsiRawFirBuilder(
                             name = OperatorNameConventions.HAS_NEXT
                         }
                         explicitReceiver = generateResolvedAccessExpression(rangeSource, iteratorVal)
+                        origin = FirFunctionCallOrigin.Operator
                     }
                     // break/continue in the for loop condition will refer to an outer loop if any.
                     // So, prepare the loop target after building the condition.
@@ -2776,6 +2778,7 @@ open class PsiRawFirBuilder(
                                     name = OperatorNameConventions.NEXT
                                 }
                                 explicitReceiver = generateResolvedAccessExpression(rangeSource, iteratorVal)
+                                origin = FirFunctionCallOrigin.Operator
                             },
                             typeRef = ktParameter.typeReference.toFirOrImplicitType(),
                             extractedAnnotations = ktParameter.modifierList?.annotationEntries?.map { it.convert<FirAnnotation>() },
