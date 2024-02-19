@@ -55,6 +55,16 @@ internal class SignaturePrinter(
         }
 
         private inline fun extractSignatureFromDeclaration(descriptor: DeclarationDescriptorWithVisibility, continuation: () -> Unit = {}) {
+            val isPrivate = when (descriptor.visibility) {
+                DescriptorVisibilities.PUBLIC,
+                DescriptorVisibilities.PROTECTED,
+                DescriptorVisibilities.INTERNAL -> false
+                else -> true
+            }
+
+            // Skip private declarations.
+            if (isPrivate) return
+
             signatures.addIfNotNull(signatureRenderer.render(descriptor))
             continuation()
         }
