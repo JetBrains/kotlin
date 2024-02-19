@@ -120,6 +120,10 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             override fun toString() = "TypeArgument #$index"
         }
 
+        class FlexibleTypeUpperBound(val upperBoundA: KmFlexibleTypeUpperBound, val upperBoundB: KmFlexibleTypeUpperBound) : PathElement {
+            override fun toString() = "TypeFlexibleUpperBound"
+        }
+
         class EnumEntry(val entryA: KlibEnumEntry, val entryB: KlibEnumEntry) : PathElement {
             override fun toString() = "EnumEntry '${entryA.name}'"
         }
@@ -175,6 +179,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
                     EffectExpression(entityA, entityB, optionalIndex)
                 }
                 entityA is KlibEnumEntry && entityB is KlibEnumEntry -> EnumEntry(entityA, entityB)
+                entityA is KmFlexibleTypeUpperBound && entityB is KmFlexibleTypeUpperBound -> FlexibleTypeUpperBound(entityA, entityB)
                 else -> error("Unknown combination of entities: ${entityA::class.java}, ${entityB::class.java}")
             }
         }
