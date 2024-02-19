@@ -61,9 +61,7 @@ if (!useCustomDist) {
 }
 
 compileTestKotlin {
-    kotlinOptions {
-        freeCompilerArgs += "-Xskip-prerelease-check"
-    }
+    compilerOptions.freeCompilerArgs.add("-Xskip-prerelease-check")
 }
 
 // Do not generate run tasks for konan built artifacts
@@ -1384,7 +1382,7 @@ sourceSets {
 }
 
 compileNopPluginKotlin {
-    kotlinOptions.freeCompilerArgs += ['-Xskip-prerelease-check']
+    compilerOptions.freeCompilerArgs.add('-Xskip-prerelease-check')
 }
 
 Task pluginTest(String name, String pluginName, Closure configureClosure) {

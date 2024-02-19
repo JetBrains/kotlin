@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 description = "Kotlin Scripting Compiler Plugin"
 
 plugins {
@@ -46,9 +48,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs - "-progressive" + "-Xskip-metadata-version-check"
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        progressiveMode.set(false)
+        freeCompilerArgs.add("-Xskip-metadata-version-check")
     }
 }
 

@@ -229,6 +229,7 @@ kotlin {
         }
         compilations {
             all {
+                @Suppress("DEPRECATION")
                 kotlinOptions {
                     freeCompilerArgs += listOf(
                         "-Xallow-kotlin-package",
@@ -237,6 +238,7 @@ kotlin {
                 }
             }
             val main by getting {
+                @Suppress("DEPRECATION")
                 kotlinOptions {
                     freeCompilerArgs += listOfNotNull(
                         "-Xir-module-name=kotlin",
@@ -260,12 +262,14 @@ kotlin {
         (this as KotlinTargetWithNodeJsDsl).nodejs()
         compilations {
             all {
+                @Suppress("DEPRECATION")
                 kotlinOptions.freeCompilerArgs += listOfNotNull(
                     "-Xallow-kotlin-package",
                     "-Xexpect-actual-classes",
                     diagnosticNamesArg
                 )
             }
+            @Suppress("DEPRECATION")
             val main by getting {
                 kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
                 kotlinOptions.allWarningsAsErrors = true
@@ -295,6 +299,7 @@ kotlin {
         }
         nativeTarget.apply {
             compilations.all {
+                @Suppress("DEPRECATION")
                 kotlinOptions {
                     freeCompilerArgs += listOf(
                         "-Xallow-kotlin-package",
@@ -764,6 +769,7 @@ tasks {
             exclude("collections/MapTest.kt")
         }
         named("compileTestDevelopmentExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
+            @Suppress("DEPRECATION")
             kotlinOptions.freeCompilerArgs += listOf("-Xwasm-enable-array-range-checks")
         }
     }

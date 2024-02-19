@@ -22,10 +22,10 @@ RepoArtifacts.sourcesJar(project)
 RepoArtifacts.javadocJar(project)
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = [
+    compilerOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
     ]
-    kotlinOptions.moduleName = project.name
+    compilerOptions.moduleName = project.name
 }
 
 LibrariesCommon.configureFrontendIr(project)

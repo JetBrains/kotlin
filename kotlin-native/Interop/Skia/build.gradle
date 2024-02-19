@@ -15,8 +15,8 @@ dependencies {
 }
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = [
-            "-opt-in=kotlinx.cinterop.BetaInteropApi",
-            "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+    compilerOptions.optIn = [
+            "kotlinx.cinterop.BetaInteropApi",
+            "kotlinx.cinterop.ExperimentalForeignApi",
     ]
 }

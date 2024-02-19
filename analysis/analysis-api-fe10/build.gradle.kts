@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -41,11 +43,15 @@ sourceSets {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
-        freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
-        freeCompilerArgs += "-Xcontext-receivers"
-        freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals"
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        optIn.addAll(
+            listOf(
+                "kotlin.RequiresOptIn",
+                "org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals"
+            )
+        )
+        freeCompilerArgs.add("-Xcontext-receivers")
     }
 }
 

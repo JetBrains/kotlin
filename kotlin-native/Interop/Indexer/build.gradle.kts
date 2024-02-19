@@ -6,11 +6,8 @@
 import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.tools.solib
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.target.ClangArgs
-import org.jetbrains.kotlin.konan.target.Family.*
-import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
@@ -162,16 +159,21 @@ kotlinNativeInterop {
     }
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions {
-        freeCompilerArgs += listOf(
-                "-Xskip-prerelease-check",
-                "-opt-in=kotlinx.cinterop.BetaInteropApi",
-                "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-                // staticCFunction uses kotlin.reflect.jvm.reflect on its lambda parameter.
-                "-Xlambdas=class",
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        optIn.addAll(
+                listOf(
+                        "kotlinx.cinterop.BetaInteropApi",
+                        "kotlinx.cinterop.ExperimentalForeignApi",
+                )
         )
-
+        freeCompilerArgs.addAll(
+                listOf(
+                        "-Xskip-prerelease-check",
+                        // staticCFunction uses kotlin.reflect.jvm.reflect on its lambda parameter.
+                        "-Xlambdas=class",
+                )
+        )
     }
 }
 

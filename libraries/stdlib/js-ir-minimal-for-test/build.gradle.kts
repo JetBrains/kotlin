@@ -147,7 +147,8 @@ kotlin {
     }
 }
 
-tasks.withType<KotlinCompile<*>> {
+@Suppress("DEPRECATION")
+tasks.withType<KotlinCompile<*>>().configureEach {
     kotlinOptions.languageVersion = "1.9"
     kotlinOptions.apiVersion = "2.0"
     kotlinOptions.freeCompilerArgs += listOf(
@@ -167,6 +168,7 @@ tasks {
         enabled = false
     }
 
+    @Suppress("DEPRECATION")
     named("compileKotlinJs", KotlinCompile::class) {
         kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
     }
