@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.NonLocalAnnotationVisitor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.AnnotationVisitorVoid
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationsAreResolved
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirResolvePhase.ANNOTATION_ARGUMENTS) {
@@ -134,10 +133,10 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
     }
 
     private class ForeignAnnotationsContext(val collection: MutableCollection<FirBasedSymbol<*>>, val currentSymbol: FirCallableSymbol<*>)
-    private object ForeignAnnotationsCollector : AnnotationVisitorVoid<ForeignAnnotationsContext>() {
-        override fun visitAnnotation(annotation: FirAnnotation, data: ForeignAnnotationsContext) {}
-        override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: ForeignAnnotationsContext) {
-            val symbolToPostpone = annotationCall.containingDeclarationSymbol.symbolToPostponeIfCanBeResolvedOnDemand() ?: return
+    private object ForeignAnnotationsCollector : NonLocalAnnotationVisitor<ForeignAnnotationsContext>() {
+        override fun processAnnotation(annotation: FirAnnotation, data: ForeignAnnotationsContext) {
+            if (annotation !is FirAnnotationCall) return
+            val symbolToPostpone = annotation.containingDeclarationSymbol.symbolToPostponeIfCanBeResolvedOnDemand() ?: return
             if (symbolToPostpone != data.currentSymbol) {
                 data.collection += symbolToPostpone
             }
@@ -242,19 +241,13 @@ internal object AnnotationArgumentsStateKeepers {
     }
 
     val DECLARATION: StateKeeper<FirElementWithResolveState, FirSession> = stateKeeper { target, session ->
-        val visitor = object : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) {
-                when (element) {
-                    is FirDeclaration -> if (element !== target) return // Avoid nested declarations
-                    is FirAnnotation -> entity(element, ANNOTATION, session)
-                    is FirStatement -> return
-                }
-
-                element.acceptChildren(this)
+        val visitor = object : NonLocalAnnotationVisitor<Unit>() {
+            override fun processAnnotation(annotation: FirAnnotation, data: Unit) {
+                entity(annotation, ANNOTATION, session)
             }
         }
 
-        target.accept(visitor)
+        target.accept(visitor, Unit)
     }
 }
 
