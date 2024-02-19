@@ -280,6 +280,7 @@ internal abstract class LLFirTargetResolver(
         if (doResolveWithoutLock(target)) return
 
         if (isJumpingPhase) {
+            checkThatResolvedAtLeastToPreviousPhase(target)
             lockProvider.withJumpingLock(
                 target,
                 resolverPhase,
