@@ -6,19 +6,21 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.resources
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.KotlinAndroidTargetResourcesPublication
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.AggregateResourcesTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.ResolveResourcesFromDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.locateTask
@@ -40,6 +42,11 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
         KotlinNativeTarget::class,
         KotlinJvmTarget::class,
         KotlinAndroidTarget::class,
+    )
+
+    private val targetsThatSupportResolution = listOf(
+        KotlinJsIrTarget::class,
+        KotlinNativeTarget::class,
     )
 
     private val targetToResourcesMap: MutableMap<KotlinTarget, TargetResources> = mutableMapOf()
@@ -114,6 +121,86 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
         androidTargetAssetsMap[target] = resources
         androidTargetAssetsSubscribers[target].orEmpty().forEach { notify ->
             notify(resources)
+        }
+    }
+
+    override fun canResolveResources(target: KotlinTarget): Boolean {
+        return targetsThatSupportResolution.any { it.isInstance(target) }
+    }
+
+    override fun resolveResources(target: KotlinTarget): Provider<File> {
+        if (!canResolveResources(target)) {
+            target.project.reportDiagnostic(KotlinToolingDiagnostics.ResourceMayNotBeResolvedForTarget(target.name))
+        }
+
+        val aggregateResourcesTaskName = target.disambiguateName("AggregateResources")
+        project.locateTask<AggregateResourcesTask>(aggregateResourcesTaskName)?.let {
+            return it.flatMap { it.outputDirectory.asFile }
+        }
+
+        val resolveResourcesFromDependenciesTask = project.registerTask<ResolveResourcesFromDependenciesTask>(
+            target.disambiguateName("ResolveResourcesFromDependencies")
+        )
+        val aggregateResourcesTask = project.registerTask<AggregateResourcesTask>(aggregateResourcesTaskName) { aggregate ->
+            aggregate.resourcesFromDependenciesDirectory.set(resolveResourcesFromDependenciesTask.flatMap { it.outputDirectory })
+            aggregate.outputDirectory.set(
+                project.layout.buildDirectory.dir("$MULTIPLATFORM_RESOURCES_DIRECTORY/aggregated-resources/${target.targetName}")
+            )
+        }
+
+        project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
+            val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+            resolveResourcesFromDependencies(
+                compilation = mainCompilation,
+                resolveResourcesFromDependenciesTask = resolveResourcesFromDependenciesTask,
+                targetName = target.targetName,
+            )
+            resolveResourcesFromSelf(
+                compilation = mainCompilation,
+                target = target,
+                aggregateResourcesTask = aggregateResourcesTask,
+            )
+        }
+
+        return aggregateResourcesTask.flatMap { it.outputDirectory.asFile }
+    }
+
+    private fun resolveResourcesFromDependencies(
+        compilation: KotlinCompilation<*>,
+        resolveResourcesFromDependenciesTask: TaskProvider<ResolveResourcesFromDependenciesTask>,
+        targetName: String,
+    ) {
+        resolveResourcesFromDependenciesTask.configure {
+            it.filterResourcesByExtension.set(
+                project.kotlinPropertiesProvider
+                    .mppFilterResourcesByExtension
+                    .map { explicitlyEnabled ->
+                        // Always filter resources configuration because it resolves klibs for dependency graph inheritance
+                        explicitlyEnabled || project.kotlinPropertiesProvider.mppResourcesResolutionStrategy == KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration
+                    }
+            )
+            it.archivesFromDependencies.from(
+                project.kotlinPropertiesProvider.mppResourcesResolutionStrategy.resourceArchives(compilation)
+            )
+            it.outputDirectory.set(
+                project.layout.buildDirectory.dir("$MULTIPLATFORM_RESOURCES_DIRECTORY/resources-from-dependencies/${targetName}")
+            )
+        }
+    }
+
+    private fun resolveResourcesFromSelf(
+        compilation: KotlinCompilation<*>,
+        target: KotlinTarget,
+        aggregateResourcesTask: TaskProvider<AggregateResourcesTask>,
+    ) {
+        subscribeOnPublishResources(target) { resources ->
+            val copyResourcesTask = compilation.assembleHierarchicalResources(
+                target.disambiguateName("ResolveSelfResources"),
+                resources,
+            )
+            aggregateResourcesTask.configure { aggregate ->
+                aggregate.resourcesFromSelfDirectory.set(copyResourcesTask)
+            }
         }
     }
 
