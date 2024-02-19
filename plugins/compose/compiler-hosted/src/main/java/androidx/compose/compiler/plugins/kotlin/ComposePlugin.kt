@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.analysis.FqNameMatcher
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityConfigParser
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.k1.ComposableCallChecker
@@ -76,7 +77,7 @@ object ComposeConfiguration {
     val STRONG_SKIPPING_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Enable strong skipping mode")
     val STABILITY_CONFIG_PATH_KEY =
-        CompilerConfigurationKey<String>(
+        CompilerConfigurationKey<List<String>>(
             "Path to stability configuration file"
         )
     val TRACE_MARKERS_ENABLED_KEY =
@@ -247,7 +248,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
             value == "true"
         )
-        STABLE_CONFIG_PATH_OPTION -> configuration.put(
+        STABLE_CONFIG_PATH_OPTION -> configuration.appendList(
             ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,
             value
         )
@@ -429,9 +430,8 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 false
             )
 
-            val stabilityConfigPath = configuration.get(
-                ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,
-                ""
+            val stabilityConfigPaths = configuration.getList(
+                ComposeConfiguration.STABILITY_CONFIG_PATH_KEY
             )
             val traceMarkersEnabled = configuration.get(
                 ComposeConfiguration.TRACE_MARKERS_ENABLED_KEY,
@@ -439,14 +439,20 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
             )
 
             val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-            val stableTypeMatchers = try {
-                StabilityConfigParser.fromFile(stabilityConfigPath).stableTypeMatchers
-            } catch (e: Exception) {
-                msgCollector?.report(
-                    CompilerMessageSeverity.ERROR,
-                    e.message ?: "Error parsing stability configuration"
-                )
-                emptySet()
+
+            val stableTypeMatchers = mutableSetOf<FqNameMatcher>()
+            for (i in stabilityConfigPaths.indices) {
+                val path = stabilityConfigPaths[i]
+                val matchers = try {
+                    StabilityConfigParser.fromFile(path).stableTypeMatchers
+                } catch (e: Exception) {
+                    msgCollector?.report(
+                        CompilerMessageSeverity.ERROR,
+                        e.message ?: "Error parsing stability configuration at $path"
+                    )
+                    emptySet()
+                }
+                stableTypeMatchers.addAll(matchers)
             }
 
             return ComposeIrGenerationExtension(

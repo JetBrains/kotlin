@@ -208,6 +208,15 @@ class FqNameMatcher(val pattern: String) {
         }
     }
 
+    override fun equals(other: Any?): Boolean {
+        val otherMatcher = other as? FqNameMatcher ?: return false
+        return this.pattern == otherMatcher.pattern
+    }
+
+    override fun hashCode(): Int {
+        return pattern.hashCode()
+    }
+
     companion object {
         private const val PATTERN_SINGLE_WILD = "\\w+"
         private const val PATTERN_MULTI_WILD = "[\\w\\.]+"
