@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.binaryen
 
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
@@ -37,8 +41,16 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     @NormalizeLineEndings
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
-    @OutputFile
-    val outputFileProperty: RegularFileProperty = project.newFileProperty()
+    @get:OutputDirectory
+    abstract val outputDirectory: DirectoryProperty
+
+    @get:Input
+    abstract val outputFileName: Property<String>
+
+    @Internal
+    val outputFileProperty: Provider<RegularFile> = project.provider {
+        outputDirectory.file(outputFileName).get()
+    }
 
     override fun exec() {
         val inputFile = inputFileProperty.asFile.get()
@@ -46,7 +58,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
         newArgs.addAll(binaryenArgs)
         newArgs.add(inputFile.canonicalPath)
         newArgs.add("-o")
-        newArgs.add(outputFileProperty.asFile.get().canonicalPath)
+        newArgs.add(outputDirectory.file(outputFileName).get().asFile.normalize().absolutePath)
         workingDir = inputFile.parentFile
         this.args = newArgs
         super.exec()
@@ -56,7 +68,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
         fun create(
             compilation: KotlinJsIrCompilation,
             name: String,
-            configuration: BinaryenExec.() -> Unit = {}
+            configuration: BinaryenExec.() -> Unit = {},
         ): TaskProvider<BinaryenExec> {
             val target = compilation.target
             val project = target.project

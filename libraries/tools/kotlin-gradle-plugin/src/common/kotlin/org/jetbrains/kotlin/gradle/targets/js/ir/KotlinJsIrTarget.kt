@@ -151,7 +151,6 @@ constructor(
                 .withType(JsIrBinary::class.java)
                 .all { binary ->
                     val syncTask = binary.linkSyncTask
-                    binaryenReplaceInput[binary]?.invoke()
                     val tsValidationTask = registerTypeScriptCheckTask(binary)
 
                     binary.linkTask.configure {
@@ -182,97 +181,8 @@ constructor(
         }
     }
 
-    //Binaryen
-    private var binaryenReplaceInput: MutableMap<JsIrBinary, () -> Unit> = mutableMapOf()
-
+    @Deprecated("Binaryen is enabled by default. This call is redundant.")
     override fun applyBinaryen(body: BinaryenExec.() -> Unit) {
-        compilations.all {
-            it.binaries.all { binary ->
-                if (binary is ExecutableWasm) {
-                    val binaryenExec = createBinaryen(binary, body)
-
-                    if (
-                        wasmTargetType == KotlinWasmTargetType.WASI && nodejsLazyDelegate.isInitialized() ||
-                        project.locateTask<IncrementalSyncTask>(binary.linkSyncTaskName) != null
-                    ) {
-                        configureBinaryen(binary, binaryenExec)
-                    } else {
-                        binaryenReplaceInput[binary] = {
-                            configureBinaryen(binary, binaryenExec)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun createBinaryen(binary: ExecutableWasm, binaryenDsl: BinaryenExec.() -> Unit): TaskProvider<BinaryenExec> {
-        val linkTask = binary.linkTask
-
-        val compileWasmDestDir = linkTask.map {
-            it.destinationDirectory
-        }
-
-        val compiledWasmFile = linkTask.map { link ->
-            link.destinationDirectory.asFile.get().resolve(link.compilerOptions.moduleName.get() + ".wasm")
-        }
-
-        return BinaryenExec.create(binary.compilation, binary.optimizeTaskName) {
-            val compilation = binary.compilation
-            dependsOn(linkTask)
-            inputFileProperty.fileProvider(compiledWasmFile)
-
-            val outputDirectory: Provider<File> = binary.target.project.layout.buildDirectory
-                .dir(COMPILE_SYNC)
-                .map { it.dir(compilation.target.targetName) }
-                .map { it.dir(compilation.name) }
-                .map { it.dir(binary.name) }
-                .map { it.dir("optimized") }
-                .map { it.asFile }
-
-            val outputFile = outputDirectory.map { it.resolve(compiledWasmFile.get().name) }
-
-            outputFileProperty.fileProvider(
-                outputFile
-            )
-
-            doLast {
-                fs.copy {
-                    it.from(compileWasmDestDir)
-                    it.into(outputDirectory)
-                    it.eachFile {
-                        if (it.relativePath.getFile(outputDirectory.get()).exists()) {
-                            it.exclude()
-                        }
-                    }
-                }
-            }
-
-            binaryenDsl()
-        }
-    }
-
-    private fun configureBinaryen(binary: JsIrBinary, binaryenExec: TaskProvider<BinaryenExec>) {
-        if (wasmTargetType == KotlinWasmTargetType.WASI) {
-            if (binary.compilation.isMain() && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
-                project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(binaryenExec)
-            }
-
-            whenNodejsConfigured {
-                testTask {
-                    val name = binary.mainFileName
-                    it.inputFileProperty.fileProvider(
-                        binaryenExec.flatMap { it.outputFileProperty.map { it.asFile.parentFile.resolve(name.get()) } }
-                    )
-                    it.dependsOn(binaryenExec)
-                }
-            }
-        } else {
-            binary.linkSyncTask.configure {
-                it.from.setFrom(binaryenExec.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
-                it.dependsOn(binaryenExec)
-            }
-        }
     }
 
     //Browser
@@ -304,12 +214,8 @@ constructor(
             commonLazy
         } else {
             NodeJsRootPlugin.apply(project.rootProject)
-            compilations.all { compilation ->
-                compilation.binaries.all { binary ->
-                    binaryenReplaceInput[binary]?.invoke()
-                }
-            }
         }
+
         project.objects.newInstance(KotlinNodeJsIr::class.java, this).also {
             it.configureSubTarget()
             nodejsConfiguredHandlers.forEach { handler ->

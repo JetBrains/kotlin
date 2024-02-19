@@ -1679,7 +1679,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
         }
         build(":wasmJs${name}Test") {
             assertTasksExecuted(":compileKotlinWasmJs")
-
             assertTasksNotExecuted(":compileTestDevelopmentExecutableKotlinWasmJsOptimize")
             assertTasksFailed(":wasmJs${name}Test")
             assertTestResults(
