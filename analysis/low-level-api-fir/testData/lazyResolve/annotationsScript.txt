@@ -23,7 +23,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotations container
+    [ResolvedTo(RAW_FIR)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -34,7 +34,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    [ResolvedTo(COMPANION_GENERATION)] annotations container
+    [ResolvedTo(RAW_FIR)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    [ResolvedTo(SUPER_TYPES)] annotations container
+    [ResolvedTo(RAW_FIR)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -55,8 +55,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](LAZY_EXPRESSION)
-    [ResolvedTo(TYPES)] annotations container
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
+    [ResolvedTo(RAW_FIR)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -66,8 +66,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](LAZY_EXPRESSION)
-    [ResolvedTo(STATUS)] annotations container
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
+    [ResolvedTo(RAW_FIR)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -77,8 +77,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](LAZY_EXPRESSION)
-    [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotations container
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
+    [ResolvedTo(RAW_FIR)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -88,8 +88,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](LAZY_EXPRESSION)
-    [ResolvedTo(CONTRACTS)] annotations container
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
+    [ResolvedTo(RAW_FIR)] annotations container
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -100,8 +100,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](LAZY_EXPRESSION)
-    [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotations container
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
+    [ResolvedTo(RAW_FIR)] annotations container
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -112,8 +112,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(ANNOTATION_ARGUMENTS)] annotations container
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
+    [ResolvedTo(RAW_FIR)] annotations container
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -124,8 +124,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(ANNOTATION_ARGUMENTS)] annotations container
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
+    [ResolvedTo(RAW_FIR)] annotations container
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
