@@ -48,6 +48,7 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
             FIR_PARSER with FirParser.Psi
         }
 
+        FirLowLevelCompilerBasedTestConfigurator.configureTest(this, disposable)
         configureTest()
         defaultConfiguration(this)
         registerAnalysisApiBaseTestServices(disposable, FirLowLevelCompilerBasedTestConfigurator)

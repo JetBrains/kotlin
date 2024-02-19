@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.test.services.configuration.ExternalAnnotationsEnvir
 
 object StandaloneModeLibraryBinaryTestConfigurator : StandaloneModeConfiguratorBase() {
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
+        super.configureTest(builder, disposable)
+
         with(builder) {
             configureOptionalTestCompilerPlugin()
             useConfigurators(::AnalysisApiJvmEnvironmentConfigurator)

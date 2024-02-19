@@ -18,6 +18,9 @@ object StandaloneModeConfigurator : StandaloneModeConfiguratorBase() {
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         sourceConfigurator.configureTest(builder, disposable)
+
+        // `StandaloneModeConfiguratorBase` is ordered last so that it overrules the source test configuration.
+        super.configureTest(builder, disposable)
     }
 
     private val sourceConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
