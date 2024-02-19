@@ -41,7 +41,9 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 abstract class InlineFunctionResolver {
     open fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         if (shouldExcludeFunctionFromInlining(symbol)) return null
-        return symbol.owner
+
+        val owner = symbol.owner
+        return (owner as? IrSimpleFunction)?.resolveFakeOverride() ?: owner
     }
 
     protected open fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
@@ -108,8 +110,7 @@ class FunctionInlining(
         if (!callee.needsInlining)
             return expression
 
-        val target = (callee as? IrSimpleFunction)?.resolveFakeOverride() ?: callee
-        val actualCallee = inlineFunctionResolver.getFunctionDeclaration(target.symbol)
+        val actualCallee = inlineFunctionResolver.getFunctionDeclaration(callee.symbol)
         if (actualCallee?.body == null) {
             return expression
         }
