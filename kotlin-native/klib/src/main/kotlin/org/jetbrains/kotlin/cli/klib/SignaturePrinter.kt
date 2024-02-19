@@ -36,11 +36,11 @@ internal class SignaturePrinter(
         }
 
         override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit) {
-            extractSignatureFromDeclaration(descriptor)
+            extractSignatureFromCallableMember(descriptor)
         }
 
         override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit) {
-            extractSignatureFromDeclaration(descriptor) {
+            extractSignatureFromCallableMember(descriptor) {
                 descriptor.getter?.let(::extractSignatureFromDeclaration)
                 descriptor.setter?.let(::extractSignatureFromDeclaration)
             }
@@ -52,6 +52,13 @@ internal class SignaturePrinter(
 
         override fun visitTypeAliasDescriptor(descriptor: TypeAliasDescriptor, data: Unit) {
             extractSignatureFromDeclaration(descriptor)
+        }
+
+        private inline fun extractSignatureFromCallableMember(descriptor: CallableMemberDescriptor, continuation: () -> Unit = {}) {
+            // Skip fake overrides.
+            if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) return
+
+            extractSignatureFromDeclaration(descriptor, continuation)
         }
 
         private inline fun extractSignatureFromDeclaration(descriptor: DeclarationDescriptorWithVisibility, continuation: () -> Unit = {}) {
@@ -70,3 +77,4 @@ internal class SignaturePrinter(
         }
     }
 }
+
