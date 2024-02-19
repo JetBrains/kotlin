@@ -250,19 +250,20 @@ fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
             }
         }.sorted()
         .joinToString("\n")
-
+    //TODO: Rename tryGetOrSetExternrefBox to getCachedJsObject after bootstrap (KT-65322)
     //language=js
     return """
 export async function instantiate(imports={}, runInitializer=true) {
-    const externrefBoxes = new WeakMap();
+    const cachedJsObjects = new WeakMap();
     // ref must be non-null
     function tryGetOrSetExternrefBox(ref, ifNotCached) {
-        if (typeof ref !== 'object') return ifNotCached;
-        const cachedBox = externrefBoxes.get(ref);
-        if (cachedBox !== void 0) return cachedBox;
-        externrefBoxes.set(ref, ifNotCached);
+        if (typeof ref !== 'object' && typeof ref !== 'function') return ifNotCached;
+        const cached = cachedJsObjects.get(ref);
+        if (cached !== void 0) return cached;
+        cachedJsObjects.set(ref, ifNotCached);
         return ifNotCached;
     }
+    const getCachedJsObject = tryGetOrSetExternrefBox;
 
 $referencesToQualifiedAndImportedDeclarations
     

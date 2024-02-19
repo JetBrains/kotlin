@@ -519,12 +519,15 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         // TODO: Cache created JS closures
         val arity = info.parametersAdapters.size
         val jsCode = buildString {
-            append("(f) => (")
+            append("(f) => ")
+            append("getCachedJsObject(f, ")
+            append("(")
             appendParameterList(arity)
             append(") => wasmExports[")
             append("$CALL_FUNCTION${info.signatureString}".toJsStringLiteral())
             append("](f, ")
             appendParameterList(arity)
+            append(")")
             append(")")
         }
 
