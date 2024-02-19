@@ -1,3 +1,7 @@
+// KT-65957
+// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
+// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
+
 // MODULE: base
 // FILE: base.kt
 package serialization.fake_overrides
@@ -61,9 +65,9 @@ import serialization.fake_overrides.*
 fun test1() = Z().bar()
 
 fun box(): String {
-    assertEquals("Moved", test0())
-    assertEquals("Moved", test1())
-    assertEquals("Child", test2())
-    assertEquals("Super", test3())
+    assertEquals("Moved", test0(), "test0() failed")
+    assertEquals("Moved", test1(), "test1() failed")
+    assertEquals("Child", test2(), "test2() failed")
+    assertEquals("Super", test3(), "test3() failed")
     return "OK"
 }
