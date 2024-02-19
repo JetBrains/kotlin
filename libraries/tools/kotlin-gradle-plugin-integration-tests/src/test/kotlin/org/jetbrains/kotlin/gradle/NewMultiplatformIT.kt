@@ -1653,6 +1653,9 @@ open class NewMultiplatformIT : BaseGradleIT() {
     ) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        gradleBuildScript().modify {
+            it.replace("<JsEngine>", "d8")
+        }
         build("build") {
             assertSuccessful()
             assertTasksExecuted(":compileKotlinJs")
