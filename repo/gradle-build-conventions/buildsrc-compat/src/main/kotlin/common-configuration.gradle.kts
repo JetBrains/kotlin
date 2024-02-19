@@ -1,5 +1,8 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 // Contains common configuration that should be applied to all projects
 
@@ -136,24 +139,24 @@ fun Project.configureKotlinCompilationOptions() {
             ":kotlin-dom-api-compat",
         ) - listOf(":kotlin-stdlib", ":kotlin-stdlib-common")
 
-        tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
-            kotlinOptions {
+        tasks.withType<KotlinCompilationTask<*>>().configureEach {
+            compilerOptions {
 
-                freeCompilerArgs += commonCompilerArgs
+                freeCompilerArgs.addAll(commonCompilerArgs)
                 val forced19 = project.path in projectsWithForced19LanguageVersion
                 if (forced19) {
-                    languageVersion = "1.9"
-                    apiVersion = "1.9"
+                    languageVersion.set(KotlinVersion.KOTLIN_1_9)
+                    apiVersion.set(KotlinVersion.KOTLIN_1_9)
                 } else {
-                    languageVersion = kotlinLanguageVersion
-                    apiVersion = kotlinLanguageVersion
-                    freeCompilerArgs += "-Xskip-prerelease-check"
+                    languageVersion.set(KotlinVersion.fromVersion(kotlinLanguageVersion))
+                    apiVersion.set(KotlinVersion.fromVersion(kotlinLanguageVersion))
+                    freeCompilerArgs.add("-Xskip-prerelease-check")
                 }
                 if (project.path in projectsUsedInIntelliJKotlinPlugin) {
-                    apiVersion = kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin
+                    apiVersion.set(KotlinVersion.fromVersion(kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin))
                 }
                 if (KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0 && forced19) {
-                    options.progressiveMode.set(false)
+                    progressiveMode.set(false)
                 }
             }
 
@@ -168,7 +171,8 @@ fun Project.configureKotlinCompilationOptions() {
             if (project.path != ":native:kotlin-test-native-xctest") {
                 doFirst {
                     if (!useAbsolutePathsInKlib) {
-                        kotlinOptions.freeCompilerArgs += "-Xklib-relative-path-base=${layout.buildDirectory.get().asFile},${layout.projectDirectory.asFile},$rootDir"
+                        (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs +=
+                            "-Xklib-relative-path-base=${layout.buildDirectory.get().asFile},${layout.projectDirectory.asFile},$rootDir"
                     }
                 }
             }
@@ -182,19 +186,18 @@ fun Project.configureKotlinCompilationOptions() {
         val projectsWithEnabledContextReceivers: List<String> by rootProject.extra
         val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib: List<String> by rootProject.extra
 
-        @Suppress("SuspiciousCollectionReassignment", "DEPRECATION")
-        tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile>().configureEach {
-            kotlinOptions {
-                freeCompilerArgs += jvmCompilerArgs
+        tasks.withType<KotlinJvmCompile>().configureEach {
+            compilerOptions {
+                freeCompilerArgs.addAll(jvmCompilerArgs)
                 if (renderDiagnosticNames) {
-                    freeCompilerArgs += "-Xrender-internal-diagnostic-names"
+                    freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
                 }
-                allWarningsAsErrors = !kotlinBuildProperties.disableWerror
+                allWarningsAsErrors.set(!kotlinBuildProperties.disableWerror)
                 if (project.path in projectsWithEnabledContextReceivers) {
-                    freeCompilerArgs += "-Xcontext-receivers"
+                    freeCompilerArgs.add("-Xcontext-receivers")
                 }
                 if (project.path in projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib) {
-                    freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction"
+                    freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction")
                 }
 
                 if (project.path == ":kotlin-util-klib") {
@@ -213,9 +216,9 @@ fun Project.configureKotlinCompilationOptions() {
                     //
                     // This change will most likely not be needed after the bootstrap, as soon as kotlin-util-klib is compiled with
                     // `-Xjvm-default=all`.
-                    freeCompilerArgs += "-Xjvm-default=all-compatibility"
+                    freeCompilerArgs.add("-Xjvm-default=all-compatibility")
                 } else if (!skipJvmDefaultAllForModule(project.path)) {
-                    freeCompilerArgs += "-Xjvm-default=all"
+                    freeCompilerArgs.add("-Xjvm-default=all")
                 }
             }
         }

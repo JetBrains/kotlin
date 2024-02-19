@@ -14,8 +14,8 @@ import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import org.gradle.process.CommandLineArgumentProvider
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 @JvmOverloads
@@ -31,10 +31,11 @@ fun Project.configureJava9Compilation(
 
     val kotlinCompileTaskNames = setOf("compile${sourceSetNameC}Kotlin", "compile${sourceSetNameC}KotlinJvm")
 
-    tasks.withType(KotlinCompile::class.java).matching { it.name in kotlinCompileTaskNames }.configureEach {
-        configureTaskToolchain(JdkMajorVersion.JDK_9_0)
-        @Suppress("DEPRECATION")
-        kotlinOptions.jvmTarget = JdkMajorVersion.JDK_9_0.targetName
+    tasks.withType<KotlinJvmCompile>().configureEach {
+        if (name in kotlinCompileTaskNames) {
+            configureTaskToolchain(JdkMajorVersion.JDK_9_0)
+            compilerOptions.jvmTarget.set(JvmTarget.fromTarget(JdkMajorVersion.JDK_9_0.targetName))
+        }
     }
 
     tasks.named("compile${sourceSetNameC}Java", JavaCompile::class.java) {

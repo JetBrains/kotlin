@@ -35,7 +35,7 @@ import org.jetbrains.dokka.gradle.GradleExternalDocumentationLinkBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import java.net.URL
@@ -179,11 +179,8 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
 
     // Common outputs will also produce '${project.name}.kotlin_module' file, so we need to avoid
     // files clash
-    tasks.named<KotlinCompile>("compile${commonSourceSet.name.replaceFirstChar { it.uppercase() }}Kotlin") {
-        @Suppress("DEPRECATION")
-        kotlinOptions {
-            moduleName = "${this@createGradleCommonSourceSet.name}_${commonSourceSet.name}"
-        }
+    tasks.named<KotlinJvmCompile>("compile${commonSourceSet.name.replaceFirstChar { it.uppercase() }}Kotlin") {
+        compilerOptions.moduleName.set("${this@createGradleCommonSourceSet.name}_${commonSourceSet.name}")
     }
 
     registerValidatePluginTasks(commonSourceSet)
@@ -508,11 +505,8 @@ fun Project.createGradlePluginVariant(
     }
 
     // KT-52138: Make module name the same for all variants, so KSP could access internal methods/properties
-    tasks.named<KotlinCompile>("compile${variantSourceSet.name.replaceFirstChar { it.uppercase() }}Kotlin") {
-        @Suppress("DEPRECATION")
-        kotlinOptions {
-            moduleName = this@createGradlePluginVariant.name
-        }
+    tasks.named<KotlinJvmCompile>("compile${variantSourceSet.name.replaceFirstChar { it.uppercase() }}Kotlin") {
+        compilerOptions.moduleName.set(this@createGradlePluginVariant.name)
     }
 
     dependencies {
@@ -546,7 +540,7 @@ private fun Project.commonVariantAttributes(): Action<Configuration> = Action<Co
 }
 
 fun Project.configureKotlinCompileTasksGradleCompatibility() {
-    tasks.withType<KotlinCompile>().configureEach {
+    tasks.withType<KotlinJvmCompile>().configureEach {
         compilerOptions {
             // check https://docs.gradle.org/current/userguide/compatibility.html#kotlin for Kotlin-Gradle versions matrix
             @Suppress("DEPRECATION") // we can't use language version greater than 1.5 as minimal supported Gradle embeds Kotlin 1.4
@@ -591,7 +585,7 @@ fun Project.publishShadowedJar(
         // which leads to the content of that JAR being excluded as well:
         exclude {
             // Docstring says `file` never returns null, but it does
-            @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY")
+            @Suppress("UNNECESSARY_SAFE_CALL")
             it.file?.name?.startsWith("kotlin-compiler-embeddable") ?: false
         }
     }

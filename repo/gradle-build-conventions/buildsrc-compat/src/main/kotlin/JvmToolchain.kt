@@ -7,8 +7,9 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.*
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 enum class JdkMajorVersion(
     val majorVersion: Int,
@@ -114,7 +115,7 @@ fun Project.chooseJdk_1_8ForJpsBuild(jdkVersion: JdkMajorVersion): JdkMajorVersi
     }
 }
 
-fun KotlinCompile.configureTaskToolchain(
+fun KotlinJvmCompile.configureTaskToolchain(
     jdkVersion: JdkMajorVersion
 ) {
     if (project.shouldOverrideObsoleteJdk(jdkVersion)) {
@@ -123,10 +124,7 @@ fun KotlinCompile.configureTaskToolchain(
                 jdkVersion.overrideVersion ?: error("Substitution version should be defined for override mode")
             )
         )
-        @Suppress("DEPRECATION")
-        kotlinOptions {
-            jvmTarget = jdkVersion.targetName
-        }
+        compilerOptions.jvmTarget.set(JvmTarget.fromTarget(jdkVersion.targetName))
     } else {
         kotlinJavaToolchain.toolchain.use(
             project.getToolchainLauncherFor(jdkVersion)
@@ -161,11 +159,10 @@ fun Project.updateJvmTarget(
     }
     // Java 9 tasks are exceptions that are configured in configureJava9Compilation
     tasks
-        .withType<KotlinCompile>()
+        .withType<KotlinJvmCompile>()
         .matching { it.name != "compileJava9Kotlin" }
         .configureEach {
-            @Suppress("DEPRECATION")
-            kotlinOptions.jvmTarget = jvmTarget
+            compilerOptions.jvmTarget.set(JvmTarget.fromTarget(jvmTarget))
         }
 
     tasks
