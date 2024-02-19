@@ -34,6 +34,10 @@ interface KotlinTargetResourcesPublication {
         resourcePathForSourceSet: (KotlinSourceSet) -> (ResourceRoot),
         relativeResourcePlacement: Provider<File>,
     )
+    
+    fun canResolveResources(target: KotlinTarget): Boolean
+
+    fun resolveResources(target: KotlinTarget): Provider<File>
 
     companion object {
         const val EXTENSION_NAME = "multiplatformResourcesPublication"
