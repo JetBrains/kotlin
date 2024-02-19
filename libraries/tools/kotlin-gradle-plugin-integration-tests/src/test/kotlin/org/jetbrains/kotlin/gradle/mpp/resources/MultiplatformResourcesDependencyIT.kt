@@ -80,8 +80,8 @@ class MultiplatformResourcesDependencyIT : KGPBaseTest() {
         ) {
             buildWithAGPVersion(
                 ":publishAllPublicationsToMavenRepository",
-                androidVersion,
-                defaultBuildOptions,
+                androidVersion = androidVersion,
+                defaultBuildOptions = defaultBuildOptions,
             )
             withRepositoryRoot(projectPath.resolve("build/repo"))
         }

@@ -30,8 +30,8 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
         ) {
             buildWithAGPVersion(
                 ":publishAndroidReleasePublicationToMavenRepository",
-                androidVersion,
-                defaultBuildOptions,
+                androidVersion = androidVersion,
+                defaultBuildOptions = defaultBuildOptions,
             )
             val publishedAarPath = "build/repo/test/publication-android/1.0/publication-android-1.0.aar"
             val classesInAar = projectPath.resolve("classesInAar")
@@ -143,8 +143,8 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
         ) {
             buildWithAGPVersion(
                 publicationTask,
-                androidVersion,
-                defaultBuildOptions,
+                androidVersion = androidVersion,
+                defaultBuildOptions = defaultBuildOptions,
             )
             compareEmbeddedResources(
                 projectPath.resolve(publishedArchive),
