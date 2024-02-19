@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.NonLocalAnnotationVisitor
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -28,12 +29,8 @@ import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.customAnnotations
-import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -226,35 +223,9 @@ internal fun FirAbstractBodyResolveTransformerDispatcher.checkAnnotationCallIsRe
     checkAnnotationIsResolved(annotationCall, annotationContainer)
 }
 
-private object AnnotationChecker : AnnotationVisitorVoid<FirAnnotationContainer>() {
-    override fun visitAnnotation(annotation: FirAnnotation, data: FirAnnotationContainer) {
+private object AnnotationChecker : NonLocalAnnotationVisitor<FirAnnotationContainer>() {
+    override fun processAnnotation(annotation: FirAnnotation, data: FirAnnotationContainer) {
         checkAnnotationIsResolved(annotation, data)
-    }
-
-    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: FirAnnotationContainer) {
-        checkAnnotationIsResolved(annotationCall, data)
-    }
-}
-
-/**
- * This visitor is responsible for visiting all annotations recursively
- */
-internal abstract class AnnotationVisitorVoid<T> : FirVisitor<Unit, T>() {
-    abstract override fun visitAnnotation(annotation: FirAnnotation, data: T)
-    abstract override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: T)
-
-    override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: T) {
-        resolvedTypeRef.acceptChildren(this, data)
-
-        resolvedTypeRef.coneType.forEachType {
-            it.type.attributes.customAnnotations.forEach { typeArgumentAnnotation ->
-                typeArgumentAnnotation.accept(this, data)
-            }
-        }
-    }
-
-    override fun visitElement(element: FirElement, data: T) {
-        element.acceptChildren(this, data)
     }
 }
 
