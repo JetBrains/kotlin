@@ -51201,6 +51201,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("suspendSamConstructorAdaptation.kt")
+      public void testSuspendSamConstructorAdaptation() {
+        runTest("compiler/testData/codegen/box/sam/constructors/suspendSamConstructorAdaptation.kt");
+      }
+
+      @Test
       @TestMetadata("syntheticVsReal.kt")
       public void testSyntheticVsReal() {
         runTest("compiler/testData/codegen/box/sam/constructors/syntheticVsReal.kt");

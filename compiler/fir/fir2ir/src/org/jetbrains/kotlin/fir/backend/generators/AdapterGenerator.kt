@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirFakeArgumentForCallableReferenc
 import org.jetbrains.kotlin.fir.resolve.calls.ResolvedCallArgument
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -411,10 +410,9 @@ internal class AdapterGenerator(
             }
         }
 
-        val unwrappedArgument = argument.unwrapArgument()
-        if (unwrappedArgument !is FirSamConversionExpression) return this
+        if (argument !is FirSamConversionExpression) return this
 
-        val samFirType = unwrappedArgument.resolvedType.let { it.removeExternalProjections() ?: it }
+        val samFirType = argument.resolvedType.let { it.removeExternalProjections() ?: it }
         val samType = samFirType.toIrType(ConversionTypeOrigin.DEFAULT)
 
         // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
@@ -429,12 +427,12 @@ internal class AdapterGenerator(
             // BLOCK ADAPTED_FUNCTION_REFERENCE(FUN ADAPTER_FOR_CALLABLE_REFERENCE, TYPE_OP SAM_CONVERSION(FUNCTION_REFERENCE))
             // Therefore, we need to insert the cast as the last statement of the block, not around the block itself.
             val lastIndex = statements.lastIndex
-            val samConversion = (statements[lastIndex] as IrExpression).generateSamConversion(samType, unwrappedArgument, samFirType)
+            val samConversion = (statements[lastIndex] as IrExpression).generateSamConversion(samType, argument, samFirType)
             statements[lastIndex] = samConversion
             this.type = samConversion.type
             this
         } else {
-            generateSamConversion(samType, unwrappedArgument, samFirType)
+            generateSamConversion(samType, argument, samFirType)
         }
     }
 

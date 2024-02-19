@@ -1,0 +1,53 @@
+FILE fqName:<root> fileName:/suspendSamConstructorAdaptation.kt
+  CLASS INTERFACE name:FunInterface modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FunInterface
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:invoke visibility:public modality:ABSTRACT <> ($this:<root>.FunInterface) returnType:kotlin.Unit [suspend,operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.FunInterface
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:lambda type:kotlin.Function0<kotlin.Unit> [val]
+        FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.box'
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      CALL 'public final fun func (f: <root>.FunInterface): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        f: BLOCK type=<root>.FunInterface origin=SUSPEND_CONVERSION
+          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [suspend]
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<kotlin.Unit>
+            BLOCK_BODY
+              CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
+                $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.box.suspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
+          TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+            FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit declared in <root>.box' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+              $receiver: GET_VAR 'val lambda: kotlin.Function0<kotlin.Unit> declared in <root>.box' type=kotlin.Function0<kotlin.Unit> origin=null
+      CALL 'public final fun func (f: <root>.FunInterface): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        f: BLOCK type=<root>.FunInterface origin=SUSPEND_CONVERSION
+          FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [suspend]
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<kotlin.Unit>
+            BLOCK_BODY
+              CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
+                $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.box.suspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
+          TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
+            FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit declared in <root>.box' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+              $receiver: GET_VAR 'val lambda: kotlin.Function0<kotlin.Unit> declared in <root>.box' type=kotlin.Function0<kotlin.Unit> origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:func visibility:public modality:FINAL <> (f:<root>.FunInterface) returnType:kotlin.Unit
+    VALUE_PARAMETER name:f index:0 type:<root>.FunInterface
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun func (f: <root>.FunInterface): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit

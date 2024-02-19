@@ -34705,6 +34705,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
       public void testSameWrapperClass2() {
         runTest("compiler/testData/codegen/box/sam/constructors/sameWrapperClass2.kt");
       }
+
+      @Test
+      @TestMetadata("suspendSamConstructorAdaptation.kt")
+      public void testSuspendSamConstructorAdaptation() {
+        runTest("compiler/testData/codegen/box/sam/constructors/suspendSamConstructorAdaptation.kt");
+      }
     }
 
     @Nested

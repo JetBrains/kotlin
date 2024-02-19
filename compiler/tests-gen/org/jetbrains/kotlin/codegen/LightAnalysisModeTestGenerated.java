@@ -40574,6 +40574,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         runTest("compiler/testData/codegen/box/sam/constructors/sameWrapperClass2.kt");
       }
 
+      @TestMetadata("suspendSamConstructorAdaptation.kt")
+      public void testSuspendSamConstructorAdaptation() {
+        runTest("compiler/testData/codegen/box/sam/constructors/suspendSamConstructorAdaptation.kt");
+      }
+
       @TestMetadata("syntheticVsReal.kt")
       public void testSyntheticVsReal() {
         runTest("compiler/testData/codegen/box/sam/constructors/syntheticVsReal.kt");
