@@ -52,6 +52,9 @@ internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES)
                     checkTypeRefIsResolved(bound, "type parameter bound", target)
                 }
             }
+
+            is FirRegularClass -> checkContextReceiverTypeRefIsResolved(target)
+            is FirScript -> checkContextReceiverTypeRefIsResolved(target)
         }
     }
 }
