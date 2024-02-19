@@ -93,6 +93,41 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
             referenceName = "linuxX64",
         )
     }
+
+    @DisplayName("Multiplatform resources publication for wasm js target")
+    @GradleAndroidTest
+    fun testWasmJsTargetResourcesPublication(
+        gradleVersion: GradleVersion,
+        androidVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk,
+    ) {
+        testEmbeddedResources(
+            gradleVersion,
+            androidVersion,
+            providedJdk,
+            publicationTask = ":publishWasmJsPublicationToMavenRepository",
+            publishedArchive = "build/repo/test/publication-wasm-js/1.0/publication-wasm-js-1.0-kotlin_resources.kotlin_resources.zip",
+            referenceName = "wasmJs",
+        )
+    }
+
+    @DisplayName("Multiplatform resources publication for wasm wasi target")
+    @GradleAndroidTest
+    fun testWasmWasiTargetResourcesPublication(
+        gradleVersion: GradleVersion,
+        androidVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk,
+    ) {
+        testEmbeddedResources(
+            gradleVersion,
+            androidVersion,
+            providedJdk,
+            publicationTask = ":publishWasmWasiPublicationToMavenRepository",
+            publishedArchive = "build/repo/test/publication-wasm-wasi/1.0/publication-wasm-wasi-1.0-kotlin_resources.kotlin_resources.zip",
+            referenceName = "wasmWasi",
+        )
+    }
+
     private fun testEmbeddedResources(
         gradleVersion: GradleVersion,
         androidVersion: String,
