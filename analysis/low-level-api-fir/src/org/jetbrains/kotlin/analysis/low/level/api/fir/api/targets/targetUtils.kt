@@ -25,7 +25,7 @@ internal fun LLFirResolveTarget.resolve(phase: FirResolvePhase) {
         }
 
     val lazyDeclarationResolver = session.moduleComponents.firModuleLazyDeclarationResolver
-    lazyDeclarationResolver.lazyResolveTarget(this, phase, towerDataContextCollector = null)
+    lazyDeclarationResolver.lazyResolveTarget(this, phase)
 }
 
 internal val LLFirResolveTarget.session: LLFirSession get() = target.llFirSession

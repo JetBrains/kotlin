@@ -54,10 +54,7 @@ abstract class AbstractFirForeignAnnotationsTestBase(
         }
 
         forTestsMatching("compiler/testData/diagnostics/*") {
-            useAfterAnalysisCheckers(
-                ::FirIdenticalChecker,
-                ::FirFailingTestSuppressor,
-            )
+            useAfterAnalysisCheckers(::FirFailingTestSuppressor)
             useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
         }
     }

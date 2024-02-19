@@ -6,12 +6,14 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.annotationInfos
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSelectors
+import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSwiftNames
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -19,12 +21,10 @@ internal val KtCallableSymbol.isConstructor: Boolean
     get() = this is KtConstructorSymbol
 
 context(KtAnalysisSession, KtObjCExportSession)
-fun KtFunctionSymbol.translateToObjCMethod(
-): ObjCMethod? {
+fun KtFunctionSymbol.translateToObjCMethod(): ObjCMethod? {
     if (!isVisibleInObjC()) return null
-    if (anyMethodSelectors.containsKey(this.name)) return null //temp, find replacement for org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.isReal
+    if (isFakeOverride) return null
     if (isClone) return null
-
     return buildObjCMethod()
 }
 
@@ -110,9 +110,10 @@ internal fun KtCallableSymbol.isRefinedInSwift(): Boolean = when {
 
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtFunctionLikeSymbol.getSwiftName(methodBridge: MethodBridge): String {
-
     //assert(mapper.isBaseMethod(method)) //TODO: implement isBaseMethod
-    getPredefined(this, Predefined.anyMethodSwiftNames)?.let { return it }
+    if (this is KtNamedSymbol) {
+        anyMethodSwiftNames[name]?.let { return it }
+    }
 
     val parameters = methodBridge.valueParametersAssociated(this)
     val method = this
@@ -172,12 +173,6 @@ private fun splitSelector(selector: String): List<String> {
     }
 }
 
-/**
- * Not implemented [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getPredefined]
- */
-private fun <T : Any> getPredefined(method: KtFunctionLikeSymbol, predefinedForAny: Map<Name, T>): T? {
-    return null
-}
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getSelector]
@@ -185,7 +180,9 @@ private fun <T : Any> getPredefined(method: KtFunctionLikeSymbol, predefinedForA
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
 
-    getPredefined(this, anyMethodSelectors)?.let { return it }
+    if (this is KtNamedSymbol) {
+        anyMethodSelectors[this.name]?.let { return it }
+    }
 
     val parameters = methodBridge.valueParametersAssociated(this)
 
@@ -275,7 +272,7 @@ fun MethodBridge.valueParametersAssociated(
 }
 
 private fun String.startsWithWords(words: String) = this.startsWith(words) &&
-        (this.length == words.length || !this[words.length].isLowerCase())
+    (this.length == words.length || !this[words.length].isLowerCase())
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReturnType]
@@ -295,7 +292,7 @@ fun KtFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): 
             if (!returnBridge.successMayBeZero) {
                 check(
                     successReturnType is ObjCNonNullReferenceType
-                            || (successReturnType is ObjCPointerType && !successReturnType.nullable)
+                        || (successReturnType is ObjCPointerType && !successReturnType.nullable)
                 ) {
                     "Unexpected return type: $successReturnType in $this"
                 }

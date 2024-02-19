@@ -55,6 +55,6 @@ fun getResult(): Result<JsString> = getResultInternal()
 
 // FILE: entry.mjs
 
-import main from "./index.mjs";
+import { getResult } from "./index.mjs";
 
-if (JSON.stringify(main.getResult()) != "{}") throw new Error("Unexpected result")
+if (JSON.stringify(getResult()) != "{}") throw new Error("Unexpected result")

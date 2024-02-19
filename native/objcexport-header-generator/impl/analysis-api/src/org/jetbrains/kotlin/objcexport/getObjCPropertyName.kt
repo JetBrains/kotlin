@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportPropertyName
 
 
-context(KtAnalysisSession, KtObjCExportSession)
-fun KtPropertySymbol.getObjCPropertyName(): ObjCExportPropertyName {
+context(KtAnalysisSession)
+fun KtVariableLikeSymbol.getObjCPropertyName(): ObjCExportPropertyName {
     val resolveObjCNameAnnotation = resolveObjCNameAnnotation()
 
     return ObjCExportPropertyName(

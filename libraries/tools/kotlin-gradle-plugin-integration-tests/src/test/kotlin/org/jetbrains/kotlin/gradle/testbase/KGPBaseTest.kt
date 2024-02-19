@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.test.WithMuteInDatabase
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Tag
@@ -42,7 +43,7 @@ abstract class KGPBaseTest {
 
     @AfterAll
     fun checkThatDefaultKonanHasNotBeenCreated() {
-        if (System.getenv("TEAMCITY_VERSION") != null) {
+        if (isTeamCityRun) {
             val userHomeDir = System.getProperty("user.home")
             assertDirectoryDoesNotExist(Paths.get("$userHomeDir/.konan"))
         }

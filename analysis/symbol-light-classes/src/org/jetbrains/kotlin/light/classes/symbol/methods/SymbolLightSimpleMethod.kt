@@ -205,10 +205,16 @@ internal class SymbolLightSimpleMethod(
                 }
     }
 
+    context(KtAnalysisSession)
     private val KtType.isInlineClassType: Boolean
         get() = ((this as? KtNonErrorClassType)?.classSymbol as? KtNamedClassOrObjectSymbol)?.isInline == true
 
-    private val KtType.isVoidType: Boolean get() = isUnit && nullabilityType != NullabilityType.Nullable
+    context(KtAnalysisSession)
+    private val KtType.isVoidType: Boolean
+        get() {
+            val expandedType = fullyExpandedType
+            return expandedType.isUnit && expandedType.nullabilityType != NullabilityType.Nullable
+        }
 
     private val _returnedType: PsiType by lazyPub {
         withFunctionSymbol { functionSymbol ->

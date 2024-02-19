@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleRe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeclarationStatusIsResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
@@ -21,7 +19,6 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StatusComputationSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -31,21 +28,10 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 
 internal object LLFirStatusLazyResolver : LLFirLazyResolver(FirResolvePhase.STATUS) {
-    override fun resolve(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-        towerDataContextCollector: FirResolveContextCollector?,
-    ) {
-        val resolver = LLFirStatusTargetResolver(
-            target = target,
-            lockProvider = lockProvider,
-            scopeSession = scopeSession,
-            resolveMode = target.resolveMode(),
-        )
-
-        resolver.resolveDesignation()
-    }
+    override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirStatusTargetResolver(
+        target = target,
+        resolveMode = target.resolveMode(),
+    )
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target !is FirMemberDeclaration) return
@@ -107,12 +93,10 @@ private class LLStatusComputationSession(val useSiteSession: FirSession) : Statu
 
 private class LLFirStatusTargetResolver(
     target: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
-    scopeSession: ScopeSession,
     private val statusComputationSession: LLStatusComputationSession = LLStatusComputationSession(target.session),
     private val resolveMode: StatusResolveMode,
-) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.STATUS, isJumpingPhase = false) {
-    private val transformer = Transformer(resolveTargetSession, scopeSession)
+) : LLFirTargetResolver(target, FirResolvePhase.STATUS, isJumpingPhase = false) {
+    private val transformer = Transformer(resolveTargetSession, resolveTargetScopeSession)
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     override fun withContainingRegularClass(firClass: FirRegularClass, action: () -> Unit) {
@@ -258,11 +242,8 @@ private class LLFirStatusTargetResolver(
             }
 
             val target = regularClass.tryCollectDesignation()?.asResolveTarget() ?: return false
-            val targetSession = target.target.llFirSession
             val resolver = LLFirStatusTargetResolver(
                 target,
-                lockProvider,
-                targetSession.getScopeSession(),
                 computationSession,
                 resolveMode = resolveMode,
             )

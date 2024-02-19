@@ -27,7 +27,5 @@ internal object MultiplatformLayoutV1SourceDirConfigurator : KotlinAndroidSource
         if (!androidSourceSet.name.startsWith(target.disambiguationClassifier)) {
             kotlinSourceSet.kotlin.srcDir("src/${androidSourceSet.name}/kotlin")
         }
-
-        kotlinSourceSet.kotlin.srcDir(target.project.provider { androidSourceSet.java.srcDirs })
     }
 }

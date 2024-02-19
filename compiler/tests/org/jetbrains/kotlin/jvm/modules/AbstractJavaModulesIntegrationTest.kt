@@ -70,15 +70,12 @@ abstract class AbstractJavaModulesIntegrationTest(
         )
     }
 
-
     private fun checkKotlinOutput(moduleName: String): (String) -> Unit {
         val expectedFirFile = File(testDataDirectory, "$moduleName.fir.txt")
         return { actual ->
             KotlinTestUtils.assertEqualsToFile(
                 if (languageVersion.usesK2 && expectedFirFile.exists()) expectedFirFile else File(testDataDirectory, "$moduleName.txt"),
                 getNormalizedCompilerOutput(actual, null, testDataPath, tmpdir.absolutePath)
-                    .replace((System.getenv("JDK_11_0") ?: System.getenv("JDK_11")).replace("\\", "/"), "\$JDK11")
-                    .replace((System.getenv("JDK_17_0") ?: System.getenv("JDK_17")).replace("\\", "/"), "\$JDK17")
             )
         }
     }

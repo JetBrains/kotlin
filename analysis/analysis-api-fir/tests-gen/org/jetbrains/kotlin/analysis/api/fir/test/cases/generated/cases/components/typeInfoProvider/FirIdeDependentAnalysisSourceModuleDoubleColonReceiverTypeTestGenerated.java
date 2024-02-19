@@ -93,4 +93,16 @@ public class FirIdeDependentAnalysisSourceModuleDoubleColonReceiverTypeTestGener
   public void testMethodReference_variable() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_variable.kt");
   }
+
+  @Test
+  @TestMetadata("outerThisReceiver.kt")
+  public void testOuterThisReceiver() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/outerThisReceiver.kt");
+  }
+
+  @Test
+  @TestMetadata("thisReceiver.kt")
+  public void testThisReceiver() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/thisReceiver.kt");
+  }
 }

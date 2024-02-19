@@ -7,17 +7,58 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
-private fun invokeKlibTool(kotlinNativeClassLoader: ClassLoader, klibFile: File, functionName: String, vararg args: Any?): String {
-    val libraryClass = Class.forName("org.jetbrains.kotlin.cli.klib.Library", true, kotlinNativeClassLoader)
-    val entryPoint = libraryClass.declaredMethods.single { it.name == functionName }
-    val lib = libraryClass.getDeclaredConstructor(String::class.java, String::class.java).newInstance(klibFile.canonicalPath, null)
+private fun invokeKlibTool(
+    kotlinNativeClassLoader: ClassLoader,
+    klibFile: File,
+    command: String,
+    printSignatures: Boolean,
+    signatureVersion: KotlinIrSignatureVersion?
+): String {
+    val entryPoint = Class.forName("org.jetbrains.kotlin.cli.klib.Main", true, kotlinNativeClassLoader)
+        .declaredMethods
+        .single { it.name == "exec" }
 
-    val output = StringBuilder()
-    entryPoint.invoke(lib, output, *args)
-    return output.toString()
+    val stdout = StringBuilder()
+    val stderr = StringBuilder()
 
+    val args: Array<String> = mutableListOf(
+        command, klibFile.canonicalPath,
+        "-test-mode", "true",
+    ).apply {
+        runIf(printSignatures) {
+            this += "-print-signatures"
+            this += "true"
+        }
+        signatureVersion?.let {
+            this += "-signature-version"
+            this += signatureVersion.number.toString()
+        }
+    }.toTypedArray()
+
+    val exitCode = entryPoint.invoke(null, stdout, stderr, args) as Int
+    if (exitCode != 0) {
+        error(
+            buildString {
+                appendLine("Execution of KLIB tool finished with exit code $exitCode")
+                args.joinTo(this, prefix = "Arguments: [", postfix = "]\n")
+                appendLine()
+                appendLine("========== BEGIN: STDOUT ==========")
+                append(stdout)
+                if (stdout.isNotEmpty() && stdout.last() != '\n') appendLine()
+                appendLine("========== END: STDOUT ==========")
+                appendLine()
+                appendLine("========== BEGIN: STDERR ==========")
+                append(stderr)
+                if (stderr.isNotEmpty() && stderr.last() != '\n') appendLine()
+                appendLine("========== END: STDERR ==========")
+            }
+        )
+    } else {
+        return stdout.toString()
+    }
 }
 
 internal fun TestCompilationArtifact.KLIB.dumpMetadata(
@@ -25,12 +66,11 @@ internal fun TestCompilationArtifact.KLIB.dumpMetadata(
     printSignatures: Boolean,
     signatureVersion: KotlinIrSignatureVersion?
 ): String = invokeKlibTool(
-    kotlinNativeClassLoader = kotlinNativeClassLoader,
-    klibFile = klibFile,
-    functionName = "dumpMetadata",
-    /* printSignatures= */ printSignatures,
-    /* signatureVersion= */ signatureVersion?.let { getSignatureVersionForIsolatedClassLoader(kotlinNativeClassLoader, signatureVersion) },
-    /* testMode= */ true
+    kotlinNativeClassLoader,
+    klibFile,
+    command = "dump-metadata",
+    printSignatures,
+    signatureVersion
 )
 
 internal fun TestCompilationArtifact.KLIB.dumpIr(
@@ -38,43 +78,31 @@ internal fun TestCompilationArtifact.KLIB.dumpIr(
     printSignatures: Boolean,
     signatureVersion: KotlinIrSignatureVersion?
 ): String = invokeKlibTool(
-    kotlinNativeClassLoader = kotlinNativeClassLoader,
-    klibFile = klibFile,
-    functionName = "dumpIr",
-    /* printSignatures= */ printSignatures,
-    /* signatureVersion= */ signatureVersion?.let { getSignatureVersionForIsolatedClassLoader(kotlinNativeClassLoader, signatureVersion) }
+    kotlinNativeClassLoader,
+    klibFile,
+    command = "dump-ir",
+    printSignatures,
+    signatureVersion
 )
 
 internal fun TestCompilationArtifact.KLIB.dumpMetadataSignatures(
     kotlinNativeClassLoader: ClassLoader,
     signatureVersion: KotlinIrSignatureVersion,
 ): String = invokeKlibTool(
-    kotlinNativeClassLoader = kotlinNativeClassLoader,
-    klibFile = klibFile,
-    functionName = "dumpMetadataSignatures",
-    /* signatureVersion= */ getSignatureVersionForIsolatedClassLoader(kotlinNativeClassLoader, signatureVersion)
+    kotlinNativeClassLoader,
+    klibFile,
+    command = "dump-metadata-signatures",
+    printSignatures = false,
+    signatureVersion
 )
 
 internal fun TestCompilationArtifact.KLIB.dumpIrSignatures(
     kotlinNativeClassLoader: ClassLoader,
     signatureVersion: KotlinIrSignatureVersion,
 ): String = invokeKlibTool(
-    kotlinNativeClassLoader = kotlinNativeClassLoader,
-    klibFile = klibFile,
-    functionName = "dumpIrSignatures",
-    /* signatureVersion= */ getSignatureVersionForIsolatedClassLoader(kotlinNativeClassLoader, signatureVersion)
+    kotlinNativeClassLoader,
+    klibFile,
+    command = "dump-ir-signatures",
+    printSignatures = false,
+    signatureVersion
 )
-
-// This ceremony is required to load `KotlinIrSignatureVersion` class from the isolated class loader and thus avoid
-// "argument type mismatch" exception raised by the Java reflection API.
-// TODO: migrate on CLI-based scheme of invocation of all KLIB tool commands
-private fun getSignatureVersionForIsolatedClassLoader(
-    kotlinNativeClassLoader: ClassLoader,
-    signatureVersion: KotlinIrSignatureVersion,
-): Any {
-    return Class.forName(
-        signatureVersion::class.java.canonicalName,
-        true,
-        kotlinNativeClassLoader
-    ).getDeclaredConstructor(Int::class.java).newInstance(signatureVersion.number)!!
-}

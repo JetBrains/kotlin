@@ -192,6 +192,9 @@ internal class KtFirTypeProvider(
             }
             is FirCallableReferenceAccess -> {
                 when (val explicitReceiver = fir.explicitReceiver) {
+                    is FirThisReceiverExpression -> {
+                        explicitReceiver.resolvedType.asKtType()
+                    }
                     is FirPropertyAccessExpression -> {
                         explicitReceiver.resolvedType.asKtType()
                     }

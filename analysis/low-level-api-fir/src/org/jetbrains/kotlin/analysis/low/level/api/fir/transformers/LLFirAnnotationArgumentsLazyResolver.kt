@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.AnnotationVisitorVoid
@@ -20,8 +19,6 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsTransformer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -31,15 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirResolvePhase.ANNOTATION_ARGUMENTS) {
-    override fun resolve(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-        towerDataContextCollector: FirResolveContextCollector?,
-    ) {
-        val resolver = LLFirAnnotationArgumentsTargetResolver(target, lockProvider, scopeSession, towerDataContextCollector)
-        resolver.resolveDesignation()
-    }
+    override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirAnnotationArgumentsTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target !is FirAnnotationContainer) return
@@ -78,15 +67,8 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
     }
 }
 
-private class LLFirAnnotationArgumentsTargetResolver(
-    resolveTarget: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
-    scopeSession: ScopeSession,
-    firResolveContextCollector: FirResolveContextCollector?,
-) : LLFirAbstractBodyTargetResolver(
+private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(
     resolveTarget,
-    lockProvider,
-    scopeSession,
     FirResolvePhase.ANNOTATION_ARGUMENTS,
 ) {
     /**
@@ -103,10 +85,9 @@ private class LLFirAnnotationArgumentsTargetResolver(
      */
     override val transformer = FirAnnotationArgumentsTransformer(
         resolveTargetSession,
-        scopeSession,
+        resolveTargetScopeSession,
         resolverPhase,
-        returnTypeCalculator = createReturnTypeCalculator(firResolveContextCollector = firResolveContextCollector),
-        firResolveContextCollector = firResolveContextCollector,
+        returnTypeCalculator = createReturnTypeCalculator(),
     )
 
     override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {

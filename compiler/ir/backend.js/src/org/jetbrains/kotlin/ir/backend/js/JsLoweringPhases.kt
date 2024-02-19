@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 

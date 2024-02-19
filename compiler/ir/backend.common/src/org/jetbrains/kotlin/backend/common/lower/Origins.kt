@@ -11,4 +11,9 @@ object LoweredStatementOrigins {
     val STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE = IrStatementOriginImpl("INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE")
     val SYNTHESIZED_INIT_BLOCK by IrStatementOriginImpl
     val DEFAULT_DISPATCH_CALL by IrStatementOriginImpl
+
+    val INLINED_FUNCTION_REFERENCE by IrStatementOriginImpl
+    val INLINED_FUNCTION_ARGUMENTS by IrStatementOriginImpl
+    val INLINED_FUNCTION_DEFAULT_ARGUMENTS by IrStatementOriginImpl
+
 }

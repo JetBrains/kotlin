@@ -1,0 +1,8 @@
+-Xjdk-release=1.6
+-jvm-target
+1.8
+-jdk-home
+$JDK_1_8
+$TESTDATA_DIR$/jdkRelease.kt
+-d
+$TEMP_DIR$

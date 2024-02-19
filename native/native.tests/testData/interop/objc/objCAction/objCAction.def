@@ -1,0 +1,3 @@
+language = Objective-C
+headerFilter = **/objCAction.h
+linkerOpts = -lobjCAction

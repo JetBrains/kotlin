@@ -124,6 +124,14 @@ fun Candidate.resolveArgumentExpression(
             isReceiver,
             isDispatch
         )
+        is FirErrorExpression -> {
+            val wrappedExpression = argument.expression
+            if (wrappedExpression != null) {
+                resolveArgumentExpression(csBuilder, wrappedExpression, expectedType, sink, context, isReceiver, isDispatch)
+            } else {
+                resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, context, isReceiver, isDispatch)
+            }
+        }
         else -> resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, context, isReceiver, isDispatch)
     }
 }

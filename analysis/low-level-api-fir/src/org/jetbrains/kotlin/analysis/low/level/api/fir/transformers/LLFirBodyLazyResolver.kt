@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.codeFragmentScopeProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderF
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForFile
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForScript
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractsDslNames
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -52,15 +50,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_RESOLVE) {
-    override fun resolve(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-        towerDataContextCollector: FirResolveContextCollector?,
-    ) {
-        val resolver = LLFirBodyTargetResolver(target, lockProvider, scopeSession, towerDataContextCollector)
-        resolver.resolveDesignation()
-    }
+    override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirBodyTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         when (target) {
@@ -75,24 +65,16 @@ internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_R
     }
 }
 
-private class LLFirBodyTargetResolver(
-    target: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
-    scopeSession: ScopeSession,
-    firResolveContextCollector: FirResolveContextCollector?,
-) : LLFirAbstractBodyTargetResolver(
+private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(
     target,
-    lockProvider,
-    scopeSession,
     FirResolvePhase.BODY_RESOLVE,
 ) {
     override val transformer = object : FirBodyResolveTransformer(
         resolveTargetSession,
         phase = resolverPhase,
         implicitTypeOnly = false,
-        scopeSession = scopeSession,
-        returnTypeCalculator = createReturnTypeCalculator(firResolveContextCollector = firResolveContextCollector),
-        firResolveContextCollector = firResolveContextCollector,
+        scopeSession = resolveTargetScopeSession,
+        returnTypeCalculator = createReturnTypeCalculator(),
     ) {
         override val preserveCFGForClasses: Boolean get() = false
         override val buildCfgForScripts: Boolean get() = false
@@ -527,5 +509,5 @@ private fun delegatedConstructorCallGuard(fir: FirDelegatedConstructorCall): Fir
 
 private class LLFirCodeFragmentContext(
     override val towerDataContext: FirTowerDataContext,
-    override val smartCasts: Map<RealVariable, Set<ConeKotlinType>>
+    override val smartCasts: Map<RealVariable, Set<ConeKotlinType>>,
 ) : FirCodeFragmentContext

@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.ir.util.RenderIrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -36,6 +38,18 @@ class IrSourceRangesDumpHandler(
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives, FirDiagnosticsDirectives)
+
+    override val additionalAfterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>
+        get() = listOf(::IdenticalChecker)
+
+    class IdenticalChecker(testServices: TestServices) : SimpleFirIrIdenticalChecker(testServices) {
+        override val dumpExtension: String
+            get() = DUMP_EXTENSION
+
+        override fun shouldRun(): Boolean {
+            return CodegenTestDirectives.DUMP_SOURCE_RANGES_IR in testServices.moduleStructure.allDirectives
+        }
+    }
 
     private val baseDumper = MultiModuleInfoDumper()
     private val buildersForSeparateFileDumps: MutableMap<File, StringBuilder> = mutableMapOf()

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.blockGuard
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkContractDescriptionIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isCallableWithSpecialBody
@@ -18,23 +17,11 @@ import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveTransformer
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
-import org.jetbrains.kotlin.util.PrivateForInline
 
 internal object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.CONTRACTS) {
-    override fun resolve(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-        towerDataContextCollector: FirResolveContextCollector?,
-    ) {
-        val resolver = LLFirContractsTargetResolver(target, lockProvider, scopeSession, towerDataContextCollector)
-        resolver.resolveDesignation()
-    }
+    override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirContractsTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target !is FirContractDescriptionOwner) return
@@ -42,26 +29,13 @@ internal object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.C
     }
 }
 
-private class LLFirContractsTargetResolver(
-    target: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
-    scopeSession: ScopeSession,
-    firResolveContextCollector: FirResolveContextCollector?,
-) : LLFirAbstractBodyTargetResolver(
+private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(
     target,
-    lockProvider,
-    scopeSession,
     FirResolvePhase.CONTRACTS,
 ) {
-    override val transformer = FirContractResolveTransformer(
-        resolveTargetSession,
-        scopeSession,
-        firResolveContextCollector = firResolveContextCollector,
-    )
+    override val transformer = FirContractResolveTransformer(resolveTargetSession, resolveTargetScopeSession)
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        collectTowerDataContext(target)
-
         // There is no sense to resolve such declarations as they do not have contracts
         if (target is FirCallableDeclaration && target.isCopyCreatedInScope) return
 
@@ -101,98 +75,6 @@ private class LLFirContractsTargetResolver(
                 }
             }
             else -> throwUnexpectedFirElementError(target)
-        }
-    }
-
-
-    private inline fun actionWithContextCollector(
-        noinline action: () -> Unit,
-        crossinline collect: (FirResolveContextCollector, BodyResolveContext) -> Unit,
-    ): () -> Unit {
-        val collector = transformer.firResolveContextCollector ?: return action
-        return {
-            collect(collector, transformer.context)
-            action()
-        }
-    }
-
-    @Deprecated("Should never be called directly, only for override purposes, please use withFile", level = DeprecationLevel.ERROR)
-    override fun withContainingFile(firFile: FirFile, action: () -> Unit) {
-        val actionWithCollector = actionWithContextCollector(action) { collector, context ->
-            collector.addFileContext(firFile, context.towerDataContext)
-        }
-
-        @Suppress("DEPRECATION_ERROR")
-        super.withContainingFile(firFile, actionWithCollector)
-    }
-
-    @Deprecated("Should never be called directly, only for override purposes, please use withScript", level = DeprecationLevel.ERROR)
-    override fun withContainingScript(firScript: FirScript, action: () -> Unit) {
-        val actionWithCollector = actionWithContextCollector(action) { collector, context ->
-            collector.addDeclarationContext(firScript, context)
-        }
-
-        @Suppress("DEPRECATION_ERROR")
-        super.withContainingScript(firScript, actionWithCollector)
-    }
-
-    @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
-    override fun withContainingRegularClass(firClass: FirRegularClass, action: () -> Unit) {
-        val actionWithCollector = actionWithContextCollector(action) { collector, context ->
-            collector.addDeclarationContext(firClass, context)
-        }
-
-        @Suppress("DEPRECATION_ERROR")
-        super.withContainingRegularClass(firClass, actionWithCollector)
-    }
-
-    private fun collectTowerDataContext(target: FirElementWithResolveState) {
-        val contextCollector = transformer.firResolveContextCollector
-        if (contextCollector == null || target !is FirDeclaration) return
-
-        val bodyResolveContext = transformer.context
-        withTypeParametersIfMemberDeclaration(bodyResolveContext, target) {
-            when (target) {
-                is FirRegularClass -> {
-                    contextCollector.addClassHeaderContext(target, bodyResolveContext.towerDataContext)
-                }
-
-                is FirFunction -> bodyResolveContext.forFunctionBody(target, transformer.components) {
-                    contextCollector.addDeclarationContext(target, bodyResolveContext)
-                    for (valueParameter in target.valueParameters) {
-                        bodyResolveContext.withValueParameter(valueParameter, transformer.session) {
-                            contextCollector.addDeclarationContext(valueParameter, bodyResolveContext)
-                        }
-                    }
-                }
-
-                is FirScript -> {}
-
-                else -> contextCollector.addDeclarationContext(target, bodyResolveContext)
-            }
-        }
-
-        /**
-         * [withRegularClass] and [withScript] already have [FirResolveContextCollector.addDeclarationContext] call,
-         * so we shouldn't do anything inside
-         */
-        when (target) {
-            is FirRegularClass -> withRegularClass(target) { }
-            is FirScript -> withScript(target) { }
-            else -> {}
-        }
-    }
-
-    private inline fun withTypeParametersIfMemberDeclaration(
-        context: BodyResolveContext,
-        target: FirElementWithResolveState,
-        action: () -> Unit,
-    ) {
-        if (target is FirMemberDeclaration) {
-            @OptIn(PrivateForInline::class)
-            context.withTypeParametersOf(target, action)
-        } else {
-            action()
         }
     }
 }

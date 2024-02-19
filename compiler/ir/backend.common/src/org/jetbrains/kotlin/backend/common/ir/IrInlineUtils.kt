@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.ir
 
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_ARGUMENTS
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
-import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_ARGUMENTS
-import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_DEFAULT_ARGUMENTS
-import org.jetbrains.kotlin.backend.common.lower.inline.isAdaptedFunctionReference
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET

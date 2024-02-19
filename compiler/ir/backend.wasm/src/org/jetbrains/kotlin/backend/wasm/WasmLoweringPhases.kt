@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLow
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.backend.wasm.lower.generateMainFunctionCalls
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.platform.WasmPlatform

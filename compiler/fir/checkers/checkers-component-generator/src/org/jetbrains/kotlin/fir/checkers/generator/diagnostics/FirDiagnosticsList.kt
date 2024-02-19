@@ -1596,6 +1596,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val TYPEALIAS_SHOULD_EXPAND_TO_CLASS by error<KtElement> {
             parameter<ConeKotlinType>("expandedType")
         }
+        val CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION by deprecationError<KtElement>(
+            LanguageFeature.ProhibitConstructorAndSupertypeOnTypealiasWithTypeProjection
+        )
     }
 
     val EXTENDED_CHECKERS by object : DiagnosticGroup("Extended checkers") {

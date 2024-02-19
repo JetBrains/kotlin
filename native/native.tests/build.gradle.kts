@@ -17,7 +17,7 @@ dependencies {
     testImplementation(project(":compiler:ir.serialization.native"))
     testImplementation(project(":compiler:fir:native"))
     testImplementation(project(":native:kotlin-native-utils"))
-    testImplementation(project(":native:executors"))
+    testApi(project(":native:executors")) // Reexport this dependency to every user of nativeTest()
     testImplementation(project(":kotlin-util-klib-abi"))
     testImplementation(project(":native:swift:swift-export-standalone"))
     testImplementation(projectTests(":kotlin-util-klib-abi"))

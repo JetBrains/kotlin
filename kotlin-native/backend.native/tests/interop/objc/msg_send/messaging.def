@@ -1,3 +1,0 @@
-language = Objective-C
-headerFilter = **/messaging.h
-linkerOpts = -lobjcmessaging

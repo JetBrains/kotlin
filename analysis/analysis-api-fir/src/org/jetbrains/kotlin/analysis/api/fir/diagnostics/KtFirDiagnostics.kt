@@ -3174,6 +3174,14 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val expandedType: KtType
     }
 
+    interface ConstructorOrSupertypeOnTypealiasWithTypeProjectionError : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ConstructorOrSupertypeOnTypealiasWithTypeProjectionError::class
+    }
+
+    interface ConstructorOrSupertypeOnTypealiasWithTypeProjectionWarning : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ConstructorOrSupertypeOnTypealiasWithTypeProjectionWarning::class
+    }
+
     interface RedundantVisibilityModifier : KtFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = RedundantVisibilityModifier::class
     }

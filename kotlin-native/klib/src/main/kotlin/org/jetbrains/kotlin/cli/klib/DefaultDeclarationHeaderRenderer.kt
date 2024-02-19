@@ -7,8 +7,9 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 
-object DefaultDeclarationHeaderRenderer : DeclarationHeaderRenderer {
-    override fun render(descriptor: DeclarationDescriptor): String = when (descriptor) {
+// TODO: This class is used in dumping metadata by descriptors, "contents" command. Drop it after 2.0. KT-65380
+internal object DefaultDeclarationHeaderRenderer {
+    fun render(descriptor: DeclarationDescriptor): String = when (descriptor) {
         is PackageFragmentDescriptor -> render(descriptor)
         is ClassifierDescriptorWithTypeParameters -> render(descriptor)
         is PropertyAccessorDescriptor -> render(descriptor)

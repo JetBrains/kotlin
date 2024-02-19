@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.abicmp.defects.Location
 import org.jetbrains.kotlin.abicmp.reports.*
 import org.jetbrains.kotlin.abicmp.tag
 import org.jetbrains.kotlin.abicmp.tasks.ClassTask
+import org.jetbrains.kotlin.abicmp.tasks.ModuleMetadataTask
 import org.jetbrains.kotlin.abicmp.tasks.checkerConfiguration
 import org.jetbrains.kotlin.codegen.getClassFiles
+import org.jetbrains.kotlin.codegen.getKotlinModuleFile
 import org.jetbrains.kotlin.test.backend.ir.AbiCheckerSuppressor
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.*
@@ -35,6 +37,7 @@ class JvmAbiConsistencyHandler(testServices: TestServices) : AnalysisHandler<Bin
         val missingInK1: Set<String>,
         val missingInK2: Set<String>,
         val nonEmptyClassReports: MutableList<ClassReport>,
+        val moduleMetadataReport: ModuleMetadataReport,
     )
 
     private class TestReport {
@@ -63,8 +66,13 @@ class JvmAbiConsistencyHandler(testServices: TestServices) : AnalysisHandler<Bin
                     node("MODULE $module") {
                         reportMissing("K1", report.missingInK1)
                         reportMissing("K2", report.missingInK2)
+
                         report.nonEmptyClassReports.forEach { classReport ->
                             with(classReport) { appendClassReport() }
+                        }
+
+                        if (!report.moduleMetadataReport.isEmpty()) {
+                            with(report.moduleMetadataReport) { appendModuleMetadataReport() }
                         }
                     }
                 }
@@ -164,27 +172,45 @@ class JvmAbiConsistencyHandler(testServices: TestServices) : AnalysisHandler<Bin
         if (AbiCheckerSuppressor.ignoredByBackendOrInliner(testServices)) return
         val classesFromK1 = info.fromK1.classFileFactory.getClassFiles().associate { it.relativePath to it.asByteArray() }
         val classesFromK2 = info.fromK2.classFileFactory.getClassFiles().associate { it.relativePath to it.asByteArray() }
-        val missingInK2 = Sets.difference(classesFromK1.keys, classesFromK2.keys)
-        val missingInK1 = Sets.difference(classesFromK2.keys, classesFromK1.keys)
+        val missingInK2 = Sets.difference(classesFromK1.keys, classesFromK2.keys).toMutableSet()
+        val missingInK1 = Sets.difference(classesFromK2.keys, classesFromK1.keys).toMutableSet()
         val commonClasses = Sets.intersection(classesFromK1.keys, classesFromK2.keys)
+
+        val configuration = checkerConfiguration {
+            // Indication of constants is different in K2 as expected
+            // We simply turn the checker off to avoid producing an enormous number of difference reports
+            disable("class.metadata.property.hasConstant")
+        }
 
         val nonEmptyClassReports = mutableListOf<ClassReport>()
         commonClasses.forEach { classInternalName ->
             val k1ClassNode = parseClassNode(classesFromK1[classInternalName]!!)
             val k2ClassNode = parseClassNode(classesFromK2[classInternalName]!!)
             val classReport = ClassReport(Location.Class("", classInternalName), classInternalName, "K1", "K2", DefectReport())
-            ClassTask(checkerConfiguration {
-                // Indication of constants is different in K2 as expected
-                // We simply turn the checker off to avoid producing an enormous number of difference reports
-                disable("class.metadata.property.hasConstant")
-            }, k1ClassNode, k2ClassNode, classReport).run()
+            ClassTask(configuration, k1ClassNode, k2ClassNode, classReport).run()
             if (classReport.isNotEmpty()) {
                 nonEmptyClassReports.add(classReport)
             }
         }
 
-        if (nonEmptyClassReports.isNotEmpty() || missingInK1.isNotEmpty() || missingInK2.isNotEmpty()) {
-            testReport.addModuleReport(module.name, ModuleReport(missingInK1, missingInK2, nonEmptyClassReports))
+        val k1ModuleFile = info.fromK1.classFileFactory.getKotlinModuleFile()
+        val k2ModuleFile = info.fromK2.classFileFactory.getKotlinModuleFile()
+
+        if (k1ModuleFile == null && k2ModuleFile != null) {
+            missingInK1.add(k2ModuleFile.relativePath)
+        }
+
+        if (k1ModuleFile != null && k2ModuleFile == null) {
+            missingInK2.add(k1ModuleFile.relativePath)
+        }
+
+        val moduleMetadataReport = ModuleMetadataReport("K1", "K2")
+        if (k1ModuleFile != null && k2ModuleFile != null) {
+            ModuleMetadataTask(configuration, k1ModuleFile.asByteArray(), k2ModuleFile.asByteArray(), moduleMetadataReport).run()
+        }
+
+        if (nonEmptyClassReports.isNotEmpty() || missingInK1.isNotEmpty() || missingInK2.isNotEmpty() || !moduleMetadataReport.isEmpty()) {
+            testReport.addModuleReport(module.name, ModuleReport(missingInK1, missingInK2, nonEmptyClassReports, moduleMetadataReport))
         }
     }
 

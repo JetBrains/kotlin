@@ -4553,6 +4553,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION.errorFactory) { firDiagnostic ->
+        ConstructorOrSupertypeOnTypealiasWithTypeProjectionErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION.warningFactory) { firDiagnostic ->
+        ConstructorOrSupertypeOnTypealiasWithTypeProjectionWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.REDUNDANT_VISIBILITY_MODIFIER) { firDiagnostic ->
         RedundantVisibilityModifierImpl(
             firDiagnostic as KtPsiDiagnostic,

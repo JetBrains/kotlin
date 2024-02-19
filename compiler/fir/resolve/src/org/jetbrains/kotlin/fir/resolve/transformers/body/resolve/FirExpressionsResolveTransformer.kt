@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -558,7 +558,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         data
                 else
                     ResolutionMode.ContextIndependent
-            collectStatementContext(block.statements[index])
+
             TransformData.Data(value)
         }
         block.transformOtherChildren(transformer, data)
@@ -571,10 +571,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         dataFlowAnalyzer.exitBlock(block)
-    }
-
-    private fun collectStatementContext(statement: FirStatement) {
-        transformer.firResolveContextCollector?.addStatementContext(statement, context)
     }
 
     override fun transformThisReceiverExpression(
@@ -994,7 +990,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return binaryLogicExpression.also(dataFlowAnalyzer::enterBinaryLogicExpression)
             .transformLeftOperand(this, ResolutionMode.WithExpectedType(booleanType))
             .also(dataFlowAnalyzer::exitLeftBinaryLogicExpressionArgument)
-            .also { collectStatementContext(it.rightOperand) }
             .transformRightOperand(this, ResolutionMode.WithExpectedType(booleanType))
             .also(dataFlowAnalyzer::exitBinaryLogicExpression)
             .transformOtherChildren(transformer, ResolutionMode.WithExpectedType(booleanType))

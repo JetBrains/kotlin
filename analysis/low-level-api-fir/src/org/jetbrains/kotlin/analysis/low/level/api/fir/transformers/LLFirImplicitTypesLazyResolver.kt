@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -15,9 +14,7 @@ import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -29,15 +26,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
-    override fun resolve(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-        towerDataContextCollector: FirResolveContextCollector?,
-    ) {
-        val resolver = LLFirImplicitBodyTargetResolver(target, lockProvider, scopeSession, towerDataContextCollector)
-        resolver.resolveDesignation()
-    }
+    override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirImplicitBodyTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target !is FirCallableDeclaration) return
@@ -130,14 +119,9 @@ internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComp
 
 internal class LLFirImplicitBodyTargetResolver(
     target: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
-    scopeSession: ScopeSession,
-    firResolveContextCollector: FirResolveContextCollector?,
     llImplicitBodyResolveComputationSessionParameter: LLImplicitBodyResolveComputationSession? = null,
 ) : LLFirAbstractBodyTargetResolver(
     target,
-    lockProvider,
-    scopeSession,
     FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
     llImplicitBodyResolveComputationSession = llImplicitBodyResolveComputationSessionParameter ?: LLImplicitBodyResolveComputationSession(),
     isJumpingPhase = true,
@@ -147,9 +131,8 @@ internal class LLFirImplicitBodyTargetResolver(
         implicitBodyResolveComputationSession = llImplicitBodyResolveComputationSession,
         phase = resolverPhase,
         implicitTypeOnly = true,
-        scopeSession = scopeSession,
-        firResolveContextCollector = firResolveContextCollector,
-        returnTypeCalculator = createReturnTypeCalculator(firResolveContextCollector = firResolveContextCollector),
+        scopeSession = resolveTargetScopeSession,
+        returnTypeCalculator = createReturnTypeCalculator(),
     ) {
         override val preserveCFGForClasses: Boolean get() = false
         override val buildCfgForScripts: Boolean get() = false

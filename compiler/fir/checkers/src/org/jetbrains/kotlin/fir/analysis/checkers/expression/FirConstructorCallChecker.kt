@@ -12,17 +12,26 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
+import org.jetbrains.kotlin.fir.types.ConeCapturedType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.contains
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 object FirConstructorCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val constructorSymbol = expression.calleeReference.toResolvedConstructorSymbol() ?: return
-        val declarationClass = constructorSymbol.resolvedReturnTypeRef.coneType.toRegularClassSymbol(context.session)
+        val coneType = constructorSymbol.resolvedReturnTypeRef.coneType
+
+        if (constructorSymbol.origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor && coneType.contains { it is ConeCapturedType }) {
+            reporter.reportOn(expression.source, FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION, context)
+        }
+
+        val declarationClass = coneType.toRegularClassSymbol(context.session)
             ?: return
 
         if (declarationClass.classKind == ClassKind.ANNOTATION_CLASS &&

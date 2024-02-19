@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.runners.ir
 
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.backend.handlers.FirIrSourceRangesIdenticalChecker
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -37,9 +36,6 @@ abstract class AbstractFirJvmIrSourceRangesTest(
         super.configure(builder)
         with(builder) {
             configureFirParser(parser)
-            useAfterAnalysisCheckers(
-                ::FirIrSourceRangesIdenticalChecker,
-            )
         }
     }
 }

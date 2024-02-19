@@ -2,7 +2,7 @@
 // !OPT_IN: kotlin.ExperimentalMultiplatform
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// JVM_ABI_K1_K2_DIFF: KT-62931, KT-63984
+// JVM_ABI_K1_K2_DIFF: KT-63984
 
 // FILE: common.kt
 

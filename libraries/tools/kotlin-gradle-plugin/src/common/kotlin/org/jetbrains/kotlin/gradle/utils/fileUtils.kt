@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
-import org.gradle.api.file.Directory
-import org.gradle.api.file.FileCollection
-import org.gradle.api.file.RegularFile
+import org.gradle.api.file.*
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.internal.CustomPropertiesFileValueSource
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
@@ -150,3 +148,11 @@ internal val Project.localProperties: Provider<Map<String, String>>
  * Returns file collection [this] excluding files from [excludes] if not null
  */
 internal fun FileCollection.exclude(excludes: FileCollection?): FileCollection = if (excludes != null) minus(excludes) else this
+
+internal fun Project.fileCollectionFromConfigurableFileTree(fileTree: ConfigurableFileTree): ConfigurableFileCollection {
+    // It is important to pass exactly `fileTree.dir` as provider with explicit task dependency
+    // Because of the following bugs:
+    // * https://github.com/gradle/gradle/issues/27881 ConfigurableFileTree.from() doesn't preserve Task Dependencies
+    // * https://github.com/gradle/gradle/issues/27882 SourceDirectorySet doesn't accept ConfigurableFileTree
+    return project.filesProvider(fileTree) { fileTree.dir }
+}

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.handlers.FirIrDumpIdenticalChecker
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
@@ -82,7 +81,7 @@ abstract class AbstractParcelizeBoxTestBase<R : ResultingArtifact.FrontendOutput
 
         useAdditionalServices(service<JvmBoxMainClassProvider>(::ParcelizeMainClassProvider))
 
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor, ::FirIrDumpIdenticalChecker)
+        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
 
         enableMetaInfoHandler()
     }

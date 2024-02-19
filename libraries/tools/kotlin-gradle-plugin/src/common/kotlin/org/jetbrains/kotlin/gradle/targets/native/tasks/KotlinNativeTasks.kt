@@ -500,7 +500,7 @@ internal constructor(
         sources { args ->
             /* Shared native compilations in K2 still use -Xcommon-sources and klib dependencies */
             if (compilerOptions.usesK2.get() && sharedCompilationData == null) {
-                args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sourceFileFilter)
+                args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sources.files, sourceFileFilter)
             } else {
                 args.commonSources = commonSourcesTree.files.takeIf { it.isNotEmpty() }?.toPathsArray()
             }

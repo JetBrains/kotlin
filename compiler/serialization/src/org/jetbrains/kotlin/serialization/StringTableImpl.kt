@@ -46,6 +46,14 @@ open class SerializableStringTable : StringTable {
     private val strings = Interner<String>()
     private val qualifiedNames = Interner<FqNameProto>()
 
+    fun addString(string: String) {
+        strings.intern(string)
+    }
+
+    fun addQualifiedName(qualifiedName: ProtoBuf.QualifiedNameTable.QualifiedName) {
+        qualifiedNames.intern(FqNameProto(qualifiedName.toBuilder()))
+    }
+
     override fun getStringIndex(string: String): Int = strings.intern(string)
 
     override fun getQualifiedClassNameIndex(className: String, isLocal: Boolean): Int =

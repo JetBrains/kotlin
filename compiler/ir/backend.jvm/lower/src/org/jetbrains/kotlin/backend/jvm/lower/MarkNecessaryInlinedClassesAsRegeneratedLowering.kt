@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_REFERENCE
 import org.jetbrains.kotlin.ir.util.inlineDeclaration
 import org.jetbrains.kotlin.ir.util.isFunctionInlining
-import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_REFERENCE
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.functionInliningPhase

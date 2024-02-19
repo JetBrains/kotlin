@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
+import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.time.Duration
 
@@ -206,6 +208,192 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     }
 
     @Test
+    @TestMetadata("with_initializer")
+    fun testObjCWithGlobalInitializer() {
+        val execResult = testDylibCinteropExe("with_initializer")
+        assertEquals("OK", execResult.stdout)
+    }
+
+    @Test
+    @TestMetadata("messaging")
+    fun testMessaging() {
+        testDylibCinteropExe("messaging")
+    }
+
+    @Test
+    @TestMetadata("kt42172")
+    fun testKt42172() {
+        Assumptions.assumeFalse(testRunSettings.get<GCType>() == GCType.NOOP)
+        val execResult = testDylibCinteropExe("kt42172")
+        assertEquals("Executed finalizer", execResult.stdout)
+    }
+
+    @Test
+    @TestMetadata("include_categories")
+    fun testInclude_categories() {
+        val execResult = testDylibCinteropExe("include_categories")
+        assertEquals("""
+            3.0
+            3.14
+            6.0
+            
+            3
+            6
+            6.0
+            
+            3.0
+            600.0
+        """.trimIndent(), execResult.stdout)
+    }
+
+    @Test
+    @TestMetadata("kt56402")
+    fun testKt56402() {
+        // Test depends on macOS-specific AppKit and some GC
+        Assumptions.assumeTrue(targets.testTarget.family == Family.OSX)
+        Assumptions.assumeFalse(testRunSettings.get<GCType>() == GCType.NOOP)
+        val execResult = testDylibCinteropExe(
+            "kt56402",
+            extraClangOpts = listOf("-framework", "AppKit", "-fobjc-arc"),
+            extraCompilerOpts = listOf("-tr"),
+        )
+        assertTrue(execResult.stdout.contains("[  PASSED  ] 8 tests"))
+    }
+
+    @Test
+    @TestMetadata("friendly_dealloc")
+    fun testFriendly_dealloc() {
+        Assumptions.assumeFalse(testRunSettings.get<GCType>() == GCType.NOOP)
+        val execResult = testDylibCinteropExe(
+            "friendly_dealloc",
+            extraClangOpts = listOf("-fno-objc-arc"),
+            extraCompilerOpts = listOf("-tr", "-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion"),
+            extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT),
+        )
+        assertTrue(execResult.stdout.contains("[  PASSED  ] 4 tests"))
+    }
+
+    @Test
+    @TestMetadata("objCAction")
+    fun testObjCAction() {
+        val execResult = testDylibCinteropExe(
+            "objCAction",
+            extraCompilerOpts = listOf("-tr"),
+            extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT),
+        )
+        assertTrue(execResult.stdout.contains("[  PASSED  ] 5 tests"))
+    }
+
+    @Test
+    @TestMetadata("foreignException")
+    fun testForeignException() {
+        val res = testDylibCinteropExe(
+            "foreignException",
+            "objc_wrap.h",
+            "objc_wrap.m",
+            "objc_wrap.def",
+            "objc_wrap.kt",
+        )
+        assertEquals("", res.stdout)
+        assertEquals("", res.stderr)
+    }
+
+    @Test
+    @TestMetadata("foreignException")
+    fun testForeignExceptionMode_default() {
+        val res = testDylibCinteropExe(
+            "foreignException",
+            "objc_wrap.h",
+            "objc_wrap.m",
+            "objcExceptionMode.def",
+            "objcExceptionMode_wrap.kt",
+        )
+        assertEquals("OK: Ends with uncaught exception handler", res.stdout)
+        assertEquals("", res.stderr)
+    }
+
+    @Test
+    @TestMetadata("foreignException")
+    fun testForeignExceptionMode_wrap() {
+        val res = testDylibCinteropExe(
+            "foreignException",
+            "objc_wrap.h",
+            "objc_wrap.m",
+            "objcExceptionMode.def",
+            "objcExceptionMode_wrap.kt",
+            extraCinteropArgs = listOf("-Xforeign-exception-mode", "objc-wrap")
+        )
+        assertEquals("OK: ForeignException", res.stdout)
+        assertEquals("", res.stderr)
+    }
+
+    private fun testDylibCinteropExe(
+        testName: String,
+        extraClangOpts: List<String> = listOf("-fobjc-arc"),
+        extraCompilerOpts: List<String> = emptyList(),
+        extras: TestCase.Extras = TestCase.NoTestRunnerExtras("main"),
+    ): RunProcessResult {
+        return testDylibCinteropExe(
+            testName,
+            hFile = "$testName.h",
+            mFile = "$testName.m",
+            defFile = "$testName.def",
+            ktFile = "$testName.kt",
+            extraClangOpts = extraClangOpts,
+            extraCompilerOpts = extraCompilerOpts,
+            extras = extras,
+        )
+    }
+
+    private fun testDylibCinteropExe(
+        testName: String,
+        hFile: String,
+        mFile: String,
+        defFile: String,
+        ktFile: String,
+        extraCinteropArgs: List<String> = emptyList(),
+        extraClangOpts: List<String> = listOf("-fobjc-arc"),
+        extraCompilerOpts: List<String> = emptyList(),
+        extras: TestCase.Extras = TestCase.NoTestRunnerExtras("main"),
+    ): RunProcessResult {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val srcDir = interopObjCDir.resolve(testName)
+        val dylib = compileDylib(testName, listOf(srcDir.resolve(mFile)), extraClangOpts)
+        if (testRunSettings.configurables.targetTriple.isSimulator)
+            codesign(dylib.resultingArtifact.path)
+
+        val cinteropKlib = cinteropToLibrary(
+            targets = targets,
+            defFile = srcDir.resolve(defFile),
+            outputDir = buildDir,
+            freeCompilerArgs = TestCompilerArgs(
+                compilerArgs = emptyList(),
+                cinteropArgs = extraCinteropArgs + listOf("-header", srcDir.resolve(hFile).absolutePath)
+            )
+        ).assertSuccess().resultingArtifact
+
+        val testKind = when (extras) {
+            is TestCase.NoTestRunnerExtras -> TestKind.STANDALONE_NO_TR
+            is TestCase.WithTestRunnerExtras -> TestKind.STANDALONE
+        }
+        val testCase = generateTestCaseWithSingleFile(
+            sourceFile = srcDir.resolve(ktFile),
+            moduleName = testName,
+            testKind = testKind,
+            extras = extras,
+            freeCompilerArgs = TestCompilerArgs(
+                "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                "-opt-in=kotlin.native.internal.InternalForKotlinNative",
+                "-linker-option", "-L${buildDir.absolutePath}",
+                *extraCompilerOpts.toTypedArray()
+            )
+        )
+
+        val success = compileToExecutable(testCase, cinteropKlib.asLibraryDependency()).assertSuccess()
+        return testRunSettings.executor.runProcess(success.resultingArtifact.executableFile.absolutePath)
+    }
+
+    @Test
     @TestMetadata("withSpaces.kt")
     fun testWithSpaces() {
         val srcDir = interopDir.resolve("withSpaces")
@@ -255,7 +443,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         assertTrue(mapfile.exists())
     }
 
-    private fun compileDylib(name: String, mSources: List<File>): TestCompilationResult.Success<out TestCompilationArtifact.Executable> {
+    private fun compileDylib(name: String, mSources: List<File>, extraClangOpts: List<String> = listOf("-fobjc-arc")): TestCompilationResult.Success<out TestCompilationArtifact.Executable> {
         val clangResult = compileWithClang(
             clangDistribution = ClangDistribution.Llvm,
             sourceFiles = mSources,
@@ -263,8 +451,8 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             outputFile = buildDir.resolve("lib$name.dylib"),
             libraryDirectories = emptyList(),
             libraries = emptyList(),
-            additionalClangFlags = listOf(
-                "-DNS_FORMAT_ARGUMENT(A)=", "-lobjc", "-fobjc-arc", "-fPIC", "-shared",
+            additionalClangFlags = extraClangOpts + listOf(
+                "-DNS_FORMAT_ARGUMENT(A)=", "-lobjc", "-fPIC", "-shared",
                 // Enable ARC optimizations to prevent some objects from leaking in Obj-C code due to exceptions:
                 "-O2"
             ),

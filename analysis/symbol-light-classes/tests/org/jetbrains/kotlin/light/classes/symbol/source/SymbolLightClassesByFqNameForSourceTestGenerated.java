@@ -337,6 +337,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
   }
 
   @Test
+  @TestMetadata("UnitAsTypeAlias.kt")
+  public void testUnitAsTypeAlias() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/UnitAsTypeAlias.kt");
+  }
+
+  @Test
   @TestMetadata("ValueClassInParametersWithJvmName.kt")
   public void testValueClassInParametersWithJvmName() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ValueClassInParametersWithJvmName.kt");
@@ -523,6 +529,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     @TestMetadata("typeAliasActualization2.kt")
     public void testTypeAliasActualization2() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/typeAliasActualization2.kt");
+    }
+
+    @Test
+    @TestMetadata("UnitAsTypeAliasActualization.kt")
+    public void testUnitAsTypeAliasActualization() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/UnitAsTypeAliasActualization.kt");
     }
 
     @Test

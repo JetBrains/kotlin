@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootExtension
 import java.net.URI
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
@@ -55,7 +56,34 @@ tasks.register("resolveDependencies") {
                 "google.d8:v8:win64-rel-$version@zip",
                 "google.d8:v8:mac-arm64-rel-$version@zip",
                 "google.d8:v8:mac64-rel-$version@zip"
-            )
+            ) {
+                ivy {
+                    url = URI(downloadBaseUrl)
+                    patternLayout {
+                        artifact("[artifact]-[revision].[ext]")
+                    }
+                    metadataSources { artifact() }
+                    content { includeModule("google.d8", "v8") }
+                }
+            }
+        }
+
+        rootProject.extensions.findByType<BinaryenRootExtension>()?.run {
+            project.resolveDependencies(
+                "com.github.webassembly:binaryen:$version:arm64-macos@tar.gz",
+                "com.github.webassembly:binaryen:$version:x86_64-linux@tar.gz",
+                "com.github.webassembly:binaryen:$version:x86_64-macos@tar.gz",
+                "com.github.webassembly:binaryen:$version:x86_64-windows@tar.gz"
+            ) {
+                ivy {
+                    url = URI(downloadBaseUrl)
+                    patternLayout {
+                        artifact("version_[revision]/binaryen-version_[revision]-[classifier].[ext]")
+                    }
+                    metadataSources { artifact() }
+                    content { includeModule("com.github.webassembly", "binaryen") }
+                }
+            }
         }
 
         rootProject.extensions.findByType<NodeJsRootExtension>()?.run {

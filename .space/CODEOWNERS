@@ -87,6 +87,7 @@
 /compiler/ir/serialization.js/ "Kotlin JS"
 /compiler/ir/serialization.jvm/ "Kotlin JVM"
 /compiler/ir/serialization.native/ "Kotlin Native"
+/compiler/ir/ir.inline/ "Kotlin Common Backend"
 /compiler/javac-wrapper/ "Kotlin Compiler Core" Simon.Ogorodnik
 /compiler/light-classes/ "Kotlin IDE Analysis Core"
 /compiler/plugin-api/ "Kotlin Compiler Core" Simon.Ogorodnik

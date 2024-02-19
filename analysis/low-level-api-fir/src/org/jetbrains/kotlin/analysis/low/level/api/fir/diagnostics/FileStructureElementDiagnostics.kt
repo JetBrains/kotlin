@@ -7,22 +7,16 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
-import org.jetbrains.kotlin.fir.declarations.FirFile
 
-internal class FileStructureElementDiagnostics(
-    private val firFile: FirFile,
-    private val retriever: FileStructureElementDiagnosticRetriever,
-    private val moduleComponents: LLFirModuleResolveComponents,
-) {
+internal class FileStructureElementDiagnostics(private val retriever: FileStructureElementDiagnosticRetriever) {
     private val diagnosticByCommonCheckers: FileStructureElementDiagnosticList by lazy {
-        retriever.retrieve(firFile, FileStructureElementDiagnosticsCollector.USUAL_COLLECTOR, moduleComponents)
+        retriever.retrieve(FileStructureElementDiagnosticsCollector.USUAL_COLLECTOR)
     }
 
     private val diagnosticByExtendedCheckers: FileStructureElementDiagnosticList by lazy {
-        retriever.retrieve(firFile, FileStructureElementDiagnosticsCollector.EXTENDED_COLLECTOR, moduleComponents)
+        retriever.retrieve(FileStructureElementDiagnosticsCollector.EXTENDED_COLLECTOR)
     }
 
     fun diagnosticsFor(filter: DiagnosticCheckerFilter, element: PsiElement): List<KtPsiDiagnostic> =

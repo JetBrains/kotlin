@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistributi
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
@@ -189,10 +189,45 @@ open class ExecutableWasm(
 ) {
     val optimizeTaskName: String = optimizeTaskName()
 
-    val optimizeTask: TaskProvider<BinaryenExec>
-        get() = target.project.tasks
-            .withType<BinaryenExec>()
-            .named(optimizeTaskName)
+    val optimizeTask: TaskProvider<BinaryenExec> = BinaryenExec.create(compilation, optimizeTaskName) {
+        val compileWasmDestDir = linkTask.map {
+            it.destinationDirectory
+        }
+
+        val compiledWasmFile = linkTask.flatMap { link ->
+            link.destinationDirectory.locationOnly.zip(link.compilerOptions.moduleName) { destDir, moduleName ->
+                destDir.file("$moduleName.wasm")
+            }
+        }
+
+        dependsOn(linkTask)
+        inputFileProperty.set(compiledWasmFile)
+
+        val outputDirectory: Provider<Directory> = target.project.layout.buildDirectory
+            .dir(COMPILE_SYNC)
+            .map { it.dir(compilation.target.targetName) }
+            .map { it.dir(compilation.name) }
+            .map { it.dir(name) }
+            .map { it.dir("optimized") }
+
+        this.outputDirectory.set(outputDirectory)
+
+        outputFileName.set(
+            compiledWasmFile.map { it.asFile.name }
+        )
+
+        doLast {
+            fs.copy {
+                it.from(compileWasmDestDir)
+                it.into(outputDirectory)
+                it.eachFile {
+                    if (it.relativePath.getFile(outputDirectory.get().asFile).exists()) {
+                        it.exclude()
+                    }
+                }
+            }
+        }
+    }
 
     private fun optimizeTaskName(): String =
         "${linkTaskName}Optimize"
