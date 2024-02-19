@@ -11,8 +11,10 @@ import org.gradle.api.file.Directory
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -49,7 +51,6 @@ private fun Project.registerSwiftExportTask(
     val swiftExportTask = registerSwiftExportRun(
         swiftApiModuleName = swiftApiModuleName,
         taskNamePrefix = taskNamePrefix,
-        mainCompilation = mainCompilation,
     )
     val staticLibrary = registerSwiftExportCompilationAndGetBinary(
         buildType = buildType,
@@ -91,15 +92,19 @@ private fun Project.registerSwiftExportTask(
 private fun Project.registerSwiftExportRun(
     swiftApiModuleName: Provider<String>,
     taskNamePrefix: String,
-    mainCompilation: KotlinCompilation<*>,
 ): TaskProvider<SwiftExportTask> {
     val swiftExportTaskName = taskNamePrefix + "SwiftExport"
+
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
-        val directoryProvider = project.future {
-            kotlinPluginLifecycle.await(KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges)
-            mainCompilation.allKotlinSourceSets.flatMap {
-                it.kotlin.srcDirs
-            }
+        val commonMainProvider = project.future {
+            project
+                .multiplatformExtension
+                .awaitSourceSets()
+                .commonMain
+                .get()
+                .kotlin
+                .srcDirs
+                .single()
         }
 
         val outputs = layout.buildDirectory.dir(swiftExportTaskName)
@@ -107,15 +112,16 @@ private fun Project.registerSwiftExportRun(
         val kotlinIntermediates = outputs.map { it.dir("kotlinIntermediates") }
 
         // Input
-        task.sourceRoots.from(project.files(directoryProvider.getOrThrow()))
-        task.bridgeModuleName.set(swiftApiModuleName.map { "${it}Bridge" })
-        task.debugMode.set(true)
-        task.konanDistribution.set(konanDistribution.root)
+        task.swiftExportClasspath.from(project.maybeCreateSwiftExportClasspathResolvableConfiguration())
+        task.parameters.sourceRoot.set(commonMainProvider.getOrThrow())
+        task.parameters.bridgeModuleName.set(swiftApiModuleName.map { "${it}Bridge" })
+        task.parameters.debugMode.set(true)
+        task.parameters.konanDistribution.set(konanDistribution.root)
 
         // Output
-        task.swiftApiPath.set(swiftIntermediates.map { it.file("KotlinAPI.swift") })
-        task.headerBridgePath.set(swiftIntermediates.map { it.file("KotlinBridge.h") })
-        task.kotlinBridgePath.set(kotlinIntermediates.map { it.file("KotlinBridge.kt") })
+        task.parameters.swiftApiPath.set(swiftIntermediates.map { it.file("KotlinAPI.swift") })
+        task.parameters.headerBridgePath.set(swiftIntermediates.map { it.file("KotlinBridge.h") })
+        task.parameters.kotlinBridgePath.set(kotlinIntermediates.map { it.file("KotlinBridge.kt") })
     }
 }
 
@@ -133,7 +139,10 @@ private fun registerSwiftExportCompilationAndGetBinary(
         swiftExportCompilationName,
         invokeWhenCreated = { swiftExportCompilation ->
             swiftExportCompilation.associateWith(mainCompilation)
-            swiftExportCompilation.defaultSourceSet.kotlin.srcDir(swiftExportTask.map { it.kotlinBridgePath.getFile().parent })
+            swiftExportCompilation.defaultSourceSet.kotlin.srcDir(swiftExportTask.map {
+                it.parameters.kotlinBridgePath.getFile().parent
+            })
+
             swiftExportCompilation.compileTaskProvider.configure {
                 it.compilerOptions.optIn.add("kotlin.experimental.ExperimentalNativeApi")
             }
@@ -165,10 +174,10 @@ private fun Project.registerPackageGeneration(
         task.description = "Generates $taskNamePrefix SPM Package"
 
         // Input
-        task.swiftApiPath.set(swiftExportTask.flatMap { it.swiftApiPath })
-        task.headerBridgePath.set(swiftExportTask.flatMap { it.headerBridgePath })
-        task.headerBridgeModuleName.set(swiftExportTask.flatMap { it.bridgeModuleName })
-        task.libraryPath.set { staticLibrary.linkTaskProvider.flatMap { it.outputFile }.get() }
+        task.swiftApiPath.set(swiftExportTask.map { it.parameters.swiftApiPath.get() })
+        task.headerBridgePath.set(swiftExportTask.map { it.parameters.headerBridgePath.get() })
+        task.headerBridgeModuleName.set(swiftExportTask.map { it.parameters.bridgeModuleName.get() })
+        task.libraryPath.set { staticLibrary.linkTaskProvider.map { it.outputFile.get() }.get() }
         task.swiftLibraryName.set(swiftApiLibraryName)
         task.kotlinLibraryName.set(kotlinStaticLibraryName)
         task.swiftApiModuleName.set(swiftApiModuleName)
@@ -220,3 +229,4 @@ private fun Project.registerCopyTask(
     copyTask.dependsOn(syntheticProjectBuild)
     return copyTask
 }
+

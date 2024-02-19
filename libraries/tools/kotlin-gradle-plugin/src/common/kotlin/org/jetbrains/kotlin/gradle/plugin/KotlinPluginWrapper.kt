@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.initSwiftExportClasspathConfigurations
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
@@ -254,6 +255,7 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
             addGradlePluginMetadataAttributes(project)
         }
         project.maybeCreateCommonizerClasspathConfiguration()
+        project.initSwiftExportClasspathConfigurations()
 
         project.createKotlinExtension(projectExtensionClass).apply {
             coreLibrariesVersion = pluginVersion

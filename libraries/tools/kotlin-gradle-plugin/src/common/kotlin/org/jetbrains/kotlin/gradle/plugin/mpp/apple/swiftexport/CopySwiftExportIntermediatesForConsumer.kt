@@ -18,7 +18,7 @@ import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "This task only copies files")
-abstract class CopySwiftExportIntermediatesForConsumer @Inject constructor(
+internal abstract class CopySwiftExportIntermediatesForConsumer @Inject constructor(
     objectFactory: ObjectFactory,
     projectLayout: ProjectLayout,
     providerFactory: ProviderFactory,

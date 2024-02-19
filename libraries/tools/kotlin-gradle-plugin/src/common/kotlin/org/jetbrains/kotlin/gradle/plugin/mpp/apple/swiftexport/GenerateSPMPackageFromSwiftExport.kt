@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.incremental.createDirectory
 import org.jetbrains.kotlin.incremental.deleteRecursivelyOrThrow
 
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
-abstract class GenerateSPMPackageFromSwiftExport : DefaultTask() {
+internal abstract class GenerateSPMPackageFromSwiftExport : DefaultTask() {
 
     @get:Input
     abstract val swiftApiModuleName: Property<String>

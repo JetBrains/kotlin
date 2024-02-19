@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResourceTransformer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -90,10 +89,6 @@ dependencies {
     }
     commonRuntimeOnly(project(":kotlin-util-klib"))
     commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
-
-    if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
-        embedded(project(":native:swift:swift-export-embeddable"))
-    }
 
     embedded(project(":kotlin-gradle-build-metrics"))
     embedded(project(":kotlin-gradle-statistics"))

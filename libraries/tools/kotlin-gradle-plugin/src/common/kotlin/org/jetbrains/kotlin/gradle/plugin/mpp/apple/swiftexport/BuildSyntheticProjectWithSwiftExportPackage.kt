@@ -24,7 +24,7 @@ import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
-abstract class BuildSyntheticProjectWithSwiftExportPackage : DefaultTask() {
+internal abstract class BuildSyntheticProjectWithSwiftExportPackage : DefaultTask() {
 
     @get:Inject
     abstract val providerFactory: ProviderFactory
