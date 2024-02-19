@@ -143,6 +143,9 @@ class ResultTypeResolver(
             return intersectionWithAlternative
         }
 
+        if (firstCandidate.isNothing() && isSuitableType(secondCandidate, variableWithConstraints)) return secondCandidate
+        if (secondCandidate.isNothing() && isSuitableType(firstCandidate, variableWithConstraints)) return firstCandidate
+
         if (isSuitableType(firstCandidate, variableWithConstraints)) return firstCandidate
 
         return if (isSuitableType(secondCandidate, variableWithConstraints)) {
