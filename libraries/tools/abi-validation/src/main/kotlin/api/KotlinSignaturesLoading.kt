@@ -313,15 +313,16 @@ public fun List<ClassBinarySignature>.dump(): PrintStream = dump(to = System.out
 
 @ExternalApi
 public fun <T : Appendable> List<ClassBinarySignature>.dump(to: T): T {
-    forEach { classApi ->
-        with(to) {
-            append(classApi.signature).appendLine(" {")
-            classApi.memberSignatures
-                .sortedWith(MEMBER_SORT_ORDER)
-                .forEach { append("\t").appendLine(it.signature) }
-            appendLine("}\n")
+    sortedBy { it.name }
+        .forEach { classApi ->
+            with(to) {
+                append(classApi.signature).appendLine(" {")
+                classApi.memberSignatures
+                    .sortedWith(MEMBER_SORT_ORDER)
+                    .forEach { append("\t").appendLine(it.signature) }
+                appendLine("}\n")
+            }
         }
-    }
     return to
 }
 

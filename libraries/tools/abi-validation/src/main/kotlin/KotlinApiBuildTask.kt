@@ -105,15 +105,7 @@ public open class KotlinApiBuildTask @Inject constructor(
             .filterOutAnnotated(nonPublicMarkers.map(::replaceDots).toSet())
 
         outputApiDir.resolve("$projectName.api").bufferedWriter().use { writer ->
-            filteredSignatures
-                .sortedBy { it.name }
-                .forEach { api ->
-                    writer.append(api.signature).appendLine(" {")
-                    api.memberSignatures
-                        .sortedWith(MEMBER_SORT_ORDER)
-                        .forEach { writer.append("\t").appendLine(it.signature) }
-                    writer.appendLine("}\n")
-                }
+            filteredSignatures.dump(writer)
         }
     }
 
