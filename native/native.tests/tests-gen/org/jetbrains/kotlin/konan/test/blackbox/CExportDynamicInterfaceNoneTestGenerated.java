@@ -23,20 +23,20 @@ import java.util.regex.Pattern;
 @EnforcedProperty(property = ClassLevelProperty.BINARY_LIBRARY_KIND, propertyValue = "DYNAMIC")
 @EnforcedProperty(property = ClassLevelProperty.C_INTERFACE_MODE, propertyValue = "NONE")
 public class CExportDynamicInterfaceNoneTestGenerated extends AbstractNativeCExportTest {
-    @Test
-    public void testAllFilesPresentInInterfaceNone() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CExport/InterfaceNone"), Pattern.compile("^([^_](.+))$"), null, false);
-    }
+  @Test
+  public void testAllFilesPresentInInterfaceNone() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CExport/InterfaceNone"), Pattern.compile("^([^_](.+))$"), null, false);
+  }
 
-    @Test
-    @TestMetadata("primitiveTypes")
-    public void testPrimitiveTypes() throws Exception {
-        runTest("native/native.tests/testData/CExport/InterfaceNone/primitiveTypes/");
-    }
+  @Test
+  @TestMetadata("primitiveTypes")
+  public void testPrimitiveTypes() {
+    runTest("native/native.tests/testData/CExport/InterfaceNone/primitiveTypes/");
+  }
 
-    @Test
-    @TestMetadata("smoke0")
-    public void testSmoke0() throws Exception {
-        runTest("native/native.tests/testData/CExport/InterfaceNone/smoke0/");
-    }
+  @Test
+  @TestMetadata("smoke0")
+  public void testSmoke0() {
+    runTest("native/native.tests/testData/CExport/InterfaceNone/smoke0/");
+  }
 }
