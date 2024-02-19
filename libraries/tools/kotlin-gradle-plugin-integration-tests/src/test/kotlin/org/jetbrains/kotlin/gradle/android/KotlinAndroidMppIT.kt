@@ -446,7 +446,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                         }                        
                         """.trimIndent()
             }
-            makeSnapshotTo("/tmp/111")
             build("publish") {
                 listOf("foobar", "foobaz").forEach { flavor ->
                     listOf("-debug", "").forEach { buildType ->
