@@ -198,7 +198,7 @@ internal class KtFirTypeProvider(
                     is FirResolvedQualifier -> {
                         explicitReceiver.symbol?.toLookupTag()?.constructType(
                             explicitReceiver.typeArguments.map { it.toConeTypeProjection() }.toTypedArray(),
-                            isNullable = false
+                            isNullable = explicitReceiver.isNullableLHSForCallableReference
                         )?.asKtType()
                             ?: fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
                     }
