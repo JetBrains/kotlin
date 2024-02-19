@@ -1305,6 +1305,9 @@ open class PsiRawFirBuilder(
                                     // the last one need to be analyzed in script configurator to decide on result property
                                     // therefore no lazy conversion in this case
                                     allowLazyBody = !isLast,
+                                    // the last anonymous initializer could be converted to a property and its symbol will be dropped
+                                    // therefore we should not rely on it as a containing declaration symbol, and use the parent one instead
+                                    isLocal = isLast,
                                 )
 
                                 declarations.add(initializer)
@@ -2212,12 +2215,21 @@ open class PsiRawFirBuilder(
             return buildAnonymousInitializer(initializer, containingDeclarationSymbol = null)
         }
 
+        /**
+         * Builds [FirAnonymousInitializer] from [KtAnonymousInitializer]
+         *
+         * @param initializer Source [KtAnonymousInitializer]
+         * @param containingDeclarationSymbol containing declaration symbol, if any
+         * @param allowLazyBody if `true`, [FirLazyBlock] is used in the IDE mode
+         * @param isLocal if `true`, the initializer is not used as a containing declaration for the contents of the initializer
+         */
         protected fun buildAnonymousInitializer(
             initializer: KtAnonymousInitializer,
             containingDeclarationSymbol: FirBasedSymbol<*>?,
             allowLazyBody: Boolean = true,
+            isLocal: Boolean = false,
         ) = buildAnonymousInitializer {
-            withContainerSymbol(symbol) {
+            withContainerSymbol(symbol, isLocal) {
                 source = initializer.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
