@@ -139,8 +139,6 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             is FirFile -> {
                 if (target.resolvePhase >= resolverPhase) return true
 
-                target.annotationsContainer?.lazyResolveToPhase(resolverPhase)
-
                 // resolve file CFG graph here, to do this we need to have property blocks resoled
                 resolveMembersForControlFlowGraph(target)
                 performCustomResolveUnderLock(target) {
@@ -311,7 +309,6 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             is FirVariable -> resolve(target, BodyStateKeepers.VARIABLE)
             is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
             is FirDanglingModifierList,
-            is FirFileAnnotationsContainer,
             is FirTypeAlias,
             -> {
                 // No bodies here

@@ -187,8 +187,12 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
             }
 
             target is FirScript -> target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
+            target is FirFile -> transformer.declarationsTransformer.withFile(target) {
+                target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
+            }
+
             target.isRegularDeclarationWithAnnotation -> target.transformSingle(transformer, ResolutionMode.ContextIndependent)
-            target is FirCodeFragment || target is FirFile -> {}
+            target is FirCodeFragment -> {}
             else -> throwUnexpectedFirElementError(target)
         }
     }
@@ -199,7 +203,6 @@ internal val FirElementWithResolveState.isRegularDeclarationWithAnnotation: Bool
         is FirCallableDeclaration,
         is FirAnonymousInitializer,
         is FirDanglingModifierList,
-        is FirFileAnnotationsContainer,
         is FirTypeAlias,
         -> true
         else -> false

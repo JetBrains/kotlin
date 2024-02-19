@@ -14,11 +14,11 @@ import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -28,26 +28,26 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 class FirFileBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    var annotationsContainer: FirFileAnnotationsContainer? = null
     lateinit var packageDirective: FirPackageDirective
     val imports: MutableList<FirImport> = mutableListOf()
     val declarations: MutableList<FirDeclaration> = mutableListOf()
     lateinit var name: String
     var sourceFile: KtSourceFile? = null
     var sourceFileLinesMapping: KtSourceFileLinesMapping? = null
-    lateinit var symbol: FirFileSymbol
+    var symbol: FirFileSymbol = FirFileSymbol()
 
     override fun build(): FirFile {
         return FirFileImpl(
             source,
             resolvePhase,
+            annotations.toMutableOrEmpty(),
             moduleData,
             origin,
             attributes,
-            annotationsContainer,
             packageDirective,
             imports,
             declarations,
@@ -58,9 +58,6 @@ class FirFileBuilder : FirAnnotationContainerBuilder {
         )
     }
 
-
-    @Deprecated("Modification of 'annotations' has no impact for FirFileBuilder", level = DeprecationLevel.HIDDEN)
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
 }
 
 @OptIn(ExperimentalContracts::class)

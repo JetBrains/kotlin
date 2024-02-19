@@ -139,14 +139,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(elementWithResolveState)
     }
 
-    final override fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: Nothing?) {
-        visitFileAnnotationsContainer(fileAnnotationsContainer)
-    }
-
-    open fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer) {
-        visitElement(fileAnnotationsContainer)
-    }
-
     final override fun visitDeclaration(declaration: FirDeclaration, data: Nothing?) {
         visitDeclaration(declaration)
     }

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolv
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -105,14 +104,14 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
             is FirProperty -> resolve(target, TypeStateKeepers.PROPERTY)
             is FirCallableDeclaration,
             is FirDanglingModifierList,
-            is FirFileAnnotationsContainer,
+            is FirFile,
             is FirTypeAlias,
             is FirScript,
             is FirRegularClass,
             is FirAnonymousInitializer,
             -> rawResolve(target)
 
-            is FirFile, is FirCodeFragment -> {}
+            is FirCodeFragment -> {}
             else -> errorWithAttachment("Unknown declaration ${target::class.simpleName}") {
                 withFirEntry("declaration", target)
             }
@@ -132,9 +131,7 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
                 resolveOutsideClassBody(target, transformer::transformDelegatedConstructorCall)
             }
             is FirScript -> resolveScriptTypes(target)
-            is FirDanglingModifierList, is FirFileAnnotationsContainer, is FirCallableDeclaration, is FirTypeAlias,
-            is FirAnonymousInitializer,
-            -> {
+            is FirDanglingModifierList, is FirCallableDeclaration, is FirTypeAlias, is FirAnonymousInitializer -> {
                 if (target is FirField && target.origin == FirDeclarationOrigin.Synthetic.DelegateField) {
                     // delegated field should be resolved in the same context as super types
                     resolveOutsideClassBody(target, transformer::transformDelegateField)
@@ -143,6 +140,7 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
                 }
             }
 
+            is FirFile -> transformer.withFileScope(target) { target.transformAnnotations(transformer, null) }
             is FirRegularClass -> resolveClassTypes(target)
             else -> errorWithAttachment("Unknown declaration ${target::class.simpleName}") {
                 withFirEntry("declaration", target)

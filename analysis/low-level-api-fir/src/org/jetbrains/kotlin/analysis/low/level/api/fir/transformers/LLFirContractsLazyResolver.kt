@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.blockGuard
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkContractDescriptionIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isCallableWithSpecialBody
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
@@ -80,7 +79,6 @@ private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAb
             is FirFile,
             is FirScript,
             is FirCodeFragment,
-            is FirFileAnnotationsContainer,
             is FirDanglingModifierList,
             -> {
                 // No contracts here

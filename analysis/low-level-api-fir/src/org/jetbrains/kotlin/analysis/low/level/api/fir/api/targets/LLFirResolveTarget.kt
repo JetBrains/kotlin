@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
@@ -130,7 +129,7 @@ internal sealed class LLFirResolveTarget(val designation: FirDesignation) {
         is FirClassLikeDeclaration -> fir.symbol.name.asString()
         is FirCallableDeclaration -> fir.symbol.name.asString()
         is FirAnonymousInitializer -> ("<init-block>")
-        is FirFileAnnotationsContainer -> "<file annotations>"
+        is FirFile -> fir.name
         is FirScript -> fir.name.asString()
         else -> "???"
     }

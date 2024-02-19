@@ -165,7 +165,7 @@ private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWith
             return collectDesignationPathWithContainingClass(providedFile, target, containingClassId)
         }
 
-        is FirFileAnnotationsContainer -> return FirDesignation(path = listOf(target.containingFileSymbol.fir), target = target)
+        is FirFile -> return FirDesignation(target)
         is FirScript, is FirCodeFragment -> {
             requireIsInstance<FirDeclaration>(target)
 
@@ -365,7 +365,7 @@ fun FirElementWithResolveState.tryCollectDesignationWithOptionalFile(providedFil
  */
 fun FirElementWithResolveState.tryCollectDesignation(providedFile: FirFile? = null): FirDesignation? = when (this) {
     is FirSyntheticProperty, is FirSyntheticPropertyAccessor -> unexpectedElementError<FirElementWithResolveState>(this)
-    is FirFileAnnotationsContainer, is FirDeclaration -> {
+    is FirDeclaration -> {
         val designation = tryCollectDesignation(providedFile = providedFile, target = this)
         designation?.takeIf { it.fileOrNull != null }
     }

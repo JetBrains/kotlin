@@ -70,7 +70,6 @@ internal class ImplementationPrinter(
                         !element.typeName.contains("Reference")
                         && !element.typeName.contains("ResolvedQualifier")
                         && !element.typeName.endsWith("Ref")
-                        && !element.typeName.endsWith("AnnotationsContainer")
             }.orEmpty()
 
             val customCalls = fieldsInConstructor.filter { it.customInitializationCall != null }

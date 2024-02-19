@@ -457,15 +457,6 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirDeclarationsResolveTransformer::transformDanglingModifierList,
     )
 
-    override fun transformFileAnnotationsContainer(
-        fileAnnotationsContainer: FirFileAnnotationsContainer,
-        data: ResolutionMode,
-    ): FirFileAnnotationsContainer = declarationTransformation(
-        fileAnnotationsContainer,
-        data,
-        FirDeclarationsResolveTransformer::transformFileAnnotationsContainer,
-    )
-
     override fun transformProperty(
         property: FirProperty,
         data: ResolutionMode,

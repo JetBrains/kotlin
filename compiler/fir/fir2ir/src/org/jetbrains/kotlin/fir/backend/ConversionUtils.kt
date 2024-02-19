@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COMPONENT_PREFIX
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.diagnostics.startOffsetSkippingComments
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.builder.buildFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
@@ -698,11 +697,6 @@ fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
     return buildList {
         for (packageFqName in (topLevelClasses.keys + topLevelCallables.keys)) {
             this += buildFile {
-                symbol = FirFileSymbol()
-                annotationsContainer = buildFileAnnotationsContainer {
-                    moduleData = this@createFilesWithGeneratedDeclarations.moduleData
-                    containingFileSymbol = this@buildFile.symbol
-                }
                 origin = FirDeclarationOrigin.Synthetic.PluginFile
                 moduleData = this@createFilesWithGeneratedDeclarations.moduleData
                 packageDirective = buildPackageDirective {

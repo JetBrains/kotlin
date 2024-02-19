@@ -158,9 +158,6 @@ internal abstract class LLFirTargetResolver(
             target is FirField && target.origin == FirDeclarationOrigin.Synthetic.DelegateField || target is FirConstructor -> {
                 containingClass(target).lazyResolveToPhase(resolverPhase)
             }
-
-            // Effectively, file annotation container is a part of FirFile, so we have to resolve it before
-            target is FirFile -> target.annotationsContainer?.lazyResolveToPhase(resolverPhase)
         }
     }
 

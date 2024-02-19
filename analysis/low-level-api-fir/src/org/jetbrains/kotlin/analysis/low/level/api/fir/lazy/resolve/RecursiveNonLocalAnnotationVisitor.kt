@@ -20,7 +20,6 @@ internal abstract class RecursiveNonLocalAnnotationVisitor<T> : NonLocalAnnotati
     override fun visitFile(file: FirFile, data: T) {
         super.visitFile(file, data)
 
-        file.annotationsContainer?.accept(this, data)
         file.forEachDeclaration { it.accept(this, data) }
     }
 

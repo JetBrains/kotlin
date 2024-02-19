@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
@@ -325,13 +324,6 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             data: ResolutionMode
         ): FirDanglingModifierList {
             return danglingModifierList
-        }
-
-        override fun transformFileAnnotationsContainer(
-            fileAnnotationsContainer: FirFileAnnotationsContainer,
-            data: ResolutionMode
-        ): FirFileAnnotationsContainer {
-            return fileAnnotationsContainer
         }
 
         override fun transformErrorPrimaryConstructor(

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirErrorPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -102,8 +102,8 @@ internal abstract class NonLocalAnnotationVisitor<T> : FirVisitor<Unit, T>() {
         visitAnnotation(errorAnnotationCall, data)
     }
 
-    override fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: T) {
-        visitAnnotationContainer(fileAnnotationsContainer, data)
+    override fun visitFile(file: FirFile, data: T) {
+        visitAnnotationContainer(file, data)
     }
 
     override fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList, data: T) {

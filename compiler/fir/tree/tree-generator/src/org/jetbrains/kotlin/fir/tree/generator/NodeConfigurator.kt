@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -90,10 +90,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
             +field("moduleData", firModuleDataType)
             shouldBeAbstractClass()
-        }
-
-        fileAnnotationsContainer.configure {
-            +field("containingFileSymbol", type("fir.symbols.impl", "FirFileSymbol"))
         }
 
         declaration.configure {
@@ -491,7 +487,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         file.configure {
-            +field("annotationsContainer", fileAnnotationsContainer, nullable = true).withTransform()
             +field("packageDirective", packageDirective)
             +fieldList(import).withTransform()
             +declarations.withTransform()

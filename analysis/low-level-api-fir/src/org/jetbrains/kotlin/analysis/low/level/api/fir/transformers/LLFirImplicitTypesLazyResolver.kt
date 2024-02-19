@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
@@ -198,7 +197,6 @@ internal class LLFirImplicitBodyTargetResolver(
                     target is FirCodeFragment ||
                     target is FirAnonymousInitializer ||
                     target is FirDanglingModifierList ||
-                    target is FirFileAnnotationsContainer ||
                     target is FirEnumEntry ||
                     target is FirErrorProperty ||
                     target is FirScript
@@ -208,9 +206,8 @@ internal class LLFirImplicitBodyTargetResolver(
             else -> throwUnexpectedFirElementError(target)
         }
 
-        if (target is FirDeclaration) {
-            target.forEachDeclarationWhichCanHavePostponedSymbols(::publishPostponedSymbols)
-        }
+        @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
+        (target as FirDeclaration).forEachDeclarationWhichCanHavePostponedSymbols(::publishPostponedSymbols)
     }
 
     private fun publishPostponedSymbols(target: FirCallableDeclaration) {
