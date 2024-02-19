@@ -43,9 +43,7 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
                     checkAnnotationsAreResolved(target, receiverParameter.typeRef)
                 }
 
-                for (contextReceiver in target.contextReceivers) {
-                    checkAnnotationsAreResolved(target, contextReceiver.typeRef)
-                }
+                checkAnnotationsAreResolved(target.contextReceivers, target)
             }
 
             is FirTypeParameter -> {
@@ -54,15 +52,16 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
                 }
             }
 
-            is FirClass -> {
+            is FirRegularClass -> {
                 for (typeRef in target.superTypeRefs) {
                     checkAnnotationsAreResolved(target, typeRef)
                 }
+
+                checkAnnotationsAreResolved(target.contextReceivers, target)
             }
 
-            is FirTypeAlias -> {
-                checkAnnotationsAreResolved(target, target.expandedTypeRef)
-            }
+            is FirScript -> checkAnnotationsAreResolved(target.contextReceivers, target)
+            is FirTypeAlias -> checkAnnotationsAreResolved(target, target.expandedTypeRef)
         }
     }
 }
