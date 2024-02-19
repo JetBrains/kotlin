@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ResolveException
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.kotlin.dsl.project
@@ -20,10 +22,11 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.resourcesVariantViewFromCompileDependencyConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.util.assertThrows
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -32,15 +35,15 @@ class KotlinTargetVariantResourcesResolutionTests {
 
     @Test
     fun `test direct dependency - is the same - for all resolution methods and supported scopes`() {
-        resolutionMethods().forEach { resolutionMethod ->
+        KotlinTargetResourcesResolutionStrategy.values().forEach { resolutionMethod ->
             dependencyScopesWithResources().forEach { dependencyScope ->
                 testDirectDependencyOnResourcesProducer(
                     producerTarget = { linuxX64() },
                     consumerTarget = { linuxX64() },
                     dependencyScope = dependencyScope,
-                    resolutionMethod = resolutionMethod,
+                    resolutionStrategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
                     expectedResult = { _, producer ->
-                        hashSetOf(producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/producer.zip"))
+                        hashSetOf(producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/producer.kotlin_resources.zip"))
                     },
                 )
             }
@@ -52,18 +55,24 @@ class KotlinTargetVariantResourcesResolutionTests {
         testDirectDependencyOnResourcesProducer(
             producerTarget = { linuxX64() },
             consumerTarget = { linuxArm64() },
-            resolutionMethod = { resolveResourcesWithVariantReselectionFiles() },
+            resolutionStrategy = KotlinTargetResourcesResolutionStrategy.VariantReselection,
             expectedResult = { _, _ -> emptySet() },
         )
     }
 
     @Test
     fun `test direct dependency - between different native targets - with resources configuration`() {
-        testDirectDependencyOnResourcesProducer(
+        directDependencyOnResourcesProducer(
             producerTarget = { linuxX64() },
             consumerTarget = { linuxArm64() },
-            resolutionMethod = { resolveResourcesWithResourcesConfigurationFiles(lenient = true) },
-            expectedResult = { _, _ -> emptySet() },
+            strategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
+            assert = { consumer, _ ->
+                assertThrows<ResolveException> {
+                    KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration.resourceArchives(
+                        consumer.multiplatformExtension.linuxArm64().compilations.getByName("main")
+                    ).files
+                }
+            },
         )
     }
 
@@ -76,15 +85,11 @@ class KotlinTargetVariantResourcesResolutionTests {
             testDirectDependencyOnResourcesProducer(
                 producerTarget = { target() },
                 consumerTarget = { target() },
-                resolutionMethod = {
-                    resolveResourcesWithVariantReselectionFiles().filterNot {
-                        it.path.contains("org/jetbrains/kotlin/kotlin-stdlib")
-                    }.toSet()
-                },
+                resolutionStrategy = KotlinTargetResourcesResolutionStrategy.VariantReselection,
                 expectedResult = { _, producer ->
                     hashSetOf(
                         producer.buildFile(
-                            "kotlin-multiplatform-resources/zip-for-publication/${producer.multiplatformExtension.target().name}/producer.zip"
+                            "kotlin-multiplatform-resources/zip-for-publication/${producer.multiplatformExtension.target().name}/producer.kotlin_resources.zip"
                         ),
                     )
                 },
@@ -97,20 +102,20 @@ class KotlinTargetVariantResourcesResolutionTests {
         testDirectDependencyOnResourcesProducer(
             producerTarget = { wasmJs() },
             consumerTarget = { wasmJs() },
-            resolutionMethod = {
-                resolveResourcesWithResourcesConfigurationFiles().filterNot {
+            resolutionStrategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
+            filterResolvedFiles = {
+                it.filterNot {
                     it.path.contains("org/jetbrains/kotlin/kotlin-stdlib")
                 }.toSet()
             },
             expectedResult = { consumer, producer ->
                 hashSetOf(
                     producer.buildFile(
-                        "kotlin-multiplatform-resources/zip-for-publication/wasmJs/producer.zip"
+                        "kotlin-multiplatform-resources/zip-for-publication/wasmJs/producer.kotlin_resources.zip"
                     ),
                     // ???
-                    consumer.buildFile(
-                        "classes/kotlin/wasmJs/main"
-                    )
+                    consumer.buildFile("classes/kotlin/wasmJs/main"),
+                    consumer.buildFile("processedResources/wasmJs/main"),
                 )
             },
         )
@@ -121,20 +126,20 @@ class KotlinTargetVariantResourcesResolutionTests {
         testDirectDependencyOnResourcesProducer(
             producerTarget = { wasmWasi() },
             consumerTarget = { wasmWasi() },
-            resolutionMethod = {
-                resolveResourcesWithResourcesConfigurationFiles().filterNot {
+            resolutionStrategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
+            filterResolvedFiles = {
+                it.filterNot {
                     it.path.contains("org/jetbrains/kotlin/kotlin-stdlib")
                 }.toSet()
             },
             expectedResult = { consumer, producer ->
                 hashSetOf(
                     producer.buildFile(
-                        "kotlin-multiplatform-resources/zip-for-publication/wasmWasi/producer.zip"
+                        "kotlin-multiplatform-resources/zip-for-publication/wasmWasi/producer.kotlin_resources.zip"
                     ),
                     // ???
-                    consumer.buildFile(
-                        "classes/kotlin/wasmWasi/main"
-                    )
+                    consumer.buildFile("classes/kotlin/wasmWasi/main"),
+                    consumer.buildFile("processedResources/wasmWasi/main"),
                 )
             },
         )
@@ -143,52 +148,125 @@ class KotlinTargetVariantResourcesResolutionTests {
     @Test
     fun `test transitive dependency - without resources in middle project - with configuration`() {
         testTransitiveDependencyOnResourcesProducer(
-            resolutionMethod = { resolveResourcesWithResourcesConfigurationFiles() },
+            targetProvider = { linuxX64() },
+            resolutionStrategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
             expectedResult = { consumer, middle, producer ->
                 setOf(
-                    producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/producer.zip"),
-                    middle.buildFile("classes/kotlin/linuxX64/main/klib/withoutResources.klib"),
-                )
-            }
-        )
-        // Resources can be filtered by classifier
-        testTransitiveDependencyOnResourcesProducer(
-            resolutionMethod = {
-                resolveResourcesWithResourcesConfiguration().resolvedConfiguration.resolvedArtifacts.filter {
-                    it.classifier == "kotlin_resources"
-                }.map { it.file }.toSet()
-            },
-            expectedResult = { consumer, middle, producer ->
-                setOf(
-                    producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/producer.zip"),
+                    producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/producer.kotlin_resources.zip"),
+                    middle.buildFile("classes/kotlin/linuxX64/main/klib/middle.klib"),
                 )
             }
         )
     }
 
     @Test
+    fun `test transitive dependency - without resources in middle project in wasm - with configuration`() {
+        dependencyScopesWithResources().forEach { dependencyScope ->
+            testTransitiveDependencyOnResourcesProducer(
+                targetProvider = { wasmJs() },
+                resolutionStrategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
+                dependencyScope = dependencyScope,
+                filterResolvedFiles = {
+                    it.filter { it.path.endsWith("kotlin_resources.zip") }.toSet()
+                },
+                expectedResult = { consumer, middle, producer ->
+                    setOf(
+                        producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/wasmJs/producer.kotlin_resources.zip"),
+                    )
+                }
+            )
+        }
+    }
+
+    @Test
+    fun `test transitive dependency - without resources in middle project in wasm - with artifact view`() {
+        dependencyScopesWithResources().forEach { dependencyScope ->
+            testTransitiveDependencyOnResourcesProducer(
+                targetProvider = { wasmJs() },
+                resolutionStrategy = KotlinTargetResourcesResolutionStrategy.VariantReselection,
+                dependencyScope = dependencyScope,
+                filterResolvedFiles = {
+                    it.filter { it.path.endsWith("kotlin_resources.zip") }.toSet()
+                },
+                expectedResult = { consumer, middle, producer ->
+                    setOf(
+                        producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/wasmJs/producer.kotlin_resources.zip"),
+                    )
+                }
+            )
+        }
+    }
+
+    @Test
     fun `test transitive dependency - without resources in middle project - with artifact view`() {
         testTransitiveDependencyOnResourcesProducer(
-            resolutionMethod = { resolveResourcesWithVariantReselectionFiles() },
+            targetProvider = { linuxX64() },
+            resolutionStrategy = KotlinTargetResourcesResolutionStrategy.VariantReselection,
             expectedResult = { consumer, middle, producer ->
                 setOf(
-                    producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/producer.zip"),
-                    middle.buildFile("classes/kotlin/linuxX64/main/klib/withoutResources.klib"),
+                    producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/producer.kotlin_resources.zip"),
+                    // VariantReselection strategy disables compatibility rule that resolves klibs for resources configuration
+                    // middle.buildFile("classes/kotlin/linuxX64/main/klib/middle.klib"),
                 )
             }
         )
-        // Resources can be filtered by attribute, since artifactView doesn't have access to classifier
+    }
+
+    @Test
+    fun `test transitive dependency - with resources in middle project - with artifact view`() {
+        dependencyScopesWithResources().forEach { dependencyScope ->
+            testTransitiveDependencyOnResourcesProducer(
+                targetProvider = { linuxX64() },
+                resolutionStrategy = KotlinTargetResourcesResolutionStrategy.VariantReselection,
+                dependencyScope = dependencyScope,
+                middlePublishesResources = true,
+                expectedResult = { consumer, middle, producer ->
+                    setOf(
+                        middle.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/middle.kotlin_resources.zip"),
+                        producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/producer.kotlin_resources.zip"),
+                    )
+                }
+            )
+        }
         testTransitiveDependencyOnResourcesProducer(
-            resolutionMethod = {
-                resolveResourcesWithVariantReselection().artifacts.filter {
-                    it.variant.attributes.getAttribute(
-                        Usage.USAGE_ATTRIBUTE
-                    ) == project.usageByName(KotlinUsages.KOTLIN_RESOURCES)
-                }.map { it.file }.toSet()
-            },
+            targetProvider = { linuxX64() },
+            resolutionStrategy = KotlinTargetResourcesResolutionStrategy.VariantReselection,
+            middlePublishesResources = true,
+            consumerPublishesResources = true,
             expectedResult = { consumer, middle, producer ->
                 setOf(
-                    producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/producer.zip"),
+                    middle.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/middle.kotlin_resources.zip"),
+                    producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/producer.kotlin_resources.zip"),
+                )
+            }
+        )
+    }
+
+    @Test
+    fun `test transitive dependency - with resources in middle project - with configuration`() {
+        dependencyScopesWithResources().forEach { dependencyScope ->
+            testTransitiveDependencyOnResourcesProducer(
+                targetProvider = { linuxX64() },
+                resolutionStrategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
+                dependencyScope = dependencyScope,
+                middlePublishesResources = true,
+                expectedResult = { consumer, middle, producer ->
+                    setOf(
+                        middle.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/middle.kotlin_resources.zip"),
+                        producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/producer.kotlin_resources.zip"),
+                    )
+                }
+            )
+        }
+        testTransitiveDependencyOnResourcesProducer(
+            targetProvider = { linuxX64() },
+            resolutionStrategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
+            middlePublishesResources = true,
+            consumerPublishesResources = true,
+            expectedResult = { consumer, middle, producer ->
+                setOf(
+                    middle.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/middle.kotlin_resources.zip"),
+                    producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/producer.kotlin_resources.zip"),
                 )
             }
         )
@@ -196,7 +274,7 @@ class KotlinTargetVariantResourcesResolutionTests {
 
     @Test
     fun `test resources - don't leak into non-resources configurations`() {
-        resolutionSanityCheck()
+        resourcesConfigurationResolutionSanityCheck()
 
         val targetsToTest = listOf<TargetProvider>(
             { wasmJs() },
@@ -209,36 +287,33 @@ class KotlinTargetVariantResourcesResolutionTests {
             testNonResourcesConfigurationDontResolveResourceVariants(
                 producerTarget = targetsToTest[index],
                 consumerTarget = targetsToTest[index],
+                strategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
             )
 
             // Test when target is not matching
             testNonResourcesConfigurationDontResolveResourceVariants(
                 producerTarget = targetsToTest[index],
                 consumerTarget = targetsToTest[(index + 1) % targetsToTest.count()],
+                strategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
             )
         }
-    }
-
-    private fun resolutionMethods(): List<ResolutionMethod> {
-        return listOf(
-            { resolveResourcesWithResourcesConfigurationFiles() },
-            { resolveResourcesWithVariantReselectionFiles() },
-        )
     }
 
     private fun dependencyScopesWithResources(): List<DependencyScopeProvider> {
         return listOf(
             { this::implementation },
             { this::api },
-            { this::compileOnly },
-            // { this::runtimeOnly }, ???
+            // What are these supposed to mean for resources?
+            // { this::compileOnly }, ?
+            // { this::runtimeOnly }, ?
         )
     }
 
-    private fun resolutionSanityCheck() {
+    private fun resourcesConfigurationResolutionSanityCheck() {
         directDependencyOnResourcesProducer(
             producerTarget = { linuxX64() },
             consumerTarget = { linuxX64() },
+            strategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
             assert = { consumer, producer ->
                 val resourcesConfiguration = consumer.multiplatformExtension.linuxX64()
                     .compilations.getByName("main")
@@ -267,15 +342,16 @@ class KotlinTargetVariantResourcesResolutionTests {
     private fun testNonResourcesConfigurationDontResolveResourceVariants(
         producerTarget: TargetProvider,
         consumerTarget: TargetProvider,
+        strategy: KotlinTargetResourcesResolutionStrategy,
     ) {
         directDependencyOnResourcesProducer(
             producerTarget = producerTarget,
             consumerTarget = consumerTarget,
+            strategy = strategy,
             assert = { consumer, producer ->
                 val resourcesConfigurations = consumer.multiplatformExtension.targets.map {
                     it.compilations.getByName("main").internal.configurations.resourcesConfiguration
                 }
-                assert(resourcesConfigurations.isNotEmpty())
 
                 val nonResourcesConfigurations: Set<Configuration> = consumer.configurations.filter {
                     it.isCanBeResolved
@@ -289,17 +365,20 @@ class KotlinTargetVariantResourcesResolutionTests {
                         val resolvedVariants = resolvedComponent.variants
 
                         resolvedVariants.forEach { variant ->
-                            // Getting usage properly doesn't work here in this API
-                            // variant.attributes.getAttribute(Usage.USAGE_ATTRIBUTE) is always null
-                            val dumpAttributesToString = variant.attributes.toString()
-                            val isWeirdToolingConfiguration = dumpAttributesToString == "{}"
                             val variantPath = { "$resolvableConfiguration -> $resolvedComponent -> $variant" }
+                            val typedUsage = variant.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)
+                            val stringUsage = variant.attributes.getAttribute(Attribute.of(Usage.USAGE_ATTRIBUTE.name, String::class.java))
+                            val isKotlinCompilerClasspath = variant.attributes.keySet().isEmpty()
                             assert(
-                                dumpAttributesToString.contains("org.gradle.usage=") || isWeirdToolingConfiguration,
+                                typedUsage != null || stringUsage != null || isKotlinCompilerClasspath,
+                                variantPath
+                            )
+                            assert(
+                                typedUsage != consumer.project.usageByName(KotlinUsages.KOTLIN_RESOURCES),
                                 variantPath,
                             )
                             assert(
-                                !dumpAttributesToString.contains("org.gradle.usage=${KotlinUsages.KOTLIN_RESOURCES}"),
+                                stringUsage != KotlinUsages.KOTLIN_RESOURCES,
                                 variantPath,
                             )
                         }
@@ -313,16 +392,23 @@ class KotlinTargetVariantResourcesResolutionTests {
         producerTarget: TargetProvider,
         consumerTarget: TargetProvider,
         dependencyScope: DependencyScopeProvider = { ::implementation },
-        resolutionMethod: ResolutionMethod,
+        resolutionStrategy: KotlinTargetResourcesResolutionStrategy,
+        filterResolvedFiles: (Set<File>) -> Set<File> = { it },
         expectedResult: (consumer: Project, producer: Project) -> Set<File>,
     ) = directDependencyOnResourcesProducer(
         producerTarget = producerTarget,
         consumerTarget = consumerTarget,
         dependencyScope = dependencyScope,
+        strategy = resolutionStrategy,
         assert = { consumer: Project, producer: Project ->
+            consumer.setMppResourcesResolutionStrategy(resolutionStrategy)
             assertEquals(
                 expectedResult(consumer, producer),
-                consumer.multiplatformExtension.consumerTarget().resolutionMethod(),
+                filterResolvedFiles(
+                    resolutionStrategy.resourceArchives(
+                        consumer.multiplatformExtension.consumerTarget().compilations.getByName("main"),
+                    ).files
+                )
             )
         }
     )
@@ -330,15 +416,18 @@ class KotlinTargetVariantResourcesResolutionTests {
     private fun directDependencyOnResourcesProducer(
         producerTarget: TargetProvider,
         consumerTarget: TargetProvider,
+        strategy: KotlinTargetResourcesResolutionStrategy,
         dependencyScope: DependencyScopeProvider = { ::implementation },
         assert: (consumer: Project, producer: Project) -> Unit,
     ) {
         val rootProject = buildProject()
         val producer = rootProject.createSubproject("producer") {
             kotlin { producerTarget() }
-            enableMppResourcesPublication(true)
         }
-        val consumer = rootProject.createSubproject("consumer") {
+        val consumer = rootProject.createSubproject(
+            "consumer",
+            preApplyCode = { setMppResourcesResolutionStrategy(strategy) }
+        ) {
             kotlin {
                 consumerTarget()
                 sourceSets.commonMain {
@@ -347,7 +436,6 @@ class KotlinTargetVariantResourcesResolutionTests {
                     }
                 }
             }
-            enableMppResourcesPublication(false)
         }
 
         listOf(rootProject, producer, consumer).forEach { it.evaluate() }
@@ -357,46 +445,73 @@ class KotlinTargetVariantResourcesResolutionTests {
     }
 
     private fun testTransitiveDependencyOnResourcesProducer(
-        resolutionMethod: ResolutionMethod,
+        targetProvider: TargetProvider,
+        resolutionStrategy: KotlinTargetResourcesResolutionStrategy,
+        filterResolvedFiles: (Set<File>) -> Set<File> = { it },
+        dependencyScope: DependencyScopeProvider = { ::implementation },
+        middlePublishesResources: Boolean = false,
+        consumerPublishesResources: Boolean = false,
         expectedResult: (consumer: Project, middle: Project, producer: Project) -> Set<File>,
     ) {
         val rootProject = buildProject()
-        val producer = rootProject.createSubproject("producer") {
-            kotlin { linuxX64() }
-            enableMppResourcesPublication(true)
+        val producer = rootProject.createSubproject(
+            "producer",
+            preApplyCode = {
+                enableMppResourcesPublication(true)
+                setMppResourcesResolutionStrategy(resolutionStrategy)
+            }
+        ) {
+            kotlin { targetProvider() }
         }
 
-        val middle = rootProject.createSubproject("withoutResources") {
+        val middle = rootProject.createSubproject(
+            "middle",
+            preApplyCode = {
+                enableMppResourcesPublication(middlePublishesResources)
+                setMppResourcesResolutionStrategy(resolutionStrategy)
+            }
+        ) {
             kotlin {
-                linuxX64()
+                targetProvider()
                 sourceSets.commonMain {
                     dependencies {
-                        implementation(dependencies.project(":${producer.name}"))
+                        dependencyScope()(dependencies.project(":${producer.name}"))
                     }
                 }
             }
-            enableMppResourcesPublication(false)
         }
 
-        val consumer = rootProject.createSubproject("consumer") {
+        val consumer = rootProject.createSubproject(
+            "consumer",
+            preApplyCode = {
+                enableMppResourcesPublication(consumerPublishesResources)
+                setMppResourcesResolutionStrategy(resolutionStrategy)
+            }
+        ) {
             kotlin {
-                linuxX64()
+                targetProvider()
                 sourceSets.commonMain {
                     dependencies {
-                        implementation(dependencies.project(":${middle.name}"))
+                        dependencyScope()(dependencies.project(":${middle.name}"))
                     }
                 }
-                enableMppResourcesPublication(false)
+                setMppResourcesResolutionStrategy(resolutionStrategy)
             }
         }
 
         listOf(rootProject, producer, middle, consumer).forEach { it.evaluate() }
 
-        producer.publishFakeResources(producer.multiplatformExtension.linuxX64())
+        producer.publishFakeResources(producer.multiplatformExtension.targetProvider())
+        if (middlePublishesResources) middle.publishFakeResources(middle.multiplatformExtension.targetProvider())
+        if (consumerPublishesResources) consumer.publishFakeResources(consumer.multiplatformExtension.targetProvider())
 
         assertEquals(
             expectedResult(consumer, middle, producer),
-            consumer.multiplatformExtension.linuxX64().resolutionMethod(),
+            filterResolvedFiles(
+                resolutionStrategy.resourceArchives(
+                    consumer.multiplatformExtension.targetProvider().compilations.getByName("main"),
+                ).files
+            ),
         )
     }
 
@@ -404,20 +519,24 @@ class KotlinTargetVariantResourcesResolutionTests {
 
     private fun ProjectInternal.createSubproject(
         name: String,
+        preApplyCode: Project.() -> Unit = {},
         code: Project.() -> Unit = {},
     ) = buildProjectWithMPPAndStdlib(
         projectBuilder = {
             withParent(this@createSubproject)
             withName(name)
         },
+        preApplyCode = preApplyCode,
         code = code,
     )
 
     private fun buildProjectWithMPPAndStdlib(
         projectBuilder: ProjectBuilder.() -> Unit = { },
+        preApplyCode: Project.() -> Unit = {},
         code: Project.() -> Unit = {},
     ) = buildProjectWithMPP(
-        projectBuilder = projectBuilder
+        projectBuilder = projectBuilder,
+        preApplyCode = preApplyCode,
     ) {
         enableDependencyVerification(false)
         enableDefaultStdlibDependency(true)
@@ -425,19 +544,6 @@ class KotlinTargetVariantResourcesResolutionTests {
         repositories.mavenCentralCacheRedirector()
         code()
     }
-
-    private fun KotlinTarget.resolveResourcesWithVariantReselection() = compilations.getByName("main")
-        .resourcesVariantViewFromCompileDependencyConfiguration { lenient(true) }
-
-    private fun KotlinTarget.resolveResourcesWithVariantReselectionFiles(): Set<File> = resolveResourcesWithVariantReselection()
-        .files.toSet()
-
-    private fun KotlinTarget.resolveResourcesWithResourcesConfiguration() =
-        compilations.getByName("main").internal.configurations.resourcesConfiguration
-
-    private fun KotlinTarget.resolveResourcesWithResourcesConfigurationFiles(
-        lenient: Boolean = false
-    ): Set<File> = resolveResourcesWithResourcesConfiguration().incoming.artifactView { it.isLenient = lenient }.files.toSet()
 
     private fun Project.publishFakeResources(target: KotlinTarget) {
         project.multiplatformExtension.resourcesPublicationExtension?.publishResourcesAsKotlinComponent(
@@ -456,5 +562,4 @@ class KotlinTargetVariantResourcesResolutionTests {
 }
 
 private typealias TargetProvider = KotlinMultiplatformExtension.() -> (KotlinTarget)
-private typealias ResolutionMethod = KotlinTarget.() -> Set<File>
 private typealias DependencyScopeProvider = KotlinDependencyHandler.() -> ((Any) -> Dependency?)

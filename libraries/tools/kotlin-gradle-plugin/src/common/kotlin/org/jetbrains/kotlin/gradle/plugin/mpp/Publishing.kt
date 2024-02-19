@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -182,14 +183,19 @@ internal fun Configuration.configureSourcesPublicationAttributes(target: KotlinT
 internal fun Configuration.configureResourcesPublicationAttributes(target: KotlinTarget) {
     val project = target.project
 
+    val usage = if (target is KotlinJsIrTarget) {
+        KotlinUsages.KOTLIN_RESOURCES_JS
+    } else {
+        KotlinUsages.KOTLIN_RESOURCES
+    }
     // FIXME: Discuss again
     attributes.attribute(
         Usage.USAGE_ATTRIBUTE,
-        project.usageByName(KotlinUsages.KOTLIN_RESOURCES)
+        project.usageByName(usage)
     )
     attributes.attribute(
         LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
-        project.objects.named(KotlinUsages.KOTLIN_RESOURCES)
+        project.objects.named(usage)
     )
 
     attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))

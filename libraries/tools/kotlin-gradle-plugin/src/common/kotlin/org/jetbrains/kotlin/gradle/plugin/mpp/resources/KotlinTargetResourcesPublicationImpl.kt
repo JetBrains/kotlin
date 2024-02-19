@@ -6,27 +6,25 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.resources
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.KotlinAndroidTargetResourcesPublication
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.resourcesVariantViewFromCompileDependencyConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.AggregateResourcesTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.ResolveResourcesFromDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
 import java.io.File
 import javax.inject.Inject
 
@@ -125,7 +123,7 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
 
     override fun resolveResources(target: KotlinTarget): Provider<File> {
         if (!canResolveResources(target)) {
-            error("Resources may not be resolved for target $target")
+            target.project.reportDiagnostic(KotlinToolingDiagnostics.ResourceMayNotBeResolvedForTarget(target.name))
         }
 
         val aggregateResourcesTaskName = target.disambiguateName("AggregateResources")
@@ -166,10 +164,16 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
         targetName: String,
     ) {
         resolveResourcesFromDependenciesTask.configure {
-            // FIXME: ???
-//            it.dependsOn(resourcesConfiguration)
+            it.filterResourcesByExtension.set(
+                project.kotlinPropertiesProvider
+                    .mppFilterResourcesByExtension
+                    .map { explicitlyEnabled ->
+                        // Always filter resources configuration because it resolves klibs for dependency graph inheritance
+                        explicitlyEnabled || project.kotlinPropertiesProvider.mppResourcesResolutionStrategy == KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration
+                    }
+            )
             it.archivesFromDependencies.from(
-                compilation.resourcesVariantViewFromCompileDependencyConfiguration { lenient(true) }.files
+                project.kotlinPropertiesProvider.mppResourcesResolutionStrategy.resourceArchives(compilation)
             )
             it.outputDirectory.set(
                 project.layout.buildDirectory.dir("$MULTIPLATFORM_RESOURCES_DIRECTORY/resources-from-dependencies/${targetName}")
@@ -197,6 +201,8 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
 
     internal companion object {
         const val MULTIPLATFORM_RESOURCES_DIRECTORY = "kotlin-multiplatform-resources"
+        const val RESOURCES_CLASSIFIER = "kotlin_resources"
+        const val RESOURCES_ZIP_EXTENSION = "${RESOURCES_CLASSIFIER}.zip"
     }
 
 }

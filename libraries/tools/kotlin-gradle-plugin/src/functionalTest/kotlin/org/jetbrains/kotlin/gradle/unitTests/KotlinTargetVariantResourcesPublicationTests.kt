@@ -108,7 +108,7 @@ class KotlinTargetVariantResourcesPublicationTests {
         assertEquals(
             listOf(
                 project.layout.buildDirectory.file(
-                    "kotlin-multiplatform-resources/zip-for-publication/linuxX64/test.zip"
+                    "kotlin-multiplatform-resources/zip-for-publication/linuxX64/test.kotlin_resources.zip"
                 ).get().asFile
             ),
             configuration.outgoing.artifacts.map { it.file },

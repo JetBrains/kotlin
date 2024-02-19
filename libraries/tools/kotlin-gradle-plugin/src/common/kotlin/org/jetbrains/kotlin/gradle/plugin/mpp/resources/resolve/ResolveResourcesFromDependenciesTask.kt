@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.*
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import javax.inject.Inject
 
@@ -20,6 +22,9 @@ internal abstract class ResolveResourcesFromDependenciesTask : DefaultTask() {
 
     @get:Inject
     abstract val archiveOperations: ArchiveOperations
+
+    @get:Input
+    abstract val filterResourcesByExtension: Property<Boolean>
 
     @get:PathSensitive(PathSensitivity.NONE)
     @get:InputFiles
@@ -33,11 +38,8 @@ internal abstract class ResolveResourcesFromDependenciesTask : DefaultTask() {
         outputDirectory.get().asFile.deleteDirectoryContents()
         fileSystem.copy { copy ->
             archivesFromDependencies
-                .filter { it.exists() }
-                // FIXME: Remove the zip filtering when these two issues are resolved:
-                // 1. wasm passes self-classes directory somewhere in the api configuration
-                // 2. current attributes resolve to klibs
-                .filter { it.extension == "zip" }
+                .filter { it.isFile }
+                .filter { if (filterResourcesByExtension.get()) it.name.endsWith(KotlinTargetResourcesPublicationImpl.RESOURCES_ZIP_EXTENSION) else true }
                 .forEach {
                     copy.from(archiveOperations.zipTree(it))
                 }

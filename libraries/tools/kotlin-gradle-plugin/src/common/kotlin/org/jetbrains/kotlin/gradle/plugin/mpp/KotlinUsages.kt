@@ -37,6 +37,7 @@ object KotlinUsages {
     const val KOTLIN_COMMONIZED_CINTEROP = "kotlin-commonized-cinterop"
     const val KOTLIN_SOURCES = "kotlin-sources"
     const val KOTLIN_RESOURCES = "kotlin-multiplatformresources"
+    const val KOTLIN_RESOURCES_JS = "kotlin-multiplatformresourcesjs"
 
     // Following two constants were removed in Gradle 8.0 from 'Usages' class
     private const val JAVA_RUNTIME_CLASSES = "java-runtime-classes"
@@ -132,7 +133,16 @@ object KotlinUsages {
              * When resolving resources using KotlinTarget.resourcesConfiguration, if a dependency doesn't have resources variant, we must
              * take dependencies from apiElements because they might contain transitive resources variants.
              * */
-            if (consumerValue?.name == KOTLIN_RESOURCES && producerValue?.name == KOTLIN_API) {
+            val consumerValueName = consumerValue?.name
+            val producerValueName = producerValue?.name
+            if (consumerValueName == null || producerValueName == null) return
+
+            if (
+                mapOf(
+                    KOTLIN_RESOURCES to KOTLIN_API,
+                    KOTLIN_RESOURCES_JS to KOTLIN_RUNTIME,
+                )[consumerValueName] == producerValueName
+            ) {
                 compatible()
             }
         }
@@ -144,6 +154,9 @@ object KotlinUsages {
                 val candidateNames = candidateValues.map { it?.name }
                 when {
                     KOTLIN_RESOURCES in candidateNames -> chooseCandidateByName(KOTLIN_RESOURCES)
+                    // JS
+                    KOTLIN_RUNTIME in candidateNames -> chooseCandidateByName(KOTLIN_RUNTIME)
+                    // Native
                     KOTLIN_API in candidateNames -> chooseCandidateByName(KOTLIN_API)
                     else -> Unit
                 }
@@ -212,7 +225,11 @@ object KotlinUsages {
         closestMatch(candidateValues.single { it?.name == name }!!)
     }
 
-    internal fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema, isKotlinGranularMetadata: Boolean) {
+    internal fun setupAttributesMatchingStrategy(
+        attributesSchema: AttributesSchema,
+        isKotlinGranularMetadata: Boolean,
+        isKotlinResourcesCompatibilityRuleEnabled: Boolean
+    ) {
         attributesSchema.attribute(USAGE_ATTRIBUTE) { strategy ->
             strategy.compatibilityRules.add(KotlinJavaRuntimeJarsCompatibility::class.java)
             strategy.disambiguationRules.add(KotlinUsagesDisambiguation::class.java)
@@ -225,9 +242,12 @@ object KotlinUsages {
                 strategy.disambiguationRules.add(KotlinMetadataDisambiguation::class.java)
             }
 
-            strategy.compatibilityRules.add(KotlinResourcesCompatibility::class.java)
-            // FIXME: Is there ever a case when disambiguation may be needed?
-            // strategy.disambiguationRules.add(KotlinResourcesDisambiguation::class.java)
+            // Only enable resources compatibility rule when resources configuration is used, so that for variant reselection klibs aren't selected
+            if (isKotlinResourcesCompatibilityRuleEnabled) {
+                strategy.compatibilityRules.add(KotlinResourcesCompatibility::class.java)
+                // FIXME: Is there ever a case when disambiguation may be needed?
+                // strategy.disambiguationRules.add(KotlinResourcesDisambiguation::class.java)
+            }
         }
     }
 }

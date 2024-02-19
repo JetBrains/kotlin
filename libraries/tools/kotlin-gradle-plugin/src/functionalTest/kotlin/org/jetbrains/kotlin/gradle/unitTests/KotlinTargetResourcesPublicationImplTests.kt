@@ -15,10 +15,9 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
-import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.kotlin
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -117,6 +116,49 @@ class KotlinTargetResourcesPublicationImplTests {
             apiCall = { project.publishFakeAssets(target) },
             diagnostic = KotlinToolingDiagnostics.AssetsPublishedMoreThanOncePerTarget,
         )
+    }
+
+    @Test
+    fun `test targets that can publish resources`() {
+        buildProjectWithMPP {
+            plugins.apply("com.android.library")
+            enableMppResourcesPublication(true)
+            kotlin {
+                listOf(
+                    androidTarget(),
+                    jvm(),
+                    wasmJs(),
+                    wasmWasi(),
+                    linuxArm64(),
+                    iosArm64(),
+                ).forEach { target ->
+                    assert(
+                        resourcesPublicationExtension!!.canPublishResources(target),
+                        { target }
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `test targets that can resolve resources`() {
+        buildProjectWithMPP {
+            enableMppResourcesPublication(true)
+            kotlin {
+                listOf(
+                    wasmJs(),
+                    wasmWasi(),
+                    linuxArm64(),
+                    iosArm64(),
+                ).forEach { target ->
+                    assert(
+                        resourcesPublicationExtension!!.canResolveResources(target),
+                        { target }
+                    )
+                }
+            }
+        }
     }
 
     private fun testCallbacksAfterApiCall(

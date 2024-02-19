@@ -30,8 +30,8 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
         ) {
             buildWithAGPVersion(
                 ":publishAndroidReleasePublicationToMavenRepository",
-                androidVersion,
-                defaultBuildOptions,
+                androidVersion = androidVersion,
+                defaultBuildOptions = defaultBuildOptions,
             )
             val publishedAarPath = "build/repo/test/publication-android/1.0/publication-android-1.0.aar"
             val classesInAar = projectPath.resolve("classesInAar")
@@ -89,7 +89,7 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
             androidVersion,
             providedJdk,
             publicationTask = ":publishLinuxX64PublicationToMavenRepository",
-            publishedArchive = "build/repo/test/publication-linuxx64/1.0/publication-linuxx64-1.0-kotlin_resources.zip",
+            publishedArchive = "build/repo/test/publication-linuxx64/1.0/publication-linuxx64-1.0-kotlin_resources.kotlin_resources.zip",
             referenceName = "linuxX64",
         )
     }
@@ -106,7 +106,7 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
             androidVersion,
             providedJdk,
             publicationTask = ":publishWasmJsPublicationToMavenRepository",
-            publishedArchive = "build/repo/test/publication-wasm-js/1.0/publication-wasm-js-1.0-kotlin_resources.zip",
+            publishedArchive = "build/repo/test/publication-wasm-js/1.0/publication-wasm-js-1.0-kotlin_resources.kotlin_resources.zip",
             referenceName = "wasmJs",
         )
     }
@@ -123,7 +123,7 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
             androidVersion,
             providedJdk,
             publicationTask = ":publishWasmWasiPublicationToMavenRepository",
-            publishedArchive = "build/repo/test/publication-wasm-wasi/1.0/publication-wasm-wasi-1.0-kotlin_resources.zip",
+            publishedArchive = "build/repo/test/publication-wasm-wasi/1.0/publication-wasm-wasi-1.0-kotlin_resources.kotlin_resources.zip",
             referenceName = "wasmWasi",
         )
     }
@@ -143,8 +143,8 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
         ) {
             buildWithAGPVersion(
                 publicationTask,
-                androidVersion,
-                defaultBuildOptions,
+                androidVersion = androidVersion,
+                defaultBuildOptions = defaultBuildOptions,
             )
             compareEmbeddedResources(
                 projectPath.resolve(publishedArchive),

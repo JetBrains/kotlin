@@ -707,7 +707,7 @@ object KotlinToolingDiagnostics {
     object ResourcePublishedMoreThanOncePerTarget : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke(targetName: String) = build(
             """
-                "Only one resources publication per target $targetName is allowed."
+                Only one resources publication per target $targetName is allowed.
             """.trimIndent()
         )
     }
@@ -723,7 +723,31 @@ object KotlinToolingDiagnostics {
     object ResourceMayNotBePublishedForTarget : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke(targetName: String) = build(
             """
-                "Resources may not be published for target $targetName."
+                Resources may not be published for target $targetName.
+            """.trimIndent()
+        )
+    }
+
+    object ResourceMayNotBeResolvedForTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(targetName: String) = build(
+            """
+                Resources may not be resolved for target $targetName.
+            """.trimIndent()
+        )
+    }
+
+    object UnknownValueProvidedForResourcesStrategy : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(value: String) = build(
+            """
+                Unknown value $value provided for ${PropertiesProvider.PropertyNames.KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY}
+            """.trimIndent()
+        )
+    }
+
+    object MissingConfigurationForWasmTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(targetName: String) = build(
+            """
+                Resources will not be resolved for ${targetName} as it is missing runtimeDependencyConfiguration
             """.trimIndent()
         )
     }

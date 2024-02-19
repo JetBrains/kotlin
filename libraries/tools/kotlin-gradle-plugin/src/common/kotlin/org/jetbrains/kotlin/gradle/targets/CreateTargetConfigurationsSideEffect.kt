@@ -77,8 +77,12 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         isVisible = false
         isCanBeResolved = false
         isCanBeConsumed = false
-        // Publish with dependencies of apiElements configuration, so that transitives are resolved correctly
+        // FIXME: Maybe filter resources configuration artifacts by Usage attribute, so that klibs don't get to the task
+        // Publish with dependencies of apiElements configuration, so that transitives are resolved correctly. Don't inherit from
+        // apiElementsConfiguration directly, because it contains klibs in project dependencies.
         extendsFrom(apiElementScope)
+        // Resources from implementation scope should also be resolved transitively, hence extend from it.
+        extendsFrom(implementationConfiguration)
 
         project.multiplatformExtensionOrNull?.resourcesPublicationExtension?.subscribeOnPublishResources(target) {
             isCanBeConsumed = true

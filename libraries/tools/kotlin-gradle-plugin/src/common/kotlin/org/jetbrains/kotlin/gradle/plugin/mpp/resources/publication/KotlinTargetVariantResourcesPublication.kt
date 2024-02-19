@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication
 
-import org.gradle.api.artifacts.ArtifactView
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -16,10 +15,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl.Companion.RESOURCES_CLASSIFIER
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl.Companion.RESOURCES_ZIP_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.registerAssembleHierarchicalResourcesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
 
 // Use KotlinMultiplatformExtension to make sure this usage context is only creatable in MPP
 @Suppress("UnusedReceiverParameter")
@@ -54,6 +54,7 @@ internal fun KotlinMultiplatformExtension.setUpResourcesVariant(
             ) { copy ->
                 copy.destinationDirectory.set(zippedResourcesDirectory)
                 copy.duplicatesStrategy = DuplicatesStrategy.FAIL
+                copy.archiveExtension.set(RESOURCES_ZIP_EXTENSION)
             }
             zipResourcesForPublication.configure {
                 it.from(copyTask)
@@ -63,32 +64,12 @@ internal fun KotlinMultiplatformExtension.setUpResourcesVariant(
                 compilation.target.internal.resourcesElementsConfigurationName,
                 zipResourcesForPublication
             ) { artifact ->
-                artifact.extension = "zip"
+                artifact.extension = RESOURCES_ZIP_EXTENSION
+                artifact.classifier = RESOURCES_CLASSIFIER
                 artifact.type = "zip"
-                artifact.classifier = "kotlin_resources"
             }
         }
     }
 
     return resourcesVariant
-}
-
-// In Gradle 7.2 project dependencies fail to resolve
-// FIXME: Use this as an alternative resolution strategy?
-internal fun KotlinCompilation<*>.resourcesVariantViewFromCompileDependencyConfiguration(
-    configure: ArtifactView.ViewConfiguration.() -> (Unit)
-): ArtifactView {
-    return internal.configurations.compileDependencyConfiguration.incoming.artifactView {
-        it.withVariantReselection()
-        it.attributes { viewAttributes ->
-            // Lifecycle await?
-            project.configurations.getByName(
-                target.internal.resourcesElementsConfigurationName
-            ).copyAttributesTo(
-                project,
-                viewAttributes,
-            )
-        }
-        it.configure()
-    }
 }

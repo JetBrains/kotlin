@@ -43,8 +43,8 @@ class AndroidMultiplatformResourcesIT : KGPBaseTest() {
 
                 buildWithAGPVersion(
                     ":consumer:zipApksForDebug",
-                    androidVersion,
-                    defaultBuildOptions,
+                    androidVersion = androidVersion,
+                    defaultBuildOptions = defaultBuildOptions,
                 )
                 val apkPath = projectPath.resolve("consumer/build/outputs/apk/debug/consumer-debug.apk")
                 assertAssetsMatchReference(apkPath)
@@ -100,8 +100,8 @@ class AndroidMultiplatformResourcesIT : KGPBaseTest() {
         ) {
             buildWithAGPVersion(
                 ":publishAllPublicationsToMavenRepository",
-                androidVersion,
-                defaultBuildOptions,
+                androidVersion = androidVersion,
+                defaultBuildOptions = defaultBuildOptions,
             )
             withRepositoryRoot(projectPath.resolve("build/repo"))
         }
