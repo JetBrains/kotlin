@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.*
@@ -423,7 +424,7 @@ internal class AdapterGenerator(
                 castArgumentToFunctionalInterfaceForSamType(this, firSamConversion.expression.resolvedType, samFirType)
             )
 
-        return if (this is IrBlock && origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
+        return if (this is IrBlock && (origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || origin == IrStatementOrigin.SUSPEND_CONVERSION)) {
             // The IR for adapted callable references should be
             // BLOCK ADAPTED_FUNCTION_REFERENCE(FUN ADAPTER_FOR_CALLABLE_REFERENCE, TYPE_OP SAM_CONVERSION(FUNCTION_REFERENCE))
             // Therefore, we need to insert the cast as the last statement of the block, not around the block itself.
@@ -445,12 +446,20 @@ internal class AdapterGenerator(
     ): IrExpression {
         // The rule for SAM conversions is: the argument must be a subtype of the required function type.
         // We handle intersection types, captured types, etc. by approximating both expected and actual types.
-        val approximatedConeKotlinFunctionType = getFunctionTypeForPossibleSamType(samType)?.approximateForIrOrSelf() ?: return argument
+        var approximatedConeKotlinFunctionType = getFunctionTypeForPossibleSamType(samType)?.approximateForIrOrSelf() ?: return argument
 
         // This line is not present in the K1 counterpart because there is InsertImplicitCasts::cast that effectively removes
         // such unnecessary casts. At the same time, many IR lowerings assume that there are no such redundant casts and many
         // tests from FirBlackBoxCodegenTestGenerated relevant to INDY start failing once this line is removed.
         val approximateArgumentConeType = argumentConeType.approximateForIrOrSelf()
+
+        // We don't want to insert a redundant cast from a function type to a suspend function type,
+        // because that's already handled by suspend conversion.
+        if (approximatedConeKotlinFunctionType.functionTypeKind(session)?.isSuspendOrKSuspendFunction == true &&
+            approximateArgumentConeType.functionTypeKind(session)?.isSuspendOrKSuspendFunction != true
+        ) {
+            approximatedConeKotlinFunctionType = approximatedConeKotlinFunctionType.customFunctionTypeToSimpleFunctionType(session)
+        }
 
         if (approximateArgumentConeType.isSubtypeOf(approximatedConeKotlinFunctionType, session)) {
             return argument
