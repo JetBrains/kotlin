@@ -297,11 +297,7 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("samInterface"))
     }
 
-    /**
-     * Requires some fixes: KT-65800
-     */
     @Test
-    @TodoAnalysisApi
     fun `test - simple data class`() {
         doTest(headersTestDataDir.resolve("simpleDataClass"))
     }

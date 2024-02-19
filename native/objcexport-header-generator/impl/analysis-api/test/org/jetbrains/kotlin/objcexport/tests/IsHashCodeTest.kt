@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
 import org.jetbrains.kotlin.objcexport.testUtils.getFunctionOrFail
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -56,12 +57,12 @@ class IsHashCodeTest(
     }
 
     @Test
-    fun `test - Any equals`() {
+    fun `test - Any equals method is returning false for isHashCode`() {
         val file = inlineSourceCodeAnalysis.createKtFile("")
         analyze(file) {
             val anySymbol = getClassOrObjectSymbolByClassId(StandardClassIds.Any) ?: error("Missing kotlin.Any")
-            val hashCodeSymbol = anySymbol.getFunctionOrFail("equals")
-            assertFalse(hashCodeSymbol.isHashCode)
+            val equalsSymbol = anySymbol.getFunctionOrFail("equals")
+            assertFalse(equalsSymbol.isHashCode)
         }
     }
 }
