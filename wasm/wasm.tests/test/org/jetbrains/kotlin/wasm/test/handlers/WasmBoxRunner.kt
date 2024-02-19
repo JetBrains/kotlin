@@ -42,9 +42,8 @@ class WasmBoxRunner(
                     try {
                         // Use "dynamic import" to catch exception happened during JS & Wasm modules initialization
                         let jsModule = await import('./index.mjs');
-                        let wasmExports = jsModule.default;
-                        ${if (startUnitTests) "wasmExports.startUnitTests();" else ""}
-                        actualResult = wasmExports.box();
+                        ${if (startUnitTests) "jsModule.startUnitTests();" else ""}
+                        actualResult = jsModule.box();
                     } catch(e) {
                         console.log('Failed with exception!')
                         console.log('Message: ' + e.message)

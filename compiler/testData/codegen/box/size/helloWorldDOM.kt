@@ -2,7 +2,7 @@
 
 // RUN_THIRD_PARTY_OPTIMIZER
 // WASM_DCE_EXPECTED_OUTPUT_SIZE: wasm 14_178
-// WASM_DCE_EXPECTED_OUTPUT_SIZE:  mjs  5_081
+// WASM_DCE_EXPECTED_OUTPUT_SIZE:  mjs  5_478
 // WASM_OPT_EXPECTED_OUTPUT_SIZE: 4_317
 
 // FILE: test.kt
@@ -16,7 +16,7 @@ fun test() {
 }
 
 // FILE: entry.mjs
-import k from "./index.mjs"
+import { test } from "./index.mjs"
 
-const r = typeof k.test;
+const r = typeof test;
 if (r != "function") throw Error("Wrong result: " + r);
