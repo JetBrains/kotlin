@@ -123,7 +123,7 @@ class FunctionInlining(
             ?: containerScope?.irElement as? IrDeclarationParent
             ?: (containerScope?.irElement as? IrDeclaration)?.parent
 
-        val inliner = Inliner(expression, actualCallee, target, currentScope ?: containerScope!!, parent, context)
+        val inliner = Inliner(expression, actualCallee, currentScope ?: containerScope!!, parent, context)
         return inliner.inline().markAsRegenerated()
     }
 
@@ -149,7 +149,6 @@ class FunctionInlining(
     private inner class Inliner(
         val callSite: IrFunctionAccessExpression,
         val callee: IrFunction,
-        val originalCallee: IrFunction,
         val currentScope: ScopeWithIr,
         val parent: IrDeclarationParent?,
         val context: CommonBackendContext
@@ -169,7 +168,7 @@ class FunctionInlining(
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
 
-        fun inline() = inlineFunction(callSite, callee, originalCallee, true)
+        fun inline() = inlineFunction(callSite, callee, callee, true)
 
         private fun <E : IrElement> E.copy(): E {
             @Suppress("UNCHECKED_CAST")
