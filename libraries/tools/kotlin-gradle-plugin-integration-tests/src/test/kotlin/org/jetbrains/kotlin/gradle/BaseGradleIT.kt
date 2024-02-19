@@ -47,8 +47,6 @@ abstract class BaseGradleIT {
     open val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.None
 
-    val isTeamCityRun = System.getenv("TEAMCITY_VERSION") != null
-
     @Before
     open fun setUp() {
         // Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.

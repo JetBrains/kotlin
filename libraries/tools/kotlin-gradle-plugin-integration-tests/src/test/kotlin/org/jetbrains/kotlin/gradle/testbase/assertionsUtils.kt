@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
+import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
@@ -38,7 +39,7 @@ internal fun assertEqualsToFile(expectedFile: File, actualText: String) {
     val textSanitized: String = actualText.trim().convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
 
     if (!expectedFile.exists()) {
-        if (KtUsefulTestCase.IS_UNDER_TEAMCITY) {
+        if (isTeamCityRun) {
             fail("Expected data file $expectedFile did not exist")
         } else {
             expectedFile.writeText(textSanitized)
