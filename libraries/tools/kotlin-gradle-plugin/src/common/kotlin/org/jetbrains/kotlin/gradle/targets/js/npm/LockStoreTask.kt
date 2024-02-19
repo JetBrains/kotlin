@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.GradleException
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.utils.contentEquals
 
@@ -21,6 +22,10 @@ abstract class LockStoreTask : LockCopyTask() {
 
     @get:Input
     abstract val lockFileAutoReplace: Property<Boolean>
+
+    @get:Internal
+    internal open val mismatchMessage: String
+        get() = PACKAGE_LOCK_MISMATCH_MESSAGE
 
     override fun copy() {
         val outputFile = outputDirectory.get().asFile.resolve(fileName.get())
@@ -49,9 +54,9 @@ abstract class LockStoreTask : LockCopyTask() {
             when (lockFileMismatchReport.get()) {
                 LockFileMismatchReport.NONE -> {}
                 LockFileMismatchReport.WARNING -> {
-                    logger.warn(PACKAGE_LOCK_MISMATCH_MESSAGE)
+                    logger.warn(mismatchMessage)
                 }
-                LockFileMismatchReport.FAIL -> throw GradleException(PACKAGE_LOCK_MISMATCH_MESSAGE)
+                LockFileMismatchReport.FAIL -> throw GradleException(mismatchMessage)
                 else -> error("Unknown mismatch report kind")
             }
         }
