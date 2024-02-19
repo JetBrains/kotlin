@@ -13864,6 +13864,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/delegation/delegationToVal.kt");
     }
 
+    @TestMetadata("delegationToVar.kt")
+    public void testDelegationToVar() {
+      runTest("compiler/testData/codegen/box/delegation/delegationToVar.kt");
+    }
+
     @TestMetadata("delegationWithPrivateConstructor.kt")
     public void testDelegationWithPrivateConstructor() {
       runTest("compiler/testData/codegen/box/delegation/delegationWithPrivateConstructor.kt");

@@ -12730,6 +12730,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("delegationToVar.kt")
+    public void testDelegationToVar() {
+      runTest("compiler/testData/codegen/box/delegation/delegationToVar.kt");
+    }
+
+    @Test
     @TestMetadata("delegationWithPrivateConstructor.kt")
     public void testDelegationWithPrivateConstructor() {
       runTest("compiler/testData/codegen/box/delegation/delegationWithPrivateConstructor.kt");
