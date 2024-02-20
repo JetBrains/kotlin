@@ -28,14 +28,16 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 @interface Foo (Extensions)
-- (void)extensionFunA __attribute__((swift_name("extensionFunA()")));
-- (void)extensionFunB __attribute__((swift_name("extensionFunB()")));
+@property (readonly) int32_t extensionValA __attribute__((swift_name("extensionValA")));
+@property (readonly) int32_t extensionValB __attribute__((swift_name("extensionValB")));
+@property int32_t extensionVarA __attribute__((swift_name("extensionVarA")));
+@property int32_t extensionVarB __attribute__((swift_name("extensionVarB")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-+ (void)topLevelFunA __attribute__((swift_name("topLevelFunA()")));
-+ (void)topLevelFunB __attribute__((swift_name("topLevelFunB()")));
+@property (class, readonly) int32_t topLevelPropA __attribute__((swift_name("topLevelPropA")));
+@property (class, readonly) int32_t topLevelPropB __attribute__((swift_name("topLevelPropB")));
 @end
 
 #pragma pop_macro("_Nullable_result")

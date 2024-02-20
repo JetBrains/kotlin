@@ -2,7 +2,6 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.annotationInfos
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -11,11 +10,9 @@ import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSelectors
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSwiftNames
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
-import org.jetbrains.kotlin.psi.KtFile
 
 internal val KtCallableSymbol.isConstructor: Boolean
     get() = this is KtConstructorSymbol
@@ -26,13 +23,6 @@ fun KtFunctionSymbol.translateToObjCMethod(): ObjCMethod? {
     if (isFakeOverride) return null
     if (isClone) return null
     return buildObjCMethod()
-}
-
-context(KtAnalysisSession, KtObjCExportSession)
-fun KtFileSymbol.getObjCFileClassOrProtocolName(): ObjCExportFileName? {
-    val ktFile = this.psi as? KtFile ?: return null
-    val name = NameUtils.getPackagePartClassNamePrefix(FileUtil.getNameWithoutExtension(ktFile.name)) + "Kt"
-    return name.toIdentifier().getObjCFileName()
 }
 
 /**
@@ -272,7 +262,7 @@ fun MethodBridge.valueParametersAssociated(
 }
 
 private fun String.startsWithWords(words: String) = this.startsWith(words) &&
-    (this.length == words.length || !this[words.length].isLowerCase())
+        (this.length == words.length || !this[words.length].isLowerCase())
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReturnType]
@@ -292,7 +282,7 @@ fun KtFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): 
             if (!returnBridge.successMayBeZero) {
                 check(
                     successReturnType is ObjCNonNullReferenceType
-                        || (successReturnType is ObjCPointerType && !successReturnType.nullable)
+                            || (successReturnType is ObjCPointerType && !successReturnType.nullable)
                 ) {
                     "Unexpected return type: $successReturnType in $this"
                 }

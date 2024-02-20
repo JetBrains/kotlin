@@ -37,7 +37,7 @@ private class KtObjCExportHeaderGenerator {
      * Represents all elements that still have to be processed and translated.
      * So far this only includes references to top level entities (such as files or classes):
      * Note: Top level functions and properties will be translated as part of the file.
-     * See [translateToObjCTopLevelInterfaceFileFacade]
+     * See [translateToObjCTopLevelInterfaceFileFacades]
      */
     private val symbolDeque = ArrayDeque<QueueElement>()
 
@@ -90,17 +90,17 @@ private class KtObjCExportHeaderGenerator {
     context(KtAnalysisSession, KtObjCExportSession)
     private fun translateFileElement(element: QueueElement.File) {
         val fileSymbol = element.psi.getFileSymbol()
-        translateFileSymbol(fileSymbol)
         fileSymbol.getAllClassOrObjectSymbols().sortedWith(StableClassifierOrder).forEach { classOrObjectSymbol ->
             translateClassOrObjectSymbol(classOrObjectSymbol)
         }
+        translateFileSymbol(fileSymbol)
     }
 
     context(KtAnalysisSession, KtObjCExportSession)
     private fun translateFileSymbol(symbol: KtFileSymbol) {
-        val objCInterface = symbol.translateToObjCTopLevelInterfaceFileFacade() ?: return
-        objCStubs += objCInterface
-        enqueueDependencyClasses(objCInterface)
+        val objCFacades = listOfNotNull(symbol.getExtensionsFacade(), symbol.getTopLevelFacade()).ifEmpty { return }
+        objCStubs += objCFacades
+        objCFacades.forEach { enqueueDependencyClasses(it) }
     }
 
     context(KtAnalysisSession, KtObjCExportSession)
@@ -178,7 +178,9 @@ private class KtObjCExportHeaderGenerator {
 
         val classForwardDeclarations = resolvedObjCForwardDeclarations.filterIsInstance<ObjCInterface>()
             .map { stub -> ObjCClassForwardDeclaration(stub.name, stub.generics) }
-            .plus(listOfNotNull(errorForwardClass.takeIf { hasErrorTypes })).toSet()
+            .plus(listOfNotNull(errorForwardClass.takeIf { hasErrorTypes }))
+            .plus(objCStubs.filterIsInstance<ObjCInterface>().filter { it.isExtensionsFacade }.map { ObjCClassForwardDeclaration(it.name) })
+            .toSet()
 
         val stubs = (if (configuration.generateBaseDeclarationStubs) objCBaseDeclarations() else emptyList()).plus(objCStubs)
             .plus(listOfNotNull(errorInterface.takeIf { hasErrorTypes }))

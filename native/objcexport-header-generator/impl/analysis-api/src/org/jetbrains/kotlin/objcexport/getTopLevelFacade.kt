@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrProtocolName
 
+
 /**
  * Translates top level functions/properties inside the given [this] file as a single [ObjCInterface].
  * ## example:
@@ -40,34 +41,30 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrPr
  * ```
  *
  * Where `FooKt` would be the "top level interface file facade" returned by this function.
+ *
+ * See related [getExtensionsFacade]
  */
 context(KtAnalysisSession, KtObjCExportSession)
-fun KtFileSymbol.translateToObjCTopLevelInterfaceFileFacade(): ObjCInterface? {
-    val topLevelCallableStubs = getFileScope().getCallableSymbols()
-        .sortedWith(StableCallableOrder)
-        .mapNotNull { callableSymbol -> callableSymbol.translateToObjCExportStub() }
+fun KtFileSymbol.getTopLevelFacade(): ObjCInterface? {
+    val extensions = getFileScope().getCallableSymbols()
+        .filter { !it.isExtension }
         .toList()
-        /* If there are no top level functions or properties, we do not need to export a file facade */
+        .sortedWith(StableCallableOrder)
         .ifEmpty { return null }
 
     val fileName = getObjCFileClassOrProtocolName()
-        ?: throw IllegalStateException("Top level file '$this' cannot be translated without file name")
-
-    val name = fileName.objCName
-    val attributes = listOf(OBJC_SUBCLASSING_RESTRICTED)
-
-    val superClass = getDefaultSuperClassOrProtocolName()
+        ?: throw IllegalStateException("File '$this' cannot be translated without file name")
 
     return ObjCInterfaceImpl(
-        name = name,
+        name = fileName.objCName,
         comment = null,
         origin = null,
-        attributes = attributes,
+        attributes = listOf(OBJC_SUBCLASSING_RESTRICTED),
         superProtocols = emptyList(),
-        members = topLevelCallableStubs,
+        members = extensions.mapNotNull { it.translateToObjCExportStub() },
         categoryName = null,
         generics = emptyList(),
-        superClass = superClass.objCName,
+        superClass = getDefaultSuperClassOrProtocolName().objCName,
         superClassGenerics = emptyList()
     )
 }
