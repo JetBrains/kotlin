@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.tooling.core.HasMutableExtras
+import org.jetbrains.kotlin.tooling.core.MutableExtras
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import org.jetbrains.kotlin.types.Variance
 
-sealed class ObjCType {
+sealed class ObjCType : HasMutableExtras {
+    override val extras: MutableExtras = mutableExtrasOf()
+
     final override fun toString(): String = this.render()
 
     abstract fun render(attrsAndName: String): String
@@ -26,20 +30,13 @@ data class ObjCRawType(
     override fun render(attrsAndName: String): String = rawText.withAttrsAndName(attrsAndName)
 }
 
-sealed class ObjCReferenceType : ObjCType() {
-    @InternalKotlinNativeApi
-    open val classId: ClassId? = null
-}
-
+sealed class ObjCReferenceType : ObjCType()
 sealed class ObjCNonNullReferenceType : ObjCReferenceType()
 
 data class ObjCNullableReferenceType(
     val nonNullType: ObjCNonNullReferenceType,
     val isNullableResult: Boolean = false,
 ) : ObjCReferenceType() {
-
-    override val classId: ClassId? get() = nonNullType.classId
-
     override fun render(attrsAndName: String): String {
         val attribute = if (isNullableResult) objcNullableResultAttribute else objcNullableAttribute
         return nonNullType.render(" $attribute".withAttrsAndName(attrsAndName))
@@ -49,7 +46,6 @@ data class ObjCNullableReferenceType(
 data class ObjCClassType(
     val className: String,
     val typeArguments: List<ObjCNonNullReferenceType> = emptyList(),
-    override val classId: ClassId? = null,
 ) : ObjCNonNullReferenceType() {
 
 
@@ -80,7 +76,6 @@ data class ObjCGenericTypeParameterUsage(
 
 data class ObjCProtocolType(
     val protocolName: String,
-    override val classId: ClassId? = null,
 ) : ObjCNonNullReferenceType() {
     override fun render(attrsAndName: String) = "id<$protocolName>".withAttrsAndName(attrsAndName)
 }

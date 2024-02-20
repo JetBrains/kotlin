@@ -8,6 +8,8 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isCompanion
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
+import org.jetbrains.kotlin.objcexport.extras.withOriginClassId
+import org.jetbrains.kotlin.objcexport.extras.withRequiresForwardDeclaration
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
@@ -83,11 +85,8 @@ private fun KtClassOrObjectSymbol.getDefaultMembers(): List<ObjCExportStub> {
  * See also: [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceType]
  */
 context(KtAnalysisSession, KtObjCExportSession)
-private fun KtClassOrObjectSymbol.toPropertyType() = ObjCClassType(
-    getObjCClassOrProtocolName().objCName,
-    emptyList(),
-    classIdIfNonLocal!!
-)
+private fun KtClassOrObjectSymbol.toPropertyType() = ObjCClassType(getObjCClassOrProtocolName().objCName, emptyList(),)
+    .withRequiresForwardDeclaration().withOriginClassId(classIdIfNonLocal)
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getObjectInstanceSelector]

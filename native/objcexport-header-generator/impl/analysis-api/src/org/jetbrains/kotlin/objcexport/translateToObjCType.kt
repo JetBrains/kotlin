@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getInlineTargetTypeOrNul
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isError
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCObjectType
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.objCErrorType
+import org.jetbrains.kotlin.objcexport.extras.withOriginClassId
+import org.jetbrains.kotlin.objcexport.extras.withRequiresForwardDeclaration
 
 
 /**
@@ -107,10 +109,10 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
 
         // TODO NOW: create type translation test
         return if (classSymbol?.classKind == KtClassKind.INTERFACE) {
-            ObjCProtocolType(fullyExpandedType.objCTypeName, classId)
+            ObjCProtocolType(fullyExpandedType.objCTypeName)
         } else {
-            ObjCClassType(fullyExpandedType.objCTypeName, translateTypeArgumentsToObjC(), classId)
-        }
+            ObjCClassType(fullyExpandedType.objCTypeName, translateTypeArgumentsToObjC())
+        }.withRequiresForwardDeclaration().withOriginClassId(classId)
     }
 
     if (fullyExpandedType is KtTypeParameterType) {
