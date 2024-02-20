@@ -361,12 +361,8 @@ class GccBasedLinker(targetProperties: GccConfigurables)
         require(!isDynamic) {
             "Dynamic compiler rt librares are unsupported"
         }
-        val targetSuffix = when (target) {
-            KonanTarget.LINUX_X64 -> "x86_64"
-            else -> error("$target is not supported.")
-        }
         val dir = File("$absoluteLlvmHome/lib/clang/").listFiles.firstOrNull()?.absolutePath
-        return if (dir != null) "$dir/lib/linux/libclang_rt.$libraryName-$targetSuffix.a" else null
+        return if (dir != null) "$dir/lib/x86_64-unknown-linux-gnu/libclang_rt.$libraryName.a" else null
     }
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isUnixStaticLib }
