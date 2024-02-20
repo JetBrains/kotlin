@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
@@ -85,7 +85,7 @@ class CandidateInterceptor(
 
     override val resolutionPath: String? = path
 
-    override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): FirResolvedTypeRef? {
+    override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): CallReturnType? {
         val callSiteAnnotations = (callInfo.callSite as? FirAnnotationContainer)?.annotations ?: emptyList()
         if (callSiteAnnotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("DisableInterpretation")) == true }) {
             return null
@@ -96,7 +96,7 @@ class CandidateInterceptor(
         val lookupTag = ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID)
         var hash = callInfo.name.hashCode() + callInfo.arguments.sumOf {
             when (it) {
-                is FirConstExpression<*> -> it.value.hashCode()
+                is FirLiteralExpression<*> -> it.value.hashCode()
                 else -> 42
             }
         }
@@ -156,7 +156,7 @@ class CandidateInterceptor(
                 isNullable = false
             )
         }
-        return typeRef
+        return CallReturnType(typeRef)
     }
 
     @OptIn(SymbolInternals::class)

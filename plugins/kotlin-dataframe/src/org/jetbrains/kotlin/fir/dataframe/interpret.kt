@@ -93,11 +93,11 @@ fun <T> KotlinTypeFacade.interpret(
         val value: Interpreter.Success<Any?>? = when (expectedArgument.lens) {
             is Interpreter.Value -> {
                 when (val expression = it.expression) {
-                    is FirConstExpression<*> -> Interpreter.Success(expression.value!!)
+                    is FirLiteralExpression<*> -> Interpreter.Success(expression.value!!)
                     is FirVarargArgumentsExpression -> {
                         val args = expression.arguments.map {
                             when (it) {
-                                is FirConstExpression<*> -> it.value
+                                is FirLiteralExpression<*> -> it.value
                                 is FirCallableReferenceAccess -> {
                                     toKPropertyApproximation(it, session)
                                 }
@@ -349,7 +349,7 @@ private fun KotlinTypeFacade.toKPropertyApproximation(
         val columnName = symbol.annotations
             .find { it.fqName(session)!!.asString() == ColumnName::class.qualifiedName!! }
             ?.let {
-                (it.argumentMapping.mapping[Name.identifier(ColumnName::name.name)] as FirConstExpression<*>).value as String
+                (it.argumentMapping.mapping[Name.identifier(ColumnName::name.name)] as FirLiteralExpression<*>).value as String
             }
         val kotlinType = symbol.resolvedReturnTypeRef.type
 
@@ -387,7 +387,7 @@ internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema? {
         symbol.annotations.firstNotNullOfOrNull {
             runIf(it.fqName(session)?.asString() == HasSchema::class.qualifiedName!!) {
                 val argumentName = Name.identifier(HasSchema::schemaArg.name)
-                @Suppress("UNCHECKED_CAST") val schemaArg = (it.findArgumentByName(argumentName) as FirConstExpression<Int>).value
+                @Suppress("UNCHECKED_CAST") val schemaArg = (it.findArgumentByName(argumentName) as FirLiteralExpression<Int>).value
                 ObjectWithSchema(schemaArg, typeRef)
             }
         } ?: error("Annotate ${symbol} with @HasSchema")

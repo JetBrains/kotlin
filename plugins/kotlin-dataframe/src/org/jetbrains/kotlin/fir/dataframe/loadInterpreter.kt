@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.Names.INTERPRETABLE_FQNAME
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fqName
@@ -31,7 +31,7 @@ internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*
     return symbol.annotations
         .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
         ?.let { annotation ->
-            val name = (annotation.findArgumentByName(argName) as FirConstExpression<*>).value as String
+            val name = (annotation.findArgumentByName(argName) as FirLiteralExpression<*>).value as String
             name.load<Interpreter<*>>()
         }
 }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
@@ -72,7 +73,7 @@ abstract class AbstractResearchTest : BaseTestRunner() {
         }
     }
 
-    object FunctionCallChecker : FirFunctionCallChecker() {
+    object FunctionCallChecker : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
         private val ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
 
         override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {

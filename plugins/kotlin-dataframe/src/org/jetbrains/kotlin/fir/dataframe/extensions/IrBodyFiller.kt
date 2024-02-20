@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -154,7 +153,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         val typeOp = IrTypeOperatorCallImpl(-1, -1, returnType, IrTypeOperator.CAST, returnType, call)
         val returnExpression = IrReturnImpl(-1, -1, returnType, getter.symbol, typeOp)
         getter.apply {
-            body = IrBlockBodyImpl(-1, -1, listOf(returnExpression))
+            body = factory.createBlockBody(-1, -1, listOf(returnExpression))
         }
 
         return declaration
