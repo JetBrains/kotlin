@@ -202,7 +202,7 @@ abstract class LlvmOptimizationPipeline(
         try {
             initLLVMOnce()
             options = LLVMCreatePassBuilderOptions()
-            // InlinerThreshold is not supported by new PM until LLVM 16
+            // InlinerThreshold is not supported by new PM until LLVM 16, and the interface to set it is not available until LLVM-17
             // config.inlineThreshold?.let { threshold ->
             //     LLVMPassBuilderOptionsSetInlinerThreshold(options, threshold)
             // }
@@ -221,7 +221,11 @@ abstract class LlvmOptimizationPipeline(
                     inline_threshold: ${config.inlineThreshold ?: "default"}
                 """.trimIndent()
             }
-            LLVMRunPasses(llvmModule, passes.joinToString(","), targetMachine, options)
+            println("running passes: ${passes.joinToString(",")}")
+            val errorCode = LLVMRunPasses(llvmModule, passes.joinToString(","), targetMachine, options)
+            require(errorCode == null) {
+                LLVMGetErrorMessage(errorCode)!!.toKString()
+            }
             if (config.timePasses) {
                 LLVMPrintAllTimersToStdOut()
                 LLVMClearAllTimers()
@@ -299,6 +303,12 @@ class LTOOptimizationPipeline(config: LlvmPipelineConfig, logger: LoggingContext
         // Pipeline that is similar to `llvm-lto`.
         add("lto<$optimizationFlag>")
     }
+}
+
+class ThreadSanitizerPipeline(config: LlvmPipelineConfig, logger: LoggingContext? = null) :
+        LlvmOptimizationPipeline(config, logger) {
+    override val pipelineName = "New PM thread sanitizer"
+    override val passes = listOf("tsan-module,function(tsan)")
 }
 
 internal fun RelocationModeFlags.currentRelocationMode(context: PhaseContext): RelocationModeFlags.Mode =
