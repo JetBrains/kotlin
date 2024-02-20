@@ -77,11 +77,9 @@ object TestModuleStructureFactory {
 
         val libraryCache: LibraryCache = mutableMapOf()
 
-        for (testModule in moduleStructure.modules) {
-            val ktModule = modulesByName.getByTestModule(testModule).ktModule
-
-            ktModule.addToLibraryCacheIfNeeded(libraryCache)
-            ktModule.addDependencies(testModule, testServices, modulesByName, libraryCache)
+        for (ktTestModule in modules) {
+            ktTestModule.ktModule.addToLibraryCacheIfNeeded(libraryCache)
+            ktTestModule.addDependencies(testServices, modulesByName, libraryCache)
         }
 
         return KtTestModuleProjectStructure(modules, libraryCache.values)
@@ -132,9 +130,6 @@ object TestModuleStructureFactory {
         return result
     }
 
-    private fun ModulesByName.getByTestModule(testModule: TestModule): KtTestModule =
-        this[testModule.name] ?: this.getValue(testModule.files.single().name)
-
     /**
      * A main module may be a binary library module, which may be a dependency of subsequent main modules. We need to add such a module to
      * the library cache before it is processed as a dependency. Otherwise, when another module's binary dependency is processed,
@@ -147,12 +142,11 @@ object TestModuleStructureFactory {
         }
     }
 
-    private fun KtModule.addDependencies(
-        testModule: TestModule,
+    private fun KtTestModule.addDependencies(
         testServices: TestServices,
         modulesByName: ModulesByName,
         libraryCache: LibraryCache,
-    ) = when (this) {
+    ) = when (ktModule) {
         is KtNotUnderContentRootModule -> {
             // Not-under-content-root modules have no external dependencies on purpose
         }
@@ -160,8 +154,8 @@ object TestModuleStructureFactory {
             // Dangling file modules get dependencies from their context
         }
         is KtModuleWithModifiableDependencies -> {
-            addModuleDependencies(testModule, modulesByName, this)
-            addLibraryDependencies(testModule, testServices, project, this, libraryCache::getOrPut)
+            addModuleDependencies(testModule, modulesByName, ktModule)
+            addLibraryDependencies(testModule, testServices, ktModule, libraryCache::getOrPut)
         }
         else -> error("Unexpected module type: " + javaClass.name)
     }
@@ -184,10 +178,11 @@ object TestModuleStructureFactory {
     private fun addLibraryDependencies(
         testModule: TestModule,
         testServices: TestServices,
-        project: Project,
         ktModule: KtModuleWithModifiableDependencies,
         libraryCache: (paths: Set<Path>, factory: () -> KtBinaryModule) -> KtBinaryModule
     ) {
+        val project = ktModule.project
+
         val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(testModule)
 
         val classpathRoots = compilerConfiguration[CLIConfigurationKeys.CONTENT_ROOTS, emptyList()]
