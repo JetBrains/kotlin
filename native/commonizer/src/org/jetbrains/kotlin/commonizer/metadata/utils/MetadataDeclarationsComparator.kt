@@ -161,7 +161,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
                     TypeParameter(entityA, entityB, index)
                 }
                 entityA is KmType && entityB is KmType -> {
-                    val optionalIndex = entityKey?.toInt()
+                    val optionalIndex = entityKey?.toIntOrNull()
                     val typeKind = entityKind as TypeKind
                     Type(entityA, entityB, typeKind, optionalIndex)
                 }
@@ -528,11 +528,27 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
     }
 
-    private fun compareTypeLists(
+    private fun compareOrderInsensitiveTypeLists(
         containerContext: Context,
         typeListA: List<KmType>,
         typeListB: List<KmType>,
         typeKind: TypeKind
+    ) {
+        compareUniqueEntityLists(
+            containerContext = containerContext,
+            entityListA = typeListA,
+            entityListB = typeListB,
+            entityKind = typeKind,
+            groupingKeySelector = { _, type -> type.dumpToString(dumpExtras = false) },
+            entitiesComparator = ::compareTypes
+        )
+    }
+
+    private fun compareOrderSensitiveTypeLists(
+        containerContext: Context,
+        typeListA: List<KmType>,
+        typeListB: List<KmType>,
+        @Suppress("SameParameterValue") typeKind: TypeKind
     ) {
         compareUniqueEntityLists(
             containerContext = containerContext,
@@ -587,8 +603,8 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
 
         compareTypeParameterLists(classContext, classA.typeParameters, classB.typeParameters)
 
-        compareTypeLists(classContext, classA.supertypes, classB.supertypes, TypeKind.SUPERTYPE)
-        compareTypeLists(classContext, classA.contextReceiverTypes, classB.contextReceiverTypes, TypeKind.CONTEXT_RECEIVER)
+        compareOrderInsensitiveTypeLists(classContext, classA.supertypes, classB.supertypes, TypeKind.SUPERTYPE)
+        compareOrderSensitiveTypeLists(classContext, classA.contextReceiverTypes, classB.contextReceiverTypes, TypeKind.CONTEXT_RECEIVER)
 
         compareNullableEntities(
             containerContext = classContext,
@@ -678,7 +694,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             entityKind = TypeKind.RECEIVER,
             entitiesComparator = ::compareTypes
         )
-        compareTypeLists(
+        compareOrderSensitiveTypeLists(
             containerContext = propertyContext,
             typeListA = propertyA.contextReceiverTypes,
             typeListB = propertyB.contextReceiverTypes,
@@ -722,7 +738,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             entityKind = TypeKind.RECEIVER,
             entitiesComparator = ::compareTypes
         )
-        compareTypeLists(
+        compareOrderSensitiveTypeLists(
             containerContext = functionContext,
             typeListA = functionA.contextReceiverTypes,
             typeListB = functionB.contextReceiverTypes,
@@ -887,7 +903,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         compareValues(typeParameterContext, typeParameterA.name, typeParameterB.name, EntityKind.TypeParameterName)
 
         compareValues(typeParameterContext, typeParameterA.variance, typeParameterB.variance, EntityKind.TypeParameterVariance)
-        compareTypeLists(typeParameterContext, typeParameterA.upperBounds, typeParameterB.upperBounds, TypeKind.UPPER_BOUND)
+        compareOrderInsensitiveTypeLists(typeParameterContext, typeParameterA.upperBounds, typeParameterB.upperBounds, TypeKind.UPPER_BOUND)
     }
 
     @OptIn(ExperimentalContracts::class)
