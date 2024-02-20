@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
@@ -22,50 +21,12 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.isExpect
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
-private var patchParentPhases = 0
-
-@Suppress("unused")
-private fun makePatchParentsPhase(): SimpleNamedCompilerPhase<CommonBackendContext, IrFile, IrFile> {
-    val number = patchParentPhases++
-    return makeIrFilePhase(
-        { PatchDeclarationParents() },
-        name = "PatchParents$number",
-        description = "Patch parent references in IrFile, pass $number",
-    )
-}
-
-private var checkParentPhases = 0
-
-@Suppress("unused")
-private fun makeCheckParentsPhase(): SimpleNamedCompilerPhase<CommonBackendContext, IrFile, IrFile> {
-    val number = checkParentPhases++
-    return makeIrFilePhase(
-        { CheckDeclarationParents() },
-        name = "CheckParents$number",
-        description = "Check parent references in IrFile, pass $number",
-    )
-}
-
 internal fun JvmBackendContext.irInlinerIsEnabled(): Boolean =
     config.enableIrInliner
-
-private class PatchDeclarationParents : FileLoweringPass {
-    override fun lower(irFile: IrFile) {
-        irFile.patchDeclarationParents()
-    }
-}
-
-private class CheckDeclarationParents : FileLoweringPass {
-    override fun lower(irFile: IrFile) {
-        irFile.checkDeclarationParents()
-    }
-}
 
 private val validateIrBeforeLowering = makeIrModulePhase(
     ::JvmIrValidationBeforeLoweringPhase,
@@ -366,7 +327,6 @@ private val jvmFilePhases = listOf(
     jvmMultiFieldValueClassPhase,
     jvmInlineClassPhase,
     tailrecPhase,
-    // makePatchParentsPhase(),
 
     enumWhenPhase,
 
@@ -375,7 +335,6 @@ private val jvmFilePhases = listOf(
     singletonReferencesPhase,
     sharedVariablesPhase,
     localDeclarationsPhase,
-    // makePatchParentsPhase(),
 
     removeDuplicatedInlinedLocalClasses,
     inventNamesForInlinedLocalClassesPhase,
@@ -392,7 +351,6 @@ private val jvmFilePhases = listOf(
     defaultArgumentInjectorPhase,
     defaultArgumentCleanerPhase,
 
-    // makePatchParentsPhase(),
     interfacePhase,
     inheritedDefaultMethodsOnClassesPhase,
     replaceDefaultImplsOverriddenSymbolsPhase,
@@ -406,8 +364,6 @@ private val jvmFilePhases = listOf(
     innerClassesPhase,
     innerClassesMemberBodyPhase,
     innerClassConstructorCallsPhase,
-
-    // makePatchParentsPhase(),
 
     enumClassPhase,
     enumExternalEntriesPhase,
@@ -438,8 +394,6 @@ private val jvmFilePhases = listOf(
     renameFieldsPhase,
     fakeLocalVariablesForBytecodeInlinerLowering,
     fakeLocalVariablesForIrInlinerLowering,
-
-    // makePatchParentsPhase()
 )
 
 val jvmLoweringPhases = buildJvmLoweringPhases("IrLowering", listOf("PerformByIrFile" to jvmFilePhases))
