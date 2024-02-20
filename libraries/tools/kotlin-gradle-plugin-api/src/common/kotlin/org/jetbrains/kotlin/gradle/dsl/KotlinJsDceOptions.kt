@@ -28,7 +28,7 @@ interface KotlinJsDceOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolO
      *
      * Default value: null
      */
-    @Deprecated(message = "Use task 'destinationDirectory' to configure output directory", level = DeprecationLevel.WARNING)
+    @Deprecated(message = "Use task 'destinationDirectory' to configure output directory", level = DeprecationLevel.ERROR)
     var outputDirectory: kotlin.String?
         get() = options.outputDirectory.orNull
         set(value) = options.outputDirectory.set(value)

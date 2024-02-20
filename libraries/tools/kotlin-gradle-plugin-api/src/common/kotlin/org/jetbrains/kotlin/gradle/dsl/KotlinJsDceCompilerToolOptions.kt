@@ -23,7 +23,7 @@ interface KotlinJsDceCompilerToolOptions : org.jetbrains.kotlin.gradle.dsl.Kotli
      *
      * Default value: null
      */
-    @Deprecated(message = "Use task 'destinationDirectory' to configure output directory", level = DeprecationLevel.WARNING)
+    @Deprecated(message = "Use task 'destinationDirectory' to configure output directory", level = DeprecationLevel.ERROR)
     @get:org.gradle.api.tasks.Internal
     val outputDirectory: org.gradle.api.provider.Property<kotlin.String>
 }
