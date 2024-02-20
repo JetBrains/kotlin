@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
@@ -2319,7 +2320,7 @@ internal class CannotInferVisibilityImpl(
     override val callable: KtCallableSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KtFirDiagnostic.CannotInferVisibility
+) : KtAbstractFirDiagnostic<PsiNameIdentifierOwner>(firDiagnostic, token), KtFirDiagnostic.CannotInferVisibility
 
 internal class MultipleDefaultsInheritedFromSupertypesImpl(
     override val name: Name,

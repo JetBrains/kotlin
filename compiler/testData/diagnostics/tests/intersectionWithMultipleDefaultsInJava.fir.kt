@@ -31,4 +31,4 @@ public abstract class AbstractIntSet extends AbstractIntCollection implements In
 
 // FILE: Main.kt
 
-class KotlinClass : AbstractIntSet()
+<!CANNOT_INFER_VISIBILITY!>class KotlinClass<!> : AbstractIntSet()

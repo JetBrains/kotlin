@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -141,17 +142,31 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         // Other kinds of fake overrides may also be incorrect, but not to that extent, so we can
         // check them more granularly. See the relevant comments.
 
-        firTypeScope.processAllProperties {
-            if (it.containingClassLookupTag() == declaration.symbol.toLookupTag() && !it.isSubstitutionOverride) {
+        fun checkMember(it: FirCallableSymbol<*>) {
+            val isFromThis = it.containingClassLookupTag() == declaration.symbol.toLookupTag()
+
+            if (isFromThis && !it.isSubstitutionOverride) {
                 checkMember(it, declaration, reporter, typeCheckerState, firTypeScope, context)
+            } else {
+                val source = it.source?.takeIf { isFromThis } ?: declaration.source
+                it.ensureKnownVisibility(context, reporter, source)
             }
         }
 
-        firTypeScope.processAllFunctions {
-            if (it.containingClassLookupTag() == declaration.symbol.toLookupTag() && !it.isSubstitutionOverride) {
-                checkMember(it, declaration, reporter, typeCheckerState, firTypeScope, context)
-            }
-        }
+        firTypeScope.processAllProperties(::checkMember)
+        firTypeScope.processAllFunctions(::checkMember)
+    }
+
+    /**
+     * Returns `false` if [Visibilities.Unknown].
+     */
+    private fun FirCallableSymbol<*>.ensureKnownVisibility(
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+        source: KtSourceElement? = this.source,
+    ) = when {
+        visibility != Visibilities.Unknown -> true
+        else -> false.also { reporter.reportOn(source, FirErrors.CANNOT_INFER_VISIBILITY, this, context) }
     }
 
     private fun checkModality(
@@ -178,13 +193,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         overriddenSymbols: List<FirCallableSymbol<*>>,
         context: CheckerContext
     ) {
-        if (visibility == Visibilities.Unknown) {
-            // MANY_*_NOT_IMPLEMENTED implies CANNOT_INFER_VISIBILITY as per KT-63741
-            val isManyNotImplementedDiagnosticReported = overriddenSymbols.count { !it.isAbstract } != 1
-            val isSimpleToReasonAboutSituation = overriddenSymbols.none { it.isIntersectionOverride }
-            if (!(isManyNotImplementedDiagnosticReported && isSimpleToReasonAboutSituation)) {
-                reporter.reportOn(source, FirErrors.CANNOT_INFER_VISIBILITY, this, context)
-            }
+        if (!ensureKnownVisibility(context, reporter)) {
             return
         }
 

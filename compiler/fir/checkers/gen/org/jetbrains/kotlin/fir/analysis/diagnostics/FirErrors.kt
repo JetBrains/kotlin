@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
@@ -518,7 +519,7 @@ object FirErrors {
     val DATA_CLASS_OVERRIDE_DEFAULT_VALUES: KtDiagnosticFactory2<FirCallableSymbol<*>, FirClassSymbol<*>> by error2<KtElement, FirCallableSymbol<*>, FirClassSymbol<*>>(SourceElementPositioningStrategies.DATA_MODIFIER)
     val CANNOT_WEAKEN_ACCESS_PRIVILEGE: KtDiagnosticFactory3<Visibility, FirCallableSymbol<*>, Name> by error3<KtModifierListOwner, Visibility, FirCallableSymbol<*>, Name>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val CANNOT_CHANGE_ACCESS_PRIVILEGE: KtDiagnosticFactory3<Visibility, FirCallableSymbol<*>, Name> by error3<KtModifierListOwner, Visibility, FirCallableSymbol<*>, Name>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
-    val CANNOT_INFER_VISIBILITY: KtDiagnosticFactory1<FirCallableSymbol<*>> by error1<KtDeclaration, FirCallableSymbol<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val CANNOT_INFER_VISIBILITY: KtDiagnosticFactory1<FirCallableSymbol<*>> by error1<PsiNameIdentifierOwner, FirCallableSymbol<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES: KtDiagnosticFactory3<Name, FirValueParameterSymbol, List<FirCallableSymbol<*>>> by error3<KtElement, Name, FirValueParameterSymbol, List<FirCallableSymbol<*>>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE: KtDiagnosticFactory3<Name, FirValueParameterSymbol, List<FirCallableSymbol<*>>> by error3<KtElement, Name, FirValueParameterSymbol, List<FirCallableSymbol<*>>>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_DEPRECATION: KtDiagnosticFactoryForDeprecation3<Name, FirValueParameterSymbol, List<FirCallableSymbol<*>>> by deprecationError3<KtElement, Name, FirValueParameterSymbol, List<FirCallableSymbol<*>>>(ProhibitAllMultipleDefaultsInheritedFromSupertypes, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
