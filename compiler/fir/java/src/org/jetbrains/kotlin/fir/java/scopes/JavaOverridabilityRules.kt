@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.fir.java.scopes
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
 import org.jetbrains.kotlin.fir.scopes.PlatformSpecificOverridabilityRules
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 
 class JavaOverridabilityRules(session: FirSession) : PlatformSpecificOverridabilityRules {
@@ -46,4 +50,9 @@ class JavaOverridabilityRules(session: FirSession) : PlatformSpecificOverridabil
     }
 
     private fun FirCallableDeclaration.isOriginallyFromJava(): Boolean = unwrapFakeOverrides().origin == FirDeclarationOrigin.Enhancement
+
+    override fun <D : FirCallableSymbol<*>> chooseIntersectionVisibility(
+        extractedOverrides: Collection<MemberWithBaseScope<D>>,
+        dispatchClassSymbol: FirRegularClassSymbol?,
+    ): Visibility = javaOverrideChecker.chooseIntersectionVisibility(extractedOverrides, dispatchClassSymbol)
 }

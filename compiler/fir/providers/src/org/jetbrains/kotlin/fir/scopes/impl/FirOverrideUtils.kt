@@ -5,10 +5,18 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
+import org.jetbrains.kotlin.name.StandardClassIds
 
 fun filterOutOverriddenFunctions(extractedOverridden: Collection<MemberWithBaseScope<FirNamedFunctionSymbol>>): Collection<MemberWithBaseScope<FirNamedFunctionSymbol>> {
     return filterOutOverridden(extractedOverridden, FirTypeScope::processDirectOverriddenFunctionsWithBaseScope)
@@ -54,4 +62,53 @@ fun <D : FirCallableSymbol<*>> overrides(
     }
 
     return result
+}
+
+fun chooseIntersectionVisibilityOrNull(
+    nonSubsumedOverrides: List<MemberWithBaseScope<FirCallableSymbol<*>>>,
+): Visibility? {
+    val nonAbstract = nonSubsumedOverrides.filter {
+        // Kotlin's Cloneable interface contains phantom `protected open fun clone()`.
+        !it.isAbstract && it.member.callableId != StandardClassIds.Callables.clone
+    }
+    val allAreAbstract = nonAbstract.isEmpty()
+
+    if (allAreAbstract) {
+        return findMaxVisibilityOrNull(nonSubsumedOverrides)
+    }
+
+    return nonAbstract.singleOrNull()?.member?.rawStatus?.visibility
+}
+
+val MemberWithBaseScope<FirCallableSymbol<*>>.isAbstract: Boolean
+    get() {
+        // This function is expected to be called during FirResolvePhase.STATUS,
+        // meaning we can't yet access `resolvedStatus`, because it would require
+        // the same phase, but by this time we expect the statuses to have been
+        // calculated de-facto.
+        require(member.rawStatus is FirResolvedDeclarationStatus)
+        // Kotlin's Cloneable interface contains phantom `protected open fun clone()`.
+        return member.rawStatus.modality == Modality.ABSTRACT
+    }
+
+fun <D : FirCallableSymbol<*>> List<MemberWithBaseScope<D>>.filterOutDuplicates(): List<MemberWithBaseScope<D>> {
+    val uniqueSymbols = mutableSetOf<FirCallableSymbol<*>>()
+    return filter { uniqueSymbols.add(it.member.fir.unwrapSubstitutionOverrides().symbol) }
+}
+
+fun <D : FirCallableSymbol<*>> findMaxVisibilityOrNull(
+    extractedOverrides: Collection<MemberWithBaseScope<D>>
+): Visibility? {
+    var maxVisibility: Visibility = Visibilities.Private
+
+    for ((override) in extractedOverrides) {
+        val visibility = (override.fir as FirMemberDeclaration).visibility
+        val compare = Visibilities.compare(visibility, maxVisibility) ?: return null
+
+        if (compare > 0) {
+            maxVisibility = visibility
+        }
+    }
+
+    return maxVisibility
 }

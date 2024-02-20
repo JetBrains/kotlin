@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.scopes.*
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -207,7 +205,7 @@ class FirTypeIntersectionScopeContext(
         extractedOverrides: List<MemberWithBaseScope<D>>,
     ): MemberWithBaseScope<FirCallableSymbol<*>> {
         val newModality = chooseIntersectionOverrideModality(extractedOverrides.flatMap { it.flattenIntersectionsRecursively() }.nonSubsumed())
-        val newVisibility = chooseIntersectionVisibility(extractedOverrides)
+        val newVisibility = overrideChecker.chooseIntersectionVisibility(extractedOverrides, dispatchClassSymbol)
         val mostSpecificSymbols = mostSpecific.map { it.member }
         val extractedOverridesSymbols = extractedOverrides.map { it.member }
         val key = mostSpecific.first()
@@ -318,57 +316,6 @@ class FirTypeIntersectionScopeContext(
             collectRealOverridden(overridden, baseScope, result, visited, processDirectOverridden)
             ProcessorAction.NEXT
         }
-    }
-
-    private fun <D : FirCallableSymbol<*>> chooseIntersectionVisibility(
-        extractedOverrides: Collection<MemberWithBaseScope<D>>
-    ): Visibility = chooseIntersectionVisibilityOrNull(extractedOverrides) ?: Visibilities.Unknown
-
-    private fun <D : FirCallableSymbol<*>> chooseIntersectionVisibilityOrNull(
-        extractedOverrides: Collection<MemberWithBaseScope<D>>
-    ): Visibility? {
-        val overridesWithoutIntersections = extractedOverrides.flatMap { it.flattenIntersectionsRecursively() }
-        val nonSubsumed = overridesWithoutIntersections.nonSubsumed().filterOutDuplicates()
-        val nonAbstract = nonSubsumed.filter {
-            require(it.member.rawStatus is FirResolvedDeclarationStatus) {
-                "We expect that to be true already, but we can't yet call resolvedStatus"
-            }
-            // Kotlin's Cloneable interface contains phantom `protected open fun clone()`.
-            it.member.rawStatus.modality != Modality.ABSTRACT && it.member.callableId != StandardClassIds.Callables.clone
-        }
-        val allAreAbstract = nonAbstract.isEmpty()
-
-        if (allAreAbstract) {
-            return findMaxVisibilityOrNull(nonSubsumed)
-        }
-
-        if (nonAbstract.size >= 2) {
-            return null
-        }
-
-        return nonAbstract.single().member.rawStatus.visibility
-    }
-
-    private fun <D : FirCallableSymbol<*>> List<MemberWithBaseScope<D>>.filterOutDuplicates(): List<MemberWithBaseScope<D>> {
-        val uniqueSymbols = mutableSetOf<FirCallableSymbol<*>>()
-        return filter { uniqueSymbols.add(it.member.fir.unwrapSubstitutionOverrides().symbol) }
-    }
-
-    private fun <D : FirCallableSymbol<*>> findMaxVisibilityOrNull(
-        extractedOverrides: Collection<MemberWithBaseScope<D>>
-    ): Visibility? {
-        var maxVisibility: Visibility = Visibilities.Private
-
-        for ((override) in extractedOverrides) {
-            val visibility = (override.fir as FirMemberDeclaration).visibility
-            val compare = Visibilities.compare(visibility, maxVisibility) ?: return null
-
-            if (compare > 0) {
-                maxVisibility = visibility
-            }
-        }
-
-        return maxVisibility
     }
 
     private fun createIntersectionOverrideFunction(

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
@@ -927,7 +926,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("overridden")
             parameter<Name>("containingClassName")
         }
-        val CANNOT_INFER_VISIBILITY by error<PsiNameIdentifierOwner>(PositioningStrategy.DECLARATION_NAME) {
+        val CANNOT_INFER_VISIBILITY by error<KtDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirCallableSymbol<*>>("callable")
         }
 

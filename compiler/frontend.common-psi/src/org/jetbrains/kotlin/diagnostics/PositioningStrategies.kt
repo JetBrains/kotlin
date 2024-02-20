@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 
 object PositioningStrategies {
-    open class DeclarationHeader<T : PsiElement> : PositioningStrategy<T>() {
+    open class DeclarationHeader<T : KtDeclaration> : PositioningStrategy<T>() {
         override fun isValid(element: T): Boolean {
             if (element is KtNamedDeclaration &&
                 element !is KtObjectDeclaration &&
@@ -142,8 +142,8 @@ object PositioningStrategies {
     }
 
     @JvmField
-    val DECLARATION_NAME: PositioningStrategy<PsiNameIdentifierOwner> = object : DeclarationHeader<PsiNameIdentifierOwner>() {
-        override fun mark(element: PsiNameIdentifierOwner): List<TextRange> {
+    val DECLARATION_NAME: PositioningStrategy<KtNamedDeclaration> = object : DeclarationHeader<KtNamedDeclaration>() {
+        override fun mark(element: KtNamedDeclaration): List<TextRange> {
             val nameIdentifier = element.nameIdentifier
             if (nameIdentifier != null) {
                 if (element is KtClassOrObject) {

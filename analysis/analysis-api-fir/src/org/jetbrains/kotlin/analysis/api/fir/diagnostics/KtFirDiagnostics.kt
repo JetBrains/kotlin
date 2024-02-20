@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
@@ -1928,7 +1927,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val containingClassName: Name
     }
 
-    interface CannotInferVisibility : KtFirDiagnostic<PsiNameIdentifierOwner> {
+    interface CannotInferVisibility : KtFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = CannotInferVisibility::class
         val callable: KtCallableSymbol
     }
