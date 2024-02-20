@@ -148,6 +148,8 @@ kotlin {
 }
 
 tasks.withType<KotlinCompile<*>> {
+    kotlinOptions.languageVersion = "1.9"
+    kotlinOptions.apiVersion = "2.0"
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
         "-Xexpect-actual-classes",
@@ -156,6 +158,7 @@ tasks.withType<KotlinCompile<*>> {
         "-opt-in=kotlin.RequiresOptIn",
         "-opt-in=kotlin.ExperimentalUnsignedTypes",
         "-opt-in=kotlin.ExperimentalStdlibApi",
+        "-Xsuppress-api-version-greater-than-language-version-error",
     )
 }
 

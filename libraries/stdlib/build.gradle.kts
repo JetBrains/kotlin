@@ -1,6 +1,7 @@
 @file:Suppress("UNUSED_VARIABLE", "NAME_SHADOWING")
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
@@ -39,6 +40,12 @@ fun outgoingConfiguration(name: String, configure: Action<Configuration> = Actio
         isCanBeConsumed = true
         configure(this)
     }
+
+fun KotlinCommonCompilerOptions.mainCompilationWithK1() {
+    languageVersion = KotlinVersion.KOTLIN_1_9
+    apiVersion = KotlinVersion.KOTLIN_2_0
+    freeCompilerArgs.add("-Xsuppress-api-version-greater-than-language-version-error")
+}
 
 val configurationBuiltins = resolvingConfiguration("builtins") {
     attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements.JAR))
@@ -83,9 +90,10 @@ kotlin {
                                 diagnosticNamesArg,
                             )
                         )
+                        mainCompilationWithK1()
                         // workaround for compiling legacy MPP metadata, remove when this compilation is not needed anymore
                         // restate the list of opt-ins
-                        compilerOptions.optIn.addAll(commonOptIns)
+                        optIn.addAll(commonOptIns)
                     }
                 }
             }
@@ -122,6 +130,7 @@ kotlin {
                                 diagnosticNamesArg,
                             )
                         )
+                        mainCompilationWithK1()
                     }
                 }
                 defaultSourceSet {
@@ -147,6 +156,7 @@ kotlin {
                                 diagnosticNamesArg,
                             )
                         )
+                        mainCompilationWithK1()
                     }
                 }
             }
@@ -165,6 +175,7 @@ kotlin {
                                 diagnosticNamesArg,
                             )
                         )
+                        mainCompilationWithK1()
                     }
                 }
             }
@@ -219,21 +230,25 @@ kotlin {
         compilations {
             all {
                 kotlinOptions {
-                    freeCompilerArgs += "-Xallow-kotlin-package"
+                    freeCompilerArgs += listOf(
+                        "-Xallow-kotlin-package",
+                        "-Xexpect-actual-classes",
+                    )
                 }
             }
-            val main by getting
-            main.apply {
+            val main by getting {
                 kotlinOptions {
                     freeCompilerArgs += listOfNotNull(
                         "-Xir-module-name=kotlin",
-                        "-Xexpect-actual-classes",
                         diagnosticNamesArg,
                     )
 
                     if (!kotlinBuildProperties.disableWerror) {
                         allWarningsAsErrors = true
                     }
+                }
+                compileTaskProvider.configure {
+                    compilerOptions.mainCompilationWithK1()
                 }
             }
         }
@@ -251,10 +266,12 @@ kotlin {
                     diagnosticNamesArg
                 )
             }
-            val main by getting
-            main.apply {
+            val main by getting {
                 kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
                 kotlinOptions.allWarningsAsErrors = true
+                compileTaskProvider.configure {
+                    compilerOptions.mainCompilationWithK1()
+                }
             }
         }
     }

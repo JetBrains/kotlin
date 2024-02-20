@@ -133,10 +133,8 @@ fun Project.configureKotlinCompilationOptions() {
 
         val coreLibProjects: List<String> by rootProject.extra
         val projectsWithForced19LanguageVersion = coreLibProjects + listOf(
-            ":kotlin-stdlib-jvm-minimal-for-test",
-            ":kotlin-stdlib-js-ir-minimal-for-test",
             ":kotlin-dom-api-compat",
-        )
+        ) - listOf(":kotlin-stdlib", ":kotlin-stdlib-common")
 
         tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
             kotlinOptions {

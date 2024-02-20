@@ -588,6 +588,9 @@ konanArtifacts {
                 "-opt-in=kotlin.native.internal.InternalForKotlinNative",
                 "-language-version",
                 "1.9",
+                "-api-version",
+                "2.0",
+                "-Xsuppress-api-version-greater-than-language-version-error",
         )
 
         commonStdlibSrcDirs.forEach { commonSrcDir(it) }

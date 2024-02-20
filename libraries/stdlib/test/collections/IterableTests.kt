@@ -543,6 +543,7 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     }
 
     @Test
+    @Suppress("USELESS_CAST") // remove suppress and casts when tests are finally compiled only with K2
     fun minusAssign() {
         // lets use a mutable variable
         var result: Iterable<String> = data
