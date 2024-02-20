@@ -628,6 +628,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("intersectionWithMultipleDefaultsInJava.kt")
+    public void testIntersectionWithMultipleDefaultsInJava() {
+      runTest("compiler/testData/diagnostics/tests/intersectionWithMultipleDefaultsInJava.kt");
+    }
+
+    @Test
     @TestMetadata("invalidTargetCrashesCompiler.kt")
     public void testInvalidTargetCrashesCompiler() {
       runTest("compiler/testData/diagnostics/tests/invalidTargetCrashesCompiler.kt");
