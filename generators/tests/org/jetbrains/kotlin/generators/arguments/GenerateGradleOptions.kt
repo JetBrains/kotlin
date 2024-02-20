@@ -611,8 +611,7 @@ private fun generateMultiplatformCommonOptionsImpl(
 
 private inline fun <reified T : Any> List<KProperty1<T, *>>.filterToBeDeleted() = filter { prop ->
     prop.findAnnotation<GradleDeprecatedOption>()
-        ?.let { LanguageVersion.fromVersionString(it.removeAfter) }
-        ?.let { it >= LanguageVersion.LATEST_STABLE }
+        ?.let { it.removeAfter >= LanguageVersion.LATEST_STABLE }
         ?: true
 }
 

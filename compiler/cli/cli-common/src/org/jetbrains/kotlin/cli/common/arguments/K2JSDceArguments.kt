@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.arguments.DevModeOverwritingStrategies.ALL
 import org.jetbrains.kotlin.cli.common.arguments.DevModeOverwritingStrategies.OLDER
+import org.jetbrains.kotlin.config.LanguageVersion
 
 class K2JSDceArguments : CommonToolArguments() {
     companion object {
@@ -21,7 +22,7 @@ class K2JSDceArguments : CommonToolArguments() {
     @GradleDeprecatedOption(
         message = "Use task 'destinationDirectory' to configure output directory",
         level = DeprecationLevel.WARNING,
-        removeAfter = "1.9.0"
+        removeAfter = LanguageVersion.KOTLIN_1_9,
     )
     @Argument(
             value = "-output-dir",
