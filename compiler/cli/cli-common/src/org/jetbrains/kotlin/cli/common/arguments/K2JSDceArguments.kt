@@ -21,8 +21,8 @@ class K2JSDceArguments : CommonToolArguments() {
     )
     @GradleDeprecatedOption(
         message = "Use task 'destinationDirectory' to configure output directory",
-        level = DeprecationLevel.WARNING,
-        removeAfter = LanguageVersion.KOTLIN_1_9,
+        level = DeprecationLevel.ERROR,
+        removeAfter = LanguageVersion.KOTLIN_2_0,
     )
     @Argument(
             value = "-output-dir",

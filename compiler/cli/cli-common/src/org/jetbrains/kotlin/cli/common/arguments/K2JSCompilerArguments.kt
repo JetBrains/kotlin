@@ -50,8 +50,8 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     )
     @GradleDeprecatedOption(
         message = "Only for legacy backend.",
-        level = DeprecationLevel.WARNING,
-        removeAfter = LanguageVersion.KOTLIN_2_0,
+        level = DeprecationLevel.WARNING, // TODO: KT-65990 switch to ERROR in 2.1
+        removeAfter = LanguageVersion.KOTLIN_2_1,
     )
     @Argument(value = "-no-stdlib", description = "Don't automatically include the default Kotlin/JS stdlib in compilation dependencies.")
     var noStdlib = false
@@ -150,8 +150,8 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     )
     @GradleDeprecatedOption(
         message = "Only for legacy backend.",
-        level = DeprecationLevel.WARNING,
-        removeAfter = LanguageVersion.KOTLIN_2_0,
+        level = DeprecationLevel.WARNING, // TODO: KT-65990 switch to ERROR in 2.1
+        removeAfter = LanguageVersion.KOTLIN_2_1,
     )
     @Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
     @Argument(value = "-meta-info", description = "Generate .meta.js and .kjsm files with metadata. Use this to create a library.")

@@ -453,8 +453,8 @@ They should be a subset of sources passed as free arguments."""
 
     @GradleDeprecatedOption(
         message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead",
-        level = DeprecationLevel.WARNING,
-        removeAfter = LanguageVersion.KOTLIN_2_0,
+        level = DeprecationLevel.WARNING, // TODO: KT-65990 switch to ERROR in 2.1
+        removeAfter = LanguageVersion.KOTLIN_2_1,
     )
     @GradleOption(
         DefaultValue.BOOLEAN_FALSE_DEFAULT,
