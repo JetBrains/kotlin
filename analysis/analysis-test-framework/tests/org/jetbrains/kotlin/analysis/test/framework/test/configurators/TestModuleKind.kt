@@ -30,6 +30,18 @@ enum class TestModuleKind(val suffix: String) {
     LibraryBinary("LibraryBinary"),
 
     /**
+     * A binary library with PSI files decompiled from the library's class files. Instead of building and indexing stubs (if applicable),
+     * the test's declaration provider will instead index the decompiled PSI files directly.
+     *
+     * [LibraryBinaryDecompiled] should be specified when tests access the library's files as test files, usually as a main file in a main
+     * module. See [AbstractAnalysisApiBasedTest][org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest] for an
+     * overview of "main module" and "main file".
+     *
+     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryDecompiledModuleFactory
+     */
+    LibraryBinaryDecompiled("LibraryBinaryDecompiled"),
+
+    /**
      * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibrarySourceModuleFactory
      */
     LibrarySource("LibrarySource"),

@@ -54,7 +54,8 @@ object DependencyKindModuleStructureTransformer : ModuleStructureTransformer() {
                 DependencyKind.Source
             }
 
-            TestModuleKind.LibraryBinary -> {
+            TestModuleKind.LibraryBinary,
+            TestModuleKind.LibraryBinaryDecompiled -> {
                 DependencyKind.Binary
             }
 

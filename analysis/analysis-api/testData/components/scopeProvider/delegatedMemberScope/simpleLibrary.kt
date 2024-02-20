@@ -1,6 +1,6 @@
 // IGNORE_FE10
 // MAIN_FILE_NAME: I
-// MODULE_KIND: LibraryBinary
+// MODULE_KIND: LibraryBinaryDecompiled
 // FILE: A.kt
 interface A {
     var Int.zoo: Unit

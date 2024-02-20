@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryDecompiledTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleProjectStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
@@ -21,11 +21,11 @@ object AnalysisApiSymbolLightClassesDecompiledTestConfigurator : AnalysisApiTest
     override val frontendKind: FrontendKind get() = FrontendKind.Fir
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
-        AnalysisApiFirLibraryBinaryTestConfigurator.configureTest(builder, disposable)
+        AnalysisApiFirLibraryBinaryDecompiledTestConfigurator.configureTest(builder, disposable)
     }
 
     override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
-        get() = AnalysisApiFirLibraryBinaryTestConfigurator.serviceRegistrars +
+        get() = AnalysisApiFirLibraryBinaryDecompiledTestConfigurator.serviceRegistrars +
                 AnalysisApiSymbolLightClassesDecompiledTestServiceRegistrar
 
     override fun createModules(
@@ -33,6 +33,6 @@ object AnalysisApiSymbolLightClassesDecompiledTestConfigurator : AnalysisApiTest
         testServices: TestServices,
         project: Project
     ): KtTestModuleProjectStructure {
-        return AnalysisApiFirLibraryBinaryTestConfigurator.createModules(moduleStructure, testServices, project)
+        return AnalysisApiFirLibraryBinaryDecompiledTestConfigurator.createModules(moduleStructure, testServices, project)
     }
 }

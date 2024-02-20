@@ -27,7 +27,7 @@ class AnalysisApiFirCodeFragmentTestConfigurator(
             useModuleStructureTransformers(DependencyKindModuleStructureTransformer)
         }
 
-        AnalysisApiFirLibraryBinaryTestConfigurator.configureLibraryCompilationSupport(builder)
+        AnalysisApiFirLibraryBinaryDecompiledTestConfigurator.configureLibraryCompilationSupport(builder)
     }
 
     override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>

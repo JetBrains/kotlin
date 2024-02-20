@@ -131,7 +131,7 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
         generateResolveExtensionsTests()
     }
     group(
-        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibraryBinary) and
+        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibraryBinaryDecompiled) and
                 analysisApiModeIs(AnalysisApiMode.Standalone)
     ) {
         generateAnalysisApiStandaloneTests()
@@ -254,9 +254,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiStandaloneTests() {
         ) {
             model(it, "source")
         }
+
         test(
             AbstractPsiDeclarationProviderTest::class,
-            filter = testModuleKindIs(TestModuleKind.LibraryBinary)
+            filter = testModuleKindIs(TestModuleKind.LibraryBinaryDecompiled)
         ) {
             model(it, "binary")
         }

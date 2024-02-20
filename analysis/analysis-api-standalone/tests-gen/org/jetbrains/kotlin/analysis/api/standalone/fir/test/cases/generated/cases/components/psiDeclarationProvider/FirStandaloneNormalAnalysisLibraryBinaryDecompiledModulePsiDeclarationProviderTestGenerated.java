@@ -27,14 +27,14 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/standalone/binary")
 @TestDataPath("$PROJECT_ROOT")
-public class FirStandaloneNormalAnalysisLibraryBinaryModulePsiDeclarationProviderTestGenerated extends AbstractPsiDeclarationProviderTest {
+public class FirStandaloneNormalAnalysisLibraryBinaryDecompiledModulePsiDeclarationProviderTestGenerated extends AbstractPsiDeclarationProviderTest {
   @NotNull
   @Override
   public AnalysisApiTestConfigurator getConfigurator() {
     return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
       new AnalysisApiTestConfiguratorFactoryData(
         FrontendKind.Fir,
-        TestModuleKind.LibraryBinary,
+        TestModuleKind.LibraryBinaryDecompiled,
         AnalysisSessionMode.Normal,
         AnalysisApiMode.Standalone
       )

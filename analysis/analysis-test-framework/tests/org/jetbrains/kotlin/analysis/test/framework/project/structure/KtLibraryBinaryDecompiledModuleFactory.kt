@@ -7,16 +7,18 @@ package org.jetbrains.kotlin.analysis.test.framework.project.structure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.testModuleDecompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.test.services.TestServices
 import java.nio.file.Path
 
 /**
- * @see TestModuleKind.LibraryBinary
+ * @see TestModuleKind.LibraryBinaryDecompiled
  */
-object KtLibraryBinaryModuleFactory : KtLibraryBinaryModuleFactoryBase() {
+object KtLibraryBinaryDecompiledModuleFactory : KtLibraryBinaryModuleFactoryBase() {
     override val testModuleKind: TestModuleKind
-        get() = TestModuleKind.LibraryBinary
+        get() = TestModuleKind.LibraryBinaryDecompiled
 
-    override fun decompileToPsiFiles(binaryRoot: Path, testServices: TestServices, project: Project): List<PsiFile> = emptyList()
+    override fun decompileToPsiFiles(binaryRoot: Path, testServices: TestServices, project: Project): List<PsiFile> =
+        testServices.testModuleDecompiler.getAllPsiFilesFromLibrary(binaryRoot, project)
 }
