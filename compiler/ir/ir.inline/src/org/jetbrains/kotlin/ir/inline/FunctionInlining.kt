@@ -39,6 +39,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 abstract class InlineFunctionResolver {
+    open val allowExternalInlining: Boolean
+        get() = false
+
+    private val IrFunction.needsInlining get() = this.isInline && (allowExternalInlining || !this.isExternal)
+
     open fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         if (shouldExcludeFunctionFromInlining(symbol)) return null
 
@@ -47,7 +52,7 @@ abstract class InlineFunctionResolver {
     }
 
     protected open fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
-        return Symbols.isLateinitIsInitializedPropertyGetter(symbol) || Symbols.isTypeOfIntrinsic(symbol)
+        return !symbol.owner.needsInlining || Symbols.isLateinitIsInitializedPropertyGetter(symbol) || Symbols.isTypeOfIntrinsic(symbol)
     }
 
     companion object {
@@ -85,7 +90,6 @@ class FunctionInlining(
     private val alwaysCreateTemporaryVariablesForArguments: Boolean = false,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val inlineArgumentsWithOriginalOffset: Boolean = false,
-    private val allowExternalInlining: Boolean = false,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
     private var containerScope: ScopeWithIr? = null
 
@@ -102,15 +106,13 @@ class FunctionInlining(
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         expression.transformChildrenVoid(this)
-        val callee = when (expression) {
-            is IrCall -> expression.symbol.owner
-            is IrConstructorCall -> expression.symbol.owner
+        val calleeSymbol = when (expression) {
+            is IrCall -> expression.symbol
+            is IrConstructorCall -> expression.symbol
             else -> return expression
         }
-        if (!callee.needsInlining)
-            return expression
 
-        val actualCallee = inlineFunctionResolver.getFunctionDeclaration(callee.symbol)
+        val actualCallee = inlineFunctionResolver.getFunctionDeclaration(calleeSymbol)
         if (actualCallee?.body == null) {
             return expression
         }
@@ -144,8 +146,6 @@ class FunctionInlining(
         })
         return this
     }
-
-    private val IrFunction.needsInlining get() = this.isInline && (allowExternalInlining || !this.isExternal)
 
     private inner class Inliner(
         val callSite: IrFunctionAccessExpression,
@@ -385,9 +385,7 @@ class FunctionInlining(
                 val inlinedFunction = inlinedFunctionSymbol.owner
                 return inlineFunctionReference(
                     irCall, irFunctionReference,
-                    if (inlinedFunction.needsInlining)
-                        inlineFunctionResolver.getFunctionDeclaration(inlinedFunction.symbol) ?: inlinedFunction
-                    else inlinedFunction
+                    inlineFunctionResolver.getFunctionDeclaration(inlinedFunction.symbol) ?: inlinedFunction
                 )
             }
 
@@ -493,7 +491,7 @@ class FunctionInlining(
                         putTypeArgument(index, irFunctionReference.getTypeArgument(index))
                 }
 
-                return if (inlinedFunction.needsInlining && inlinedFunction.body != null) {
+                return if (inlineFunctionResolver.getFunctionDeclaration(inlinedFunction.symbol)?.body != null) {
                     inlineFunction(immediateCall, inlinedFunction, irFunctionReference, performRecursiveInline = true)
                 } else {
                     val transformedExpression = super.visitExpression(immediateCall).transform(this@FunctionInlining, null)

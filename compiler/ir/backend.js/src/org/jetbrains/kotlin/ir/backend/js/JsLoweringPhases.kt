@@ -215,7 +215,6 @@ private val functionInliningPhase = makeIrModulePhase(
             it.innerClassesSupport,
             alwaysCreateTemporaryVariablesForArguments = true,
             inlineArgumentsWithOriginalOffset = true,
-            allowExternalInlining = true
         )
     },
     name = "FunctionInliningPhase",
