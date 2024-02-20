@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @see SharedExecutionTestRunner
  */
 internal object SharedExecutionBuilder {
-    private val executionResults: ConcurrentHashMap<TestExecutable, AbstractRunner<Unit>> = ConcurrentHashMap()
+    private val executableToSharedRun: ConcurrentHashMap<TestExecutable, TestRun> = ConcurrentHashMap()
     private val testCasesToExecuteSeparately: ConcurrentHashMap<TestExecutable, MutableList<TestCase>> = ConcurrentHashMap()
 
     fun buildRunner(settings: Settings, executor: Executor, testRun: TestRun): AbstractRunner<Unit> {
@@ -38,7 +38,7 @@ internal object SharedExecutionBuilder {
             return RunnerWithExecutor(executor, testRun)
         }
 
-        return executionResults.computeIfAbsent(testRun.executable) {
+        val sharedTestRun = executableToSharedRun.computeIfAbsent(testRun.executable) {
             // Get ignored tests to exclude them from run by adding the test filtering option
             val ignoredTests = if (testRun.testCase.extras is TestCase.WithTestRunnerExtras) {
                 testRun.testCase.extras.ignoredTests
@@ -60,7 +60,7 @@ internal object SharedExecutionBuilder {
                 executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(timeout)
             )
 
-            val sharedTestRun = TestRun(
+            TestRun(
                 displayName = "Shared TestRun for ${testRun.executable.executable.path} made from ${testRun.displayName}",
                 executable = testRun.executable,
                 runParameters = runParameters,
@@ -68,8 +68,9 @@ internal object SharedExecutionBuilder {
                 checks = checks,
                 expectedFailure = false
             )
-            CachedRunResultRunner(executor, sharedTestRun)
         }
+
+        return CachedRunResultRunner(executor, testRun, sharedTestRun)
     }
 
     private fun Settings.computeSeparateTestCases(testRun: TestRun): MutableList<TestCase> =
@@ -100,11 +101,23 @@ internal object SharedExecutionBuilder {
             }.toMutableList()
         }
 
-    private class CachedRunResultRunner(executor: Executor, testRun: TestRun) : RunnerWithExecutor(executor, testRun) {
-        private val cachedRunResult by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-            super.buildRun().run()
+    private val cachedRunResult = ConcurrentHashMap<TestRun, RunResult>()
+
+    private class CachedRunResultRunner(executor: Executor, private val testRun: TestRun, private val sharedTestRun: TestRun) :
+        RunnerWithExecutor(executor, sharedTestRun) {
+
+        override fun buildRun() = AbstractRun {
+            cachedRunResult.computeIfAbsent(sharedTestRun) { super.buildRun().run() }
         }
 
-        override fun buildRun() = AbstractRun { cachedRunResult }
+        override fun buildResultHandler(runResult: RunResult): ResultHandler = ResultHandler(
+            runResult = runResult,
+            visibleProcessName = "Test process under ${this::class.simpleName}",
+            checks = sharedTestRun.checks,
+            testRun = testRun.copy(
+                runParameters = sharedTestRun.runParameters
+            ),
+            loggedParameters = getLoggedParameters()
+        )
     }
 }

@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtilRt.convertLineSeparators
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExecutionTimeout
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExitCode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestReport
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.junit.jupiter.api.Assumptions
@@ -100,10 +102,7 @@ internal class ResultHandler(
                         if (check.testOutputFilter != TestOutputFilter.NO_FILTERING) {
                             val testReport = runResult.processOutput.stdOut.testReport
 
-                            if (testReport == null) {
-                                add("TestRun has TestFiltering enabled, but test report is null")
-                            }
-                            checkNotNull(testReport)
+                            checkNotNull(testReport) { "TestRun has TestFiltering enabled, but test report is null" }
 
                             if (testReport.isEmpty()) add("No tests have been found. Test report is empty")
 
@@ -117,14 +116,48 @@ internal class ResultHandler(
                                     testReport.ignoredTests.filter { testName -> !testMatches(testName) },
                                     "Excessive tests have been ignored"
                                 )
+
+                                verifyNoSuchTests(testReport.failedTests, "Failed tests found in the test report")
+
+                                testReport.checkDisabled()
                             }
 
-                            verifyNoSuchTests(testReport.failedTests, "Failed tests found in the test report")
+                            testRun.runParameters.getAll<TestRunParameter.WithIgnoredTestFilter> {
+                                verifyNoSuchTests(
+                                    testReport.passedTests.filter { testName -> !testMatches(testName) },
+                                    "Ignored tests have been executed"
+                                )
+                                verifyNoSuchTests(
+                                    testReport.failedTests.filter { testName ->
+                                        testName.packageName == testRun.testCase.nominalPackageName
+                                    },
+                                    "Test failure found in the test report"
+                                )
 
-                            Assumptions.assumeFalse(
-                                testReport.ignoredTests.isNotEmpty() && testReport.passedTests.isEmpty(),
-                                "Test case is disabled"
-                            )
+                                Assumptions.assumeFalse(
+                                    testReport.ignoredTests.any { testName ->
+                                        testName.packageName == testRun.testCase.nominalPackageName
+                                    },
+                                    "Test case is disabled"
+                                )
+                            }
+
+                            if (!testRun.runParameters.has<TestRunParameter.WithFilter>()) {
+                                verifyNoSuchTests(
+                                    testReport.failedTests.filter { testName ->
+                                        testName.packageName == testRun.testCase.nominalPackageName
+                                    },
+                                    "Test ${testRun.testCase.id} failure found in the test report"
+                                )
+
+                                testReport.checkDisabled()
+                            }
+
+                            if (testRun.testCase.kind == TestKind.STANDALONE) {
+                                verifyNoSuchTests(testReport.failedTests, "Failed tests found in the test report")
+
+                                testReport.checkDisabled()
+                            }
                         }
                     }
                 }
@@ -136,6 +169,7 @@ internal class ResultHandler(
             }
         } else {
             val runResultInfo = buildString {
+                appendLine("TestCase Kind: ${testRun.testCase.kind}")
                 appendLine("TestCaseId: ${testRun.testCase.id}")
                 appendLine("Exit code: ${runResult.exitCode}")
                 appendLine("Filtered test output is")
@@ -164,6 +198,13 @@ internal class ResultHandler(
                 }
             )
         }
+    }
+
+    private fun TestReport.checkDisabled() {
+        Assumptions.assumeFalse(
+            ignoredTests.isNotEmpty() && passedTests.isEmpty(),
+            "Test case is disabled"
+        )
     }
 }
 
