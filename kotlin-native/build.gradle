@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.cpp.GitClangFormatPlugin
 import org.jetbrains.kotlin.CompareDistributionSignatures
+import org.jetbrains.kotlin.xcode.XcodeOverridePlugin
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.UtilsKt
@@ -43,6 +44,8 @@ buildscript {
 }
 
 defaultTasks 'clean', 'dist'
+
+apply plugin: XcodeOverridePlugin
 
 if (PlatformInfo.isMac()) {
     PlatformInfo.checkXcodeVersion(project)
