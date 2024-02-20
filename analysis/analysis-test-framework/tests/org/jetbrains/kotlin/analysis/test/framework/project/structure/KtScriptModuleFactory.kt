@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.test.framework.project.structure
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -18,11 +17,11 @@ import java.nio.file.Path
 object KtScriptModuleFactory : KtModuleFactory {
     override fun createModule(
         testModule: TestModule,
-        contextModule: KtModuleWithFiles?,
+        contextModule: KtTestModule?,
         dependencyPaths: Collection<Path>,
         testServices: TestServices,
         project: Project,
-    ): KtModuleWithFiles {
+    ): KtTestModule {
         val ktFile = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project).single() as KtFile
         val module = KtScriptModuleImpl(
             ktFile,
@@ -31,6 +30,6 @@ object KtScriptModuleFactory : KtModuleFactory {
             project,
         )
 
-        return KtModuleWithFiles(module, listOf(ktFile))
+        return KtTestModule(testModule, module, listOf(ktFile))
     }
 }

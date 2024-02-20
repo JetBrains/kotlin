@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.test.framework.project.structure
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
@@ -24,11 +23,11 @@ import java.nio.file.Path
 object KtLibrarySourceModuleFactory : KtModuleFactory {
     override fun createModule(
         testModule: TestModule,
-        contextModule: KtModuleWithFiles?,
+        contextModule: KtTestModule?,
         dependencyPaths: Collection<Path>,
         testServices: TestServices,
         project: Project,
-    ): KtModuleWithFiles {
+    ): KtTestModule {
         Assume.assumeFalse("Compilation of multi-platform libraries is not supported", testModule.targetPlatform.isMultiPlatform())
 
         val (libraryJar, librarySourcesJar) = testServices.compiledLibraryProvider.compileToLibrary(testModule)
@@ -51,7 +50,7 @@ fun createKtLibrarySourceModule(
     testModule: TestModule,
     project: Project,
     testServices: TestServices,
-): KtModuleWithFiles {
+): KtTestModule {
     val libraryKtModule = KtLibraryModuleImpl(
         testModule.name,
         testModule.targetPlatform,
@@ -74,5 +73,5 @@ fun createKtLibrarySourceModule(
     )
 
     libraryKtModule.librarySources = librarySourceKtModule
-    return KtModuleWithFiles(librarySourceKtModule, decompiledPsiFilesFromSourceJar)
+    return KtTestModule(testModule, librarySourceKtModule, decompiledPsiFilesFromSourceJar)
 }

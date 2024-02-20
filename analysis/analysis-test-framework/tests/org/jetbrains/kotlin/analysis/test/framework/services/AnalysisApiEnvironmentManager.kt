@@ -54,7 +54,7 @@ class AnalysisApiEnvironmentManagerImpl(
     }
 
     override fun initializeProjectStructure() {
-        val ktModuleProjectStructure = testServices.ktModuleProvider.getModuleStructure()
+        val ktTestModuleProjectStructure = testServices.ktModuleProvider.getModuleStructure()
         val useSiteModule = testServices.moduleStructure.modules.first()
         val useSiteCompilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(useSiteModule)
         val builtinsModule = KtBuiltinsModule(
@@ -67,7 +67,7 @@ class AnalysisApiEnvironmentManagerImpl(
 
         StandaloneProjectFactory.registerServicesForProjectEnvironment(
             _projectEnvironment,
-            KtTestProjectStructureProvider(globalLanguageVersionSettings, builtinsModule, ktModuleProjectStructure),
+            KtTestProjectStructureProvider(globalLanguageVersionSettings, builtinsModule, ktTestModuleProjectStructure),
             useSiteCompilerConfiguration.languageVersionSettings,
             useSiteCompilerConfiguration.get(JVMConfigurationKeys.JDK_HOME)?.toPath(),
         )

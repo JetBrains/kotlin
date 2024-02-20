@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.test.framework.project.structure
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.moduleKind
 import org.jetbrains.kotlin.test.model.TestModule
@@ -19,18 +18,18 @@ fun interface KtModuleFactory : TestService {
      * Creates a [KtModule](org.jetbrains.kotlin.analysis.project.structure.KtModule) for the given [testModule].
      *
      * @param contextModule a module to use as a context module. Some kinds of modules (such as dangling file modules) require a
-     * context module. Modules representing code fragments also require a context element – that is why the [KtModuleWithFiles] is passed,
-     * instead of a plain (KtModule)[org.jetbrains.kotlin.analysis.project.structure.KtModule].
+     * context module. Modules representing code fragments also require a context element. That is why the [KtTestModule] is passed
+     * instead of a plain [KtModule][org.jetbrains.kotlin.analysis.project.structure.KtModule].
      *
      * @param dependencyPaths Paths of directories containing dependency libraries. The paths will be set as class paths for compilation.
      */
     fun createModule(
         testModule: TestModule,
-        contextModule: KtModuleWithFiles?,
+        contextModule: KtTestModule?,
         dependencyPaths: Collection<Path>,
         testServices: TestServices,
         project: Project,
-    ): KtModuleWithFiles
+    ): KtTestModule
 }
 
 private val TestServices.ktModuleFactory: KtModuleFactory by TestServices.testServiceAccessor()

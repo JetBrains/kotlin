@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleProjectStructure
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 class KtTestProjectStructureProvider(
     override val globalLanguageVersionSettings: LanguageVersionSettings,
     private val builtinsModule: KtBuiltinsModule,
-    private val projectStructure: KtModuleProjectStructure,
+    private val projectStructure: KtTestModuleProjectStructure,
 ) : KtStaticProjectStructureProvider() {
     override fun getNotUnderContentRootModule(project: Project): KtNotUnderContentRootModule {
         error("Not-under content root modules most be initialized explicitly in tests")

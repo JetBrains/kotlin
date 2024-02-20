@@ -9,8 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
@@ -40,7 +38,7 @@ import kotlin.io.path.nameWithoutExtension
 
 private typealias LibraryCache = MutableMap<Set<Path>, KtBinaryModule>
 
-private typealias ModulesByName = Map<String, KtModuleWithFiles>
+private typealias ModulesByName = Map<String, KtTestModule>
 
 /**
  * A function to run the topological sort (or post-order sort) for [TestModule]s based on the dependency graph.
@@ -72,7 +70,7 @@ object TestModuleStructureFactory {
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): KtModuleProjectStructure {
+    ): KtTestModuleProjectStructure {
         val modules = createModules(moduleStructure, testServices, project)
 
         val modulesByName = modules.associateByName()
@@ -86,7 +84,7 @@ object TestModuleStructureFactory {
             ktModule.addDependencies(testModule, testServices, modulesByName, libraryCache)
         }
 
-        return KtModuleProjectStructure(modules, libraryCache.values)
+        return KtTestModuleProjectStructure(modules, libraryCache.values)
     }
 
     /**
@@ -103,11 +101,11 @@ object TestModuleStructureFactory {
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project,
-    ): List<KtModuleWithFiles> {
+    ): List<KtTestModule> {
         val moduleCount = moduleStructure.modules.size
-        val result = ArrayList<KtModuleWithFiles>(moduleCount)
+        val result = ArrayList<KtTestModule>(moduleCount)
 
-        val processedModules = HashMap<String, KtModuleWithFiles>(moduleCount)
+        val processedModules = HashMap<String, KtTestModule>(moduleCount)
         val processedDependencies = mutableMapOf<String, Collection<Path>>()
 
         for (testModule in sortInDependencyPostOrder(moduleStructure.modules)) {
@@ -134,7 +132,7 @@ object TestModuleStructureFactory {
         return result
     }
 
-    private fun ModulesByName.getByTestModule(testModule: TestModule): KtModuleWithFiles =
+    private fun ModulesByName.getByTestModule(testModule: TestModule): KtTestModule =
         this[testModule.name] ?: this.getValue(testModule.files.single().name)
 
     /**
