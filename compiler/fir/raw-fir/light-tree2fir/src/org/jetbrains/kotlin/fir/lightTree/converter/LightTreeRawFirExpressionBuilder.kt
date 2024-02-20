@@ -1402,13 +1402,19 @@ class LightTreeRawFirExpressionBuilder(
                 parent = parent.getParent() ?: return true
             }
             val parentTokenType = parent.tokenType
-            if (parentTokenType == BLOCK) return false
-            if (parentTokenType == THEN || parentTokenType == ELSE || parentTokenType == WHEN_ENTRY) {
-                return parent.getParent()?.usedAsExpression ?: true
+            return when (parentTokenType) {
+                BLOCK -> parent.getLastChildExpression() == this && parent.usedAsExpression
+                TRY, CATCH -> parent.usedAsExpression
+                THEN, ELSE, WHEN_ENTRY -> parent.getParent()?.usedAsExpression ?: true
+                CLASS_INITIALIZER, SCRIPT_INITIALIZER, SECONDARY_CONSTRUCTOR, FUNCTION_LITERAL, FINALLY -> false
+                FUN, PROPERTY_ACCESSOR -> parent.getChildrenAsArray().any { it?.tokenType == EQ }
+                DOT_QUALIFIED_EXPRESSION -> parent.getFirstChild() == this
+                BODY -> when (parent.getParent()?.tokenType) {
+                    FOR, WHILE, DO_WHILE -> false
+                    else -> true
+                }
+                else -> true
             }
-            if (parentTokenType != BODY) return true
-            val type = parent.getParent()?.tokenType ?: return true
-            return !(type == FOR || type == WHILE || type == DO_WHILE)
         }
 
     /**

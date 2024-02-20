@@ -2690,17 +2690,33 @@ open class PsiRawFirBuilder(
                 ) {
                     parent = parent.parent
                 }
-                if (parent is KtBlockExpression) return false
+
                 when (parent.elementType) {
                     KtNodeTypes.THEN, KtNodeTypes.ELSE, KtNodeTypes.WHEN_ENTRY -> {
                         return (parent.parent as? KtExpression)?.usedAsExpression != false
                     }
                 }
-                if (parent is KtScriptInitializer) return false
-                // Here we check that when used is a single statement of a loop
-                if (parent !is KtContainerNodeForControlStructureBody) return true
-                val type = parent.parent.elementType
-                return !(type == KtNodeTypes.FOR || type == KtNodeTypes.WHILE || type == KtNodeTypes.DO_WHILE)
+
+                fun PsiElement.getLastChildExpression() = children.asList().asReversed().firstIsInstanceOrNull<KtExpression>()
+
+                return when (parent) {
+//                  todo KT-62472 Replace with the following when K2 is used in TeamCity
+//                    is KtBlockExpression, is KtTryExpression -> parent.getLastChildExpression() == this && parent.usedAsExpression
+                    is KtBlockExpression -> parent.getLastChildExpression() == this && parent.usedAsExpression
+                    is KtTryExpression -> parent.getLastChildExpression() == this && parent.usedAsExpression
+                    is KtCatchClause -> (parent.parent as? KtTryExpression)?.usedAsExpression == true
+                    is KtClassInitializer, is KtScriptInitializer, is KtSecondaryConstructor, is KtFunctionLiteral, is KtFinallySection -> false
+                    is KtDotQualifiedExpression -> parent.firstChild == this
+//                  todo KT-62472 Replace with the following when K2 is used in TeamCity
+//                    is KtFunction, is KtPropertyAccessor -> parent.hasBody() && !parent.hasBlockBody()
+                    is KtFunction -> parent.hasBody() && !parent.hasBlockBody()
+                    is KtPropertyAccessor -> parent.hasBody() && !parent.hasBlockBody()
+                    is KtContainerNodeForControlStructureBody -> when (parent.parent.elementType) {
+                        KtNodeTypes.FOR, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE -> false
+                        else -> true
+                    }
+                    else -> true
+                }
             }
 
         override fun visitDoWhileExpression(expression: KtDoWhileExpression, data: FirElement?): FirElement {

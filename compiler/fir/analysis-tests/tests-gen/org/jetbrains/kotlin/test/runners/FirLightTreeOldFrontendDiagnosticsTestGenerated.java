@@ -8057,6 +8057,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("tryCatchFinallyIfs.kt")
+      public void testTryCatchFinallyIfs() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/tryCatchFinallyIfs.kt");
+      }
+
+      @Test
       @TestMetadata("tryWithAssignmentUsedInCatch.kt")
       public void testTryWithAssignmentUsedInCatch() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/tryWithAssignmentUsedInCatch.kt");
