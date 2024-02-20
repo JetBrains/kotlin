@@ -51,6 +51,8 @@ class AnalysisApiKtModuleProviderImpl(
 
 fun AnalysisApiKtModuleProvider.getKtFiles(module: TestModule): List<KtFile> = getModuleFiles(module).filterIsInstance<KtFile>()
 
+val AnalysisApiKtModuleProvider.mainModules: List<KtTestModule> get() = getModuleStructure().mainModules
+
 fun TestServices.allKtFiles(): List<KtFile> = moduleStructure.modules.flatMap(ktModuleProvider::getKtFiles)
 
 val TestServices.ktModuleProvider: AnalysisApiKtModuleProvider by TestServices.testServiceAccessor()
