@@ -89,7 +89,7 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
 
     if (isObjCObjectType()) {
         // KT-65891: mapObjCObjectReferenceTypeIgnoringNullability
-        return ObjCIdType
+        return translateToObjCObjectType()
     }
 
     /* Check if inline type represents 'regular' inline class */
