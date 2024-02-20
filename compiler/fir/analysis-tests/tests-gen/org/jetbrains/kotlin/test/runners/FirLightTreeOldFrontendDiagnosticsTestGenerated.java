@@ -12820,6 +12820,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("entriesPropertyImport.kt")
+        public void testEntriesPropertyImport() {
+          runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyImport.kt");
+        }
+
+        @Test
         @TestMetadata("entriesPropertyImportedClash.kt")
         public void testEntriesPropertyImportedClash() {
           runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyImportedClash.kt");
