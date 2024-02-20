@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.configuration.Analy
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -52,13 +53,20 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
         val mainModules = moduleStructure.modules.map { testModule ->
             val files = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
             val scriptFile = files.singleOrNull() as? KtFile
-            val ktModule = if (scriptFile?.isScript() == true) {
-                KtScriptModuleByCompilerConfiguration(project, testModule, scriptFile, testServices)
+
+            val (ktModule, testModuleKind) = if (scriptFile?.isScript() == true) {
+                Pair(
+                    KtScriptModuleByCompilerConfiguration(project, testModule, scriptFile, testServices),
+                    TestModuleKind.ScriptSource,
+                )
             } else {
-                KtSourceModuleByCompilerConfiguration(project, testModule, files, testServices)
+                Pair(
+                    KtSourceModuleByCompilerConfiguration(project, testModule, files, testServices),
+                    TestModuleKind.Source,
+                )
             }
 
-            KtTestModule(testModule, ktModule, files)
+            KtTestModule(testModuleKind, testModule, ktModule, files)
         }
 
         return KtTestModuleProjectStructure(

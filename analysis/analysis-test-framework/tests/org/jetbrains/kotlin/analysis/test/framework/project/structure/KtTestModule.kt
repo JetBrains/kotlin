@@ -11,6 +11,7 @@ import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory.findJvmRootsForJavaFiles
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.test.model.TestModule
 import kotlin.collections.addAll
 import kotlin.collections.filterIsInstance
@@ -22,6 +23,7 @@ import kotlin.collections.mapTo
  * the module structure configured by Analysis API tests.
  */
 class KtTestModule(
+    val moduleKind: TestModuleKind,
     val testModule: TestModule,
     val ktModule: KtModule,
     val files: List<PsiFile>,

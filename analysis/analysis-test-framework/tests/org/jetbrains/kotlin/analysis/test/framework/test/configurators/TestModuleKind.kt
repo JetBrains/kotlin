@@ -42,8 +42,13 @@ enum class TestModuleKind(val suffix: String) {
     /**
      * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtCodeFragmentModuleFactory
      */
-    CodeFragment("CodeFragment")
+    CodeFragment("CodeFragment"),
+
+    /**
+     * This is currently only used in LL FIR tests and not supported by a test framework module factory.
+     */
+    NotUnderContentRoot("NotUnderContentRoot"),
 }
 
-val TestModule.moduleKind: TestModuleKind?
+val TestModule.explicitTestModuleKind: TestModuleKind?
     get() = directives.singleOrZeroValue(AnalysisApiTestDirectives.MODULE_KIND)

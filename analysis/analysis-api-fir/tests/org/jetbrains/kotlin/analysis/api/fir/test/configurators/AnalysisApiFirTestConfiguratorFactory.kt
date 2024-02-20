@@ -41,6 +41,8 @@ object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactor
                 AnalysisSessionMode.Normal -> AnalysisApiFirCodeFragmentTestConfigurator(analyseInDependentSession = false)
                 AnalysisSessionMode.Dependent -> AnalysisApiFirCodeFragmentTestConfigurator(analyseInDependentSession = true)
             }
+
+            else -> unsupportedModeError(data)
         }
     }
 
@@ -59,6 +61,8 @@ object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactor
                 TestModuleKind.CodeFragment -> {
                     data.analysisSessionMode == AnalysisSessionMode.Normal
                 }
+
+                TestModuleKind.NotUnderContentRoot -> false
             }
         }
     }

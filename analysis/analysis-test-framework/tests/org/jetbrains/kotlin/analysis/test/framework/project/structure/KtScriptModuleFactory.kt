@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.analysis.test.framework.project.structure
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import java.nio.file.Path
 
 /**
- * @see org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind.ScriptSource
+ * @see TestModuleKind.ScriptSource
  */
 object KtScriptModuleFactory : KtModuleFactory {
     override fun createModule(
@@ -30,6 +31,6 @@ object KtScriptModuleFactory : KtModuleFactory {
             project,
         )
 
-        return KtTestModule(testModule, module, listOf(ktFile))
+        return KtTestModule(TestModuleKind.ScriptSource, testModule, module, listOf(ktFile))
     }
 }

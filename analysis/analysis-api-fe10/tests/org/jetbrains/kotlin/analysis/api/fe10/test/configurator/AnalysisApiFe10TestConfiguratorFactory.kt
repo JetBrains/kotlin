@@ -36,7 +36,8 @@ object AnalysisApiFe10TestConfiguratorFactory : AnalysisApiTestConfiguratorFacto
                 TestModuleKind.ScriptSource,
                 TestModuleKind.LibraryBinary,
                 TestModuleKind.LibrarySource,
-                TestModuleKind.CodeFragment -> {
+                TestModuleKind.CodeFragment,
+                TestModuleKind.NotUnderContentRoot -> {
                     false
                 }
             }

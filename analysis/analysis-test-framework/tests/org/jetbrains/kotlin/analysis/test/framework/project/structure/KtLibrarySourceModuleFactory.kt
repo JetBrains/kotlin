@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.platform.isMultiPlatform
@@ -18,7 +19,7 @@ import org.junit.Assume
 import java.nio.file.Path
 
 /**
- * @see org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind.LibrarySource
+ * @see TestModuleKind.LibrarySource
  */
 object KtLibrarySourceModuleFactory : KtModuleFactory {
     override fun createModule(
@@ -73,5 +74,5 @@ fun createKtLibrarySourceModule(
     )
 
     libraryKtModule.librarySources = librarySourceKtModule
-    return KtTestModule(testModule, librarySourceKtModule, decompiledPsiFilesFromSourceJar)
+    return KtTestModule(TestModuleKind.LibrarySource, testModule, librarySourceKtModule, decompiledPsiFilesFromSourceJar)
 }

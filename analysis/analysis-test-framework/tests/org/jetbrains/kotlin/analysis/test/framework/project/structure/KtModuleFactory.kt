@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.test.framework.project.structure
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.moduleKind
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.explicitTestModuleKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
@@ -46,11 +46,12 @@ private val TestServices.ktModuleFactory: KtModuleFactory by TestServices.testSe
  *
  * @see org.jetbrains.kotlin.analysis.test.framework.services.DependencyKindModuleStructureTransformer
  */
-fun TestServices.getKtModuleFactoryForTestModule(testModule: TestModule): KtModuleFactory = when (testModule.moduleKind) {
+fun TestServices.getKtModuleFactoryForTestModule(testModule: TestModule): KtModuleFactory = when (testModule.explicitTestModuleKind) {
     TestModuleKind.Source -> KtSourceModuleFactory
     TestModuleKind.LibraryBinary -> KtLibraryBinaryModuleFactory
     TestModuleKind.LibrarySource -> KtLibrarySourceModuleFactory
     TestModuleKind.ScriptSource -> KtScriptModuleFactory
     TestModuleKind.CodeFragment -> KtCodeFragmentModuleFactory
+    TestModuleKind.NotUnderContentRoot -> error("Unsupported test module kind: ${TestModuleKind.NotUnderContentRoot}")
     else -> ktModuleFactory
 }
