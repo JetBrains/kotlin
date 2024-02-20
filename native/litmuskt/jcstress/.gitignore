@@ -1,0 +1,6 @@
+target/
+libs/
+results/
+*.bin.gz
+test.iml
+generatedSrc/
