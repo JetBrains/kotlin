@@ -357,7 +357,7 @@ private inline fun <F> prepareSessions(
         }
     }
 
-    val nonScriptSessions =when {
+    val nonScriptSessions = when {
         metadataCompilationMode || !isMppEnabled -> {
             listOf(
                 createSingleSession(

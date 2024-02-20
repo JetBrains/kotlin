@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.generateCodeFromIr
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -56,6 +57,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
 
 object FirKotlinToJvmBytecodeCompiler {
@@ -194,6 +196,8 @@ object FirKotlinToJvmBytecodeCompiler {
             AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
         }
 
+        val scriptsInCommonSourcesErrors = reportCommonScriptsError(ktFiles)
+
         val sourceScope = projectEnvironment.getSearchScopeByPsiFiles(ktFiles) + projectEnvironment.getSearchScopeForProjectJavaSources()
 
         var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
@@ -224,7 +228,22 @@ object FirKotlinToJvmBytecodeCompiler {
         }
         outputs.runPlatformCheckers(diagnosticsReporter)
 
-        return runUnless(syntaxErrors || diagnosticsReporter.hasErrors) { FirResult(outputs) }
+        return runUnless(syntaxErrors || scriptsInCommonSourcesErrors || diagnosticsReporter.hasErrors) { FirResult(outputs) }
+    }
+
+    private fun FrontendContext.reportCommonScriptsError(ktFiles: List<KtFile>): Boolean {
+        val lastHmppModule = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)?.modules?.lastOrNull()
+        val commonScripts = ktFiles.filter { it.isScript() && (it.isCommonSource == true || it.hmppModuleName != lastHmppModule?.name) }
+        if (commonScripts.isNotEmpty()) {
+            val cwd = File(".").absoluteFile
+            fun renderFile(ktFile: KtFile) = File(ktFile.virtualFilePath).descendantRelativeTo(cwd).path
+            messageCollector.report(
+                CompilerMessageSeverity.ERROR,
+                "Script files in common source roots are not supported. Misplaced files:\n    ${commonScripts.joinToString("\n    ", transform = ::renderFile)}"
+            )
+            return true
+        }
+        return false
     }
 
     private fun CompilationContext.runBackend(
