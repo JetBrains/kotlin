@@ -19264,6 +19264,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
     }
 
     @Test
+    @TestMetadata("diamondWithNullabilityAnnotations.kt")
+    public void testDiamondWithNullabilityAnnotations() {
+      runTest("compiler/testData/codegen/box/fakeOverride/diamondWithNullabilityAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("fakeOverrideInAnonymousObject.kt")
     public void testFakeOverrideInAnonymousObject() {
       runTest("compiler/testData/codegen/box/fakeOverride/fakeOverrideInAnonymousObject.kt");

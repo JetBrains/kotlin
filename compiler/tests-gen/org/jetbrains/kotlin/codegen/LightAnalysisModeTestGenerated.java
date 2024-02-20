@@ -16021,6 +16021,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/fakeOverride/diamondFunction.kt");
     }
 
+    @TestMetadata("diamondWithNullabilityAnnotations.kt")
+    public void testDiamondWithNullabilityAnnotations() {
+      runTest("compiler/testData/codegen/box/fakeOverride/diamondWithNullabilityAnnotations.kt");
+    }
+
     @TestMetadata("fakeOverrideInAnonymousObject.kt")
     public void testFakeOverrideInAnonymousObject() {
       runTest("compiler/testData/codegen/box/fakeOverride/fakeOverrideInAnonymousObject.kt");
